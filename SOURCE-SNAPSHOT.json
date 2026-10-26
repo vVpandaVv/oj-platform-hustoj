@@ -249,8 +249,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7652,
-  "totalBytes": 148712850,
+  "fileCount": 7653,
+  "totalBytes": 148715796,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -1996,8 +1996,8 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 54848,
-      "sha256": "627935b352b1404ae27650b4cad560ea7ec7fa92ade781cd2b085535bed35e44",
+      "size": 55481,
+      "sha256": "f6d2c18c9c687d37c12c0bb67ba75e527f88ddbc9cd7c8db5ed2472249bf8679",
       "origin": "working-tree"
     },
     {
@@ -2058,6 +2058,12 @@
       "path": "_release-kit/install/configure-platform.php",
       "size": 9848,
       "sha256": "a219d7c18eee17d33f4acb983e3bc0ffb7dcb14f944f31007050a9eaef343e32",
+      "origin": "working-tree"
+    },
+    {
+      "path": "_release-kit/install/github-ubuntu24.sh",
+      "size": 2313,
+      "sha256": "565bb0d6356ac45c56006239159df87a547b38429f010b8802d2312c0eae1149",
       "origin": "working-tree"
     },
     {

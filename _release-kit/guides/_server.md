@@ -4,6 +4,23 @@ Ubuntu 24.04 LTS에 HUSTOJ와 OJ 플러그인을 설치하기 위한 서버 작�
 
 ## 새 서버 자동 설치
 
+### 공개 저장소에서 다운로드
+
+저장소를 Public으로 전환한 뒤 새 Ubuntu 24.04 서버에서 실행합니다. 도메인과 이메일을 바꿔 입력합니다.
+
+```bash
+sudo apt update
+sudo apt install -y curl ca-certificates
+curl -fL https://raw.githubusercontent.com/vVpandaVv/oj-platform-hustoj/main/_release-kit/install/github-ubuntu24.sh -o oj-platform-install.sh
+bash oj-platform-install.sh \
+  --site-url https://oj.school.kr \
+  --admin-email admin@school.kr
+```
+
+공개 저장소의 `main` 브랜치를 로그인 없이 내려받아 자동 설치기를 실행합니다.
+
+### 저장소 폴더에서 실행
+
 도메인의 A 레코드를 서버 IP에 연결하고 80·443 포트를 연 뒤, 저장소 폴더에서 실행합니다.
 
 ```bash
