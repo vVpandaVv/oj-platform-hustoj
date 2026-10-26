@@ -2,6 +2,24 @@
 
 Ubuntu 24.04 LTS에 HUSTOJ와 OJ 플러그인을 설치하기 위한 서버 작업입니다. 위에서부터 **명령을 한 줄씩** 입력하고 `Enter`를 누릅니다.
 
+## 새 서버 자동 설치
+
+도메인의 A 레코드를 서버 IP에 연결하고 80·443 포트를 연 뒤, 저장소 폴더에서 실행합니다.
+
+```bash
+sudo bash _release-kit/install/ubuntu24.sh \
+  --site-url https://oj.school.kr \
+  --admin-email admin@school.kr
+```
+
+공식 HUSTOJ 최신 소스, nginx·MariaDB·PHP 확장, WordPress 한국어판, OJ Platform을 설치합니다. `/home/judge/src/web`을 백업한 뒤 내용을 모두 삭제하고 WordPress로 교체합니다. 채점 DB 연결·설치 마법사·테스트데이터 권한·예약 실행·HTTPS도 설정합니다.
+
+WordPress DB는 `oj_wordpress`로 만들고, `/home/judge/etc/judge.conf`의 아이디와 비밀번호를 그대로 사용합니다. HUSTOJ의 `jol` DB는 유지합니다.
+
+관리자 아이디는 `ojadmin`입니다. 비밀번호는 `sudo cat /var/lib/oj-platform-installer/credentials.txt`로 확인합니다. 다른 설치 ZIP은 `.zip.sha256` 파일과 함께 두고 `--plugin-zip /경로/oj-platform-버전.zip`으로 지정합니다.
+
+오류를 해결한 뒤에는 같은 스크립트에 `--resume`을 붙여 이어서 실행합니다. 아래는 수동 설치 절차입니다.
+
 - 웹 루트: `/home/judge/src/web` (WordPress가 설치된 곳)
 - PHP 버전: 8.3
 - 명령 안의 `oj.school.kr`은 예시입니다. **반드시 내 도메인으로 바꿔서** 입력합니다. 보안 업데이트·헤더 확인 예시는 운영 대상 `judge.codingpanda.kr`을 사용하며, 다른 사이트에서는 해당 주소도 내 도메인으로 바꿉니다.

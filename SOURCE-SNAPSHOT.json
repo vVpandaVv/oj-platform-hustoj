@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "snapshotDate": "2026-10-26",
-  "mode": "source-only",
+  "mode": "source-and-release",
   "sourceBaseCommit": "cf0d56b151084f45de42975d0c0a2c50c34af41d",
   "workingTreeIncluded": true,
   "sourceInventory": "Current Git index; existing regular files only",
@@ -249,8 +249,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7646,
-  "totalBytes": 142069346,
+  "fileCount": 7652,
+  "totalBytes": 148712850,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -286,8 +286,8 @@
     },
     {
       "path": "README.md",
-      "size": 711,
-      "sha256": "983ca19c3334f8dca35625b50f981711197a17e70688c7feca4ebfdb45a36d84",
+      "size": 932,
+      "sha256": "633b7a93c36485bd0dc535633bf547063fd031dc25fee6b13b2eaa528bac165c",
       "origin": "working-tree"
     },
     {
@@ -1978,8 +1978,8 @@
     },
     {
       "path": "_release-kit/guides/_overview.md",
-      "size": 3375,
-      "sha256": "96b9b109a27d590cb4ad651990f1af9c8310b08c9566ffa913ecd76e5d1b2c01",
+      "size": 3567,
+      "sha256": "2d9e2b8198b3176d5888563e9db4cd248bf45626e2f6ee41be368248d810ef5c",
       "origin": "working-tree"
     },
     {
@@ -1996,8 +1996,8 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 53672,
-      "sha256": "9714721fa55dd3b90be2f2f8a1ae394b263e424d91165cd16a9f6788e05be599",
+      "size": 54848,
+      "sha256": "627935b352b1404ae27650b4cad560ea7ec7fa92ade781cd2b085535bed35e44",
       "origin": "working-tree"
     },
     {
@@ -2032,8 +2032,8 @@
     },
     {
       "path": "_release-kit/guides/oj-platform.md",
-      "size": 39775,
-      "sha256": "2828df27d2fd8f264c8bf7e8d2100d94de98a8af6007bbdfeff6257034021837",
+      "size": 40029,
+      "sha256": "36fcfbeb07b30dd39d4a8d838c5a117cbe812ca25465b1ac10a8db6941a510d8",
       "origin": "working-tree"
     },
     {
@@ -2052,6 +2052,18 @@
       "path": "_release-kit/guides/teaching-tools.md",
       "size": 22141,
       "sha256": "659421e4998c815aa0a81abd0b39d89ce0079050f95a6028dd62cdf507184897",
+      "origin": "working-tree"
+    },
+    {
+      "path": "_release-kit/install/configure-platform.php",
+      "size": 9848,
+      "sha256": "a219d7c18eee17d33f4acb983e3bc0ffb7dcb14f944f31007050a9eaef343e32",
+      "origin": "working-tree"
+    },
+    {
+      "path": "_release-kit/install/ubuntu24.sh",
+      "size": 28043,
+      "sha256": "7bb1583582994b4a7e4995ce6234ce5663709d26d0073386e01d14e0940766f5",
       "origin": "working-tree"
     },
     {
@@ -2175,6 +2187,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "_release-kit/tests/ubuntu-installer.py",
+      "size": 20060,
+      "sha256": "6863fe1eb83bf3405112caf22af732ebafe7cf177abd37544e1c76e76b59f7e4",
+      "origin": "working-tree"
+    },
+    {
       "path": "_releases/README.md",
       "size": 72,
       "sha256": "0765f1a56c3f85cb31b222a81de77fa0db1ee327e153e6fae443b97b75923567",
@@ -2215,6 +2233,24 @@
       "size": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "origin": "generated"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.1/oj-platform-2.5.1.manifest.json",
+      "size": 852,
+      "sha256": "2149e9d0f8b1aa3e4d1f295000f6800e1f7fa177efec0733e42223569ed29401",
+      "origin": "release-kit"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.1/oj-platform-2.5.1.zip",
+      "size": 6582770,
+      "sha256": "0a089511d18b90b75b2eeab2bfb507c9dd2286de6a899844bb9441e03d3090fa",
+      "origin": "release-kit"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.1/oj-platform-2.5.1.zip.sha256",
+      "size": 88,
+      "sha256": "2388b0f08360fab7f8e789f80c9871dc7a94e64df70ee6c8b9fcdab26a34f422",
+      "origin": "release-kit"
     },
     {
       "path": "_releases/oj-primm/.gitkeep",
@@ -46997,5 +47033,15 @@
     "privateHistoryIncluded": false
   },
   "repositoryVisibility": "private",
-  "layoutStage": "folders"
+  "layoutStage": "installer-and-platform-package",
+  "releaseArtifacts": [
+    {
+      "plugin": "oj-platform",
+      "version": "2.5.1",
+      "path": "_releases/oj-platform/2.5.1/oj-platform-2.5.1.zip",
+      "sha256": "0a089511d18b90b75b2eeab2bfb507c9dd2286de6a899844bb9441e03d3090fa",
+      "producer": "_release-kit/release.cmd",
+      "existingReleasePreserved": true
+    }
+  ]
 }
