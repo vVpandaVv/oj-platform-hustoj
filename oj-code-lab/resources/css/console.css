@@ -1,0 +1,226 @@
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ * Additional permission: see PLATFORM-LINKING-EXCEPTION.txt.
+ */
+/*
+ * 코드 실습실 콘솔 화면(학생 노트북, 추천 데이터, Kaggle 설정).
+ * 버튼·표·입력·알림·머리말은 OJ Platform 공용 부품(ojp-*)을 쓰고, 여기에는
+ * 배치와 노트북 열람 셀만 둔다. 색은 --ojp-* 토큰만 쓰므로 어두운 화면도 따라간다.
+ */
+.ocl-console {
+    max-width: 960px;
+}
+
+.ocl-console [hidden],
+.ocl-console .ojp-button[hidden] {
+    display: none;
+}
+
+.ocl-messages:not(:empty) {
+    margin-bottom: var(--ojp-space-4, 16px);
+}
+
+.ocl-panel {
+    margin-bottom: var(--ojp-space-4, 16px);
+    padding: var(--ojp-space-5, 24px);
+    border: 1px solid var(--ojp-color-line);
+    border-radius: var(--ojp-radius-lg, 16px);
+    background: var(--ojp-color-surface);
+}
+
+.ocl-panel h2 {
+    margin: 0 0 var(--ojp-space-3, 12px);
+    font-size: var(--ojp-text-title3, 18px);
+}
+
+.ocl-panel h3 {
+    margin: var(--ojp-space-4, 16px) 0 var(--ojp-space-2, 8px);
+    font-size: var(--ojp-text-body, 15px);
+}
+
+.ocl-panel-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ojp-space-2, 8px);
+    margin-bottom: var(--ojp-space-2, 8px);
+}
+
+.ocl-panel-heading h2 {
+    margin: 0;
+}
+
+.ocl-panel > .ojp-button {
+    margin-top: var(--ojp-space-3, 12px);
+}
+
+.ocl-console .ojp-field {
+    max-width: 420px;
+}
+
+.ocl-form {
+    display: grid;
+    gap: var(--ojp-space-3, 12px);
+    max-width: 480px;
+}
+
+.ocl-form-actions {
+    display: flex;
+    gap: var(--ojp-space-2, 8px);
+}
+
+.ocl-file-input {
+    height: auto;
+    padding: var(--ojp-space-2, 8px) var(--ojp-space-3, 12px);
+}
+
+.ocl-description,
+.ocl-status-line {
+    margin: 0 0 var(--ojp-space-3, 12px);
+    color: var(--ojp-color-muted);
+    font-size: var(--ojp-text-subhead, 13px);
+}
+
+.ocl-status-line {
+    color: var(--ojp-color-ink);
+    font-weight: 600;
+}
+
+.ocl-empty {
+    margin: 0;
+    color: var(--ojp-color-tertiary);
+    font-size: var(--ojp-text-subhead, 13px);
+}
+
+.ocl-console .ojp-table-wrap {
+    margin-top: var(--ojp-space-3, 12px);
+}
+
+.ocl-console .ojp-table td {
+    white-space: nowrap;
+}
+
+.ocl-more {
+    margin-top: var(--ojp-space-3, 12px);
+}
+
+.ocl-dataset-search {
+    display: flex;
+    gap: var(--ojp-space-2, 8px);
+    max-width: 520px;
+    margin-bottom: var(--ojp-space-3, 12px);
+}
+
+.ocl-dataset-search .ojp-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.ocl-dataset-list {
+    display: grid;
+    gap: var(--ojp-space-2, 8px);
+}
+
+.ocl-dataset-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ojp-space-2, 8px) var(--ojp-space-3, 12px);
+    padding: var(--ojp-space-2, 8px) var(--ojp-space-3, 12px);
+    border: 1px solid var(--ojp-color-line);
+    border-radius: var(--ojp-radius-md, 12px);
+    background: var(--ojp-color-subtle);
+}
+
+.ocl-dataset-row-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.ocl-dataset-row-main strong {
+    display: block;
+    font-size: var(--ojp-text-subhead, 13px);
+}
+
+.ocl-dataset-row-main span {
+    display: block;
+    overflow-wrap: anywhere;
+    color: var(--ojp-color-muted);
+    font-size: var(--ojp-text-footnote, 12px);
+}
+
+/* Read-only notebook viewer */
+.ocl-viewer-cell {
+    margin-bottom: var(--ojp-space-3, 12px);
+    overflow: hidden;
+    border: 1px solid var(--ojp-color-line);
+    border-radius: var(--ojp-radius-md, 12px);
+    background: var(--ojp-color-surface);
+}
+
+.ocl-viewer-cell pre.ocl-code-view {
+    margin: 0;
+    padding: var(--ojp-space-3, 12px);
+    border-radius: 0;
+    background: var(--ojp-color-subtle);
+    color: var(--ojp-color-ink);
+    font-family: var(--ojp-font-mono);
+    font-size: var(--ojp-text-footnote, 12px);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.ocl-viewer-cell .ocl-output-text,
+.ocl-viewer-cell .ocl-output-error {
+    margin: 0;
+    padding: var(--ojp-space-2, 8px) var(--ojp-space-3, 12px);
+    border-top: 1px solid var(--ojp-color-separator, var(--ojp-color-line));
+    border-radius: 0;
+    background: var(--ojp-color-surface);
+    color: var(--ojp-color-ink);
+    font-family: var(--ojp-font-mono);
+    font-size: var(--ojp-text-footnote, 12px);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.ocl-viewer-cell .ocl-output-error {
+    background: var(--ojp-color-danger-bg);
+    color: var(--ojp-color-danger);
+}
+
+.ocl-viewer-cell .ocl-input-echo {
+    background: var(--ojp-color-info-bg);
+    color: var(--ojp-color-info);
+}
+
+.ocl-viewer-cell .ocl-output-image {
+    display: block;
+    max-width: 100%;
+}
+
+.ocl-text-view {
+    margin: 0;
+    padding: var(--ojp-space-3, 12px) var(--ojp-space-4, 16px);
+    background: transparent;
+    color: var(--ojp-color-ink);
+    font: inherit;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.ocl-viewer-text-cell {
+    background: var(--ojp-color-accent-bg);
+}
+
+@media (max-width: 640px) {
+    .ocl-panel {
+        padding: var(--ojp-space-4, 16px);
+    }
+
+    .ocl-dataset-search {
+        flex-wrap: wrap;
+    }
+}

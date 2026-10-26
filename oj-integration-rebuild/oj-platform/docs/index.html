@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OJ Platform 재정비 기준 문서 | OJ Platform</title>
+  <style>
+    :root {
+      --page: #f3f5f4;
+      --surface: #fff;
+      --soft: #f7faf9;
+      --ink: #18211f;
+      --muted: #5f6e69;
+      --line: #d7dfdc;
+      --primary: #0f766e;
+      --primary-soft: #e6f4f1;
+      --warning: #9a6700;
+      --warning-soft: #fff4d6;
+      --nav: #162433;
+      --radius: 8px;
+      --font: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: var(--font);
+      line-height: 1.6;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: -80px;
+      left: 12px;
+      z-index: 100;
+      padding: 10px 14px;
+      border-radius: 4px;
+      background: #fff;
+      color: var(--nav);
+      text-decoration: none;
+    }
+
+    .skip-link:focus { top: 12px; }
+
+    .topbar {
+      display: flex;
+      min-height: 58px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px;
+      border-bottom: 1px solid #26394b;
+      background: var(--nav);
+      color: #fff;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 6px;
+      border: 1px solid #6f879b;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .topbar strong {
+      font-size: 14px;
+    }
+
+    main {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 44px 0 64px;
+    }
+
+    header {
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 40px);
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    header p:last-child {
+      max-width: 720px;
+      margin: 12px 0 0;
+      color: var(--muted);
+    }
+
+    section {
+      padding-top: 32px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 21px;
+      letter-spacing: 0;
+    }
+
+    .document-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .document {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      min-height: 78px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .document-id {
+      display: grid;
+      width: 46px;
+      height: 38px;
+      place-items: center;
+      border-radius: 5px;
+      background: var(--soft);
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .document h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .document h3 a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .document h3 a:hover,
+    .document h3 a:focus-visible {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .document p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      display: inline-flex;
+      min-height: 28px;
+      align-items: center;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status.done {
+      background: var(--primary-soft);
+      color: #0b5f59;
+    }
+
+    .status.review {
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .policy {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .policy ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .policy li + li {
+      margin-top: 6px;
+    }
+
+    code {
+      color: #174e49;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 0 14px;
+      }
+
+      main {
+        width: min(100% - 28px, 1080px);
+        padding-top: 28px;
+      }
+
+      .document {
+        grid-template-columns: 48px minmax(0, 1fr);
+      }
+
+      .status {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="topbar">
+    <span class="brand-mark" aria-hidden="true">OJ</span>
+    <strong>OJ Platform 재정비</strong>
+  </header>
+
+  <main id="main">
+    <header>
+      <p class="eyebrow">OJ Platform 재정비</p>
+      <h1>OJ Platform 재정비 기준 문서</h1>
+      <p>이 문서 묶음은 기존 OJ Platform의 디자인, 코드, 데이터베이스와 기능 경계를 일관된 사용자 서비스 구조로 재정비하기 위한 단일 기준입니다. 조사 결과와 현재 구현은 재정비 결정을 뒷받침하는 근거로만 사용합니다.</p>
+    </header>
+
+    <section aria-labelledby="scope-title">
+      <h2 id="scope-title">재정비 범위</h2>
+      <div class="policy">
+        <p><strong>목표:</strong> 디자인 통일, 코드 책임 정리, 데이터베이스 소유권 정리, 기능 분리 명확화와 사용자 중심 용어·화면을 하나의 순서로 구현합니다.</p>
+        <p><strong>범위 밖:</strong> 재정비와 관계없는 신규 기능 확장, 임시 운영 안내, 개발자용 홍보 문구는 이 문서에 추가하지 않습니다.</p>
+        <p><strong>정식 버전 승인 · 2026-09-11:</strong> 검토·보완된 재구축 플랫폼을 <strong>2.0.0</strong> 정식 버전으로 승인했습니다. 승인 근거와 배포 조건은 <a href="development-sequence.html#release-hardening-20260911">C-29 정식 버전 승인 기록</a>에서 확인합니다. 공개 Addon API 1.1.0은 유지하며, 특정 서버의 설치·업데이트 완료와 정식판 승인은 구분합니다.</p>
+        <p><strong>2026-08-10 검증 이력:</strong> D-001~D-009와 DS-00~DS-16의 재정비 설계, I-00·R-01~R-11 구현과 단계 커밋을 유지합니다. 당시 정상 운영 계약은 GET 152개, 고유 액션 128개, 관리자 메뉴 58개, 권한 61개, 역할 16개, 기능 30개, 무접두어 플랫폼 테이블 42개였습니다. PHP 파일 1,096개와 구조·계약·단위·통합·E2E 자동 검사 39개에서 실패 0건을 확인했습니다. 당시 실제 서버 인수는 신규 설치 조건부 통과, 정식 경로·UI·Judge 쓰기·SPJ·제출·학습 공간은 수정본 재검증, AI·메일·복구는 미실시로 기록했습니다. 상세 판정은 <a href="development-ds-16-integration-freeze.html#live-acceptance">DS-16 실환경 인수 현황</a>을 단일 원본으로 사용합니다.</p>
+        <p><strong>사후 변경 C-28:</strong> OJ Console·PublicUI 등록, capability 선언·역할 배정, 플랫폼 학습 Context authorization, 기존 AI 작업 배정과 공개 실행 gateway, 문서 동시 갱신 규칙을 C28-R01~R06·D01~D11에 반영했다. <a href="development-c-28-addon-api-v1-contract.html"><code>C28-API-V1-LOCK-01</code></a>의 Addon API <code>1.1.0</code>과 C28-I01~I06 Runtime 구현은 dev.33에서 코드·검증 ZIP 관문을 통과했다. 기존 DS-16과 core 수량은 유지하며 <a href="development-c-28-addon-api-v1-release-evidence.html">릴리스 증거</a>의 clean production package와 애드온 G1 인수가 남아 있다.</p>
+        <p><strong>변경 금지 기준:</strong> WordPress와 동일하게 숫자 내부 키와 문자열 로그인 아이디를 구분합니다. 플랫폼의 <code>user_id</code>는 <code>wp_users.ID</code>이며 로그인 아이디는 <code>wp_users.user_login</code>입니다. 무접두어 테이블, 제출 용어, 선택 모듈 독립성, AI 분리, 난이도 1~5와 안전한 이전을 포함한 전체 고정 결정은 D-006의 “변경 금지 기준”을 단일 원본으로 사용합니다.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="documents-title">
+      <h2 id="documents-title">D-001~D-009 재정비 기준</h2>
+      <ol class="document-list">
+        <li class="document">
+          <span class="document-id">D-001</span>
+          <div>
+            <h3><a href="d-001-module-dependencies.html">모듈·의존 관계 재정비</a></h3>
+            <p>현재 선언 19개와 필수 Jobs를 더한 전환기 목표 20개, 필수 기반 9개·사용자 선택 10개·임시 전환 1개의 의존과 유지·분리·제거 기준</p>
+          </div>
+          <span class="status done">의존 계약 선행 보강 반영</span>
+        </li>
+        <li class="document">
+          <span class="document-id">D-002</span>
+          <div>
+            <h3><a href="d-002-route-inventory.html">화면·접근 경로 재정비</a></h3>
+            <p>현재 화면 137개·호환 39개와 목표 렌더링 화면 150개·보호 파일 응답 2개·호환 0개, 총 GET 경로 152개의 단일 소유·제출·퀴즈·주제 관리·AI 작업 배정·사용자 식별자 기준과 기능별 페이지 트리</p>
+          </div>
+          <span class="status review">설계 보강 확정 · 일부 구현 대기</span>
+        </li>
+        <li class="document">
+          <span class="document-id">D-003</span>
+          <div>
+            <h3><a href="d-003-menu-permission-feature-flags.html">메뉴·권한·기능 설정 재정비</a></h3>
+            <p>현재 메뉴 51개·고유 작업 122개·권한 60개에서 목표 메뉴 58개·고유 작업 128개·권한 61개로 전환하고 기능 설정 30개의 실행 계약 통일</p>
+          </div>
+          <span class="status done">메뉴·권한 선행 보강 반영</span>
+        </li>
+        <li class="document">
+          <span class="document-id">D-004</span>
+          <div>
+            <h3><a href="d-004-storage-inventory.html">데이터 저장소 재정비</a></h3>
+            <p>플랫폼 32개·Judge 14개 테이블과 설정·파일의 소유권·이전 기준</p>
+          </div>
+          <span class="status review">설계 확정 · 구현 대기</span>
+        </li>
+        <li class="document">
+          <span class="document-id">D-005</span>
+          <div>
+            <h3><a href="d-005-user-workflows-risks.html">사용자 흐름·코드 구조 재정비</a></h3>
+            <p>핵심 작업, 목표 컨트롤러 66개, Jobs 권한·상태·취소, 복구와 사용자 상태 표현의 개선 순서</p>
+          </div>
+          <span class="status review">설계 확정 · 구현 대기</span>
+        </li>
+        <li class="document">
+          <span class="document-id">D-006</span>
+          <div>
+            <h3><a href="d-006-current-state-baseline.html">재정비 기준선과 실행 순서</a></h3>
+            <p>현재 코드, 변경 금지 기준, 누적 점검 결과 27건, 완전 재구축·신규 설치·개발/배포 실행 분리 원칙, 근거 없는 재점검 수정 방지와 단계별 개발 순서를 분리한 단일 기준선</p>
+          </div>
+          <span class="status review">설계 확정 · 구현 반영</span>
+        </li>
+        <li class="document">
+          <span class="document-id">D-007</span>
+          <div>
+            <h3><a href="d-007-users-terminology-navigation.html">사용자·용어·메뉴 재정비</a></h3>
+            <p>목표 역할 16종, 목표 Registry 58개, 서비스 채점 기능을 묶은 9개 소유 영역, 로그인 우선 진입과 사용자 중심 용어·메뉴 원칙</p>
+          </div>
+          <span class="status review">학습 기능·담당 범위 설계 확정 · 구현 대기</span>
+        </li>
+        <li class="document">
+          <span class="document-id">D-008</span>
+          <div>
+            <h3><a href="d-008-module-database-ownership.html">모듈·데이터베이스 소유권 재정비</a></h3>
+            <p>전환기 20개·정상 운영 19개 모듈, 서비스 담당 관계를 포함한 42개 테이블 트리·속성 데이터 사전, 모듈별 원자 전환과 HUSTOJ 기본 채점 8개·<code>custominput</code> 선택 프로필 계약</p>
+          </div>
+          <span class="status review">설계 확정 · 구현 반영</span>
+        </li>
+        <li class="document">
+          <span class="document-id">D-009</span>
+          <div>
+            <h3><a href="d-009-admin-ui-system.html">관리자 UI 재정비</a></h3>
+            <p>공통 화면 구조, 상태·컴포넌트와 문제 목록 첫 시범의 구현 기준</p>
+          </div>
+          <span class="status review">설계 확정 · 구현 대기</span>
+        </li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="supplement-title">
+      <h2 id="supplement-title">보조 연결표</h2>
+      <div class="policy">
+        <p><strong><a href="user-menu-page-access-data-map.html">사용자 메뉴·페이지·권한·데이터 연결표</a></strong></p>
+        <p>로그인 뒤 기본으로 제공되는 사용자 메뉴와 운영자가 설정한 1차·2차 구성, 로그인 전 계정·법적 보조 화면을 기준으로 메뉴 트리, 연결 페이지, 접근 권한, 사용 테이블과 핵심 속성을 한 표로 확인합니다. D-007의 상세 내용을 분리한 문서이며 새로운 설계 단계 번호를 추가하지 않습니다.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="development-title">
+      <h2 id="development-title">개발 설계</h2>
+      <div class="policy">
+        <p><strong><a href="development-sequence.html">전체 설계·개발 순서</a></strong></p>
+        <p>전체 상세 설계는 완료했습니다. 기존 runtime을 새 코드에 남기지 않는 C-23, 신규 설치와 기존 데이터 이전을 분리하는 C-24, 플러그인 개발과 운영 배포 실행을 나누는 C-25, 테스트 환경 설정 누락을 보강한 C-26, 실행 필수 스키마를 정합화한 C-27과 R-00~R-11 완전 재구축 계획, 각 단계의 생성·검사·제거 관문을 이 문서에서 관리합니다. SEQ-Q04까지 사용자 확정했으며 I-00과 R-01~R-11 구현·자동 검사를 완료했습니다. 실제 WordPress·Judge DB 통합과 사용자 시각 확인은 최종 인수·배포 전 누적 관문으로 유지합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-c-28-addon-extension-api.html">C-28 범용 애드온 확장 API 변경 설계</a></strong></p>
+        <p>DS-16 동결 이후 외부 애드온의 관리자 기능은 OJ Console에, 로그인 사용자 기능은 PublicUI에 연결하고 선언 capability·학습 Context·AI task를 플랫폼 운영 체계에 합성하기 위한 사후 변경 통제다. C28-D01~D11과 <a href="development-c-28-addon-api-v1-contract.html">Addon API v1 정확한 계약 및 구현 이관서</a>를 정본으로 삼아 <code>C28-I01~I06</code>을 dev.33·Addon API 1.1로 구현했다. AM-01은 옛 <code>oj_platform_loaded</code>/<code>AddonRuntimeGatewayV1</code>을 애드온별 <code>onReady()</code> 직접 dispatch로 교체했고, AM-02는 학생 learning Context·exact roster·task instruction을 additive로 추가했다. 공개 symbol 37개와 47개 회귀 script, 검증 ZIP은 통과했으며 <a href="development-c-28-addon-api-v1-release-evidence.html">릴리스 증거서</a>에 upgrade·rollback·fingerprint를 기록했다. 남은 작업은 clean production package와 AI 평가 애드온 G1 인수다.</p>
+      </div>      <div class="policy">
+        <p><strong><a href="implementation-i-00-protection-baseline.html">I-00 보호 기준선 실행 보고서</a></strong></p>
+        <p>재구축 전 Git 기준점, 별도 worktree, 현재 코드·Route·Action·권한·메뉴·옵션·테이블 manifest와 복구 도구를 기록합니다. 개발 보호 기준선 통과로 별도 worktree의 R-01 코드 재구축을 허용하며, 실제 WordPress·Judge DB 백업과 격리 복원은 I-09 운영 교체 전 배포 승인 절차로 분리합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-00-scope-baseline.html">DS-00 목적·범위·기준선</a></strong></p>
+        <p>학습용 프로그래밍 채점 서비스의 목적, 사용자, 포함·제외 기능, 현재 코드 수치, 목표 수치와 변경 금지 계약을 짧게 묶은 상세 설계 진입 기준입니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-01-ui-system.html">DS-01 공통 사용자·관리자 UI 시스템</a></strong></p>
+        <p>로그인·사용자 홈·관리자 대시보드·역할 관리에서 시작해 모든 기능 화면이 공유할 셸, 시각 토큰, 컴포넌트, 상태·문구, 반응형·접근성 기준과 단계별 전환 방법을 정의합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-common-foundation.html">공통 기반 모듈 개발 설계</a></strong></p>
+        <p>최종 목표는 사용자 UI와 관리자 UI를 포함한 플랫폼 전체 재설계입니다. 첫 단계로 Permission, Settings, PlatformDb, JudgeDb, Jobs Core, AccessRouter와 공통 UI 시스템의 순서·소유권·계약·구현 관문을 정리합니다. 이후 각 메뉴를 화면·기능·DB·권한·테스트가 결합된 수직 단위로 완성하며 새로운 D 번호를 추가하지 않습니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-cf-1-permission.html">DS-02 CF-1 Permission 상세 설계</a></strong></p>
+        <p>사용자 확정 뒤 가입 승인 권한 분리를 보강한 설계입니다. 기존 60개 capability·15개 역할을 보존하고 승인 전용 capability·역할·preset을 하나씩 추가해 목표 61개·16개·10개로 구성합니다. 학습 운영 담당 범위, 수행 모드, Registry와 역할 관리 화면·테스트 관문을 구체화합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-cf-2-settings.html">DS-03 CF-2 Settings 상세 설계</a></strong></p>
+        <p>사용자 확정으로 동결된 설계입니다. 공통 설정 기반, 기능별 설정 소유권, 기존 WordPress 옵션의 호환 저장, 비밀값 보호, 기능 전환 사전 검토와 운영자 설정 화면 계약을 정의합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-cf-3-platformdb.html">DS-04 CF-3 PlatformDb 상세 설계</a></strong></p>
+        <p>사용자 확정으로 동결된 설계입니다. 무접두어 플랫폼 테이블 42개의 소유권, 실행 가능한 스키마 Registry, 동명 테이블 충돌 차단, 모듈별 활성 스키마 맵과 설치·업그레이드·복구 계약을 정의합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-cf-4-judgedb.html">DS-05 CF-4 JudgeDb 상세 설계</a></strong></p>
+        <p>사용자 확정으로 동결된 설계입니다. 외부 HUSTOJ 데이터베이스 연결, 지원 테이블 프로필, 문제·제출·대회 Gateway, WordPress 사용자 식별 변환, 부분 실패 복구와 운영 상태 화면을 정의합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-cf-5-jobs.html">DS-06 CF-5 Jobs 상세 설계</a></strong></p>
+        <p>사용자 확정·설계 동결 상태입니다. 장기·다중 저장소 작업의 원자 등록, AI 작업, 4개 영구 테이블, Worker 임대, 7개 상태, 재시도·취소·복구와 진행 화면을 정의합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-cf-6-accessrouter.html">DS-07 CF-6 AccessRouter 상세 설계</a></strong></p>
+        <p>사용자 확정된 실행 계약에 DS-10 퀴즈 화면 분리·호환 경로 제거·최고 관리자 주제 관리, DS-14 보호 첨부 파일 응답과 DS-15 AI 작업 배정 화면을 동기화한 상태입니다. 152개 GET 경로의 타입 정의, 중복 검사, URL 생성, 로그인·기능·대상 권한 판정, WordPress rewrite와 기존 페이지 충돌 검사를 정의합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-08-accounts-users.html">DS-08 계정·사용자 상세 설계</a></strong></p>
+        <p>기능 설계와 UI 시안 3종을 사용자 확정으로 동결했습니다. WordPress 사용자 원본, 로그인·가입·기존 Judge 계정 전환, 프로필·설정·약관·법정대리인 동의와 사용자 관리 화면을 정의합니다.</p>
+        <p><a href="development-ds-08-access-policy-ui.html">비로그인·정책 시안</a> · <a href="development-ds-08-user-account-ui.html">프로필·내 계정 시안</a> · <a href="development-ds-08-admin-users-ui.html">관리자 사용자 시안</a></p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-09-home-dashboard-shell.html">DS-09 홈·대시보드·셸 상세 설계</a></strong></p>
+        <p>기능 설계와 UI 시안 2종을 사용자 확정으로 동결했습니다. 로그인 후 사용자 홈, 사용자·관리자 셸, 역할별 메뉴, 최근 작업·알림과 데이터 Provider 조립을 정의합니다.</p>
+        <p><a href="development-ds-09-user-home-shell-ui.html">사용자 홈·셸 시안</a> · <a href="development-ds-09-admin-dashboard-shell-ui.html">관리자 대시보드·셸 시안</a></p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-10-problems.html">DS-10 문제 상세 설계</a></strong></p>
+        <p>기능 설계와 시각 시안 5종을 사용자 확정으로 동결했습니다. 큰 단일 문서를 <a href="development-ds-10-page-contracts.html">페이지·권한·데이터 계약</a>, <a href="development-ds-10-problem-content.html">문제 콘텐츠</a>, <a href="development-ds-10-quiz-design.html">퀴즈</a>, <a href="development-ds-10-operations.html">관리 도구·구현</a>으로 분리했습니다. <a href="development-ds-10-problems.html#ui">전체 화면 시안 5종</a>에서 사용자 10개와 관리자 13개 화면의 구현 기준을 확인할 수 있습니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-11-submissions-blockly.html">DS-11 제출 상세 설계</a></strong></p>
+        <p>사용자 제출 화면 5개와 관리자 화면 7개, HUSTOJ 원본 보존, 수행모드, 재채점·무효 처리·복원, Blockly 편집기 시안과 입문·표준·확장 도구상자, 8개 블록 범주, Python 생성·저장 규칙을 한 문서에서 정의합니다. <a href="development-ds-11-submissions-blockly.html#ui">제출 화면 시안</a>과 <a href="development-ds-11-submissions-blockly.html#blockly">Blockly 편집기</a>를 같은 설계 원본에서 검토할 수 있습니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-12-learning-spaces.html">DS-12 학습 공간 상세 설계</a></strong></p>
+        <p>기능 설계와 UI 시안 7종을 사용자 확정으로 동결했습니다. 직접 경로 47개와 학습 공간 플랫폼 테이블 14개를 사용하며 수업 → 대회·평가 → 그룹 순서의 참여·담당자·문제·제출·진도·보고서, 수행 모드와 Groups OFF 독립성을 정의합니다.</p>
+        <p><a href="development-ds-12-user-classes-ui.html">사용자 수업</a> · <a href="development-ds-12-user-contests-ui.html">사용자 대회·평가</a> · <a href="development-ds-12-user-groups-ui.html">사용자 그룹</a> · <a href="development-ds-12-admin-learning-hub-ui.html">관리자 허브</a> · <a href="development-ds-12-admin-classes-ui.html">관리자 수업</a> · <a href="development-ds-12-admin-contests-ui.html">관리자 대회·평가</a> · <a href="development-ds-12-admin-groups-ui.html">관리자 그룹</a></p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-13-learning-support.html">DS-13 학습 지원 상세 설계</a></strong></p>
+        <p>기능 설계와 UI 시안 2종을 사용자 확정으로 동결했습니다. 직접 경로 9개와 AI Feedback 테이블 2개, 컨트롤러 7개를 유지하며 연구 기반 학습자 수준 분석, 수준별 제출 AI 피드백, 일일 교체 추천, 내 학습, 전체 랭킹과 기능별 독립성을 정의합니다.</p>
+        <p><a href="development-ds-13-user-learning-ui.html">사용자 학습 지원 시안</a> · <a href="development-ds-13-admin-ai-ui.html">관리자 AI 지원 시안</a></p>
+        <p><a href="research-pilot-redesign.html">수준별 AI 피드백 연구 — 조건 설정과 논문 작성</a> — 두 집단의 조건을 설정하면 문제 자료·사전·수업 적용·결과 분석 문안과 표가 함께 바뀝니다. 설정·문안 내보내기를 지원하는 설계 도구이며 운영 OJ 연결은 별도입니다.</p>
+        <p><a href="research-integration.html">이전 그룹 수업 연구 구현·사용 방법</a> — 현재 로컬 코드의 A/B 피드백, 독립 검사, 가림 채점, 가명 자료 수집 범위를 기록합니다.</p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-14-community.html">DS-14 커뮤니티 상세 설계</a></strong></p>
+        <p>기능 설계와 UI 시안 2종을 사용자 확정으로 동결했습니다. 사용자·관리자 화면 21개와 보호 파일 응답 1개, 기존 처리 명령 19개, 목표 컨트롤러 5개, 플랫폼 테이블 0개를 기준으로 게시판·공지·문맥 질문·댓글 운영·보호 첨부, 문제 상세의 최근 문제별 질문과 기능별 독립성을 정의합니다. 보호 첨부 파일 응답 <code>community.attachments.download</code>을 포함한 전체 GET 목표는 152개입니다.</p>
+        <p><a href="development-ds-14-user-community-ui.html">사용자 커뮤니티 시안</a> · <a href="development-ds-14-admin-community-ui.html">관리자 커뮤니티 시안</a></p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-15-operations-migration.html">DS-15 신규 설치·운영·데이터 이전 상세 설계</a></strong></p>
+        <p>기능 설계와 설치·운영 관리자 UI 시안을 사용자 확정으로 동결했습니다. 설치 전용 일시 화면 1개, 정상 운영 직접 화면 13개와 2차 메뉴 12개, 각 소유 모듈의 저장·검사 명령과 공통 Jobs 명령, 신규 플랫폼 테이블 총 42개를 기준으로 활성화 DDL 0건, 5개 설치 모드, Jobs 4개 + 소유 모듈 38개 파동과 재개, 설정 소유권, AI 연결 프로필·작업별 배정, Judge DB·메일 후보 검사, 시스템 상태, 점검·쓰기 동결, 데이터 이전 0~10단계와 외부 백업·복구 증거를 정의합니다. DS-15 자체의 추가 업무 테이블은 0개입니다.</p>
+        <p><a href="development-ds-15-admin-operations-ui.html#fresh-install">신규 설치 시안</a> · <a href="development-ds-15-admin-operations-ui.html">정상 운영 관리자 UI 시안 13개 화면</a></p>
+      </div>
+      <div class="policy">
+        <p><strong><a href="development-ds-16-integration-freeze.html">DS-16 전체 연결·동결</a></strong></p>
+        <p>기존 상세 문서를 반복하지 않고 부팅 순서, 모듈 의존 계약, 페이지·권한·코드·테이블 추적, 주요 업무 흐름과 검증 관문을 하나의 기준으로 연결합니다. DS16-Q01~Q06의 동결을 유지하면서 LIVE-01~LIVE-09를 실제 서버 인수 원장으로 추가했습니다. 신규 설치·정식 경로·공통 UI·Judge 문제·Jobs·SPJ·제출·학습 공간·AI·메일·복구를 같은 판정 규칙으로 관리하며, 수정 반영과 서버 재검증을 구분합니다.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="policy-title">
+      <h2 id="policy-title">재정비 문서 작성 기준</h2>
+      <div class="policy">
+        <ul>
+          <li>앞으로 사용자 검토용 정리문서는 독립 HTML 파일로 작성한다.</li>
+          <li>한글은 UTF-8 원문으로 기록하고 유니코드 이스케이프 표현을 사용하지 않는다.</li>
+          <li>확인된 사실과 제안·확정·보류 결정을 시각적으로 구분한다.</li>
+          <li>점검은 D-006의 변경 금지 기준을 우선하며, 다른 결론은 자동 반영하지 않고 불일치로 기록한 뒤 사용자 승인을 받아 변경한다.</li>          <li>플랫폼 코드·config·테스트·공개 계약을 변경할 때 같은 변경 집합에서 관련 HTML 개발 문서, 추적 ID, 계약 수량과 검증 관문을 함께 갱신한다. 문서와 코드가 다르면 완료로 처리하지 않는다.</li>
+          <li>데스크톱, 모바일과 인쇄 화면에서 같은 내용을 명확하게 읽을 수 있어야 한다.</li>
+          <li>외부 서비스 없이 파일을 직접 열어도 핵심 내용과 상호작용이 동작해야 한다.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

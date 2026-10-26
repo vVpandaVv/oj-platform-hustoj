@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-14 사용자 커뮤니티 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds11-prototype.css">
+  <link rel="stylesheet" href="assets/ds14-prototype.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4M20 4h-7v16h7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="m21 11-9 9a6 6 0 0 1-8-8l10-10a4 4 0 0 1 6 6L10 18a2 2 0 0 1-3-3l9-9"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 21h16"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-14 사용자 커뮤니티 시안</strong><span>소유 화면 7개 + 문제 연결 상태</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="사용자 커뮤니티 화면 선택">
+        <button type="button" role="tab" data-screen-target="board-list" aria-selected="true">게시판</button>
+        <button type="button" role="tab" data-screen-target="board-new" aria-selected="false">글쓰기</button>
+        <button type="button" role="tab" data-screen-target="board-detail" aria-selected="false">글·댓글</button>
+        <button type="button" role="tab" data-screen-target="board-edit" aria-selected="false">글 수정</button>
+        <button type="button" role="tab" data-screen-target="notices-list" aria-selected="false">공지</button>
+        <button type="button" role="tab" data-screen-target="notice-detail" aria-selected="false">공지 상세</button>
+        <button type="button" role="tab" data-screen-target="notice-new" aria-selected="false">공지 작성</button>
+        <button type="button" role="tab" data-screen-target="problem-community" aria-selected="false">문제 질문 연결</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-14-community.html"><span class="brand-mark">OJ</span><span>OJ Platform</span></a>
+      <nav class="primary-nav" aria-label="주 메뉴">
+        <a href="#home">홈</a>
+        <a href="#problems">문제</a>
+        <a href="#submissions">제출</a>
+        <a href="#learning">학습</a>
+        <a href="#board-list" aria-current="page">커뮤니티</a>
+      </nav>
+      <a class="account-button" href="#profile" aria-label="내 정보" title="내 정보"><svg><use href="#i-user"/></svg></a>
+    </div>
+  </header>
+
+  <nav class="community-nav" aria-label="커뮤니티 메뉴">
+    <a href="#board-list" data-sidebar-for="board-list board-new board-detail board-edit problem-community" aria-current="page">게시판</a>
+    <a href="#notices-list" data-sidebar-for="notices-list notice-detail notice-new">공지</a>
+  </nav>
+
+  <div class="workspace">
+    <main class="page" id="main">
+      <section class="screen" id="board-list" data-screen="board-list">
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">서비스 사용자 대화</p><h1>게시판</h1><p>서비스 전체 글과 내가 참여 중인 학습 공간의 질문을 함께 확인합니다.</p></div>
+          <div class="heading-actions"><button class="button primary" type="button" data-open-screen="board-new"><svg><use href="#i-plus"/></svg>글쓰기</button></div>
+        </header>
+        <p class="route-caption">/board</p>
+
+        <div class="filter-bar">
+          <label class="field wide"><span class="field-label">검색</span><input type="search" placeholder="제목이나 본문 검색"></label>
+          <label class="field"><span class="field-label">연결 공간</span><select><option>모든 공간</option><option>전체 게시판</option><option>문제</option><option>수업</option><option>대회·평가</option><option>그룹</option></select></label>
+          <label class="field"><span class="field-label">답변</span><select><option>전체</option><option>답변 있음</option><option>답변 대기</option></select></label>
+          <div class="filter-actions"><button class="button primary" type="button"><svg><use href="#i-search"/></svg>검색</button></div>
+        </div>
+
+        <div class="thread-list">
+          <article class="thread-row pinned">
+            <div class="thread-main"><div class="context-labels"><span class="badge info">고정</span><span class="context-label global">전체 게시판</span></div><strong>질문을 올릴 때 확인해 주세요</strong><span>개인정보와 풀이 전체 코드는 게시하지 않습니다.</span></div>
+            <div class="thread-meta"><strong>박지현 강사</strong><span>07-22 09:00</span></div><div class="thread-count"><strong>4</strong><span>댓글</span></div><button class="button" type="button" data-open-screen="board-detail">보기</button>
+          </article>
+          <article class="thread-row">
+            <div class="thread-main"><div class="context-labels"><span class="context-label">문제 · 1024</span><span class="badge wait">답변 대기</span></div><strong>구간 합에서 인덱스를 어디서 바꿔야 하나요?</strong><span>입력 번호와 리스트 위치가 달라서 자꾸 한 칸씩 밀립니다.</span></div>
+            <div class="thread-meta"><strong>김하늘</strong><span>오늘 10:21</span></div><div class="thread-count"><strong>2</strong><span>댓글</span></div><button class="button" type="button" data-open-screen="board-detail">보기</button>
+          </article>
+          <article class="thread-row">
+            <div class="thread-main"><div class="context-labels"><span class="context-label classroom">수업 · 파이썬 기초</span><span class="badge good">답변 있음</span></div><strong>이번 주 연습 문제 공개 시간을 확인하고 싶어요</strong><span>수업 화면에는 금요일 오전으로 표시되어 있습니다.</span></div>
+            <div class="thread-meta"><strong>박서연</strong><span>어제 15:40</span></div><div class="thread-count"><strong>3</strong><span>댓글</span></div><button class="button" type="button">보기</button>
+          </article>
+          <article class="thread-row">
+            <div class="thread-main"><div class="context-labels"><span class="context-label global">전체 게시판</span><span class="badge good">답변 있음</span></div><strong>Python 입력 처리 자료를 공유합니다</strong><span>한 줄 입력과 여러 정수 입력 예제를 정리했습니다.</span></div>
+            <div class="thread-meta"><strong>한유진</strong><span>07-23 13:18</span></div><div class="thread-count"><strong>5</strong><span>댓글</span></div><button class="button" type="button">보기</button>
+          </article>
+        </div>
+        <nav class="pagination" aria-label="게시판 페이지"><button class="button" type="button" disabled>이전</button><strong>1 / 12</strong><button class="button" type="button">다음</button></nav>
+      </section>
+
+      <section class="screen" id="board-new" data-screen="board-new" hidden>
+        <div class="breadcrumb"><span>커뮤니티</span><span>/</span><span>게시판</span><span>/</span><span>글쓰기</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">새 글</p><h1>질문과 이야기를 남겨 보세요</h1><p>현재 진입한 공간은 서버에서 확인하며 숫자 문맥 값은 입력하지 않습니다.</p></div></header>
+        <p class="route-caption">/board/new</p>
+        <div class="composer-layout">
+          <form class="composer-main">
+            <div class="notice"><div><strong>연결 공간</strong><br><span data-active-context>전체 게시판</span></div></div>
+            <label class="field"><span class="field-label">제목</span><input type="text" maxlength="120" data-count-input="new-title" value="구간 합에서 인덱스를 어디서 바꿔야 하나요?"><span class="field-footer"><small class="field-help">내용을 바로 이해할 수 있는 제목을 입력합니다.</small><small class="character-count" data-count-output="new-title"></small></span></label>
+            <label class="field"><span class="field-label">본문</span><textarea class="community-editor" maxlength="20000" data-count-input="new-body">입력의 문제 번호는 1부터 시작하는데 리스트는 0부터 시작해서 자꾸 한 칸씩 밀립니다. 어느 시점에서 기준을 바꾸는 것이 좋은가요?</textarea><span class="field-footer"><small class="field-help">개인정보와 전체 정답 코드는 올리지 않습니다.</small><small class="character-count" data-count-output="new-body"></small></span></label>
+            <div class="attachment-zone">
+              <p>PDF·문서·이미지 파일을 최대 5개, 파일당 10MB까지 보호 첨부로 등록합니다.</p>
+              <button class="button" type="button" data-add-attachment="new-thread"><svg><use href="#i-paperclip"/></svg>파일 선택</button>
+              <div class="attachment-list" data-attachment-list="new-thread"></div>
+            </div>
+            <div class="form-actions"><button class="button" type="button" data-open-screen="board-list">취소</button><button class="button primary" type="button" data-toast="게시글을 등록하고 상세 화면으로 이동합니다.">등록</button></div>
+          </form>
+          <aside class="composer-side"><h2>작성 기준</h2><ul><li>질문한 내용을 재현할 수 있게 작성합니다.</li><li>다른 학습자의 답이나 개인정보를 올리지 않습니다.</li><li>문제·수업·대회·그룹에서 들어오면 해당 공간에 자동 연결됩니다.</li></ul></aside>
+        </div>
+      </section>
+
+      <section class="screen" id="board-detail" data-screen="board-detail" hidden>
+        <div class="breadcrumb"><span>커뮤니티</span><span>/</span><span>문제 · 1024</span></div>
+        <p class="route-caption">/board/thread/{board_thread_id}</p>
+        <div class="post-layout">
+          <article class="post-article">
+            <header class="post-head"><div class="context-labels"><span class="context-label">문제 · 1024 구간 합 구하기</span><span class="badge good">답변 있음</span></div><h1>구간 합에서 인덱스를 어디서 바꿔야 하나요?</h1><div class="post-byline"><strong>김하늘</strong><span>오늘 10:21 작성</span><span>오늘 10:27 수정</span></div></header>
+            <div class="post-body"><p>입력의 문제 번호는 1부터 시작하는데 리스트는 0부터 시작해서 자꾸 한 칸씩 밀립니다.</p><p>입력을 받을 때 바로 1을 빼는 것이 좋은지, 합을 계산할 때 바꾸는 것이 좋은지 궁금합니다.</p></div>
+            <div class="post-attachments"><strong>첨부파일 · 로그인과 문제 접근 권한 확인 후 내려받기</strong><a class="download-link" href="#download"><svg><use href="#i-download"/></svg>인덱스_예시.png · 184KB</a></div>
+          </article>
+          <aside class="post-side">
+            <div class="notice"><div><strong>연결된 문제</strong><br>1024 · 구간 합 구하기</div></div>
+            <button class="button" type="button" data-open-screen="problem-community">문제에서 보기</button>
+            <button class="button" type="button" data-open-screen="board-edit">내 글 수정</button>
+          </aside>
+        </div>
+        <section class="comments-panel">
+          <div class="section-heading"><div><h2>댓글 2개</h2><p>작성된 순서대로 표시합니다.</p></div></div>
+          <div class="comment-list" data-comment-list="thread-detail">
+            <article class="comment"><div class="comment-author"><strong>이민준 강사</strong><span>수업 담당자</span></div><div class="comment-body"><p>입력을 받은 직후 내부 기준을 0부터 시작하도록 바꾸면 이후 계산에서 같은 기준을 계속 사용할 수 있습니다.</p><span class="comment-time">오늘 10:29</span></div></article>
+            <article class="comment"><div class="comment-author"><strong>김하늘</strong><span>작성자</span></div><div class="comment-body"><p>입력 단계에서 바꾸니 계산식이 훨씬 단순해졌습니다. 감사합니다.</p><span class="comment-time">오늘 10:35</span></div></article>
+          </div>
+          <div class="comment-form"><label class="field"><span class="field-label">댓글</span><textarea maxlength="5000" data-comment-input="thread-detail" placeholder="댓글을 입력하세요"></textarea></label><div class="form-actions"><button class="button primary" type="button" data-add-comment="thread-detail">댓글 등록</button></div></div>
+        </section>
+      </section>
+
+      <section class="screen" id="board-edit" data-screen="board-edit" hidden>
+        <div class="breadcrumb"><span>커뮤니티</span><span>/</span><span>내 글</span><span>/</span><span>수정</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">개정 기록 보존</p><h1>게시글 수정</h1><p>연결 공간과 작성자는 바꿀 수 없으며 이전 내용은 WordPress 개정으로 보존합니다.</p></div></header>
+        <p class="route-caption">/board/thread/{board_thread_id}/edit</p>
+        <div class="composer-layout">
+          <form class="composer-main">
+            <div class="notice"><div><strong>연결 공간</strong><br>문제 · 1024 구간 합 구하기</div></div>
+            <label class="field"><span class="field-label">제목</span><input type="text" maxlength="120" value="구간 합에서 인덱스를 어디서 바꿔야 하나요?"></label>
+            <label class="field"><span class="field-label">본문</span><textarea class="community-editor" maxlength="20000">입력의 문제 번호는 1부터 시작하는데 리스트는 0부터 시작해서 자꾸 한 칸씩 밀립니다. 입력 단계에서 기준을 바꾸는 방법을 확인하고 싶습니다.</textarea></label>
+            <div class="attachment-zone"><p>현재 첨부</p><div class="attachment-list"><div class="attachment-item"><span>인덱스_예시.png · 184KB</span><button class="button ghost" type="button" data-remove-attachment>제거</button></div></div></div>
+            <div class="form-actions"><button class="button" type="button" data-open-screen="board-detail">취소</button><button class="button primary" type="button" data-toast="수정 내용을 저장하고 개정 기록을 남겼습니다.">변경 저장</button></div>
+          </form>
+          <aside class="composer-side"><h2>수정할 수 없는 항목</h2><ul><li>작성자</li><li>문제·수업·대회·그룹 연결</li><li>고정·숨김·운영 상태</li></ul></aside>
+        </div>
+      </section>
+
+      <section class="screen" id="notices-list" data-screen="notices-list" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">서비스 안내</p><h1>공지</h1><p>현재 게시 중인 서비스 전체 공지를 확인합니다.</p></div></header>
+        <p class="route-caption">/notices</p>
+        <div class="filter-bar compact single"><label class="field wide"><span class="field-label">검색</span><input type="search" placeholder="공지 제목 검색"></label><div class="filter-actions"><button class="button primary" type="button"><svg><use href="#i-search"/></svg>검색</button></div></div>
+        <div class="notice-list">
+          <article class="notice-row"><div><span class="badge danger">중요</span></div><div><strong>7월 26일 채점 서버 점검 안내</strong><span>점검 중 제출은 대기열에 보관되며 완료 뒤 자동 처리됩니다.</span></div><div><strong>07-24</strong><span>관리자</span></div></article>
+          <article class="notice-row"><div><span class="badge info">고정</span></div><div><strong>서비스 온라인 채점 시스템 이용 안내</strong><span>로그인, 문제 풀이와 질문 작성 기준을 안내합니다.</span></div><div><strong>07-18</strong><span>박지현</span></div></article>
+          <article class="notice-row"><div><span class="badge">공지</span></div><div><strong>여름집중 학습 알고리즘 대회 참가 신청</strong><span>대회 메뉴에서 7월 30일까지 신청할 수 있습니다.</span></div><div><strong>07-23</strong><span>이민준</span></div></article>
+        </div>
+        <div class="form-actions"><button class="button" type="button" data-open-screen="notice-detail">선택 공지 보기</button></div>
+      </section>
+
+      <section class="screen" id="notice-detail" data-screen="notice-detail" hidden>
+        <div class="breadcrumb"><span>커뮤니티</span><span>/</span><span>공지</span></div>
+        <p class="route-caption">/notices/{notice_id}</p>
+        <article class="post-article">
+          <header class="post-head"><div class="context-labels"><span class="badge danger">중요</span><span class="badge info">고정</span></div><h1>7월 26일 채점 서버 점검 안내</h1><div class="post-byline"><strong>시스템 관리자</strong><span>07-24 09:00 게시</span><span>07-27 00:00 종료</span></div></header>
+          <div class="post-body"><p>7월 26일 오전 8시부터 9시까지 채점 서버 점검을 진행합니다.</p><p>점검 시간에 접수된 제출은 대기열에 보관되며 서버가 정상화되면 자동으로 채점됩니다.</p></div>
+          <div class="post-attachments"><strong>첨부파일</strong><a class="download-link" href="#download"><svg><use href="#i-download"/></svg>점검_일정.pdf · 212KB</a></div>
+        </article>
+        <div class="notice"><div><strong>댓글을 사용하지 않는 공지입니다.</strong><br>문의가 필요하면 전체 게시판을 이용해 주세요.</div></div>
+      </section>
+
+      <section class="screen" id="notice-new" data-screen="notice-new" hidden>
+        <div class="breadcrumb"><span>커뮤니티</span><span>/</span><span>공지</span><span>/</span><span>작성</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">공지 운영 권한</p><h1>공지 작성</h1><p>공지 운영 권한이 있는 사용자에게만 이 화면이 나타납니다.</p></div></header>
+        <p class="route-caption">/notices/new</p>
+        <div class="composer-layout">
+          <form class="composer-main">
+            <div class="form-grid">
+              <label class="field wide"><span class="field-label">제목</span><input type="text" maxlength="120" value="7월 26일 채점 서버 점검 안내"></label>
+              <label class="field"><span class="field-label">게시 상태</span><select data-notice-status="public-notice"><option value="draft">초안</option><option value="future">예약</option><option value="publish">바로 게시</option></select></label>
+              <label class="field" data-schedule-fields="public-notice" hidden><span class="field-label">게시 시작</span><input type="datetime-local" value="2026-07-26T08:00"></label>
+              <label class="field"><span class="field-label">게시 종료</span><input type="datetime-local" value="2026-07-27T00:00"></label>
+            </div>
+            <label class="field"><span class="field-label">본문</span><textarea class="community-editor" maxlength="20000">채점 서버 점검 시간과 제출 처리 방법을 안내합니다.</textarea></label>
+            <div class="setting-line"><div><strong>중요 공지</strong><span>목록과 홈에서 눈에 띄게 표시합니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>사용</span></label></div>
+            <div class="setting-line"><div><strong>상단 고정</strong><span>게시 중인 공지의 위쪽에 표시합니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>사용</span></label></div>
+            <div class="setting-line"><div><strong>댓글 허용</strong><span>기본값은 사용하지 않음입니다.</span></div><label class="toggle-line"><input type="checkbox"><span>사용</span></label></div>
+            <div class="form-actions"><button class="button" type="button" data-open-screen="notices-list">취소</button><button class="button primary" type="button" data-toast="공지 저장 명령을 실행합니다.">저장</button></div>
+          </form>
+          <aside class="composer-side"><h2>게시 상태</h2><ul><li>초안은 사용자에게 보이지 않습니다.</li><li>예약은 사이트 시각에 맞춰 게시됩니다.</li><li>종료 뒤에는 홈과 기본 목록에서 제외됩니다.</li></ul></aside>
+        </div>
+      </section>
+
+      <section class="screen" id="problem-community" data-screen="problem-community" hidden>
+        <div class="breadcrumb"><span>문제</span><span>/</span><span>1024</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">1024</p><h1>구간 합 구하기</h1><p>배열의 연속 구간 합을 빠르게 계산합니다.</p></div><div class="heading-actions"><button class="button primary" type="button">제출</button></div></header>
+        <p class="route-caption">/problems/{problem_id}</p>
+        <div class="context-strip"><div><h2>제한</h2><p>시간 2초 · 메모리 128MB · 난이도 3 · 누적 합</p></div></div>
+        <section class="content-section"><h2>문제 설명</h2><p>수열과 여러 구간이 주어질 때 각 구간의 합을 출력합니다.</p><h2>입력</h2><p>첫째 줄에 수열의 크기와 질문 수가 주어집니다.</p></section>
+        <section class="question-section">
+          <div class="section-heading"><div><h2>이 문제의 질문</h2><p>같은 문제에 연결된 최근 질문 5개까지 표시합니다.</p></div><div class="heading-actions"><button class="button" type="button" data-open-screen="board-list">전체 질문</button><button class="button primary" type="button" data-open-screen="board-new" data-context-launch="문제 · 1024 구간 합 구하기">질문하기</button></div></div>
+          <div class="question-list">
+            <article class="question-row"><div><strong>구간 합에서 인덱스를 어디서 바꿔야 하나요?</strong><span>김하늘 · 오늘 10:21</span></div><span class="badge good">답변 있음</span><strong>댓글 2</strong></article>
+            <article class="question-row"><div><strong>누적 합 배열의 첫 칸을 0으로 두는 이유</strong><span>박서연 · 어제 15:14</span></div><span class="badge good">답변 있음</span><strong>댓글 4</strong></article>
+            <article class="question-row"><div><strong>큰 입력에서 시간 초과가 발생합니다</strong><span>한유진 · 07-22 16:03</span></div><span class="badge wait">답변 대기</span><strong>댓글 1</strong></article>
+          </div>
+        </section>
+        <div class="notice warning"><div><strong>평가 보호 상태</strong><br>사용자가 참여 중인 진행 평가에 이 문제가 포함되면 질문 영역 전체가 표시되지 않습니다.</div></div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴">
+    <a href="#home"><svg><use href="#i-home"/></svg><span>홈</span></a>
+    <a href="#problems"><svg><use href="#i-book"/></svg><span>문제</span></a>
+    <a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a>
+    <a href="#learning"><svg><use href="#i-learn"/></svg><span>학습</span></a>
+    <a href="#board-list" aria-current="page"><svg><use href="#i-message"/></svg><span>커뮤니티</span></a>
+  </nav>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds14-prototype.js"></script>
+</body>
+</html>

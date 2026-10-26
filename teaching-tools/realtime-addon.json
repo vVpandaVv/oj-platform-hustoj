@@ -1,0 +1,8 @@
+{
+  "protocol": 1,
+  "app": "teaching-tools",
+  "version": "1.2.3",
+  "secretKey": "REALTIME_SECRET",
+  "adapter": "realtime-server/src/realtime-adapter.js",
+  "include": ["realtime-server/src", "realtime-server/package.json", "realtime-server/LICENSE.txt"]
+}

@@ -1,0 +1,1 @@
+import{K as e,Y as t,dt as n,et as r,mt as i}from"./vue-i18n-7JtS-33s.js";var a={class:`overflow-auto rounded-panel border border-line`},o={class:`data-table w-full border-collapse text-left tabular-nums`},s=r({__name:`AppTable`,setup(r){return(r,s)=>(n(),t(`div`,a,[e(`table`,o,[i(r.$slots,`default`)])]))}});export{s as t};

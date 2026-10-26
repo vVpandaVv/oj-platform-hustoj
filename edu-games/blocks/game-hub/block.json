@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "edu-games/game-hub",
+  "title": "Game Hub",
+  "category": "widgets",
+  "icon": "games",
+  "description": "Lists available educational games and launches play screens.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScriptModule": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

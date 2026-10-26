@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-10 사용자 퀴즈 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 5.5A3.5 3.5 0 0 1 5.5 2H11v18H5.5A3.5 3.5 0 0 0 2 23z"/><path d="M22 5.5A3.5 3.5 0 0 0 18.5 2H13v18h5.5A3.5 3.5 0 0 1 22 23z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 21h20z"/><path d="M12 9v5M12 18h.01"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title">
+        <strong>DS-10 사용자 퀴즈 시안</strong>
+        <span>퀴즈의 다섯 단계를 확인합니다.</span>
+      </div>
+      <div class="screen-switcher" role="tablist" aria-label="화면 선택">
+        <button type="button" role="tab" data-screen-target="quiz-list" aria-selected="true">목록</button>
+        <button type="button" role="tab" data-screen-target="quiz-detail" aria-selected="false">상세</button>
+        <button type="button" role="tab" data-screen-target="quiz-attempt" aria-selected="false">응시</button>
+        <button type="button" role="tab" data-screen-target="quiz-result" aria-selected="false">결과</button>
+        <button type="button" role="tab" data-screen-target="quiz-statistics" aria-selected="false">통계</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-10-problems.html" aria-label="DS-10 설계 문서로 이동">
+        <span class="brand-mark">OJ</span>
+        <span>OJ Platform</span>
+      </a>
+      <nav class="primary-nav" aria-label="주 메뉴">
+        <a href="#home">홈</a>
+        <a href="#quiz-list" aria-current="page">문제</a>
+        <a href="#submissions">제출</a>
+        <a href="#learning">학습</a>
+        <a href="#community">커뮤니티</a>
+      </nav>
+      <button class="account-button" type="button" aria-label="내 계정" title="내 계정"><svg><use href="#i-user"/></svg></button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="page" id="main">
+      <section class="screen" data-screen="quiz-list">
+        <div class="breadcrumb"><span>문제</span><svg><use href="#i-chevron-right"/></svg><span>퀴즈</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">개념 확인</p>
+            <h1>퀴즈</h1>
+            <p>문제와 관련된 핵심 개념을 짧은 문항으로 점검합니다.</p>
+          </div>
+        </header>
+        <div class="filter-bar compact">
+          <div class="field">
+            <label for="quiz-search">퀴즈 검색</label>
+            <div class="input-wrap"><svg><use href="#i-search"/></svg><input class="input" id="quiz-search" type="search" placeholder="문제 번호 또는 제목"></div>
+          </div>
+          <div class="field"><label for="quiz-status">응시 상태</label><select class="select" id="quiz-status"><option>전체 상태</option><option>응시 가능</option><option>완료</option><option>응시 종료</option></select></div>
+          <div class="field"><label for="quiz-topic">주제</label><select class="select" id="quiz-topic"><option>전체 주제</option><option>배열</option><option>정렬</option><option>그래프</option></select></div>
+          <div class="filter-actions"><button class="button primary" type="button" data-toast="검색 조건을 적용했습니다."><svg><use href="#i-filter"/></svg>적용</button></div>
+        </div>
+        <div class="summary-line"><span>응시 가능한 퀴즈 12개</span><span>진행 중인 퀴즈 1개</span></div>
+        <div class="card-grid">
+          <article class="card">
+            <div class="card-top"><span class="badge good">응시 가능</span><span class="badge">배열</span></div>
+            <h3>구간 합 핵심 개념</h3><p>문제 1024 · 누적 합과 구간 계산을 확인합니다.</p>
+            <div class="card-meta"><span>5문항</span><span>10점</span><span>최근 점수 8점</span></div>
+            <button class="button primary" type="button" data-open-screen="quiz-detail">퀴즈 보기 <svg><use href="#i-arrow-right"/></svg></button>
+          </article>
+          <article class="card">
+            <div class="card-top"><span class="badge wait">진행 중</span><span class="badge">그리디</span></div>
+            <h3>회의실 배정 원리</h3><p>문제 1031 · 선택 기준과 종료 시각을 점검합니다.</p>
+            <div class="card-meta"><span>6문항</span><span>12점</span><span>3/6 답변</span></div>
+            <button class="button" type="button" data-open-screen="quiz-attempt">계속하기 <svg><use href="#i-arrow-right"/></svg></button>
+          </article>
+          <article class="card">
+            <div class="card-top"><span class="badge info">완료</span><span class="badge">문자열</span></div>
+            <h3>문자열 압축 이해</h3><p>문제 1056 · 반복 구간과 출력 규칙을 확인합니다.</p>
+            <div class="card-meta"><span>5문항</span><span>10점</span><span>최고 10점</span></div>
+            <button class="button" type="button" data-open-screen="quiz-result">결과 보기 <svg><use href="#i-arrow-right"/></svg></button>
+          </article>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="quiz-detail" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="quiz-list">퀴즈</button><svg><use href="#i-chevron-right"/></svg><span>구간 합 핵심 개념</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">문제 1024 연계 퀴즈</p>
+            <h1>구간 합 핵심 개념</h1>
+            <p>누적 합을 만들고 구간의 합을 계산하는 원리를 확인합니다.</p>
+          </div>
+          <div class="heading-actions">
+            <button class="button" type="button" data-toast="연계 문제 상세로 이동합니다."><svg><use href="#i-book"/></svg>문제 보기</button>
+            <button class="button primary" type="button" data-open-screen="quiz-attempt"><svg><use href="#i-play"/></svg>응시 시작</button>
+          </div>
+        </header>
+        <div class="two-column">
+          <div>
+            <section class="section">
+              <h2>퀴즈 안내</h2>
+              <div class="metric-grid">
+                <div class="metric"><span>문항</span><strong>5</strong><small>모두 객관식</small></div>
+                <div class="metric"><span>총점</span><strong>10점</strong><small>문항별 2점</small></div>
+                <div class="metric"><span>제한 시간</span><strong>없음</strong><small>진행 상태 저장</small></div>
+                <div class="metric"><span>남은 응시</span><strong>2회</strong><small>총 3회</small></div>
+              </div>
+              <div class="notice">
+                <svg><use href="#i-check"/></svg>
+                <div><strong>응시 전 확인</strong><br>응시를 시작하면 현재 게시 버전으로 고정됩니다. 도중에 퀴즈가 수정되어도 진행 중인 문항은 바뀌지 않습니다.</div>
+              </div>
+            </section>
+            <section class="section">
+              <div class="section-heading"><div><h2>내 응시 이력</h2><p>본인의 결과만 표시합니다.</p></div></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>회차</th><th>상태</th><th>점수</th><th>정답</th><th>제출 시각</th><th>결과</th></tr></thead>
+                  <tbody>
+                    <tr><td>1회</td><td><span class="badge good">완료</span></td><td><strong>8 / 10</strong></td><td>4 / 5</td><td>07-20 14:18</td><td><button class="button ghost" type="button" data-open-screen="quiz-result">보기</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+          <aside class="panel soft">
+            <h2>응시 조건</h2>
+            <div class="check-list">
+              <div class="check-row"><svg style="color:var(--green)"><use href="#i-check"/></svg><span>현재 로그인 계정으로 응시</span></div>
+              <div class="check-row"><svg style="color:var(--green)"><use href="#i-check"/></svg><span>연계 문제 접근 가능</span></div>
+              <div class="check-row"><svg style="color:var(--green)"><use href="#i-check"/></svg><span>남은 응시 횟수 2회</span></div>
+            </div>
+            <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+            <button class="button primary" style="width:100%" type="button" data-open-screen="quiz-attempt"><svg><use href="#i-play"/></svg>응시 시작</button>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="quiz-attempt" hidden>
+        <div class="breadcrumb"><span>퀴즈</span><svg><use href="#i-chevron-right"/></svg><span>구간 합 핵심 개념</span><svg><use href="#i-chevron-right"/></svg><span>응시</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">진행 중 · 2회차</p>
+            <h1>구간 합 핵심 개념</h1>
+            <p>답안은 선택할 때마다 임시 저장됩니다.</p>
+          </div>
+          <div class="heading-actions">
+            <span class="badge wait"><svg><use href="#i-clock"/></svg>제한 시간 없음</span>
+          </div>
+        </header>
+        <div class="quiz-layout">
+          <aside class="question-nav">
+            <strong>진행률 3 / 5</strong>
+            <div class="progress-track" style="margin-top:8px"><div class="progress-bar" style="width:60%"></div></div>
+            <div class="question-nav-grid" aria-label="문항 이동">
+              <button class="answered" type="button">1</button><button class="answered" type="button">2</button><button class="answered" type="button">3</button><button type="button">4</button><button type="button">5</button>
+            </div>
+            <p class="help">답하지 않은 문항이 있어도 최종 제출할 수 있습니다.</p>
+          </aside>
+          <div>
+            <article class="question">
+              <p class="question-number">문항 3 · 2점</p>
+              <h2>누적 합 배열 <code>S</code>가 있을 때, 구간 <code>i</code>부터 <code>j</code>까지의 합을 구하는 식은 무엇인가요?</h2>
+              <div class="choice-list" data-choice-group role="radiogroup" aria-label="문항 3 답안">
+                <button class="choice" type="button" data-choice role="radio" aria-checked="false"><span class="choice-marker">1</span><code>S[j] - S[i]</code></button>
+                <button class="choice" type="button" data-choice role="radio" aria-checked="true"><span class="choice-marker">2</span><code>S[j] - S[i - 1]</code></button>
+                <button class="choice" type="button" data-choice role="radio" aria-checked="false"><span class="choice-marker">3</span><code>S[j - 1] - S[i]</code></button>
+                <button class="choice" type="button" data-choice role="radio" aria-checked="false"><span class="choice-marker">4</span><code>S[i] + S[j]</code></button>
+              </div>
+            </article>
+            <div class="section-actions" style="margin-top:18px;justify-content:space-between">
+              <button class="button" type="button" data-toast="이전 문항으로 이동합니다."><svg><use href="#i-arrow-left"/></svg>이전</button>
+              <div class="inline-actions">
+                <button class="button" type="button" data-toast="다음 문항으로 이동합니다.">다음 <svg><use href="#i-arrow-right"/></svg></button>
+                <button class="button primary" type="button" data-toast="답하지 않은 문항 2개를 확인한 뒤 제출합니다."><svg><use href="#i-send"/></svg>최종 제출</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="quiz-result" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="quiz-list">퀴즈</button><svg><use href="#i-chevron-right"/></svg><span>구간 합 핵심 개념</span><svg><use href="#i-chevron-right"/></svg><span>결과</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">2회차 결과</p>
+            <h1>8점 / 10점</h1>
+            <p>5문항 중 4문항을 맞혔습니다.</p>
+          </div>
+          <div class="heading-actions">
+            <button class="button" type="button" data-open-screen="quiz-statistics"><svg><use href="#i-chart"/></svg>학습 통계</button>
+            <button class="button primary" type="button" data-open-screen="quiz-detail"><svg><use href="#i-rotate"/></svg>다시 응시</button>
+          </div>
+        </header>
+        <div class="metric-grid">
+          <div class="metric"><span>점수</span><strong>8점</strong><small>총점 10점</small></div>
+          <div class="metric"><span>정답</span><strong>4 / 5</strong><small>정답률 80%</small></div>
+          <div class="metric"><span>응시 시간</span><strong>04:32</strong><small>제한 없음</small></div>
+          <div class="metric"><span>남은 응시</span><strong>1회</strong><small>최고 점수 8점</small></div>
+        </div>
+        <div class="notice warning">
+          <svg><use href="#i-alert"/></svg>
+          <div><strong>오답 1개를 확인해 보세요.</strong><br>정답과 해설은 퀴즈 공개 설정에서 허용된 범위만 표시됩니다.</div>
+        </div>
+        <section class="section">
+          <div class="section-heading"><div><h2>문항별 결과</h2><p>선택한 답과 공개 가능한 해설</p></div></div>
+          <article class="panel">
+            <p class="question-number">문항 3 · 오답</p>
+            <h3>누적 합 배열에서 구간 합을 구하는 올바른 식은 무엇인가요?</h3>
+            <div class="answer-review wrong"><strong>내 답:</strong> <code>S[j] - S[i]</code></div>
+            <div class="answer-review"><strong>정답:</strong> <code>S[j] - S[i - 1]</code><p>구간 앞까지 누적된 값을 제외해야 하므로 시작 인덱스의 바로 이전 값을 뺍니다.</p></div>
+          </article>
+        </section>
+      </section>
+
+      <section class="screen" data-screen="quiz-statistics" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="quiz-list">퀴즈</button><svg><use href="#i-chevron-right"/></svg><span>구간 합 핵심 개념</span><svg><use href="#i-chevron-right"/></svg><span>통계</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">내 학습 통계</p>
+            <h1>구간 합 핵심 개념</h1>
+            <p>내 응시 기록과 공개가 허용된 익명 집계를 비교합니다.</p>
+          </div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="quiz-detail"><svg><use href="#i-list"/></svg>퀴즈 상세</button></div>
+        </header>
+        <div class="metric-grid">
+          <div class="metric"><span>응시</span><strong>2회</strong><small>최대 3회</small></div>
+          <div class="metric"><span>최고 점수</span><strong>8점</strong><small>평균 7점</small></div>
+          <div class="metric"><span>최근 점수</span><strong>8점</strong><small>이전보다 +2점</small></div>
+          <div class="metric"><span>전체 평균</span><strong>7.1점</strong><small>익명 집계</small></div>
+        </div>
+        <div class="equal-columns">
+          <section class="panel">
+            <h2>회차별 점수</h2>
+            <div class="bar-list">
+              <div class="bar-row"><span>1회차</span><div class="progress-track"><div class="progress-bar" style="width:60%"></div></div><strong>6점</strong></div>
+              <div class="bar-row"><span>2회차</span><div class="progress-track"><div class="progress-bar" style="width:80%"></div></div><strong>8점</strong></div>
+            </div>
+          </section>
+          <section class="panel">
+            <h2>개념별 이해도</h2>
+            <div class="bar-list">
+              <div class="bar-row"><span>누적 합</span><div class="progress-track"><div class="progress-bar" style="width:90%"></div></div><strong>90%</strong></div>
+              <div class="bar-row"><span>인덱스</span><div class="progress-track"><div class="progress-bar" style="width:60%;background:#9b6500"></div></div><strong>60%</strong></div>
+              <div class="bar-row"><span>복잡도</span><div class="progress-track"><div class="progress-bar" style="width:75%"></div></div><strong>75%</strong></div>
+            </div>
+          </section>
+        </div>
+        <section class="section">
+          <div class="notice">
+            <svg><use href="#i-book"/></svg>
+            <div><strong>다음 학습 제안</strong><br>인덱스 경계에서 오답이 반복되었습니다. 구간 합 문제의 예시 2와 관련 문제 1030을 다시 확인해 보세요.</div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴">
+    <a href="#home"><svg><use href="#i-home"/></svg><span>홈</span></a>
+    <a href="#quiz-list" aria-current="page"><svg><use href="#i-book"/></svg><span>문제</span></a>
+    <a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a>
+    <a href="#learning"><svg><use href="#i-learn"/></svg><span>학습</span></a>
+    <a href="#community"><svg><use href="#i-message"/></svg><span>더보기</span></a>
+  </nav>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-14 커뮤니티 상세 설계 | OJ Platform</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5d6975;
+      --line: #d8dfe5;
+      --surface: #ffffff;
+      --soft: #f4f7f8;
+      --navy: #17364d;
+      --teal: #167883;
+      --green: #24734e;
+      --yellow: #a36500;
+      --red: #a33d3d;
+      --blue-soft: #eaf3f7;
+      --green-soft: #eaf5ef;
+      --yellow-soft: #fff6df;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--soft); font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif; line-height: 1.62; }
+    .topbar { color: #fff; background: var(--navy); border-bottom: 4px solid var(--teal); }
+    .topbar-inner { width: min(1180px, calc(100% - 32px)); min-height: 58px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+    .brand { width: 34px; height: 34px; display: grid; place-items: center; color: var(--navy); background: #fff; border-radius: 5px; font-weight: 900; }
+    .topbar strong { font-size: 16px; }
+    .topbar span { color: #dbe8ee; font-size: 13px; }
+    .layout { width: min(1180px, calc(100% - 32px)); margin: 22px auto 48px; display: grid; grid-template-columns: 205px minmax(0, 1fr); gap: 22px; align-items: start; }
+    nav { position: sticky; top: 20px; padding: 15px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    nav strong { display: block; margin-bottom: 8px; }
+    nav ul { margin: 0; padding: 0; list-style: none; }
+    nav li + li { margin-top: 4px; }
+    nav a { display: block; padding: 5px 6px; border-radius: 4px; color: var(--ink); text-decoration: none; font-size: 13px; }
+    nav a:hover { color: var(--teal); background: var(--soft); }
+    main { min-width: 0; }
+    .report-header, .section { padding: 28px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); }
+    .section { margin-top: 18px; }
+    .eyebrow { margin: 0 0 8px; color: var(--teal); font-size: 13px; font-weight: 800; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 10px; font-size: 32px; line-height: 1.28; letter-spacing: 0; }
+    h2 { margin-bottom: 4px; font-size: 21px; letter-spacing: 0; }
+    h3 { margin: 22px 0 8px; font-size: 16px; letter-spacing: 0; }
+    .lede { max-width: 860px; color: var(--muted); font-size: 15px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+    .meta span, .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 4px 9px; border-radius: 5px; font-size: 12px; font-weight: 700; }
+    .meta span { color: #3d4a55; background: var(--soft); border: 1px solid var(--line); }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+    .metric { padding: 14px; border-top: 3px solid var(--teal); background: var(--soft); }
+    .metric strong { display: block; font-size: 22px; }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .section-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+    .badge.good { color: var(--green); background: var(--green-soft); }
+    .badge.info { color: var(--navy); background: var(--blue-soft); }
+    .badge.wait { color: var(--yellow); background: var(--yellow-soft); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th, td { padding: 10px 11px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 13px; }
+    th { color: #32414d; background: var(--soft); font-size: 12px; }
+    tr:last-child td { border-bottom: 0; }
+    code { color: #174f60; font-family: Consolas, "Courier New", monospace; font-size: .94em; overflow-wrap: anywhere; }
+    .callout, .summary, .warning { margin-top: 12px; padding: 13px 15px; border-radius: 5px; font-size: 13px; }
+    .callout { background: var(--blue-soft); border-left: 4px solid var(--teal); }
+    .summary { background: var(--green-soft); border-left: 4px solid var(--green); }
+    .warning { background: var(--yellow-soft); border-left: 4px solid var(--yellow); }
+    .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .flow article { padding: 14px; border-top: 3px solid var(--teal); background: var(--soft); }
+    .flow span { display: block; color: var(--teal); font-size: 12px; font-weight: 800; }
+    .flow strong { display: block; margin-top: 4px; font-size: 14px; }
+    .rules { margin: 12px 0 0; padding-left: 20px; font-size: 13px; }
+    .rules li + li { margin-top: 6px; }
+    .gate { display: grid; grid-template-columns: 150px minmax(0, 1fr) 145px; border: 1px solid var(--line); border-bottom: 0; }
+    .gate:last-of-type { border-bottom: 1px solid var(--line); }
+    .gate > div { padding: 10px 11px; font-size: 13px; }
+    .gate > div + div { border-left: 1px solid var(--line); }
+    .tree { margin: 0; padding: 15px; overflow-x: auto; border-radius: 6px; color: #e9f1f4; background: #1c2c37; font: 12px/1.55 Consolas, "Courier New", monospace; }
+    footer { padding: 24px 4px 0; color: var(--muted); text-align: center; font-size: 12px; }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; }
+      nav ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+      .metrics, .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px) {
+      .topbar-inner, .layout { width: min(100% - 20px, 1180px); }
+      .report-header, .section { padding: 20px; }
+      h1 { font-size: 27px; }
+      .metrics, .flow { grid-template-columns: 1fr; }
+      .section-heading { display: block; }
+      .section-heading .badge { margin-top: 8px; }
+      .gate { grid-template-columns: 1fr; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+      .gate > div + div { border-left: 0; border-top: 1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner"><span class="brand">OJ</span><strong>OJ Platform 개발 설계</strong><span>DS-14 커뮤니티</span></div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="문서 목차">
+      <strong>목차</strong>
+      <ul>
+        <li><a href="#scope">범위와 기준</a></li>
+        <li><a href="#pages">메뉴와 페이지</a></li>
+        <li><a href="#ui">화면 시안</a></li>
+        <li><a href="#board">게시판</a></li>
+        <li><a href="#notices">공지</a></li>
+        <li><a href="#contexts">연결형 질문</a></li>
+        <li><a href="#moderation">댓글과 운영</a></li>
+        <li><a href="#attachments">첨부파일</a></li>
+        <li><a href="#integration">설정과 의존</a></li>
+        <li><a href="#data">데이터와 코드</a></li>
+        <li><a href="#verification">검증 관문</a></li>
+        <li><a href="#approval">확인 항목</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header" id="scope">
+        <p class="eyebrow">DS-14 · 메뉴 기반 상세 설계</p>
+        <h1>커뮤니티 상세 설계</h1>
+        <p class="lede">서비스 사용자이 게시판과 공지를 간결하게 사용하고, 문제·수업·대회·그룹 안에서는 접근 권한을 그대로 이어받은 질문과 답변을 사용할 수 있도록 설계한다. 운영자는 게시글·댓글·공지·첨부를 한곳에서 관리하되 WordPress 원본과 기능 독립성을 유지한다.</p>
+        <div class="meta">
+          <span>작성일: 2026-07-24</span>
+          <span>상태: 사용자 확정 · 설계 동결</span>
+          <span>최종 확정일: 2026-07-26</span>
+          <span>확정 보완: 문제 상세 질문 연계</span>
+          <span>선행 설계: DS-00~DS-13 확정</span>
+          <span>실행: I-00 보호 환경 뒤 I-07에서 구현</span>
+          <span>근거: D-001·D-002·D-003·D-005·D-007·D-008·D-009·DS-09·DS-12</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>22개</strong><span>Board GET 계약<br>화면 21 + 파일 1</span></div>
+          <div class="metric"><strong>19개</strong><span>기존 처리 명령</span></div>
+          <div class="metric"><strong>5개</strong><span>목표 컨트롤러</span></div>
+          <div class="metric"><strong>0개</strong><span>플랫폼 테이블 추가</span></div>
+        </div>
+        <div class="callout"><strong>전체 순서에서의 위치:</strong> DS14-Q01~Q08과 DS-16은 2026-07-26 사용자 확정했다. I-00 보호 환경을 먼저 완료한 뒤 I-07에서 게시판 → 공지 → 댓글 운영 → 보호 첨부 순서로 구현한다.</div>
+        <div class="warning"><strong>범위 경계:</strong> 사용자·역할은 Auth·Permission, 문제·수업·대회·그룹 접근은 각 소유 모듈, 홈 공지 배치는 PublicUi가 소유한다. Board는 승인된 접근 Provider와 WordPress API만 사용하고 다른 기능의 Repository나 JudgeDb를 직접 조회하지 않는다.</div>
+      </header>
+
+      <section class="section" id="pages">
+        <div class="section-heading"><div><h2>메뉴와 페이지</h2><p>사용자·관리자 화면은 유지하고 보호 첨부 전용 파일 응답을 명시한다.</p></div><span class="badge info">화면 21 · 파일 1</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>페이지</th><th>경로</th><th>접근</th></tr></thead>
+          <tbody>
+            <tr><td>사용자 게시판 · 4</td><td>목록, 작성, 상세·댓글, 수정</td><td><code>/board</code><br><code>/board/new</code><br><code>/board/thread/{board_thread_id}</code><br><code>/board/thread/{board_thread_id}/edit</code></td><td><code>active</code> 로그인. 작성은 게시 허용, 수정은 작성자 또는 <code>oj_manage_board</code></td></tr>
+            <tr><td>사용자 공지 · 3</td><td>목록, 상세·선택 댓글, 작성</td><td><code>/notices</code><br><code>/notices/{notice_id}</code><br><code>/notices/new</code></td><td>목록·상세는 <code>active</code> 로그인, 작성은 <code>oj_manage_notices</code></td></tr>
+            <tr><td>관리자 게시판 · 7</td><td>목록, 작성, 상세, 수정, 댓글, 휴지통 확인, 휴지통</td><td><code>/oj-console/board</code> 하위</td><td><code>oj_manage_board</code></td></tr>
+            <tr><td>관리자 공지 · 6</td><td>목록, 작성, 수정, 댓글, 휴지통 확인, 휴지통</td><td><code>/oj-console/notices</code> 하위</td><td><code>oj_manage_notices</code></td></tr>
+            <tr><td>관리자 설정 · 1</td><td>게시판·공지 설정</td><td><code>/oj-console/community/settings</code></td><td><code>oj_manage_settings</code>와 Board 또는 Notices ON</td></tr>
+            <tr><td>보호 파일 응답 · 1</td><td>게시판·공지 첨부 내려받기</td><td><code>community.attachments.download</code><br><code>/community/attachments/{attachment_id}</code></td><td><code>active</code> 로그인, 부모 글·문맥·첨부 관계 접근을 모두 통과한 사용자</td></tr>
+            <tr><td>공통 허브 · 1</td><td>커뮤니티 관리 진입</td><td><code>/oj-console/community</code></td><td>AdminConsole 소유. 접근 가능한 첫 게시판·공지 화면으로 연결</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>확정 수량:</strong> Board가 직접 소유하는 계약은 사용자 화면 7개, 관리자 화면 14개, 보호 파일 응답 1개로 22개다. 공통 허브는 AdminConsole의 기존 1개다. 전체 GET은 152개로 동결하고 기존 Board 처리 명령 19개와 전체 명령 128개는 유지한다.</div>
+      </section>
+
+      <section class="section" id="ui">
+        <div class="section-heading"><div><h2>화면 시안</h2><p>직접 화면 21개는 사용자·관리자 시안 2종에 묶고 문제 상세 질문 영역은 DS-10 화면에 삽입되는 상태로 함께 검토한다.</p></div><span class="badge good">사용자 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>시안</th><th>포함 화면</th><th>확인할 핵심</th></tr></thead>
+          <tbody>
+            <tr><td><a href="development-ds-14-user-community-ui.html"><strong>사용자 커뮤니티</strong></a></td><td>게시판 목록·작성·상세·수정, 공지 목록·상세·작성 7개<br>문제 상세 질문 연결 상태 1개</td><td>검색과 문맥 표시, 숫자 문맥 입력 부재, 시간순 댓글, 보호 첨부, 공지 상태, 평가 보호</td></tr>
+            <tr><td><a href="development-ds-14-admin-community-ui.html"><strong>관리자 커뮤니티</strong></a></td><td>게시판 관리 7개, 공지 관리 6개, 설정 1개</td><td>숨김·고정·휴지통·복원, 연결 대상 없음, 댓글 운영, 예약·종료, 기능별 독립 설정</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>문서 수 원칙:</strong> 화면마다 별도 문서를 만들지 않는다. 두 시안은 같은 <code>ds14-prototype.css</code>와 <code>ds14-prototype.js</code>를 사용하고, 문제 상세 질문 상태는 새 Route나 DS-14 소유 화면 수에 포함하지 않는다.</div>
+      </section>
+
+      <section class="section" id="board">
+        <div class="section-heading"><div><h2>사용자 게시판</h2><p>전체 서비스 게시판과 접근 가능한 학습 문맥의 질문을 한 목록 계약으로 제공한다.</p></div><span class="badge good">간결한 글 흐름</span></div>
+        <div class="flow">
+          <article><span>1 · 찾기</span><strong>검색·연결 공간·최신순</strong></article>
+          <article><span>2 · 작성</span><strong>제목·본문·첨부만</strong></article>
+          <article><span>3 · 대화</span><strong>본문 뒤 시간순 댓글</strong></article>
+          <article><span>4 · 수정</span><strong>작성자 편집·개정 보존</strong></article>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>사용자 동작</th><th>보호 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>목록</td><td>제목·연결 공간·작성자 표시 이름·작성 시각·댓글 수를 보여 주고 제목·본문 검색, 연결 공간, 답변 여부로 필터</td><td>접근할 수 없는 문맥 글과 숨김·휴지통 글은 검색 건수에도 포함하지 않음</td></tr>
+            <tr><td>문제 상세 노출</td><td>문제 본문 아래에 최근 질문 최대 5개의 제목·답변 상태·댓글 수·갱신 시각과 질문하기·전체 질문을 표시</td><td>Board ON·문제 질문 ON·문제 접근·평가 보호를 모두 통과할 때만 Section ViewModel 제공</td></tr>
+            <tr><td>작성</td><td>전체 게시판에서는 일반 글, 문제·수업·대회·그룹 화면에서는 해당 공간 질문으로 생성</td><td>화면에 문맥 종류·숫자 ID 입력란을 노출하지 않고 서버가 검증한 진입 문맥만 사용</td></tr>
+            <tr><td>입력</td><td>제목 1~120자, 본문 1~20,000자, 허용된 첨부만 입력</td><td>스크립트·폼·iframe·이벤트 속성을 제거하고 허용 HTML만 저장</td></tr>
+            <tr><td>수정</td><td>작성자와 게시판 운영자가 제목·본문·첨부를 수정</td><td>일반 작성자는 작성자·연결 문맥·고정·숨김 상태를 바꾸지 못하며 WordPress 개정을 보존</td></tr>
+            <tr><td>고정·숨김</td><td>운영자가 중요한 글을 위에 고정하거나 운영 기준 위반 글을 숨김·복원</td><td>숨김 글은 작성자에게 상태만 알리고 본문을 공개 목록에 남기지 않음</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>과도한 경쟁 요소 제외:</strong> 좋아요·인기 점수·사용자 등급·게시 횟수 순위를 만들지 않는다. 목록은 고정 글 뒤 최신 작성 시각을 기본으로 하며 학습자에게 필요한 검색과 답변 여부만 제공한다.</div>
+      </section>
+
+      <section class="section" id="notices">
+        <div class="section-heading"><div><h2>공지</h2><p>서비스 전체에 전달할 안내를 게시판 대화와 분리하고 홈에도 같은 원본을 제공한다.</p></div><span class="badge info">전체 사용자 안내</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>상태·표시</th><th>운영 동작</th><th>사용자 화면</th></tr></thead>
+          <tbody>
+            <tr><td>초안 <code>draft</code></td><td>공지 운영자가 작성·검토하며 저장</td><td>사용자 목록·홈에서 제외</td></tr>
+            <tr><td>예약 <code>future</code></td><td>WordPress 사이트 시각을 기준으로 게시 시작 시각 지정</td><td>시작 전 제외, 시각 도달 뒤 자동 게시</td></tr>
+            <tr><td>게시 <code>publish</code></td><td>중요·상단 고정, 댓글 허용 여부, 선택 종료 시각 설정</td><td>중요·고정 공지를 먼저 표시하고 나머지는 게시 시각 내림차순</td></tr>
+            <tr><td>종료</td><td>종료 시각이 지나면 목록 기본 결과와 홈에서 제외하되 관리자 검색에는 유지</td><td>직접 접근은 “게시가 종료된 공지입니다”만 표시하고 본문은 운영 정책에 따라 숨김</td></tr>
+            <tr><td>휴지통 <code>trash</code></td><td>확인 화면 뒤 이동하고 복원 가능</td><td>모든 사용자 화면에서 제외</td></tr>
+          </tbody>
+        </table></div>
+        <ul class="rules">
+          <li>공지는 로그인한 전체 <code>active</code> 사용자를 대상으로 하며 수업·그룹별 대상 지정은 만들지 않는다. 제한된 공간 안내는 해당 문맥 게시판을 사용한다.</li>
+          <li>홈에는 현재 게시 중인 공지 최대 5개와 전체 보기만 제공한다. 지속형 읽음·안 읽음 기록과 알림 수는 새 테이블 없이 만들지 않는다.</li>
+          <li>공지 댓글은 전역 기본값 OFF이며 공지 운영자가 필요한 공지에서만 켠다. 게시판 기능이 꺼져도 공지와 허용된 공지 댓글은 독립적으로 동작한다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="contexts">
+        <div class="section-heading"><div><h2>학습 문맥 연결형 질문</h2><p>Board가 다른 업무 모듈의 내부 저장소를 읽지 않고 등록형 접근 Provider를 사용한다.</p></div><span class="badge good">선택 Provider</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>문맥</th><th>질문·조회 조건</th><th>기능 OFF·종료 동작</th></tr></thead>
+          <tbody>
+            <tr><td>전체 <code>global</code></td><td>게시판 ON, <code>active</code> 로그인, 전체 글쓰기 허용</td><td>Board OFF이면 게시판 메뉴·글·댓글 모두 숨김</td></tr>
+            <tr><td>문제 <code>problem</code></td><td>문제 접근 정책을 통과하고 문제 질문 기능 ON. 문제 상세에는 같은 문맥의 최근 질문 최대 5개 표시</td><td>Problems OFF·숨김·삭제면 일반 사용자에게 제외. 사용자가 참여 중인 대회·평가에 포함된 문제는 종료 전까지 질문 영역·목록·상세를 모두 숨김</td></tr>
+            <tr><td>수업 <code>class</code></td><td>활성 참여자·소유 강사·공동 강사와 수업 질문 기능 ON</td><td>Classes OFF 또는 참여 종료 뒤 새 글·댓글 차단, 기존 글은 권한 있는 운영자만 확인</td></tr>
+            <tr><td>대회·평가 <code>contest</code></td><td>참가자·담당자이고 대회 질문 기능 ON. 일반 참가자는 종료 뒤 작성·조회</td><td>진행 중에는 담당자만 운영 목적으로 확인하고 학습자에게 숨겨 답안 공유를 방지</td></tr>
+            <tr><td>그룹 <code>group</code></td><td>활성 구성원·소유자·위임 운영자와 그룹 질문 기능 ON</td><td>Groups OFF 또는 구성원 관계 종료 시 숨김. 수업·대회·전체 게시판은 정상 유지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>등록 방식:</strong> Problems·Classes·Contests·Groups는 문맥 키, 대상 표시 이름, 현재 사용자의 조회·작성·운영 가능 여부만 Board의 <code>Community_Context_Registry</code>에 등록한다. Board의 필수 모듈 의존은 늘리지 않으며 Provider가 없으면 해당 문맥만 사용할 수 없다.</div>
+        <div class="callout"><strong>문제 상세 조립:</strong> Problems가 소유한 문제 상세 Section Registry에 Board의 <code>Problem_Community_Section_Provider</code>를 두 기능이 모두 켜졌을 때만 등록한다. Provider는 현재 <code>problem_id</code>, 숫자 사용자 ID와 최대 5개 제한을 받아 타입이 있는 ViewModel만 반환한다. Problems는 Board Service·Repository·WordPress 글을 직접 조회하지 않고 Board는 문제 상세 HTML을 만들지 않는다.</div>
+        <div class="warning"><strong>평가 우회 방지:</strong> Contests의 선택형 평가 보호 Provider가 현재 사용자와 문제의 진행 평가 관계를 판정한다. 하나라도 보호 중이면 일반 문제 상세, 게시판 필터, 직접 글 주소, 댓글과 첨부 응답에서 같은 문제 문맥을 거부한다. 담당 운영자는 승인된 운영 범위에서만 확인할 수 있다.</div>
+        <div class="warning"><strong>연결 대상 없음:</strong> 원본 대상이 삭제되거나 Provider가 더 이상 대상을 확인하지 못하면 글을 전체 게시판으로 자동 이동하지 않는다. 일반 사용자에게 숨기고 관리자 목록의 “연결 대상 없음” 필터에서 새 문맥 배정 또는 휴지통 이동을 선택한다.</div>
+      </section>
+
+      <section class="section" id="moderation">
+        <div class="section-heading"><div><h2>댓글과 운영</h2><p>학습자 댓글은 즉시 사용할 수 있게 하되 숨김·휴지통·복원으로 운영 이력을 보존한다.</p></div><span class="badge wait">익명 댓글 없음</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>권장 정책</th><th>구현 계약</th></tr></thead>
+          <tbody>
+            <tr><td>작성</td><td><code>active</code> 사용자, 접근 가능한 글, 댓글 허용 상태에서 1~5,000자 작성</td><td>표시 이름과 숫자 <code>wp_users.ID</code>를 사용하고 로그인 아이디·이메일은 출력하지 않음</td></tr>
+            <tr><td>게시 방식</td><td>서비스 내부 실명 계정이므로 게시판 댓글은 즉시 표시, 공지 댓글은 공지별 허용 때만 표시</td><td>같은 내용의 짧은 시간 중복 등록을 거부하고 저장 뒤 같은 댓글로 이동</td></tr>
+            <tr><td>작성 제한</td><td>사용자당 10분에 게시글 5개, 댓글 20개를 기본 상한으로 적용</td><td>WordPress transient·객체 캐시를 사용하고 관리자 설정에서 더 넓게 완화하지 않음</td></tr>
+            <tr><td>숨김·복원</td><td>운영자가 게시글·댓글을 숨기고 같은 명령으로 복원</td><td>사유, 실행자 숫자 사용자 ID와 시각을 postmeta·commentmeta에 기록</td></tr>
+            <tr><td>댓글 삭제</td><td>기존 “댓글 삭제” 명령은 영구 삭제 대신 WordPress 댓글 휴지통 이동·복원으로 사용</td><td>관리 화면에서 정상·숨김·휴지통을 구분하고 DS-15 보존 정책 전에는 영구 삭제하지 않음</td></tr>
+            <tr><td>게시글 삭제</td><td>게시판·공지 운영자가 확인 화면 뒤 WordPress 휴지통으로 이동하고 복원</td><td>댓글·첨부·문맥·고정·숨김·공지 설정 관계를 함께 유지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>작성자 삭제:</strong> 학습자 작성자는 자신의 게시글을 수정할 수 있지만 직접 삭제하지 않는다. 서비스 기록 보존과 대화 맥락을 위해 삭제 요청은 게시판 운영자가 확인해 휴지통으로 처리한다. 댓글은 게시 뒤 수정하지 않고 정정 댓글을 추가하도록 한다.</div>
+      </section>
+
+      <section class="section" id="attachments">
+        <div class="section-heading"><div><h2>첨부파일</h2><p>WordPress 첨부 레코드는 사용하되 로그인·문맥 권한을 우회하는 공개 파일 주소는 만들지 않는다.</p></div><span class="badge good">보호 다운로드 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>구분</th><th>권장안</th><th>검증·보호</th></tr></thead>
+          <tbody>
+            <tr><td>기본 허용</td><td><code>pdf, png, jpg, jpeg, hwp, hwpx, doc, docx, ppt, pptx, xls, xlsx, txt</code></td><td>확장자와 MIME을 함께 검사하고 이중 확장자·실행 파일·HTML·SVG·스크립트 거부</td></tr>
+            <tr><td>기본 제한</td><td>파일당 10MB, 게시글·공지 최대 5개, 게시판 댓글 최대 3개</td><td>업로드 전후 크기·개수·부모 관계 재검사. notice 댓글은 파일 첨부 없음</td></tr>
+            <tr><td>압축 파일</td><td><code>zip</code>은 기본 차단하고 설정 관리자만 명시적으로 허용</td><td>허용해도 실행형 내부 파일 검사는 보장하지 않으므로 다운로드 경고와 강제 첨부 응답 사용</td></tr>
+            <tr><td>저장</td><td>WordPress attachment 글과 부모·postmeta·commentmeta 관계를 사용하고 실제 파일은 직접 URL이 없는 보호 저장소에 배치</td><td>원본 파일명은 표시용으로만 보존하고 저장명은 예측 불가능하게 생성</td></tr>
+            <tr><td>다운로드</td><td><code>community.attachments.download</code> · <code>/community/attachments/{attachment_id}</code>의 <code>file</code> 응답 Route가 파일을 반환</td><td>로그인, 부모 글, 문맥 접근, 첨부 관계를 매번 검사하고 직접 미디어 URL을 출력하지 않음</td></tr>
+            <tr><td>제거·보존</td><td>기존 글 수정 명령에서 첨부 연결을 제거. 글·댓글 휴지통에서는 파일 유지</td><td>고아 파일과 영구 정리는 DS-15 보존 정책·사전 보고서·복구 기준 뒤 처리</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>응답 계약 분리:</strong> AccessRouter는 한 Route에 <code>response_kind</code> 하나만 허용하므로 HTML 상세 화면에서 파일을 분기하지 않는다. 보호 다운로드 Route 1개를 추가하고 <code>Stream Handler</code>가 파일만 반환한다. 첨부 추가·제거는 기존 작성·수정 명령이 소유하므로 POST 명령 수는 바뀌지 않는다.</div>
+      </section>
+
+      <section class="section" id="integration">
+        <div class="section-heading"><div><h2>설정·권한·기능 OFF</h2><p>게시판과 공지를 독립 기능으로 유지하고 Board가 선택 업무 모듈을 역으로 요구하지 않는다.</p></div><span class="badge good">독립 동작</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>소유자</th><th>소유 설정·계약</th><th>OFF 동작</th></tr></thead>
+          <tbody>
+            <tr><td>Board</td><td>전체 글쓰기, 게시판 댓글, 문제·수업·대회·그룹 질문, 작성 제한, 숨김·휴지통 정책</td><td>게시판 메뉴·문맥 질문·게시판 댓글만 제거</td></tr>
+            <tr><td>Notices</td><td>공지 게시·예약·종료, 중요·고정, 공지 댓글 허용</td><td>공지 목록·홈 공지 Provider만 제거. 게시판은 정상</td></tr>
+            <tr><td>Attachment</td><td>기능 ON, 확장자, MIME, 파일 크기·개수와 보호 저장 위치</td><td>새 업로드만 차단하고 기존 허용 파일은 권한 검사 뒤 조회</td></tr>
+            <tr><td>Permission</td><td><code>oj_manage_board</code>, <code>oj_manage_notices</code>, <code>oj_manage_settings</code></td><td>메뉴 숨김과 직접 GET·POST 거부를 같은 정책으로 적용</td></tr>
+            <tr><td>Problems</td><td>문제 Context Provider와 문제 상세 Section Registry. Board는 선택형 문제 질문 Section Provider 등록</td><td>둘 중 하나가 꺼지면 문제 상세 질문 영역과 문제 문맥 글만 제외</td></tr>
+            <tr><td>Classes·Contests·Groups</td><td>선택 Context Provider. Contests는 문제 문맥에도 적용되는 평가 보호 Provider 제공</td><td>꺼진 문맥만 제외하며 다른 문맥·전체 게시판·공지는 유지</td></tr>
+            <tr><td>PublicUi</td><td>현재 게시 공지 최대 5개의 Home Notice Provider 소비</td><td>Notices OFF·실패면 홈 공지 블록만 제외</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>기존 처리 명령 19개</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>소유 흐름</th><th>수</th><th>계약</th></tr></thead>
+          <tbody>
+            <tr><td>사용자 게시판</td><td>3</td><td>글 작성, 작성자 수정, 댓글 작성</td></tr>
+            <tr><td>사용자 공지</td><td>2</td><td>권한 있는 공지 작성, 허용된 공지 댓글 작성</td></tr>
+            <tr><td>관리자 게시판</td><td>8</td><td>작성·수정·숨김·고정·휴지통·복원·댓글 숨김·댓글 휴지통</td></tr>
+            <tr><td>관리자 공지</td><td>5</td><td>작성·수정·휴지통·복원·댓글 휴지통</td></tr>
+            <tr><td>설정</td><td>1</td><td>게시판·공지·첨부 설정 저장</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="section" id="data">
+        <div class="section-heading"><div><h2>데이터와 코드 구조</h2><p>플랫폼 전용 테이블을 만들지 않고 WordPress API와 모듈 경계를 명확히 한다.</p></div><span class="badge info">플랫폼 테이블 0개</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>저장소</th><th>핵심 속성</th><th>소유·보존</th></tr></thead>
+          <tbody>
+            <tr><td>WordPress 글</td><td><code>oj_board_post</code>, <code>oj_notice</code>, 작성자 숫자 ID, 제목·본문, <code>post_status</code>, 게시·수정 시각, revisions</td><td>Board Repository가 WordPress 글 API로만 읽고 씀</td></tr>
+            <tr><td>postmeta</td><td>문맥 종류·ID, 고정·중요·숨김, 댓글 허용, 종료 시각, 첨부 ID, 운영 사유·실행자·시각</td><td>원본 글 휴지통·복원과 함께 유지</td></tr>
+            <tr><td>WordPress 댓글</td><td><code>comment_post_ID</code>, 숫자 <code>user_id</code>, 본문, 승인·휴지통 상태, 작성 시각</td><td>댓글 Repository가 WordPress 댓글 API로 관리</td></tr>
+            <tr><td>commentmeta</td><td>숨김, 첨부 ID, 운영 사유·실행자·시각</td><td>부모 댓글과 함께 보존</td></tr>
+            <tr><td>WordPress 첨부 글 + 보호 파일</td><td>부모 글, MIME, 표시 파일명, 크기, 예측 불가 저장 참조</td><td>Attachment Storage가 업로드·다운로드·고아 검사를 소유</td></tr>
+            <tr><td>WordPress 옵션</td><td>기능별 게시판·공지·첨부·운영 설정</td><td>Settings API를 사용하고 화면·Controller에서 직접 옵션 조회 금지</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>목표 코드 구조</h3>
+        <pre class="tree">modules/Board/
+|-- Http/                    [공개 2개·관리자 2개·설정 1개 Controller]
+|-- Application/             [게시글·공지·댓글 운영·첨부 Use Case]
+|-- Domain/                  [작성·문맥·공개·운영·파일 Policy]
+|-- Infrastructure/
+|   |-- WordPress/           [글·댓글·첨부 Repository]
+|   `-- Storage/             [보호 파일 저장·응답]
+|-- Integration/
+|   |-- Context/             [문제·수업·대회·그룹 Provider Registry]
+|   |-- Problems/            [문제 상세 질문 Section Provider]
+|   `-- PublicUi/            [홈 공지 Provider]
+`-- Presentation/            [사용자·관리자 Presenter와 View]</pre>
+        <div class="summary"><strong>컨트롤러 5개:</strong> <code>Public_Thread_Controller</code>, <code>Public_Notice_Controller</code>, <code>Console_Thread_Controller</code>, <code>Console_Notice_Controller</code>, <code>Board_Settings_Controller</code>를 D-005 목표 이름 그대로 사용한다. Controller는 요청·정책·응답만 담당하고 WordPress 쿼리·업로드·HTML 조립을 포함하지 않는다.</div>
+        <div class="warning"><strong>현재 코드 교체 대상:</strong> 큰 공개·관리자 Controller의 직접 HTML, 숫자 문맥 ID 입력, 다른 모듈에서 <code>board_service</code>를 직접 꺼내는 결합, 공개 미디어 링크, 댓글 강제 영구 삭제와 영어 사용자 문구는 목표 구조와 맞지 않는다. I-00 보호 환경을 통과한 뒤 I-07에서 이 설계로 교체하며 지금은 실행 코드를 수정하지 않는다.</div>
+      </section>
+
+      <section class="section" id="verification">
+        <div class="section-heading"><div><h2>구현·검증 관문</h2><p>I-00 보호 환경 뒤 I-07에서 통과해야 할 완료 기준이다.</p></div><span class="badge wait">I-07 시작 대기</span></div>
+        <div class="gate"><div><strong>사용자 흐름</strong></div><div>게시판 검색·작성·상세·댓글·수정, 문제 상세의 최근 질문·질문하기·전체 질문과 공지 목록·상세가 기술 문구 없이 완료됨</div><div>브라우저 E2E</div></div>
+        <div class="gate"><div><strong>문맥 접근</strong></div><div>문제·수업·대회·그룹 조회·작성 권한과 종료·해제·기능 OFF를 GET·POST·검색 건수에서 동일하게 적용</div><div>정책·우회 검사</div></div>
+        <div class="gate"><div><strong>평가 보호</strong></div><div>진행 중 대회·평가의 학습자 질문·댓글·첨부·검색 노출과 해당 문제의 일반 상세 질문 Section을 차단하고 담당자 운영 접근만 허용</div><div>시간 경계·우회 검사</div></div>
+        <div class="gate"><div><strong>운영</strong></div><div>게시글·댓글·공지 숨김, 휴지통, 복원, 고정·중요, 예약·종료와 운영 사유 보존</div><div>통합·복구 검사</div></div>
+        <div class="gate"><div><strong>첨부</strong></div><div>확장자·MIME·크기·개수·부모 관계 검증, 직접 URL 부재, 권한 없는 다운로드 거부와 고아 보고</div><div>보안·파일 검사</div></div>
+        <div class="gate"><div><strong>독립성</strong></div><div>Board·Notices·Problems·Classes·Contests·Groups를 하나씩 꺼도 허용된 나머지 메뉴와 문맥 정상</div><div>ON/OFF 조합</div></div>
+        <div class="gate"><div><strong>성능·UI</strong></div><div>페이지 단위 쿼리, 댓글·작성자 일괄 조회, 기능별 자산, 데스크톱·모바일 겹침·잘림 없음</div><div>쿼리·시각 QA</div></div>
+        <div class="gate"><div><strong>일관성</strong></div><div>Board GET 22개(화면 21·파일 1)·기존 명령 19개·컨트롤러 5개·플랫폼 테이블 0개, UTF-8 한글 원문과 호환 경로 0개</div><div>정적·계약 검사</div></div>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading"><div><h2>DS-14 확정 결과</h2><p>아래 권장안을 2026-07-26 사용자 확정했으며 DS-16과 Route 원본에 동기화했다.</p></div><span class="badge good">8건 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>결정</th><th>주제</th><th>권장안</th><th>영향</th></tr></thead>
+          <tbody>
+            <tr><td>DS14-Q01</td><td>범위·수량</td><td>사용자 화면 7개·관리자 화면 14개, 보호 파일 응답 1개와 AdminConsole 허브를 사용하고 기존 명령 19개 유지</td><td>보호 파일 응답을 포함해 전체 GET 152·액션 128으로 동기화 완료</td></tr>
+            <tr><td>DS14-Q02</td><td>게시판·문맥</td><td>전체 게시판과 문제·수업·대회·그룹 질문을 등록형 Context Provider로 연결하고 숫자 문맥 입력은 숨긴다. 문제 상세에는 같은 원본의 최근 질문 최대 5개와 질문하기·전체 질문을 표시</td><td>새 Route·액션·테이블 없이 같은 접근·평가 보호 정책 재사용</td></tr>
+            <tr><td>DS14-Q03</td><td>공지</td><td>전체 사용자 공지, 초안·예약·게시·종료·휴지통, 중요·고정과 홈 최대 5개 적용</td><td>읽음 테이블 없이 안내 제공</td></tr>
+            <tr><td>DS14-Q04</td><td>댓글·운영</td><td>게시판 댓글 즉시 표시, 공지 댓글 기본 OFF, 숨김·휴지통·복원과 작성 제한 적용</td><td>학습자 사용성과 기록 보존 병행</td></tr>
+            <tr><td>DS14-Q05</td><td>첨부</td><td>WordPress 첨부 레코드와 보호 파일 저장, 전용 <code>file</code> Route의 권한 검사 다운로드, 기본 10MB·5개·댓글 3개</td><td>공개 URL 차단, GET Route 1개 추가·액션 추가 0</td></tr>
+            <tr><td>DS14-Q06</td><td>설정·기능 OFF</td><td>Board·Notices·Attachment 설정 소유를 분리하고 선택 문맥 Provider가 없어도 나머지 기능 정상</td><td>의존 역전과 장애 격리</td></tr>
+            <tr><td>DS14-Q07</td><td>데이터·코드</td><td>플랫폼 테이블 없이 WordPress 글·댓글·첨부 API를 사용하고 목표 컨트롤러 5개와 계층 구조 적용</td><td>D-001·D-004·D-008 동기화 필요</td></tr>
+            <tr><td>DS14-Q08</td><td>검증</td><td>문맥 권한·진행 평가 보호·운영 복구·첨부 보안·기능 독립·반응형 검증 적용</td><td>I-07 완료 관문</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>확정된 추가 요구:</strong> 2026-07-24 사용자 확인에 따라 문제 상세에 같은 문제 문맥의 최근 질문 최대 5개와 질문하기·전체 질문을 표시한다. Board·문제 질문 기능이 꺼지거나 평가 보호가 적용되면 영역 전체를 숨기며 새 Route·액션·테이블을 만들지 않는다. 이 요구는 DS-14의 이후 점검에서 변경하지 않는다.</div>
+        <div class="summary"><strong>확정:</strong> DS14-Q01~Q08을 위 내용대로 동결한다. 보호 첨부 파일 응답을 포함한 전체 GET 152개와 액션 128개를 최종 기준으로 사용하며 구현은 I-00 보호 환경 뒤 I-07에서 진행한다.</div>
+      </section>
+
+      <footer>OJ Platform 재정비 · DS-14 커뮤니티 상세 설계 · 사용자 확정 · 설계 동결 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

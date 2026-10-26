@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "edu-games/group-leaderboard",
+  "title": "Group Leaderboard",
+  "category": "widgets",
+  "icon": "groups",
+  "description": "Shows group and in-group competition rankings.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScriptModule": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

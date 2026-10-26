@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-09 사용자 홈·셸 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds09-prototype.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 5.5A3.5 3.5 0 0 1 5.5 2H11v18H5.5A3.5 3.5 0 0 0 2 23z"/><path d="M22 5.5A3.5 3.5 0 0 0 18.5 2H13v18h5.5A3.5 3.5 0 0 1 22 23z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H3v2a4 4 0 0 0 5 4M17 6h4v2a4 4 0 0 1-5 4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 22a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M17 15a7 7 0 0 1 5 7"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 21h20z"/><path d="M12 9v5M12 18h.01"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6z"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M13 3h8v18h-8"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 3h7v7M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-09 사용자 홈·셸 시안</strong><span>역할과 Provider 상태를 비교합니다.</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="화면 상태 선택">
+        <button type="button" role="tab" data-screen-target="learner-home" aria-selected="true">학습자 홈</button>
+        <button type="button" role="tab" data-screen-target="instructor-home" aria-selected="false">강사 홈</button>
+        <button type="button" role="tab" data-screen-target="empty-home" aria-selected="false">첫 사용</button>
+        <button type="button" role="tab" data-screen-target="partial-home" aria-selected="false">부분 실패</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-09-home-dashboard-shell.html"><span class="brand-mark">OJ</span><span>OJ Platform</span></a>
+      <nav class="primary-nav" aria-label="주 메뉴">
+        <a href="#learner-home" aria-current="page">홈</a>
+        <div class="primary-nav-group">
+          <button class="primary-nav-trigger" type="button" data-secondary-toggle aria-controls="problem-secondary-menu" aria-expanded="false">문제<svg><use href="#i-down"/></svg></button>
+          <div class="secondary-menu-preview" id="problem-secondary-menu" data-secondary-menu hidden>
+            <a href="#problems"><span><strong>문제 목록</strong><small>주제와 난이도로 문제 찾기</small></span></a>
+            <a href="#quizzes"><span><strong>퀴즈</strong><small>퀴즈 목록과 응시 기록</small></span></a>
+            <a href="#problem-books"><span><strong>문제집</strong><small>묶음 문제로 학습하기</small></span></a>
+            <a class="external-secondary-link" href="https://docs.python.org/3/" target="_blank" rel="noopener noreferrer"><svg><use href="#i-external"/></svg><span><strong>Python 문서</strong><small>docs.python.org · 외부 · 새 창</small></span></a>
+          </div>
+        </div>
+        <a href="#submissions">제출</a>
+        <a href="#learning">학습</a>
+        <a href="#community">커뮤니티</a>
+      </nav>
+      <div class="account-wrap">
+        <button class="account-button" type="button" aria-label="내 정보 메뉴" title="내 정보 메뉴" data-account-toggle aria-expanded="false"><svg><use href="#i-user"/></svg></button>
+        <div class="account-menu-preview" data-account-menu hidden>
+          <a href="#profile"><svg><use href="#i-user"/></svg>내 프로필</a>
+          <a href="#learning-dashboard"><svg><use href="#i-learn"/></svg>내 학습</a>
+          <a href="#settings"><svg><use href="#i-settings"/></svg>계정 설정</a>
+          <a href="#agreements"><svg><use href="#i-shield"/></svg>동의 현황</a>
+          <a href="development-ds-09-admin-dashboard-shell-ui.html" data-admin-console-link hidden><svg><use href="#i-settings"/></svg>관리자 화면</a>
+          <button type="button" data-toast="로그아웃 확인 후 로그인 화면으로 이동합니다."><svg><use href="#i-logout"/></svg>로그아웃</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="page" id="main">
+      <section class="screen" data-screen="learner-home">
+        <div class="shell-flash notice"><svg><use href="#i-check"/></svg><span>로그인했습니다. 오늘 학습을 이어서 시작해 보세요.</span></div>
+        <header class="home-heading">
+          <div><h1>김하늘님, 안녕하세요.</h1><p>지금 이어서 할 학습과 최근 결과를 확인하세요.</p></div>
+          <span class="home-date">2026년 7월 24일 금요일</span>
+        </header>
+        <div class="continue-band">
+          <div><span>이어서 하기 · 진행 중 대회</span><strong>여름 알고리즘 평가</strong><span>남은 시간 1시간 18분 · 5문제 중 3문제 제출</span></div>
+          <button class="button primary" type="button" data-toast="진행 중인 대회 상세로 이동합니다.">계속하기<svg><use href="#i-arrow-right"/></svg></button>
+        </div>
+        <div class="home-grid">
+          <div class="home-column">
+            <section class="home-section">
+              <div class="section-heading"><div><h2>내 학습 공간</h2><p>현재 참여 중인 공간입니다.</p></div><a class="button ghost" href="#learning">전체 보기</a></div>
+              <div class="space-grid">
+                <a class="space-card" href="#class-python"><div><span class="badge info">수업</span><h3>파이썬 알고리즘 기초</h3><p>이번 주 문제 4개 · 3개 완료</p></div><div class="space-card-footer"><span>진도 75%</span><span>이어서 하기</span></div></a>
+                <a class="space-card" href="#contest-summer"><div><span class="badge wait">대회·평가</span><h3>여름 알고리즘 평가</h3><p>오늘 17:00 종료</p></div><div class="space-card-footer"><span>3 / 5 제출</span><span>참여 중</span></div></a>
+                <a class="space-card" href="#group-first"><div><span class="badge">그룹</span><h3>1과정 단계 알고리즘반</h3><p>새 공지 1개 · 구성원 24명</p></div><div class="space-card-footer"><span>최근 활동 오늘</span><span>열기</span></div></a>
+              </div>
+            </section>
+            <section class="home-section">
+              <div class="section-heading"><div><h2>최근 제출</h2><p>최근 채점 결과 5건을 표시합니다.</p></div><a class="button ghost" href="#submissions">전체 보기</a></div>
+              <div class="submission-list">
+                <a class="submission-row" href="#submission-4286" data-toast="제출 상세 화면으로 이동합니다."><div class="submission-main"><strong>1024 · 구간 합 구하기</strong><span>Python 3 · 일반 문제</span></div><span class="badge good">맞았습니다</span><span class="submission-time">10분 전</span></a>
+                <div class="submission-row"><div class="submission-main"><strong>1041 · 최단 경로</strong><span>Python 3 · 시간 제한 평가</span></div><span class="badge danger">틀렸습니다</span><span class="submission-time">28분 전</span></div>
+                <a class="submission-row" href="#submission-4274" data-toast="제출 상세 화면으로 이동합니다."><div class="submission-main"><strong>1018 · 미로 탐색</strong><span>Blockly · 일반 문제</span></div><span class="badge good">맞았습니다</span><span class="submission-time">어제</span></a>
+              </div>
+              <p class="help">수행 모드 제출은 결과만 표시하며 제출 상세와 코드 링크를 만들지 않습니다.</p>
+            </section>
+          </div>
+          <aside class="home-column">
+            <section class="home-section">
+              <div class="section-heading"><div><h2>공지</h2><p>최근 게시된 안내입니다.</p></div><a class="button ghost" href="#notices">전체 보기</a></div>
+              <div class="notice-list">
+                <div class="notice-row"><div class="notice-main"><strong>여름집중 학습 서비스 운영 안내</strong><span>전체 공지</span></div><span class="notice-time">오늘</span></div>
+                <div class="notice-row"><div class="notice-main"><strong>시간 제한 평가 유의사항</strong><span>대회·평가</span></div><span class="notice-time">어제</span></div>
+                <div class="notice-row"><div class="notice-main"><strong>파이썬 수업 과제 안내</strong><span>수업</span></div><span class="notice-time">07-22</span></div>
+              </div>
+            </section>
+            <section class="home-section">
+              <h2>오늘의 학습</h2>
+              <dl class="definition-list">
+                <div class="definition-row"><dt>해결한 문제</dt><dd><strong>2개</strong></dd></div>
+                <div class="definition-row"><dt>제출</dt><dd><strong>5회</strong></dd></div>
+                <div class="definition-row"><dt>연속 학습</dt><dd><strong>12일</strong></dd></div>
+              </dl>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="instructor-home" hidden>
+        <header class="home-heading">
+          <div><h1>이민준 강사, 안녕하세요.</h1><p>오늘 운영할 학습 공간과 본인의 최근 학습을 확인하세요.</p></div>
+          <span class="home-date">2026년 7월 24일 금요일</span>
+        </header>
+        <div class="continue-band">
+          <div><span>가장 먼저 확인할 일</span><strong>여름 알고리즘 평가가 오늘 17:00 종료됩니다.</strong><span>참가 26명 · 제출 완료 21명 · 확인 필요 2건</span></div>
+          <button class="button primary" type="button" data-toast="담당 대회 운영 화면으로 이동합니다.">운영 화면<svg><use href="#i-arrow-right"/></svg></button>
+        </div>
+        <section class="home-section">
+          <div class="section-heading"><div><h2>담당 공간 바로가기</h2><p>권한이 있는 대상의 관리 화면만 표시합니다.</p></div><a class="button" href="development-ds-09-admin-dashboard-shell-ui.html">관리자 화면</a></div>
+          <div class="managed-actions">
+            <a class="managed-action" href="#class-manage"><svg><use href="#i-learn"/></svg><strong>수업 관리</strong><span>담당 수업 3개</span></a>
+            <a class="managed-action" href="#contest-manage"><svg><use href="#i-trophy"/></svg><strong>대회·평가 관리</strong><span>진행 중 1개</span></a>
+            <a class="managed-action" href="#problem-manage"><svg><use href="#i-book"/></svg><strong>문제 관리</strong><span>담당 문제 42개</span></a>
+            <a class="managed-action" href="#group-manage"><svg><use href="#i-users"/></svg><strong>그룹 관리</strong><span>운영 그룹 2개</span></a>
+            <a class="managed-action" href="#submission-manage"><svg><use href="#i-send"/></svg><strong>제출 확인</strong><span>확인 필요 4건</span></a>
+            <a class="managed-action" href="#community-manage"><svg><use href="#i-message"/></svg><strong>공지 관리</strong><span>초안 1개</span></a>
+          </div>
+        </section>
+        <div class="home-grid">
+          <div class="home-column">
+            <section class="home-section">
+              <div class="section-heading"><div><h2>내 학습 공간</h2><p>강사로 참여하거나 수강 중인 공간입니다.</p></div></div>
+              <div class="space-grid">
+                <a class="space-card" href="#class-python"><div><span class="badge info">담당 수업</span><h3>파이썬 알고리즘 기초</h3><p>수강 28명 · 과제 제출 24명</p></div><div class="space-card-footer"><span>최근 활동 오늘</span><span>열기</span></div></a>
+                <a class="space-card" href="#class-advanced"><div><span class="badge info">담당 수업</span><h3>알고리즘 심화</h3><p>수강 18명 · 다음 수업 월요일</p></div><div class="space-card-footer"><span>진도 62%</span><span>열기</span></div></a>
+              </div>
+            </section>
+            <section class="home-section">
+              <div class="section-heading"><div><h2>내 최근 제출</h2><p>강사의 본인 제출만 표시합니다.</p></div><a class="button ghost" href="#submissions">전체 보기</a></div>
+              <div class="submission-list"><a class="submission-row" href="#submission-4212" data-toast="제출 상세 화면으로 이동합니다."><div class="submission-main"><strong>1120 · 그래프 순회</strong><span>C++17 · 문제 검증</span></div><span class="badge good">맞았습니다</span><span class="submission-time">어제</span></a></div>
+            </section>
+          </div>
+          <aside class="home-column">
+            <section class="home-section"><div class="section-heading"><div><h2>공지</h2><p>운영과 학습 관련 최신 안내입니다.</p></div></div><div class="notice-list"><div class="notice-row"><div class="notice-main"><strong>채점 서버 점검 예정</strong><span>운영 공지</span></div><span class="notice-time">오늘</span></div><div class="notice-row"><div class="notice-main"><strong>2운영 기간 평가 일정</strong><span>강사 공지</span></div><span class="notice-time">07-23</span></div></div></section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="empty-home" hidden>
+        <header class="home-heading"><div><h1>최지우님, 반갑습니다.</h1><p>처음 풀 문제를 찾아 학습을 시작하세요.</p></div><span class="home-date">첫 로그인</span></header>
+        <section class="home-section">
+          <div class="empty-state">
+            <svg><use href="#i-book"/></svg>
+            <h2>아직 진행 중인 학습이 없습니다.</h2>
+            <p>문제 목록에서 관심 있는 주제와 난이도를 선택해 시작할 수 있습니다.</p>
+            <button class="button primary" type="button" data-toast="문제 목록으로 이동합니다.">문제 찾기<svg><use href="#i-arrow-right"/></svg></button>
+          </div>
+        </section>
+        <div class="home-grid">
+          <div class="home-column"><section class="home-section"><h2>최근 제출</h2><div class="provider-fallback"><div><svg><use href="#i-send"/></svg><strong>아직 제출한 문제가 없습니다.</strong><p>문제를 제출하면 최근 결과가 여기에 표시됩니다.</p></div></div></section></div>
+          <aside class="home-column"><section class="home-section"><h2>공지</h2><div class="notice-list"><div class="notice-row"><div class="notice-main"><strong>신입생 온라인 채점 이용 안내</strong><span>전체 공지</span></div><span class="notice-time">오늘</span></div></div></section></aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="partial-home" hidden>
+        <header class="home-heading"><div><h1>김하늘님, 안녕하세요.</h1><p>일부 정보를 불러오지 못했지만 사용할 수 있는 학습은 계속 표시합니다.</p></div><span class="home-date">2026년 7월 24일 금요일</span></header>
+        <div class="continue-band"><div><span>이어서 하기 · 최근 문제</span><strong>1024 · 구간 합 구하기</strong><span>최근 결과: 틀렸습니다 · 다시 도전 가능</span></div><button class="button primary" type="button" data-toast="문제 상세로 이동합니다.">다시 풀기</button></div>
+        <div class="home-grid">
+          <div class="home-column">
+            <section class="home-section"><div class="section-heading"><div><h2>내 학습 공간</h2><p>이 블록만 안전한 실패 상태로 대체했습니다.</p></div></div><div class="provider-fallback"><div><svg><use href="#i-alert"/></svg><strong>학습 공간을 불러오지 못했습니다.</strong><p>잠시 후 다시 확인해 주세요. 다른 홈 기능은 계속 사용할 수 있습니다.</p><button class="button" type="button" data-toast="학습 공간 블록만 다시 요청합니다.">다시 시도</button></div></div></section>
+            <section class="home-section"><div class="section-heading"><div><h2>최근 제출</h2><p>정상적으로 불러온 최근 결과입니다.</p></div></div><div class="submission-list"><a class="submission-row" href="#submission-4286" data-toast="제출 상세 화면으로 이동합니다."><div class="submission-main"><strong>1024 · 구간 합 구하기</strong><span>Python 3</span></div><span class="badge danger">틀렸습니다</span><span class="submission-time">10분 전</span></a></div></section>
+          </div>
+          <aside class="home-column"><section class="home-section"><h2>공지</h2><div class="notice-list"><div class="notice-row"><div class="notice-main"><strong>여름집중 학습 서비스 운영 안내</strong><span>전체 공지</span></div><span class="notice-time">오늘</span></div></div></section></aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴">
+    <a href="#learner-home" aria-current="page"><svg><use href="#i-home"/></svg><span>홈</span></a>
+    <a href="#problems" data-mobile-secondary-toggle aria-controls="mobile-problem-menu" aria-expanded="false"><svg><use href="#i-book"/></svg><span>문제</span></a>
+    <a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a>
+    <a href="#learning"><svg><use href="#i-learn"/></svg><span>학습</span></a>
+    <a href="#more" data-mobile-more-toggle aria-controls="mobile-more-menu" aria-expanded="false"><svg><use href="#i-more"/></svg><span>더보기</span></a>
+  </nav>
+  <div class="mobile-secondary-preview" id="mobile-problem-menu" data-mobile-secondary-menu hidden>
+    <div class="mobile-menu-heading"><strong>문제</strong><span>2차 메뉴</span></div>
+    <a href="#problems"><svg><use href="#i-book"/></svg><span><strong>문제 목록</strong><small>주제와 난이도로 찾기</small></span></a>
+    <a href="#quizzes"><svg><use href="#i-check"/></svg><span><strong>퀴즈</strong><small>퀴즈 목록과 응시 기록</small></span></a>
+    <a href="#problem-books"><svg><use href="#i-learn"/></svg><span><strong>문제집</strong><small>묶음 문제로 학습하기</small></span></a>
+    <a href="https://docs.python.org/3/" target="_blank" rel="noopener noreferrer"><svg><use href="#i-external"/></svg><span><strong>Python 문서</strong><small>docs.python.org · 외부 · 새 창</small></span></a>
+  </div>
+  <div class="mobile-more-preview" id="mobile-more-menu" data-mobile-more-menu hidden>
+    <a href="#community" data-toast="커뮤니티 화면으로 이동합니다."><svg><use href="#i-message"/></svg><span><strong>커뮤니티</strong><small>게시판과 공지</small></span></a>
+    <a href="#profile" data-toast="내 프로필 화면으로 이동합니다."><svg><use href="#i-user"/></svg><span><strong>내 정보</strong><small>프로필과 계정 설정</small></span></a>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds09-prototype.js"></script>
+</body>
+</html>

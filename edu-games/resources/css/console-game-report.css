@@ -1,0 +1,81 @@
+/*
+ * 교육 게임 › 게임 기록 콘솔. 표·입력·버튼·배지는 OJ Platform 공용 부품(ojp-*)을
+ * 쓰고, 여기에는 배치만 둔다. 순위 페이지 넘김(assets/rankings/pager.css)은 게임
+ * 화면과 같이 쓰므로, 이 화면 안에서만 토큰 색으로 맞춘다.
+ */
+.edu-game-report .eg-report-filters {
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: var(--ojp-space-3, 12px);
+}
+
+.edu-game-report .eg-report-field {
+    width: min(220px, 100%);
+}
+
+.edu-game-report .eg-report-field:first-child {
+    width: min(420px, 100%);
+}
+
+.edu-game-report .eg-report-date {
+    width: min(170px, 100%);
+}
+
+.edu-game-report .eg-report-context {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ojp-space-2, 8px);
+}
+
+.edu-game-report .eg-report-context .ojp-select {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+.edu-game-report .eg-report-status {
+    min-height: 1.5em;
+    margin: var(--ojp-space-2, 8px) 0;
+    color: var(--ojp-color-muted, #6e6e73);
+    font-size: var(--ojp-text-subhead, 13px);
+}
+
+.edu-game-report .eg-report-scroll {
+    overflow-x: auto;
+}
+
+.edu-game-report .eg-report-table th,
+.edu-game-report .eg-report-table td {
+    white-space: nowrap;
+}
+
+.edu-game-report .eg-report-table td {
+    font-variant-numeric: tabular-nums;
+}
+
+.edu-game-report .edu-rank-pagination {
+    border-top-color: var(--ojp-color-separator, #d2d2d7);
+    color: var(--ojp-color-ink-2, #424245);
+}
+
+.edu-game-report .edu-rank-pagination select,
+.edu-game-report .edu-rank-pagination .edu-rank-page-controls button,
+.edu-game-report .edu-rank-pagination [data-rank-page="retry"] {
+    border-color: var(--ojp-color-line, #d2d2d7);
+    border-radius: var(--ojp-radius-sm, 8px);
+    background: var(--ojp-color-surface, #ffffff);
+    color: var(--ojp-color-ink, #1d1d1f);
+}
+
+.edu-game-report .edu-rank-pagination [data-rank-page="retry"] {
+    min-height: 36px;
+    padding: 0 var(--ojp-space-3, 12px);
+    border-width: 1px;
+    border-style: solid;
+    font: inherit;
+    cursor: pointer;
+}
+
+.edu-game-report .edu-rank-pagination :is(button, select):focus-visible {
+    outline-color: var(--ojp-color-primary, #0071e3);
+}

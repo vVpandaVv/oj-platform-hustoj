@@ -1,0 +1,22 @@
+MathJax
+Version: 3.2.2
+License: Apache-2.0
+Source: https://www.npmjs.com/package/mathjax/v/3.2.2
+Package SHA-1: c754d7b46a679d7f3fa03543d6b8bf124ddf9f6b
+
+Included files:
+- es5/tex-chtml.js
+- es5/ui/safe.js
+- es5/output/chtml/fonts/woff-v2/*.woff
+- LICENSE
+
+The complete license text is stored in LICENSE.txt.
+
+MathJax source attribution:
+Copyright (c) 2017-2022 The MathJax Consortium
+Licensed under the Apache License, Version 2.0.
+Source: https://github.com/mathjax/MathJax-src/tree/3.2.2
+Original source header example: ts/core/MathDocument.ts
+
+The official mathjax@3.2.2 npm archive contains LICENSE but no separate NOTICE
+file. This is a local attribution supplement, not an upstream NOTICE file.

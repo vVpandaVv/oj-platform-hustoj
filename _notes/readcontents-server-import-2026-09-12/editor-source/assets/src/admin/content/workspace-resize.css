@@ -1,0 +1,48 @@
+#contents-editor-admin-root .rcis-outline-resize-handle {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  #contents-editor-admin-root [data-contents-workspace-split] {
+    grid-template-columns: var(--rcis-outline-width, 280px) 12px minmax(0, 1fr);
+  }
+
+  #contents-editor-admin-root .rcis-outline-resize-handle {
+    position: relative;
+    display: block;
+    min-height: 0;
+    cursor: col-resize;
+    touch-action: none;
+    user-select: none;
+    background: var(--ojp-color-surface, #fff);
+  }
+
+  #contents-editor-admin-root .rcis-outline-resize-handle::before {
+    position: absolute;
+    inset: 0 auto 0 5px;
+    width: 2px;
+    background: var(--ojp-color-line, #e3e3e8);
+    content: "";
+  }
+
+  #contents-editor-admin-root .rcis-outline-resize-handle::after {
+    position: absolute;
+    top: calc(50% - 20px);
+    left: 4px;
+    width: 4px;
+    height: 40px;
+    border-radius: var(--ojp-radius-pill, 999px);
+    background: var(--ojp-color-tertiary, #8e8e93);
+    content: "";
+  }
+
+  #contents-editor-admin-root .rcis-outline-resize-handle:is(:hover, :focus-visible, [data-resizing="true"])::after {
+    background: var(--ojp-color-primary, #087d78);
+  }
+
+  #contents-editor-admin-root .rcis-outline-resize-handle:focus-visible {
+    z-index: 1;
+    outline: 2px solid var(--ojp-color-primary, #087d78);
+    outline-offset: -2px;
+  }
+}

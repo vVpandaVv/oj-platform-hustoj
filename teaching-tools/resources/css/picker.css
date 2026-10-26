@@ -1,0 +1,45 @@
+.htt-picker-latest {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 24px 0;
+}
+
+.htt-picker-history {
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    color: var(--htt-muted);
+    margin-top: 12px;
+}
+
+.htt-picker-setup textarea {
+    width: 100%;
+    min-height: 100px;
+    box-sizing: border-box;
+    background: var(--htt-card-bg);
+    color: var(--htt-fg);
+    border: 1px solid var(--htt-border);
+}
+
+.htt-picker-setup label {
+    display: block;
+    margin-bottom: 12px;
+}
+
+.htt-picker-messages .message {
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+.htt-picker-messages .message.warning {
+    background: var(--htt-warning-bg);
+    color: var(--htt-warning-fg);
+}
+
+.htt-picker-messages .message.info {
+    background: var(--htt-info-bg);
+    color: var(--htt-info-fg);
+}

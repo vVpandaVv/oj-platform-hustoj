@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-00 목적·범위·기준선 | OJ Platform</title>
+  <style>
+    :root {
+      --ink: #18212b;
+      --muted: #5c6875;
+      --line: #d8dee5;
+      --surface: #ffffff;
+      --soft: #f4f7f9;
+      --navy: #17324d;
+      --cyan: #087e8b;
+      --green: #237a57;
+      --yellow: #946200;
+      --red: #a33a3a;
+      --code: #eef3f6;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--soft); font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif; line-height: 1.65; }
+    a { color: var(--cyan); }
+    code { padding: 2px 5px; border-radius: 4px; background: var(--code); font-family: Consolas, "Courier New", monospace; font-size: .92em; }
+    .skip-link { position: fixed; top: -80px; left: 12px; z-index: 10; padding: 10px 14px; background: #fff; color: var(--navy); }
+    .skip-link:focus { top: 12px; }
+    .topbar { background: var(--navy); color: #fff; }
+    .topbar-inner { width: min(1180px, calc(100% - 32px)); min-height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+    .brand-mark { display: inline-grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 6px; font-weight: 800; }
+    .topbar-note { color: #d5e5ef; font-size: 14px; }
+    .layout { width: min(1180px, calc(100% - 32px)); margin: 24px auto 48px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
+    nav { position: sticky; top: 20px; padding: 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    nav strong { display: block; margin-bottom: 8px; }
+    nav ul { margin: 0; padding: 0; list-style: none; }
+    nav li + li { margin-top: 5px; }
+    nav a { display: block; padding: 5px 7px; border-radius: 4px; color: var(--ink); text-decoration: none; }
+    nav a:hover, nav a:focus-visible { background: var(--soft); color: var(--cyan); }
+    main { min-width: 0; }
+    .report-header, .section { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .report-header { padding: 30px; border-top: 5px solid var(--cyan); }
+    .section { margin-top: 20px; padding: 24px; }
+    .eyebrow { margin: 0 0 6px; color: var(--cyan); font-size: 13px; font-weight: 800; }
+    h1 { margin: 0; font-size: 34px; line-height: 1.25; letter-spacing: 0; }
+    h2 { margin: 0; font-size: 23px; letter-spacing: 0; }
+    h3 { margin: 0; font-size: 17px; letter-spacing: 0; }
+    p { margin: 8px 0 0; }
+    .lede { max-width: 840px; color: var(--muted); font-size: 17px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 18px; color: var(--muted); font-size: 13px; }
+    .summary, .callout, .warning { margin-top: 18px; padding: 14px 16px; border-left: 4px solid var(--cyan); background: #edf8f8; }
+    .callout { border-left-color: var(--green); background: #eef8f3; }
+    .warning { border-left-color: var(--yellow); background: #fff8e6; }
+    .section-heading { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .section-heading p { color: var(--muted); }
+    .badge { flex: 0 0 auto; display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+    .badge.good { color: #175c40; background: #def2e8; }
+    .badge.info { color: #075e68; background: #dff4f5; }
+    .badge.wait { color: #7b5200; background: #fff0c7; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+    .panel { padding: 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--soft); }
+    .panel p { color: var(--muted); }
+    .panel ul { margin: 10px 0 0; padding-left: 20px; }
+    .panel li + li { margin-top: 5px; }
+    .table-wrap { margin-top: 16px; overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; background: var(--surface); font-size: 14px; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #fff; background: var(--navy); font-weight: 750; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) { background: #f8fafb; }
+    .rule-list, .check-list { margin: 16px 0 0; padding-left: 22px; }
+    .rule-list li + li, .check-list li + li { margin-top: 8px; }
+    footer { margin-top: 22px; padding: 16px 4px; color: var(--muted); font-size: 13px; text-align: center; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; }
+    }
+    @media (max-width: 680px) {
+      .topbar-inner, .layout { width: min(100% - 20px, 1180px); }
+      .topbar-note { display: none; }
+      .report-header, .section { padding: 18px; }
+      h1 { font-size: 27px; }
+      .section-heading { display: block; }
+      .section-heading .badge { margin-top: 10px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="development-sequence.html"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 설계</strong></a>
+      <span class="topbar-note">DS-00 · 목적·범위·기준선</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="문서 목차">
+      <strong>목차</strong>
+      <ul>
+        <li><a href="#purpose">제품 목적</a></li>
+        <li><a href="#scope">포함·제외 범위</a></li>
+        <li><a href="#current">현재 기준선</a></li>
+        <li><a href="#target">목표 기준선</a></li>
+        <li><a href="#contracts">변경 금지 계약</a></li>
+        <li><a href="#completion">완료·안전 관문</a></li>
+        <li><a href="#approval">확인 항목</a></li>
+      </ul>
+    </nav>
+
+    <main id="main">
+      <header class="report-header" id="purpose">
+        <p class="eyebrow">상세 설계 1단계 · 기준 동결</p>
+        <h1>DS-00 목적·범위·기준선</h1>
+        <p class="lede">OJ Platform을 학습 서비스에서 학습자가 문제를 풀고 제출하며, 강사가 수업·대회·평가를 운영하는 사용자 서비스로 전면 재정비한다. 내부 클래스 정리에 한정하지 않고 일반 사용자 UI, 관리자 UI, 코드, 권한, 데이터베이스와 이전 절차를 하나의 제품 범위로 다룬다.</p>
+        <div class="meta"><span>작성일: 2026-07-22</span><span>확정일: 2026-07-22</span><span>상태: 사용자 확정</span><span>근거: D-001~D-009 및 현재 코드 재검증</span><span>인코딩: UTF-8 한글 원문</span></div>
+        <div class="summary"><strong>DS-00의 역할:</strong> 새 기능을 설계하는 문서가 아니라 이후 DS-01~DS-16이 바꾸면 안 되는 목적, 범위, 수량과 기술 계약을 고정하는 승인 문서다.</div>
+      </header>
+
+      <section class="section" id="scope">
+        <div class="section-heading"><div><h2>사용자와 기능 범위</h2><p>학습용 채점 서비스에 필요한 실제 작업을 기준으로 포함 여부를 나눈다.</p></div><span class="badge info">제품 전체</span></div>
+        <div class="grid">
+          <article class="panel">
+            <h3>주요 사용자</h3>
+            <ul>
+              <li>학습자: 문제 풀이, 제출, 결과·학습 현황 확인</li>
+              <li>강사·공동 강사: 수업, 문제, 진도와 참여자 운영</li>
+              <li>대회 담당자: 대회·평가 운영, 감독과 결과 확인</li>
+              <li>문제 담당자: 문제·테스트데이터·난이도·주제 관리</li>
+              <li>플랫폼 운영자: 사용자·권한·설정·상태·이전 관리</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>포함 기능</h3>
+            <ul>
+              <li>로그인·계정·사용자·홈과 역할별 탐색</li>
+              <li>문제·문제집·퀴즈·난이도 1~5·표준 주제</li>
+              <li>전체 코드·코드 빈칸 완성·Blockly 제출, 채점 결과와 재채점</li>
+              <li>수업·대회·그룹, 참여·진도·보고서</li>
+              <li>AI 지원·학습 현황·랭킹·커뮤니티</li>
+              <li>관리자 설정·Jobs·상태·데이터 이전·복구</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>이번 범위에서 제외</h3>
+            <ul>
+              <li>플랫폼 외부의 별도 학습 관리와 공식 성적 처리</li>
+              <li>별도 조직 행정과 공식 성적 관리</li>
+              <li>카메라·화면 녹화 기반 온라인 감독</li>
+              <li>재정비와 관계없는 신규 서비스 확장</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>후속 독립 검토</h3>
+            <p>코드 유사도·표절 검사와 HUSTOJ <code>sim</code> 기능은 이번 재정비에서 사용하지 않는다. 제출·채점·평가 화면과 설정에도 관련 기능을 만들지 않는다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="current">
+        <div class="section-heading"><div><h2>현재 코드 기준선</h2><p>2026-07-22에 설정·테이블 맵·운영 PHP와 네 계약 테스트에서 다시 확인했다.</p></div><span class="badge good">재검증 완료</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>현재 값</th><th>코드 근거</th></tr></thead>
+          <tbody>
+            <tr><td>모듈·기능</td><td>모듈 19개, 기능 설정 30개</td><td><code>config/modules.php</code>, <code>config/features.php</code></td></tr>
+            <tr><td>권한·역할</td><td>현재 60개·15개·9개, 가입 승인 분리 뒤 목표 capability 61개·WordPress 역할 16개·preset 10개</td><td>Permission 설정 Registry</td></tr>
+            <tr><td>경로</td><td>화면 137개 + 호환 이동 39개 = 176개, 중복 0개</td><td><code>tests/architecture-smoke.php</code></td></tr>
+            <tr><td>관리·명령</td><td>관리 메뉴 51개, 고유 작업 액션 122개</td><td>Console Menu Provider, <code>tests/action-contracts.php</code></td></tr>
+            <tr><td>코드 구조</td><td>컨트롤러 28개</td><td>운영 PHP의 Controller 클래스 선언</td></tr>
+            <tr><td>사용자 식별 혼재</td><td><code>oj_user_id</code> 41개 파일·662개 일치 행</td><td>테스트 제외 운영 PHP 전체 검색</td></tr>
+            <tr><td>데이터</td><td>플랫폼 테이블 맵 32개, Judge 테이블 맵 14개</td><td><code>Platform_Table_Map</code>, <code>Judge_Table_Map</code></td></tr>
+            <tr><td>계약 테스트</td><td>구조·액션·제출 동작·문제 메타데이터 4종 통과</td><td><code>D:\php\php.exe</code>로 실행</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>해석:</strong> 테스트 통과는 현재 동작 계약이 보존되었다는 뜻이다. 목표 UI·모듈·DB 재정비가 구현되었다는 뜻은 아니다.</div>
+      </section>
+
+      <section class="section" id="target">
+        <div class="section-heading"><div><h2>재정비 목표 기준선</h2><p>D-002~D-009에서 수량과 소유 관계까지 확정한 목표다.</p></div><span class="badge info">DS-16까지 유지</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>목표</th><th>핵심 의미</th></tr></thead>
+          <tbody>
+            <tr><td>GET 경로</td><td>정상 운영 152개</td><td>렌더링 150개 + 보호 파일 응답 2개, 호환 경로 0개. 설치 미완료 동안에는 AccessRouter 밖의 WordPress 관리자 setup 화면 1개가 별도로 존재</td></tr>
+            <tr><td>관리 메뉴</td><td>58개</td><td>7개 상위 + 51개 하위, 기능·경로·권한을 통과한 항목만 노출</td></tr>
+            <tr><td>작업 액션</td><td>정상 운영 128개</td><td>현재 122개 - 중복·폐기 계약 6개 + Jobs 공통 명령 3개 + 문제 작성·테스트케이스 AI 작업 등록 1개 + 가입 승인 전용 명령 1개 + 퀴즈 응시 시작·최종 제출 2개 + 제출 복원 1개 + 최고 관리자 주제 생성 1개 + 작업별 AI 배정 저장 1개. 설치 중 setup 액션 1개는 별도</td></tr>
+            <tr><td>컨트롤러</td><td>정상 운영 66개</td><td>기존 28개 재분류 62개 + 관리자 허브·Jobs 소유자 4개. Kernel의 일시 SetupBootstrap은 기능 컨트롤러 수에서 제외</td></tr>
+            <tr><td>플랫폼 테이블</td><td>42개</td><td>모두 WordPress 접두어와 <code>oj_</code> 없이 기능별 소유·버전 관리</td></tr>
+            <tr><td>Judge 계약</td><td>현재 맵 14개 / 지원 기본 8개 + <code>custominput</code> 선택 1개</td><td><code>sim</code>·<code>solution2</code>는 미사용으로 고정하고 Judge 물리 스키마는 변경하지 않음</td></tr>
+            <tr><td>사용자</td><td>WordPress 단일 원본</td><td><code>user_id</code>는 숫자 <code>wp_users.ID</code>, 로그인은 문자열 <code>user_login</code></td></tr>
+            <tr><td>문제 메타데이터</td><td>난이도 1~5, 주제 1~3개</td><td>AI 생성부터 저장까지 정수 범위와 표준 주제 사전 재검증</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>수량 경계:</strong> 신규 설치 중에는 WordPress 관리자 setup 화면 1개와 setup 액션 1개만 일시적으로 더해진다. 설치 완료 뒤 둘 다 등록 0개가 되므로 정상 운영 GET 152개·액션 128개·메뉴 58개·컨트롤러 66개와 분리한다.</div>
+        <p>세부 산식과 목록은 <a href="d-006-current-state-baseline.html#target-baseline">D-006 목표 기준선</a>과 <a href="d-008-module-database-ownership.html#target-data">D-008 목표 데이터</a>를 근거로 사용한다.</p>
+      </section>
+
+      <section class="section" id="contracts">
+        <div class="section-heading"><div><h2>변경 금지 계약</h2><p>새로운 근거와 사용자 승인 없이는 이후 점검에서 뒤집지 않는다.</p></div><span class="badge good">고정</span></div>
+        <ol class="rule-list">
+          <li><strong>전체 제품 재설계:</strong> 일반 사용자 UI와 관리자 UI, UX·문구·반응형·접근성, 코드·권한·DB를 모두 포함한다.</li>
+          <li><strong>WordPress 사용자 기준:</strong> 일반 코드·URL·권한·플랫폼 데이터는 숫자 <code>user_id</code>만 사용하고 Judge 문자열 ID의 영구 매핑을 만들지 않는다.</li>
+          <li><strong>저장소 명명:</strong> 플랫폼 물리 테이블에는 WordPress 접두어와 <code>oj_</code>를 모두 붙이지 않는다. Judge DB 연결은 별도로 유지한다.</li>
+          <li><strong>Judge 엔진:</strong> HUSTOJ 기본 채점 8개 테이블과 활성화한 <code>custominput</code> 선택 프로필을 공식 스키마 그대로 유지한다. <code>OJ_SIM_ENABLE=0</code>과 <code>OJ_TURBO_MODE=0</code>을 고정하고 Judge DB에 보조 열·이중 쓰기·타입 교체를 추가하지 않는다.</li>
+          <li><strong>기능 경계:</strong> AI는 공통 기반과 기능별 사용을 분리하고, Groups를 꺼도 수업과 대회가 정상 동작해야 한다.</li>
+          <li><strong>제출·Blockly:</strong> 사용자 용어와 공개 주소는 “제출”로 통일하고, Blockly는 제출 페이지에서 블록 모드를 선택할 때만 불러온다.</li>
+          <li><strong>문제 메타데이터:</strong> 난이도는 AI 응답 스키마부터 정수 1~5로 제한하고, 주제는 승인된 표준 키만 저장한다.</li>
+          <li><strong>한글:</strong> 메뉴·문구·문서는 UTF-8 한글 원문으로 기록하며 <code>\uXXXX</code> 형태를 사용하지 않는다.</li>
+          <li><strong>진행 순서:</strong> DS-00~DS-16 상세 설계와 사용자 최종 승인을 마치기 전 운영 코드와 DB 재정비를 시작하지 않는다.</li>
+        </ol>
+        <p>전체 17개 결정의 단일 원본은 <a href="d-006-current-state-baseline.html#fixed-decisions">D-006 변경 금지 기준</a>이다.</p>
+      </section>
+
+      <section class="section" id="completion">
+        <div class="section-heading"><div><h2>완료 정의와 안전 관문</h2><p>내부 클래스나 DB만 바뀐 상태는 기능 완료로 판정하지 않는다.</p></div><span class="badge wait">구현 전 필수</span></div>
+        <div class="grid">
+          <article class="panel">
+            <h3>메뉴별 완료 조건</h3>
+            <p>사용자 UI, 관리자 UI, 업무 코드, 권한·행 범위, 테이블·이전·복구, Jobs, 반응형·접근성, 자동 테스트와 브라우저 사용자 확인을 한 수직 단위로 완료한다.</p>
+          </article>
+          <article class="panel">
+            <h3>데이터 변경 조건</h3>
+            <p>운영 자료를 자동 채택하지 않는다. 읽기 전용 구조·건수·고아 보고서, 개인정보 보존·삭제 정책, 백업과 실제 복구 시험이 승인된 뒤에만 물리 스키마와 데이터를 바꾼다.</p>
+          </article>
+        </div>
+        <div class="callout"><strong>다음 단계 진입:</strong> DS00-Q01~Q04가 모두 승인되어 DS-00을 동결했다. 다음 단계는 DS-01 공통 사용자·관리자 UI 시스템 상세 설계다.</div>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading"><div><h2>DS-00 확정 항목</h2><p>기존 승인 내용을 압축한 기준이며 새 정책을 추가하지 않는다.</p></div><span class="badge good">2026-07-22 확정</span></div>
+        <ol class="check-list">
+          <li><strong>DS00-Q01:</strong> 학습용 프로그래밍 채점 서비스의 목적과 학습자·강사·담당자·운영자 사용자 범위를 확정한다.</li>
+          <li><strong>DS00-Q02:</strong> 포함 기능과 이번 범위의 제외 기능을 확정하며 유사도·표절 검사는 사용하지 않는다.</li>
+          <li><strong>DS00-Q03:</strong> 현재·목표 수량과 8개 변경 금지 계약을 이후 상세 설계의 고정 기준으로 사용한다.</li>
+          <li><strong>DS00-Q04:</strong> DS-16 최종 승인 전에는 운영 코드·DB 재정비를 시작하지 않고, 각 메뉴를 전체 제품 수직 단위로 완성한다.</li>
+        </ol>
+        <div class="summary"><strong>확정 결과:</strong> DS00-Q01~Q04를 모두 권장안대로 확정했다. 이 기준은 새로운 근거와 사용자 승인 없이 이후 점검에서 변경하지 않는다.</div>
+      </section>
+
+      <footer>OJ Platform · DS-00 목적·범위·기준선 · 2026-07-22 사용자 확정 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

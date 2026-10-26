@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-01 공통 사용자·관리자 UI 시스템 | OJ Platform</title>
+  <style>
+    :root { --ink:#18212b; --muted:#5c6875; --line:#d8dee5; --surface:#fff; --soft:#f4f7f9; --navy:#17324d; --blue:#2563eb; --cyan:#087e8b; --green:#237a57; --yellow:#946200; --red:#a33a3a; --code:#eef3f6; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin:0; color:var(--ink); background:var(--soft); font-family:"Pretendard","Noto Sans KR","Malgun Gothic",sans-serif; line-height:1.65; }
+    a { color:var(--cyan); }
+    code { padding:2px 5px; border-radius:4px; background:var(--code); font-family:Consolas,"Courier New",monospace; font-size:.92em; }
+    .skip-link { position:fixed; top:-80px; left:12px; z-index:10; padding:10px 14px; background:#fff; color:var(--navy); }
+    .skip-link:focus { top:12px; }
+    .topbar { background:var(--navy); color:#fff; }
+    .topbar-inner { width:min(1180px,calc(100% - 32px)); min-height:60px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .brand { display:inline-flex; align-items:center; gap:10px; color:#fff; text-decoration:none; }
+    .brand-mark { display:inline-grid; width:34px; height:34px; place-items:center; border:1px solid rgba(255,255,255,.55); border-radius:6px; font-weight:800; }
+    .topbar-note { color:#d5e5ef; font-size:14px; }
+    .layout { width:min(1180px,calc(100% - 32px)); margin:24px auto 48px; display:grid; grid-template-columns:220px minmax(0,1fr); gap:24px; align-items:start; }
+    nav { position:sticky; top:20px; padding:16px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+    nav strong { display:block; margin-bottom:8px; }
+    nav ul { margin:0; padding:0; list-style:none; }
+    nav li + li { margin-top:5px; }
+    nav a { display:block; padding:5px 7px; border-radius:4px; color:var(--ink); text-decoration:none; }
+    nav a:hover, nav a:focus-visible { background:var(--soft); color:var(--cyan); }
+    main { min-width:0; }
+    .report-header,.section { border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+    .report-header { padding:30px; border-top:5px solid var(--blue); }
+    .section { margin-top:20px; padding:24px; }
+    .eyebrow { margin:0 0 6px; color:var(--blue); font-size:13px; font-weight:800; }
+    h1 { margin:0; font-size:34px; line-height:1.25; letter-spacing:0; }
+    h2 { margin:0; font-size:23px; letter-spacing:0; }
+    h3 { margin:0; font-size:17px; letter-spacing:0; }
+    p { margin:8px 0 0; }
+    .lede { max-width:850px; color:var(--muted); font-size:17px; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:18px; color:var(--muted); font-size:13px; }
+    .summary,.callout,.warning { margin-top:18px; padding:14px 16px; border-left:4px solid var(--cyan); background:#edf8f8; }
+    .callout { border-left-color:var(--green); background:#eef8f3; }
+    .warning { border-left-color:var(--yellow); background:#fff8e6; }
+    .section-heading { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; padding-bottom:12px; border-bottom:1px solid var(--line); }
+    .section-heading p { color:var(--muted); }
+    .badge { flex:0 0 auto; display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:800; }
+    .badge.good { color:#175c40; background:#def2e8; }
+    .badge.info { color:#075e68; background:#dff4f5; }
+    .badge.wait { color:#7b5200; background:#fff0c7; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:16px; }
+    .panel { padding:16px; border:1px solid var(--line); border-radius:6px; background:var(--soft); }
+    .panel p { color:var(--muted); }
+    .table-wrap { margin-top:16px; overflow-x:auto; border:1px solid var(--line); border-radius:6px; }
+    table { width:100%; border-collapse:collapse; background:var(--surface); font-size:14px; }
+    th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:#fff; background:var(--navy); font-weight:750; }
+    tbody tr:last-child td { border-bottom:0; }
+    tbody tr:nth-child(even) { background:#f8fafb; }
+    .tree { margin:16px 0 0; padding:14px 16px; overflow:auto; border:1px solid var(--line); border-radius:6px; background:#18212b; color:#edf3f7; font-family:Consolas,"Courier New",monospace; font-size:13px; line-height:1.65; white-space:pre; }
+    .check-list { margin:16px 0 0; padding-left:22px; }
+    .check-list li + li { margin-top:8px; }
+    footer { margin-top:22px; padding:16px 4px; color:var(--muted); font-size:13px; text-align:center; }
+    @media (max-width:900px) { .layout { grid-template-columns:1fr; } nav { position:static; } }
+    @media (max-width:680px) { .topbar-inner,.layout { width:min(100% - 20px,1180px); } .topbar-note { display:none; } .report-header,.section { padding:18px; } h1 { font-size:27px; } .section-heading { display:block; } .section-heading .badge { margin-top:10px; } .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="topbar"><div class="topbar-inner"><a class="brand" href="development-sequence.html"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 설계</strong></a><span class="topbar-note">DS-01 · 공통 UI 시스템</span></div></header>
+  <div class="layout">
+    <nav aria-label="문서 목차"><strong>목차</strong><ul>
+      <li><a href="#scope">범위·근거</a></li><li><a href="#ownership">소유 구조</a></li><li><a href="#shells">셸·탐색</a></li><li><a href="#tokens">시각 토큰</a></li><li><a href="#patterns">화면·컴포넌트</a></li><li><a href="#states">상태·문구</a></li><li><a href="#responsive">반응형·접근성</a></li><li><a href="#files">목표 파일 구조</a></li><li><a href="#verification">검증·전환</a></li><li><a href="#approval">확인 항목</a></li>
+    </ul></nav>
+
+    <main id="main">
+      <header class="report-header" id="scope">
+        <p class="eyebrow">상세 설계 2단계 · 사용자·관리자 공통 기반</p>
+        <h1>DS-01 공통 사용자·관리자 UI 시스템</h1>
+        <p class="lede">학습자·강사 서비스와 관리자 콘솔이 같은 용어, 상태, 입력, 명령과 접근성 규칙을 사용하도록 공통 UI 계약을 정의한다. 두 화면의 업무 밀도와 탐색 방식은 구분하되, 기능별 화면이 임의 스타일과 상호작용을 다시 만들지 않게 한다.</p>
+        <div class="meta"><span>작성일: 2026-07-22</span><span>확정일: 2026-07-22</span><span>상태: 사용자 확정</span><span>선행: DS-00 확정</span><span>적용: DS-02~DS-15 전체</span><span>인코딩: UTF-8 한글 원문</span></div>
+        <div class="summary"><strong>완료 범위:</strong> 디자인 문서만 만드는 단계가 아니다. 구현 시 로그인, 사용자 홈, 관리자 대시보드와 역할 관리 화면에 실제로 적용해 시각·조작 기준을 승인받아야 I-01의 UI 기반이 완료된다.</div>
+      </header>
+
+      <section class="section">
+        <div class="section-heading"><div><h2>계승 결정과 현재 근거</h2><p>이미 확정된 D-007·D-009 결정은 다시 묻지 않는다.</p></div><span class="badge good">변경 없음</span></div>
+        <div class="table-wrap"><table><thead><tr><th>구분</th><th>확정·확인 내용</th><th>DS-01 처리</th></tr></thead><tbody>
+          <tr><td>서비스 진입</td><td>업무·콘텐츠 페이지는 <code>active</code> 로그인 필수, 로그인·가입·복구·법정대리인 확인·법적 문서만 비로그인 예외, 로그인 뒤 6개 메뉴</td><td>셸과 반응형 표현만 구체화</td></tr>
+          <tr><td>관리 탐색</td><td>대시보드·사용자·문제·제출·학습 공간·커뮤니티·운영 7개 메뉴, 최대 2단계</td><td>240px 사이드바와 권한별 노출 유지</td></tr>
+          <tr><td>관리 밀도</td><td>상단 58px, 본문 최대 1280px, 표 44~48px, 입력·버튼 36~40px, 모서리 최대 8px</td><td>공통 토큰으로 승격</td></tr>
+          <tr><td>상호작용</td><td>사이드바는 주 탐색, 탭은 같은 기능의 보기 전환, 모바일 표는 요약 행+상세 펼치기</td><td>공통 컴포넌트 계약으로 승격</td></tr>
+          <tr><td>아이콘·위험 작업</td><td>Lucide 로컬 자산·공통 렌더러, 영구·대량 작업은 사전 검사 후 별도 검토 화면</td><td>자산 소유와 확인 단계 명시</td></tr>
+        </tbody></table></div>
+        <div class="grid">
+          <article class="panel"><h3>현재 스타일 자산</h3><p><code>public.css</code> 6,844행·변수 46개와 <code>console.css</code> 4,283행·변수 16개가 서로 다른 색·이름·컴포넌트를 사용한다.</p></article>
+          <article class="panel"><h3>현재 출력 구조</h3><p>공개·관리 셸과 홈·대시보드 핵심 Renderer 4개만 2,333행이다. 기존 화면은 동작 기준으로 보존하되 새 UI의 시각 기준으로 사용하지 않는다.</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="ownership">
+        <div class="section-heading"><div><h2>UI 소유와 의존 방향</h2><p>공통 표현, 셸, 기능별 표시 책임을 분리한다.</p></div><span class="badge info">DB 소유 없음</span></div>
+        <div class="table-wrap"><table><thead><tr><th>소유자</th><th>소유 범위</th><th>금지</th></tr></thead><tbody>
+          <tr><td><code>src/Ui</code></td><td>토큰 이름, 공통 컴포넌트 API, 아이콘 Registry, 메시지·상태 표현, 접근성 도우미</td><td>업무 권한 판정·Repository·DB 접근</td></tr>
+          <tr><td><code>PublicUi</code></td><td>로그인 최소 셸, 사용자 셸, 설정형 1차·2차 메뉴의 반응형 탐색과 사용자 홈 조립</td><td>기능별 상태 해석·업무 저장</td></tr>
+          <tr><td><code>AdminConsole</code></td><td>관리자 셸, 7개 메뉴, 화면 제목·명령 영역과 관리자 대시보드 조립</td><td>개별 기능 권한·메뉴 조건 재정의</td></tr>
+          <tr><td>기능 모듈</td><td>Presenter가 상태·문구·허용 명령 ViewModel을 만들고 View가 공통 컴포넌트를 조합</td><td>DB 행 직접 출력·인라인 CSS·원시 예외 노출</td></tr>
+          <tr><td>Controller</td><td>검증된 입력, 정책, Service와 Renderer·Responder 선택</td><td>HTML·색상·아이콘·사용자 문구 조립</td></tr>
+        </tbody></table></div>
+        <div class="callout"><strong>의존 규칙:</strong> 기능 모듈은 공통 UI 계약을 사용할 수 있지만 <code>src/Ui</code>는 PublicUi, AdminConsole 또는 기능 모듈을 역참조하지 않는다. PublicUi와 AdminConsole도 서로의 셸을 호출하지 않는다.</div>
+      </section>
+
+      <section class="section" id="shells">
+        <div class="section-heading"><div><h2>셸과 탐색 구조</h2><p>사용자와 관리자의 작업 환경을 구분하면서 이동 규칙은 일관되게 유지한다.</p></div><span class="badge wait">모바일 권장안 확인</span></div>
+        <div class="table-wrap"><table><thead><tr><th>환경</th><th>구조</th><th>탐색·명령</th></tr></thead><tbody>
+          <tr><td>비로그인</td><td>로고·로그인 폼 중심의 최소 셸. 가입·복구·법정대리인 확인·법적 문서만 보조 링크로 제공</td><td>서비스 6개 메뉴와 관리자 진입은 표시하지 않음</td></tr>
+          <tr><td>사용자 데스크톱</td><td>58px 상단 바, 최대 1180px 본문, 현재 페이지 제목과 필요한 보조 탐색</td><td>설정된 1차 메뉴를 최대 8개 표시하고 자식이 있는 메뉴는 2차 드롭다운을 연다. 외부 HTTPS 메뉴도 설정된 단계와 부모에 외부 표시와 함께 배치</td></tr>
+          <tr><td>사용자 모바일</td><td>58px 상단 바, 한 열 본문, 하단 주 탐색</td><td>홈·문제·제출·학습 4개와 더보기. 자식이 있는 메뉴를 누르면 해당 부모의 2차 메뉴 시트를 열고, 더보기에는 커뮤니티·내 정보를 배치</td></tr>
+          <tr><td>관리자 데스크톱</td><td>58px 상단 바, 240px 사이드바, 최대 1280px 본문</td><td>7개 1차 메뉴와 접근 가능한 2차 화면, 화면 제목에 주 명령 1개</td></tr>
+          <tr><td>관리자 모바일</td><td>상단 바와 열기식 사이드바, 한 열 본문</td><td>하단 메뉴를 만들지 않고 현재 기능·화면 제목·주 명령을 유지</td></tr>
+          <tr><td>기능 내부</td><td>같은 대상의 보기 전환만 탭 사용</td><td>다른 기능으로 이동하거나 명령을 실행하는 탭은 금지</td></tr>
+        </tbody></table></div>
+        <div class="warning"><strong>모바일 더보기:</strong> 메뉴 체계는 여전히 6개다. 작은 화면에서 6개를 같은 폭으로 줄이지 않고 사용 빈도가 높은 4개를 고정해 터치 영역과 한글 가독성을 지키는 표현 방식이다.</div>
+      </section>
+
+      <section class="section" id="tokens">
+        <div class="section-heading"><div><h2>공통 시각 토큰</h2><p>화면 코드에 임의 색상·간격·크기를 추가하지 않는다.</p></div><span class="badge info">실행 값</span></div>
+        <div class="table-wrap"><table><thead><tr><th>영역</th><th>기준</th><th>사용 규칙</th></tr></thead><tbody>
+          <tr><td>기본 색</td><td>배경 <code>#F5F7F9</code>, 표면 <code>#FFFFFF</code>, 약한 표면 <code>#F8FAFB</code>, 본문 <code>#18212B</code>, 보조 <code>#5C6875</code>, 선 <code>#D8DEE5</code></td><td>밝은 중립을 기본으로 페이지 구역을 색상 카드로 감싸지 않음</td></tr>
+          <tr><td>행동 색</td><td>주요 <code>#2563EB</code>, 강조 <code>#087E8B</code>, 성공 <code>#237A57</code>, 주의 <code>#946200</code>, 위험 <code>#A33A3A</code></td><td>상태색을 장식에 사용하지 않고 항상 문구·아이콘을 병행</td></tr>
+          <tr><td>글자</td><td>12·14·16·20·24·32px, 본문 16px, 줄높이 1.5~1.65</td><td>뷰포트에 따라 글자 크기를 비례 확대하지 않고 자간은 0</td></tr>
+          <tr><td>간격</td><td>4·8·12·16·24·32·48px</td><td>업무 화면 기본 간격 16px, 큰 구역 간격 24~32px</td></tr>
+          <tr><td>크기</td><td>입력·버튼 36·40px, 터치 목표 최소 44px, 표 행 44~48px</td><td>텍스트 길이로 도구 모음과 행 높이가 흔들리지 않게 최소·최대 크기 사용</td></tr>
+          <tr><td>형태</td><td>모서리 4·6·8px, 테두리 1px</td><td>그림자는 대화상자·메뉴·드로어에만 사용하고 중첩 카드를 만들지 않음</td></tr>
+          <tr><td>초점·동작</td><td>3px 초점 링, 120~200ms 상태 전환</td><td>초점 제거 금지, 동작 감소 설정에서는 비필수 전환 제거</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="patterns">
+        <div class="section-heading"><div><h2>화면 유형과 공통 컴포넌트</h2><p>페이지 유형을 먼저 선언하고 필요한 요소만 조합한다.</p></div><span class="badge good">공통 계약</span></div>
+        <div class="table-wrap"><table><thead><tr><th>영역</th><th>유형·컴포넌트</th><th>핵심 계약</th></tr></thead><tbody>
+          <tr><td>사용자 화면</td><td>인증, 홈, 목록, 상세, 풀이 작업공간, 결과, 학습 공간, 커뮤니티, 계정</td><td>한 화면의 주 목적 1개, 다음 행동이 분명하고 기술 정보는 숨김</td></tr>
+          <tr><td>관리자 화면</td><td>목록, 상세, 작성·편집, 설정, 위험 작업, 작업 진행</td><td>D-009의 6개 화면 필수 영역을 그대로 사용</td></tr>
+          <tr><td>탐색</td><td>상단 바, 사이드바, 하단 탐색, 이동 경로, 탭, 드로어</td><td>현재 위치·접근 권한·기능 상태가 동일한 Registry 결과를 사용</td></tr>
+          <tr><td>페이지 문맥</td><td>이동 경로, 페이지 제목, 대상 번호·이름, 핵심 제한 요약</td><td>페이지가 한 번만 소유하며 내장 편집기·표·탭·대화상자는 같은 제목과 대상 정보를 반복하지 않음</td></tr>
+          <tr><td>명령</td><td>버튼, 아이콘 버튼, 분할 메뉴, 선택 작업 바, 확인 대화상자</td><td>주 명령 1개, 행 명령 3개 이상은 더보기, 아이콘 버튼은 툴팁·접근성 이름 제공</td></tr>
+          <tr><td>입력</td><td>필드, 검색, 필터, 선택, 체크박스, 토글, 분할 선택, 숫자 스테퍼</td><td>라벨·도움말·오류 연결, 제출 오류 시 입력 유지</td></tr>
+          <tr><td>데이터</td><td>표, 요약 목록, 상태 배지, 페이지 이동, 메타 정보</td><td>모바일 요약 우선순위 선언, 비교형 기술 표만 가로 스크롤 허용</td></tr>
+          <tr><td>피드백</td><td>알림, 토스트, 빈 상태, 로딩, 진행률, 오류 요약, 기술 상세</td><td>결과·영향 수·다음 행동을 표시하고 원시 예외는 운영자 기술 상세로 제한</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="states">
+        <div class="section-heading"><div><h2>상태와 문구 규칙</h2><p>빈 화면과 실패도 정상 화면 상태로 설계한다.</p></div><span class="badge info">한글 원문</span></div>
+        <div class="table-wrap"><table><thead><tr><th>상태</th><th>화면 표현</th><th>필수 행동</th></tr></thead><tbody>
+          <tr><td>로딩</td><td>레이아웃을 유지하는 자리 표시 또는 짧은 진행 표시</td><td>중복 명령 차단, 장기 작업은 Jobs로 전환</td></tr>
+          <tr><td>처음 비어 있음</td><td>무엇이 없는지와 첫 작업 설명</td><td>권한이 있으면 생성·참여 같은 한 개 행동</td></tr>
+          <tr><td>검색 결과 없음</td><td>적용된 조건과 결과 없음 구분</td><td>조건 초기화 또는 검색 수정</td></tr>
+          <tr><td>권한 없음</td><td>대상에 접근할 수 없다는 일반 안내</td><td>허용된 이전 화면으로 이동, 권한 구조 노출 금지</td></tr>
+          <tr><td>기능 꺼짐</td><td>기능을 사용하지 않는 상태</td><td>설정 권한이 있을 때만 설정 이동</td></tr>
+          <tr><td>부분 완료·확인 필요</td><td>전체·성공·실패·보류 수와 원인 요약</td><td>실패 항목 확인·재시도·수정</td></tr>
+          <tr><td>오류</td><td>사용자가 이해할 수 있는 원인과 유지된 입력</td><td>다시 시도·입력 이동·문의용 추적 ID 중 가능한 행동</td></tr>
+        </tbody></table></div>
+        <div class="callout"><strong>문구 원칙:</strong> 대상·행동·결과·다음 선택 순으로 작성한다. 명령은 “문제 정보 생성”, 결과는 “12개 중 10개를 저장했습니다”처럼 구체적으로 쓰며 DB명·클래스명·Provider·예외명은 일반 화면에 표시하지 않는다.</div>
+      </section>
+
+      <section class="section" id="responsive">
+        <div class="section-heading"><div><h2>반응형·접근성 기준</h2><p>동일 기능을 작은 화면과 키보드에서도 잃지 않는다.</p></div><span class="badge good">필수 검증</span></div>
+        <div class="table-wrap"><table><thead><tr><th>구간·기준</th><th>필수 동작</th><th>실패 판정</th></tr></thead><tbody>
+          <tr><td>1200px 이상</td><td>사용자 상단 메뉴, 관리자 240px 사이드바, 우선 열 전체 표시</td><td>본문 과도 확장, 긴 행·도구 모음 이동</td></tr>
+          <tr><td>768~1199px</td><td>접이식 탐색, 낮은 우선순위 열을 행 상세로 이동</td><td>가려진 핵심 명령, 임의 가로 스크롤</td></tr>
+          <tr><td>767px 이하</td><td>한 열, 사용자 하단 탐색, 관리자 드로어, 필터 세로 배치</td><td>44px 미만 터치 영역, 텍스트 겹침·잘림</td></tr>
+          <tr><td>키보드</td><td>본문 바로가기, 논리적 초점 순서, 대화상자 초점 고정·복귀</td><td>키보드로 닿지 않는 명령·닫히지 않는 레이어</td></tr>
+          <tr><td>인식</td><td>WCAG 2.2 AA 수준 대비, 상태 문구·아이콘 병행, 입력 오류 연결</td><td>색상만으로 상태 전달, 초점 표시 없음</td></tr>
+          <tr><td>안정성</td><td>긴 한글·빈 값·최대 숫자·로딩·오류에서도 고정된 레이아웃</td><td>컴포넌트 크기 변동, 이전·다음 내용 가림</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section" id="files">
+        <div class="section-heading"><div><h2>목표 파일 구조</h2><p>공통 계약과 두 셸, 기능별 표현을 물리적으로 구분한다.</p></div><span class="badge info">구현 입력</span></div>
+        <pre class="tree">oj-platform/
+├─ src/Ui/
+│  ├─ Component/       # 공통 렌더링 API와 접근성 계약
+│  ├─ Icon/            # Lucide 허용 목록과 렌더러
+│  ├─ Message/         # 메시지 코드·안전한 문맥 값
+│  └─ View/            # 화면 제목·상태·페이지 공통 모델
+├─ resources/ui/
+│  ├─ css/
+│  │  ├─ oj-ui-system.css  # 토큰·기본 요소·공통 컴포넌트·두 셸의 단일 원본
+│  │  └─ features/         # 기능 고유 배치만 허용, 공통 선택자·토큰 재정의 금지
+│  ├─ js/
+│  │  ├─ oj-ui.js          # dialog·drawer·tabs·table·일괄 선택 공통 동작
+│  │  └─ features/         # 기능 고유 상태 연결만 허용
+│  └─ icons/               # 사용하는 Lucide 아이콘만 로컬 보관
+├─ resources/public/       # 사용자 셸 조립과 화면 ViewModel
+├─ resources/console/      # 관리자 셸 조립과 화면 ViewModel
+├─ modules/PublicUi/   # 로그인·사용자 셸과 홈 조립
+└─ modules/AdminConsole/ # 관리자 셸·메뉴와 대시보드 조립</pre>
+        <div class="warning"><strong>CSS 단일 원본:</strong> <code>oj-ui-system.css</code>가 토큰, 글꼴, 입력, 버튼, 표, 상태, dialog, 일괄 선택, 사용자·관리자 셸을 소유한다. 기능 CSS는 기능 고유 그리드와 시각화 배치만 소유하며 <code>:root</code>, 공통 선택자, 색·간격·모서리 재정의, 인라인 레이아웃 스타일과 <code>!important</code>를 허용하지 않는다. 빌드와 정적 검사에서 위반을 실패로 처리한다.</div>
+        <div class="summary"><strong>시안 자산도 같은 구조:</strong> 모든 UI 시안은 <code>docs/assets/oj-ui-system.css</code>와 <code>oj-ui-prototype.js</code>를 먼저 사용한다. <code>ds08~ds14-prototype.css</code>는 해당 기능의 고유 배치만 남기며 별도 토큰 파일과 DS-10 이름의 공통 CSS·JS는 제거했다.</div>
+      </section>
+
+      <section class="section" id="verification">
+        <div class="section-heading"><div><h2>기준 화면·검증·전환</h2><p>네 기준 화면에서 공통 계약을 먼저 증명하고 기능 화면으로 확장한다.</p></div><span class="badge wait">I-01 시작 대기</span></div>
+        <div class="table-wrap"><table><thead><tr><th>순서</th><th>기준 화면</th><th>검증 목적</th></tr></thead><tbody>
+          <tr><td>1</td><td>로그인</td><td>비로그인 최소 셸, 폼·오류·복구·법적 링크와 모바일 키보드</td></tr>
+          <tr><td>2</td><td>사용자 홈</td><td>설정형 1차·2차 메뉴, 모바일 최대 4개+더보기, 역할별 요약·빈 상태·다음 작업</td></tr>
+          <tr><td>3</td><td>관리자 대시보드</td><td>7개 권한 메뉴, 240px 사이드바, 상태·최근 작업과 기술 정보 분리</td></tr>
+          <tr><td>4</td><td>역할 목록·상세</td><td>DS-02 Permission의 목록·상세·편집, 검색·상태·확인·권한 거부</td></tr>
+        </tbody></table></div>
+        <div class="grid">
+          <article class="panel"><h3>필수 뷰포트</h3><p>1440×900, 1024×768, 390×844에서 겹침·잘림·불필요한 가로 이동·초점 손실을 검사한다.</p></article>
+          <article class="panel"><h3>브라우저 관문</h3><p>각 화면은 Chromium 데스크톱·모바일을 통과하고, 배포 전 Firefox·WebKit 데스크톱·모바일을 추가 검증한다.</p></article>
+        </div>
+        <ol class="check-list">
+          <li>새 공통 자산을 기존 자산과 함께 로드하되 기준 화면 단위로만 적용한다.</li>
+          <li>동작·권한·URL 회귀 검사 뒤 새 화면의 데스크톱·모바일 결과를 사용자에게 보여 승인받는다.</li>
+          <li>승인된 화면이 사용하던 기존 선택자·직접 출력만 제거하고 다른 화면은 유지한다.</li>
+          <li>모든 화면 전환 후 임시 호환 CSS·JS와 사용하지 않는 변수를 I-09에서 제거한다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading"><div><h2>DS-01 확정 항목</h2><p>앞선 결정을 유지하면서 새로 구체화한 네 항목이다.</p></div><span class="badge good">2026-07-22 확정</span></div>
+        <ol class="check-list">
+          <li><strong>DS01-Q01 · 보완:</strong> 사용자 데스크톱은 설정된 1차 메뉴와 최대 한 단계의 2차 드롭다운을 사용한다. 모바일은 운영자가 지정한 최대 4개 1차 메뉴와 나머지 1차 메뉴를 모은 더보기로 구성하고, 자식이 있는 메뉴를 누르면 같은 2차 항목을 시트로 연다. 외부 HTTPS 메뉴는 설정된 단계와 부모에서 외부 아이콘·호스트·새 창 정보를 표시한다.</li>
+          <li><strong>DS01-Q02:</strong> 중립 표면, 파란 주요 행동과 의미별 상태색, 4px 간격 체계, 최대 8px 모서리의 실행 토큰을 공통 기준으로 사용한다.</li>
+          <li><strong>DS01-Q03:</strong> <code>src/Ui</code>가 공통 표현 계약을, <code>oj-ui-system.css</code>와 <code>oj-ui.js</code>가 공통 시각·상호작용 구현을 단일 소유한다. PublicUi·AdminConsole은 각각 셸 조립만 소유하고 기능 CSS·JS는 고유 배치·상태 연결 외의 공통 코드를 만들지 않는다.</li>
+          <li><strong>DS01-Q04:</strong> 로그인·사용자 홈·관리자 대시보드·역할 관리 네 화면을 최초 기준 화면으로 구현·검증하고 사용자 승인을 받아 확장한다.</li>
+        </ol>
+        <div class="summary"><strong>확정 결과:</strong> DS01-Q01~Q04를 모두 권장안대로 확정했다. DS-02부터 모든 사용자·관리자 화면은 이 UI 계약을 사용한다.</div>
+      </section>
+
+      <footer>OJ Platform · DS-01 공통 사용자·관리자 UI 시스템 · 2026-07-22 사용자 확정 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

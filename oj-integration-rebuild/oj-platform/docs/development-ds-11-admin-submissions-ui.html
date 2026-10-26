@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-11 관리자 제출 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds11-prototype.css">
+</head>
+<body class="console">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg class="icon-symbols" aria-hidden="true" width="0" height="0">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4M20 4h-7v16h7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a2 2 0 0 0 .4 2.2l.1.1-2.6 2.6-.1-.1a2 2 0 0 0-2.2-.4 2 2 0 0 0-1.2 1.8V21h-3.6v-.2A2 2 0 0 0 9 19a2 2 0 0 0-2.2.4l-.1.1-2.6-2.6.1-.1A2 2 0 0 0 4.6 15a2 2 0 0 0-1.8-1.2H2v-3.6h.8A2 2 0 0 0 4.6 9a2 2 0 0 0-.4-2.2l-.1-.1 2.6-2.6.1.1A2 2 0 0 0 9 4.6a2 2 0 0 0 1.2-1.8V2h3.6v.8A2 2 0 0 0 15 4.6a2 2 0 0 0 2.2-.4l.1-.1 2.6 2.6-.1.1A2 2 0 0 0 19.4 9a2 2 0 0 0 1.8 1.2H22v3.6h-.8a2 2 0 0 0-1.8 1.2z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7V3h-4M4 17v4h4"/><path d="M5.5 9a7 7 0 0 1 11.8-3L20 7M4 17l2.7 1a7 7 0 0 0 11.8-3"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></symbol>
+    <symbol id="i-blocks" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><path d="M17 13v8M13 17h8"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 21h20z"/><path d="M12 9v5M12 18h.01"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-11 관리자 제출 시안</strong><span>직접 화면 7개</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="관리자 제출 화면 선택">
+        <button type="button" role="tab" data-screen-target="admin-submissions" aria-selected="true">제출 목록</button>
+        <button type="button" role="tab" data-screen-target="admin-submission-detail" aria-selected="false">제출 상세</button>
+        <button type="button" role="tab" data-screen-target="admin-rejudge" aria-selected="false">재채점</button>
+        <button type="button" role="tab" data-screen-target="admin-invalid" aria-selected="false">무효 기록</button>
+        <button type="button" role="tab" data-screen-target="admin-events" aria-selected="false">처리 이력</button>
+        <button type="button" role="tab" data-screen-target="admin-settings" aria-selected="false">제출 설정</button>
+        <button type="button" role="tab" data-screen-target="admin-blockly" aria-selected="false">Blockly 설정</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-11-submissions-blockly.html" aria-label="DS-11 설계 문서로 이동"><span class="brand-mark">OJ</span><span>관리자 콘솔</span></a>
+      <a class="button ghost header-utility" href="development-ds-11-user-submissions-ui.html">사용자 제출</a>
+    </div>
+  </header>
+
+  <div class="workspace console-workspace">
+    <aside class="console-sidebar" aria-label="관리자 메뉴">
+      <strong>관리자 메뉴</strong>
+      <div class="sidebar-role">강사 · 담당 범위</div>
+      <a href="development-ds-09-admin-dashboard-shell-ui.html"><svg><use href="#i-grid"/></svg>대시보드</a>
+      <a href="development-ds-10-admin-problems-ui.html"><svg><use href="#i-book"/></svg>문제</a>
+      <a href="#admin-submissions" aria-current="page"><svg><use href="#i-send"/></svg>제출</a>
+      <a href="development-ds-12-admin-learning-hub-ui.html"><svg><use href="#i-learn"/></svg>학습 공간</a>
+      <a href="development-ds-14-community.html"><svg><use href="#i-message"/></svg>커뮤니티</a>
+    </aside>
+
+    <main class="page" id="main">
+      <section class="screen" id="admin-submissions" data-screen="admin-submissions">
+        <div class="breadcrumb"><span>관리자</span><span>/</span><span>제출</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">담당 범위 조회</p><h1>제출 관리</h1><p>수업·대회·그룹·문제에서 담당하는 제출만 검색합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="admin-invalid">무효 기록</button><button class="button" type="button" data-open-screen="admin-events">처리 이력</button></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions</p>
+
+        <div class="scope-banner">
+          <div><strong>현재 조회 범위 · 담당 수업 2개, 담당 문제 14개</strong><span>목록·상세·내보내기와 상태 변경에 같은 범위를 다시 적용합니다.</span></div>
+          <button class="button" type="button" data-toast="담당 범위 선택기를 엽니다.">범위 변경</button>
+        </div>
+
+        <div class="filter-bar compact">
+          <label class="field"><span class="field-label">사용자·문제</span><input type="search" placeholder="이름, 로그인 아이디, 문제 번호"></label>
+          <label class="field"><span class="field-label">결과</span><select><option>전체 결과</option><option>맞았습니다</option><option>틀렸습니다</option><option>채점 중</option><option>오류</option></select></label>
+          <label class="field"><span class="field-label">문맥</span><select><option>전체 담당 범위</option><option>수업</option><option>대회·평가</option><option>그룹</option><option>문제</option></select></label>
+          <div class="filter-actions"><button class="button primary" type="button">조회</button></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>제출</th><th>사용자</th><th>문제</th><th>문맥</th><th>결과</th><th>언어·방식</th><th>제출 시각</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>#58427</td><td>박서연<br><small>seoyeon26</small></td><td>1024 · 구간 합</td><td>수업 · 파이썬 기초</td><td><span class="badge good">맞았습니다</span></td><td>Python 3<br><small>빈칸 완성</small></td><td>오늘 10:32</td><td><button class="button" type="button" data-open-screen="admin-submission-detail">상세</button></td></tr>
+              <tr><td>#58421</td><td>김하늘<br><small>sky2026</small></td><td>1024 · 구간 합</td><td>수업 · 파이썬 기초</td><td><span class="badge wait">채점 중</span></td><td>Python 3<br><small>빈칸 완성</small></td><td>오늘 10:26</td><td><button class="button" type="button" data-open-screen="admin-submission-detail">상세</button></td></tr>
+              <tr><td>#58396</td><td>김하늘<br><small>sky2026</small></td><td>1031 · 그래프 탐색</td><td>그룹 · 2과정 단계 A</td><td><span class="badge danger">틀렸습니다</span></td><td>Python 3<br><small>Blockly</small></td><td>오늘 10:18</td><td><button class="button" type="button" data-open-screen="admin-submission-detail">상세</button></td></tr>
+              <tr><td>#58102</td><td>한유진<br><small>yujin22</small></td><td>1031 · 그래프 탐색</td><td>담당 문제</td><td><span class="badge good">맞았습니다</span></td><td>C++17</td><td>어제 16:04</td><td><button class="button" type="button" data-open-screen="admin-submission-detail">상세</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="screen" id="admin-submission-detail" data-screen="admin-submission-detail" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>#58396</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">담당 수업 범위 · 상세·코드 허용</p><h1>제출 #58396</h1><p>김하늘 · 그래프 탐색 · Blockly · 오늘 10:18</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="admin-rejudge"><svg><use href="#i-refresh"/></svg>재채점</button><button class="button danger" type="button" data-toast="무효 처리 사유 입력 화면을 엽니다."><svg><use href="#i-trash"/></svg>무효 처리</button></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/{submission_id}</p>
+
+        <div class="result-hero">
+          <div class="result-primary error"><span>채점 완료</span><strong>틀렸습니다</strong></div>
+          <div class="result-stat"><span>실행 시간</span><strong>88ms</strong></div>
+          <div class="result-stat"><span>메모리</span><strong>13.8MB</strong></div>
+          <div class="result-stat"><span>언어</span><strong>Python 3</strong></div>
+        </div>
+
+        <div class="detail-grid">
+          <div>
+            <section class="detail-section">
+              <div class="section-heading"><div><h2>작성한 코드</h2><p>Blockly 작업공간에서 서버가 다시 생성한 앞·뒤 코드 결합 전 Python 원본입니다.</p></div><button class="button" type="button" data-toast="코드를 복사합니다.">복사</button></div>
+              <pre class="source-view">from collections import deque
+n, m, start = map(int, input().split())
+graph = [[] for _ in range(n + 1)]
+queue = deque([start])
+visited = {start}</pre>
+            </section>
+            <section class="detail-section">
+              <h2>채점 정보</h2>
+              <pre class="error-output">테스트 4번에서 출력이 다릅니다.
+기대 출력: 27
+사용자 출력: 18</pre>
+            </section>
+            <section class="detail-section">
+              <div class="section-heading"><div><h2>처리 이력</h2><p>원문 대신 안전한 상태 전이만 표시합니다.</p></div><button class="button" type="button" data-open-screen="admin-events">전체 이력</button></div>
+              <ul class="timeline">
+                <li><time>10:18:12</time><strong>Judge 대기열 공개</strong><span>submission_published</span></li>
+                <li><time>10:18:11</time><strong>Blockly 소스 검증 완료</strong><span>submission_source_verified</span></li>
+                <li><time>10:18:10</time><strong>제출 준비</strong><span>submission_prepare_started</span></li>
+              </ul>
+            </section>
+          </div>
+          <aside class="submission-rules">
+            <h2>제출 정보</h2>
+            <dl class="metadata-list">
+              <div><dt>사용자</dt><dd>김하늘</dd></div>
+              <div><dt>문제</dt><dd>1031</dd></div>
+              <div><dt>문맥</dt><dd>수업 · 파이썬 기초</dd></div>
+              <div><dt>제출 방식</dt><dd>Blockly</dd></div>
+              <div><dt>가시성</dt><dd>전체</dd></div>
+              <div><dt>유효 상태</dt><dd>유효</dd></div>
+            </dl>
+            <div class="notice warning"><div><strong>권한 분리</strong><br>상세 조회 권한과 코드 조회 권한은 각각 검사합니다.</div></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="admin-rejudge" data-screen="admin-rejudge" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>재채점</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">상태 변경 확인</p><h1>제출 재채점</h1><p>현재 담당 범위와 제출 상태를 다시 확인한 뒤 Judge 대기열에 공개합니다.</p></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/rejudge</p>
+
+        <div class="confirm-layout">
+          <div class="confirm-panel">
+            <h2>제출 #58396을 재채점하시겠습니까?</h2>
+            <p>현재 결과는 “틀렸습니다”입니다. 재채점 요청 뒤 완료될 때까지 이전 결과를 이력에 보존하고 새 상태를 표시합니다.</p>
+            <div class="table-wrap">
+              <table><tbody>
+                <tr><th>사용자</th><td>김하늘 · sky2026</td></tr>
+                <tr><th>문제</th><td>1024 · 구간 합 구하기</td></tr>
+                <tr><th>문맥</th><td>수업 · 파이썬 알고리즘 기초</td></tr>
+                <tr><th>현재 결과</th><td>틀렸습니다 · 88ms · 13.8MB</td></tr>
+              </tbody></table>
+            </div>
+            <label class="field space-top"><span class="field-label">재채점 사유</span><textarea rows="4">테스트데이터 수정 후 결과를 다시 확인합니다.</textarea></label>
+            <div class="heading-actions space-top"><button class="button" type="button" data-open-screen="admin-submission-detail">취소</button><button class="button danger" type="button" data-toast="권한과 상태를 재검사한 뒤 재채점을 요청합니다.">재채점 요청</button></div>
+          </div>
+          <aside class="submission-rules">
+            <h2>실행 전 검사</h2>
+            <dl>
+              <dt>담당 범위</dt><dd>통과</dd>
+              <dt>제출 유효성</dt><dd>유효</dd>
+              <dt>Judge 소스</dt><dd>존재</dd>
+              <dt>중복 요청</dt><dd>없음</dd>
+            </dl>
+            <div class="notice"><svg><use href="#i-history"/></svg><div><strong>감사 기록</strong><br>이전 결과, 실행자, 사유와 요청 키를 남깁니다.</div></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="admin-invalid" data-screen="admin-invalid" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>무효 처리 기록</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">복원 가능</p><h1>무효 처리된 제출</h1><p>원본을 삭제하지 않고 통계와 일반 목록에서 제외된 제출을 확인합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="admin-submissions">유효한 제출</button></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/deleted</p>
+
+        <div class="notice warning"><svg><use href="#i-alert"/></svg><div><strong>영구 삭제가 아닙니다</strong><br>소스·오류·결과 원본은 유지되고 <span class="inline-code">solution.valid=0</span>으로만 제외됩니다.</div></div>
+        <div class="filter-bar compact">
+          <label class="field"><span class="field-label">검색</span><input type="search" placeholder="제출 번호, 사용자, 문제"></label>
+          <label class="field"><span class="field-label">처리 기간</span><select><option>최근 30일</option><option>이번 운영 기간</option><option>전체</option></select></label>
+          <div class="filter-actions"><button class="button primary" type="button">조회</button></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>제출</th><th>사용자·문제</th><th>무효 처리 사유</th><th>처리자</th><th>처리 시각</th><th>작업</th></tr></thead>
+            <tbody>
+              <tr><td>#57620</td><td>최민준<br><small>1090 · 재귀 호출</small></td><td>평가 종료 후 중복 제출 확인</td><td>이민준 강사</td><td>07-20 17:45</td><td><button class="button primary" type="button" data-toast="권한과 연결 데이터를 검증한 뒤 복원합니다.">복원</button></td></tr>
+              <tr><td>#56991</td><td>박서연<br><small>1014 · 조건 수 찾기</small></td><td>관리자 테스트 계정 제출</td><td>시스템 관리자</td><td>07-12 11:02</td><td><button class="button primary" type="button" data-toast="권한과 연결 데이터를 검증한 뒤 복원합니다.">복원</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="screen" id="admin-events" data-screen="admin-events" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>처리 이력</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">감사·복구</p><h1>제출 처리 이력</h1><p>제출 공개, 재채점, 무효 처리와 복원의 상태 전이를 검색합니다.</p></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/events</p>
+
+        <div class="filter-bar compact">
+          <label class="field"><span class="field-label">제출·요청 키</span><input type="search" placeholder="제출 번호 또는 요청 키"></label>
+          <label class="field"><span class="field-label">사건</span><select><option>전체 사건</option><option>제출 공개</option><option>재채점</option><option>무효 처리</option><option>복원</option><option>실패</option></select></label>
+          <label class="field"><span class="field-label">행위자</span><select><option>전체</option><option>사용자</option><option>강사·관리자</option><option>시스템</option></select></label>
+          <div class="filter-actions"><button class="button primary" type="button">조회</button></div>
+        </div>
+
+        <ul class="event-stream">
+          <li><time>오늘 10:32:15</time><div><strong>제출 #58427</strong><small>submission_published</small></div><div><span>검증된 소스를 Judge 대기열에 공개했습니다.</span><small>요청 키 req_8fb2…</small></div><div><strong>박서연</strong><small>사용자</small></div></li>
+          <li><time>오늘 10:18:12</time><div><strong>제출 #58396</strong><small>submission_published</small></div><div><span>Blockly 작업공간을 검증하고 서버 생성 코드를 공개했습니다.</span><small>프로필 standard · 생성기 해시 일치</small></div><div><strong>김하늘</strong><small>사용자</small></div></li>
+          <li><time>07-20 17:45</time><div><strong>제출 #57620</strong><small>submission_invalidated</small></div><div><span>중복 제출 확인 사유로 통계와 일반 목록에서 제외했습니다.</span><small>이전 valid=1 · 이후 valid=0</small></div><div><strong>이민준</strong><small>강사</small></div></li>
+          <li><time>07-18 09:22</time><div><strong>제출 #57118</strong><small>submission_rejudge_requested</small></div><div><span>테스트데이터 수정 후 재채점을 요청했습니다.</span><small>이전 결과 보존</small></div><div><strong>박서현</strong><small>강사</small></div></li>
+        </ul>
+      </section>
+
+      <section class="screen" id="admin-settings" data-screen="admin-settings" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>설정</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">전역 관리자 전용</p><h1>제출 설정</h1><p>코드 제출 언어, 크기·간격과 목록 표시 기준을 관리합니다.</p></div>
+          <div class="heading-actions"><button class="button primary" type="button" data-toast="검증된 제출 설정과 변경 이력을 저장합니다.">변경사항 저장</button></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/settings</p>
+
+        <div class="settings-stack">
+          <div class="setting-row">
+            <div class="setting-copy"><strong>코드 제출 언어</strong><span>문제별 허용 언어는 이 전역 목록 안에서 선택합니다. Blockly의 Python 자동 허용과는 분리됩니다.</span></div>
+            <div><label class="toggle-line"><span>C++17</span><input type="checkbox" checked data-setting-toggle></label><label class="toggle-line"><span>Python 3</span><input type="checkbox" checked data-setting-toggle></label><label class="toggle-line"><span>Java 17</span><input type="checkbox" checked data-setting-toggle></label></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-copy"><strong>최대 소스 크기</strong><span>UTF-8 바이트 기준이며 초과 요청은 Judge 테이블을 쓰기 전에 거부합니다.</span></div>
+            <label class="field"><span class="field-label">크기</span><select><option>64KB</option><option>128KB</option><option>256KB</option></select></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-copy"><strong>최소 제출 간격</strong><span>같은 사용자의 연속 제출 요청을 제한합니다.</span></div>
+            <label class="field"><span class="field-label">간격</span><select><option>10초</option><option>20초</option><option>30초</option></select></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-copy"><strong>목록 페이지 크기</strong><span>행별 상세 조회와 Polling 없이 한 번에 표시할 제출 수입니다.</span></div>
+            <label class="field"><span class="field-label">행 수</span><select><option>25개</option><option>50개</option><option>100개</option></select></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-copy"><strong>채점 중 자동 갱신</strong><span>사용자가 보고 있는 상세 제출 하나에만 점증 간격 Polling을 사용합니다.</span></div>
+            <label class="toggle-line"><span>상세 자동 갱신 사용</span><input type="checkbox" checked data-setting-toggle></label>
+          </div>
+        </div>
+        <div class="notice"><svg><use href="#i-history"/></svg><div><strong>언어 설정 이력</strong><br>변경한 언어 마스크, 실행자 숫자 WordPress ID와 변경 시각을 별도 기록합니다.</div></div>
+      </section>
+
+      <section class="screen" id="admin-blockly" data-screen="admin-blockly" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>Blockly 설정</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">전역 관리자 전용</p><h1>Blockly 설정</h1><p>활성 상태와 기본 프로필을 정하고 로컬 고정 자산을 진단합니다.</p></div>
+          <div class="heading-actions"><a class="button" href="development-ds-11-submissions-blockly.html#blockly">편집기 설계</a><button class="button primary" type="button" data-toast="검증된 Blockly 설정을 저장합니다.">설정 저장</button></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/block-coding</p>
+
+        <div class="settings-stack">
+          <div class="setting-row">
+            <div class="setting-copy"><strong>블록 제출</strong><span>비활성화해도 일반 코드 제출과 DS-11 기본 화면은 정상 동작합니다.</span></div>
+            <label class="toggle-line"><span>Blockly 사용</span><input type="checkbox" checked data-setting-toggle></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-copy"><strong>기본 프로필</strong><span>입문·표준·확장 Registry 중 새 수업과 일반 문제에서 제안할 기본값입니다.</span></div>
+            <label class="field"><span class="field-label">프로필</span><select><option>표준</option><option>입문</option><option>확장</option></select></label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-copy"><strong>생성 언어</strong><span>학습자용 공식 생성 언어는 Python 3 하나이며 직접 코드 언어 권한을 변경하지 않습니다.</span></div>
+            <div class="toggle-line"><span>Python 3</span><span class="badge good">고정</span></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-copy"><strong>작업공간 형식</strong><span>클라이언트와 서버가 같은 버전·프로필·생성기 해시를 검증합니다.</span></div>
+            <div class="toggle-line"><span class="inline-code">blockly-json-v1</span><span class="badge info">현재</span></div>
+          </div>
+        </div>
+
+        <div class="section-heading space-top">
+          <div><h2>로컬 자산 진단</h2><p>CDN 대체 없이 배포된 파일과 서버 생성기의 일치 여부를 확인합니다.</p></div>
+          <button class="button" type="button" data-run-diagnostics><svg><use href="#i-refresh"/></svg>진단 실행</button>
+        </div>
+        <div class="diagnostic-grid">
+          <div class="diagnostic-item" data-diagnostic-state="idle"><strong>Blockly 코어</strong><span data-diagnostic-status>확인 전</span><small>로컬 12.5.1 묶음</small></div>
+          <div class="diagnostic-item" data-diagnostic-state="idle"><strong>Python 생성기</strong><span data-diagnostic-status>확인 전</span><small>서버·브라우저 해시 비교</small></div>
+          <div class="diagnostic-item" data-diagnostic-state="idle"><strong>블록 Registry</strong><span data-diagnostic-status>확인 전</span><small>8개 범주 · 프로필 3개</small></div>
+        </div>
+        <div class="notice warning"><svg><use href="#i-alert"/></svg><div><strong>제공하지 않는 설정</strong><br>외부 URL, 임의 JavaScript 파일과 도구상자 업로드, JavaScript 생성기는 관리자 화면에 두지 않습니다.</div></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds11-prototype.js"></script>
+</body>
+</html>

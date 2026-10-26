@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-02 Addon API v1 소비자 프로필</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>Addon API v1 소비자 프로필</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 절차</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html" aria-current="page">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">결론</a>
+          <a href="#source">계약 원본</a>
+          <a href="#hooks">두 연결점</a>
+          <a href="#surface">공개 표면</a>
+          <a href="#manifest">Manifest</a>
+          <a href="#contributions">기여 목록</a>
+          <a href="#runtime">Runtime</a>
+          <a href="#contexts">학습 Context</a>
+          <a href="#ai">AI 작업</a>
+          <a href="#states">상태·오류</a>
+          <a href="#implementation">구현 이관</a>
+          <a href="#acceptance">수용 기준</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">A-DS-02 · Addon API v1 Consumer Profile</p>
+        <h2>Addon API v1 소비자 프로필</h2>
+        <p>AI 평가 애드온이 OJ Platform의 내부 Container나 Registry를 조회하지 않고 Console·PublicUI·권한·학습 Context·AI 작업을 사용하는 정확한 연결 계약을 고정한다. 이 문서는 소비자 프로필이며 공개 API의 제공자 정본은 플랫폼 C-28이다.</p>
+        <div class="meta">
+          <span class="badge">정의일 2026-08-10</span>
+          <span class="badge good">API 표면 정의 완료</span>
+          <span class="badge good">A-DS-02 사용자 확인·동결</span>
+          <span class="badge good">AM-01 사용자 확인·동결</span>
+          <span class="badge good">Addon API 1.1.0</span>
+          <span class="badge good">C28-I01~I06 · AM-01·AM-02 구현 확인</span>
+          <span class="badge good">검증 릴리스 증거 기록</span><span class="badge wait">clean package·G1 인수 대기</span>
+          <span class="badge">애드온 Runtime 변경 0건</span>
+        </div>
+      </section>
+
+      <h2 id="source">계약 원본과 우선순위</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>구분</th><th>정본</th><th>역할</th></tr></thead>
+          <tbody>
+            <tr><td>플랫폼 제공자 계약</td><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-api-v1-contract.html#api-v1-contract">C-28 API v1 정확한 공개 계약</a><br><code>C28-API-V1-LOCK-01</code></td><td>namespace·interface·DTO·hook·오류·SemVer</td></tr>
+            <tr><td>플랫폼 구현 기록</td><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-api-v1-contract.html#implementation-record">C-28 구현 이관 기록</a></td><td>변경 대상·단계·테스트·릴리스 증거</td></tr>
+            <tr><td>애드온 생명주기</td><td><a href="a-ds-02-addon-lifecycle.html">A-DS-02 애드온 생명주기와 플랫폼 연결</a></td><td>호환·설치·등록·비활성화·데이터 보존</td></tr>
+            <tr><td>보안 개정 적용</td><td><a href="a-ds-02-am-01-onready-adoption.html"><code>A-DS-02 AM-01</code> onReady 적용 계획</a></td><td>보안 사유·영향 파일·보상 정책·C28-I06 관문</td></tr>
+            <tr><td>후속 권한</td><td><a href="a-ds-03-access-policy.html"><code>A-DS-03</code> 권한·역할·객체 범위</a></td><td>최종 capability key·역할·사용자·객체 scope</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>현재 구현 기준:</strong> OJ Platform <code>2.0.0-dev.33</code>은 C28-I06과 Addon API <code>1.1.0</code> 공개 표면 37개를 구현했다. 플랫폼 계약 fixture와 검증 ZIP·upgrade·rollback·fingerprint 기록은 통과했다. 제공자 문서 commit 뒤 clean production package를 만들고, 이 애드온의 기존 Container 연결을 교체하는 G1 구현을 시작한다.</div>
+      </section>
+
+      <h2 id="hooks">단일 연결점과 애드온별 준비 callback</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>구분</th><th>인자</th><th>시점</th><th>허용</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td>WordPress action <code>oj_platform_register_addons</code></td><td><code>AddonRegistrationGatewayV1</code> 1개</td><td>core 계약 등록 후·Registry 동결 전 1회</td><td>Manifest 후보와 단일 <code>onReady()</code>의 원자 등록</td><td>Runtime 조회, DB·Container 접근</td></tr>
+            <tr><td>builder callback <code>onReady()</code></td><td><code>AddonRuntimeContextV1</code> 1개</td><td>이 Manifest가 accepted되고 정상 Runtime 준비 후 최대 1회</td><td>자기 addon Context·AI adapter 연결</td><td>추가 기여 등록, 다른 addon ID 조회</td></tr>
+          </tbody>
+        </table>
+        <pre><code>use CodingPanda\OjPlatform\AddonApi\V1\AddonRegistrationGatewayV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeContextV1;
+
+add_action('oj_platform_register_addons', [AddonBootstrap::class, 'register'], 10, 1);
+
+// register()의 AddonManifestBuilderV1 안에서 onReady()를 정확히 한 번 등록한다.
+// 플랫폼의 callback 호출 보장은 최대 한 번이며 실패 뒤 같은 부팅 재시도는 없다.</code></pre>
+        <div class="callout"><strong>핵심:</strong> WordPress 플랫폼 action은 하나뿐이다. Runtime은 조회하지 않고, 플랫폼이 accepted 애드온의 <code>onReady()</code>에 자기 전용 Context를 직접 전달한다.</div>
+      </section>
+
+      <h2 id="surface">애드온이 의존하는 공개 표면</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>표면</th><th>정확한 이름</th><th>사용 목적</th></tr></thead>
+          <tbody>
+            <tr><td>버전</td><td><code>OJ_PLATFORM_ADDON_API_VERSION</code></td><td><code>&gt;=1.1.0 &lt;2.0.0</code> 호환 preflight</td></tr>
+            <tr><td>등록</td><td><code>AddonRegistrationGatewayV1</code>, <code>AddonManifestBuilderV1</code></td><td>애드온별 원자 Manifest 후보 작성</td></tr>
+            <tr><td>페이지</td><td><code>AddonPageHandlerV1</code>, <code>AddonPageRequestV1</code>, <code>AddonPageResponseV1</code></td><td>플랫폼 shell 내부 GET 페이지</td></tr>
+            <tr><td>기여 DTO</td><td><code>AddonCapabilityDefinitionV1</code>, <code>AddonConsolePageDefinitionV1</code>, <code>AddonPublicPageDefinitionV1</code>, <code>AddonConsoleMenuDefinitionV1</code>, <code>AddonPublicMenuDefinitionV1</code>, <code>AddonAssetBundleDefinitionV1</code>, <code>AddonAiTaskDefinitionV1</code></td><td>타입이 고정된 선언</td></tr>
+            <tr><td>Runtime</td><td><code>AddonManifestBuilderV1::onReady()</code>, <code>AddonRuntimeContextV1</code>, <code>AddonRuntimeSnapshotV1</code></td><td>승인된 자기 애드온의 불변 상태와 제한 Gateway 연결</td></tr>
+            <tr><td>Context</td><td><code>AddonContextGatewayV1</code>, <code>AddonLearningContextGatewayV1</code>, <code>AddonAssignmentRosterGatewayV1</code>과 DTO</td><td>교사·학생 학습 Context, 객체 인가·snapshot, 정확한 배정 명단</td></tr>
+            <tr><td>AI</td><td><code>AddonAiTaskGatewayV1</code>, route·snapshot·request·result·<code>AddonAiTaskInstructionV1</code> DTO</td><td>선언된 AI task의 배정 확인, 격리된 instruction과 실행</td></tr>
+          </tbody>
+        </table>
+        <div class="warning callout"><strong>공개 allowlist:</strong> 위 C-28 allowlist 밖의 <code>CodingPanda\OjPlatform</code> class, 문자열 service ID, Container, Registry, repository, DB connection, SecretVault와 provider client는 애드온 의존 대상이 아니다.</div>
+      </section>
+
+      <h2 id="manifest">Manifest 등록 형태</h2>
+      <section class="panel">
+        <pre><code>public static function register(AddonRegistrationGatewayV1 $gateway): void
+{
+    $gateway-&gt;register('oj-ai-dashboard', static function (AddonManifestBuilderV1 $addon): void {
+        $addon-&gt;manifest(
+            namespace: 'oj_ai_dashboard',
+            version: OJ_AI_DASHBOARD_VERSION,
+            pluginFile: OJ_AI_DASHBOARD_FILE,
+            requiresPlatform: '&gt;=2.0.0-dev.33 &lt;3.0.0',
+            requiresAddonApi: '&gt;=1.1.0 &lt;2.0.0',
+            diagnosticLabel: 'AI 평가 애드온',
+            supportReference: 'oj-ai-dashboard/addon-api-v1'
+        );
+
+        $addon-&gt;capability(new AddonCapabilityDefinitionV1(
+            key: '@A_DS03_CAPABILITY_KEY@',
+            label: '@A_DS03_CAPABILITY_LABEL@',
+            audience: '@A_DS03_AUDIENCE@'
+        ));
+
+        $addon-&gt;consolePage(new AddonConsolePageDefinitionV1(
+            key: 'addon.oj_ai_dashboard.console.worksheets',
+            path: '/oj-console/addons/oj-ai-dashboard/worksheets',
+            handler: new WorksheetListPageHandler(),
+            capability: '@A_DS03_WORKSHEET_VIEW@',
+            assetBundles: ['addon.oj_ai_dashboard.asset.console']
+        ));
+
+        $addon-&gt;onReady(static function (AddonRuntimeContextV1 $runtime): void {
+            if ($runtime-&gt;snapshot()-&gt;status() === 'accepted') {
+                Addon_Runtime_Bridge::connect($runtime);
+            }
+        });
+    });
+}</code></pre>
+        <div class="warning callout"><strong>남은 치환 토큰:</strong> 플랫폼 최솟값은 <code>2.0.0-dev.33</code>, Addon API 범위는 <code>&gt;=1.1.0 &lt;2.0.0</code>으로 확정했다. <code>@A_DS03_*</code> capability 토큰만 G1 package 작성 전에 실제 key로 치환하며 토큰이 남은 package는 배포하지 않는다.</div>
+      </section>
+
+      <h2 id="contributions">AI 평가 애드온 기여 목록</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>종류</th><th>수량</th><th>정확한 key</th></tr></thead>
+          <tbody>
+            <tr><td>Console Page</td><td>6</td><td><code>addon.oj_ai_dashboard.console.worksheets</code>, <code>.console.worksheets.edit</code>, <code>.console.assignments</code>, <code>.console.assessments</code>, <code>.console.reports</code>, <code>.console.settings</code></td></tr>
+            <tr><td>Public Page</td><td>3</td><td><code>addon.oj_ai_dashboard.public.worksheets</code>, <code>.public.assignments.show</code>, <code>.public.results.show</code></td></tr>
+            <tr><td>Menu</td><td>6</td><td>Console <code>.menu.worksheets</code>, <code>.menu.assignments</code>, <code>.menu.assessments</code>, <code>.menu.reports</code>, <code>.menu.settings</code>와 Public <code>.public.menu.worksheets</code></td></tr>
+            <tr><td>Asset Bundle</td><td>5</td><td><code>addon.oj_ai_dashboard.asset.console</code>, <code>.asset.settings</code>, <code>.asset.worksheet_editor</code>, <code>.asset.public</code>, <code>.asset.student_worksheet</code></td></tr>
+            <tr><td>AI Task</td><td>2</td><td><code>addon.oj_ai_dashboard.worksheet_quality_assessment</code>, <code>addon.oj_ai_dashboard.student_submission_assessment</code></td></tr>
+            <tr><td>Capability</td><td>A-DS-03 확정</td><td><code>oj_oj_ai_dashboard_*</code>가 아니라 <code>oj_ai_dashboard_*</code> 형식 사용</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>원자 후보:</strong> 위 22개 고정 기여와 A-DS-03 capability 집합은 Manifest 후보 하나로 제출한다. <code>AddonAssetBundleDefinitionV1</code>의 CSS·JS 각 최대 8개 제한을 지키며, 하나라도 유효하지 않으면 승인 기여는 0개다.</div>
+      </section>
+
+      <h2 id="runtime">Runtime 연결</h2>
+      <section class="panel">
+        <pre><code>$addon-&gt;onReady(static function (AddonRuntimeContextV1 $runtime): void {
+    $snapshot = $runtime-&gt;snapshot();
+
+    if ($snapshot-&gt;status() !== 'accepted') {
+        return;
+    }
+
+    Addon_Runtime_Bridge::connect($runtime);
+});</code></pre>
+        <table>
+          <thead><tr><th>메서드·시점</th><th>결과</th><th>애드온 규칙</th></tr></thead>
+          <tbody>
+            <tr><td><code>onReady(AddonRuntimeContextV1)</code></td><td>이 애드온 전용 Runtime Context</td><td>builder당 정확히 한 번 등록하고 addon ID 조회·저장 없음</td></tr>
+            <tr><td><code>snapshot()</code></td><td>버전·상태·catalog revision·기여 수량·안전한 진단</td><td><code>accepted</code> 확인 뒤에만 Bridge ready 전이</td></tr>
+            <tr><td><code>contexts()</code></td><td><code>AddonContextGatewayV1</code>이며 learning·roster 확장 interface도 구현</td><td>플랫폼 학사 원장을 수정하지 않고 공개 Gateway만 사용</td></tr>
+            <tr><td><code>aiTasks()</code></td><td><code>AddonAiTaskGatewayV1</code></td><td>provider profile·model·비밀값을 받지 않음</td></tr>
+          </tbody>
+        </table>
+        <div class="warning callout"><strong>미승인 Manifest:</strong> rejected·incompatible·disabled 상태에는 callback이 호출되지 않는다. 해당 진단은 플랫폼 운영자용 애드온 상태 화면이 소유하며 애드온은 Registry나 DB를 우회 조회하지 않는다.</div>
+      </section>
+
+      <h2 id="contexts">학습 Context 사용</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>연산</th><th>입력</th><th>사용</th></tr></thead>
+          <tbody>
+            <tr><td><code>listTeachingContexts()</code></td><td>actor, <code>site|class|group|user</code> type filter, search, cursor, limit</td><td>교사용 배포 대상 선택기. 담당 범위와 최소 표시 정보만 수신</td></tr>
+            <tr><td><code>listLearningContexts()</code></td><td>학생 actor, type filter, search, cursor, limit</td><td>학생 본인의 active 참여 Context만 조회하고 타인 대리는 허용하지 않음</td></tr>
+            <tr><td><code>listAssignmentRoster()</code></td><td>교사 actor, Context, expected context·roster revision, cursor, limit</td><td>최대 5,000명의 active learner를 안정된 page로 고정하고 PII는 받지 않음</td></tr>
+            <tr><td><code>authorize()</code></td><td>actor, type, stable ID, <code>view|assign|evaluate|report|manage|participate</code>, 선택 learner, expected revision</td><td>메뉴·직접 URL·REST·Jobs·보고서의 객체 범위 판정</td></tr>
+            <tr><td><code>snapshot()</code></td><td>허용된 type·ID·expected revision</td><td>배정 당시 label·revision·최소 membership 사실 보존</td></tr>
+          </tbody>
+        </table>
+        <div class="warning callout"><strong>학년 처리:</strong> 학년은 별도 그룹이나 애드온 master가 아니다. Addon API 1.1은 학년 값을 보장해 제공하지 않으므로 핵심 인가·배포·보고서 분모에 사용하지 않으며, 향후 플랫폼이 optional 표시 속성으로 제공할 때만 보조 필터로 쓴다.</div>
+      </section>
+
+      <h2 id="ai">AI 작업 사용</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>메서드</th><th>입력·출력</th><th>실패 처리</th></tr></thead>
+          <tbody>
+            <tr><td><code>canRoute(taskKey)</code></td><td>배정 가능 여부·안전한 code·routing revision</td><td>불가하면 평가 요청 생성 전 차단</td></tr>
+            <tr><td><code>snapshot(taskKey)</code></td><td>provider key·model key·profile fingerprint·routing revision, 비밀값 제외</td><td>실행 이력에 snapshot 보존</td></tr>
+            <tr><td><code>execute(AddonAiTaskRequestV1)</code></td><td>task key, contract version, actor, idempotency key, 구조화 input → 구조화 output·routing snapshot·correlation ID</td><td>실패 결과를 평가 미확정으로 저장하고 자동 공개 금지</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>sourceKind와 instruction:</strong> 활동지 자체 평가는 <code>sourceKind=none</code>, 학생 제출 평가는 <code>sourceKind=addon_payload</code>다. 각 task의 불변 <code>AddonAiTaskInstructionV1</code>은 catalog·routing fingerprint에 포함되고 플랫폼 system prompt 다음, 사용자 payload 앞에 적용된다. 플랫폼은 애드온 테이블을 직접 조회하지 않는다.</div>
+        <p class="note"><a href="g2-imp-05-s04-worker-normalizer.html">G2-IMP-05-S04</a>에서 활동지 task 표시 이름과 <code>worksheet_quality.v1</code>은 유지하고 Manifest instruction을 <code>worksheet_quality_prompt.v2</code>, 2,607 bytes, SHA-256 <code>5499f44428a9e504e045fb6035c6d650bef8601a8421567095063a231e5db2cd</code>로 올렸다. v1 985 bytes와 hash는 과거 불변 증거로 보존한다.</p>
+      </section>
+
+      <h2 id="states">상태와 오류 매핑</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>Runtime status</th><th>소비자 상태</th><th>행동</th></tr></thead>
+          <tbody>
+            <tr><td><code>accepted</code></td><td><code>accepted</code></td><td>기여·Context·AI Gateway 사용</td></tr>
+            <tr><td><code>incompatible</code></td><td><code>registration_pending</code> 또는 <code>runtime_unavailable</code></td><td>callback 미호출, 업무 Route 없음, 플랫폼 상태 화면에서 버전 진단</td></tr>
+            <tr><td><code>rejected</code></td><td><code>registration_pending</code> 또는 <code>runtime_unavailable</code></td><td>callback 미호출, 기여 0개, 플랫폼 상태 화면에서 manifest 오류 확인</td></tr>
+            <tr><td><code>disabled</code></td><td><code>inactive</code></td><td>callback 미호출, 기여 제외, 설정·데이터 보존</td></tr>
+            <tr><td>callback 예외</td><td><code>runtime_unavailable</code></td><td>플랫폼은 catalog accepted와 Runtime <code>failed</code>를 분리해 <code>addon_runtime_callback_failed</code>로 진단한다. 모든 handler는 Bridge ready를 검사해 읽기·쓰기·AI를 fail closed하고 같은 부팅 재시도를 기대하지 않는다.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>안정 오류:</strong> <code>addon_api_incompatible</code>, <code>addon_platform_incompatible</code>, <code>addon_manifest_invalid</code>, <code>addon_contribution_conflict</code>, <code>addon_registration_failed</code>, <code>addon_runtime_unavailable</code>, <code>addon_runtime_callback_failed</code>, <code>addon_public_menu_unavailable</code>, <code>addon_access_denied</code>, <code>addon_capability_assignment_invalid</code>, <code>addon_context_unavailable</code>, <code>addon_context_denied</code>, <code>addon_ai_task_unroutable</code>, <code>addon_ai_task_failed</code>, <code>addon_handler_failed</code>만 업무 상태에 저장한다. exception message·class·절대 경로·비밀값은 저장하거나 학생에게 노출하지 않는다.</div>
+      </section>
+
+      <h2 id="implementation">플랫폼 구현 이관 규칙</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>시점</th><th>필수 기록</th><th>완료 증거</th></tr></thead>
+          <tbody>
+            <tr><td>C28-I01 시작</td><td>플랫폼 commit·Runtime fingerprint·core 152/128/58/19/42/AI 4 기준선</td><td>변경 전 fixture</td></tr>
+            <tr><td>C28-I02 계약 구현</td><td>공개 symbol allowlist, hook 인자, DTO field, SemVer와 API fixture</td><td>2026-08-12 재확인 통과</td></tr>
+            <tr><td>C28-I03~I05 통합</td><td>원자성·두 shell·권한·Context·AI와 AM-01 애드온별 dispatch</td><td>기존 계약 fixture 유지</td></tr>
+            <tr><td>C28-I06 구현</td><td><code>2.0.0-dev.33</code>, API <code>1.1.0</code>, 공개 symbol 37개, CG01·02·11, AJ08, LC01, RC01·02·04·05</td><td>계약 fixture 6종과 관련 단위 검사 통과</td></tr>
+            <tr><td>릴리스 관문</td><td>upgrade·rollback, package hash, 애드온 G1 소비자 인수</td><td>양쪽 HTML·changelog·fingerprint 증거</td></tr>
+          </tbody>
+        </table>
+        <div class="warning callout"><strong>같은 변경 집합:</strong> 공개 이름·signature·DTO·오류·hook timing을 바꾸는 플랫폼 변경은 C-28 HTML, 플랫폼 문서 허브·개발 순서, 이 소비자 프로필과 자동 교차 검사를 동시에 갱신해야 한다. 구현 코드만 먼저 병합하지 않는다.</div>
+      </section>
+
+      <h2 id="acceptance">소비자 계약 수용 기준</h2>
+      <section class="panel">
+        <table>
+          <thead><tr><th>ID</th><th>검증</th></tr></thead>
+          <tbody>
+            <tr><td><code>A-DS02-API-A01</code></td><td>등록 action과 <code>onReady()</code>의 이름·인자·시점이 플랫폼 C-28 AM-01과 일치</td></tr>
+            <tr><td><code>A-DS02-API-A02</code></td><td>WordPress 플랫폼 action은 <code>oj_platform_register_addons</code> 1종이며 등록된 <code>onReady()</code>가 다른 addon context를 받지 않고 최대 한 번 호출됨</td></tr>
+            <tr><td><code>A-DS02-API-A03</code></td><td>22개 고정 기여와 A-DS-03 capability가 Manifest 후보 하나에서 원자 등록</td></tr>
+            <tr><td><code>A-DS02-API-A04</code></td><td>공개 allowlist 밖 플랫폼 class·service·Registry·repository 의존 0건</td></tr>
+            <tr><td><code>A-DS02-API-A05</code></td><td>Console 6개·Public 3개 Route와 메뉴 6개가 A-DS-01 화면 ID에 연결</td></tr>
+            <tr><td><code>A-DS02-API-A06</code></td><td>교사·학생 학습 Context, 인가·snapshot과 exact roster가 세 공개 Context Gateway만 사용</td></tr>
+            <tr><td><code>A-DS02-API-A07</code></td><td>두 평가 task의 불변 instruction이 플랫폼 prompt 우선순위·fingerprint 계약에 합성</td></tr>
+            <tr><td><code>A-DS02-API-A08</code></td><td>Runtime 예상 실패는 안정 결과 DTO로 반환되고 비밀·내부 예외 비노출</td></tr>
+            <tr><td><code>A-DS02-API-A09</code></td><td>플랫폼 코드 변경 전후 core 기준 수량과 기존 전체 회귀 유지</td></tr>
+            <tr><td><code>A-DS02-API-A10</code></td><td>애드온 설치·업데이트 전후 플랫폼 source·config·migration hash 동일</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <p class="footer">이 문서는 A-DS-02·AM-01, G5-IMP-05-S04 자산 정정과 2026-08-28 Console 직접 메뉴 보완을 반영한다. 현재 Manifest 정본은 Page 9·Menu 6·Asset Bundle 5·AI Task 2이며 플랫폼 공개 API 변화는 0이다.</p>
+    </main>
+  </div>
+</body>
+</html>

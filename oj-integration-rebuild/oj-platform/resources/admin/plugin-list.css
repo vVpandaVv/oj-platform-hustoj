@@ -1,0 +1,4 @@
+/* Presentation only: retain WordPress dependency validation and action guards. */
+#the-list > tr[data-plugin="oj-platform/oj-platform.php"] .required-by {
+  display: none;
+}

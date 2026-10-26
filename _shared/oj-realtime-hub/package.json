@@ -1,0 +1,12 @@
+{
+  "name": "oj-realtime-hub",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Shared realtime host with independently installed OJ addon adapters",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "engines": { "node": ">=24" },
+  "scripts": { "test": "node --test test/*.test.js" },
+  "dependencies": { "ws": "8.22.0" },
+  "license": "GPL-2.0-or-later"
+}

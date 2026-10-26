@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C-28 범용 애드온 확장 API | OJ Platform</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17212b;
+      --muted: #596674;
+      --line: #d7dee5;
+      --surface: #ffffff;
+      --soft: #f3f6f8;
+      --primary: #0f766e;
+      --primary-soft: #e5f5f2;
+      --warning: #9a5b08;
+      --warning-soft: #fff5dd;
+      --danger: #a33a3a;
+      --danger-soft: #fff0f0;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: #eef2f4;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+    a { color: #0b6861; }
+    a:focus-visible { outline: 3px solid #f0b44c; outline-offset: 3px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { color: #174e49; }
+    .skip-link {
+      position: fixed;
+      left: 12px;
+      top: -48px;
+      z-index: 10;
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    .skip-link:focus { top: 12px; }
+    .topbar {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px;
+      border-bottom: 1px solid #bcc7cf;
+      background: #18242d;
+      color: #fff;
+    }
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 5px;
+      background: #d7f0ec;
+      color: #164e49;
+      font-weight: 900;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      width: min(1440px, 100%);
+      margin: 0 auto;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      max-height: 100vh;
+      overflow: auto;
+      padding: 28px 20px;
+      border-right: 1px solid var(--line);
+      background: #f8fafb;
+    }
+    nav strong { display: block; margin-bottom: 10px; font-size: 13px; }
+    nav ul { margin: 0; padding: 0; list-style: none; }
+    nav li + li { margin-top: 3px; }
+    nav a {
+      display: block;
+      padding: 6px 8px;
+      border-radius: 4px;
+      color: #36434f;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    nav a:hover { background: #e9eef1; color: #0b5f59; }
+    main { min-width: 0; padding: 36px clamp(24px, 5vw, 72px) 64px; }
+    .report-header, .section {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    .report-header {
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--primary);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.2; letter-spacing: 0; }
+    h2 { margin: 0; font-size: 21px; letter-spacing: 0; }
+    h3 { margin: 0 0 6px; font-size: 16px; letter-spacing: 0; }
+    .lede { max-width: 850px; margin: 12px 0 0; color: var(--muted); }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .badge {
+      display: inline-flex;
+      min-height: 27px;
+      align-items: center;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: #3d4b57;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .badge.good { background: var(--primary-soft); color: #0b5f59; }
+    .badge.wait { background: var(--warning-soft); color: var(--warning); }
+    .section { padding-top: 34px; }
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 12px;
+    }
+    .section-heading p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+    .panel, .callout, .warning, .risk {
+      padding: 17px 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .callout { border-left: 4px solid var(--primary); }
+    .warning { border-left: 4px solid #d49325; background: var(--warning-soft); }
+    .risk { border-left: 4px solid var(--danger); background: var(--danger-soft); }
+    .panel p:first-child, .callout p:first-child { margin-top: 0; }
+    .panel p:last-child, .callout p:last-child { margin-bottom: 0; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .metric {
+      min-height: 108px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .metric strong { display: block; margin-bottom: 5px; color: #0b5f59; font-size: 19px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+    table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    th, td { padding: 11px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #f4f7f8; color: #35424e; font-size: 12px; }
+    td { font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    pre {
+      overflow: auto;
+      margin: 0;
+      padding: 18px;
+      border: 1px solid #273640;
+      border-radius: var(--radius);
+      background: #17242d;
+      color: #e6f1f0;
+      line-height: 1.75;
+    }
+    .flow { display: grid; gap: 8px; }
+    .flow article {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .flow article span {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border-radius: 50%;
+      background: #dcece9;
+      color: #0b5f59;
+      font-weight: 900;
+    }
+    .flow article p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+    .checks { margin: 0; padding-left: 22px; }
+    .checks li + li { margin-top: 8px; }
+    footer { max-width: 1080px; margin: 36px auto 0; color: var(--muted); font-size: 12px; text-align: center; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--line); }
+      nav ul { display: flex; flex-wrap: wrap; gap: 4px; }
+      nav li + li { margin-top: 0; }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .topbar { padding: 0 14px; }
+      main { padding: 22px 14px 48px; }
+      .report-header { padding: 22px 18px; }
+      .section-heading { align-items: start; flex-direction: column; }
+    }
+    @media print {
+      body { background: #fff; }
+      .topbar, nav, .skip-link { display: none; }
+      .layout { display: block; }
+      main { padding: 0; }
+      .report-header, .section { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="topbar">
+    <span class="brand-mark" aria-hidden="true">OJ</span>
+    <strong>OJ Platform 개발 설계</strong>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="문서 목차">
+      <strong>C-28 목차</strong>
+      <ul>
+        <li><a href="#decision">요구와 판정</a></li>
+        <li><a href="#evidence">현재 코드 근거</a></li>
+        <li><a href="#change-control">변경 통제</a></li>
+        <li><a href="#terms">용어와 자동 등록</a></li>
+        <li><a href="#target">목표 경계</a></li>
+        <li><a href="#lifecycle">등록 생명주기</a></li>
+        <li><a href="development-c-28-addon-onready-migration.html">onReady 전환 안내서(AM-01)</a></li>
+        <li><a href="#manifest">Manifest v1</a></li>
+        <li><a href="development-c-28-addon-api-v1-contract.html">API v1 정확한 계약·이관</a></li>
+        <li><a href="development-c-28-addon-api-v1-release-evidence.html">API 1.1 릴리스 증거</a></li>
+        <li><a href="#contributions">기여 계약</a></li>
+        <li><a href="#runtime-gateways">권한·컨텍스트·AI Gateway</a></li>
+        <li><a href="#a-ds06-context-gap">A-DS-06 Context 인수 공백</a></li>
+        <li><a href="#a-ds07-ai-job-gap">A-DS-07 AI 인수 기록</a></li>
+        <li><a href="#public-menu">PublicUI 메뉴 합성</a></li>
+        <li><a href="#security">격리와 보안</a></li>
+        <li><a href="#compatibility">버전과 오류</a></li>
+        <li><a href="#counts">수량·버전 계약</a></li>
+        <li><a href="#traceability">양방향 추적</a></li>
+        <li><a href="#implementation">구현 순서</a></li>
+        <li><a href="#gates">완료 관문</a></li>
+        <li><a href="#status">결정 상태</a></li>
+      </ul>
+    </nav>
+
+    <main id="main">
+      <header class="report-header" id="decision">
+        <p class="eyebrow">C-28 · Post-freeze Platform Change</p>
+        <h1>범용 애드온 확장 API</h1>
+        <p class="lede">외부 애드온의 관리자 기능은 OJ Console에, 로그인 사용자 기능은 PublicUI에 네이티브로 통합하기 위한 플랫폼 제공자 측 변경 설계다. AI 평가 기능을 플랫폼 본체에 넣지 않고, 모든 지원 애드온이 사용할 수 있는 등록·권한 선언·학사 컨텍스트 판정·AI 작업 실행 계약만 플랫폼이 소유한다.</p>
+        <div class="meta">
+          <span class="badge">보완일 2026-08-10</span>
+          <span class="badge good">요구사항 6건 반영</span>
+          <span class="badge good">확장 API v1 상세 설계 승인</span>
+          <span class="badge good">C28-API-V1-LOCK-01 정의</span>
+          <span class="badge">현재 oj-platform 2.0.0-dev.33</span>
+          <span class="badge good">C28-I01~I06 구현 완료</span>
+          <span class="badge good">AM-01·AM-02 계약 개정 반영</span>
+        </div>
+      </header>
+
+      <div class="callout"><strong>C28-I06 현재 상태:</strong> 제품 <code>2.0.0-dev.33</code>, Addon API <code>1.1.0</code>, 공개 interface 8개·DTO 28개·권한 utility 1개(총 37개)를 구현했다. CG01·CG02·CG11·AJ08·LC01·RC01·RC02는 코드와 fixture로 닫았고 CG03은 학년 미제공, RC04는 역할 전용, RC05는 GET 전용으로 정합화했다. 47개 회귀 script, 91-file source fingerprint, upgrade·rollback과 검증 ZIP hash는 <a href="development-c-28-addon-api-v1-release-evidence.html">릴리스 증거서</a>에 고정했으며 clean production build와 G1 소비자 인수가 남아 있다.</div>
+
+      <div class="callout"><strong>정확한 공개 계약:</strong> 구현자는 <a href="development-c-28-addon-api-v1-contract.html"><code>C28-API-V1-LOCK-01</code> Addon API v1 정확한 계약 및 구현 이관서</a>의 namespace·interface·DTO·hook timing·오류·SemVer를 사용한다. 이 문서는 변경 배경과 아키텍처 원본이며 두 문서가 다르면 정확한 공개 signature는 계약 이관서를 우선한다.</div>
+
+      <section class="section">
+        <div class="grid">
+          <div class="metric"><strong>C28-R01</strong><span>AI 평가 애드온은 별도 WordPress 관리자 메뉴가 아니라 OJ Console 내부 메뉴와 경로를 사용한다.</span></div>
+          <div class="metric"><strong>C28-R02</strong><span>플랫폼 코드 변경은 같은 작업의 HTML 개발 문서, 추적 ID와 검증 관문에 반드시 함께 반영한다.</span></div>
+          <div class="metric"><strong>C28-R03</strong><span>Console과 PublicUI 기여를 분리 선언하고, 활성 애드온이 명시한 사용자 메뉴만 PublicUI에 기본 등록한다.</span></div>
+          <div class="metric"><strong>C28-R04</strong><span>애드온 capability는 manifest로 선언하고 플랫폼의 기존 역할 권한 관리에서 명시적으로 배정한다. 사용자 직접 capability 배정은 v1 비범위다.</span></div>
+          <div class="metric"><strong>C28-R05</strong><span>사용자·학급·그룹·담당 관계는 플랫폼 원장을 사용하며 애드온에는 범위가 제한된 context authorization 계약만 제공한다.</span></div>
+          <div class="metric"><strong>C28-R06</strong><span>애드온 AI task type은 기존 <code>운영 &gt; AI 작업 배정</code>에 합성하고 provider·비밀값·model routing은 플랫폼이 계속 소유한다.</span></div>
+          <div class="metric"><strong>현재 판정</strong><span>C28-I06 구현은 완료됐고 release candidate 검증이 진행 중이다. 애드온 구현은 이 공개 계약만 소비하며 플랫폼 파일을 수정하지 않는다.</span></div>
+        </div>
+      </section>
+
+      <section class="section" id="evidence">
+        <div class="section-heading"><div><h2>현재 코드 근거</h2><p>추측이 아니라 현재 플랫폼의 부팅과 Registry 구현을 기준으로 변경 필요성을 고정한다.</p></div><span class="badge good">읽기 완료</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>근거</th><th>현재 사실</th><th>설계 영향</th></tr></thead>
+          <tbody>
+            <tr><td><a href="../oj-platform.php">플러그인 진입점</a><br><a href="../src/Kernel/Bootstrap.php">Kernel Bootstrap</a></td><td>플랫폼은 <code>plugins_loaded</code> 우선순위 1에서 Composition Root를 부팅한다.</td><td>애드온 파일이 등록 callback을 선언한 뒤 플랫폼 부팅 중 등록 창을 열 수 있다. 애드온이 일반 <code>plugins_loaded</code> 후속 callback에서 등록하면 늦다.</td></tr>
+            <tr><td><a href="../src/Kernel/Boot/Kernel.php">Kernel</a></td><td>모듈 등록 뒤 모든 Registry를 검증·동결하고 Adapter를 연결한다.</td><td>외부 기여는 검증·동결보다 먼저 수집되어야 하며, 준비 완료 이벤트만으로는 메뉴·경로를 추가할 수 없다.</td></tr>
+            <tr><td><a href="../src/Kernel/Composition/CompositionRoot.php">Composition Root</a><br><a href="../src/Kernel/Registry/DefinitionRegistry.php">DefinitionRegistry</a></td><td>내부 Registry와 Container는 class key로 조립되고 부팅이 끝나면 변경할 수 없다.</td><td>Container 또는 내부 Registry를 외부에 노출하지 않는 별도 공개 Facade가 필요하다.</td></tr>
+            <tr><td><a href="../src/Kernel/Registry/FoundationContractValidator.php">FoundationContractValidator</a></td><td>Route·Menu·Capability 소유자는 내부 ModuleManifest에 존재해야 하고 참조 무결성을 함께 검사한다.</td><td>외부 애드온을 내부 모듈처럼 같은 Registry에 직접 삽입하면 고정 모듈 소유권과 수량 계약이 깨진다.</td></tr>
+            <tr><td><a href="../modules/AdminConsole/Module.php">AdminConsole Module</a><br><a href="../modules/AdminConsole/Application/MenuTree.php">MenuTree</a></td><td>관리 메뉴는 플랫폼 config에서 내부 Registry에 등록되고 외부 WordPress filter나 action을 제공하지 않는다.</td><td>별도 WordPress 메뉴를 피하려면 검증된 애드온 메뉴를 Console resolver에 합성하는 공식 경로가 필요하다.</td></tr>
+            <tr><td><a href="../modules/PublicUi/Application/PublicMenuSettingsService.php">PublicMenuSettingsService</a><br><a href="../modules/PublicUi/Presentation/Console/PublicMenuSettingsPageHandler.php">사용자 메뉴 관리 화면</a></td><td>PublicUI 메뉴는 <code>public_menu</code> 설정과 core Route Registry만 사용한다. Route를 추가해도 메뉴가 자동 생성되지 않으며 운영자가 저장한 메뉴 배열과 기본 메뉴가 분리되지 않는다.</td><td>애드온 Public Route Catalog와 Public Menu Catalog를 명시적으로 받고, 기존 저장 배열을 변경하지 않는 별도 override 합성 계층이 필요하다.</td></tr>
+            <tr><td><a href="../config/capabilities.php">capability 설정</a><br><a href="../modules/Permission/Contract/CapabilityDefinition.php">CapabilityDefinition</a></td><td>플랫폼 capability는 core config와 Permission 계약에 고정되어 있고 외부 선언·권한 관리 합성 지점이 없다.</td><td>애드온 전용 WordPress 역할을 만들지 않으려면 선언된 capability를 별도 Catalog로 검증하고 기존 역할 권한 관리에 명시적 배정 대상으로 합성해야 한다.</td></tr>
+            <tr><td><a href="../modules/Classes/Application/ClassRepository.php">ClassRepository</a><br><a href="../modules/Groups/Application/GroupRepository.php">GroupRepository</a></td><td>학급·그룹과 담당 관계는 플랫폼 모듈이 소유하지만 외부 애드온이 사용할 수 있는 조회·인가 계약은 없다.</td><td>내부 repository를 노출하지 않고 actor·대상·operation을 받는 최소 context gateway와 안전한 snapshot DTO가 필요하다.</td></tr>
+            <tr><td><a href="../modules/Settings/Application/AiProviderCatalog.php">AiProviderCatalog</a><br><a href="../modules/Settings/Presentation/Console/AiTaskRoutingPageHandler.php">AI 작업 배정 화면</a><br><a href="../src/Shared/Ai/AiTaskRouter.php">AiTaskRouter</a></td><td>플랫폼은 4개 core task type, provider profile·비밀값, 주·대체 routing과 <code>canRoute</code>·<code>snapshot</code>·<code>execute</code>를 이미 소유하지만 화면은 고정 <code>TASK_TYPES</code>만 순회한다.</td><td>core 4개를 유지하는 Composite AI Task Catalog와 승인된 애드온 task만 호출할 수 있는 공개 runtime gateway가 필요하다.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong><code>oj_platform_register_addons</code> 하나만으로는 부족하다.</strong> 이 action은 Registry 동결 전에 Route·Menu·capability·asset·AI task를 등록하는 창이다. Runtime Ready 뒤의 준비 완료 통지는 <strong>별도 action이 아니라</strong>, 같은 builder에서 <code>onReady(callable $callback)</code>으로 등록한 애드온별 callback을 직접 호출하는 방식으로 전달한다(AM-01, <a href="development-c-28-addon-onready-migration.html">전환 안내서</a>). 등록 action과 onReady callback 모두 Container나 내부 Registry를 전달하지 않는다.</div>
+      </section>
+
+      <section class="section" id="change-control">
+        <div class="section-heading"><div><h2>사후 변경 통제</h2><p>DS-16의 기존 동결 결정을 덮어쓰지 않고 새로운 변경 근거와 구현 관문을 누적한다.</p></div><span class="badge wait">C-28</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>적용 규칙</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td>원본 동결</td><td>DS16-Q01~Q06, 기본 GET 152개·Action 128개·Menu 58개·Table 42개를 플랫폼 기본 계약으로 유지한다.</td><td>애드온 요구를 이유로 기존 수량과 소유권을 설명 없이 덮어쓰기</td></tr>
+            <tr><td>변경 원본</td><td>플랫폼 아키텍처는 이 문서, 정확한 공개 signature는 <a href="development-c-28-addon-api-v1-contract.html">C28-API-V1-LOCK-01</a>, 애드온 생명주기·소비는 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>, capability·객체 판정은 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-03-access-policy.html">A-DS-03 권한 정책 동결</a>, AI 연결·평가 설정은 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-04-settings-ai-connection.html">A-DS-04 설정·연결 정책 동결</a>, 저장 경계는 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-05-addon-database.html">A-DS-05 데이터베이스 동결</a>, Context 소비자 상세안은 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-06-platform-ledger-connector.html">A-DS-06 플랫폼 원장 Connector 동결</a>, AI 실행 소비자 상세안은 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-07-ai-job-execution.html">A-DS-07 AI 작업 실행·큐 초안</a>을 원본으로 사용한다.</td><td>문서마다 다른 Hook·버전·DTO·실패 정책 기록</td></tr>
+            <tr><td>동시 갱신</td><td>공개 API 코드, 테스트, 버전 상수, 릴리스 조건을 바꾸는 커밋은 이 HTML과 문서 허브·개발 순서를 함께 갱신한다.</td><td>코드만 먼저 병합하고 문서를 후속 작업으로 남김</td></tr>
+            <tr><td>구현 진입</td><td>C28-D01~D11의 이름·입력·출력·오류·버전·수량 계약과 테스트 fixture를 승인한 뒤 구현한다.</td><td>현재 <code>Oj_Console_Connector</code>의 문자열 service 기대를 플랫폼 API로 간주</td></tr>
+            <tr><td>릴리스</td><td>플랫폼 버전과 애드온 API 버전을 각각 명시하고 호환 행렬·업그레이드·롤백 결과를 기록한다.</td><td>플랫폼 제품 버전만 비교하거나 API 변경을 patch 버전에 숨김</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="section" id="terms">
+        <div class="section-heading"><div><h2>용어와 자동 등록의 의미</h2><p>Console 등록, PublicUI 등록과 실제 사용자 노출을 서로 다른 계약으로 구분한다.</p></div><span class="badge good">C28-R03</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>용어</th><th>의미</th><th>자동 처리</th></tr></thead>
+          <tbody>
+            <tr><td>OJ Console</td><td>관리자·교사가 제작, 배포, 평가와 운영을 수행하는 플랫폼 관리 shell</td><td>manifest의 <code>console_routes</code>와 <code>console_menus</code>만 합성</td></tr>
+            <tr><td>PublicUI</td><td>로그인한 학생·일반 사용자가 학습 기능을 사용하는 플랫폼 사용자 shell</td><td>manifest의 <code>public_routes</code>와 <code>public_menus</code>만 합성</td></tr>
+            <tr><td>별도 등록</td><td>한 애드온 manifest 안에서 Console과 PublicUI 기여를 독립된 목록으로 선언하는 것</td><td>두 번 설치하거나 플랫폼 파일을 두 번 수정한다는 의미가 아님</td></tr>
+            <tr><td>자동 등록</td><td>활성 애드온의 호환 manifest가 승인되면 선언된 기여가 해당 요청의 Composite Catalog에 들어가는 것</td><td>운영자가 Route나 메뉴를 수동으로 다시 만들 필요 없음</td></tr>
+            <tr><td>자동 노출</td><td><code>default_enabled=true</code>, 유효한 부모, 수량 제한과 사용자 접근 정책을 모두 통과한 Public 메뉴를 표시하는 것</td><td>모든 사용자에게 무조건 보이는 동작이 아니며 권한 판정은 항상 마지막에 적용</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>핵심 구분:</strong> Console 메뉴를 PublicUI로 자동 복제하지 않는다. 애드온 활성화는 manifest에 각각 명시된 두 기여를 한 번에 등록할 뿐이며, 사용자 메뉴 표시 여부는 PublicUI 기본값·운영자 override·현재 사용자 접근 정책을 차례로 적용한다.</div>
+      </section>
+      <section class="section" id="target">
+        <div class="section-heading"><div><h2>목표 아키텍처 경계</h2><p>플랫폼의 고정 내부 모듈, 외부 애드온 기여와 세 개의 공개 runtime 계약을 서로 다른 소유 단위로 유지한다.</p></div><span class="badge good">C28-D01~D11</span></div>
+        <pre><code>oj-platform core
+  |-- ModuleManifest + core DefinitionRegistry             [기존 고정 계약]
+  |-- Addon API v1 Contract                                [공개·버전형]
+  |-- AddonCandidateCollector + ContributionValidator
+  |-- AcceptedAddonCatalog                                 [애드온별 원자 결과]
+  |   |-- Console/Public Route·Menu / Asset / Status
+  |   |-- AddonCapabilityDefinition                        [D09]
+  |   +-- AddonAiTaskDefinition                            [D11]
+  |-- Composite Route·Menu·Capability·AI Task Catalog
+  |-- 애드온별 onReady(callable) 직접 dispatch               [AM-01, 전역 facade 없음]
+  |   +-- AddonRuntimeContextV1                             [addon마다 별개 인스턴스]
+  |       |-- AddonRuntimeSnapshotV1
+  |       |-- AddonContextGatewayV1               [D10]
+  |       +-- AddonAiTaskGatewayV1                          [D11]
+  +-- AddonSystemStatusProvider                            [시스템 상태의 후보·승인·비호환·거부 요약]
+
+oj-ai-dashboard
+  |-- 플러그인 파일 로드 시 registration callback 선언
+  |-- 하나의 manifest에 Console/PublicUI, capability, AI task를 원자 제출
+  |-- 애드온 데이터·REST·평가 정책·루브릭·검토·공개를 자체 소유
+  |-- 플랫폼 식별자와 context snapshot만 참조
+  +-- AI 입력·결과 schema를 소유하되 provider 비밀값과 routing을 저장하지 않음</code></pre>
+        <div class="callout"><strong>소유권 원칙:</strong> 플랫폼은 사용자·학급·그룹 원장, capability 배정, AI provider profile·비밀값·model routing과 공개 gateway를 소유한다. 애드온은 AI 평가 도메인, Plate, <code>oj_ai_*</code> 테이블, 평가 실행 요청·결과와 교사 검토를 소유한다. 어느 쪽도 상대의 내부 Container, repository, config 또는 비밀 저장소를 직접 조회하지 않는다.</div>
+      </section>
+
+      <section class="section" id="lifecycle">
+        <div class="section-heading"><div><h2>등록 생명주기</h2><p>모든 활성 플러그인 파일이 로드된 뒤, core 계약 등록과 Registry 동결 사이에 한 번의 수집·검증 창을 둔다.</p></div><span class="badge good">C28-D01 확정</span></div>
+        <div class="flow">
+          <article><span>1</span><div><strong>애드온 callback 선언</strong><p>애드온 root 파일은 로드 시 <code>oj_platform_register_addons</code> callback 하나만 등록한다. Runtime 준비 callback은 별도 action이 아니라 이 callback 안에서 <code>builder-&gt;onReady(...)</code>로 함께 등록한다(AM-01). 이 시점에 플랫폼 class를 생성하거나 Registry를 조회하지 않는다.</p></div></article>
+          <article><span>2</span><div><strong>core 계약 등록</strong><p>플랫폼은 <code>plugins_loaded</code> 우선순위 1에서 부팅하고 기존 Module의 <code>register()</code>를 완료한다. 이 단계의 core Registry는 기존 계약대로 유지한다.</p></div></article>
+          <article><span>3</span><div><strong>등록 창 실행</strong><p>Registry 동결 직전에 action <code>oj_platform_register_addons</code>을 한 번 발행하고 변경 가능한 내부 Registry 대신 <code>AddonRegistrationGatewayV1</code> 하나만 전달한다.</p></div></article>
+          <article><span>4</span><div><strong>후보 manifest 수집</strong><p>각 callback은 <code>gateway.register(addon_id, builder)</code> 안에서 manifest 전체를 작성한다. builder의 예외와 DTO 오류는 Gateway가 잡아 해당 애드온 후보만 <code>rejected</code>로 기록한다.</p></div></article>
+          <article><span>5</span><div><strong>전체 집합 검증·원자 승인</strong><p>후보를 애드온 ID와 기여 key로 정렬한 뒤 core 충돌, addon 간 충돌, 참조, 수량과 버전을 검증한다. core와 충돌한 애드온은 거부하고, 같은 key·path를 낸 애드온끼리는 순서에 관계없이 모두 거부한다.</p></div></article>
+          <article><span>6</span><div><strong>동결·Runtime 연결</strong><p>승인된 애드온별 기여 전체를 하나의 불변 Catalog로 commit하고 core Catalog와 읽기 전용으로 합성한다. Route, Console 메뉴와 PublicUI 메뉴는 이 결과만 읽는다.</p></div></article>
+          <article><span>7</span><div><strong>애드온별 Runtime 준비 dispatch (AM-01)</strong><p>Runtime Ready 뒤, accepted된 애드온마다 그 애드온이 <code>onReady()</code>로 등록한 callback을 이 애드온 전용 <code>AddonRuntimeContextV1</code> 하나와 함께 plain PHP 함수 호출로 최대 한 번 실행한다. WordPress action으로 방송하지 않으므로 다른 애드온이 이 호출을 가로채거나 남의 context를 받을 수 없다. 애드온은 snapshot·Context·AI 작업만 사용하며 임의 service 조회와 추가 등록은 할 수 없다. manifest가 승인되지 못한 애드온의 <code>onReady</code>는 호출되지 않는다. Context 생성·callback 예외는 격리하지만 이미 합성된 기여는 유지되고 같은 부팅에서 재시도하지 않으므로 소비자는 자체 Bridge ready를 별도로 검사한다.</p></div></article>
+        </div>
+        <div class="callout"><strong><code>C28-I06-LC01</code> 구현:</strong> callback 예외 뒤에도 catalog·Route·Menu는 accepted 상태로 남고 같은 부팅에서 자동 재호출하지 않는다. 별도 내부 readiness는 <code>pending|ready|failed|not_required</code>를 기록하며 운영 상태에는 안전한 <code>addon_runtime_callback_failed</code>만 표시한다. 소비자는 여전히 자체 Bridge ready를 모든 진입점에서 fail closed한다.</div>
+        <div class="warning"><strong>예외 격리의 현실적 경계:</strong> 애드온은 모든 manifest 작성 작업을 <code>gateway.register()</code> builder 안에서 수행해야 한다. Gateway 밖에서 플러그인 callback 자체가 PHP 실행을 중단시키는 행위까지 플랫폼이 sandbox할 수는 없으므로 이는 API 위반이며, 플랫폼 Error Boundary는 core 부팅 복구와 안전한 상태 기록까지만 보장한다.</div>
+        <div class="risk"><strong>AM-01 (2026-08-11):</strong> 이전 설계의 <code>oj_platform_loaded(AddonRuntimeGatewayV1 $gateway)</code>는 모든 애드온 callback에 같은 전역 Gateway를 넘겨 <code>forAddon()</code>에 임의 addon ID를 넣으면 다른 애드온의 Runtime Context를 받을 수 있는 애드온 간 impersonation 결함을 갖고 있었다. 이 설계를 폐기하고 애드온별 직접 callback dispatch로 교체했다. 배경과 소비자 전환 절차는 <a href="development-c-28-addon-api-v1-contract.html#amendments">계약 개정 기록</a>과 <a href="development-c-28-addon-onready-migration.html">onReady 전환 안내서</a>에 있다.</div>
+      </section>
+
+      <section class="section" id="manifest">
+        <div class="section-heading"><div><h2>Addon Manifest v1</h2><p>한 애드온의 식별·호환·화면·메뉴·권한·자산을 한 번에 검증하고 한 번에 승인하거나 거부한다.</p></div><span class="badge good">C28-D02 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>필드</th><th>v1 계약</th><th>AI 활동지 예시</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>WordPress plugin slug와 같은 <code>^[a-z][a-z0-9-]{2,63}$</code>, 설치 안에서 고유</td><td><code>oj-ai-dashboard</code></td></tr>
+            <tr><td><code>namespace</code></td><td>기여 key용 <code>^[a-z][a-z0-9_]{2,63}$</code>, 모든 key는 <code>addon.{namespace}.</code>로 시작</td><td><code>oj_ai_dashboard</code></td></tr>
+            <tr><td><code>version</code></td><td>애드온 SemVer</td><td>애드온 릴리스 버전</td></tr>
+            <tr><td><code>requires.platform</code></td><td>플랫폼 제품 SemVer 범위, prerelease는 명시적으로 포함</td><td>C-28 제공 릴리스 이상·3.0.0 미만</td></tr>
+            <tr><td><code>requires.addon_api</code></td><td>Addon API SemVer 범위</td><td><code>^1.0</code></td></tr>
+            <tr><td><code>contributions</code></td><td>Console/Public Route·Menu, capability 정의·참조, AI task 정의와 route별 asset</td><td>교사용 OJ Console + 학생용 활동지 PublicUI + 평가 task 2종</td></tr>
+            <tr><td><code>diagnostics</code></td><td>비밀값 없는 애드온 상태 label과 지원 문서 식별자</td><td>AI Provider 상태는 요약 코드만 제공</td></tr>
+          </tbody>
+        </table></div>
+        <pre><code>use CodingPanda\OjPlatform\AddonApi\V1\AddonManifestBuilderV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRegistrationGatewayV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeContextV1;
+
+add_action('oj_platform_register_addons', static function (AddonRegistrationGatewayV1 $gateway): void {
+    $gateway-&gt;register('oj-ai-dashboard', static function (AddonManifestBuilderV1 $addon): void {
+        $addon-&gt;manifest(
+            namespace: 'oj_ai_dashboard',
+            version: OJ_AI_DASHBOARD_VERSION,
+            pluginFile: OJ_AI_DASHBOARD_FILE,
+            requiresPlatform: '&gt;=2.0.0-dev.33 &lt;3.0.0', // Addon API 1.1 최초 제공 하한
+            requiresAddonApi: '^1.0',
+            diagnosticLabel: 'AI 평가 애드온',
+            supportReference: 'oj-ai-dashboard/addon-api-v1'
+        );
+
+        // 정확한 기여 DTO와 전체 소비자 profile은 C28-API-V1-LOCK-01을 따른다.
+
+        // AM-01: Runtime 준비 callback은 별도 action이 아니라 같은 builder에서
+        // onReady()로 등록한다. 이 callback은 오직 'oj-ai-dashboard'만을 위해
+        // 생성된 AddonRuntimeContextV1 하나와 함께, manifest가 accepted로
+        // 승인되고 Runtime Context 생성까지 성공한 경우 최대 한 번 호출된다.
+        $addon-&gt;onReady(static function (AddonRuntimeContextV1 $runtime): void {
+            if ($runtime-&gt;snapshot()-&gt;status() === 'accepted') {
+                OjAiDashboardRuntimeBridge::connect($runtime);
+            }
+        });
+    });
+}, 10, 1);</code></pre>
+        <div class="callout"><strong>정확한 signature:</strong> 공개 namespace·class·interface·DTO field·named argument는 <a href="development-c-28-addon-api-v1-contract.html#api-v1-contract"><code>C28-API-V1-LOCK-01</code></a>에서 정의했다. C28-I02는 이를 새로 결정하는 단계가 아니라 그대로 구현·reflection 검증하는 단계다. 정확한 플랫폼 최초 제공 제품 버전은 <strong>2.0.0-dev.33</strong>, Addon API 하한은 <strong>1.1.0</strong>으로 확정했다. 위 <code>onReady()</code> 통합 지점은 AM-01에서 <code>oj_platform_loaded</code>/<code>AddonRuntimeGatewayV1</code>을 대체했다 — 기존 코드를 이 형태로 옮기는 절차는 <a href="development-c-28-addon-onready-migration.html">onReady 전환 안내서</a>를 따른다.</div>
+        <div class="callout"><strong>확정 소비자 하한:</strong> Addon API 1.1 기능을 사용하는 애드온은 <code>requiresPlatform &gt;=2.0.0-dev.33 &lt;3.0.0</code>과 <code>requiresAddonApi &gt;=1.1.0 &lt;2.0.0</code>을 선언한다. 접두어 없는 버전 토큰은 exact match이므로 범위 하한의 <code>&gt;=</code>를 생략하지 않는다.</div>
+      </section>
+      <section class="section" id="contributions">
+        <div class="section-heading"><div><h2>애드온 기여 계약</h2><p>API v1은 두 사용자 shell, 명시적 capability, AI task routing 통합에 필요한 최소 선언 표면만 제공한다.</p></div><span class="badge good">C28-D02·D05·D09·D11</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>기여</th><th>필수 내용</th><th>플랫폼 검증</th><th>v1 제한</th></tr></thead>
+          <tbody>
+            <tr><td>Console Route</td><td>namespaced key, <code>/oj-console/addons/{addon-id}</code> prefix, GET, handler, capability, asset key</td><td>core·addon key/path 충돌, 인증 HTML, path parameter 형식, handler·asset 참조</td><td>OJ Console shell로 감싸며 파일 응답·POST는 받지 않음</td></tr>
+            <tr><td>Public Route</td><td>namespaced key, <code>/oj-addons/{addon-id}</code> prefix, GET, handler, capability, asset key</td><td>로그인 필수, PublicUI HTML, direct URL과 메뉴의 동일 접근 판정</td><td>목록·상세 Route 모두 허용하되 메뉴 대상 Route는 path parameter가 없어야 함</td></tr>
+            <tr><td>Console Menu</td><td>namespaced key, label, Console Route, 허용된 core anchor, order</td><td>route 참조, 부모·순환·중복, capability와 handler 가용성</td><td>v1은 core가 공개한 anchor 아래 2차 메뉴만 허용</td></tr>
+            <tr><td>Public Menu</td><td>namespaced key, label, Public Route, core root parent, order, scope, mobile, <code>default_enabled</code></td><td>Public Route 참조, parameter 0개, 부모 존재, 최대 수량, 접근 정책</td><td>v1은 새 1차 메뉴를 만들지 않고 기존 root 아래 2차 메뉴만 허용</td></tr>
+            <tr><td>Authorization</td><td>애드온 capability의 key·label·audience와 Route별 AND 요구 조건</td><td><code>{addon_namespace}_*</code>, 중복·참조, 메뉴·GET의 동일 fail-closed 판정</td><td>플랫폼이 기존 역할 권한 화면에 명시적 배정 대상으로 합성한다. 애드온 역할 생성과 자동 광역 부여는 금지</td></tr>
+            <tr><td>AI Task</td><td>namespaced task key, 운영 label, input contract version, submission source 필요 여부</td><td>core·addon task 충돌, 승인 addon 소유권, label·contract·source 형식</td><td>평가 정책·prompt·결과 schema는 애드온 소유이며 provider profile·model·fallback은 플랫폼 소유</td></tr>
+            <tr><td>Page Handler</td><td>공개 <code>AddonPageHandlerV1</code>과 제목·본문·상태를 담는 <code>AddonPageResponseV1</code></td><td>등록 객체 타입, route별 단일 handler, 예외와 잘못된 응답 격리</td><td>플랫폼 Container·Responder를 전달하지 않고 플랫폼이 최종 shell을 렌더링</td></tr>
+            <tr><td>Assets</td><td>namespaced handle, <code>pluginFile</code> 기준 상대 경로, version, dependency, 적용 Route</td><td>상대 경로·확장자, 중복 handle, manifest 참조, route 범위</td><td>등록된 애드온 Route에서만 enqueue하며 외부 URL·인라인 script/style은 받지 않음</td></tr>
+            <tr><td>Status</td><td><code>accepted</code>, <code>incompatible</code>, <code>rejected</code>, <code>disabled</code>와 안전한 진단 코드</td><td>비밀값·절대 경로·stack trace 제거, 관리자만 상세 확인</td><td>사용자 화면에는 일반적인 이용 불가 메시지만 표시</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>API v1 비목표:</strong> 플랫폼 DB schema, core role preset, Jobs 종류, Judge Gateway, Settings 정의, Action Registry, REST endpoint, 내부 Container와 repository를 애드온에 개방하지 않는다. 예외는 아래의 형식화된 capability·context authorization·AI task 계약뿐이다. 애드온의 쓰기 명령과 REST는 WordPress REST API, 표준 <code>wp_rest</code> nonce, 애드온 capability와 객체 scope 검사를 사용한다.</div>
+      </section>
+
+      <section class="section" id="runtime-gateways">
+        <div class="section-heading"><div><h2>권한·컨텍스트·AI Runtime 계약</h2><p>A-D-003에서 확인한 이중 역할 관리, 로컬 학사 원장과 provider 설정 중복을 없애기 위한 범용 플랫폼 계약이다.</p></div><span class="badge good">C28-D09~D11 보완 확정</span></div>
+
+        <h3>C28-D09 · Capability 선언과 명시적 배정</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>단계</th><th>플랫폼 계약</th><th>거부·보존 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>Manifest 선언</td><td><code>AddonCapabilityDefinitionV1</code>에 key, 운영 label, audience를 선언한다. key는 해당 애드온 namespace에 속해야 한다.</td><td>미선언 capability 참조, core·addon 중복, 다른 namespace key는 manifest 전체 거부</td></tr>
+            <tr><td>권한 관리 합성</td><td>승인된 capability를 플랫폼의 기존 역할 권한 관리에 “애드온 소유”로 표시하고 운영자가 기존 역할에 명시적으로 배정한다.</td><td>애드온 전용 WordPress 역할 자동 생성, 관리자 외 역할에 자동 광역 부여, 애드온의 직접 역할 수정 금지</td></tr>
+            <tr><td>Route 판정</td><td>Console은 shell 접근권한과 선언 capability를 AND로, PublicUI는 로그인·scope·선언 capability를 AND로 검사한다.</td><td>메뉴, GET, HEAD, direct URL 중 하나라도 다른 판정을 사용하면 fail-closed</td></tr>
+            <tr><td>비활성화</td><td>배정값은 addon ID와 capability key로 비활성 상태 보존하고 다음 승인 시 복원한다.</td><td>비활성 capability는 실행 판정에서 항상 거부하며 core role preset은 변경하지 않음</td></tr>
+            <tr><td>삭제·축소</td><td>manifest에서 사라진 capability는 orphan 진단으로 표시하고 운영자의 명시적 정리 전까지 실행 불가 상태로 보존한다.</td><td>과거 권한을 다른 capability로 자동 치환하거나 더 넓은 권한으로 승격 금지</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>C28-D10 · 학습 Context 조회와 객체 인가</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>공개 연산</th><th>입력·출력</th><th>안전 경계</th></tr></thead>
+          <tbody>
+            <tr><td><code>listTeachingContexts</code></td><td>actor user ID와 제한된 query를 받아 접근 가능한 학급·그룹의 stable ID, type, 표시명, lifecycle state, revision만 반환</td><td>담당 관계가 없는 context와 불필요한 학생 개인정보를 반환하지 않으며 pagination·상한을 강제</td></tr>
+            <tr><td><code>authorize</code></td><td><code>AddonContextAccessRequestV1</code>의 actor, context type·ID, operation, 선택 learner ID를 받아 allow/deny와 안전한 reason code를 반환</td><td>존재하지 않는 대상, provider 예외와 stale revision은 deny. allowlist 밖 operation은 DTO 생성에서 거부되며 현재 구현은 허용된 여섯 operation을 목적별로 분기하지 않음</td></tr>
+            <tr><td><code>snapshot</code></td><td>인가된 context의 stable ID, type, 표시용 이름, revision과 최소 membership 사실을 불변 DTO로 반환</td><td>플랫폼 repository 객체, SQL, 수정 메서드와 전체 roster를 노출하지 않음</td></tr>
+            <tr><td>애드온 결합</td><td>애드온은 플랫폼 context allow와 자신의 활동지 배정·제출 소유 관계를 AND로 검사한다.</td><td>플랫폼 allow만으로 다른 활동지에 접근하거나 애드온 로컬 학급·그룹 원장을 별도 생성하지 않음</td></tr>
+            <tr><td>가용성</td><td>Gateway가 없거나 context revision을 확인할 수 없으면 해당 객체 작업을 중단하고 진단 상태를 남긴다.</td><td>관리자라는 이유만으로 row scope를 생략하거나 마지막 성공 결과를 무기한 재사용하지 않음</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>C28-D11 · AI Task 선언·배정·실행</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>단계</th><th>플랫폼 계약</th><th>애드온 책임</th></tr></thead>
+          <tbody>
+            <tr><td>Task 선언</td><td><code>AddonAiTaskDefinitionV1</code>의 namespaced key, label, input contract version, submission source 필요 여부를 manifest에서 원자 검증</td><td>평가 목적과 입력·출력 JSON schema version을 문서화</td></tr>
+            <tr><td>Catalog 합성</td><td><code>AiProviderCatalog::TASK_TYPES</code>의 core 4개는 고정하고 승인된 addon task를 별도 수량으로 합성한 Composite AI Task Catalog를 제공</td><td>core task 이름을 재사용하거나 다른 애드온 task를 호출하지 않음</td></tr>
+            <tr><td>운영 화면</td><td>기존 <code>운영 &gt; AI 작업 배정</code>이 core와 addon task 행을 함께 표시하고 주·대체 profile, model과 routing revision을 플랫폼 설정에 저장</td><td>자체 provider key·endpoint·API key·model 배정 화면을 만들지 않음</td></tr>
+            <tr><td>Runtime</td><td><code>AddonAiTaskGatewayV1</code>은 선언·승인된 task에 한해 <code>canRoute</code>, <code>snapshot</code>, <code>execute</code>를 제공</td><td>snapshot을 실행 기록에 보존하고 요청 task·contract version·schema를 검증</td></tr>
+            <tr><td>응답</td><td>구조화 output, routing revision, 사용된 provider·model key와 profile fingerprint를 반환하되 endpoint·인증 비밀값은 반환하지 않음</td><td>결과 schema 검증, 재시도 판단, 평가 이력·검토 상태를 애드온 테이블에 저장</td></tr>
+            <tr><td>Ollama 출력 계약 검사</td><td><code>operation_payload.output_contract.json_schema</code> 또는 <code>output_contract.json_schema</code>를 native <code>format</code>과 플랫폼 system 메시지에 동일하게 전달한다. 최상위 <code>required</code> 누락 시 Provider 내부 <code>schema_required_missing</code> 오류로 중단한다.</td><td>공개 API 1.2.0의 요청·DTO·응답 형태는 변경하지 않는다. 해당 오류는 기존 실패 결과와 재시도 불가 표시로 반환하며, 불완전한 output을 성공으로 받지 않는다. 애드온은 중첩 필드·형식·범위 등 전체 업무 Schema 검증을 유지한다. Schema 없는 기존 요청은 JSON 모드를 유지한다.</td></tr>
+            <tr><td>Ollama 문맥 보존</td><td>native Schema를 사용하는 플랫폼·애드온 요청은 <code>/api/chat</code>에 <code>truncate=false</code>, <code>shift=false</code>를 전달한다. 지원 서버와 프록시는 전체 메시지와 이 옵션을 보존해야 한다. 확인된 문맥 한도 오류는 Provider 내부 <code>context_too_small</code>로 구분하고 <code>num_ctx</code> 확인을 안내한다.</td><td>공개 API 1.2.0의 요청·DTO·응답은 유지한다. 이전에 잘린 입력으로 실행되던 요청이 이제 실패할 수 있는 동작 변경이며 재시도 불가로 반환한다. 입력·출력에 맞는 문맥 용량을 운영자가 정해야 하며 자동 증가·다른 Provider로 우회하지 않는다. Schema 없는 Ollama JSON 모드, 다른 Provider, 애드온 메시지 순서와 내용은 변경하지 않는다.</td></tr>
+            <tr><td>실패</td><td>미배정, 비활성 profile, source 불일치, timeout과 provider 오류를 안정된 오류 코드로 반환</td><td>평가를 미확정 상태로 두고 학생 공개를 막으며 platform 내부 service로 우회하지 않음</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="table-wrap"><table>
+          <thead><tr><th>AI 활동지 task</th><th>플랫폼 화면의 의미</th><th>실제 평가 소유</th></tr></thead>
+          <tbody>
+            <tr><td><code>addon.oj_ai_dashboard.worksheet_quality_assessment</code></td><td><code>AI 활동지 · 활동지 자체 평가</code> 행에서 어떤 연결 profile과 model을 사용할지 배정</td><td>애드온이 Plate 활동지 구조, 문항, 루브릭과 제작 품질을 평가</td></tr>
+            <tr><td><code>addon.oj_ai_dashboard.student_submission_assessment</code></td><td><code>AI 활동지 · 학생 제출 평가</code> 행에서 어떤 연결 profile과 model을 사용할지 배정</td><td>애드온이 학생 답안, rubric snapshot과 제출 증거를 평가</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="callout"><strong>화면 이름의 의미:</strong> OJ Platform의 두 행은 평가 화면이 아니라 AI 연결 경로를 선택하는 운영 설정이다. 활동지 자체 평가와 학생 제출 평가는 모두 AI 평가 애드온의 OJ Console 화면·서비스·테이블에서 실행되고 검토된다.</div>
+        <div class="risk"><strong>Runtime 공개 범위(AM-01 갱신):</strong> 애드온은 자신이 <code>onReady()</code>로 등록한 callback을 통해서만 <code>AddonRuntimeContextV1</code>을 받는다. 조회형 facade(옛 <code>AddonRuntimeGatewayV1::forAddon(addon_id)</code>)는 존재하지 않으므로 애드온이 자기 자신 이외의 addon ID를 지정해 다른 애드온의 context를 받는 경로 자체가 없다. 받은 <code>AddonRuntimeContextV1</code>은 <code>snapshot()</code>, <code>contexts()</code>, <code>aiTasks()</code> 세 접근점만 가진다. 문자열 service ID, Container, DB, SecretVault, Settings repository, raw provider client와 임의 class 조회는 제공하지 않는다.</div>
+      </section>
+
+      <section class="section" id="a-ds06-context-gap">
+        <div class="section-heading"><div><h2>A-DS-06 Context 소비자 인수 공백</h2><p>실제 AI 평가 애드온 흐름을 C28-I05 구현에 대입해 확인한 플랫폼 후속 작업이다.</p></div><span class="badge wait">C28-I06-CG01~CG11</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>현재 판정</th><th>후속 처리</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-I06-CG01</code></td><td>학생 actor 자기 자신의 active class·group participation을 <code>participate</code>에서 허용한다.</td><td><span class="badge good">구현 완료</span> 타인 대리·교사 operation 승격은 거부하며 직접·간접 membership fixture를 통과했다.</td></tr>
+            <tr><td><code>C28-I06-CG02</code></td><td><code>AddonLearningContextGatewayV1</code>·query DTO가 actor 자신의 active class·group 최소 summary를 반환한다.</td><td><span class="badge good">Addon API 1.1 구현 완료</span> roster·다른 learner·담당자 목록 비노출 fixture 통과</td></tr>
+            <tr><td><code>C28-I06-CG03</code></td><td>현재 원장에 정규화된 학년 필드가 없으므로 Addon API 1.1 Context attributes는 <code>enabled</code>만 제공한다.</td><td><span class="badge good">정본 확정</span> 학년은 향후 optional additive 후보이며 핵심 기능은 의존하지 않는다.</td></tr>
+            <tr><td><code>C28-I06-CG04</code></td><td>revision에 담당 명단이 없어 권한 증명으로 사용할 수 없음</td><td>요청·Job·download의 현재 authorize 재검사로 보상하고 인수 E2E에 고정</td></tr>
+            <tr><td><code>C28-I06-CG05</code></td><td>Problem·Judge Submission 공개 Gateway 없음</td><td>활동지 v1 비목표로 유지하고 애드온 직접 DB fallback을 금지</td></tr>
+            <tr><td><code>C28-I06-CG06</code></td><td><code>participate</code>는 active self membership 분기, 나머지 staff 5개 operation은 동일 <code>canManage</code> gate</td><td><span class="badge good">정본 확정</span> 소비자는 capability·객체 관계·state를 명령별 최종 권한으로 강제</td></tr>
+            <tr><td><code>C28-I06-CG07</code></td><td>inactive는 학생 participate·exact roster에서 거부하고 staff 5개 operation·snapshot에서는 상태를 보존해 반환</td><td><span class="badge good">정본 확정</span> 상태 변경 명령은 소비자가 active·enabled를 추가 강제</td></tr>
+            <tr><td><code>C28-I06-CG08</code></td><td>교사용 목록만 unknown cursor가 첫 페이지로 되감기며 학생 learning Context·exact roster는 fail closed</td><td>교사용 목록에 소비자 반복 cursor·페이지 상한 guard, 다른 두 목록은 실패 시 전체 수집 폐기</td></tr>
+            <tr><td><code>C28-I06-CG09</code></td><td>malformed Context row를 조용히 제외하고 제외 수 비공개</td><td>필요 시 비식별 diagnostics를 별도 설계하고 소비자는 내부 제외 수를 추정하지 않음</td></tr>
+            <tr><td><code>C28-I06-CG10</code></td><td>expected revision 불일치와 provider 예외가 모두 <code>addon_context_unavailable</code>로 축약됨</td><td>raw message 분류 금지, 소비자는 중단·새로고침으로 통합하고 필요 시 안정 reason을 additive 계약으로 승인</td></tr>
+            <tr><td><code>C28-I06-CG11</code></td><td><code>AddonAssignmentRosterGatewayV1</code>과 query·learner·page DTO가 exact active learner·membership revision·roster revision을 제공한다.</td><td><span class="badge good">Addon API 1.1 구현 완료</span> race·cursor·5,000명 상한·PII 비노출 fixture 통과</td></tr>
+          </tbody>
+        </table></div>
+        <h3>CG11 공개 표면 요약</h3>
+        <pre><code>interface AddonAssignmentRosterGatewayV1 extends AddonContextGatewayV1
+{
+    public function listAssignmentLearners(
+        AddonAssignmentRosterQueryV1 $query
+    ): AddonAssignmentLearnerPageV1;
+}
+
+new AddonAssignmentRosterQueryV1(
+    actorUserId: $actorUserId,
+    contextType: $contextType,
+    contextId: $contextId,
+    expectedContextRevision: $contextRevision,
+    expectedRosterRevision: $firstPageRosterRevision,
+    cursor: $nextCursor,
+    limit: 100
+);
+
+AddonAssignmentLearnerPageV1::__construct(
+    bool $successful,
+    array $items,
+    string $nextCursor,
+    ?string $rosterRevision,
+    ?AddonApiProblemV1 $problem
+);
+AddonAssignmentLearnerPageV1::rosterRevision(): ?string;</code></pre>
+        <div class="callout"><strong>CG11 정본:</strong> query·page 불변식과 오류 의미는 <a href="development-c-28-addon-api-v1-contract.html#a-ds06-consumer-gap">API v1.1 계약</a>을 따른다. reflection과 Runtime fixture가 공개 표면·race·PII 경계를 고정한다.</div>
+        <div class="warning"><strong>구현 이력 경계:</strong> A-DS-06 소비자 요구는 별도 C28-I06 플랫폼 변경에서 SemVer·fixture·upgrade·rollback과 함께 구현했다. AI 평가 애드온 설치·업데이트는 이 플랫폼 변경을 적용하지 않으며 공개 API 1.1만 소비한다. 정확한 현재 계약은 <a href="development-c-28-addon-api-v1-contract.html#a-ds06-consumer-gap">API 정본</a>과 <a href="development-c-28-addon-api-v1-release-evidence.html">릴리스 증거</a>를 따른다.</div>
+      </section>
+
+      <section class="section" id="a-ds07-ai-job-gap">
+        <div class="callout"><strong>2026-09-14 실행 방식 보완:</strong> 플랫폼·AI 평가 애드온의 큐는 등록 직후 및 이전 작업 완료 후 즉시 Worker를 깨우도록 변경했다. 1분 cron은 복구용으로 유지한다. 공개 AI API는 기존 동기 호출 그대로이며 추가 메서드·DTO 변경은 없다. <a href="development-c-28-addon-api-v1-contract.html#a-ds07-ai-job-gap">실행 경계와 API 불변 계약</a>을 따른다.</div>
+        <div class="section-heading"><div><h2>A-DS-07·A-DS-10·A-DS-12 AI 실행 소비자 인수 기록</h2><p>동기 AI Gateway 위에 애드온 queue·worker를 설계하며 확인한 제공자 보장과 비보장이다.</p></div><span class="badge wait">C28-I06-AJ01~AJ08</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>현재 판정</th><th>애드온 처리·후속</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-I06-AJ01</code></td><td>요청 actor·idempotency key는 DTO에서 검증되지만 내부 Router·provider로 전달되어 인가·dedupe를 수행하지 않음</td><td>애드온이 enqueue·start·commit을 재인가하고 DB 멱등 조건으로 공식 결과를 한 건만 commit</td></tr>
+            <tr><td><code>C28-I06-AJ02</code></td><td><code>execute()</code>에 expected routing revision이 없고 호출 시점 현재 배정으로 실행</td><td>plan·결과·fresh postflight revision·fingerprint를 비교해 drift 결과를 폐기하며 pre-call 차단 API는 별도 additive 후보</td></tr>
+            <tr><td><code>C28-I06-AJ03</code></td><td>결과 DTO에 token·실제 비용 telemetry가 없음</td><td><code>measurement=unavailable</code>로 처리하고 추정 실적을 만들지 않으며 usage DTO는 별도 승인</td></tr>
+            <tr><td><code>C28-I06-AJ04</code></td><td>플랫폼은 JSON map까지만 보장하고 애드온 task output schema를 검증하지 않음</td><td>애드온 normalizer가 공식 저장 전 byte·schema·허용 key·점수·근거를 엄격 검증</td></tr>
+            <tr><td><code>C28-I06-AJ05</code></td><td><code>addon_payload</code>는 애드온 제공 payload 표식이며 플랫폼 제출 조회나 submission-source profile 조건이 아님</td><td><code>platform_submission</code>과 구분하고 플랫폼 DB·submission gateway 없이 허가·최소화한 input만 전달</td></tr>
+            <tr><td><code>C28-I06-AJ06</code></td><td>미배정·profile·source·route 조회 실패가 모두 <code>addon_ai_task_unroutable</code>로 축약됨</td><td>raw message 분류 금지, 필요하면 안전한 reason enum/code를 별도 additive API로 승인</td></tr>
+            <tr><td><code>C28-I06-AJ07</code></td><td>성공 결과 snapshot은 실행 배정이며 응답 반환 시점의 현재 배정을 재조회하지 않음</td><td>공식 commit 전 fresh <code>snapshot(taskKey)</code>으로 plan·result·postflight revision/fingerprint를 비교하고 실패·불일치 output 폐기</td></tr>
+            <tr><td><code>C28-I06-AJ08</code></td><td><code>AddonAiTaskInstructionV1</code>과 trailing nullable instruction이 accepted task별 높은 우선순위 instruction을 제공한다.</td><td><span class="badge good">Addon API 1.1 구현 완료</span> task 격리·prompt injection·fingerprint·adapter·raw 비노출 fixture 통과</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>AM-02 구현 경계:</strong> AJ08 공개 계약은 별도 C28-I06 플랫폼 변경에서 Addon API 1.1로 구현했고 DB schema·migration은 바꾸지 않았다. 정확한 제공자 계약은 <a href="development-c-28-addon-api-v1-contract.html#a-ds07-ai-job-gap">API 정본</a>, 소비자 실행 계약은 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-07-ai-job-execution.html">A-DS-07 동결</a>을 따른다.</div>
+
+        <h3 id="aj08-candidate-contract">AJ08 Addon API 1.1 공개 계약</h3>
+        <div class="callout"><strong>확정 SemVer:</strong> <code>Addon API 1.1.0</code>에 final DTO <code>AddonAiTaskInstructionV1</code>을 추가하고, 기존 <code>AddonAiTaskDefinitionV1</code>에는 trailing nullable parameter와 getter만 더했다. 기존 4-argument 호출은 그대로 유효하다.</div>
+        <pre><code>final class AddonAiTaskInstructionV1
+{
+    public function __construct(string $contractVersion, string $content);
+    public function contractVersion(): string;
+    public function content(): string;
+    public function contentHash(): string;
+}
+
+new AddonAiTaskDefinitionV1(
+    key: $key,
+    label: $label,
+    inputContractVersion: $inputContractVersion,
+    sourceKind: $sourceKind,
+    instruction: $instruction // ?AddonAiTaskInstructionV1 = null
+);
+
+public function instruction(): ?AddonAiTaskInstructionV1;</code></pre>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>구현 계약</th><th>검증·금지</th></tr></thead>
+          <tbody>
+            <tr><td>값 객체</td><td><code>contractVersion</code> safe token 1~64 bytes. content는 CRLF·CR을 LF로 정규화한 유효 UTF-8 plain text, 공백 제외 1자 이상, 최대 <code>16,384 bytes</code>. <code>contentHash()</code>는 플랫폼이 정규화 bytes의 lowercase SHA-256으로 계산한다.</td><td>TAB·LF 외 C0 control과 DEL 거부. 호출자 hash, HTML 렌더링, secret·endpoint·개인정보 금지</td></tr>
+            <tr><td>신뢰 원본</td><td>instruction은 accepted Manifest의 task 정의에서만 해석한다. <code>AddonAiTaskContributor</code>가 immutable descriptor를 내부 <code>AddonAiTaskContributions</code>에 복사하고 prompt factory가 task key로 조회한다.</td><td><code>AddonAiTaskRequestV1</code> signature 불변. input·REST·option·worksheet text의 override 무시</td></tr>
+            <tr><td>Fingerprint</td><td><code>AcceptedAddonCatalog</code> canonical revision과 routing assignment fingerprint에 task key·input contract·source kind·instruction contract version·content hash를 포함한다.</td><td>raw instruction을 catalog revision 자료·운영 화면·로그·correlation에 기록하지 않음</td></tr>
+            <tr><td>Prompt</td><td>논리 순서는 <code>platform_system → addon_task_instruction → untrusted_user_data</code>. 현재 OpenAI-compatible·Ollama는 <code>system → system → user</code>, Gemini는 앞의 두 값을 순서대로 <code>systemInstruction</code>에 결합한다.</td><td>우선순위를 보존하지 못하면 전송 전 fail closed. instruction을 user role로 downgrade 금지</td></tr>
+            <tr><td>호환</td><td>기존 4-argument 정의는 <code>instruction=null</code>과 일반 prompt 동작을 유지한다. instruction 의존 addon은 <code>requiresAddonApi &gt;= 1.1.0</code>과 bootstrap guard를 사용한다.</td><td>1.0.x에서 instruction을 조용히 제거하거나 일반 prompt로 실행 금지</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>구현 fixture:</strong> reflection은 interface 8개·DTO 28개·권한 utility 1개·공개 symbol 37개를 고정한다. 기존 4-argument 호환, instruction 정규화·hash, catalog·routing fingerprint, 두 addon 격리, prompt injection 차단, provider adapter 순서와 raw 비노출을 검사한다.</p>
+        <div class="callout"><strong>AJ08 완료:</strong> Addon API 1.1의 accepted Manifest instruction만 높은 우선순위 메시지로 전달한다. 활동지·학생 답안·REST input은 instruction을 덮어쓸 수 없고 플랫폼 DB migration은 없다.</div>
+        <div class="callout"><strong>A-DS-13 단일 task 계약 인수:</strong> 현재 <code>AddonAiTaskDefinitionV1</code>은 task당 <code>inputContractVersion</code> 하나만 선언하고 Runtime은 request의 contract와 정확히 비교한다. 사용자 확정된 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-13-teacher-review-feedback-release.html"><code>A-DS13-CA01</code></a>은 새 플랫폼 API 없이 <code>student_submission_assessment.v1</code> outer envelope와 <code>score|feedback_draft</code>별 inner contract를 사용한다.</div>
+        <div class="callout"><strong>A-DS-14 보고서·특기사항 인수:</strong> <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-14-dashboard-report-export.html"><code>A-DS14-CA01</code></a>은 같은 outer envelope에 <code>special_note_draft</code>·<code>student_special_note.v1</code> inner contract를 추가한 사용자 확인·동결 소비자 계약이며 새 플랫폼 API가 아니다. 보고서·PDF·CSV·JSON·ZIP은 애드온 내부 projection·private storage 책임이다. 특기사항 AI 생성은 <code>AJ08</code>, exact roster 기반 보고서 분모·assignment ZIP은 <code>CG11</code>, Console/PublicUI 진입은 <code>RC01·RC02</code>의 API 1.1 구현을 사용하며 G1 소비자 Policy·Bridge 인수를 추가로 통과해야 한다. 이 기록은 OJ Platform Runtime을 수정하지 않는다.</div>
+        <div class="callout"><strong>A-DS-15 G0 구현 결과:</strong> 2026-08-14 사용자 확정된 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-15-install-upgrade-migration-operations.html"><code>A-DS-15</code></a>의 운영 요구를 <code>2.0.0-dev.33</code>에 반영했다. <code>AddonRuntimeReadiness</code>와 <code>AddonSystemStatusProvider</code>는 catalog의 accepted·incompatible·rejected와 별도로 <code>pending|ready|failed|not_required</code> Runtime 준비 상태를 표시하며 callback 예외는 <code>addon_runtime_callback_failed</code>로 축약한다. 애드온 내부 이전 plan/package, 무접두어 <code>oj_ai_*</code> 45-table schema와 <code>oj-ai/v1</code> Page 9·GET 36·POST 75 계약은 플랫폼 API·table을 요구하지 않는다. 애드온 Bridge는 자기 연결 성공 전까지 계속 fail closed한다.</div>
+        <div class="callout"><strong>A-DS-16 G0 구현 결과:</strong> <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-16-cross-validation-freeze.html"><code>A-DS-16</code></a>이 묶은 C28-I06 항목을 <code>2.0.0-dev.33</code>·Addon API <code>1.1.0</code>으로 구현했다. 공개 표면은 기존 30개를 유지하면서 interface 2개와 DTO 5개를 더한 37개이며 계약 fixture 6종과 관련 단위 검사를 통과한다. CG01·CG02·CG11·AJ08·RC01·RC02·RC04·RC05와 LC01 진단 경계는 구현됐고, CG03은 학년 값을 공개하지 않는 optional 의미로 정합화했다. 검증 ZIP·upgrade·rollback·source/package fingerprint 증거는 <a href="development-c-28-addon-api-v1-release-evidence.html">릴리스 증거서</a>에 고정했다. 남은 관문은 문서 commit 뒤 clean production package와 G1 애드온 소비자 인수다.</div>
+      </section>
+      <section class="section" id="a-ds08-route-command-gap">
+        <div class="section-heading"><div><h2>A-DS-08 경로·REST·명령 정합화</h2><p>Console·PublicUI 권한과 Page method를 실제 구현에 일치시킨다.</p></div><span class="badge good">RC01~RC05 완료</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>현재 구현 사실</th><th>필수 후속·관문</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-I06-RC01</code></td><td>Console access rule·handler·menu가 <code>oj_access_console</code>과 선언 capability를 AND한다.</td><td><span class="badge good">구현·음수 fixture 완료</span></td></tr>
+            <tr><td><code>C28-I06-RC02</code></td><td>Public menu가 선언 capability를 보존하고 scope와 capability를 모두 검사한다.</td><td><span class="badge good">menu·direct route fixture 완료</span></td></tr>
+            <tr><td><code>C28-I06-RC03</code></td><td><code>AddonCapabilityKeyV1::wordpress(string $declaredKey): string</code>을 공개하고 내부 <code>AddonCapabilityKeys</code>도 같은 변환기를 사용하도록 통일했다.</td><td><span class="badge good">구현 완료</span> key validation·reflection·서로 다른 애드온의 동시 role grant·개별 revoke fixture를 통과해야 한다. 소비자의 내부 prefix 복제와 선언 키 직접 검사는 금지한다.</td></tr>
+            <tr><td><code>C28-I06-RC04</code></td><td>Addon API v1 capability는 기존 WordPress 역할에만 명시적으로 grant·revoke한다.</td><td><span class="badge good">역할 전용 계약 확정</span> 사용자 직접 배정은 v1 비범위</td></tr>
+            <tr><td><code>C28-I06-RC05</code></td><td>Addon Console·Public Page는 로그인된 <code>GET</code> HTML만 등록한다.</td><td><span class="badge good">GET 전용 계약 확정</span> HEAD는 v1 비범위</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>RC01~RC05 완료:</strong> RC01·RC02는 구현과 fixture, RC03은 공개 mapper, RC04는 역할 전용, RC05는 GET 전용으로 닫았다.</div>
+      </section>
+      <section class="section" id="public-menu">
+        <div class="section-heading"><div><h2>PublicUI 메뉴 합성 계약</h2><p>기존 운영자 메뉴 설정을 덮어쓰지 않고, 활성 애드온의 명시적 사용자 메뉴를 안전하게 겹쳐 보인다.</p></div><span class="badge good">C28-D05·D07 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>단계</th><th>입력</th><th>규칙</th><th>실패 시</th></tr></thead>
+          <tbody>
+            <tr><td>1 · core 메뉴 읽기</td><td>기존 <code>public_menu</code> snapshot</td><td>운영자가 저장한 core·외부 링크 배열을 원문 그대로 읽고 기존 revision을 유지</td><td>기존 PublicUI의 현재 오류 처리 유지</td></tr>
+            <tr><td>2 · 애드온 후보 읽기</td><td>AcceptedAddonCatalog의 Public Menu</td><td>활성·호환·승인된 manifest의 기여만 key 순서로 읽음</td><td>거부·비활성 애드온 항목은 합성하지 않음</td></tr>
+            <tr><td>3 · 운영자 override</td><td><code>addon_public_menu_preferences</code></td><td><code>enabled</code>, label, parent, order, mobile만 적용. route·scope·capability·소유자는 manifest 값으로 고정</td><td>잘못된 override만 무시하고 상태 화면에 코드 기록</td></tr>
+            <tr><td>4 · 구조 검증</td><td>core + addon 메뉴</td><td>활성 core root, root당 child 최대 12개, route 중복과 정렬을 검증</td><td>해당 addon 메뉴를 숨기고 <code>public_menu_capacity_exceeded</code> 또는 부모 오류 기록</td></tr>
+            <tr><td>5 · 사용자 판정</td><td>scope, capability, handler, route 상태</td><td>scope를 통과한 뒤 동일 Route access policy를 다시 적용</td><td>메뉴를 숨기며 직접 URL도 403 또는 안전한 접근 거부로 처리</td></tr>
+            <tr><td>6 · shell 렌더링</td><td>최종 PublicMenuItem 목록</td><td>현재 PublicShell의 데스크톱·모바일 탐색에 동일한 항목을 전달</td><td>메뉴만 숨겨도 권한이 있는 직접 배정 링크는 유지</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="grid">
+          <div class="metric"><strong>설정 분리</strong><span>기존 <code>public_menu</code> option을 애드온 활성화 때 수정하지 않는다. 새 Settings key <code>addon_public_menu_preferences</code>, WordPress option <code>oj_platform_addon_public_menu_preferences</code>는 운영자 override만 저장한다.</span></div>
+          <div class="metric"><strong>기본 표시</strong><span>override가 없으면 manifest의 <code>default_enabled</code>, parent, order와 mobile 값을 사용한다.</span></div>
+          <div class="metric"><strong>비활성화</strong><span>다음 부팅에서 Route와 메뉴가 사라지며 override는 비활성 상태로 보존해 재활성화 때 복원한다.</span></div>
+        </div>
+
+        <div class="table-wrap"><table>
+          <thead><tr><th>AI 활동지 기본값</th><th>설계 값</th><th>이유</th></tr></thead>
+          <tbody>
+            <tr><td>Console 위치</td><td><code>수업 &gt; AI 활동지</code>, core anchor <code>classes</code></td><td>제작·배포·평가 운영은 교사·관리자 업무</td></tr>
+            <tr><td>PublicUI 위치</td><td><code>학습 &gt; 활동지</code>, core root <code>learning</code>, order 40</td><td>기존 수업 10·대회 20·그룹 30 다음의 학생 학습 흐름</td></tr>
+            <tr><td>기본 대상</td><td><code>scope=learner</code>, <code>default_enabled=true</code>, 애드온 사용 capability 필수</td><td>학생 메뉴는 기본 제공하고 시스템 관리자는 운영 확인을 위해 미리 볼 수 있으며, 그 밖의 권한 없는 사용자에게는 노출하지 않음</td></tr>
+            <tr><td>직접 링크</td><td><code>/oj-addons/oj-ai-dashboard/assignments/{assignment_id}</code></td><td>메뉴를 숨겨도 배정 URL은 유지하되 로그인·capability·배정 소유 범위를 모두 검사</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>C28-MENU-FIX-01 · 2026-08-27 구현 정합화:</strong> Console handler가 shell에 전달하는 현재 메뉴 키와 <code>ConsoleMenuAccessRule</code>의 지원 키는 반드시 <code>config/menus.php</code> 정본에 존재해야 한다. 수업·그룹은 <code>classes.*</code>, 대회는 <code>contests.*</code>를 사용한다. <code>learning.classes*</code>·<code>learning.groups*</code>·<code>learning.contests*</code>는 이전 설계 키이며 Runtime 코드에서 사용하지 않는다. core 수업 화면과 <code>classes</code> anchor의 애드온 화면 모두에서 수업 root와 접근 가능한 하위 메뉴가 펼쳐지는 단위·합성 회귀를 통과해야 한다. 공개 Addon API signature와 version 변화는 없다.</div>
+        <div class="callout"><strong>운영자 경험:</strong> 기존 OJ Console의 <code>운영 &gt; 사용자 메뉴</code> 화면에 애드온 소유 badge와 상태를 표시한다. 운영자는 표시·이름·부모·순서·모바일 위치를 바꿀 수 있지만 Route key, 대상 scope와 capability를 넓힐 수 없다. 애드온이 비활성화되면 깨진 링크 대신 비활성 기여로 표시한다.</div>
+        <div class="warning"><strong>중복 생성 방지:</strong> Addon Public Route는 일반 “새 내부 메뉴” 선택 목록에서 제외하고 애드온 소유 구역에서만 편집한다. 운영자가 같은 Route를 core 저장 항목으로 복사해 비활성화 뒤 깨진 링크를 남기는 경로를 허용하지 않는다.</div>
+      </section>
+      <section class="section" id="security">
+        <div class="section-heading"><div><h2>격리·실패·보안</h2><p>애드온 오류가 core 계약을 부분 변경하거나 Console과 PublicUI의 접근 정책을 우회하지 않게 한다.</p></div><span class="badge good">C28-D03·D07·D09~D11 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>상황</th><th>목표 동작</th><th>검증</th></tr></thead>
+          <tbody>
+            <tr><td>API·플랫폼 버전 불일치</td><td>애드온 기여 전체를 <code>incompatible</code>로 제외하고 core Console·PublicUI는 정상 부팅한다.</td><td>제품 버전과 API 버전 호환 행렬</td></tr>
+            <tr><td>core와 key·path 충돌</td><td>core가 항상 우선하며 충돌한 애드온 manifest 전체를 거부한다.</td><td>Route, Console Menu, Public Menu, Asset 조합</td></tr>
+            <tr><td>애드온 간 충돌</td><td>플러그인 로드 순서와 관계없이 같은 계약을 낸 애드온을 모두 거부하고 충돌 key를 기록한다.</td><td>순서를 뒤집은 동일 fixture 결과</td></tr>
+            <tr><td>builder 예외·잘못된 참조</td><td><code>gateway.register()</code> 단위 후보를 폐기하고 부분 기여 0건을 보장한다.</td><td>기여 작성 각 단계 실패 주입</td></tr>
+            <tr><td>Handler·접근 판정 예외</td><td>fail-closed로 메뉴를 숨기고 직접 경로에 플랫폼 Error Boundary의 안전한 응답을 반환한다.</td><td>민감 정보·stack trace 비노출, Console/Public 동일성</td></tr>
+            <tr><td>Capability 배정 오류</td><td>미선언·orphan·비활성 capability는 항상 거부하고 core role preset과 다른 애드온 배정에는 영향을 주지 않는다.</td><td>역할 명시 배정, addon 비활성화·재활성화·capability 삭제</td></tr>
+            <tr><td>Context 없음·거부·예외</td><td>대상 객체 작업을 fail-closed로 중단하며 addon 로컬 학사 데이터나 마지막 성공 판정으로 우회하지 않는다.</td><td>담당 교사·타 교사·학생·삭제 context·stale revision 행렬</td></tr>
+            <tr><td>AI task 미배정·실행 실패</td><td>안정된 오류 코드를 반환하고 애드온은 평가를 미확정으로 유지한다. provider 비밀값이나 내부 client는 노출하지 않는다.</td><td>core/addon task, source 조건, primary·fallback, timeout·provider 오류</td></tr>
+            <tr><td>Public 메뉴 부모·수량 실패</td><td>Route 승인은 유지할 수 있으나 해당 메뉴는 숨기고 운영 상태와 메뉴 관리 화면에 해결 가능한 코드를 표시한다.</td><td>부모 제거, child 12개 초과, 중복 route</td></tr>
+            <tr><td>애드온 비활성화·업그레이드</td><td>다음 부팅의 accepted catalog에서 제외하고 rewrite signature가 달라질 때 한 번만 동기화한다. Public 메뉴 override는 보존한다.</td><td>활성화·비활성화·버전 변경 E2E와 flush 횟수</td></tr>
+          </tbody>
+        </table></div>
+        <div class="risk"><strong>금지:</strong> 외부 애드온에 Container, core DefinitionRegistry, DB 연결, SecretVault, raw provider client 또는 내부 Composition Bundle을 전달하지 않는다. 등록 Gateway와 애드온별 <code>onReady</code> callback에 임의 service 조회 메서드를 두지 않으며 애드온 HTML을 다른 사용자의 권한으로 사전 실행하지 않는다. 애드온 간 Runtime Context 격리는 전역 Gateway를 아예 두지 않고 애드온마다 별개 callback에 별개 인스턴스를 직접 호출로 전달함으로써 API 표면에서 강제한다(AM-01).</div>
+      </section>
+
+      <section class="section" id="compatibility">
+        <div class="section-heading"><div><h2>버전·공개 이름·오류 계약</h2><p>애드온이 내부 class 존재 여부를 추측하지 않고 공개 상수와 Gateway 계약만으로 호환성을 판정한다.</p></div><span class="badge good">C28-D06 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>공개 계약</th><th>API 1.1 현재 계약</th><th>변경 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>API 상수</td><td><code>OJ_PLATFORM_ADDON_API_VERSION = '1.1.0'</code></td><td>AM-02 additive minor. 계약 파괴는 major 증가</td></tr>
+            <tr><td>C28-I06 공개 표면</td><td>interface 8개·DTO 28개·권한 utility 1개·공개 symbol 37개</td><td><code>tests/Contract/addon-api-v1.php</code> reflection allowlist 고정</td></tr>
+            <tr><td>등록 action</td><td><code>oj_platform_register_addons</code>, 인자 <code>AddonRegistrationGatewayV1</code> 1개</td><td>API major 안에서 이름·인자 의미 변경 금지</td></tr>
+            <tr><td>준비 dispatch <span class="badge wait">AM-01</span></td><td>action 아님. <code>AddonManifestBuilderV1::onReady(callable)</code>로 등록한 애드온별 callback을 <code>AddonRuntimeContextV1</code> 1개와 함께 직접 호출</td><td>불변 snapshot과 D10·D11의 형식화된 연산만 제공하며 추가 등록·타 addon context 접근 금지. 옛 <code>oj_platform_loaded</code>/<code>AddonRuntimeGatewayV1</code>은 삭제됨</td></tr>
+            <tr><td>Runtime 접근점</td><td><code>AddonRuntimeContextV1</code> → <code>snapshot()</code>, <code>contexts()</code>, <code>aiTasks()</code></td><td>API major 안에서 임의 service lookup 추가 금지, DTO 필드 변경은 SemVer 적용</td></tr>
+            <tr><td>제품 버전</td><td><code>OJ_PLATFORM_VERSION = 2.0.0-dev.33</code></td><td>Addon API 1.1 최초 제공 release candidate</td></tr>
+            <tr><td>prerelease</td><td><code>dev</code>, <code>alpha</code>, <code>beta</code>, <code>rc</code>는 manifest 범위가 명시적으로 포함할 때만 허용</td><td>정식 릴리스 범위에 prerelease를 암묵적으로 포함하지 않음</td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>상태 코드</th><th>의미</th><th>관리자 조치</th></tr></thead>
+          <tbody>
+            <tr><td><code>addon_api_incompatible</code></td><td>요구 Addon API 범위 불일치</td><td>지원 플랫폼 또는 애드온 버전 설치</td></tr>
+            <tr><td><code>addon_platform_incompatible</code></td><td>제품 버전 범위 불일치</td><td>manifest 호환 행렬 확인</td></tr>
+            <tr><td><code>addon_manifest_invalid</code></td><td>필수 필드·namespace·수량·참조 오류</td><td>애드온 공급자 문서 확인</td></tr>
+            <tr><td><code>addon_contribution_conflict</code></td><td>core 또는 다른 애드온과 key·path·handle 충돌</td><td>충돌 ID와 애드온 버전 확인</td></tr>
+            <tr><td><code>addon_registration_failed</code></td><td>builder 실행 중 예외 또는 원자 commit 실패</td><td>비밀값 없는 correlation ID로 로그 확인</td></tr>
+            <tr><td><code>addon_public_menu_unavailable</code></td><td>부모·수량·override 문제로 Public 메뉴만 숨김</td><td>사용자 메뉴 관리에서 부모·순서·사용 상태 조정</td></tr>
+            <tr><td><code>addon_access_denied</code></td><td>scope·capability·행 범위 거부</td><td>권한과 배정 상태 확인</td></tr>
+            <tr><td><code>addon_capability_assignment_invalid</code></td><td>미선언·orphan·비활성 capability 배정</td><td>플랫폼 권한 관리에서 애드온 상태와 배정 정리</td></tr>
+            <tr><td><code>addon_context_unavailable</code></td><td>context provider 없음·예외·stale revision</td><td>플랫폼 학급·그룹 상태와 Addon API 진단 확인</td></tr>
+            <tr><td><code>addon_context_denied</code></td><td>actor가 대상·operation·learner 범위에 접근할 수 없음</td><td>담당 관계와 활동지 배정 범위를 함께 확인</td></tr>
+            <tr><td><code>addon_ai_task_unroutable</code></td><td>task 미배정·비활성 profile·source 조건 불일치</td><td><code>운영 &gt; AI 작업 배정</code>에서 해당 addon task 행 확인</td></tr>
+            <tr><td><code>addon_ai_task_failed</code></td><td>timeout·provider·응답 contract 오류</td><td>correlation ID와 provider 진단을 확인하고 평가를 미확정 유지</td></tr>
+            <tr><td><code>addon_handler_failed</code></td><td>페이지 handler 예외 또는 응답 계약 위반</td><td>correlation ID로 애드온 로그 확인</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>표시 정책:</strong> <code>운영 &gt; 시스템 상태</code>는 후보·승인·비호환·거부 수와 addon ID, 승인된 애드온 버전, 안전한 상태 코드를 보여 준다. 학생 화면에는 내부 class·경로·예외를 노출하지 않는다.</div>
+      </section>
+      <section class="section" id="counts">
+        <div class="section-heading"><div><h2>수량·버전·호환 계약</h2><p>기존 자동 검산 목표, 운영자 설정 수량과 설치별 가변 애드온 기여를 분리한다.</p></div><span class="badge good">C28-D04 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>지표</th><th>기본 플랫폼</th><th>애드온 포함 Runtime 보고</th></tr></thead>
+          <tbody>
+            <tr><td>GET Route</td><td>기존 152개 고정</td><td><code>core=152</code>, <code>addon_console_routes</code>, <code>addon_public_routes</code>, <code>total</code>을 분리 보고</td></tr>
+            <tr><td>Action</td><td>기존 128개 고정</td><td>API v1에서 외부 Action 기여를 열지 않아 128개 유지</td></tr>
+            <tr><td>OJ Console Menu</td><td>기존 58개 고정</td><td><code>core_console_menus=58</code>과 <code>addon_console_menus</code>를 분리 보고</td></tr>
+            <tr><td>PublicUI 기본 Menu</td><td><code>PublicMenuSettingsService::defaults()</code> 기준 19개</td><td>운영자 저장 core 항목 수와 <code>accepted</code>·<code>visible</code> addon public menu 수를 분리 보고</td></tr>
+            <tr><td>플랫폼 Table</td><td>기존 무접두어 42개 고정</td><td>애드온 Table은 플랫폼 수량에 포함하지 않고 addon status에서 별도 보고</td></tr>
+            <tr><td>Public 메뉴 설정</td><td>기존 <code>public_menu</code> 유지</td><td>플랫폼 Settings key <code>addon_public_menu_preferences</code>와 option <code>oj_platform_addon_public_menu_preferences</code>에는 override만 저장하고 애드온 업무 데이터는 저장하지 않음</td></tr>
+            <tr><td>Capability</td><td>기존 core capability 수량과 role preset 고정</td><td><code>addon_capability_definitions</code>, active, assigned role, orphan 수를 addon별로 분리 보고</td></tr>
+            <tr><td>AI Task</td><td>기존 core task type 4개 고정</td><td><code>core_ai_tasks=4</code>, <code>addon_ai_tasks</code>, routed, unroutable 수를 분리 보고</td></tr>
+            <tr><td>제품 버전</td><td><code>OJ_PLATFORM_VERSION</code></td><td>manifest의 플랫폼 범위와 설치·업그레이드 호환 판정</td></tr>
+            <tr><td>Addon API 버전</td><td><code>OJ_PLATFORM_ADDON_API_VERSION</code></td><td>공개 계약의 breaking 변경을 제품 버전과 별도로 판정</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>검산 원칙:</strong> 설치별 애드온 수량을 core 고정 수량에 덮어써 새 기준선으로 만들지 않는다. 상태 보고서는 core, 후보, 승인, 거부, 실제 표시 수를 각각 제공해 메뉴 설정 문제와 manifest 거부를 구분한다.</div>
+      </section>
+      <section class="section" id="traceability">
+        <div class="section-heading"><div><h2>플랫폼·애드온 양방향 추적</h2><p>같은 결정을 제공자와 소비자 문서에서 서로 가리키고 구현 증거까지 한 줄로 연결한다.</p></div><span class="badge good">링크 설정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>요구·계약</th><th>플랫폼 원본</th><th>애드온 원본</th><th>완료 증거</th></tr></thead>
+          <tbody>
+            <tr><td>OJ Console 네이티브 통합</td><td><code>C28-R01</code></td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-d-001-boundary-dependencies.html#console-integration"><code>A-D001-DEC-01</code>, <code>A-D001-C06</code></a></td><td>교사용 메뉴·GET 화면·권한 E2E</td></tr>
+            <tr><td>PublicUI 명시 등록</td><td><code>C28-R03</code>, <code>C28-D05</code></td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-d-001-boundary-dependencies.html#console-integration"><code>A-D001-DEC-02</code>, <code>A-D001-C06</code></a></td><td><code>학습 &gt; 활동지</code>, direct assignment URL, 설정 override E2E</td></tr>
+            <tr><td>플랫폼 파일 패치 금지</td><td><code>C28-R02</code>, 공개 API 경계</td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-d-001-boundary-dependencies.html#contract"><code>A-D001-C01</code>, <code>A-D001-C02</code>, <code>A-D001-C05</code></a></td><td>애드온 설치 전후 플랫폼 file hash 동일</td></tr>
+            <tr><td>등록 생명주기·Manifest</td><td><code>C28-D01~D03</code></td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-02-addon-lifecycle.html">A-DS-02 사용자 동결</a></td><td>등록 전·중·후, 원자 거부와 freeze 검사</td></tr>
+            <tr><td>메뉴·경로·권한·설정</td><td><code>C28-D04~D07</code>, <code>C28-D09</code></td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-d-003-access-settings.html#decision"><code>A-D-003</code> 확정 결정</a>, <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-01-ui-system.html">A-DS-01 UI 동결</a>, <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-03-access-policy.html">A-DS-03 권한 정책 동결</a>, 후속 <code>A-DS-08</code></td><td>역할 명시 배정, 권한 행렬, direct URL, 두 shell, menu resolver 검사</td></tr>
+            <tr><td>플랫폼 학사 Context</td><td><code>C28-R05</code>, <code>C28-D10</code>, <code>C28-I06-CG01~CG11</code></td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-d-003-access-settings.html#ownership">A-D-003 사용자·수업 대상 소유권</a>, <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-03-access-policy.html">A-DS-03 Context·객체 정책 동결</a>, <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector 동결</a>, <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출 초안</a></td><td>교사 class·group, 학생 self participate·학습 Context 목록, exact assignment roster revision, 담당 해제·삭제·stale, 로컬 원장 0건</td></tr>
+            <tr><td>AI 작업 배정·실행</td><td><code>C28-R06</code>, <code>C28-D11</code>, <code>C28-I06-AJ01~AJ08</code></td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-d-003-access-settings.html#ownership">A-D-003 AI 연결·작업 배정 소유권</a>, <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-04-settings-ai-connection.html">A-DS-04 설정·연결 정책 동결</a>, <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-07-ai-job-execution.html">A-DS-07 실행·큐 동결</a></td><td>addon task 2종 routing 행, snapshot·execute, queue 소비자 보상, output 검증, task별 instruction, 비밀값 비노출 검사</td></tr>
+            <tr><td>애드온 저장·플랫폼 원장 비복제</td><td><code>C28-R02</code>, <code>C28-D10~D11</code></td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-05-addon-database.html">A-DS-05 데이터베이스 동결</a></td><td>플랫폼 stable ID·revision·안전 AI snapshot만 저장, 플랫폼 table FK·JOIN·write와 provider secret 0건</td></tr>
+            <tr><td>문서·fixture 동시 갱신</td><td><code>C28-R02</code>, <code>C28-D08</code></td><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/design-procedure.html">애드온 전체 설계 순서</a></td><td>HTML link·ID·API version·fixture 정적 검사</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+      <section class="section" id="implementation">
+        <div class="section-heading"><div><h2>C-28 구현 순서</h2><p>C28-D01~D11과 C28-API-V1-LOCK-01을 구현 입력으로 고정했다. 플랫폼 구현은 별도 C28-I01 기준선 작업부터 순서대로 시작한다.</p></div><span class="badge wait">C28-I01~I06</span></div>
+        <div class="callout"><strong>C28-I06 구현 기록:</strong> CG01·CG02·CG11·AJ08·LC01·RC01·RC02 구현과 CG03·RC04·RC05 정합화, Addon API 1.1 reflection 37개, 제품 dev.33과 양쪽 HTML 동기화를 완료했다. 47개 회귀 script, upgrade·rollback, source/package fingerprint와 검증 ZIP hash는 <a href="development-c-28-addon-api-v1-release-evidence.html">릴리스 증거서</a>에 기록했고 clean production package와 G1 인수가 남아 있다.</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>단계</th><th>작업</th><th>필수 산출물</th><th>중단 조건</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-I01</code></td><td>부팅·Registry·Route·Console/Public 메뉴·Permission·AI routing 기준선 고정</td><td>core GET 152, Action 128, Console Menu 58, Public 기본 Menu 19, AI task 4, 공개 addon surface 0 fixture</td><td>현재 사용자 변경 또는 기본 수량을 설명 없이 재작성</td></tr>
+            <tr><td><code>C28-I02</code></td><td><a href="development-c-28-addon-api-v1-contract.html"><code>C28-API-V1-LOCK-01</code></a> 공개 Contract·상수·DTO 구현</td><td><code>src/AddonApi/V1</code> allowlist, Registration·Manifest·Page·Runtime·Context·AI interface와 DTO, reflection·invalid input·SemVer fixture</td><td>정본 signature 변경, Container·core Registry·SecretVault 노출, AI 평가 도메인 전용 DTO 또는 미문서 public class 포함</td></tr>
+            <tr><td><code>C28-I03</code></td><td>등록 창·후보 수집·원자 승인·오류 격리 구현</td><td>Route·Menu·Capability·AI Task의 중복·예외·참조·충돌·부분 commit 0·freeze 통합 검사</td><td>잘못된 애드온이 core 부팅을 중단하거나 일부 기여만 등록</td></tr>
+            <tr><td><code>C28-I04</code></td><td>Composite Route·Console/Public Menu·Capability·AI Task·Asset와 운영 설정 연결</td><td>두 shell, direct URL, rewrite signature, 권한 명시 배정, public menu preference, AI 작업 배정 행과 상태 검사</td><td>기본 152/58/19/4 계약 변경, core 설정 자동 수정, 애드온 역할 자동 생성 또는 권한 우회</td></tr>
+            <tr><td><code>C28-I05</code></td><td>Context Authorization·AI Task Runtime Gateway와 중립 fixture E2E</td><td>담당·비담당·학생·삭제 context, canRoute·snapshot·execute, source 조건, primary·fallback, 비밀 비노출와 장애 fixture</td><td>fixture가 플랫폼 내부 namespace/service를 조회하거나 context 거부·AI 실패를 로컬 데이터로 우회</td></tr>
+            <tr><td><code>C28-I06</code></td><td>AI 평가 애드온 소비자 인수와 API 1.1 release candidate</td><td>제품 dev.33, 공개 37개, LC·CG·AJ·RC 구현/정합화, 47개 회귀와 검증 ZIP 증거</td><td>제공자 문서 commit 뒤 <code>source_dirty=false</code> clean package와 G1 소비자 인수 없이는 production release로 표시하지 않음</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+      <section class="section" id="gates">
+        <div class="section-heading"><div><h2>구현 완료 관문</h2><p>코드, 보안, 두 사용자 shell, 권한·학사 context·AI routing과 문서가 모두 일치해야 C-28을 닫는다.</p></div><span class="badge wait">전체 필수</span></div>
+        <ol class="checks panel">
+          <li>기본 플랫폼 Route 152개, Action 128개, Console Menu 58개, PublicUI 기본 Menu 19개, Table 42개, core AI task 4개와 기존 전체 회귀 검사가 그대로 통과한다.</li>
+          <li>Addon 후보 수집과 accepted catalog는 core Registry와 별도로 원자 검증·동결되며 runtime Container·SecretVault·임의 service 조회가 0건이다.</li>
+          <li>정상, 중복 ID, core/addon·addon/addon 충돌, 비호환, builder·handler·access 예외와 비활성화를 자동 검사한다.</li>
+          <li>중립 fixture가 OJ Console 메뉴와 PublicUI 메뉴·두 shell 안에서 렌더링되고 별도 WordPress 관리자 메뉴를 만들지 않는다.</li>
+          <li>선언 capability가 기존 역할 권한 관리에 애드온 소유로 표시되고 명시 배정·거부·비활성화 보존이 통과하며 애드온 역할 자동 생성은 0건이다.</li>
+          <li><code>CG01~CG02</code>의 학생 self <code>participate</code>·학습 Context 목록과 <code>CG11</code>의 exact assignment roster가 별도 플랫폼 변경으로 구현·검증되고, <code>CG03</code>의 학년 의미가 source·문서와 일치하며, <code>CG04~CG10</code>은 기록된 소비자 보상 또는 별도 승인한 제공자 변경으로 각각 닫힌다.</li>
+          <li>AI 평가 fixture의 <code>학습 공간 &gt; AI 활동지</code>와 <code>학습 &gt; 활동지</code>가 shell·capability·context·애드온 배정 관계를 모두 AND로 판정한다.</li>
+          <li>담당 교사·타 교사·학생·삭제 context·stale revision에서 D10이 fail-closed이고 플랫폼 repository 또는 전체 roster가 외부에 노출되지 않는다.</li>
+          <li>기존 <code>운영 &gt; AI 작업 배정</code>에 core 4개와 addon task 2개가 분리 집계되어 나타나고 각 task의 주·대체 routing을 저장·복원한다.</li>
+          <li><code>AddonAiTaskGatewayV1</code>의 canRoute·snapshot·execute, source 조건, primary·fallback과 provider 장애를 검사하고 endpoint·API key·raw client 노출은 0건이다.</li>
+          <li><code>C28-I06-AJ01~AJ08</code>이 양쪽 HTML에 일치하고 소비자 fixture가 플랫폼 인가·dedupe·task schema·usage telemetry·unroutable 세부 원인·task별 높은 우선순위 instruction을 가정하지 않으며 <code>addon_payload</code>를 플랫폼 제출 조회로 해석하지 않는다.</li>
+          <li><code>C28-I06-RC01~RC05</code>가 양쪽 HTML에 일치하고 Console shell+addon capability AND, Public menu capability, 공개 REST capability 변환, 역할 전용 배정 범위와 GET 전용 의미가 구현·fixture와 일치한다.</li>
+          <li>기존 <code>public_menu</code> 저장 배열은 애드온 활성화·비활성화 때 변경되지 않고, override의 숨김·이름·부모·순서·모바일 설정과 재활성화 복원이 통과한다.</li>
+          <li>메뉴 숨김 상태에서도 capability와 배정 범위를 통과한 직접 활동지 URL이 열리며 권한 없는 사용자는 메뉴와 URL 모두 거부된다.</li>
+          <li>데스크톱·모바일 브라우저에서 메뉴, 현재 위치, 권한·routing 오류 상태, 키보드 탐색, 자산 중복 적재와 텍스트 겹침을 확인한다.</li>
+          <li>애드온 활성화·업데이트·비활성화 전후 플랫폼 소스·config·migration file hash가 동일하고 rewrite flush는 signature 변경당 한 번 이하이다.</li>
+          <li>API 상수, 공개 class, action 이름, DTO 필드, 오류 코드, 호환 행렬과 core/addon 분리 수량이 이 HTML·플랫폼 연결 문서·애드온 HTML에 동일하게 기록되고 깨진 링크가 0건이다.</li>
+        </ol>
+      </section>
+      <section class="section" id="status">
+        <div class="section-heading"><div><h2>결정 상태</h2><p>확정 요구, 계약 개정과 구현·릴리스 상태를 구분한다.</p></div><span class="badge good">Addon API 1.1 구현 완료</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>상태</th><th>현재 상세안</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-R01</code></td><td><span class="badge good">사용자 확정</span></td><td>관리자·교사 기능을 OJ Console 내부 메뉴와 경로로 통합한다.</td></tr>
+            <tr><td><code>C28-R02</code></td><td><span class="badge good">사용자 확정</span></td><td>플랫폼 수정과 관련 HTML 개발 문서를 같은 변경 집합으로 갱신한다.</td></tr>
+            <tr><td><code>C28-R03</code></td><td><span class="badge good">사용자 확정</span></td><td>학생 기능은 PublicUI에 별도 선언하고, 활성화 시 명시한 <code>학습 &gt; 활동지</code>를 기본 등록하되 Console 메뉴를 복제하지 않는다.</td></tr>
+            <tr><td><code>C28-R04</code></td><td><span class="badge good">v1 구현 정합화</span></td><td>애드온 capability는 manifest로 선언하고 기존 역할에 명시 배정한다. 사용자 직접 capability 배정은 v1 비범위이며 전용 역할은 만들지 않는다.</td></tr>
+            <tr><td><code>C28-R05</code></td><td><span class="badge good">사용자 확정</span></td><td>사용자·학급·그룹·담당 관계는 플랫폼 원장을 사용하고 외부에는 최소 context authorization 계약만 제공한다.</td></tr>
+            <tr><td><code>C28-R06</code></td><td><span class="badge good">사용자 확정</span></td><td>addon task를 기존 AI 작업 배정에 합성하고 provider·비밀값·model routing은 플랫폼이 소유한다.</td></tr>
+            <tr><td><code>C28-D01</code></td><td><span class="badge good">사용자 진행 승인 · AM-01로 개정</span></td><td><code>oj_platform_register_addons</code> 동결 전 수집 창과, 같은 builder의 <code>onReady(callable)</code>로 등록한 애드온별 callback을 직접 호출하는 Runtime 준비 dispatch(옛 <code>oj_platform_loaded(AddonRuntimeGatewayV1)</code> 대체)</td></tr>
+            <tr><td><code>C28-D02</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>Manifest v1, Console/Public Route·Menu, Page Handler/Response, Asset와 Status DTO</td></tr>
+            <tr><td><code>C28-D03</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>애드온별 builder 격리, 전체 후보 검증, 원자 commit과 충돌 애드온 동시 거부</td></tr>
+            <tr><td><code>C28-D04</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>core 152/128/58/19/42/AI task 4와 addon 후보·승인·표시 수량 분리 보고</td></tr>
+            <tr><td><code>C28-D05</code></td><td><span class="badge good">사용자 진행 승인</span></td><td><code>addon.{namespace}.*</code>, reserved path, core anchor 아래 2차 메뉴와 PublicUI override 합성</td></tr>
+            <tr><td><code>C28-D06</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>Addon API <code>1.0.0</code>, 제품·API SemVer 이중 호환과 안정된 오류 코드</td></tr>
+            <tr><td><code>C28-D07</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>다음 부팅 제거, rewrite signature 동기화, Public 메뉴 override 보존·복원</td></tr>
+            <tr><td><code>C28-D08</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>중립 fixture와 AI fixture, E2E·시각·hash·문서 일치 관문</td></tr>
+            <tr><td><code>C28-D09</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>Capability 선언·검증·명시 배정·비활성 보존과 애드온 역할 자동 생성 금지</td></tr>
+            <tr><td><code>C28-D10</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>플랫폼 학급·그룹 stable ID, 최소 snapshot, actor·대상·operation context authorization</td></tr>
+            <tr><td><code>C28-D11</code></td><td><span class="badge good">사용자 진행 승인</span></td><td>Composite AI Task Catalog와 선언 task 전용 canRoute·snapshot·execute runtime gateway</td></tr>
+            <tr><td><code>C28-D12</code></td><td><span class="badge good">AM-02 구현 완료</span></td><td>Addon API 1.1 additive CG02·CG11·AJ08, LC01 readiness 진단, RC01·RC02 권한 보강, CG03·RC04·RC05 정합화</td></tr>
+            <tr><td><code>C28-API-V1-LOCK-01</code></td><td><span class="badge good">정확한 계약 정의</span></td><td>공개 namespace·interface·DTO·hook timing·오류·상한·SemVer와 C28-I01~I06 구현 기록 양식</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>현재 완료:</strong> C28-I01~I06 코드 구현과 AM-01·AM-02 공개 계약 개정, 제품 dev.33·Addon API 1.1·공개 symbol 37개, LC·CG·AJ·RC fixture, 47개 회귀와 검증 ZIP 증거를 완료했다. production 릴리스 표시는 제공자 문서 commit 뒤 <code>source_dirty=false</code> clean package와 G1 소비자 인수를 통과한 뒤에만 한다.</div>
+      </section>
+      <footer><a href="index.html">OJ Platform 문서 허브</a> · <a href="development-sequence.html">전체 설계·개발 순서</a> · <a href="development-c-28-addon-api-v1-release-evidence.html">API 1.1 릴리스 증거</a> · <a href="development-ds-16-integration-freeze.html">DS-16 동결</a> · <a href="development-c-28-addon-api-v1-contract.html">Addon API v1 정확한 계약·이관</a> · <a href="development-c-28-addon-onready-migration.html">onReady 전환 안내서(AM-01)</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-03-access-policy.html">AI 평가 권한 정책 동결</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-04-settings-ai-connection.html">AI 평가 설정·연결 정책 동결</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-05-addon-database.html">AI 평가 데이터베이스 동결</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-06-platform-ledger-connector.html">AI 평가 플랫폼 원장 Connector 동결</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-07-ai-job-execution.html">AI 평가 실행·큐 동결</a> · UTF-8 HTML</footer>
+      <section id="console-menu-icon-policy">
+        <h2>관리자 메뉴 아이콘 표시 정책</h2>
+        <p>기존 AddonConsoleMenuDefinitionV1의 선택 인자 icon 계약은 변경하지 않는다. 아이콘은 공통 메뉴 데이터에 보존하며, 1차 메뉴에서만 플랫폼 Lucide IconName에 등록된 이름을 사용한다. 미지정 애드온 메뉴 또는 미지원 이름은 puzzle로 표시한다. 기본 메뉴의 기존 아이콘은 유지한다.</p>
+        <p>현재 애드온 anchor 등록은 기본 1차 메뉴 아래의 2차 메뉴를 추가한다. 2차 메뉴는 icon 값이 있어도 텍스트만 표시하며, 애드온이 임의 SVG·이미지·이모지를 메뉴 이름에 붙이지 않는다. 펼침·접힘 화살표는 하위 항목이 있는 1차 메뉴의 오른쪽에만 표시한다. API 버전, 권한, anchor 및 Route 계약은 변경하지 않는다.</p>
+      </section>
+      <section id="feedback-review-access">
+        <h2>관리자 저장 피드백 검토</h2>
+        <p>관리자 콘솔의 제출 → AI 피드백 → 피드백 기록은 사용자 아이디·수업 번호·문제 번호로 제출별 최신 저장 피드백을 필터링한다. 관리자 제출 상세에도 같은 저장 피드백을 연결한다. AI 피드백 관리 권한과 해당 제출의 전체 상세 열람 권한을 모두 적용하며, 결과 전용 열람자는 피드백을 볼 수 없다. 권한은 사용자 → 역할과 권한에서 설정한다.</p>
+        <p>저장된 피드백의 관리자 검토는 학습자 새 생성 정책·연구 전달 정책과 분리한다. 관리자 조회는 학습자에게 피드백을 전달한 사건으로 기록하지 않으며 재생성·코드 전송을 실행하지 않는다. 재채점 후에도 생성 당시 저장 내용임을 표시한다. 기존 Addon API의 권한·피드백 생성 계약은 변경하지 않는다.</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

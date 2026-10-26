@@ -1,0 +1,315 @@
+.oj-ai-data {
+  display: grid;
+  gap: 18px;
+}
+
+.oj-ai-data__preservation {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 14px 16px;
+  border-left: 4px solid var(--config-success);
+  background: var(--ojp-color-success-bg, #eef8f2);
+}
+
+.oj-ai-data__preservation > .oj-ai-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--config-success);
+}
+
+.oj-ai-data__preservation strong,
+.oj-ai-data__preservation p,
+.oj-ai-data__row h2,
+.oj-ai-data__row p {
+  margin: 0;
+}
+
+.oj-ai-data__preservation strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+.oj-ai-data__preservation p,
+.oj-ai-data__row p,
+.oj-ai-data__permission,
+.oj-ai-data__detail {
+  color: var(--config-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.oj-ai-data__rows {
+  border-top: 1px solid var(--config-line);
+}
+
+.oj-ai-data__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--config-line);
+}
+
+.oj-ai-data__row h2 {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.oj-ai-data__row--danger h2 {
+  color: var(--config-danger);
+}
+
+.oj-ai-data__permission {
+  max-width: 260px;
+  margin: 0;
+  text-align: right;
+}
+
+.oj-ai-data__button,
+.oj-ai-data__dialog footer button,
+.oj-ai-data__icon-button {
+  min-height: 38px;
+  border: 1px solid var(--ojp-color-line, #aeb8c4);
+  border-radius: 6px;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--config-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.oj-ai-data__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 13px;
+}
+
+.oj-ai-data__button--primary {
+  border-color: var(--config-primary);
+  background: var(--config-primary);
+  color: var(--ojp-color-on-accent, #fff);
+}
+
+.oj-ai-data__button--danger {
+  border-color: var(--config-danger);
+  background: var(--config-danger);
+  color: var(--ojp-color-on-accent, #fff);
+}
+
+.oj-ai-data__dialog {
+  width: min(92vw, 620px);
+  max-height: min(86vh, 760px);
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--ojp-color-separator, var(--config-line));
+  border-radius: var(--ojp-radius-lg, 8px);
+  background: var(--ojp-color-elevated, #fff);
+  color: var(--config-ink);
+  box-shadow: var(--ojp-shadow-3, 0 18px 45px rgba(31, 41, 51, 0.24));
+}
+
+.oj-ai-data__dialog::backdrop {
+  background: var(--ojp-color-scrim, rgba(24, 30, 38, 0.52));
+}
+
+.oj-ai-data__dialog form {
+  display: grid;
+}
+
+.oj-ai-data__dialog header,
+.oj-ai-data__dialog footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+}
+
+.oj-ai-data__dialog header {
+  border-bottom: 1px solid var(--config-line);
+}
+
+.oj-ai-data__dialog footer {
+  justify-content: flex-end;
+  border-top: 1px solid var(--config-line);
+}
+
+.oj-ai-data__dialog h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.oj-ai-data__dialog footer button {
+  padding: 8px 14px;
+}
+
+.oj-ai-data__icon-button {
+  display: inline-grid;
+  width: 38px;
+  padding: 0;
+  place-items: center;
+}
+
+.oj-ai-data__notice {
+  min-height: 42px;
+  margin: 0;
+  padding: 12px 18px;
+  border-left: 4px solid var(--config-line);
+  background: var(--config-soft);
+  color: var(--config-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.oj-ai-data__notice[data-tone="success"] {
+  border-color: var(--config-success);
+  color: var(--config-success);
+}
+
+.oj-ai-data__notice[data-tone="warning"] {
+  border-color: var(--config-warning);
+  color: var(--config-warning);
+}
+
+.oj-ai-data__notice[data-tone="danger"] {
+  border-color: var(--config-danger);
+  color: var(--config-danger);
+}
+
+.oj-ai-data__dialog-body {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.oj-ai-data__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid var(--config-line);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.oj-ai-data__metrics > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 13px;
+  text-align: center;
+}
+
+.oj-ai-data__metrics > div + div {
+  border-left: 1px solid var(--config-line);
+}
+
+.oj-ai-data__metrics dt {
+  color: var(--config-muted);
+  font-size: 12px;
+}
+
+.oj-ai-data__metrics dd {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.oj-ai-data__detail,
+.oj-ai-data__warning {
+  margin: 0;
+}
+
+.oj-ai-data__warning {
+  padding: 11px 12px;
+  border-left: 3px solid var(--config-danger);
+  background: var(--ojp-color-danger-bg, #fff3f2);
+  color: var(--config-danger);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.oj-ai-data__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.oj-ai-data__check input {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+}
+
+.oj-ai-data__field {
+  display: grid;
+  gap: 6px;
+  color: var(--config-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.oj-ai-data__field input {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--ojp-color-line, #aeb8c4);
+  border-radius: 6px;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--config-ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.oj-ai-data__dialog button:disabled,
+.oj-ai-data__dialog input:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 620px) {
+  .oj-ai-data__row {
+    grid-template-columns: 1fr;
+  }
+
+  .oj-ai-data__button {
+    justify-self: start;
+  }
+
+  .oj-ai-data__permission {
+    max-width: none;
+    text-align: left;
+  }
+
+  .oj-ai-data__metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .oj-ai-data__metrics > div + div {
+    border-top: 1px solid var(--config-line);
+    border-left: 0;
+  }
+
+  .oj-ai-data__dialog footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .oj-ai-data__dialog footer button {
+    width: 100%;
+  }
+}
+
+.oj-ai-data__dialog [hidden] {
+  display: none;
+}

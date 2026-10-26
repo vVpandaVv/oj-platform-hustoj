@@ -1,0 +1,624 @@
+{
+    "console": [
+        {
+            "key": "dashboard",
+            "label": "대시보드",
+            "route": "console.dashboard",
+            "parent": "",
+            "feature": "admin_console",
+            "order": 10,
+            "capability": "oj_access_console"
+        },
+        {
+            "key": "users",
+            "label": "사용자",
+            "route": "console.users.index",
+            "parent": "",
+            "feature": "auth",
+            "order": 20,
+            "capability": "oj_manage_users"
+        },
+        {
+            "key": "users.index",
+            "label": "사용자 목록",
+            "route": "console.users.index",
+            "parent": "users",
+            "feature": "auth",
+            "order": 10,
+            "capability": "oj_manage_users"
+        },
+        {
+            "key": "users.new",
+            "label": "사용자 추가",
+            "route": "console.users.new",
+            "parent": "users",
+            "feature": "auth",
+            "order": 15,
+            "capability": "oj_create_users"
+        },
+        {
+            "key": "users.bulk_import",
+            "label": "사용자 일괄 등록",
+            "route": "console.users.bulk_import",
+            "parent": "users",
+            "feature": "auth",
+            "order": 20,
+            "capability": "oj_create_users"
+        },
+        {
+            "key": "users.deleted",
+            "label": "삭제된 사용자",
+            "route": "console.users.deleted",
+            "parent": "users",
+            "feature": "auth",
+            "order": 40,
+            "capability": "oj_view_deleted_users"
+        },
+        {
+            "key": "users.roles",
+            "label": "역할",
+            "route": "console.roles.index",
+            "parent": "users",
+            "feature": "permission",
+            "order": 50,
+            "capability": "oj_manage_roles"
+        },
+        {
+            "key": "users.agreements",
+            "label": "약관",
+            "route": "console.agreements.index",
+            "parent": "users",
+            "feature": "registration",
+            "order": 60,
+            "capability": "oj_manage_agreements"
+        },
+        {
+            "key": "users.registration",
+            "label": "가입 설정",
+            "route": "console.users.registration",
+            "parent": "users",
+            "feature": "registration",
+            "order": 70,
+            "capability": "oj_manage_registration_settings"
+        },
+        {
+            "key": "problems",
+            "label": "문제",
+            "route": "console.problems.index",
+            "parent": "",
+            "feature": "problems",
+            "order": 30,
+            "capability": "oj_manage_problems"
+        },
+        {
+            "key": "problems.index",
+            "label": "문제 목록",
+            "route": "console.problems.index",
+            "parent": "problems",
+            "feature": "problems",
+            "order": 10,
+            "capability": "oj_manage_problems"
+        },
+        {
+            "key": "problems.new",
+            "label": "문제 추가",
+            "route": "console.problems.new",
+            "parent": "problems",
+            "feature": "problems",
+            "order": 20,
+            "capability": "oj_create_problems"
+        },
+        {
+            "key": "problems.quiz",
+            "label": "퀴즈 문제",
+            "route": "console.problems.quiz",
+            "parent": "problems",
+            "feature": "quizzes",
+            "order": 30,
+            "capability": "oj_manage_quizzes"
+        },
+        {
+            "key": "problems.books",
+            "label": "문제집",
+            "route": "console.problem_books.index",
+            "parent": "problems",
+            "feature": "problem_books",
+            "order": 40,
+            "capability": "oj_manage_problem_books"
+        },
+        {
+            "key": "problems.change_id",
+            "label": "문제 번호 변경",
+            "route": "console.problems.change_id",
+            "parent": "problems",
+            "feature": "problems",
+            "order": 50,
+            "capability": "oj_change_problem_ids"
+        },
+        {
+            "key": "problems.xml",
+            "label": "문제 XML 관리",
+            "route": "console.problems.xml",
+            "parent": "problems",
+            "feature": "problems",
+            "order": 60,
+            "capability": "oj_manage_problem_xml"
+        },
+        {
+            "key": "submissions",
+            "label": "제출",
+            "route": "console.submissions.index",
+            "parent": "",
+            "feature": "submissions",
+            "order": 40,
+            "capabilities": [
+                "oj_manage_submissions",
+                "oj_view_submission_detail",
+                "oj_view_submission_code",
+                "oj_rejudge_submissions",
+                "oj_delete_submissions"
+            ]
+        },
+        {
+            "key": "submissions.index",
+            "label": "제출 목록",
+            "route": "console.submissions.index",
+            "parent": "submissions",
+            "feature": "submissions",
+            "order": 10,
+            "capabilities": [
+                "oj_manage_submissions",
+                "oj_view_submission_detail",
+                "oj_view_submission_code",
+                "oj_rejudge_submissions",
+                "oj_delete_submissions"
+            ]
+        },
+        {
+            "key": "submissions.rejudge",
+            "label": "재채점",
+            "route": "console.submissions.rejudge",
+            "parent": "submissions",
+            "feature": "submissions",
+            "order": 20,
+            "capability": "oj_rejudge_submissions"
+        },
+        {
+            "key": "submissions.deleted",
+            "label": "제출 삭제 기록",
+            "route": "console.submissions.deleted",
+            "parent": "submissions",
+            "feature": "submissions",
+            "order": 30,
+            "capability": "oj_manage_submissions"
+        },
+        {
+            "key": "submissions.events",
+            "label": "제출 처리 기록",
+            "route": "console.submissions.events",
+            "parent": "submissions",
+            "feature": "submissions",
+            "order": 40,
+            "capability": "oj_manage_submissions"
+        },
+        {
+            "key": "submissions.settings",
+            "label": "제출 설정",
+            "route": "console.submissions.settings",
+            "parent": "submissions",
+            "feature": "submissions",
+            "order": 50,
+            "capability": "oj_manage_submission_settings"
+        },
+        {
+            "key": "submissions.ai_feedback",
+            "label": "AI 피드백",
+            "route": "console.submissions.ai_feedback",
+            "parent": "submissions",
+            "feature": "ai_feedback",
+            "order": 60,
+            "capability": "oj_manage_ai_feedback"
+        },
+        {
+            "key": "submissions.ai_guides",
+            "label": "AI 답변 지침",
+            "route": "console.submissions.ai_guides",
+            "parent": "submissions",
+            "feature": "ai_feedback",
+            "order": 65,
+            "capability": "oj_manage_ai_feedback"
+        },
+        {
+            "key": "submissions.student_levels",
+            "label": "학습 수준 분석",
+            "route": "console.submissions.student_levels",
+            "parent": "submissions",
+            "feature": "ai_feedback",
+            "order": 70,
+            "capability": "oj_manage_ai_feedback"
+        },
+        {
+            "key": "submissions.blockly",
+            "label": "블록 코딩",
+            "route": "console.submissions.block_coding",
+            "parent": "submissions",
+            "feature": "blockly",
+            "order": 80,
+            "capability": "oj_manage_submission_settings"
+        },
+        {
+            "key": "contests",
+            "label": "대회",
+            "route": "console.contests.index",
+            "parent": "",
+            "feature": "contests",
+            "order": 50,
+            "capability": "oj_manage_contests"
+        },
+        {
+            "key": "contests.index",
+            "label": "대회 목록",
+            "route": "console.contests.index",
+            "parent": "contests",
+            "feature": "contests",
+            "order": 10,
+            "capability": "oj_manage_contests"
+        },
+        {
+            "key": "contests.new",
+            "label": "대회 추가",
+            "route": "console.contests.new",
+            "parent": "contests",
+            "feature": "contests",
+            "order": 20,
+            "capability": "oj_create_contests"
+        },
+        {
+            "key": "contests.deleted_submissions",
+            "label": "삭제된 대회 제출",
+            "route": "console.contests.deleted_submissions",
+            "parent": "contests",
+            "feature": "contests",
+            "order": 30,
+            "capability": "oj_manage_contests"
+        },
+        {
+            "key": "classes",
+            "label": "수업",
+            "route": "console.classes.index",
+            "parent": "",
+            "feature": "classes",
+            "order": 60,
+            "capability": "oj_manage_classes"
+        },
+        {
+            "key": "classes.index",
+            "label": "수업 목록",
+            "route": "console.classes.index",
+            "parent": "classes",
+            "feature": "classes",
+            "order": 10,
+            "capability": "oj_manage_classes"
+        },
+        {
+            "key": "classes.new",
+            "label": "수업 추가",
+            "route": "console.classes.new",
+            "parent": "classes",
+            "feature": "classes",
+            "order": 20,
+            "capability": "oj_create_classes"
+        },
+        {
+            "key": "classes.deleted",
+            "label": "보관된 수업",
+            "route": "console.classes.deleted",
+            "parent": "classes",
+            "feature": "classes",
+            "order": 30,
+            "capability": "oj_manage_classes"
+        },
+        {
+            "key": "groups",
+            "label": "그룹",
+            "route": "console.groups.index",
+            "parent": "",
+            "feature": "groups",
+            "order": 70,
+            "capabilities": [
+                "oj_manage_groups",
+                "oj_create_groups",
+                "oj_manage_own_groups"
+            ]
+        },
+        {
+            "key": "groups.index",
+            "label": "그룹 목록",
+            "route": "console.groups.index",
+            "parent": "groups",
+            "feature": "groups",
+            "order": 10,
+            "capabilities": [
+                "oj_manage_groups",
+                "oj_create_groups",
+                "oj_manage_own_groups"
+            ]
+        },
+        {
+            "key": "groups.new",
+            "label": "그룹 추가",
+            "route": "console.groups.new",
+            "parent": "groups",
+            "feature": "groups",
+            "order": 20,
+            "capability": "oj_create_groups"
+        },
+        {
+            "key": "groups.deleted",
+            "label": "보관된 그룹",
+            "route": "console.groups.deleted",
+            "parent": "groups",
+            "feature": "groups",
+            "order": 30,
+            "capability": "oj_manage_groups"
+        },
+        {
+            "key": "community",
+            "label": "게시판·공지",
+            "route": "console.board.index",
+            "parent": "",
+            "feature": "",
+            "order": 80,
+            "capabilities": [
+                "oj_manage_board",
+                "oj_manage_notices"
+            ]
+        },
+        {
+            "key": "community.board",
+            "label": "게시판",
+            "route": "console.board.index",
+            "parent": "community",
+            "feature": "board",
+            "order": 10,
+            "capability": "oj_manage_board"
+        },
+        {
+            "key": "community.board_new",
+            "label": "게시글 작성",
+            "route": "console.board.new",
+            "parent": "community",
+            "feature": "board",
+            "order": 20,
+            "capability": "oj_manage_board"
+        },
+        {
+            "key": "community.board_trash",
+            "label": "삭제된 게시글",
+            "route": "console.board.trash",
+            "parent": "community",
+            "feature": "board",
+            "order": 30,
+            "capability": "oj_manage_board"
+        },
+        {
+            "key": "community.notices",
+            "label": "공지사항",
+            "route": "console.notices.index",
+            "parent": "community",
+            "feature": "notices",
+            "order": 40,
+            "capability": "oj_manage_notices"
+        },
+        {
+            "key": "community.notice_new",
+            "label": "공지 작성",
+            "route": "console.notices.new",
+            "parent": "community",
+            "feature": "notices",
+            "order": 50,
+            "capability": "oj_manage_notices"
+        },
+        {
+            "key": "community.notice_trash",
+            "label": "삭제된 공지",
+            "route": "console.notices.trash",
+            "parent": "community",
+            "feature": "notices",
+            "order": 60,
+            "capability": "oj_manage_notices"
+        },
+        {
+            "key": "community.settings",
+            "label": "게시판 설정",
+            "route": "console.community.settings",
+            "parent": "community",
+            "feature": "",
+            "order": 70,
+            "capability": "oj_manage_settings"
+        },
+        {
+            "key": "settings",
+            "label": "설정",
+            "route": "console.settings.index",
+            "parent": "",
+            "feature": "settings",
+            "order": 90,
+            "capabilities": [
+                "oj_manage_settings",
+                "oj_manage_smtp",
+                "oj_manage_system",
+                "oj_manage_migration",
+                "oj_view_system_status"
+            ]
+        },
+        {
+            "key": "settings.features",
+            "label": "기능 관리",
+            "route": "console.settings.features",
+            "parent": "settings",
+            "feature": "settings",
+            "order": 10,
+            "capability": "oj_manage_settings"
+        },
+        {
+            "key": "settings.site",
+            "label": "사이트",
+            "route": "console.settings.site",
+            "parent": "settings",
+            "feature": "settings",
+            "order": 20,
+            "capability": "oj_manage_settings"
+        },
+        {
+            "key": "settings.menu",
+            "label": "사용자 메뉴",
+            "route": "console.settings.menu",
+            "parent": "settings",
+            "feature": "settings",
+            "order": 25,
+            "capability": "oj_manage_settings"
+        },
+        {
+            "key": "settings.home",
+            "label": "홈",
+            "route": "console.settings.home",
+            "parent": "settings",
+            "feature": "home",
+            "order": 30,
+            "capability": "oj_manage_settings"
+        }
+    ],
+    "public_defaults": [
+        {
+            "key": "home",
+            "type": "route",
+            "label": "홈",
+            "route_key": "home",
+            "parent_key": "",
+            "order": 10,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "learning",
+            "type": "group",
+            "label": "학습",
+            "route_key": "",
+            "parent_key": "",
+            "order": 20,
+            "visible": true,
+            "display_type": "dropdown"
+        },
+        {
+            "key": "dashboard",
+            "type": "route",
+            "label": "대시보드",
+            "route_key": "learning_dashboard.index",
+            "parent_key": "learning",
+            "order": 5,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "problems",
+            "type": "route",
+            "label": "문제",
+            "route_key": "problems.index",
+            "parent_key": "learning",
+            "order": 10,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "submissions",
+            "type": "route",
+            "label": "제출",
+            "route_key": "submissions.index",
+            "parent_key": "learning",
+            "order": 20,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "ranking",
+            "type": "route",
+            "label": "랭킹",
+            "route_key": "ranking.index",
+            "parent_key": "learning",
+            "order": 30,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "participation",
+            "type": "group",
+            "label": "참여",
+            "route_key": "",
+            "parent_key": "",
+            "order": 30,
+            "visible": true,
+            "display_type": "dropdown"
+        },
+        {
+            "key": "contests",
+            "type": "route",
+            "label": "대회",
+            "route_key": "contests.index",
+            "parent_key": "participation",
+            "order": 10,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "classes",
+            "type": "route",
+            "label": "수업",
+            "route_key": "classes.index",
+            "parent_key": "participation",
+            "order": 20,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "groups",
+            "type": "route",
+            "label": "그룹",
+            "route_key": "groups.index",
+            "parent_key": "participation",
+            "order": 30,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "community",
+            "type": "group",
+            "label": "커뮤니티",
+            "route_key": "",
+            "parent_key": "",
+            "order": 40,
+            "visible": true,
+            "display_type": "dropdown"
+        },
+        {
+            "key": "board",
+            "type": "route",
+            "label": "게시판",
+            "route_key": "board.index",
+            "parent_key": "community",
+            "order": 10,
+            "visible": true,
+            "display_type": "link"
+        },
+        {
+            "key": "notices",
+            "type": "route",
+            "label": "공지",
+            "route_key": "notices.index",
+            "parent_key": "community",
+            "order": 20,
+            "visible": true,
+            "display_type": "link"
+        }
+    ]
+}

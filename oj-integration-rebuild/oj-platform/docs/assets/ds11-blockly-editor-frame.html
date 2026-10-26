@@ -1,0 +1,1873 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-11 Blockly 편집기 화면 자산 | OJ Platform</title>
+  <link rel="stylesheet" href="oj-ui-system.css">
+  <script src="ds11-blockly-contract.js"></script>
+  <script>
+    document.documentElement.classList.add('embed-mode');
+  </script>
+  <style>
+    :root {
+      --soft:var(--surface-soft);
+      --navy:var(--shell);
+      --cyan:var(--teal);
+      --yellow:var(--amber);
+      --violet:#6856b7;
+      --orange:#c6652c;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--surface-soft); font-family:var(--font-sans); line-height:1.6; }
+    html.embed-mode body { background:var(--surface); }
+    html.embed-mode .topbar,
+    html.embed-mode main > .report-header,
+    html.embed-mode main > section:not(#prototype),
+    html.embed-mode main > footer { display:none; }
+    html.embed-mode main { width:100%; margin:0; }
+    html.embed-mode #prototype { margin:0; padding:0; border:0; background:var(--surface); }
+    html.embed-mode #prototype > .section-heading { display:none; }
+    html.embed-mode .prototype-head,
+    html.embed-mode .editor-nav { display:none; }
+    html.embed-mode .prototype { margin:0; }
+    html.embed-mode .embed-language { display:inline-flex; }
+    button,select,textarea { font:inherit; }
+    button { letter-spacing:0; }
+    a { color:var(--teal-strong); }
+    code { padding:1px 4px; border-radius:3px; background:#e8edef; font-family:var(--font-code); font-size:.94em; overflow-wrap:anywhere; }
+    .topbar { color:#fff; background:var(--shell); border-bottom:4px solid var(--teal); }
+    .topbar-inner { width:min(1280px,calc(100% - 32px)); margin:auto; padding:14px 0; display:flex; justify-content:space-between; gap:16px; align-items:center; }
+    .brand { display:flex; gap:10px; align-items:center; color:#fff; text-decoration:none; }
+    .brand-mark { width:34px; height:34px; display:grid; place-items:center; color:var(--navy); background:#fff; border-radius:5px; font-weight:900; }
+    main { width:min(1280px,calc(100% - 32px)); margin:24px auto 42px; }
+    .report-header,.section { padding:24px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+    .section { margin-top:18px; }
+    .eyebrow { margin:0 0 8px; color:var(--cyan); font-size:13px; font-weight:800; }
+    h1,h2,h3 { color:var(--navy); letter-spacing:0; }
+    h1 { margin:0; font-size:32px; line-height:1.25; }
+    h2 { margin:0; font-size:22px; }
+    h3 { margin:20px 0 8px; font-size:17px; }
+    p { margin:8px 0 0; }
+    .lede { max-width:930px; color:var(--muted); font-size:16px; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:16px; color:var(--muted); font-size:13px; }
+    .section-heading { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; padding-bottom:12px; border-bottom:1px solid var(--line); }
+    .section-heading p { color:var(--muted); }
+    .badge { flex:0 0 auto; padding:4px 8px; border-radius:5px; font-size:12px; font-weight:800; }
+    .badge.good { color:var(--green); background:var(--green-soft); }
+    .badge.info { color:var(--teal-strong); background:var(--surface-teal); }
+    .badge.wait { color:var(--amber); background:var(--amber-soft); }
+    .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .metric { padding:14px; border:1px solid var(--line); border-top:4px solid var(--cyan); border-radius:5px; background:var(--soft); }
+    .metric strong { display:block; color:var(--navy); font-size:23px; }
+    .metric span { color:var(--muted); font-size:13px; }
+    .callout,.warning { margin-top:16px; padding:14px 16px; border-left:4px solid var(--green); background:var(--green-soft); }
+    .warning { border-left-color:var(--yellow); background:var(--amber-soft); }
+    .table-wrap { margin-top:16px; overflow-x:auto; border:1px solid var(--line); border-radius:5px; }
+    table { width:100%; border-collapse:collapse; background:var(--surface); font-size:14px; }
+    th,td { padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:#fff; background:var(--navy); }
+    tbody tr:nth-child(even) { background:#f8fafb; }
+    tbody tr:last-child td { border-bottom:0; }
+    .rules { margin:14px 0 0; padding-left:22px; }
+    .rules li + li { margin-top:7px; }
+
+    .prototype { margin-top:16px; border:1px solid var(--line-strong); border-radius:var(--radius); background:var(--surface-soft); overflow:hidden; }
+    .prototype-head { padding:14px 16px; display:flex; justify-content:space-between; gap:16px; align-items:center; color:#fff; background:var(--shell); }
+    .problem-title { display:flex; gap:10px; align-items:center; min-width:0; }
+    .problem-title strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .problem-number { color:var(--shell); background:#fff; padding:3px 7px; border-radius:4px; font:700 12px var(--font-code); }
+    .language-badge { flex:0 0 auto; padding:4px 8px; border:1px solid rgba(255,255,255,.42); border-radius:4px; font-size:12px; font-weight:800; }
+    .editor-nav { padding:10px 14px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; align-items:center; border-bottom:1px solid var(--line); background:var(--surface); }
+    .segmented { display:inline-flex; padding:3px; border:1px solid var(--line-strong); border-radius:var(--radius); background:var(--surface-soft); }
+    .segmented button { min-height:34px; padding:5px 12px; border:0; border-radius:4px; color:var(--muted); background:transparent; cursor:pointer; font-size:13px; font-weight:800; }
+    .segmented button.is-active { color:#fff; background:var(--teal); }
+    .mode-note { color:var(--muted); font-size:12px; }
+    .toolbar { min-height:48px; padding:7px 12px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; border-bottom:1px solid var(--line); background:var(--surface-soft); }
+    .tool-label { color:var(--muted); font-size:12px; font-weight:800; }
+    .embed-language { display:none; min-height:28px; padding:3px 8px; align-items:center; border:1px solid var(--line-strong); border-radius:4px; color:var(--teal-strong); background:var(--surface-teal); font-size:12px; font-weight:800; }
+    .toolbar-spacer { flex:1 1 auto; }
+    .icon-button { width:36px; height:36px; display:grid; place-items:center; border:1px solid var(--line-strong); border-radius:5px; color:var(--ink); background:var(--surface); cursor:pointer; font-size:18px; font-weight:800; }
+    .icon-button:hover { border-color:var(--teal); background:var(--surface-teal); }
+    .editor-grid { display:grid; grid-template-columns:minmax(0,1fr) 360px; min-height:590px; }
+    .workspace-pane { min-width:0; position:relative; background:var(--surface-teal); }
+    #blocklyDiv { width:100%; height:590px; }
+    .blocklyToolboxDiv { border-right:1px solid var(--line) !important; background:var(--surface) !important; }
+    .blocklyTreeRow { min-height:34px !important; margin:3px 6px !important; padding:6px 9px !important; border-radius:5px !important; }
+    .blocklyTreeLabel { font-family:var(--font-sans) !important; font-size:13px !important; font-weight:800 !important; }
+    .blocklyFlyoutBackground { fill:var(--surface-soft) !important; fill-opacity:1 !important; }
+    .blocklyMainBackground { stroke:var(--line-strong) !important; }
+    .blocklyText {
+      fill:#ffffff !important;
+      stroke:rgba(15,24,32,.55);
+      stroke-width:.55px;
+      stroke-linejoin:round;
+      paint-order:stroke fill;
+      font-family:var(--font-sans) !important;
+      font-size:12px !important;
+      letter-spacing:0 !important;
+    }
+    .blocklyEditableField .blocklyFieldRect {
+      fill:#ffffff !important;
+      fill-opacity:1 !important;
+      stroke:rgba(15,24,32,.45) !important;
+      stroke-width:1px !important;
+    }
+    .blocklyEditableField .blocklyText {
+      fill:#000000 !important;
+      stroke:none !important;
+      paint-order:normal;
+    }
+    .blocklyDropdownField .blocklyFieldRect {
+      fill:transparent !important;
+      fill-opacity:0 !important;
+      stroke:rgba(255,255,255,.72) !important;
+      stroke-width:1px !important;
+    }
+    .blocklyDropdownField:hover .blocklyFieldRect {
+      stroke:#ffffff !important;
+      stroke-width:1.5px !important;
+    }
+    .blocklyDropdownField .blocklyDropdownText {
+      fill:#ffffff !important;
+      stroke:rgba(15,24,32,.55) !important;
+      stroke-width:.55px !important;
+      stroke-linejoin:round;
+      paint-order:stroke fill;
+    }
+    .blocklyHtmlInput {
+      color:#000000 !important;
+      background:#ffffff !important;
+    }
+    .code-pane { min-width:0; display:grid; grid-template-rows:auto 1fr auto; border-left:1px solid var(--line); background:var(--surface); }
+    .pane-head { min-height:46px; padding:10px 12px; display:flex; justify-content:space-between; gap:12px; align-items:center; border-bottom:1px solid var(--line); }
+    .pane-head strong { color:var(--navy); font-size:14px; }
+    .pane-actions { display:flex; gap:7px; align-items:center; }
+    .pane-toggle { width:30px; height:30px; display:grid; place-items:center; border:1px solid var(--line-strong); border-radius:4px; color:var(--ink); background:var(--surface); cursor:pointer; font-size:18px; font-weight:800; line-height:1; }
+    .pane-toggle:hover { border-color:var(--teal); background:var(--surface-teal); }
+    .read-only { color:var(--muted); background:var(--surface-soft); border-radius:4px; padding:2px 6px; font-size:11px; font-weight:800; }
+    #codePreview { margin:0; padding:16px; overflow:auto; color:var(--code-ink); background:var(--code-surface); font:13px/1.65 var(--font-code); white-space:pre; }
+    #codeEditor { width:100%; height:100%; min-height:470px; padding:16px; resize:none; border:0; outline:0; color:var(--code-ink); background:var(--code-surface); font:13px/1.65 var(--font-code); }
+    .code-note { padding:10px 12px; color:var(--muted); background:var(--surface-soft); border-top:1px solid var(--line); font-size:12px; }
+    .code-mode-only { display:none; }
+    .prototype.is-code-mode .workspace-pane { display:none; }
+    .prototype.is-code-mode .editor-grid { grid-template-columns:1fr; }
+    .prototype.is-code-mode .code-pane { border-left:0; }
+    .prototype.is-code-mode #codePreview,.prototype.is-code-mode .block-mode-only { display:none; }
+    .prototype.is-code-mode .code-mode-only { display:block; }
+    .prototype.is-code-preview-collapsed .editor-grid { grid-template-columns:minmax(0,1fr) 52px; }
+    .prototype.is-code-preview-collapsed .code-pane { grid-template-rows:auto; }
+    .prototype.is-code-preview-collapsed .pane-head { padding:8px; justify-content:center; }
+    .prototype.is-code-preview-collapsed .pane-head strong,
+    .prototype.is-code-preview-collapsed .read-only,
+    .prototype.is-code-preview-collapsed #codePreview,
+    .prototype.is-code-preview-collapsed .code-note { display:none; }
+    .prototype.is-code-preview-collapsed .pane-actions { width:100%; justify-content:center; }
+    .submit-bar { min-height:58px; padding:10px 14px; display:flex; justify-content:space-between; gap:14px; align-items:center; border-top:1px solid var(--line); background:var(--surface); }
+    #prototypeStatus { color:var(--muted); font-size:13px; }
+    .primary-button { min-height:38px; padding:7px 16px; border:1px solid var(--teal); border-radius:5px; color:#fff; background:var(--teal); cursor:pointer; font-weight:800; }
+    .primary-button:hover { border-color:var(--teal-strong); background:var(--teal-strong); }
+    footer { margin-top:18px; color:var(--muted); text-align:center; font-size:13px; }
+
+    @media (max-width:980px) {
+      .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .editor-grid { grid-template-columns:1fr; }
+      .code-pane { min-height:320px; border-left:0; border-top:1px solid var(--line); }
+      #codePreview { min-height:300px; }
+      .prototype.is-code-preview-collapsed .editor-grid { grid-template-columns:1fr; }
+      .prototype.is-code-preview-collapsed .code-pane { min-height:46px; }
+      .prototype.is-code-preview-collapsed .pane-head { justify-content:flex-end; }
+      .prototype.is-code-preview-collapsed .pane-actions { width:auto; }
+    }
+    @media (max-width:680px) {
+      .topbar-inner,main { width:min(100% - 20px,1280px); }
+      .topbar span:last-child { display:none; }
+      .report-header,.section { padding:17px; }
+      h1 { font-size:26px; }
+      .metrics { grid-template-columns:1fr; }
+      .section-heading,.prototype-head,.submit-bar { align-items:flex-start; flex-direction:column; }
+      .segmented { width:100%; }
+      .segmented button { flex:1 1 0; padding-inline:7px; }
+      .toolbar-spacer { display:none; }
+      #blocklyDiv { height:470px; }
+      .primary-button { width:100%; }
+    }
+  </style>
+  <script defer src="../../resources/vendor/blockly/blockly_compressed.js"></script>
+  <script defer src="../../resources/vendor/blockly/msg/ko.js"></script>
+  <script defer src="../../resources/vendor/blockly/blocks_compressed.js"></script>
+  <script defer src="../../resources/vendor/blockly/python_compressed.js"></script>
+</head>
+<body>
+  <main>
+    <section class="section" id="prototype">
+      <div class="prototype" id="prototypeShell">
+              <div class="prototype-head">
+                <div class="problem-title"><span class="problem-number">1001</span><strong>두 수의 합</strong></div>
+                <span class="language-badge block-mode-only">Python 3 · 자동</span>
+              </div>
+              <div class="editor-nav">
+                <div class="segmented" aria-label="작성 방식">
+                  <button type="button" id="codeModeButton">코드</button>
+                  <button type="button" class="is-active" id="blockModeButton">블록</button>
+                </div>
+                <span class="mode-note">블록 작업은 현재 탭에 자동 저장</span>
+              </div>
+              <div class="toolbar">
+                <span class="tool-label">도구상자</span>
+                <div class="segmented" aria-label="도구상자 단계">
+                  <button type="button" data-profile="intro">입문</button>
+                  <button type="button" class="is-active" data-profile="standard">표준</button>
+                  <button type="button" data-profile="extended">확장</button>
+                </div>
+                <span class="embed-language">Python 3 자동</span>
+                <span class="toolbar-spacer"></span>
+                <button type="button" class="icon-button" id="undoButton" title="실행 취소" aria-label="실행 취소">↶</button>
+                <button type="button" class="icon-button" id="redoButton" title="다시 실행" aria-label="다시 실행">↷</button>
+                <button type="button" class="icon-button" id="fitButton" title="전체 블록 맞춤" aria-label="전체 블록 맞춤">⌗</button>
+                <button type="button" class="icon-button" id="clearButton" title="작업공간 비우기" aria-label="작업공간 비우기">×</button>
+              </div>
+              <div class="editor-grid">
+                <div class="workspace-pane block-mode-only">
+                  <div id="blocklyDiv" aria-label="블록 작업공간"></div>
+                </div>
+                <aside class="code-pane">
+                  <div class="pane-head">
+                    <strong>생성 코드</strong>
+                    <div class="pane-actions">
+                      <span class="read-only block-mode-only">읽기 전용</span>
+                      <span class="read-only code-mode-only">직접 편집</span>
+                      <button type="button" class="pane-toggle block-mode-only" id="codePaneToggle" aria-controls="codePreview" aria-expanded="true" aria-label="생성 코드 축소" title="생성 코드 축소">−</button>
+                    </div>
+                  </div>
+                  <pre id="codePreview" class="block-mode-only">Blockly를 불러오는 중입니다.</pre>
+                  <textarea id="codeEditor" class="code-mode-only" aria-label="코드 편집기"></textarea>
+                  <div class="code-note block-mode-only">블록을 변경하면 코드가 자동으로 갱신됩니다.</div>
+                  <div class="code-note code-mode-only">코드 모드에서 수정하면 기존 블록과 다시 동기화되지 않습니다.</div>
+                </aside>
+              </div>
+              <div class="submit-bar">
+                <span id="prototypeStatus" role="status">표준 도구상자 · 블록 연결 상태를 확인합니다.</span>
+                <button type="button" class="primary-button" id="submitExampleButton">제출</button>
+              </div>
+            </div>
+    </section>
+  </main>
+  <script>
+    (function () {
+      'use strict';
+
+      var embedParams = new URLSearchParams(window.location.search);
+      var isEmbedMode = embedParams.get('embed') === '1';
+      var blocklyContract = window.OJBlocklyContract;
+      var workspace = null;
+      var ui = null;
+      var saveTimer = null;
+      var ojTheme = null;
+      var ojBlockTypes = {};
+
+      // 설정과 범주 카탈로그가 색상, 스타일, 블록 소속의 단일 기준이다.
+      var APP_CONFIG = Object.freeze({
+        defaultProfile: 'standard',
+        rendererName: 'oj_zelos',
+        storageKey: 'oj_blockly_design_example_1001',
+        profiles: Object.freeze({
+          intro: '입문',
+          standard: '표준',
+          extended: '확장'
+        })
+      });
+      var activeProfile = APP_CONFIG.defaultProfile;
+      var CATEGORY_CATALOG = Object.freeze({
+        start: {
+          name: '프로그램 시작',
+          primary: '#b19a52',
+          secondary: '#c4b278',
+          tertiary: '#7c692f',
+          blockStyle: 'oj_start_blocks',
+          blockTypes: ['oj_start']
+        },
+        io: {
+          name: '입력·출력',
+          primary: '#62aab0',
+          secondary: '#88bec2',
+          tertiary: '#397a80',
+          blockStyle: 'oj_io_blocks',
+          categoryStyle: 'oj_io_category',
+          blockTypes: [
+            'oj_input_int', 'oj_input_float', 'oj_input_token', 'oj_input_line',
+            'oj_print', 'oj_split_ints', 'oj_print_list',
+            'py_to_int', 'py_to_float', 'py_to_string', 'py_to_bool'
+          ]
+        },
+        variable: {
+          name: '변수',
+          primary: '#63709d',
+          secondary: '#8992b4',
+          tertiary: '#414d78',
+          blockStyle: 'oj_variable_blocks',
+          categoryStyle: 'oj_variable_category',
+          themeAliases: ['variable_blocks', 'variable_dynamic_blocks'],
+          blockTypes: ['variables_get', 'variables_set', 'math_change']
+        },
+        control: {
+          name: '제어',
+          primary: '#68a2ba',
+          secondary: '#8bb8c9',
+          tertiary: '#3f758e',
+          blockStyle: 'oj_control_blocks',
+          categoryStyle: 'oj_control_category',
+          themeAliases: ['loop_blocks'],
+          blockTypes: [
+            'controls_repeat_ext', 'controls_if', 'controls_whileUntil',
+            'controls_for', 'controls_forEach', 'controls_flow_statements'
+          ]
+        },
+        logic: {
+          name: '논리',
+          primary: '#7a67a5',
+          secondary: '#9d90bc',
+          tertiary: '#524279',
+          blockStyle: 'oj_logic_blocks',
+          categoryStyle: 'oj_logic_category',
+          themeAliases: ['logic_blocks'],
+          blockTypes: [
+            'logic_compare', 'logic_operation', 'logic_boolean',
+            'logic_negate', 'logic_null'
+          ]
+        },
+        math: {
+          name: '수학',
+          primary: '#74a789',
+          secondary: '#94b8a2',
+          tertiary: '#4b7b5d',
+          blockStyle: 'oj_math_blocks',
+          categoryStyle: 'oj_math_category',
+          themeAliases: ['math_blocks'],
+          blockTypes: [
+            'math_number', 'math_arithmetic', 'math_modulo', 'math_single',
+            'math_on_list', 'math_number_property', 'math_round',
+            'math_trig', 'math_constant', 'math_constrain'
+          ]
+        },
+        text: {
+          name: '문자열',
+          primary: '#d38a67',
+          secondary: '#e0a488',
+          tertiary: '#9b5d42',
+          blockStyle: 'oj_text_blocks',
+          categoryStyle: 'oj_text_category',
+          themeAliases: ['text_blocks'],
+          blockTypes: [
+            'text', 'text_join', 'text_length', 'text_isEmpty',
+            'text_changeCase', 'text_trim', 'py_string_get', 'py_string_slice',
+            'py_string_split_ws', 'py_string_split', 'py_string_join',
+            'py_string_find', 'py_string_replace'
+          ]
+        },
+        list: {
+          name: '자료구조',
+          primary: '#4675a6',
+          secondary: '#7296bd',
+          tertiary: '#2d527b',
+          blockStyle: 'oj_list_blocks',
+          categoryStyle: 'oj_list_category',
+          themeAliases: ['list_blocks'],
+          blockTypes: [
+            'lists_create_with', 'lists_repeat', 'lists_length', 'lists_isEmpty',
+            'lists_reverse', 'py_length', 'py_list_get', 'py_list_set',
+            'py_list_append', 'py_list_slice', 'py_list_find', 'py_list_sort',
+            'py_tuple_from_list', 'py_tuple_get', 'py_dict_empty',
+            'py_dict_from_pairs', 'py_dict_get', 'py_dict_get_default',
+            'py_dict_set', 'py_dict_contains', 'py_dict_view', 'py_set_empty',
+            'py_set_from_list', 'py_set_add', 'py_set_discard',
+            'py_set_contains', 'py_set_operation', 'py_set_to_list'
+          ]
+        },
+        function: {
+          name: '함수',
+          primary: '#9b5f7d',
+          secondary: '#b8849d',
+          tertiary: '#6f3d58',
+          blockStyle: 'oj_function_blocks',
+          categoryStyle: 'oj_function_category',
+          themeAliases: ['procedure_blocks'],
+          blockTypes: [
+            'procedures_defnoreturn', 'procedures_defreturn',
+            'procedures_callnoreturn', 'procedures_callreturn',
+            'procedures_ifreturn'
+          ]
+        }
+      });
+
+      function blockStyle(primary, secondary, tertiary) {
+        return {
+          colourPrimary: primary,
+          colourSecondary: secondary,
+          colourTertiary: tertiary
+        };
+      }
+
+      function uiToken(name, fallback) {
+        var value = window.getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return value || fallback;
+      }
+
+      function buildOjTheme() {
+        var blockStyles = {};
+        var categoryStyles = {};
+
+        if (ojTheme) {
+          return ojTheme;
+        }
+
+        Object.keys(CATEGORY_CATALOG).forEach(function (categoryKey) {
+          var item = CATEGORY_CATALOG[categoryKey];
+          var style = blockStyle(item.primary, item.secondary, item.tertiary);
+
+          blockStyles[item.blockStyle] = style;
+          (item.themeAliases || []).forEach(function (alias) {
+            blockStyles[alias] = style;
+          });
+          if (item.categoryStyle) {
+            categoryStyles[item.categoryStyle] = { colour: item.primary };
+          }
+        });
+
+        ojTheme = Blockly.Theme.defineTheme('ojLearningCategoryTheme', {
+          base: Blockly.Themes.Classic,
+          blockStyles: blockStyles,
+          categoryStyles: categoryStyles,
+          componentStyles: {
+            workspaceBackgroundColour: uiToken('--surface-teal', '#edf7f6'),
+            toolboxBackgroundColour: uiToken('--surface', '#ffffff'),
+            toolboxForegroundColour: uiToken('--ink', '#182126'),
+            flyoutBackgroundColour: uiToken('--surface-soft', '#f5f7f7'),
+            flyoutForegroundColour: uiToken('--ink', '#182126'),
+            flyoutOpacity: 1,
+            scrollbarColour: uiToken('--line-strong', '#bec8cd'),
+            insertionMarkerColour: uiToken('--teal-strong', '#056560'),
+            insertionMarkerOpacity: 0.25,
+            cursorColour: uiToken('--teal-strong', '#056560')
+          }
+        });
+
+        return ojTheme;
+      }
+
+      function registerOjRenderer() {
+        var rendererType = Blockly.registry.Type.RENDERER;
+
+        if (!Blockly.registry.hasItem(rendererType, APP_CONFIG.rendererName)) {
+          class OjZelosConstants extends Blockly.zelos.ConstantProvider {
+            constructor() {
+              super();
+              this.FIELD_DROPDOWN_NO_BORDER_RECT_SHADOW = false;
+            }
+          }
+
+          class OjZelosRenderer extends Blockly.zelos.Renderer {
+            makeConstants_() {
+              return new OjZelosConstants();
+            }
+          }
+
+          Blockly.registry.register(rendererType, APP_CONFIG.rendererName, OjZelosRenderer);
+        }
+
+        return APP_CONFIG.rendererName;
+      }
+
+      function wrapBlockStyle(type, styleName) {
+        var definition = Blockly.Blocks[type];
+        var originalInit;
+
+        if (!definition || definition.ojStyleWrapped) {
+          return;
+        }
+
+        originalInit = definition.init;
+        definition.init = function () {
+          originalInit.call(this);
+          this.setStyle(styleName);
+        };
+        definition.ojStyleWrapped = true;
+      }
+
+      function applyCategoryBlockStyles() {
+        Object.keys(CATEGORY_CATALOG).forEach(function (categoryKey) {
+          var item = CATEGORY_CATALOG[categoryKey];
+
+          item.blockTypes.forEach(function (type) {
+            if (!ojBlockTypes[type]) {
+              wrapBlockStyle(type, item.blockStyle);
+            }
+          });
+        });
+      }
+
+      function categoryForBlock(type) {
+        var categoryKey = Object.keys(CATEGORY_CATALOG).find(function (key) {
+          return CATEGORY_CATALOG[key].blockTypes.indexOf(type) !== -1;
+        });
+
+        if (!categoryKey) {
+          throw new Error('블록 범주가 등록되지 않았습니다: ' + type);
+        }
+
+        return CATEGORY_CATALOG[categoryKey];
+      }
+
+      function pythonGenerator() {
+        return window.python ? window.python.pythonGenerator : null;
+      }
+
+      function setGenerator(type, callback) {
+        var generator = pythonGenerator();
+
+        if (!generator) {
+          return;
+        }
+
+        generator.forBlock = generator.forBlock || {};
+        generator.forBlock[type] = callback;
+      }
+
+      function valueCode(generator, block, name, fallback) {
+        return generator.valueToCode(block, name, generator.ORDER_NONE || 0) || fallback;
+      }
+
+      function statementCode(generator, block, name) {
+        return generator.statementToCode(block, name) || '  pass\n';
+      }
+
+      function applyPythonMessages() {
+        Blockly.Msg.VARIABLES_SET = '변수 %1에 값 %2 저장';
+        Blockly.Msg.MATH_CHANGE_TITLE = '변수 %1에 %2 더하기';
+        Blockly.Msg.CONTROLS_REPEAT_TITLE = '%1번 반복';
+        Blockly.Msg.CONTROLS_REPEAT_INPUT_DO = '실행';
+        Blockly.Msg.CONTROLS_IF_MSG_IF = '만약';
+        Blockly.Msg.CONTROLS_IF_MSG_THEN = '이면 실행';
+        Blockly.Msg.CONTROLS_WHILEUNTIL_OPERATOR_WHILE = '조건이 참인 동안';
+        Blockly.Msg.CONTROLS_WHILEUNTIL_OPERATOR_UNTIL = '조건이 참이 될 때까지';
+        Blockly.Msg.CONTROLS_WHILEUNTIL_INPUT_DO = '반복 실행';
+        Blockly.Msg.CONTROLS_FOR_TITLE = '변수 %1: %2부터 %3까지 %4씩 반복';
+        Blockly.Msg.CONTROLS_FOR_INPUT_DO = '실행';
+        Blockly.Msg.CONTROLS_FOREACH_TITLE = '목록 %2의 각 항목을 %1에 넣어 반복';
+        Blockly.Msg.CONTROLS_FOREACH_INPUT_DO = '실행';
+        Blockly.Msg.TEXT_LENGTH_TITLE = '문자열 %1의 길이';
+        Blockly.Msg.TEXT_ISEMPTY_TITLE = '문자열 %1이 비어 있는가';
+        Blockly.Msg.LISTS_REPEAT_TITLE = '값 %1을 %2번 넣은 목록 만들기';
+        Blockly.Msg.LISTS_LENGTH_TITLE = '목록 %1의 길이';
+        Blockly.Msg.LISTS_ISEMPTY_TITLE = '목록 %1이 비어 있는가';
+        Blockly.Msg.LISTS_REVERSE_MESSAGE0 = '목록 %1 뒤집기';
+        Blockly.Msg.LISTS_SORT_TITLE = '목록 %3을 %1 기준 %2으로 정렬';
+        Blockly.Msg.PROCEDURES_DEFNORETURN_TITLE = '함수 정의';
+        Blockly.Msg.PROCEDURES_DEFNORETURN_PROCEDURE = '이름';
+        Blockly.Msg.PROCEDURES_DEFNORETURN_DO = '실행';
+        Blockly.Msg.PROCEDURES_DEFRETURN_TITLE = '함수 정의';
+        Blockly.Msg.PROCEDURES_DEFRETURN_PROCEDURE = '이름';
+        Blockly.Msg.PROCEDURES_DEFRETURN_DO = '실행';
+        Blockly.Msg.PROCEDURES_DEFRETURN_RETURN = '반환할 값';
+        Blockly.Msg.PROCEDURES_CALL_BEFORE_PARAMS = '함수 호출';
+      }
+
+      function registerOjBlockDefinitions() {
+        // 사용자 정의 블록은 표현만 선언하고 범주 스타일은 카탈로그에서 주입한다.
+        var definitions = [
+          {
+            type: 'oj_start',
+            message0: '프로그램 시작',
+            message1: '실행 %1',
+            args1: [{ type: 'input_statement', name: 'DO' }],
+            tooltip: '이 블록 아래에 실행 순서대로 블록을 연결합니다.'
+          },
+          {
+            type: 'oj_input_int',
+            message0: '다음 정수 입력',
+            output: 'Number',
+          },
+          {
+            type: 'oj_input_float',
+            message0: '다음 실수 입력',
+            output: 'Number',
+          },
+          {
+            type: 'oj_input_token',
+            message0: '다음 문자열 입력',
+            output: 'String',
+          },
+          {
+            type: 'oj_input_line',
+            message0: '다음 한 줄 입력',
+            output: 'String',
+          },
+          {
+            type: 'oj_print',
+            message0: '값 %1 출력, 끝 처리 %2',
+            args0: [
+              { type: 'input_value', name: 'VALUE' },
+              {
+                type: 'field_dropdown',
+                name: 'END',
+                options: [
+                  ['줄바꿈', 'NEWLINE'],
+                  ['공백', 'SPACE'],
+                  ['없음', 'NONE']
+                ]
+              }
+            ],
+            previousStatement: null,
+            nextStatement: null,
+          },
+          {
+            type: 'oj_split_ints',
+            message0: '문자열 %1을 정수 목록으로 바꾸기',
+            args0: [{ type: 'input_value', name: 'TEXT', check: 'String' }],
+            output: 'Array',
+          },
+          {
+            type: 'oj_print_list',
+            message0: '목록 %1을 구분자 %2로 출력',
+            args0: [
+              { type: 'input_value', name: 'LIST', check: 'Array' },
+              { type: 'field_input', name: 'DELIM', text: ' ' }
+            ],
+            previousStatement: null,
+            nextStatement: null,
+          },
+          {
+            type: 'py_to_int',
+            message0: '값 %1을 정수로 바꾸기',
+            args0: [{ type: 'input_value', name: 'VALUE' }],
+            output: 'Number',
+          },
+          {
+            type: 'py_to_float',
+            message0: '값 %1을 실수로 바꾸기',
+            args0: [{ type: 'input_value', name: 'VALUE' }],
+            output: 'Number',
+          },
+          {
+            type: 'py_to_string',
+            message0: '값 %1을 문자열로 바꾸기',
+            args0: [{ type: 'input_value', name: 'VALUE' }],
+            output: 'String',
+          },
+          {
+            type: 'py_to_bool',
+            message0: '값 %1을 참·거짓으로 바꾸기',
+            args0: [{ type: 'input_value', name: 'VALUE' }],
+            output: 'Boolean',
+          },
+          {
+            type: 'py_string_split_ws',
+            message0: '문자열 %1을 공백 기준으로 나누기',
+            args0: [{ type: 'input_value', name: 'TEXT', check: 'String' }],
+            output: 'Array',
+          },
+          {
+            type: 'py_string_split',
+            message0: '문자열 %1을 구분자 %2로 나누기',
+            args0: [
+              { type: 'input_value', name: 'TEXT', check: 'String' },
+              { type: 'input_value', name: 'DELIMITER', check: 'String' }
+            ],
+            inputsInline: true,
+            output: 'Array',
+          },
+          {
+            type: 'py_string_join',
+            message0: '목록 %1을 구분자 %2로 연결하기',
+            args0: [
+              { type: 'input_value', name: 'LIST', check: 'Array' },
+              { type: 'input_value', name: 'DELIMITER', check: 'String' }
+            ],
+            output: 'String',
+          },
+          {
+            type: 'py_string_find',
+            message0: '문자열 %1에서 %2의 위치 찾기',
+            args0: [
+              { type: 'input_value', name: 'TEXT', check: 'String' },
+              { type: 'input_value', name: 'NEEDLE', check: 'String' }
+            ],
+            inputsInline: true,
+            output: 'Number',
+          },
+          {
+            type: 'py_string_replace',
+            message0: '문자열 %1 바꾸기, 찾을 내용 %2 새 내용 %3',
+            args0: [
+              { type: 'input_value', name: 'TEXT', check: 'String' },
+              { type: 'input_value', name: 'OLD', check: 'String' },
+              { type: 'input_value', name: 'NEW', check: 'String' }
+            ],
+            inputsInline: true,
+            output: 'String',
+          },
+          {
+            type: 'py_string_get',
+            message0: '문자열 %1의 위치 %2 문자 가져오기',
+            args0: [
+              { type: 'input_value', name: 'TEXT', check: 'String' },
+              { type: 'input_value', name: 'INDEX', check: 'Number' }
+            ],
+            inputsInline: true,
+            output: 'String',
+          },
+          {
+            type: 'py_string_slice',
+            message0: '문자열 %1의 부분 가져오기',
+            args0: [{ type: 'input_value', name: 'TEXT', check: 'String' }],
+            message1: '시작 위치 %1',
+            args1: [{ type: 'input_value', name: 'START', check: 'Number' }],
+            message2: '끝 위치 %1 전',
+            args2: [{ type: 'input_value', name: 'END', check: 'Number' }],
+            output: 'String',
+          },
+          {
+            type: 'py_length',
+            message0: '값 %1의 길이',
+            args0: [{ type: 'input_value', name: 'VALUE' }],
+            output: 'Number',
+          },
+          {
+            type: 'py_list_get',
+            message0: '목록 %1 위치 %2의 항목 가져오기',
+            args0: [
+              { type: 'input_value', name: 'LIST', check: 'Array' },
+              { type: 'input_value', name: 'INDEX', check: 'Number' }
+            ],
+            inputsInline: true,
+            output: null,
+          },
+          {
+            type: 'py_list_set',
+            message0: '목록 %1 위치 %2에 값 %3 저장',
+            args0: [
+              { type: 'input_value', name: 'LIST', check: 'Array' },
+              { type: 'input_value', name: 'INDEX', check: 'Number' },
+              { type: 'input_value', name: 'VALUE' }
+            ],
+            inputsInline: true,
+            previousStatement: null,
+            nextStatement: null,
+          },
+          {
+            type: 'py_list_append',
+            message0: '목록 %1에 값 %2 추가',
+            args0: [
+              { type: 'input_value', name: 'LIST', check: 'Array' },
+              { type: 'input_value', name: 'VALUE' }
+            ],
+            inputsInline: true,
+            previousStatement: null,
+            nextStatement: null,
+          },
+          {
+            type: 'py_list_slice',
+            message0: '목록 %1의 부분 가져오기',
+            args0: [{ type: 'input_value', name: 'LIST', check: 'Array' }],
+            message1: '시작 위치 %1',
+            args1: [{ type: 'input_value', name: 'START', check: 'Number' }],
+            message2: '끝 위치 %1 전',
+            args2: [{ type: 'input_value', name: 'END', check: 'Number' }],
+            output: 'Array',
+          },
+          {
+            type: 'py_list_find',
+            message0: '목록 %1에서 값 %2의 위치 찾기',
+            args0: [
+              { type: 'input_value', name: 'LIST', check: 'Array' },
+              { type: 'input_value', name: 'VALUE' }
+            ],
+            inputsInline: true,
+            output: 'Number',
+            tooltip: '값이 없으면 Python ValueError가 발생합니다.'
+          },
+          {
+            type: 'py_list_sort',
+            message0: '목록 %1 정렬',
+            args0: [{ type: 'input_value', name: 'LIST', check: 'Array' }],
+            message1: '순서 %1',
+            args1: [{
+              type: 'field_dropdown',
+              name: 'ORDER',
+              options: [
+                ['오름차순', 'ASC'],
+                ['내림차순', 'DESC']
+              ]
+            }],
+            output: 'Array',
+          },
+          {
+            type: 'py_tuple_from_list',
+            message0: '목록 %1을 튜플로 바꾸기',
+            args0: [{ type: 'input_value', name: 'LIST', check: 'Array' }],
+            output: 'Tuple',
+            tooltip: '튜플은 만든 뒤 항목을 바꿀 수 없습니다.'
+          },
+          {
+            type: 'py_tuple_get',
+            message0: '튜플 %1에서 항목 가져오기',
+            args0: [{ type: 'input_value', name: 'TUPLE', check: 'Tuple' }],
+            message1: '위치 %1',
+            args1: [{ type: 'input_value', name: 'INDEX', check: 'Number' }],
+            output: null,
+          },
+          {
+            type: 'py_dict_empty',
+            message0: '빈 딕셔너리 만들기',
+            output: 'Dictionary',
+          },
+          {
+            type: 'py_dict_from_pairs',
+            message0: '키·값 쌍 목록 %1을 딕셔너리로 바꾸기',
+            args0: [{ type: 'input_value', name: 'PAIRS', check: 'Array' }],
+            output: 'Dictionary',
+          },
+          {
+            type: 'py_dict_get',
+            message0: '딕셔너리 %1에서 키 %2의 값 가져오기',
+            args0: [
+              { type: 'input_value', name: 'DICT', check: 'Dictionary' },
+              { type: 'input_value', name: 'KEY' }
+            ],
+            inputsInline: true,
+            output: null,
+            tooltip: '키가 없으면 Python KeyError가 발생합니다.'
+          },
+          {
+            type: 'py_dict_get_default',
+            message0: '딕셔너리 %1에서 키 %2의 값 가져오기',
+            args0: [
+              { type: 'input_value', name: 'DICT', check: 'Dictionary' },
+              { type: 'input_value', name: 'KEY' }
+            ],
+            message1: '키가 없으면 %1',
+            args1: [{ type: 'input_value', name: 'DEFAULT' }],
+            output: null,
+          },
+          {
+            type: 'py_dict_set',
+            message0: '딕셔너리 %1의 키 %2에 값 %3 저장',
+            args0: [
+              { type: 'input_value', name: 'DICT', check: 'Dictionary' },
+              { type: 'input_value', name: 'KEY' },
+              { type: 'input_value', name: 'VALUE' }
+            ],
+            inputsInline: true,
+            previousStatement: null,
+            nextStatement: null,
+          },
+          {
+            type: 'py_dict_contains',
+            message0: '딕셔너리 %1의 키 포함 여부 %2',
+            args0: [
+              { type: 'input_value', name: 'DICT', check: 'Dictionary' },
+              { type: 'input_value', name: 'KEY' }
+            ],
+            inputsInline: true,
+            output: 'Boolean',
+          },
+          {
+            type: 'py_dict_view',
+            message0: '딕셔너리 %1의 %2 목록 가져오기',
+            args0: [
+              { type: 'input_value', name: 'DICT', check: 'Dictionary' },
+              {
+                type: 'field_dropdown',
+                name: 'VIEW',
+                options: [
+                  ['키', 'KEYS'],
+                  ['값', 'VALUES'],
+                  ['키·값 쌍', 'ITEMS']
+                ]
+              }
+            ],
+            inputsInline: true,
+            output: 'Array',
+          },
+          {
+            type: 'py_set_empty',
+            message0: '빈 셋 만들기',
+            output: 'Set',
+          },
+          {
+            type: 'py_set_from_list',
+            message0: '목록 %1을 셋으로 바꾸기',
+            args0: [{ type: 'input_value', name: 'LIST', check: 'Array' }],
+            output: 'Set',
+          },
+          {
+            type: 'py_set_add',
+            message0: '셋 %1에 값 %2 추가',
+            args0: [
+              { type: 'input_value', name: 'SET', check: 'Set' },
+              { type: 'input_value', name: 'VALUE' }
+            ],
+            inputsInline: true,
+            previousStatement: null,
+            nextStatement: null,
+          },
+          {
+            type: 'py_set_discard',
+            message0: '셋 %1에서 값 %2 제거',
+            args0: [
+              { type: 'input_value', name: 'SET', check: 'Set' },
+              { type: 'input_value', name: 'VALUE' }
+            ],
+            inputsInline: true,
+            previousStatement: null,
+            nextStatement: null,
+          },
+          {
+            type: 'py_set_contains',
+            message0: '셋 %1의 값 포함 여부 %2',
+            args0: [
+              { type: 'input_value', name: 'SET', check: 'Set' },
+              { type: 'input_value', name: 'VALUE' }
+            ],
+            inputsInline: true,
+            output: 'Boolean',
+          },
+          {
+            type: 'py_set_operation',
+            message0: '셋 %1과 셋 %2의 %3',
+            args0: [
+              { type: 'input_value', name: 'LEFT', check: 'Set' },
+              { type: 'input_value', name: 'RIGHT', check: 'Set' },
+              {
+                type: 'field_dropdown',
+                name: 'OP',
+                options: [
+                  ['합집합', 'UNION'],
+                  ['교집합', 'INTERSECTION'],
+                  ['차집합', 'DIFFERENCE']
+                ]
+              }
+            ],
+            inputsInline: true,
+            output: 'Set',
+          },
+          {
+            type: 'py_set_to_list',
+            message0: '셋 %1을 목록으로 바꾸기',
+            args0: [{ type: 'input_value', name: 'SET', check: 'Set' }],
+            output: 'Array',
+          }
+        ];
+
+        definitions.forEach(function (definition) {
+          definition.style = categoryForBlock(definition.type).blockStyle;
+          ojBlockTypes[definition.type] = true;
+        });
+        Blockly.defineBlocksWithJsonArray(definitions);
+
+        Blockly.Blocks.math_round = {
+          init: function () {
+            this.appendValueInput('NUM')
+              .setCheck('Number')
+              .appendField(new Blockly.FieldDropdown([
+                ['반올림', 'ROUND'],
+                ['올림', 'ROUNDUP'],
+                ['내림', 'ROUNDDOWN']
+              ]), 'OP')
+              .appendField('값');
+            this.appendValueInput('PLACES')
+              .setCheck('Number')
+              .appendField('자리수');
+            this.setInputsInline(true);
+            this.setOutput(true, 'Number');
+            this.setStyle(CATEGORY_CATALOG.math.blockStyle);
+            this.setTooltip('Python 방식: 2=소수점 아래 2자리, 0=정수, -1=10의 자리입니다.');
+          }
+        };
+        ojBlockTypes.math_round = true;
+      }
+
+      function registerPythonGenerators() {
+        var generator = pythonGenerator();
+        setGenerator('oj_start', function (block, current) {
+          var active = current || generator;
+          var indent = active.INDENT || '  ';
+
+          return statementCode(active, block, 'DO').split('\n').map(function (line) {
+            return line.indexOf(indent) === 0 ? line.slice(indent.length) : line;
+          }).join('\n');
+        });
+        setGenerator('oj_input_int', function () {
+          return ['int(__oj_next())', generator.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('oj_input_float', function () {
+          return ['float(__oj_next())', generator.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('oj_input_token', function () {
+          return ['__oj_next()', generator.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('oj_input_line', function () {
+          return ['__oj_next_line()', generator.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('oj_print', function (block, current) {
+          var active = current || generator;
+          var value = valueCode(active, block, 'VALUE', '""');
+          var end = block.getFieldValue('END');
+          var suffix = end === 'SPACE' ? ', end=" "' : (end === 'NONE' ? ', end=""' : '');
+
+          return 'print(' + value + suffix + ')\n';
+        });
+        setGenerator('oj_split_ints', function (block, current) {
+          var active = current || generator;
+          var value = valueCode(active, block, 'TEXT', '""');
+
+          return ['list(map(int, str(' + value + ').split()))', generator.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('oj_print_list', function (block, current) {
+          var active = current || generator;
+          var list = valueCode(active, block, 'LIST', '[]');
+          var delimiter = JSON.stringify(String(block.getFieldValue('DELIM') || ' '));
+
+          return 'print(' + delimiter + '.join(map(str, ' + list + ')))\n';
+        });
+        setGenerator('py_to_int', function (block, current) {
+          var active = current || generator;
+          return ['int(' + valueCode(active, block, 'VALUE', '0') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_to_float', function (block, current) {
+          var active = current || generator;
+          return ['float(' + valueCode(active, block, 'VALUE', '0') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_to_string', function (block, current) {
+          var active = current || generator;
+          return ['str(' + valueCode(active, block, 'VALUE', '""') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_to_bool', function (block, current) {
+          var active = current || generator;
+          return ['bool(' + valueCode(active, block, 'VALUE', 'False') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_string_split_ws', function (block, current) {
+          var active = current || generator;
+          var text = valueCode(active, block, 'TEXT', '""');
+
+          return ['(' + text + ').split()', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_string_split', function (block, current) {
+          var active = current || generator;
+          var text = valueCode(active, block, 'TEXT', '""');
+          var delimiter = valueCode(active, block, 'DELIMITER', '","');
+
+          return ['(' + text + ').split(' + delimiter + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_string_join', function (block, current) {
+          var active = current || generator;
+          var list = valueCode(active, block, 'LIST', '[]');
+          var delimiter = valueCode(active, block, 'DELIMITER', '""');
+
+          return ['str(' + delimiter + ').join(map(str, ' + list + '))', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_string_find', function (block, current) {
+          var active = current || generator;
+          var text = valueCode(active, block, 'TEXT', '""');
+          var needle = valueCode(active, block, 'NEEDLE', '""');
+
+          return ['(' + text + ').find(' + needle + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_string_replace', function (block, current) {
+          var active = current || generator;
+          var text = valueCode(active, block, 'TEXT', '""');
+          var oldValue = valueCode(active, block, 'OLD', '""');
+          var newValue = valueCode(active, block, 'NEW', '""');
+
+          return ['(' + text + ').replace(' + oldValue + ', ' + newValue + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_string_get', function (block, current) {
+          var active = current || generator;
+          var text = valueCode(active, block, 'TEXT', '""');
+          var index = valueCode(active, block, 'INDEX', '0');
+
+          return ['(' + text + ')[int(' + index + ')]', active.ORDER_MEMBER || active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_string_slice', function (block, current) {
+          var active = current || generator;
+          var text = valueCode(active, block, 'TEXT', '""');
+          var start = valueCode(active, block, 'START', '0');
+          var end = valueCode(active, block, 'END', '0');
+
+          return ['(' + text + ')[int(' + start + '):int(' + end + ')]', active.ORDER_MEMBER || active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_length', function (block, current) {
+          var active = current || generator;
+          return ['len(' + valueCode(active, block, 'VALUE', '[]') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_list_get', function (block, current) {
+          var active = current || generator;
+          var list = valueCode(active, block, 'LIST', '[]');
+          var index = valueCode(active, block, 'INDEX', '0');
+
+          return ['(' + list + ')[int(' + index + ')]', active.ORDER_MEMBER || active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_list_set', function (block, current) {
+          var active = current || generator;
+          var list = valueCode(active, block, 'LIST', '[]');
+          var index = valueCode(active, block, 'INDEX', '0');
+          var value = valueCode(active, block, 'VALUE', 'None');
+
+          return '(' + list + ')[int(' + index + ')] = ' + value + '\n';
+        });
+        setGenerator('py_list_append', function (block, current) {
+          var active = current || generator;
+          var list = valueCode(active, block, 'LIST', '[]');
+          var value = valueCode(active, block, 'VALUE', 'None');
+
+          return '(' + list + ').append(' + value + ')\n';
+        });
+        setGenerator('py_list_slice', function (block, current) {
+          var active = current || generator;
+          var list = valueCode(active, block, 'LIST', '[]');
+          var start = valueCode(active, block, 'START', '0');
+          var end = valueCode(active, block, 'END', '0');
+
+          return ['(' + list + ')[int(' + start + '):int(' + end + ')]', active.ORDER_MEMBER || active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_list_find', function (block, current) {
+          var active = current || generator;
+          var list = valueCode(active, block, 'LIST', '[]');
+          var value = valueCode(active, block, 'VALUE', 'None');
+
+          return ['(' + list + ').index(' + value + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_list_sort', function (block, current) {
+          var active = current || generator;
+          var list = valueCode(active, block, 'LIST', '[]');
+          var reverse = block.getFieldValue('ORDER') === 'DESC' ? ', reverse=True' : '';
+
+          return ['sorted(' + list + reverse + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_tuple_from_list', function (block, current) {
+          var active = current || generator;
+          return ['tuple(' + valueCode(active, block, 'LIST', '[]') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_tuple_get', function (block, current) {
+          var active = current || generator;
+          var tuple = valueCode(active, block, 'TUPLE', '()');
+          var index = valueCode(active, block, 'INDEX', '0');
+
+          return ['(' + tuple + ')[int(' + index + ')]', active.ORDER_MEMBER || active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_dict_empty', function (block, current) {
+          var active = current || generator;
+          return ['{}', active.ORDER_ATOMIC || 0];
+        });
+        setGenerator('py_dict_from_pairs', function (block, current) {
+          var active = current || generator;
+          return ['dict(' + valueCode(active, block, 'PAIRS', '[]') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_dict_get', function (block, current) {
+          var active = current || generator;
+          var dictionary = valueCode(active, block, 'DICT', '{}');
+          var key = valueCode(active, block, 'KEY', 'None');
+
+          return ['(' + dictionary + ')[' + key + ']', active.ORDER_MEMBER || active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_dict_get_default', function (block, current) {
+          var active = current || generator;
+          var dictionary = valueCode(active, block, 'DICT', '{}');
+          var key = valueCode(active, block, 'KEY', 'None');
+          var fallback = valueCode(active, block, 'DEFAULT', 'None');
+
+          return ['(' + dictionary + ').get(' + key + ', ' + fallback + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_dict_set', function (block, current) {
+          var active = current || generator;
+          var dictionary = valueCode(active, block, 'DICT', '{}');
+          var key = valueCode(active, block, 'KEY', 'None');
+          var value = valueCode(active, block, 'VALUE', 'None');
+
+          return '(' + dictionary + ')[' + key + '] = ' + value + '\n';
+        });
+        setGenerator('py_dict_contains', function (block, current) {
+          var active = current || generator;
+          var dictionary = valueCode(active, block, 'DICT', '{}');
+          var key = valueCode(active, block, 'KEY', 'None');
+
+          return ['(' + key + ' in ' + dictionary + ')', active.ORDER_RELATIONAL || active.ORDER_NONE || 0];
+        });
+        setGenerator('py_dict_view', function (block, current) {
+          var active = current || generator;
+          var dictionary = valueCode(active, block, 'DICT', '{}');
+          var method = {
+            KEYS: 'keys',
+            VALUES: 'values',
+            ITEMS: 'items'
+          }[block.getFieldValue('VIEW')] || 'keys';
+
+          return ['list((' + dictionary + ').' + method + '())', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_set_empty', function (block, current) {
+          var active = current || generator;
+          return ['set()', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_set_from_list', function (block, current) {
+          var active = current || generator;
+          return ['set(' + valueCode(active, block, 'LIST', '[]') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('py_set_add', function (block, current) {
+          var active = current || generator;
+          var setValue = valueCode(active, block, 'SET', 'set()');
+          var value = valueCode(active, block, 'VALUE', 'None');
+
+          return '(' + setValue + ').add(' + value + ')\n';
+        });
+        setGenerator('py_set_discard', function (block, current) {
+          var active = current || generator;
+          var setValue = valueCode(active, block, 'SET', 'set()');
+          var value = valueCode(active, block, 'VALUE', 'None');
+
+          return '(' + setValue + ').discard(' + value + ')\n';
+        });
+        setGenerator('py_set_contains', function (block, current) {
+          var active = current || generator;
+          var setValue = valueCode(active, block, 'SET', 'set()');
+          var value = valueCode(active, block, 'VALUE', 'None');
+
+          return ['(' + value + ' in ' + setValue + ')', active.ORDER_RELATIONAL || active.ORDER_NONE || 0];
+        });
+        setGenerator('py_set_operation', function (block, current) {
+          var active = current || generator;
+          var left = valueCode(active, block, 'LEFT', 'set()');
+          var right = valueCode(active, block, 'RIGHT', 'set()');
+          var operator = {
+            UNION: '|',
+            INTERSECTION: '&',
+            DIFFERENCE: '-'
+          }[block.getFieldValue('OP')] || '|';
+
+          return ['((' + left + ') ' + operator + ' (' + right + '))', active.ORDER_NONE || 0];
+        });
+        setGenerator('py_set_to_list', function (block, current) {
+          var active = current || generator;
+          return ['list(' + valueCode(active, block, 'SET', 'set()') + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+        setGenerator('math_round', function (block, current) {
+          var active = current || generator;
+          var operation = block.getFieldValue('OP') || 'ROUND';
+          var number = valueCode(active, block, 'NUM', '0');
+          var places = 'int(' + valueCode(active, block, 'PLACES', '0') + ')';
+          var factor;
+          var fn;
+
+          if (operation === 'ROUND') {
+            return ['round(' + number + ', ' + places + ')', active.ORDER_FUNCTION_CALL || 0];
+          }
+
+          active.definitions_ = active.definitions_ || {};
+          active.definitions_.import_math = 'import math';
+          factor = '(10 ** (' + places + '))';
+          fn = operation === 'ROUNDUP' ? 'math.ceil' : 'math.floor';
+
+          return ['(' + fn + '((' + number + ') * ' + factor + ') / ' + factor + ')', active.ORDER_FUNCTION_CALL || 0];
+        });
+      }
+
+      function registerBlocklyComponents() {
+        applyPythonMessages();
+        registerOjBlockDefinitions();
+        applyCategoryBlockStyles();
+        registerPythonGenerators();
+      }
+
+      function block(type, extras) {
+        var value = { kind: 'block', type: type };
+
+        return Object.assign(value, extras || {});
+      }
+
+      function category(categoryKey, contents, custom) {
+        var config = CATEGORY_CATALOG[categoryKey];
+        var value;
+
+        if (!config || !config.categoryStyle) {
+          throw new Error('도구상자 범주가 등록되지 않았습니다: ' + categoryKey);
+        }
+
+        value = {
+          kind: 'category',
+          name: config.name,
+          categorystyle: config.categoryStyle
+        };
+        if (custom) {
+          value.custom = custom;
+        } else {
+          value.contents = contents;
+        }
+
+        return value;
+      }
+
+      function toolboxLabel(text) {
+        return { kind: 'label', text: text };
+      }
+
+      function toolboxSeparator(gap) {
+        return { kind: 'sep', gap: String(gap || 20) };
+      }
+
+      function baseToolboxContents() {
+        // 입문 구성을 만든 뒤 표준과 확장이 기능을 순서대로 추가한다.
+        return {
+          io: [
+            block('oj_input_int'),
+            block('oj_input_float'),
+            block('oj_input_token'),
+            block('oj_print', { inputs: { VALUE: { shadow: { type: 'text', fields: { TEXT: '' } } } } })
+          ],
+          control: [
+            block('controls_repeat_ext', { inputs: { TIMES: { shadow: { type: 'math_number', fields: { NUM: 5 } } } } }),
+            block('controls_if')
+          ],
+          logic: [
+            block('logic_compare'),
+            block('logic_operation'),
+            block('logic_boolean')
+          ],
+          math: [
+            block('math_number', { fields: { NUM: 0 } }),
+            block('math_arithmetic'),
+            block('math_modulo')
+          ],
+          text: [],
+          list: []
+        };
+      }
+
+      function addStandardToolboxContents(contents) {
+        contents.io.splice(
+          3,
+          0,
+          block('oj_input_line'),
+          block('oj_split_ints'),
+          block('oj_print_list'),
+          block('py_to_int', { inputs: { VALUE: { shadow: { type: 'text', fields: { TEXT: '123' } } } } }),
+          block('py_to_float', { inputs: { VALUE: { shadow: { type: 'text', fields: { TEXT: '3.14' } } } } }),
+          block('py_to_string'),
+          block('py_to_bool')
+        );
+        contents.control.push(
+          block('controls_whileUntil', {
+            inputs: { BOOL: { shadow: { type: 'logic_boolean', fields: { BOOL: 'TRUE' } } } }
+          }),
+          block('controls_for', {
+            inputs: {
+              FROM: { shadow: { type: 'math_number', fields: { NUM: 1 } } },
+              TO: { shadow: { type: 'math_number', fields: { NUM: 10 } } },
+              BY: { shadow: { type: 'math_number', fields: { NUM: 1 } } }
+            }
+          }),
+          block('controls_forEach', {
+            inputs: { LIST: { block: { type: 'lists_create_with' } } }
+          }),
+          block('controls_flow_statements')
+        );
+        contents.logic.push(
+          block('logic_negate'),
+          block('logic_null')
+        );
+        contents.math.push(
+          block('math_single'),
+          block('math_on_list'),
+          block('math_number_property'),
+          block('math_round', {
+            inputs: {
+              NUM: { shadow: { type: 'math_number', fields: { NUM: 3.14159 } } },
+              PLACES: { shadow: { type: 'math_number', fields: { NUM: 2 } } }
+            }
+          })
+        );
+        contents.text.push(
+          block('text'),
+          block('text_join'),
+          block('text_length'),
+          block('text_isEmpty'),
+          block('py_string_get'),
+          block('py_string_slice'),
+          block('text_changeCase'),
+          block('text_trim'),
+          block('py_string_split_ws', {
+            inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'a b c' } } } }
+          }),
+          block('py_string_split', {
+            inputs: {
+              TEXT: { shadow: { type: 'text', fields: { TEXT: 'a,b,c' } } },
+              DELIMITER: { shadow: { type: 'text', fields: { TEXT: ',' } } }
+            }
+          }),
+          block('py_string_join', {
+            inputs: {
+              DELIMITER: { shadow: { type: 'text', fields: { TEXT: ',' } } }
+            }
+          }),
+          block('py_string_find', {
+            inputs: {
+              TEXT: { shadow: { type: 'text', fields: { TEXT: 'hello' } } },
+              NEEDLE: { shadow: { type: 'text', fields: { TEXT: 'e' } } }
+            }
+          }),
+          block('py_string_replace', {
+            inputs: {
+              TEXT: { shadow: { type: 'text', fields: { TEXT: 'hello' } } },
+              OLD: { shadow: { type: 'text', fields: { TEXT: 'l' } } },
+              NEW: { shadow: { type: 'text', fields: { TEXT: 'L' } } }
+            }
+          })
+        );
+        contents.list.push(
+          toolboxLabel('공통'),
+          block('py_length'),
+          toolboxSeparator(),
+          toolboxLabel('리스트'),
+          block('lists_create_with'),
+          block('lists_repeat'),
+          block('lists_length'),
+          block('lists_isEmpty'),
+          block('py_list_get'),
+          block('py_list_set'),
+          block('py_list_append'),
+          block('py_list_slice'),
+          block('py_list_find'),
+          block('py_list_sort'),
+          block('lists_reverse'),
+          toolboxSeparator(),
+          toolboxLabel('튜플'),
+          block('py_tuple_from_list'),
+          block('py_tuple_get', {
+            inputs: {
+              INDEX: { shadow: { type: 'math_number', fields: { NUM: 0 } } }
+            }
+          })
+        );
+      }
+
+      function addExtendedToolboxContents(contents) {
+        contents.math.push(
+          block('math_trig'),
+          block('math_constant'),
+          block('math_constrain', {
+            inputs: {
+              LOW: { shadow: { type: 'math_number', fields: { NUM: 0 } } },
+              HIGH: { shadow: { type: 'math_number', fields: { NUM: 100 } } }
+            }
+          })
+        );
+        contents.list.push(
+          toolboxSeparator(28),
+          toolboxLabel('딕셔너리'),
+          block('py_dict_empty'),
+          block('py_dict_from_pairs'),
+          block('py_dict_get'),
+          block('py_dict_get_default'),
+          block('py_dict_set'),
+          block('py_dict_contains'),
+          block('py_dict_view'),
+          toolboxSeparator(28),
+          toolboxLabel('셋'),
+          block('py_set_empty'),
+          block('py_set_from_list'),
+          block('py_set_add'),
+          block('py_set_discard'),
+          block('py_set_contains'),
+          block('py_set_operation'),
+          block('py_set_to_list')
+        );
+      }
+
+      function toolbox(profile) {
+        var contents = baseToolboxContents();
+        var categories;
+
+        if (!APP_CONFIG.profiles[profile]) {
+          profile = APP_CONFIG.defaultProfile;
+        }
+        if (profile !== 'intro') {
+          addStandardToolboxContents(contents);
+        }
+        if (profile === 'extended') {
+          addExtendedToolboxContents(contents);
+        }
+
+        categories = [
+          category('io', contents.io),
+          category('variable', [], 'VARIABLE'),
+          category('control', contents.control),
+          category('logic', contents.logic),
+          category('math', contents.math)
+        ];
+        if (profile !== 'intro') {
+          categories.push(
+            category('text', contents.text),
+            category('list', contents.list)
+          );
+        }
+        if (profile === 'extended') {
+          categories.push(category('function', [], 'PROCEDURE'));
+        }
+
+        return { kind: 'categoryToolbox', contents: categories };
+      }
+
+      function inputPrelude() {
+        return [
+          'import sys',
+          '',
+          'class __OjInput:',
+          '    def __init__(self, text):',
+          '        self.text = text',
+          '        self.position = 0',
+          '',
+          '    def next(self):',
+          '        size = len(self.text)',
+          '        while self.position < size and self.text[self.position].isspace():',
+          '            self.position += 1',
+          '        start = self.position',
+          '        while self.position < size and not self.text[self.position].isspace():',
+          '            self.position += 1',
+          '        return self.text[start:self.position]',
+          '',
+          '    def line(self):',
+          '        size = len(self.text)',
+          '        while self.position < size and self.text[self.position] in "\\r\\n":',
+          '            self.position += 1',
+          '        start = self.position',
+          '        while self.position < size and self.text[self.position] not in "\\r\\n":',
+          '            self.position += 1',
+          '        return self.text[start:self.position].lstrip(" \\t")',
+          '',
+          '__oj_input = sys.stdin.read()',
+          '__oj_reader = __OjInput(__oj_input)',
+          '',
+          'def __oj_next():',
+          '    return __oj_reader.next()',
+          '',
+          'def __oj_next_line():',
+          '    return __oj_reader.line()',
+          ''
+        ].join('\n');
+      }
+
+      function hasInputBlock() {
+        return workspace.getAllBlocks(false).some(function (item) {
+          return ['oj_input_int', 'oj_input_float', 'oj_input_token', 'oj_input_line'].indexOf(item.type) !== -1;
+        });
+      }
+
+      function updateCode() {
+        var generator = pythonGenerator();
+
+        if (!workspace || !generator) {
+          ui.codePreview.textContent = 'Python 생성기를 불러오지 못했습니다.';
+          return;
+        }
+
+        var code = generator.workspaceToCode(workspace).trim();
+        ui.codePreview.textContent = (hasInputBlock() ? inputPrelude() + '\n' : '') + (code || '# 시작 블록에 실행할 블록을 연결하세요.') + '\n';
+        validateWorkspace();
+        saveDraft();
+      }
+
+      function validateWorkspace() {
+        var topBlocks = workspace.getTopBlocks(false);
+        var disconnected = topBlocks.filter(function (item) {
+          return item.type !== 'oj_start' && item.type.indexOf('procedures_def') !== 0;
+        });
+
+        if (disconnected.length) {
+          ui.status.textContent = '연결되지 않은 블록 ' + disconnected.length + '개가 있어 제출할 수 없습니다.';
+          ui.status.style.color = uiToken('--red', '#a93636');
+          return false;
+        }
+
+        ui.status.textContent = profileName(activeProfile) + ' 도구상자 · 제출 가능한 블록 연결입니다.';
+        ui.status.style.color = '';
+        return true;
+      }
+
+      function profileName(profile) {
+        return APP_CONFIG.profiles[profile] || APP_CONFIG.profiles[APP_CONFIG.defaultProfile];
+      }
+
+      function saveDraft() {
+        if (!workspace || !Blockly.serialization || !Blockly.serialization.workspaces) {
+          return;
+        }
+
+        window.clearTimeout(saveTimer);
+        saveTimer = window.setTimeout(function () {
+          try {
+            var payload = {
+              format: 'blockly-json-v1',
+              blockly: Blockly.VERSION,
+              profile: activeProfile,
+              workspace: Blockly.serialization.workspaces.save(workspace)
+            };
+            window.sessionStorage.setItem(APP_CONFIG.storageKey, JSON.stringify(payload));
+          } catch (error) {
+            window.console.warn('Blockly 임시 저장에 실패했습니다.', error);
+          }
+        }, 1000);
+      }
+
+      function restoreDraft() {
+        if (!Blockly.serialization || !Blockly.serialization.workspaces) {
+          return false;
+        }
+
+        try {
+          var raw = window.sessionStorage.getItem(APP_CONFIG.storageKey);
+          var payload = raw ? JSON.parse(raw) : null;
+
+          if (!payload
+              || payload.format !== 'blockly-json-v1'
+              || !payload.workspace) {
+            return false;
+          }
+
+          activeProfile = APP_CONFIG.profiles[payload.profile]
+            ? payload.profile
+            : APP_CONFIG.defaultProfile;
+          workspace.updateToolbox(toolbox(activeProfile));
+          Blockly.serialization.workspaces.load(payload.workspace, workspace);
+          syncProfileButtons();
+          return true;
+        } catch (error) {
+          window.console.warn('Blockly 임시 저장본을 복원하지 못했습니다.', error);
+          workspace.clear();
+          return false;
+        }
+      }
+
+      function loadExample() {
+        var xml = [
+          '<xml xmlns="https://developers.google.com/blockly/xml">',
+          '<variables><variable id="a">a</variable><variable id="b">b</variable></variables>',
+          '<block type="oj_start" x="38" y="36">',
+          '<statement name="DO">',
+          '<block type="variables_set"><field name="VAR" id="a">a</field>',
+          '<value name="VALUE"><block type="oj_input_int"></block></value>',
+          '<next><block type="variables_set"><field name="VAR" id="b">b</field>',
+          '<value name="VALUE"><block type="oj_input_int"></block></value>',
+          '<next><block type="oj_print">',
+          '<field name="END">NEWLINE</field>',
+          '<value name="VALUE"><block type="math_arithmetic"><field name="OP">ADD</field>',
+          '<value name="A"><block type="variables_get"><field name="VAR" id="a">a</field></block></value>',
+          '<value name="B"><block type="variables_get"><field name="VAR" id="b">b</field></block></value>',
+          '</block></value></block></next>',
+          '</block></next>',
+          '</block>',
+          '</statement>',
+          '</block>',
+          '</xml>'
+        ].join('');
+        var dom = Blockly.utils.xml.textToDom(xml);
+
+        Blockly.Xml.domToWorkspace(dom, workspace);
+        lockStartBlock();
+      }
+
+      function lockStartBlock() {
+        workspace.getBlocksByType('oj_start', false).forEach(function (item) {
+          item.setDeletable(false);
+        });
+      }
+
+      function syncProfileButtons() {
+        document.querySelectorAll('[data-profile]').forEach(function (button) {
+          button.classList.toggle('is-active', button.getAttribute('data-profile') === activeProfile);
+        });
+      }
+
+      function setProfile(profile) {
+        if (!APP_CONFIG.profiles[profile]) {
+          return;
+        }
+
+        activeProfile = profile;
+        workspace.updateToolbox(toolbox(profile));
+        syncProfileButtons();
+        updateCode();
+      }
+
+      function setMode(mode) {
+        if (mode === 'code') {
+          if (ui.shell.classList.contains('is-code-mode')) {
+            return;
+          }
+          if (!window.confirm('생성 코드를 직접 편집하면 블록과 다시 동기화되지 않습니다. 코드 모드로 전환할까요?')) {
+            return;
+          }
+          setCodePreviewCollapsed(false);
+          ui.codeEditor.value = ui.codePreview.textContent;
+          ui.shell.classList.add('is-code-mode');
+          ui.codeModeButton.classList.add('is-active');
+          ui.blockModeButton.classList.remove('is-active');
+          return;
+        }
+
+        if (!ui.shell.classList.contains('is-code-mode')) {
+          return;
+        }
+        if (ui.codeEditor.value !== ui.codePreview.textContent
+            && !window.confirm('직접 수정한 코드는 블록으로 바뀌지 않습니다. 기존 블록 작업공간으로 돌아갈까요?')) {
+          return;
+        }
+        ui.shell.classList.remove('is-code-mode');
+        ui.codeModeButton.classList.remove('is-active');
+        ui.blockModeButton.classList.add('is-active');
+        window.setTimeout(function () {
+          Blockly.svgResize(workspace);
+          reportEmbedHeight();
+        }, 0);
+      }
+
+      function setCodePreviewCollapsed(collapsed) {
+        ui.shell.classList.toggle('is-code-preview-collapsed', collapsed);
+        ui.codePaneToggle.setAttribute('aria-expanded', String(!collapsed));
+        ui.codePaneToggle.setAttribute('aria-label', collapsed ? '생성 코드 확장' : '생성 코드 축소');
+        ui.codePaneToggle.setAttribute('title', collapsed ? '생성 코드 확장' : '생성 코드 축소');
+        ui.codePaneToggle.textContent = collapsed ? '+' : '−';
+        window.setTimeout(function () {
+          if (workspace) {
+            Blockly.svgResize(workspace);
+          }
+          reportEmbedHeight();
+        }, 0);
+      }
+
+      function notifyParent(type, detail) {
+        if (!isEmbedMode || !blocklyContract || window.parent === window) {
+          return;
+        }
+
+        window.parent.postMessage(blocklyContract.createMessage(type, detail), '*');
+      }
+
+      function reportEmbedHeight() {
+        if (!isEmbedMode || !blocklyContract) {
+          return;
+        }
+
+        window.requestAnimationFrame(function () {
+          notifyParent(blocklyContract.types.resize, {
+            height: Math.ceil(document.documentElement.scrollHeight)
+          });
+        });
+      }
+
+      function collectUiElements() {
+        // 화면 요소 조회는 초기화 시 한 번만 수행한다.
+        return {
+          shell: document.getElementById('prototypeShell'),
+          status: document.getElementById('prototypeStatus'),
+          codePreview: document.getElementById('codePreview'),
+          codeEditor: document.getElementById('codeEditor'),
+          undoButton: document.getElementById('undoButton'),
+          redoButton: document.getElementById('redoButton'),
+          fitButton: document.getElementById('fitButton'),
+          clearButton: document.getElementById('clearButton'),
+          codeModeButton: document.getElementById('codeModeButton'),
+          blockModeButton: document.getElementById('blockModeButton'),
+          codePaneToggle: document.getElementById('codePaneToggle'),
+          submitButton: document.getElementById('submitExampleButton')
+        };
+      }
+
+      function init() {
+        var compactLayout = window.matchMedia && window.matchMedia('(max-width: 680px)').matches;
+
+        ui = collectUiElements();
+        if (isEmbedMode) {
+          ui.submitButton.textContent = '블록 제출';
+        }
+        if (!window.Blockly || !pythonGenerator()) {
+          ui.codePreview.textContent = '로컬 Blockly 자산을 불러오지 못했습니다.';
+          ui.status.textContent = 'Blockly 자산을 확인하세요.';
+          reportEmbedHeight();
+          return;
+        }
+
+        registerBlocklyComponents();
+        workspace = Blockly.inject('blocklyDiv', {
+          toolbox: toolbox(activeProfile),
+          theme: buildOjTheme(),
+          renderer: registerOjRenderer(),
+          horizontalLayout: compactLayout,
+          toolboxPosition: 'start',
+          trashcan: false,
+          sounds: false,
+          move: { scrollbars: true, drag: true, wheel: true },
+          zoom: { controls: false, wheel: true, startScale: compactLayout ? 0.7 : 0.9, maxScale: 1.5, minScale: 0.55, scaleSpeed: 1.1 },
+          grid: { spacing: 24, length: 2, colour: uiToken('--line-strong', '#bec8cd'), snap: true }
+        });
+
+        if (!restoreDraft()) {
+          loadExample();
+        } else {
+          lockStartBlock();
+        }
+
+        workspace.addChangeListener(function (event) {
+          if (!event || event.type !== Blockly.Events.VIEWPORT_CHANGE) {
+            updateCode();
+          }
+        });
+        updateCode();
+
+        document.querySelectorAll('[data-profile]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            setProfile(button.getAttribute('data-profile'));
+          });
+        });
+        ui.undoButton.addEventListener('click', function () { workspace.undo(false); });
+        ui.redoButton.addEventListener('click', function () { workspace.undo(true); });
+        ui.fitButton.addEventListener('click', function () { workspace.zoomToFit(); });
+        ui.clearButton.addEventListener('click', function () {
+          workspace.clear();
+          window.sessionStorage.removeItem(APP_CONFIG.storageKey);
+          loadExample();
+          updateCode();
+        });
+        ui.codeModeButton.addEventListener('click', function () { setMode('code'); });
+        ui.blockModeButton.addEventListener('click', function () { setMode('block'); });
+        ui.codePaneToggle.addEventListener('click', function () {
+          setCodePreviewCollapsed(!ui.shell.classList.contains('is-code-preview-collapsed'));
+        });
+        ui.submitButton.addEventListener('click', function () {
+          if (!validateWorkspace()) {
+            return;
+          }
+
+          if (isEmbedMode) {
+            ui.status.textContent = '검증된 작업공간을 제출 화면에 전달했습니다.';
+            if (blocklyContract) {
+              notifyParent(blocklyContract.types.submit, {
+                problemId: embedParams.get('problem_id') || '',
+                generatedCode: ui.codePreview.textContent
+              });
+            }
+          } else {
+            ui.status.textContent = '설계 예시에서는 서버 제출을 실행하지 않습니다.';
+          }
+        });
+        window.addEventListener('resize', function () {
+          if (workspace) {
+            Blockly.svgResize(workspace);
+          }
+          reportEmbedHeight();
+        });
+        reportEmbedHeight();
+      }
+
+      window.addEventListener('load', init);
+    }());
+  </script>
+</body>
+</html>

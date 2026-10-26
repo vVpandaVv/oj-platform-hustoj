@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-D-002 화면과 진입 경로</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-D-002 화면과 진입 경로</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html" aria-current="page">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">조사 결과</a>
+          <a href="#map">진입 지도</a>
+          <a href="#screens">화면·메뉴</a>
+          <a href="#rest">REST</a>
+          <a href="#forms">Form·Action</a>
+          <a href="#shortcodes">Shortcode</a>
+          <a href="#hooks">Hook</a>
+          <a href="#gaps">격차</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <p class="notice">이 문서는 당시 구현의 조사 기록입니다. 아래에서 제거됨으로 표시한 구형 소스는 현재 사용되지 않아 정리했습니다. <a href="retired-runtime-removal-2026-10-20.html">제거 범위와 유지한 호환 기능</a>을 참고하세요.</p>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-D-002 · Screen and Entry-Point Baseline</p>
+        <h2>화면과 진입 경로</h2>
+        <p>현재 애드온의 브라우저 화면, 메뉴, REST, form, hook, shortcode와 예약 작업을 실제 등록 코드에서 추적했다. 이 문서는 목표 UI 상세 설계가 아니라 현재 진입 표면과 담당 클래스·권한·두 shell 통합 격차를 고정한다.</p>
+        <div class="meta">
+          <span class="badge">조사일 2026-08-10</span>
+          <span class="badge">상태 dev.26 재점검 완료·최종 확인 대기</span>
+          <span class="badge">기준 oj-platform 2.0.0-dev.26</span>
+          <span class="badge">REST 73경로·85작업</span>
+          <span class="badge">PublicUI 등록 0건</span>
+          <span class="badge">실행 코드 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 판정</h2>
+      <section class="panel">
+        <p>현재 코드는 11개 관리 shell 화면과 73개 REST 경로를 갖지만, 재정비 플랫폼에서 실제 OJ Console로 등록되는 경로는 0개이고 PublicUI 기여도 0개다. 학생 기능은 관리자 shell과 14개 shortcode 경로에 분산되어 있으므로, 상세 설계에서는 관리·교사 진입점을 C-28 Console 기여로 교체하고 학생 진입점을 PublicUI 기여로 이동해야 한다.</p>
+        <div class="callout"><strong>조사 기준:</strong> 등록 호출이 소스에 있다는 사실과 조사 대상 <code>oj-platform 2.0.0-dev.26</code>에서 실제 연결된다는 사실을 구분했다. 존재하지 않는 구형 hook을 기다리는 11개 Console 후보는 “코드상 후보 11, 현재 실제 등록 0”으로 센다. 2026-08-12 플랫폼 AM-01 구현은 이 역사적 수량을 바꾸지 않으며 목표 연결만 <a href="a-ds-02-am-01-onready-adoption.html"><code>onReady()</code> 계약</a>으로 보정한다.</div>
+      </section>
+
+      <h2>수량 기준선</h2>
+      <table>
+        <thead><tr><th>진입 표면</th><th>현재 수량</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td>관리 shell 화면 descriptor</td><td>11</td><td>독립 경로 11개와 구형 Console 후보 11개가 같은 page 객체를 공유</td></tr>
+          <tr><td>업무 화면 metadata</td><td>39</td><td><code>workflow_sections()</code>의 설명 metadata이며 별도 Route는 아님</td></tr>
+          <tr><td>선택형 wp-admin 등록 호출</td><td>상위 1 + 중앙 submenu 11 + 모듈 중복 후보 4</td><td><code>oj_ai_dashboard_register_wp_admin_pages=false</code>가 기본</td></tr>
+          <tr><td>현재 플랫폼의 실제 Console 기여</td><td>0 Route / 0 Menu</td><td>기대 hook과 문자열 container service가 플랫폼 공개 계약에 없음</td></tr>
+          <tr><td>PublicUI 기여</td><td>0 Route / 0 Menu</td><td>학생 메뉴 자동 등록과 직접 활동지 URL이 없음</td></tr>
+          <tr><td>REST</td><td>10 Controller, 73경로, 85작업</td><td><code>GET 33</code>, <code>POST 51</code>, <code>DELETE 1</code></td></tr>
+          <tr><td>HTML form</td><td>40</td><td>REST form 33, 학사 REST form 6, 교사 화면 GET filter form 1</td></tr>
+          <tr><td>WordPress AJAX·admin-post</td><td>0</td><td><code>wp_ajax_*</code>, <code>admin_post_*</code> 등록 없음</td></tr>
+          <tr><td>Shortcode tag</td><td>14</td><td>직접 3 + 기본 활성화된 호환 alias 11</td></tr>
+          <tr><td>등록 action·filter</td><td>27 action + 5 filter</td><td>REST, shell, 호환, 역할, cron과 구형 플랫폼 bridge 포함</td></tr>
+          <tr><td>Cron</td><td>schedule 1 + event hook 1</td><td>5분 간격 마감 자동 제출</td></tr>
+          <tr><td>CPT·taxonomy·rewrite·block</td><td>0</td><td>직접 등록 없음</td></tr>
+        </tbody>
+      </table>
+
+      <h2>조사 근거</h2>
+      <table>
+        <thead><tr><th>영역</th><th>기준 파일</th><th>확인 내용</th></tr></thead>
+        <tbody>
+          <tr><td>화면·shell</td><td><code>Admin_Module.php (이전)</code> → <a href="../../src/Core/Composition_Root.php">Composition_Root.php</a>, <span title="2026-10-20 제거된 구형 소스">Admin_Shell.php (제거됨)</span>, <code>Oj_Console_Connector.php (이전)</code> → <a href="../../src/Platform/Addon_Integration.php">Addon_Integration.php</a></td><td>11개 page descriptor, 독립 shell, 구형 Console Route·Menu 등록 시도</td></tr>
+          <tr><td>학생 화면</td><td><code>Dashboard_Admin_Page.php·Dashboard_Module.php (이전)</code> → <a href="../../src/Platform/Student_Assignment_Page_Handler.php">Student_Assignment_Page_Handler.php</a>·<a href="../../src/Platform/Student_Result_Page_Handler.php">Student_Result_Page_Handler.php</a>, <span title="2026-10-20 제거된 구형 소스">student-worksheet.js (제거됨)</span></td><td>학생 대시보드와 활동지 작성 mount, 3개 직접 shortcode</td></tr>
+          <tr><td>REST</td><td><code>src/*/*_Rest_Controller.php</code> 10개</td><td>동일 namespace의 73개 경로와 permission callback</td></tr>
+          <tr><td>화면 action</td><td><code>Admin_Workflow_Page.php (이전)</code> → <a href="../../src/Platform/Assignment_Workbench_Page_Handler.php">Assignment_Workbench_Page_Handler.php</a>, <span title="2026-10-20 제거된 구형 소스">admin-actions.js (제거됨)</span>, <span title="2026-10-20 제거된 구형 소스">worksheet-editor.js (제거됨)</span></td><td>HTML form과 버튼이 REST 호출로 연결되고 별도 admin-post는 없음</td></tr>
+          <tr><td>호환 진입점</td><td><span title="2026-10-20 제거된 구형 소스">Shortcode_Compatibility_Service.php (제거됨)</span>, <code>Admin_Settings_Service.php (이전)</code> → <a href="../../src/Platform/External_Ai_Consent_Settings_Page_Handler.php">External_Ai_Consent_Settings_Page_Handler.php</a></td><td>11개 legacy alias가 기본 활성화</td></tr>
+          <tr><td>권한</td><td><span title="2026-10-20 제거된 구형 소스">Capabilities.php (제거됨)</span>, <span title="2026-10-20 제거된 구형 소스">Rest_Permission.php (제거됨)</span></td><td>로그인, capability, 쓰기 nonce와 일부 학생·학급 scope 검사</td></tr>
+          <tr><td>목표 플랫폼 계약</td><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html">C-28 Addon API v1</a></td><td>Console/PublicUI 기여 분리, 예약 path와 namespaced key</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="map">현재 진입 지도</h2>
+      <pre><code>WordPress 요청
+  |-- /oj-ai-dashboard/admin/* -------- template_redirect ------ Admin_Module
+  |                                           `---------------- 11 page objects
+  |-- /oj-console/ai-dashboard/* ------ 현재 플랫폼 등록 0 ---- Oj_Console_Connector 후보
+  |-- wp-admin/admin.php?page=* ------- 기본 비활성 ---------- 선택형 fallback + legacy redirect
+  |-- shortcode가 놓인 임의 WP Page --- Dashboard/Compatibility mount
+  |-- /wp-json/oj-ai/v1/* ------------- 10 REST Controllers --- capability/nonce/scope
+  `-- WP-Cron -------------------------- Submission_Scheduler --- auto submit
+
+현재 누락
+  |-- /oj-console/addons/oj-ai-dashboard/*  C-28 Console Route/Menu
+  `-- /oj-addons/oj-ai-dashboard/*          C-28 Public Route/Menu</code></pre>
+      <div class="warning callout"><strong>중요:</strong> shortcode는 PublicUI 등록이 아니다. WordPress 문서에 mount를 삽입할 수 있을 뿐 플랫폼의 사용자 메뉴, 현재 위치, PublicUI shell, 애드온 활성 상태와 직접 링크 권한 계약에 참여하지 않는다.</div>
+
+      <h2 id="screens">화면·메뉴 전수 목록</h2>
+      <p>아래 경로의 앞부분은 각각 <code>/oj-ai-dashboard/admin</code>과 구형 <code>/oj-console/ai-dashboard</code>다. 구형 Console 경로는 코드상 후보이며 현재 재정비 플랫폼에는 등록되지 않는다.</p>
+      <table>
+        <thead><tr><th>순서·화면</th><th>현재 suffix</th><th>담당 page</th><th>현재 capability</th><th>목표 shell 분류</th></tr></thead>
+        <tbody>
+          <tr><td>0 전체</td><td><code>/</code></td><td><code>Admin_Root_Page</code></td><td><code>VIEW_OWN_DASHBOARD</code></td><td>Console 운영 개요와 PublicUI 학생 시작점을 분리해야 함</td></tr>
+          <tr><td>10 교사 대시보드</td><td><code>/teacher</code></td><td><code>Dashboard_Admin_Page(teacher)</code></td><td><code>TEACH</code></td><td>Console 개요로 유지·통합 후보</td></tr>
+          <tr><td>20 학년·그룹</td><td><code>/academic</code></td><td><code>Academic_Admin_Page</code></td><td><code>MANAGE_ACADEMIC_CONTEXT</code></td><td>목표에서는 플랫폼의 학급·그룹을 조회하는 <code>수업 대상</code>으로 축소하고 애드온 그룹 관리는 제거</td></tr>
+          <tr><td>30 가져오기</td><td><code>/import</code></td><td><code>Admin_Workflow_Page</code></td><td><code>IMPORT_DATA</code></td><td>상위 메뉴 제거. 활동지 템플릿은 활동지, 이전 설치 데이터는 설정의 데이터 이전으로 분리</td></tr>
+          <tr><td>40 평가·채점</td><td><code>/assessment</code></td><td><code>Admin_Workflow_Page</code></td><td><code>RUN_ASSESSMENT</code></td><td>Console. 활동지 자체 평가 화면은 아직 없음</td></tr>
+          <tr><td>50 활동지·배부</td><td><code>/worksheets</code></td><td><code>Worksheet_Admin_Page</code></td><td><code>MANAGE_WORKSHEETS</code></td><td>Console</td></tr>
+          <tr><td>60 결과 출력</td><td><code>/reports</code></td><td><code>Admin_Workflow_Page</code></td><td><code>EXPORT_REPORTS</code></td><td>Console</td></tr>
+          <tr><td>70 학생 화면</td><td><code>/student</code></td><td><code>Dashboard_Admin_Page(student)</code></td><td><code>VIEW_OWN_DASHBOARD</code></td><td>Console에서 제거하고 PublicUI 목록·상세로 이동</td></tr>
+          <tr><td>80 실행 환경</td><td><code>/environment</code></td><td><code>Environment_Admin_Page</code></td><td><code>MANAGE_SETTINGS</code></td><td><code>연결 및 진단</code>으로 통합</td></tr>
+          <tr><td>90 OJ 플랫폼 연결</td><td><code>/connection</code></td><td><code>Platform_Admin_Page</code></td><td><code>MANAGE_SETTINGS</code></td><td>플랫폼 필수 상태와 공개 API 호환성을 보여 주는 <code>연결 및 진단</code>으로 통합</td></tr>
+          <tr><td>100 설정</td><td><code>/settings</code></td><td><code>Admin_Workflow_Page</code></td><td><code>MANAGE_SETTINGS</code></td><td>평가 정책·기본 루브릭·검토 및 공개 기준만 소유. AI 연결 프로필·비밀값·모델 배정은 플랫폼 소유</td></tr>
+        </tbody>
+      </table>
+
+      <h3>현재 메뉴 등록 방식</h3>
+      <table>
+        <thead><tr><th>방식</th><th>등록 코드</th><th>실제 상태</th><th>상세 설계 입력</th></tr></thead>
+        <tbody>
+          <tr><td>독립 관리자 shell</td><td><code>template_redirect</code>에서 11개 clean path 직접 렌더링</td><td>항상 등록되며 Console 연결 표시가 있으면 redirect</td><td>지원 진입점에서 제거</td></tr>
+          <tr><td>구형 OJ Console</td><td><code>oj_platform_loaded</code>에서 container의 <code>route_registry</code>·<code>console_menu_registry</code> 사용</td><td>조사 대상 플랫폼에서 0건</td><td><code>oj_platform_register_addons(AddonRegistrationGatewayV1)</code>의 Manifest와 같은 builder의 <code>onReady(AddonRuntimeContextV1)</code>로 완전 교체</td></tr>
+          <tr><td>wp-admin fallback</td><td>상위 1, 중앙 submenu 11, 모듈별 submenu 4개 등록 경로</td><td>filter 기본값이 false. true이면 동일 slug의 중복 등록 경로 존재</td><td>운영 fallback 제거, 이전 URL redirect 기간만 별도 결정</td></tr>
+          <tr><td>구형 외부 메뉴 bridge</td><td><code>oj_ai_dashboard_register_oj_admin_entry</code> action과 connected filter</td><td>재정비 플랫폼 계약이 아님</td><td>C-28 이후 제거 후보</td></tr>
+          <tr><td>PublicUI</td><td>등록 코드 없음</td><td>메뉴·Route 0건</td><td><code>학습 &gt; 활동지</code>와 직접 배정 Route를 manifest에 명시</td></tr>
+        </tbody>
+      </table>
+      <p><code>Admin_Shell::workflow_sections()</code>에는 39개 화면 설명 metadata가 있으나 Route 등록에는 사용되지 않는다. 이 목록은 기능 추적 자료로 유지하고 실제 정보 구조와 하위 경로는 <code>A-DS-01</code>에서 다시 설계한다.</p>
+
+      <h2 id="rest">REST 진입점</h2>
+      <p>모든 경로는 <code>/wp-json/oj-ai/v1</code> 아래에 등록된다. 아래 “쓰기”는 POST·DELETE와 nonce 요구를 뜻하며, 특별한 경우를 따로 적었다.</p>
+      <table>
+        <thead><tr><th>Controller</th><th>경로/작업</th><th>권한 경계</th><th>화면 소유</th></tr></thead>
+        <tbody>
+          <tr><td><code>Admin_Settings_Rest_Controller</code></td><td>1 / 2</td><td><code>MANAGE_SETTINGS</code>, POST nonce</td><td>Console 설정</td></tr>
+          <tr><td><code>Academic_Rest_Controller</code></td><td>8 / 12</td><td>GET <code>TEACH</code>, POST <code>MANAGE_ACADEMIC_CONTEXT</code> + nonce</td><td>Console 학사</td></tr>
+          <tr><td><code>Assessment_Rest_Controller</code></td><td>16 / 17</td><td><code>RUN_ASSESSMENT</code>, <code>REVIEW_ASSESSMENT</code>, <code>APPROVE_FEEDBACK</code>, <code>GENERATE_SPECIAL_NOTES</code>; 모든 쓰기 nonce</td><td>Console 평가</td></tr>
+          <tr><td><code>Curriculum_Rest_Controller</code></td><td>5 / 8</td><td>교육과정은 <code>MANAGE_CURRICULUM</code>, 활동지 연결은 <code>MANAGE_WORKSHEETS</code>; 쓰기 nonce</td><td>Console 학사·활동지</td></tr>
+          <tr><td><code>Dashboard_Rest_Controller</code></td><td>8 / 8</td><td>교사 <code>TEACH</code>, 학생 <code>VIEW_OWN_DASHBOARD</code>, 보고서 <code>EXPORT_REPORTS</code> + nonce·학생/학급 scope</td><td>Console + PublicUI 후보</td></tr>
+          <tr><td><code>Environment_Rest_Controller</code></td><td>1 / 1</td><td><code>MANAGE_SETTINGS</code></td><td>Console 진단</td></tr>
+          <tr><td><code>Import_Rest_Controller</code></td><td>4 / 4</td><td><code>IMPORT_DATA</code>, 쓰기 nonce</td><td>Console 가져오기</td></tr>
+          <tr><td><code>Platform_Rest_Controller</code></td><td>4 / 4</td><td><code>MANAGE_SETTINGS</code></td><td>Console 진단</td></tr>
+          <tr><td><code>Submission_Rest_Controller</code></td><td>17 / 18</td><td>학생 <code>VIEW_OWN_DASHBOARD</code>, 배부 <code>ASSIGN_WORKSHEETS</code>, 제출 관리 <code>MANAGE_SUBMISSIONS</code>; 쓰기 nonce, 학생 callback은 배정 대상 재검사, 대리 제출은 학생 scope 추가</td><td>Console + PublicUI</td></tr>
+          <tr><td><code>Worksheet_Rest_Controller</code></td><td>9 / 11</td><td>교사 <code>MANAGE_WORKSHEETS</code>; <code>view=student</code> 상세와 답안 정규화는 <code>VIEW_OWN_DASHBOARD</code>; 쓰기 nonce</td><td>Console + PublicUI</td></tr>
+        </tbody>
+      </table>
+
+      <h3>전체 Route catalog</h3>
+      <details open>
+        <summary><strong>Admin · Academic · Curriculum</strong></summary>
+        <pre><code>GET|POST /settings
+
+GET      /academic/status
+GET|POST /academic/years
+GET|POST /academic/classes
+GET|POST /academic/students
+GET|POST /academic/groups
+GET      /academic/mappings
+POST     /academic/roster/preview
+POST     /academic/roster/commit
+
+GET|POST /curriculums
+GET      /achievement-standards
+GET|POST /curriculums/{id}/standards
+GET|POST /worksheets/{id}/achievement-links
+GET      /worksheets/{id}/curriculum-context</code></pre>
+      </details>
+      <details>
+        <summary><strong>Worksheet · Submission</strong></summary>
+        <pre><code>GET|POST   /worksheets
+GET|DELETE /worksheets/{id}
+POST       /worksheets/{id}/duplicate
+POST       /worksheets/{id}/archive
+POST       /worksheets/{id}/restore
+POST       /worksheets/{id}/template-export
+POST       /worksheets/{id}/answers/normalize
+POST       /worksheets/template-import/preview
+POST       /worksheets/template-import/commit
+
+GET        /submissions
+GET        /submissions/{id}
+POST       /submissions/{id}/reopen
+GET        /student/assignments
+GET        /student/assignments/{id}
+GET|POST   /assignments
+GET        /assignments/{id}
+POST       /assignments/{id}/attachments
+POST       /assignments/{id}/autosave
+POST       /assignments/{id}/submit
+POST       /assignments/{id}/proxy-submit
+POST       /assignments/{id}/proxy-upload
+POST       /assignments/{id}/auto-submit
+POST       /assignments/auto-submit-due
+POST       /zip-uploads/preview
+POST       /zip-uploads/{id}/map
+POST       /zip-uploads/{id}/commit</code></pre>
+      </details>
+      <details>
+        <summary><strong>Assessment</strong></summary>
+        <pre><code>POST     /assessments/{submission_id}/score
+GET|POST /assessment-plans
+GET      /assessment-plans/{id}
+POST     /assessment-plans/{id}/preflight
+POST     /assessment-plans/{id}/archive
+POST     /assessment-plans/{id}/achievement-links
+POST     /assessments/{submission_id}/feedback
+POST     /assessments/{submission_id}/special-note
+POST     /assessment-results/{id}/accept
+POST     /assessment-results/{id}/reject
+GET      /regrade-reviews/{id}
+POST     /regrade-reviews/{id}/accept
+POST     /regrade-reviews/{id}/reject
+POST     /feedback/{id}/approve
+POST     /feedback/{id}/reject
+POST     /feedback/{id}/unpublish</code></pre>
+      </details>
+      <details>
+        <summary><strong>Dashboard · Import · Environment · Platform</strong></summary>
+        <pre><code>GET  /dashboard/teacher
+GET  /dashboard/student
+POST /reports/student
+POST /reports/class
+POST /reports/submissions
+POST /exports/scores-csv
+POST /reports/scores-csv
+GET  /export-files/{id}/download
+
+POST /import/legacy/preview
+POST /import/legacy/commit
+GET  /import/runs
+GET  /import/runs/{id}/items
+
+GET  /environment
+GET  /platform/status
+GET  /platform/groups
+GET  /platform/problems
+GET  /platform/submissions</code></pre>
+      </details>
+      <div class="warning callout"><strong>현재 API 격차:</strong> 활동지 자체 AI 평가용 Route는 0개다. 현재 <code>/assessments/*</code>는 학생 제출물 채점·피드백·특기사항만 다루며, 재설계 기준의 <code>/worksheets/{id}/evaluate</code>와 평가 결과 검토 Route는 후속 상세 설계 대상이다.</div>
+
+      <h2 id="forms">Form·Action 진입점</h2>
+      <table>
+        <thead><tr><th>UI 종류</th><th>수량·처리</th><th>담당 코드</th><th>권한 집행</th></tr></thead>
+        <tbody>
+          <tr><td>범용 REST form</td><td>33개 descriptor. 평가 13, 보고서 4, 가져오기 9, 설정·운영 7</td><td><code>Admin_Module → Admin_Workflow_Page → admin-actions.js</code></td><td>각 REST permission callback</td></tr>
+          <tr><td>학사 form</td><td>학년도·학급·그룹·교육과정·성취기준·학생 6개</td><td><code>Academic_Admin_Page → academic-admin.js</code></td><td>학사 REST GET/POST 권한</td></tr>
+          <tr><td>교사 dashboard filter</td><td>GET form 1개, 같은 화면 URL에 학년도·학년·반 query 전달</td><td><code>Dashboard_Admin_Page</code></td><td>화면의 <code>TEACH</code> 검사 후 server render</td></tr>
+          <tr><td>활동지 작업</td><td>form action 없이 button delegation으로 제작·배부·제출 관리·ZIP REST 호출</td><td><code>Worksheet_Admin_Page → worksheet-editor.js</code></td><td>Worksheet·Submission REST 권한</td></tr>
+          <tr><td>학생 작성</td><td>저장·제출·첨부 button이 학생 REST 호출</td><td><code>Dashboard_Admin_Page/Dashboard_Module/Compatibility → student-worksheet.js</code></td><td><code>VIEW_OWN_DASHBOARD</code> + 쓰기 nonce, Controller가 assignment service로 배정 대상 여부를 후속 검사</td></tr>
+          <tr><td>WordPress form action</td><td><code>admin_post_*</code> 0, server AJAX 0</td><td>없음</td><td>REST로 일원화된 현행</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="shortcodes">Shortcode 진입점</h2>
+      <table>
+        <thead><tr><th>구분</th><th>tag</th><th>mount·담당</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td>직접 등록 3</td><td><code>oj_ai_teacher_dashboard</code><br><code>oj_ai_student_dashboard</code><br><code>oj_ai_student_worksheet</code></td><td><code>Dashboard_Module</code>이 dashboard 또는 학생 활동지 mount 렌더링</td><td>PublicUI를 대신할 수 없음</td></tr>
+          <tr><td>일반 alias 6</td><td><code>ai_dashboard</code><br><code>ai_teacher_dashboard</code><br><code>ai_student_dashboard</code><br><code>ai_class_dashboard</code><br><code>ai_feedback_dashboard</code><br><code>ai_student_worksheet</code></td><td><code>Shortcode_Compatibility_Service</code></td><td>기본 활성화된 이전 호환 표면</td></tr>
+          <tr><td>HustOJ alias 5</td><td><code>hustoj_ai_manager_dashboard</code><br><code>hustoj_ai_student_dashboard</code><br><code>hustoj_ai_worksheet_assignment</code><br><code>hustoj_ai_assessment_feedback</code><br><code>hustoj_ai_assessment_scores</code></td><td><code>Shortcode_Compatibility_Service</code></td><td>기본 활성화된 legacy 표면</td></tr>
+        </tbody>
+      </table>
+      <p>Shortcode callback은 mount를 먼저 렌더링하고 데이터 권한은 REST가 거부한다. 따라서 비로그인·권한 없는 문서에서도 빈 shell이나 오류 UI가 나타날 수 있다. 신규 설치의 기본 진입점에서는 제외하고 이전 콘텐츠의 감지·redirect·유예 정책을 <code>A-DS-15</code>에서 결정해야 한다.</p>
+
+      <h2 id="hooks">Hook·예약 작업</h2>
+      <h3>등록 hook 32개</h3>
+      <table>
+        <thead><tr><th>hook</th><th>등록 수</th><th>현재 책임</th><th>목표 처리</th></tr></thead>
+        <tbody>
+          <tr><td><code>rest_api_init</code></td><td>10 action</td><td>10 REST Controller 등록</td><td>유지하되 shell별 API 경계 재검토</td></tr>
+          <tr><td><code>admin_menu</code></td><td>5 action</td><td>선택형 중앙·모듈별 wp-admin 메뉴</td><td>지원 표면에서 제거</td></tr>
+          <tr><td><code>admin_enqueue_scripts</code></td><td>2 action</td><td>선택형 wp-admin 자산</td><td>C-28 asset 기여로 교체</td></tr>
+          <tr><td><code>init</code></td><td>4 action</td><td>역할 동기화, legacy shortcode, cron 보장, 구형 OJ 메뉴 bridge</td><td>책임 분리. 메뉴 bridge 제거 후보</td></tr>
+          <tr><td><code>template_redirect</code></td><td>1 action</td><td>독립 관리자 shell 직접 출력</td><td>제거</td></tr>
+          <tr><td><code>wp_enqueue_scripts</code></td><td>1 action</td><td>구형 Console URL을 문자열 판별해 자산 적재</td><td>C-28 Route asset key로 교체</td></tr>
+          <tr><td><code>admin_init</code></td><td>1 action</td><td>legacy wp-admin URL redirect</td><td>이전 기간만 유지 여부 결정</td></tr>
+          <tr><td><code>oj_platform_loaded</code></td><td>1 action</td><td>구형 container 연결 대기</td><td>현재 애드온 hook을 제거하고 Manifest 등록과 Runtime callback 선언을 <code>oj_platform_register_addons</code> builder의 <code>onReady()</code>로 이동</td></tr>
+          <tr><td><code>plugins_loaded</code></td><td>1 action</td><td>번역 로드</td><td>유지</td></tr>
+          <tr><td><code>oj_ai_dashboard_auto_submit_due</code></td><td>1 action</td><td>마감 자동 제출 실행</td><td>애드온 소유 cron으로 유지 후보</td></tr>
+          <tr><td>등록 filter</td><td>5</td><td>관리 URL, shortcode 설정, 학사 scope provider, cron 간격, 플랫폼 감지 signal</td><td><code>A-D-003</code>에서 설정·권한 소유권 추적</td></tr>
+        </tbody>
+      </table>
+
+      <h3>외부 확장 hook 표면</h3>
+      <table>
+        <thead><tr><th>범주</th><th>현재 hook</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td>구형 메뉴 연결</td><td><code>oj_ai_dashboard_register_oj_admin_entry</code>, <code>oj_ai_dashboard_oj_admin_entry_connected</code>, <code>oj_ai_dashboard_oj_menu_parent_slug</code></td><td>C-28 manifest로 대체</td></tr>
+          <tr><td>wp-admin·shortcode 호환</td><td><code>oj_ai_dashboard_register_wp_admin_pages</code>, <code>oj_ai_dashboard_legacy_shortcode_map</code>, <code>oj_ai_dashboard_legacy_shortcode_compat_enabled</code></td><td>이전 정책으로 격리</td></tr>
+          <tr><td>AI 실행</td><td><code>oj_ai_dashboard_ai_score_result</code>, <code>oj_ai_dashboard_feedback_text</code>, <code>oj_ai_dashboard_special_note_text</code></td><td>현재 실제 Provider 대신 쓰이는 진입점. <code>A-D-006</code> 조사 대상</td></tr>
+          <tr><td>OJ 읽기 adapter</td><td><code>oj_ai_dashboard_oj_users*</code>, <code>oj_ai_dashboard_oj_groups*</code>, <code>oj_ai_dashboard_oj_problems*</code>, <code>oj_ai_dashboard_oj_submissions*</code></td><td>현재 filter 또는 직접 DB fallback. <code>A-D-008</code> 소유권 조사 대상</td></tr>
+          <tr><td>테이블·환경</td><td><code>oj_ai_dashboard_oj_table_map</code>, <code>oj_ai_dashboard_oj_table_candidates</code>, <code>oj_ai_dashboard_platform_detector_signals</code></td><td>재정비 플랫폼 schema·별도 Judge DB와 불일치. 공개 Gateway로 교체 후보</td></tr>
+          <tr><td>학사 scope</td><td><code>oj_ai_dashboard_scope_provider</code></td><td>REST 학생·학급 범위 판정에 사용. <code>A-D-003</code>에서 fail-closed 경로 검증</td></tr>
+        </tbody>
+      </table>
+
+      <h3>예약 작업</h3>
+      <pre><code>schedule: oj_ai_dashboard_every_five_minutes = 300초
+event:    oj_ai_dashboard_auto_submit_due
+first:    init 시 현재 시각 + 60초
+batch:    Submission_Service::auto_submit_due(100)
+cleanup:  plugin deactivation 시 wp_clear_scheduled_hook()</code></pre>
+
+      <h2 id="gaps">발견 격차와 후속 소유</h2>
+      <table>
+        <thead><tr><th>ID</th><th>중요도</th><th>현재 사실</th><th>위험</th><th>후속 단계</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-D002-F01</code></td><td><span class="badge danger">Critical</span></td><td>현재 플랫폼에서 Console Route·Menu 실제 등록은 0건</td><td>OJ Console 통합 요구 미충족</td><td>C28-I06 완료 후 <code>A-DS-02</code>·<code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D002-F02</code></td><td><span class="badge danger">Critical</span></td><td>PublicUI Route·Menu 등록 0건</td><td><code>학습 &gt; 활동지</code>와 direct assignment URL 부재</td><td><code>A-DS-01</code>·<code>A-DS-02</code>·<code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D002-F03</code></td><td><span class="badge danger">High</span></td><td>root와 학생 화면이 <code>VIEW_OWN_DASHBOARD</code>로 관리 shell에 진입</td><td>학생·운영 shell 경계 혼합</td><td><code>A-D-003</code>, <code>A-DS-01</code>·<code>A-DS-03</code>·<code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D002-F04</code></td><td><span class="badge danger">High</span></td><td>학생 활동지 mount markup과 asset 설정이 3개 클래스에 중복</td><td>PublicUI 전환 시 동작 불일치</td><td><code>A-DS-01</code>, <code>A-DS-09</code></td></tr>
+          <tr><td><code>A-D002-F05</code></td><td><span class="badge wait">Medium</span></td><td>wp-admin fallback이 중앙 등록과 4개 모듈 등록 경로를 함께 가짐</td><td>동일 slug·callback 중복 및 소유권 분산</td><td><code>A-DS-02</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D002-F06</code></td><td><span class="badge danger">High</span></td><td>14개 shortcode 중 호환 11개가 기본 활성화</td><td>비관리 public page가 사실상 대체 진입점으로 남음</td><td><code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D002-F07</code></td><td><span class="badge danger">High</span></td><td>학생용·교사용 REST가 같은 namespace와 Controller 일부를 공유</td><td>응답 schema·객체 범위의 shell별 경계가 불명확</td><td><code>A-D-003</code>·<code>A-D-005</code>, <code>A-DS-03</code>·<code>A-DS-08</code>·<code>A-DS-09</code></td></tr>
+          <tr><td><code>A-D002-F08</code></td><td><span class="badge danger">Critical</span></td><td>활동지 자체 AI 평가 화면·Route 0건</td><td>핵심 요구를 표현할 진입점 없음</td><td><code>A-D-006</code>, <code>A-DS-01</code>·<code>A-DS-08</code>·<code>A-DS-10</code></td></tr>
+          <tr><td><code>A-D002-F09</code></td><td><span class="badge wait">Medium</span></td><td><code>/exports/scores-csv</code>와 <code>/reports/scores-csv</code>가 같은 callback을 중복 노출</td><td>공개 API 표면과 제거 정책 불명확</td><td><code>A-DS-08</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D002-F10</code></td><td><span class="badge danger">High</span></td><td>진입 Route·Menu·shortcode 권한을 검증하는 자동 테스트가 없음</td><td>shell 이동과 호환 제거 회귀를 탐지하지 못함</td><td><code>A-DS-03</code>·<code>A-DS-08</code>·<code>A-DS-16</code></td></tr>
+          <tr><td><code>A-D002-F11</code></td><td><span class="badge danger">Critical</span></td><td>애드온이 플랫폼과 별도로 학년·학급·그룹을 관리</td><td>동일 사용자의 수업 대상이 두 체계에서 달라질 수 있음</td><td><code>A-D-003</code>, <code>A-DS-03</code>·<code>A-DS-05</code>·<code>A-DS-06</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D002-F12</code></td><td><span class="badge danger">High</span></td><td>상위 가져오기 화면에 명단·활동지 템플릿·이전 데이터가 혼재</td><td>데이터 소유권과 필요한 권한이 불명확</td><td><code>A-D-003</code>, <code>A-DS-01</code>·<code>A-DS-03</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D002-F13</code></td><td><span class="badge danger">High</span></td><td>실행 환경·플랫폼 연결·설정 화면이 겹치고 독립 실행 모드를 전제</td><td>플랫폼 필수 애드온의 운영 경계와 맞지 않음</td><td><code>A-DS-01</code>·<code>A-DS-02</code>·<code>A-DS-04</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D002-F14</code></td><td><span class="badge danger">Critical</span></td><td>기존 C-28이 AI Provider를 애드온 소유로 분류</td><td>플랫폼 공통 연결 프로필·비밀값·작업 배정과 중복</td><td><code>C28-D09~D11</code> 보완 반영, <code>A-DS-02</code>·<code>A-DS-04</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>목표 shell 분류 기준</h2>
+      <table>
+        <thead><tr><th>분류</th><th>포함 기능</th><th>확정된 방향</th></tr></thead>
+        <tbody>
+          <tr><td>OJ Console</td><td>교사 개요, 수업 대상 조회, 활동지 제작·배부, 활동지 자체 평가, 학생 제출 평가, 보고서, 설정</td><td><code>학습 공간 &gt; AI 활동지</code> 메뉴 1개와 namespaced Console Route를 C-28 manifest로 명시</td></tr>
+          <tr><td>PublicUI</td><td>내 활동지 목록, 배정 상세, 작성·자동 저장·첨부·제출, 공개된 점수·피드백</td><td><code>학습 &gt; 활동지</code> 기본 메뉴와 <code>/oj-addons/oj-ai-dashboard/assignments/{assignment_id}</code> 직접 경로를 별도 명시</td></tr>
+          <tr><td>지원 표면에서 제거</td><td>독립 관리자 shell, wp-admin fallback, 구형 container Console bridge</td><td>플랫폼 필수 애드온 원칙에 따라 신규 설치 경로에서 제거</td></tr>
+          <tr><td>이전 정책에서 결정</td><td>legacy wp-admin URL과 14개 shortcode</td><td>사용 현황 감지, 안내·redirect·유예 기간을 <code>A-DS-15</code>에서 확정</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>아직 상세 설계하지 않은 것:</strong> Console 하위 정보 구조와 PublicUI 목록·상세 화면은 <code>A-DS-01</code>, REST versioning은 <code>A-DS-08</code>, legacy URL·shortcode redirect와 유예 기간은 <code>A-DS-15</code>에서 결정한다.</div>
+
+      <h2 id="completion">A-D-002 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>결과</th><th>증거</th></tr></thead>
+        <tbody>
+          <tr><td>관리자 메뉴와 화면 전수 목록</td><td>충족</td><td>11개 descriptor, 3종 shell/호환 등록 경로와 39 metadata 구분</td></tr>
+          <tr><td>REST Controller·경로·권한 추적</td><td>충족</td><td>10 Controller, 73경로, 85작업, capability·nonce·scope 기록</td></tr>
+          <tr><td>AJAX·form action 조사</td><td>충족</td><td>40 HTML form, REST 연결, <code>wp_ajax_*</code>·<code>admin_post_*</code> 0건</td></tr>
+          <tr><td>Hook·shortcode·cron 조사</td><td>충족</td><td>27 action, 5 filter, shortcode 14, cron 1계열</td></tr>
+          <tr><td>Console/PublicUI 격차 분류</td><td>충족</td><td><code>A-D002-F01~F14</code>와 목표 shell 분류</td></tr>
+          <tr><td>실행 코드·플랫폼 변경 금지</td><td>충족</td><td>HTML 문서만 추가·연결, 실행 코드 변경 0건</td></tr>
+          <tr><td>사용자 기준선 확인</td><td>충족</td><td>2026-08-10 화면 소유권·메뉴 위치·플랫폼 AI 설정 경계를 확인하고 <code>A-D-003</code> 시작</td></tr>
+        </tbody>
+      </table>
+
+      <h2>확정 결정</h2>
+      <section class="panel">
+        <ol>
+          <li>교사·관리자 기능은 OJ Console의 <code>학습 공간 &gt; AI 활동지</code>로 통합하고, 학생 기능은 PublicUI의 <code>학습 &gt; 활동지</code>로 분리한다.</li>
+          <li>학급·그룹·사용자 원장은 OJ Platform을 기준으로 하며 애드온은 별도 그룹 관리 체계를 만들지 않는다.</li>
+          <li>활동지 템플릿 가져오기는 활동지 영역에, 이전 설치 데이터 가져오기는 설정의 데이터 이전 영역에 둔다. 학생 명단 가져오기는 애드온 목표 기능에서 제거한다.</li>
+          <li>실행 환경과 플랫폼 연결 화면은 애드온 설정의 <code>연결 및 진단</code>으로 합친다.</li>
+          <li>AI 연결 프로필·비밀값·모델 및 fallback 작업 배정은 OJ Platform이 소유한다. 애드온은 평가 정책·루브릭·검토 및 공개 기준과 실제 평가 실행을 소유한다.</li>
+          <li>플랫폼의 <code>AI 작업 배정</code>은 활동지 자체 평가와 학생 제출 평가에 사용할 provider·model routing 행이며, 평가 업무 화면은 아니다.</li>
+          <li>활동지 자체와 학생 제출 답안을 서로 다른 평가 대상으로 제공한다.</li>
+        </ol>
+      </section>
+
+      <p class="footer"><code>A-D-002</code> 기준선을 확정했다. 다음 문서: <a href="a-d-003-access-settings.html">A-D-003 메뉴·권한·기능 설정</a></p>
+    </main>
+  </div>
+</body>
+</html>

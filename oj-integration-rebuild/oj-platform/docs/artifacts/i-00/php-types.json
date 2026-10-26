@@ -1,0 +1,1381 @@
+[
+    {
+        "type": "class",
+        "name": "Classes_Test_Module",
+        "namespace": "",
+        "fully_qualified_name": "Classes_Test_Module",
+        "file": "tests/architecture-smoke.php"
+    },
+    {
+        "type": "interface",
+        "name": "Group_Membership_Provider_Interface",
+        "namespace": "CodingPanda\\OjPlatform\\Contract",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Contract\\Group_Membership_Provider_Interface",
+        "file": "src/Contract/Group_Membership_Provider_Interface.php"
+    },
+    {
+        "type": "interface",
+        "name": "Activatable_Module_Interface",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Activatable_Module_Interface",
+        "file": "src/Core/Activatable_Module_Interface.php"
+    },
+    {
+        "type": "class",
+        "name": "Autoloader",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Autoloader",
+        "file": "src/Core/Autoloader.php"
+    },
+    {
+        "type": "class",
+        "name": "Config",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Config",
+        "file": "src/Core/Config.php"
+    },
+    {
+        "type": "class",
+        "name": "Container",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Container",
+        "file": "src/Core/Container.php"
+    },
+    {
+        "type": "interface",
+        "name": "Deactivatable_Module_Interface",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Deactivatable_Module_Interface",
+        "file": "src/Core/Deactivatable_Module_Interface.php"
+    },
+    {
+        "type": "class",
+        "name": "Error_Logger",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Error_Logger",
+        "file": "src/Core/Error_Logger.php"
+    },
+    {
+        "type": "class",
+        "name": "Feature_Action_Guard",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Feature",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Feature\\Feature_Action_Guard",
+        "file": "src/Core/Feature/Feature_Action_Guard.php"
+    },
+    {
+        "type": "class",
+        "name": "Feature_Flag_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Feature",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Feature\\Feature_Flag_Service",
+        "file": "src/Core/Feature/Feature_Flag_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "I18n",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\I18n",
+        "file": "src/Core/I18n.php"
+    },
+    {
+        "type": "interface",
+        "name": "Module_Interface",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Module_Interface",
+        "file": "src/Core/Module_Interface.php"
+    },
+    {
+        "type": "class",
+        "name": "Module_Manager",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Module_Manager",
+        "file": "src/Core/Module_Manager.php"
+    },
+    {
+        "type": "interface",
+        "name": "Context_Rule_Interface",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Permission",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Permission\\Context_Rule_Interface",
+        "file": "src/Core/Permission/Context_Rule_Interface.php"
+    },
+    {
+        "type": "class",
+        "name": "Permission_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Permission",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Permission\\Permission_Service",
+        "file": "src/Core/Permission/Permission_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Role_Capability_Installer",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Permission",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Permission\\Role_Capability_Installer",
+        "file": "src/Core/Permission/Role_Capability_Installer.php"
+    },
+    {
+        "type": "class",
+        "name": "Plugin",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Plugin",
+        "file": "src/Core/Plugin.php"
+    },
+    {
+        "type": "class",
+        "name": "Admin_Post_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Admin_Post_Registry",
+        "file": "src/Core/Registry/Admin_Post_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Asset_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Asset_Registry",
+        "file": "src/Core/Registry/Asset_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Capability_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Capability_Registry",
+        "file": "src/Core/Registry/Capability_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Menu_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Console_Menu_Registry",
+        "file": "src/Core/Registry/Console_Menu_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Event_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Event_Registry",
+        "file": "src/Core/Registry/Event_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Feature_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Feature_Registry",
+        "file": "src/Core/Registry/Feature_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Navigation_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Navigation_Registry",
+        "file": "src/Core/Registry/Navigation_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Registry",
+        "file": "src/Core/Registry/Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Route_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Route_Registry",
+        "file": "src/Core/Registry/Route_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Shortcode_Registry",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Registry",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Registry\\Shortcode_Registry",
+        "file": "src/Core/Registry/Shortcode_Registry.php"
+    },
+    {
+        "type": "class",
+        "name": "Request_Context",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Request_Context",
+        "file": "src/Core/Request_Context.php"
+    },
+    {
+        "type": "class",
+        "name": "Pagination_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Core\\Support",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\Support\\Pagination_Renderer",
+        "file": "src/Core/Support/Pagination_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "System_Status",
+        "namespace": "CodingPanda\\OjPlatform\\Core",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Core\\System_Status",
+        "file": "src/Core/System_Status.php"
+    },
+    {
+        "type": "class",
+        "name": "Ai_Client",
+        "namespace": "CodingPanda\\OjPlatform\\Infrastructure\\AI",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Infrastructure\\AI\\Ai_Client",
+        "file": "src/Infrastructure/AI/Ai_Client.php"
+    },
+    {
+        "type": "interface",
+        "name": "Ai_Client_Interface",
+        "namespace": "CodingPanda\\OjPlatform\\Infrastructure\\AI",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Infrastructure\\AI\\Ai_Client_Interface",
+        "file": "src/Infrastructure/AI/Ai_Client_Interface.php"
+    },
+    {
+        "type": "class",
+        "name": "Ai_Feedback_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Controller\\Ai_Feedback_Controller",
+        "file": "modules/AI/Controller/Ai_Feedback_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Ai_Feedback_Settings_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Controller\\Ai_Feedback_Settings_Controller",
+        "file": "modules/AI/Controller/Ai_Feedback_Settings_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Ai_Persona_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Controller\\Ai_Persona_Controller",
+        "file": "modules/AI/Controller/Ai_Persona_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Student_Level_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Controller\\Student_Level_Controller",
+        "file": "modules/AI/Controller/Student_Level_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Module",
+        "file": "modules/AI/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Ai_Feedback_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Repository\\Ai_Feedback_Repository",
+        "file": "modules/AI/Repository/Ai_Feedback_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Ai_Persona_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Repository\\Ai_Persona_Repository",
+        "file": "modules/AI/Repository/Ai_Persona_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Student_Level_Profile_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Repository\\Student_Level_Profile_Repository",
+        "file": "modules/AI/Repository/Student_Level_Profile_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Ai_Feedback_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Service\\Ai_Feedback_Service",
+        "file": "modules/AI/Service/Ai_Feedback_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Student_Level_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Service\\Student_Level_Service",
+        "file": "modules/AI/Service/Student_Level_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Ai_Prompt_Storage",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AI\\Storage",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AI\\Storage\\Ai_Prompt_Storage",
+        "file": "modules/AI/Storage/Ai_Prompt_Storage.php"
+    },
+    {
+        "type": "class",
+        "name": "Compatibility_Route_Provider",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AccessRouter",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AccessRouter\\Compatibility_Route_Provider",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AccessRouter",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AccessRouter\\Module",
+        "file": "modules/AccessRouter/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Page_Resolver",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AccessRouter",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AccessRouter\\Page_Resolver",
+        "file": "modules/AccessRouter/Page_Resolver.php"
+    },
+    {
+        "type": "class",
+        "name": "Rewrite_Manager",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AccessRouter",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AccessRouter\\Rewrite_Manager",
+        "file": "modules/AccessRouter/Rewrite_Manager.php"
+    },
+    {
+        "type": "class",
+        "name": "Route_Matcher",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AccessRouter",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AccessRouter\\Route_Matcher",
+        "file": "modules/AccessRouter/Route_Matcher.php"
+    },
+    {
+        "type": "class",
+        "name": "Router",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AccessRouter",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AccessRouter\\Router",
+        "file": "modules/AccessRouter/Router.php"
+    },
+    {
+        "type": "class",
+        "name": "Url_Generator",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AccessRouter",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AccessRouter\\Url_Generator",
+        "file": "modules/AccessRouter/Url_Generator.php"
+    },
+    {
+        "type": "class",
+        "name": "Admin_Backup_Policy",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Backup",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Backup\\Admin_Backup_Policy",
+        "file": "modules/AdminConsole/Backup/Admin_Backup_Policy.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Dashboard_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Dashboard",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Dashboard\\Console_Dashboard_Renderer",
+        "file": "modules/AdminConsole/Dashboard/Console_Dashboard_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AdminConsole",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Module",
+        "file": "modules/AdminConsole/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Menu_Provider",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Navigation",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Navigation\\Console_Menu_Provider",
+        "file": "modules/AdminConsole/Navigation/Console_Menu_Provider.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Shell_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Shell",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Shell\\Console_Shell_Renderer",
+        "file": "modules/AdminConsole/Shell/Console_Shell_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_User_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Controller\\Console_User_Controller",
+        "file": "modules/Auth/Controller/Console_User_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Auth_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Controller\\Public_Auth_Controller",
+        "file": "modules/Auth/Controller/Public_Auth_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Registration_Settings_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Controller\\Registration_Settings_Controller",
+        "file": "modules/Auth/Controller/Registration_Settings_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Module",
+        "file": "modules/Auth/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Agreement_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository\\Agreement_Repository",
+        "file": "modules/Auth/Repository/Agreement_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Deleted_User_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository\\Deleted_User_Repository",
+        "file": "modules/Auth/Repository/Deleted_User_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Guardian_Verification_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository\\Guardian_Verification_Repository",
+        "file": "modules/Auth/Repository/Guardian_Verification_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Judge_User_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository\\Judge_User_Repository",
+        "file": "modules/Auth/Repository/Judge_User_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Platform_User_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository\\Platform_User_Repository",
+        "file": "modules/Auth/Repository/Platform_User_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "User_Preferences_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Repository\\User_Preferences_Repository",
+        "file": "modules/Auth/Repository/User_Preferences_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Account_Deletion_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\Account_Deletion_Service",
+        "file": "modules/Auth/Service/Account_Deletion_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Authenticator",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\Authenticator",
+        "file": "modules/Auth/Service/Authenticator.php"
+    },
+    {
+        "type": "class",
+        "name": "Bulk_User_Registration_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\Bulk_User_Registration_Service",
+        "file": "modules/Auth/Service/Bulk_User_Registration_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Guardian_Consent_Request_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\Guardian_Consent_Request_Service",
+        "file": "modules/Auth/Service/Guardian_Consent_Request_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Linked_User_Resolver",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\Linked_User_Resolver",
+        "file": "modules/Auth/Service/Linked_User_Resolver.php"
+    },
+    {
+        "type": "class",
+        "name": "Registration_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\Registration_Service",
+        "file": "modules/Auth/Service/Registration_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "User_Profile_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\User_Profile_Service",
+        "file": "modules/Auth/Service/User_Profile_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "User_Settings_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\User_Settings_Service",
+        "file": "modules/Auth/Service/User_Settings_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "WordPress_User_Synchronizer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Service\\WordPress_User_Synchronizer",
+        "file": "modules/Auth/Service/WordPress_User_Synchronizer.php"
+    },
+    {
+        "type": "class",
+        "name": "Oj_Password_Hasher",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Support",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Support\\Oj_Password_Hasher",
+        "file": "modules/Auth/Support/Oj_Password_Hasher.php"
+    },
+    {
+        "type": "class",
+        "name": "Oj_Password_Verifier",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Auth\\Support",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Auth\\Support\\Oj_Password_Verifier",
+        "file": "modules/Auth/Support/Oj_Password_Verifier.php"
+    },
+    {
+        "type": "class",
+        "name": "Blockly_Settings_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Blockly\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Blockly\\Controller\\Blockly_Settings_Controller",
+        "file": "modules/Blockly/Controller/Blockly_Settings_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Blockly",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Blockly\\Module",
+        "file": "modules/Blockly/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Upload_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Blockly\\Support",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Blockly\\Support\\Upload_Repository",
+        "file": "modules/Blockly/Support/Upload_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Board_Settings_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Board\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Board\\Controller\\Board_Settings_Controller",
+        "file": "modules/Board/Controller/Board_Settings_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Board_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Board\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Board\\Controller\\Console_Board_Controller",
+        "file": "modules/Board/Controller/Console_Board_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Board_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Board\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Board\\Controller\\Public_Board_Controller",
+        "file": "modules/Board/Controller/Public_Board_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Board",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Board\\Module",
+        "file": "modules/Board/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Board_Post_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Board\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Board\\Repository\\Board_Post_Repository",
+        "file": "modules/Board/Repository/Board_Post_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Notice_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Board\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Board\\Repository\\Notice_Repository",
+        "file": "modules/Board/Repository/Notice_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Board_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Board\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Board\\Service\\Board_Service",
+        "file": "modules/Board/Service/Board_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Attachment_Handler",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Board\\Support",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Board\\Support\\Attachment_Handler",
+        "file": "modules/Board/Support/Attachment_Handler.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Class_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Classes\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Classes\\Controller\\Console_Class_Controller",
+        "file": "modules/Classes/Controller/Console_Class_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Class_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Classes\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Classes\\Controller\\Public_Class_Controller",
+        "file": "modules/Classes/Controller/Public_Class_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Classes",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Classes\\Module",
+        "file": "modules/Classes/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Class_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Classes\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Classes\\Repository\\Class_Repository",
+        "file": "modules/Classes/Repository/Class_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Class_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Classes\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Classes\\Service\\Class_Service",
+        "file": "modules/Classes/Service/Class_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Contest_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Contests\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Contests\\Controller\\Console_Contest_Controller",
+        "file": "modules/Contests/Controller/Console_Contest_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Contest_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Contests\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Contests\\Controller\\Public_Contest_Controller",
+        "file": "modules/Contests/Controller/Public_Contest_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Contests",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Contests\\Module",
+        "file": "modules/Contests/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Contest_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Contests\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Contests\\Repository\\Contest_Repository",
+        "file": "modules/Contests/Repository/Contest_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Contest_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Contests\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Contests\\Service\\Contest_Service",
+        "file": "modules/Contests/Service/Contest_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Contest_Statistics_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Contests\\View",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Contests\\View\\Contest_Statistics_Renderer",
+        "file": "modules/Contests/View/Contest_Statistics_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Group_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Groups\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Groups\\Controller\\Console_Group_Controller",
+        "file": "modules/Groups/Controller/Console_Group_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Group_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Groups\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Groups\\Controller\\Public_Group_Controller",
+        "file": "modules/Groups/Controller/Public_Group_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Groups",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Groups\\Module",
+        "file": "modules/Groups/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Group_Report_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Groups\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Groups\\Repository\\Group_Report_Repository",
+        "file": "modules/Groups/Repository/Group_Report_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Group_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Groups\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Groups\\Repository\\Group_Repository",
+        "file": "modules/Groups/Repository/Group_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Group_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Groups\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Groups\\Service\\Group_Service",
+        "file": "modules/Groups/Service/Group_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Group_Permission_Rule",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Groups\\Support",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Groups\\Support\\Group_Permission_Rule",
+        "file": "modules/Groups/Support/Group_Permission_Rule.php"
+    },
+    {
+        "type": "class",
+        "name": "Connection_Manager",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Connection",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Connection\\Connection_Manager",
+        "file": "modules/JudgeDb/Connection/Connection_Manager.php"
+    },
+    {
+        "type": "class",
+        "name": "Settings_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Controller\\Settings_Controller",
+        "file": "modules/JudgeDb/Controller/Settings_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Judge_Db",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Database",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Database\\Judge_Db",
+        "file": "modules/JudgeDb/Database/Judge_Db.php"
+    },
+    {
+        "type": "class",
+        "name": "Db_Health_Checker",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Health",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Health\\Db_Health_Checker",
+        "file": "modules/JudgeDb/Health/Db_Health_Checker.php"
+    },
+    {
+        "type": "class",
+        "name": "Settings_Tester",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Health",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Health\\Settings_Tester",
+        "file": "modules/JudgeDb/Health/Settings_Tester.php"
+    },
+    {
+        "type": "class",
+        "name": "Judge_Table_Map",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Mapping",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Mapping\\Judge_Table_Map",
+        "file": "modules/JudgeDb/Mapping/Judge_Table_Map.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\JudgeDb",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Module",
+        "file": "modules/JudgeDb/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Dashboard_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard\\Controller\\Public_Dashboard_Controller",
+        "file": "modules/LearningDashboard/Controller/Public_Dashboard_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard\\Module",
+        "file": "modules/LearningDashboard/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Learning_Dashboard_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard\\Renderer",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard\\Renderer\\Learning_Dashboard_Renderer",
+        "file": "modules/LearningDashboard/Renderer/Learning_Dashboard_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Learning_Dashboard_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard\\Service\\Learning_Dashboard_Service",
+        "file": "modules/LearningDashboard/Service/Learning_Dashboard_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Migration_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Migration\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Migration\\Controller\\Console_Migration_Controller",
+        "file": "modules/Migration/Controller/Console_Migration_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Migration",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Migration\\Module",
+        "file": "modules/Migration/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Migration_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Migration\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Migration\\Repository\\Migration_Repository",
+        "file": "modules/Migration/Repository/Migration_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Migration_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Migration\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Migration\\Service\\Migration_Service",
+        "file": "modules/Migration/Service/Migration_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Permission",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Permission\\Module",
+        "file": "modules/Permission/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Platform_Db_Health_Checker",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PlatformDb\\Health",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PlatformDb\\Health\\Platform_Db_Health_Checker",
+        "file": "modules/PlatformDb/Health/Platform_Db_Health_Checker.php"
+    },
+    {
+        "type": "class",
+        "name": "Platform_Table_Map",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PlatformDb\\Mapping",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PlatformDb\\Mapping\\Platform_Table_Map",
+        "file": "modules/PlatformDb/Mapping/Platform_Table_Map.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PlatformDb",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PlatformDb\\Module",
+        "file": "modules/PlatformDb/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Platform_Schema_Installer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PlatformDb\\Schema",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PlatformDb\\Schema\\Platform_Schema_Installer",
+        "file": "modules/PlatformDb/Schema/Platform_Schema_Installer.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Problem_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Controller\\Console_Problem_Controller",
+        "file": "modules/Problems/Controller/Console_Problem_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Problem_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Controller\\Public_Problem_Controller",
+        "file": "modules/Problems/Controller/Public_Problem_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Module",
+        "file": "modules/Problems/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Book_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository\\Problem_Book_Repository",
+        "file": "modules/Problems/Repository/Problem_Book_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Metadata_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository\\Problem_Metadata_Repository",
+        "file": "modules/Problems/Repository/Problem_Metadata_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository\\Problem_Repository",
+        "file": "modules/Problems/Repository/Problem_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Submit_Mode_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository\\Problem_Submit_Mode_Repository",
+        "file": "modules/Problems/Repository/Problem_Submit_Mode_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Tool_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository\\Problem_Tool_Repository",
+        "file": "modules/Problems/Repository/Problem_Tool_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Quiz_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Repository\\Quiz_Repository",
+        "file": "modules/Problems/Repository/Quiz_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "LIBXML_NOCDATA",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service\\LIBXML_NOCDATA",
+        "file": "modules/Problems/Service/Problem_Xml_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Metadata_Ai_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service\\Problem_Metadata_Ai_Service",
+        "file": "modules/Problems/Service/Problem_Metadata_Ai_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Metadata_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service\\Problem_Metadata_Service",
+        "file": "modules/Problems/Service/Problem_Metadata_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Test_Data_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service\\Problem_Test_Data_Service",
+        "file": "modules/Problems/Service/Problem_Test_Data_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Xml_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\Service\\Problem_Xml_Service",
+        "file": "modules/Problems/Service/Problem_Xml_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Ranking_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\View",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\View\\Problem_Ranking_Renderer",
+        "file": "modules/Problems/View/Problem_Ranking_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Problem_Statistics_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Problems\\View",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Problems\\View\\Problem_Statistics_Renderer",
+        "file": "modules/Problems/View/Problem_Statistics_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Home_Page_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Home",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Home\\Home_Page_Renderer",
+        "file": "modules/PublicUi/Home/Home_Page_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Home_Page_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Home",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Home\\Home_Page_Service",
+        "file": "modules/PublicUi/Home/Home_Page_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PublicUi",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Module",
+        "file": "modules/PublicUi/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Navigation_Provider",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Navigation",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Navigation\\Public_Navigation_Provider",
+        "file": "modules/PublicUi/Navigation/Public_Navigation_Provider.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Shell_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Shell",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Shell\\Public_Shell_Renderer",
+        "file": "modules/PublicUi/Shell/Public_Shell_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Ranking_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Ranking\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Ranking\\Controller\\Public_Ranking_Controller",
+        "file": "modules/Ranking/Controller/Public_Ranking_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Ranking",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Ranking\\Module",
+        "file": "modules/Ranking/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Ranking_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Ranking\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Ranking\\Repository\\Ranking_Repository",
+        "file": "modules/Ranking/Repository/Ranking_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Abstract_Settings_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Settings\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Settings\\Controller\\Abstract_Settings_Controller",
+        "file": "modules/Settings/Controller/Abstract_Settings_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Settings_Overview_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Settings\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Settings\\Controller\\Settings_Overview_Controller",
+        "file": "modules/Settings/Controller/Settings_Overview_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Settings",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Settings\\Module",
+        "file": "modules/Settings/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Settings_Page_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Settings\\Pages",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Settings\\Pages\\Settings_Page_Renderer",
+        "file": "modules/Settings/Pages/Settings_Page_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Settings_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Settings\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Settings\\Repository\\Settings_Repository",
+        "file": "modules/Settings/Repository/Settings_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Secret_Store",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Settings\\Secrets",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Settings\\Secrets\\Secret_Store",
+        "file": "modules/Settings/Secrets/Secret_Store.php"
+    },
+    {
+        "type": "class",
+        "name": "Smtp_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Settings\\Services",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Settings\\Services\\Smtp_Service",
+        "file": "modules/Settings/Services/Smtp_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "System_Behavior_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Settings\\Services",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Settings\\Services\\System_Behavior_Service",
+        "file": "modules/Settings/Services/System_Behavior_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Console_Submission_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Controller\\Console_Submission_Controller",
+        "file": "modules/Submissions/Controller/Console_Submission_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Public_Submission_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Controller\\Public_Submission_Controller",
+        "file": "modules/Submissions/Controller/Public_Submission_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Submission_Settings_Controller",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Controller",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Controller\\Submission_Settings_Controller",
+        "file": "modules/Submissions/Controller/Submission_Settings_Controller.php"
+    },
+    {
+        "type": "class",
+        "name": "Module",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Module",
+        "file": "modules/Submissions/Module.php"
+    },
+    {
+        "type": "class",
+        "name": "Submission_Event_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Repository\\Submission_Event_Repository",
+        "file": "modules/Submissions/Repository/Submission_Event_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Submission_Repository",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Repository",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Repository\\Submission_Repository",
+        "file": "modules/Submissions/Repository/Submission_Repository.php"
+    },
+    {
+        "type": "class",
+        "name": "Submission_Service",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Service",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Service\\Submission_Service",
+        "file": "modules/Submissions/Service/Submission_Service.php"
+    },
+    {
+        "type": "class",
+        "name": "Language_Catalog",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Support",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Support\\Language_Catalog",
+        "file": "modules/Submissions/Support/Language_Catalog.php"
+    },
+    {
+        "type": "class",
+        "name": "Submission_Source_Metadata",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Support",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Support\\Submission_Source_Metadata",
+        "file": "modules/Submissions/Support/Submission_Source_Metadata.php"
+    },
+    {
+        "type": "class",
+        "name": "Submit_Form_Renderer",
+        "namespace": "CodingPanda\\OjPlatform\\Modules\\Submissions\\View",
+        "fully_qualified_name": "CodingPanda\\OjPlatform\\Modules\\Submissions\\View\\Submit_Form_Renderer",
+        "file": "modules/Submissions/View/Submit_Form_Renderer.php"
+    },
+    {
+        "type": "class",
+        "name": "Contest_Test_Module",
+        "namespace": "",
+        "fully_qualified_name": "Contest_Test_Module",
+        "file": "tests/architecture-smoke.php"
+    },
+    {
+        "type": "class",
+        "name": "Core_Test_Module",
+        "namespace": "",
+        "fully_qualified_name": "Core_Test_Module",
+        "file": "tests/architecture-smoke.php"
+    },
+    {
+        "type": "class",
+        "name": "Group_Test_Module",
+        "namespace": "",
+        "fully_qualified_name": "Group_Test_Module",
+        "file": "tests/architecture-smoke.php"
+    },
+    {
+        "type": "class",
+        "name": "false",
+        "namespace": "",
+        "fully_qualified_name": "false",
+        "file": "tests/architecture-smoke.php"
+    },
+    {
+        "type": "class",
+        "name": "newInstanceWithoutConstructor",
+        "namespace": "",
+        "fully_qualified_name": "newInstanceWithoutConstructor",
+        "file": "tests/problem-metadata-contract.php"
+    },
+    {
+        "type": "class",
+        "name": "newInstanceWithoutConstructor",
+        "namespace": "",
+        "fully_qualified_name": "newInstanceWithoutConstructor",
+        "file": "tests/problem-metadata-contract.php"
+    },
+    {
+        "type": "class",
+        "name": "newInstanceWithoutConstructor",
+        "namespace": "",
+        "fully_qualified_name": "newInstanceWithoutConstructor",
+        "file": "tests/problem-metadata-contract.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "config/modules.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "tests/architecture-smoke.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "tests/architecture-smoke.php"
+    },
+    {
+        "type": "class",
+        "name": "true",
+        "namespace": "",
+        "fully_qualified_name": "true",
+        "file": "tests/architecture-smoke.php"
+    },
+    {
+        "type": "class",
+        "name": "wpdb",
+        "namespace": "",
+        "fully_qualified_name": "wpdb",
+        "file": "tests/submission-behavior.php"
+    }
+]

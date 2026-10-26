@@ -1,0 +1,115 @@
+.edu-games-block-game-leaderboard {
+    width: min(1120px, calc(100% - 24px));
+    margin: 0 auto;
+    color: #172033;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.eg-board-header {
+    margin-bottom: 16px;
+}
+
+.eg-board-header p {
+    margin: 0 0 6px;
+    color: #1d6fd8;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.eg-board-header h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    line-height: 1.05;
+}
+
+.eg-board-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.eg-board-toolbar button {
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid #d7dee9;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #172033;
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.eg-board-toolbar button.is-active {
+    border-color: #1d6fd8;
+    background: #1d6fd8;
+    color: #ffffff;
+}
+
+.eg-board-status {
+    margin-bottom: 10px;
+    color: #69758a;
+    font-weight: 800;
+}
+
+.eg-board-table {
+    display: grid;
+    gap: 6px;
+}
+
+.eg-board-row {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) 88px 84px 68px 72px;
+    gap: 8px;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 12px;
+    border: 1px solid #d7dee9;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.eg-board-head {
+    min-height: 36px;
+    background: #f6f8fb;
+    color: #69758a;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+}
+
+.eg-board-row strong,
+.eg-board-row b {
+    color: #164c96;
+}
+
+.eg-board-row span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eg-empty {
+    padding: 18px;
+    border: 1px solid #d7dee9;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #69758a;
+    font-weight: 800;
+}
+
+@media (max-width: 760px) {
+    .eg-board-row {
+        grid-template-columns: 44px minmax(0, 1fr) 72px;
+    }
+
+    .eg-board-row span:nth-child(n + 4),
+    .eg-board-row b + span,
+    .eg-board-head span:nth-child(n + 4) {
+        display: none;
+    }
+}

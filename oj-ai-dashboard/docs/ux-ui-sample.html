@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 평가 콘솔 샘플</title>
+  <style>
+    :root {
+      --bg: #f3f5f8;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --ink: #17212b;
+      --muted: #667085;
+      --line: #d7dee8;
+      --blue: #2458a6;
+      --blue-soft: #ebf2fc;
+      --green: #1e7a51;
+      --green-soft: #ebf7f0;
+      --violet: #6b58b8;
+      --violet-soft: #f2effd;
+      --amber: #9a6a0f;
+      --amber-soft: #fff4dd;
+      --radius: 8px;
+      color: var(--ink);
+      font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    h1, h2, h3, h4, p { margin: 0; }
+    h1 { font-size: 22px; line-height: 1.25; }
+    h2 { font-size: 16px; line-height: 1.35; }
+    h3 { font-size: 14px; line-height: 1.35; }
+    h4 { font-size: 13px; line-height: 1.35; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      padding: 14px 12px;
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .brand,
+    .side-block,
+    .surface,
+    .dialog-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .brand {
+      display: grid;
+      gap: 6px;
+      padding: 14px;
+    }
+
+    .muted { color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+    .nav {
+      display: grid;
+      gap: 4px;
+      align-content: start;
+    }
+
+    .nav button {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+      min-height: 36px;
+      padding: 6px 8px;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: #2f3744;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    .nav button span,
+    .tiny-index {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #e7ecf4;
+      color: #475467;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .nav button.is-active {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .nav button.is-active span {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .side-block {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .workspace {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(243, 245, 248, 0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .row,
+    .chips,
+    .actions,
+    .segment {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stage {
+      display: grid;
+      gap: 14px;
+      padding: 18px 20px 28px;
+    }
+
+    .panel { display: none; }
+    .panel.is-active { display: grid; gap: 14px; }
+
+    .surface {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+      padding: 14px;
+    }
+
+    .surface-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .tone-blue { background: linear-gradient(180deg, var(--blue-soft) 0%, #fff 100%); }
+    .tone-green { background: linear-gradient(180deg, var(--green-soft) 0%, #fff 100%); }
+    .tone-violet { background: linear-gradient(180deg, var(--violet-soft) 0%, #fff 100%); }
+    .tone-amber { background: linear-gradient(180deg, var(--amber-soft) 0%, #fff 100%); }
+
+    .grid { display: grid; gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.teacher-review { grid-template-columns: 260px minmax(0, 1fr) 320px; align-items: start; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .stat strong { font-size: 22px; line-height: 1.1; }
+    .stat span { color: var(--muted); font-size: 12px; font-weight: 700; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .form-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .form-grid.one { grid-template-columns: minmax(0, 1fr); }
+
+    label {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 34px;
+      padding: 7px 9px;
+      border: 1px solid #b8c2d0;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    textarea { min-height: 84px; resize: vertical; }
+
+    .button,
+    .seg-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 6px 11px;
+      border: 1px solid #b8c2d0;
+      border-radius: 6px;
+      background: #fff;
+      color: #2f3744;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button.primary { border-color: var(--blue); background: var(--blue); color: #fff; }
+    .button.green { border-color: var(--green); background: var(--green); color: #fff; }
+    .button.violet { border-color: var(--violet); background: var(--violet); color: #fff; }
+    .button.small { min-height: 30px; padding: 5px 9px; font-size: 12px; }
+
+    .seg-button.is-active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #385073;
+      background: #edf2f8;
+    }
+
+    .badge.blue { color: var(--blue); background: var(--blue-soft); }
+    .badge.green { color: var(--green); background: var(--green-soft); }
+    .badge.violet { color: var(--violet); background: var(--violet-soft); }
+    .badge.amber { color: var(--amber); background: var(--amber-soft); }
+
+    .list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    button.list-row {
+      width: 100%;
+      font: inherit;
+      text-align: left;
+    }
+
+    button.list-row.is-selected {
+      border-color: #bdd2f2;
+      background: #f5f9ff;
+    }
+
+    .list-row > div {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .chips { gap: 6px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      border: 1px solid #d4dbe6;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .chip.is-blue { border-color: #c9daf7; background: var(--blue-soft); color: var(--blue); }
+    .chip.is-green { border-color: #c9ead8; background: var(--green-soft); color: var(--green); }
+    .chip.is-violet { border-color: #ddd5f8; background: var(--violet-soft); color: var(--violet); }
+    .chip.is-amber { border-color: #f6e3bc; background: var(--amber-soft); color: var(--amber); }
+
+    .editor-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 12px;
+      min-height: 520px;
+    }
+
+    .editor-canvas,
+    .side-stack,
+    .paper,
+    .score-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .editor-canvas {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      align-content: start;
+    }
+
+    .question-block {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #d8e1ef;
+      border-radius: 6px;
+      background: #fbfcfe;
+    }
+
+    .choice-list,
+    .rubric-table,
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .choice-list td,
+    .rubric-table td,
+    .rubric-table th,
+    .result-table td,
+    .result-table th {
+      padding: 8px 9px;
+      border-bottom: 1px solid #e6ebf2;
+      text-align: left;
+      vertical-align: top;
+      font-size: 12px;
+    }
+
+    .rubric-table th,
+    .result-table th { color: var(--muted); font-weight: 800; }
+
+    .side-stack {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      align-content: start;
+    }
+
+    .paper {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      min-height: 560px;
+      align-content: start;
+    }
+
+    .paper-section {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid #e3e8f0;
+      border-radius: 6px;
+      background: #fcfdff;
+    }
+
+    .score-card {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .score-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .score-row {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid #e0e7f0;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .score-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .score-buttons button {
+      min-height: 32px;
+      border: 1px solid #c9d4e4;
+      border-radius: 6px;
+      background: #fff;
+      font-weight: 800;
+    }
+
+    .score-buttons button.is-selected {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .result-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .result-summary-card {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid #dde5f0;
+      border-radius: 6px;
+      background: #fbfcfe;
+    }
+
+    .result-summary-card strong { font-size: 22px; line-height: 1.1; }
+    .result-summary-card span { color: var(--muted); font-size: 12px; font-weight: 700; }
+
+    .result-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .result-status.is-muted { color: var(--muted); }
+    .result-status.is-blue { color: var(--blue); }
+    .result-status.is-green { color: var(--green); }
+    .result-status.is-amber { color: var(--amber); }
+    .result-status.is-violet { color: var(--violet); }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid #dbe3ee;
+      border-radius: 6px;
+      background: #fbfcfe;
+    }
+
+    dialog {
+      border: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    dialog::backdrop { background: rgba(23, 33, 43, 0.32); }
+
+    .dialog-box {
+      width: min(760px, calc(100vw - 32px));
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .dialog-head,
+    .dialog-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #c8d1dd;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    @media (max-width: 1220px) {
+      .grid.teacher-review,
+      .editor-shell {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { border-right: 0; border-bottom: 1px solid var(--line); }
+      .grid.two,
+      .grid.three,
+      .form-grid,
+      .form-grid.two,
+      .stats {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <section class="brand">
+        <strong>AI 평가 콘솔</strong>
+        <span class="muted">2026 · 2학년 · 정보</span>
+      </section>
+
+      <nav class="nav" aria-label="작업 흐름">
+        <button type="button" class="is-active" data-panel-target="scope"><span>1</span>학년·그룹</button>
+        <button type="button" data-panel-target="standards"><span>2</span>성취기준</button>
+        <button type="button" data-panel-target="plan"><span>3</span>평가계획</button>
+        <button type="button" data-panel-target="worksheet"><span>4</span>활동지</button>
+        <button type="button" data-panel-target="grading"><span>5</span>채점</button>
+        <button type="button" data-panel-target="result"><span>6</span>결과</button>
+      </nav>
+
+      <section class="side-block">
+        <h3>학생</h3>
+        <div class="list">
+          <div class="list-row"><div><strong>배부 중</strong><span class="muted">조건문 수행평가</span></div><span class="badge blue">진행</span></div>
+          <div class="list-row"><div><strong>피드백 공개</strong><span class="muted">1건</span></div><span class="badge green">확인</span></div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="row">
+          <h1>교사 작업</h1>
+          <div class="chips">
+            <span class="chip is-blue">2학년 전체</span>
+            <span class="chip is-violet">교사 2명</span>
+            <span class="chip is-green">활동지 1종</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="button" type="button" data-modal-target="modal-collab">협업</button>
+          <button class="button primary" type="button" data-panel-target="grading">채점으로 이동</button>
+        </div>
+      </header>
+
+      <div class="stage">
+        <section id="scope" class="panel is-active" data-panel>
+          <div class="stats">
+            <article class="stat"><span>연결 학년</span><strong>2</strong><span>2학년 · 3학년</span></article>
+            <article class="stat"><span>연결 그룹</span><strong>5</strong><span>OJ 그룹 기반</span></article>
+            <article class="stat"><span>학생</span><strong>142</strong><span>명단 연결 완료</span></article>
+            <article class="stat"><span>협업 교사</span><strong>2</strong><span>공동 검토 가능</span></article>
+          </div>
+
+          <div class="grid two">
+            <section class="surface tone-blue">
+              <div class="surface-head">
+                <h2>운영 범위</h2>
+                <button class="button small" type="button" data-modal-target="modal-groups">그룹 선택</button>
+              </div>
+              <div class="form-grid">
+                <label>학년도<input value="2026"></label>
+                <label>학년<select><option>2학년</option><option>3학년</option></select></label>
+                <label>과목<input value="정보"></label>
+              </div>
+              <div class="list">
+                <div class="list-row"><div><strong>2학년</strong><span class="muted">2-1 · 2-2 · 2-3</span></div><span class="badge blue">OJ 연결</span></div>
+                <div class="list-row"><div><strong>3학년</strong><span class="muted">3-1 · 3-2</span></div><span class="badge blue">OJ 연결</span></div>
+              </div>
+            </section>
+
+            <section class="surface tone-green">
+              <div class="surface-head">
+                <h2>학생·협업</h2>
+                <div class="actions">
+                  <button class="button small" type="button">명단 가져오기</button>
+                  <button class="button small" type="button" data-modal-target="modal-collab">교사 초대</button>
+                </div>
+              </div>
+              <div class="list">
+                <div class="list-row"><div><strong>2-1</strong><span class="muted">28명</span></div><span class="badge green">완료</span></div>
+                <div class="list-row"><div><strong>2-2</strong><span class="muted">29명</span></div><span class="badge green">완료</span></div>
+                <div class="list-row"><div><strong>2-3</strong><span class="muted">30명</span></div><span class="badge green">완료</span></div>
+                <div class="list-row"><div><strong>공동 교사</strong><span class="muted">박교사 · 채점 검토</span></div><span class="badge violet">참여</span></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="standards" class="panel" data-panel>
+          <div class="grid two">
+            <section class="surface tone-violet">
+              <div class="surface-head">
+                <h2>성취기준</h2>
+                <button class="button small" type="button" data-modal-target="modal-standard">추가</button>
+              </div>
+              <div class="list">
+                <div class="list-row"><div><strong>정보 9정04-01</strong><span class="muted">조건에 따라 다른 동작을 설명한다</span></div><span class="badge violet">3수준</span></div>
+                <div class="list-row"><div><strong>정보 9정04-02</strong><span class="muted">조건문을 사용해 문제를 해결한다</span></div><span class="badge violet">3수준</span></div>
+                <div class="list-row"><div><strong>정보 9정04-03</strong><span class="muted">표와 예시를 근거로 결과를 해석한다</span></div><span class="badge violet">2수준</span></div>
+              </div>
+            </section>
+
+            <section class="surface tone-amber">
+              <div class="surface-head">
+                <h2>성취수준</h2>
+                <div class="segment">
+                  <button class="seg-button is-active" type="button">9정04-01</button>
+                  <button class="seg-button" type="button">9정04-02</button>
+                </div>
+              </div>
+              <table class="result-table">
+                <thead><tr><th>수준</th><th>세부 기준</th></tr></thead>
+                <tbody>
+                  <tr><td>상</td><td>조건과 결과를 정확히 연결하고 근거를 제시함</td></tr>
+                  <tr><td>중</td><td>조건과 결과를 연결하나 근거가 부분적임</td></tr>
+                  <tr><td>하</td><td>조건 해석 또는 결과 설명이 불완전함</td></tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </section>
+
+        <section id="plan" class="panel" data-panel>
+          <div class="grid two">
+            <section class="surface tone-blue">
+              <div class="surface-head">
+                <h2>평가계획</h2>
+                <div class="actions">
+                  <button class="button small" type="button" data-modal-target="modal-element">평가 요소 추가</button>
+                  <button class="button primary small" type="button">저장</button>
+                </div>
+              </div>
+              <div class="form-grid two">
+                <label>평가 주제<input value="조건문으로 상황 판단하기"></label>
+                <label>평가 내용<input value="조건 해석 · 결과 설명 · 코드 표현"></label>
+                <label>적용 학년<select><option>2학년 전체</option></select></label>
+                <label>마감일<input type="datetime-local" value="2026-06-21T18:00"></label>
+              </div>
+              <div class="list">
+                <div class="list-row"><div><strong>평가 요소 1 · 조건 해석</strong><span class="muted">루브릭 3개</span></div><button class="button small" type="button" data-modal-target="modal-element">루브릭</button></div>
+                <div class="list-row"><div><strong>평가 요소 2 · 결과 설명</strong><span class="muted">루브릭 3개</span></div><button class="button small" type="button" data-modal-target="modal-element">루브릭</button></div>
+                <div class="list-row"><div><strong>평가 요소 3 · 코드 표현</strong><span class="muted">루브릭 2개</span></div><button class="button small" type="button" data-modal-target="modal-element">루브릭</button></div>
+              </div>
+            </section>
+
+            <section class="surface tone-green">
+              <div class="surface-head">
+                <h2>활동지 연결</h2>
+                <button class="button small" type="button" data-panel-target="worksheet">활동지 작성</button>
+              </div>
+              <div class="list">
+                <div class="list-row"><div><strong>문항 구성</strong><span class="muted">평가 요소별 1문항씩</span></div><span class="badge green">3문항</span></div>
+                <div class="list-row"><div><strong>루브릭 적용</strong><span class="muted">문항별</span></div><span class="badge blue">연결됨</span></div>
+                <div class="list-row"><div><strong>배부 대상</strong><span class="muted">2학년 전체</span></div><span class="badge blue">준비</span></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="worksheet" class="panel" data-panel>
+          <div class="editor-shell">
+            <section class="editor-canvas">
+              <div class="surface-head">
+                <h2>활동지</h2>
+                <div class="actions">
+                  <button class="button small" type="button">저장</button>
+                  <button class="button small" type="button" data-modal-target="modal-rubric">루브릭 연결</button>
+                  <button class="button primary small" type="button">배부</button>
+                </div>
+              </div>
+              <div class="toolbar">
+                <button class="button small" type="button">제목</button>
+                <button class="button small" type="button">표</button>
+                <button class="button small" type="button">선택</button>
+                <button class="button small" type="button">복수선택</button>
+                <button class="button small" type="button">단답</button>
+                <button class="button small" type="button">서술</button>
+                <button class="button small" type="button">이미지</button>
+                <button class="button small" type="button">파일</button>
+                <button class="button small" type="button">그림</button>
+              </div>
+
+              <article class="question-block">
+                <div class="surface-head">
+                  <div><strong>문항 1. 단일 선택</strong><div class="muted">평가 요소: 조건 해석</div></div>
+                  <span class="badge blue">10점</span>
+                </div>
+                <table class="choice-list">
+                  <tbody>
+                    <tr><td>① 조건이 참이면 위에서 아래로 실행된다</td></tr>
+                    <tr><td>② 조건이 거짓이면 else 블록이 실행된다</td></tr>
+                    <tr><td>③ 조건이 참이면 두 블록이 모두 실행된다</td></tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <article class="question-block">
+                <div class="surface-head">
+                  <div><strong>문항 2. 표 입력</strong><div class="muted">평가 요소: 결과 설명</div></div>
+                  <span class="badge blue">10점</span>
+                </div>
+                <table class="rubric-table">
+                  <thead><tr><th>조건</th><th>실행 결과</th><th>근거</th></tr></thead>
+                  <tbody>
+                    <tr><td>x &gt; 10</td><td>숫자 입력</td><td>학생 입력</td></tr>
+                    <tr><td>x &lt;= 10</td><td>문자 입력</td><td>학생 입력</td></tr>
+                  </tbody>
+                </table>
+              </article>
+
+              <article class="question-block">
+                <div class="surface-head">
+                  <div><strong>문항 3. 서술</strong><div class="muted">평가 요소: 코드 표현</div></div>
+                  <span class="badge blue">10점</span>
+                </div>
+                <div class="muted">조건과 결과를 설명하고 조건문 형태로 작성</div>
+              </article>
+            </section>
+
+            <aside class="side-stack">
+              <section class="surface tone-violet">
+                <div class="surface-head"><h3>루브릭 적용</h3></div>
+                <div class="segment">
+                  <button class="seg-button" type="button">활동지 전체</button>
+                  <button class="seg-button is-active" type="button">문항별</button>
+                </div>
+              </section>
+
+              <section class="surface tone-green">
+                <div class="surface-head"><h3>배부</h3></div>
+                <div class="form-grid one">
+                  <label>대상<select><option>2학년 전체</option></select></label>
+                  <label>시작일<input type="datetime-local" value="2026-06-18T09:00"></label>
+                  <label>마감일<input type="datetime-local" value="2026-06-21T18:00"></label>
+                </div>
+              </section>
+
+              <section class="surface tone-amber">
+                <div class="surface-head"><h3>연결 상태</h3></div>
+                <div class="list">
+                  <div class="list-row"><div><strong>평가계획</strong><span class="muted">조건문 수행평가</span></div><span class="badge green">연결</span></div>
+                  <div class="list-row"><div><strong>자동저장</strong><span class="muted">학생 작성 중 저장</span></div><span class="badge green">사용</span></div>
+                </div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <section id="grading" class="panel" data-panel>
+          <div class="grid teacher-review">
+            <section class="surface tone-blue">
+              <div class="surface-head">
+                <h2>전체 명단</h2>
+                <div class="actions">
+                  <button class="button small" type="button">새로고침</button>
+                  <button class="button small" type="button" data-modal-target="modal-zip">ZIP</button>
+                </div>
+              </div>
+              <div class="chips">
+                <span class="chip is-blue">명단 30명</span>
+                <span class="chip is-green">제출 25명</span>
+                <span class="chip is-amber">결시 3명</span>
+                <span class="chip is-violet">미제출 2명</span>
+              </div>
+              <div class="list">
+                <button class="list-row is-selected" type="button" data-modal-target="modal-grade">
+                  <div><strong>김하린</strong><span class="muted">2-1 · 제출 완료 · 27/30점</span></div><span class="badge blue">검토</span>
+                </button>
+                <button class="list-row" type="button">
+                  <div><strong>박준호</strong><span class="muted">2-1 · 미참여 · 0점 처리</span></div><span class="badge amber">결시</span>
+                </button>
+                <button class="list-row" type="button">
+                  <div><strong>이서윤</strong><span class="muted">2-2 · 피드백 공개됨</span></div><span class="badge green">완료</span>
+                </button>
+                <button class="list-row" type="button">
+                  <div><strong>최민재</strong><span class="muted">2-2 · 장기결석 · 점수 제외</span></div><span class="badge amber">결시</span>
+                </button>
+                <button class="list-row" type="button">
+                  <div><strong>오다은</strong><span class="muted">2-3 · 미제출</span></div><span class="badge violet">미제출</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="paper">
+              <div class="surface-head">
+                <h2>김하린 활동지</h2>
+                <div class="chips">
+                  <span class="chip is-blue">제출 2026-06-18 11:24</span>
+                  <span class="chip is-green">자동저장 12회</span>
+                </div>
+              </div>
+              <section class="paper-section">
+                <strong>문항 1</strong>
+                <div>정답: ② 조건이 거짓이면 else 블록이 실행된다</div>
+              </section>
+              <section class="paper-section">
+                <strong>문항 2</strong>
+                <div>x &gt; 10 → 숫자 입력</div>
+                <div>x &lt;= 10 → 문자 입력</div>
+                <div>근거: 조건에 따라 다른 결과가 실행된다</div>
+              </section>
+              <section class="paper-section">
+                <strong>문항 3</strong>
+                <div>if x &gt; 10 then 숫자 입력 else 문자 입력</div>
+              </section>
+            </section>
+
+            <aside class="score-card">
+              <div class="surface-head">
+                <h2>결시 처리</h2>
+                <span class="badge amber">미참여</span>
+              </div>
+              <div class="form-grid one">
+                <label>상태<select><option>미참여</option><option>장기결석</option><option>결번</option></select></label>
+                <label>메모<input value="수업 참여 기록 없음"></label>
+              </div>
+              <div class="chips">
+                <span class="chip is-amber">미참여 0점</span>
+                <span class="chip is-violet">장기결석 제외</span>
+                <span class="chip is-blue">결번 제외</span>
+              </div>
+              <div class="actions">
+                <button class="button" type="button">결시 저장</button>
+              </div>
+
+              <div class="surface-head">
+                <h2>루브릭</h2>
+                <span class="badge violet">문항별</span>
+              </div>
+              <div class="score-grid">
+                <section class="score-row">
+                  <div class="surface-head"><strong>문항 1</strong><span class="badge blue">10점</span></div>
+                  <div class="score-buttons">
+                    <button class="is-selected" type="button">10</button>
+                    <button type="button">7</button>
+                    <button type="button">4</button>
+                    <button type="button">0</button>
+                  </div>
+                </section>
+                <section class="score-row">
+                  <div class="surface-head"><strong>문항 2</strong><span class="badge blue">10점</span></div>
+                  <div class="score-buttons">
+                    <button class="is-selected" type="button">10</button>
+                    <button type="button">7</button>
+                    <button type="button">4</button>
+                    <button type="button">0</button>
+                  </div>
+                </section>
+                <section class="score-row">
+                  <div class="surface-head"><strong>문항 3</strong><span class="badge blue">10점</span></div>
+                  <div class="score-buttons">
+                    <button type="button">10</button>
+                    <button class="is-selected" type="button">7</button>
+                    <button type="button">4</button>
+                    <button type="button">0</button>
+                  </div>
+                </section>
+              </div>
+              <div class="form-grid one">
+                <label>검토의견<textarea>문항 3은 조건 설명은 정확하지만 코드 형태가 일부 불완전함</textarea></label>
+                <label>발전 피드백<textarea>조건과 결과를 연결하는 설명은 좋습니다. 코드 블록 형태를 함께 정리하면 더 좋아집니다.</textarea></label>
+                <label>특기사항<textarea>조건 해석이 안정적이며 결과 설명이 명확함</textarea></label>
+              </div>
+              <div class="actions">
+                <button class="button primary" type="button">채점</button>
+                <button class="button" type="button">피드백</button>
+                <button class="button violet" type="button">특기사항</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="result" class="panel" data-panel>
+          <div class="grid two">
+            <section class="surface tone-blue">
+              <div class="surface-head">
+                <h2>학급 결과</h2>
+                <span class="badge blue">2학년 30명</span>
+              </div>
+              <div class="result-summary-grid">
+                <article class="result-summary-card"><span>제출</span><strong>25</strong></article>
+                <article class="result-summary-card"><span>미제출</span><strong>2</strong></article>
+                <article class="result-summary-card"><span>결시</span><strong>3</strong></article>
+                <article class="result-summary-card"><span>채점 완료</span><strong>21</strong></article>
+              </div>
+              <table class="result-table">
+                <thead>
+                  <tr><th>학생</th><th>조건문 수행평가</th><th>표 해석 활동지</th><th>코드 작성 활동지</th><th>결시</th><th>총점</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>김하린</td>
+                    <td><span class="result-status is-green">제출 · 27/30</span></td>
+                    <td><span class="result-status is-blue">제출 · 18/20</span></td>
+                    <td><span class="result-status is-green">제출 · 19/20</span></td>
+                    <td><span class="result-status is-muted">-</span></td>
+                    <td>64/70</td>
+                  </tr>
+                  <tr>
+                    <td>박준호</td>
+                    <td><span class="result-status is-amber">미참여 · 0/30</span></td>
+                    <td><span class="result-status is-blue">제출 · 14/20</span></td>
+                    <td><span class="result-status is-violet">미제출</span></td>
+                    <td><span class="result-status is-amber">미참여</span></td>
+                    <td>14/70</td>
+                  </tr>
+                  <tr>
+                    <td>최민재</td>
+                    <td><span class="result-status is-amber">장기결석</span></td>
+                    <td><span class="result-status is-amber">장기결석</span></td>
+                    <td><span class="result-status is-amber">장기결석</span></td>
+                    <td><span class="result-status is-amber">장기결석</span></td>
+                    <td>제외</td>
+                  </tr>
+                  <tr>
+                    <td>오다은</td>
+                    <td><span class="result-status is-violet">미제출</span></td>
+                    <td><span class="result-status is-blue">제출 · 16/20</span></td>
+                    <td><span class="result-status is-blue">제출 · 15/20</span></td>
+                    <td><span class="result-status is-muted">-</span></td>
+                    <td>31/70</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+
+            <section class="surface tone-green">
+              <div class="surface-head">
+                <h2>학생 결과</h2>
+                <span class="badge green">김하린</span>
+              </div>
+              <table class="result-table">
+                <thead><tr><th>활동지</th><th>제출</th><th>점수</th><th>피드백</th></tr></thead>
+                <tbody>
+                  <tr><td>조건문 수행평가</td><td>제출 2026-06-18 11:24</td><td>27/30</td><td>공개</td></tr>
+                  <tr><td>표 해석 활동지</td><td>제출 2026-06-09 10:11</td><td>18/20</td><td>공개</td></tr>
+                  <tr><td>코드 작성 활동지</td><td>제출 2026-06-02 09:48</td><td>19/20</td><td>대기</td></tr>
+                </tbody>
+              </table>
+              <div class="chips">
+                <span class="chip is-blue">점수</span>
+                <span class="chip is-green">검토의견</span>
+                <span class="chip is-violet">피드백</span>
+                <span class="chip is-amber">특기사항</span>
+              </div>
+              <div class="actions">
+                <button class="button primary" type="button">학생 PDF</button>
+                <button class="button" type="button">학급 PDF</button>
+                <button class="button" type="button">점수 CSV</button>
+                <button class="button" type="button">제출물 ZIP</button>
+              </div>
+              <div class="list">
+                <div class="list-row"><div><strong>2-1 학생 개별 보고서</strong><span class="muted">점수 · 피드백 · 특기사항</span></div><span class="badge green">PDF</span></div>
+                <div class="list-row"><div><strong>2학년 전체 점수표</strong><span class="muted">제출 현황 · 결시 · 점수</span></div><span class="badge blue">CSV</span></div>
+                <div class="list-row"><div><strong>제출물 묶음</strong><span class="muted">학생 원본 PDF</span></div><span class="badge amber">ZIP</span></div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="modal-groups">
+    <form method="dialog" class="dialog-box">
+      <div class="dialog-head"><h2>그룹 연결</h2><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <div class="list">
+        <div class="list-row"><div><strong>2-1</strong><span class="muted">OJ 그룹 412</span></div><span class="badge green">연결</span></div>
+        <div class="list-row"><div><strong>2-2</strong><span class="muted">OJ 그룹 413</span></div><span class="badge green">연결</span></div>
+        <div class="list-row"><div><strong>3-1</strong><span class="muted">OJ 그룹 511</span></div><span class="badge blue">대기</span></div>
+      </div>
+      <div class="dialog-foot"><button class="button" value="cancel">취소</button><button class="button primary" value="default">저장</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-collab">
+    <form method="dialog" class="dialog-box">
+      <div class="dialog-head"><h2>협업 교사</h2><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <div class="form-grid two">
+        <label>교사 ID<input value=""></label>
+        <label>권한<select><option>검토</option><option>공동 채점</option></select></label>
+      </div>
+      <div class="list">
+        <div class="list-row"><div><strong>박교사</strong><span class="muted">검토 · 피드백 공개</span></div><span class="badge violet">참여 중</span></div>
+      </div>
+      <div class="dialog-foot"><button class="button" value="cancel">닫기</button><button class="button primary" value="default">초대</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-standard">
+    <form method="dialog" class="dialog-box">
+      <div class="dialog-head"><h2>성취기준 추가</h2><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <div class="form-grid two">
+        <label>교육과정<select><option>2022 개정 정보</option></select></label>
+        <label>성취기준 코드<input value="정보 9정04-04"></label>
+        <label>성취기준<input value=""></label>
+        <label>설명<input value=""></label>
+      </div>
+      <div class="list">
+        <div class="list-row"><div><strong>상</strong><span class="muted">조건과 결과를 정확히 연결하고 근거를 제시함</span></div><button class="button small" type="button">삭제</button></div>
+        <div class="list-row"><div><strong>중</strong><span class="muted">조건과 결과를 연결하나 근거가 부분적임</span></div><button class="button small" type="button">삭제</button></div>
+        <div class="list-row"><div><strong>하</strong><span class="muted">조건 해석 또는 결과 설명이 불완전함</span></div><button class="button small" type="button">삭제</button></div>
+      </div>
+      <div class="form-grid two">
+        <label>수준<input value=""></label>
+        <label>세부 기준<input value=""></label>
+      </div>
+      <div class="dialog-foot"><button class="button" value="cancel">취소</button><button class="button primary" value="default">저장</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-element">
+    <form method="dialog" class="dialog-box">
+      <div class="dialog-head"><h2>평가 요소</h2><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <div class="form-grid one">
+        <label>평가 요소<input value="조건 해석"></label>
+      </div>
+      <label>설명<textarea>조건의 참과 거짓에 따라 실행 흐름을 정확히 판단하는지 확인</textarea></label>
+      <div class="list">
+        <div class="list-row"><div><strong>상</strong><span class="muted">10점 · 조건과 결과를 정확히 연결하고 근거를 분명하게 설명함</span></div><button class="button small" type="button">삭제</button></div>
+        <div class="list-row"><div><strong>중</strong><span class="muted">7점 · 조건과 결과를 연결하지만 설명이 부분적으로만 제시됨</span></div><button class="button small" type="button">삭제</button></div>
+        <div class="list-row"><div><strong>하</strong><span class="muted">4점 · 조건 해석이나 결과 설명이 불완전함</span></div><button class="button small" type="button">삭제</button></div>
+      </div>
+      <div class="form-grid two">
+        <label>등급<input value=""></label>
+        <label>점수<input type="number" value=""></label>
+      </div>
+      <label>세부 기준<textarea></textarea></label>
+      <div class="dialog-foot"><button class="button" value="cancel">취소</button><button class="button primary" value="default">저장</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-rubric">
+    <form method="dialog" class="dialog-box">
+      <div class="dialog-head"><h2>루브릭 연결</h2><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <table class="rubric-table">
+        <thead><tr><th>문항</th><th>연결 평가 요소</th><th>루브릭</th></tr></thead>
+        <tbody>
+          <tr><td>문항 1</td><td>조건 해석</td><td>3개 등급 연결</td></tr>
+          <tr><td>문항 2</td><td>결과 설명</td><td>3개 등급 연결</td></tr>
+          <tr><td>문항 3</td><td>코드 표현</td><td>2개 등급 연결</td></tr>
+        </tbody>
+      </table>
+      <div class="dialog-foot"><button class="button" value="cancel">닫기</button><button class="button primary" value="default">저장</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-grade">
+    <form method="dialog" class="dialog-box">
+      <div class="dialog-head"><h2>학생 채점</h2><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <div class="grid teacher-review">
+        <section class="paper">
+          <section class="paper-section"><strong>문항 1</strong><div>② 조건이 거짓이면 else 블록이 실행된다</div></section>
+          <section class="paper-section"><strong>문항 2</strong><div>표 입력 완료</div></section>
+          <section class="paper-section"><strong>문항 3</strong><div>if x &gt; 10 then 숫자 입력 else 문자 입력</div></section>
+        </section>
+        <section class="surface tone-violet">
+          <div class="surface-head"><h3>루브릭</h3></div>
+          <div class="score-grid">
+            <section class="score-row"><strong>문항 1</strong><div class="score-buttons"><button class="is-selected" type="button">10</button><button type="button">7</button><button type="button">4</button><button type="button">0</button></div></section>
+            <section class="score-row"><strong>문항 2</strong><div class="score-buttons"><button class="is-selected" type="button">10</button><button type="button">7</button><button type="button">4</button><button type="button">0</button></div></section>
+            <section class="score-row"><strong>문항 3</strong><div class="score-buttons"><button type="button">10</button><button class="is-selected" type="button">7</button><button type="button">4</button><button type="button">0</button></div></section>
+          </div>
+        </section>
+        <aside class="surface tone-green">
+          <div class="surface-head"><h3>실행</h3></div>
+          <div class="actions">
+            <button class="button primary" type="button">채점</button>
+            <button class="button" type="button">피드백</button>
+            <button class="button violet" type="button">특기사항</button>
+          </div>
+        </aside>
+      </div>
+      <div class="dialog-foot"><button class="button" value="cancel">닫기</button><button class="button primary" value="default">저장</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-output">
+    <form method="dialog" class="dialog-box">
+      <div class="dialog-head"><h2>출력 옵션</h2><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <div class="chips">
+        <span class="chip is-blue">점수</span>
+        <span class="chip is-green">검토의견</span>
+        <span class="chip is-violet">피드백</span>
+        <span class="chip is-amber">특기사항</span>
+      </div>
+      <div class="form-grid two">
+        <label>형식<select><option>학생 PDF</option><option>학급 PDF</option><option>점수 CSV</option></select></label>
+        <label>대상<select><option>2-1</option><option>2-2</option></select></label>
+      </div>
+      <div class="dialog-foot"><button class="button" value="cancel">취소</button><button class="button primary" value="default">생성</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-zip">
+    <form method="dialog" class="dialog-box">
+      <div class="dialog-head"><h2>ZIP 제출물</h2><button class="icon-button" value="cancel" aria-label="닫기">×</button></div>
+      <div class="form-grid two">
+        <label>과제<select><option>조건문 수행평가</option></select></label>
+        <label>ZIP 파일<input type="file"></label>
+      </div>
+      <div class="dialog-foot"><button class="button" value="cancel">취소</button><button class="button primary" value="default">대기열 추가</button></div>
+    </form>
+  </dialog>
+
+  <script>
+    (function () {
+      var buttons = Array.from(document.querySelectorAll('[data-panel-target]'));
+      var panels = Array.from(document.querySelectorAll('[data-panel]'));
+
+      function activate(id) {
+        panels.forEach(function (panel) {
+          panel.classList.toggle('is-active', panel.id === id);
+        });
+        buttons.forEach(function (button) {
+          button.classList.toggle('is-active', button.getAttribute('data-panel-target') === id);
+        });
+      }
+
+      buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          activate(button.getAttribute('data-panel-target'));
+        });
+      });
+
+      Array.from(document.querySelectorAll('[data-modal-target]')).forEach(function (button) {
+        button.addEventListener('click', function () {
+          var target = document.getElementById(button.getAttribute('data-modal-target'));
+          if (target && typeof target.showModal === 'function') {
+            target.showModal();
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

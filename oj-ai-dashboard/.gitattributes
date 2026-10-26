@@ -1,0 +1,32 @@
+* text=auto
+
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.npmrc text eol=lf
+.gitkeep text eol=lf
+*.php text eol=lf
+*.xml text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.ps1 text eol=lf
+*.txt text eol=lf
+*.neon text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.pdf binary
+*.zip binary
+
+*.sh text eol=lf

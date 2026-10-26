@@ -1,0 +1,305 @@
+.oj-ai-student-result-page {
+  width: min(100%, 900px);
+}
+
+#oj-ai-student-result-app {
+  min-width: 0;
+  min-height: 240px;
+}
+
+.oj-ai-result {
+  min-width: 0;
+  padding: 22px 0 36px;
+}
+
+.oj-ai-result__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 22px;
+}
+
+.oj-ai-result__title {
+  min-width: 0;
+  margin: 0;
+  color: var(--ojp-color-ink, #202124);
+  font-size: 28px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-result__meta {
+  display: flex;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oj-ai-result-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--ojp-color-success-bg, #e6f4ea);
+  color: var(--ojp-color-success, #137333);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.oj-ai-result-badge--corrected {
+  background: var(--ojp-color-warning-bg, #fef7e0);
+  color: var(--ojp-color-warning, #7a3e00);
+}
+
+.oj-ai-result__time {
+  color: var(--ojp-color-muted, #5f6368);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.oj-ai-result-section {
+  min-width: 0;
+  padding: 24px 0;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-result-section__title {
+  margin: 0 0 16px;
+  color: var(--ojp-color-ink, #202124);
+  font-size: 20px;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.oj-ai-result-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 14px;
+  padding: 16px;
+  border-left: 4px solid var(--ojp-color-info, #1967d2);
+  background: var(--ojp-color-surface, #f8f9fa);
+}
+
+.oj-ai-result-total__label {
+  color: var(--ojp-color-ink-2, #3c4043);
+  font-weight: 700;
+}
+
+.oj-ai-result-total__value {
+  color: var(--ojp-color-info, #174ea6);
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.oj-ai-result-score-list {
+  margin: 0;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-result-score-list__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 16px;
+  min-width: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-result-score-list__row dt {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-result-score-list__row dd {
+  margin: 0;
+  color: var(--ojp-color-info, #174ea6);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.oj-ai-result-feedback__overall {
+  padding: 16px;
+  border-left: 4px solid var(--ojp-color-success, #188038);
+  background: var(--ojp-color-surface, #f6fbf7);
+}
+
+.oj-ai-result-feedback h4 {
+  margin: 0 0 8px;
+  color: var(--ojp-color-ink, #202124);
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-result-feedback p {
+  margin: 6px 0;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-result-feedback-list {
+  margin-top: 18px;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-result-feedback-item {
+  min-width: 0;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-result-feedback-item strong {
+  color: var(--ojp-color-muted, #5f6368);
+}
+
+.oj-ai-result-next-steps {
+  margin-top: 22px;
+}
+
+.oj-ai-result-next-steps ul {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.oj-ai-result-next-steps li {
+  margin: 8px 0;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-result-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: end;
+  gap: 20px;
+  min-width: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-result-pdf {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.oj-ai-result-pdf__button {
+  min-width: 146px;
+  min-height: 44px;
+}
+
+.oj-ai-result-pdf__status {
+  min-width: 0;
+  min-height: 22px;
+  margin: 0;
+  color: var(--ojp-color-muted, #5f6368);
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-result-actions .oj-ai-student-secondary,
+.oj-ai-result-actions .oj-ai-student-primary,
+.oj-ai-result-message .oj-ai-student-secondary {
+  min-height: 44px;
+}
+
+.oj-ai-result-actions .oj-ai-student-secondary:focus-visible,
+.oj-ai-result-actions .oj-ai-student-primary:focus-visible,
+.oj-ai-result-message .oj-ai-student-secondary:focus-visible {
+  outline: 3px solid var(--ojp-color-focus, #f9ab00);
+  outline-offset: 2px;
+}
+
+.oj-ai-result-message {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 240px;
+  padding: 56px 16px;
+  flex-direction: column;
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-result-message__title {
+  margin: 0;
+  color: var(--ojp-color-ink-2, #3c4043);
+  font-size: 22px;
+  line-height: 1.45;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-result-message__detail {
+  margin: 10px 0 18px;
+  color: var(--ojp-color-muted, #5f6368);
+}
+
+.oj-ai-result-message--updating {
+  border-left: 4px solid var(--ojp-color-caution, #f9ab00);
+}
+
+.oj-ai-result-message--withdrawn,
+.oj-ai-result-message--unavailable {
+  border-left: 4px solid var(--ojp-color-line, #80868b);
+}
+
+.oj-ai-result-message--error {
+  border-left: 4px solid var(--ojp-color-caution, #b3261e);
+}
+
+@media (max-width: 700px) {
+  .oj-ai-result {
+    padding-top: 18px;
+  }
+
+  .oj-ai-result__header {
+    flex-direction: column;
+  }
+
+  .oj-ai-result__title {
+    font-size: 24px;
+  }
+
+  .oj-ai-result__meta {
+    align-items: flex-start;
+  }
+
+  .oj-ai-result-total__value {
+    font-size: 27px;
+  }
+
+  .oj-ai-result-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oj-ai-result-pdf {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oj-ai-result-pdf__button {
+    width: 100%;
+  }
+
+  .oj-ai-result-actions .oj-ai-student-secondary,
+  .oj-ai-result-actions .oj-ai-student-primary,
+  .oj-ai-result-message .oj-ai-student-secondary {
+    width: 100%;
+  }
+
+  .oj-ai-result-message {
+    min-height: 220px;
+    padding: 40px 12px;
+  }
+}

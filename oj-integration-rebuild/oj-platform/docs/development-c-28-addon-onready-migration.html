@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>onReady 전환 안내서(AM-01) | OJ Platform Addon API</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17212b;
+      --muted: #596674;
+      --line: #d7dee5;
+      --surface: #ffffff;
+      --soft: #f3f6f8;
+      --primary: #0f766e;
+      --primary-soft: #e5f5f2;
+      --warning: #9a5b08;
+      --warning-soft: #fff5dd;
+      --danger: #a33a3a;
+      --danger-soft: #fff0f0;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #eef2f4; color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.65; }
+    a { color: #0b6861; }
+    a:focus-visible { outline: 3px solid #f0b44c; outline-offset: 3px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { color: #174e49; }
+    .skip-link { position: fixed; left: 12px; top: -48px; z-index: 10; padding: 8px 12px; background: #fff; border: 1px solid var(--line); }
+    .skip-link:focus { top: 12px; }
+    .topbar { min-height: 58px; display: flex; align-items: center; gap: 10px; padding: 0 24px; border-bottom: 1px solid #bcc7cf; background: #18242d; color: #fff; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 5px; background: #d7f0ec; color: #164e49; font-weight: 900; }
+    .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); width: min(1440px, 100%); margin: 0 auto; }
+    nav { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow: auto; padding: 24px 18px; border-right: 1px solid var(--line); background: #f8fafb; }
+    nav strong { display: block; margin: 18px 8px 6px; font-size: 0.76rem; color: var(--muted); text-transform: uppercase; }
+    nav a { display: block; padding: 7px 8px; border-left: 3px solid transparent; color: #32414e; text-decoration: none; }
+    nav a:hover, nav a[aria-current="page"] { border-left-color: var(--primary); background: var(--primary-soft); color: #0b514c; }
+    main { min-width: 0; padding: 34px clamp(20px, 4vw, 58px) 64px; background: var(--surface); }
+    .report-header { padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 6px; color: var(--primary); font-weight: 800; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.5rem); letter-spacing: 0; }
+    h2 { margin: 0; font-size: 1.34rem; letter-spacing: 0; }
+    h3 { margin: 26px 0 10px; font-size: 1.05rem; letter-spacing: 0; }
+    .lede { max-width: 930px; color: var(--muted); }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 3px 9px; border: 1px solid #bfd9d5; border-radius: 5px; background: var(--primary-soft); color: #155c56; font-size: 0.82rem; font-weight: 700; }
+    .badge.wait { border-color: #efd59f; background: var(--warning-soft); color: #744407; }
+    .badge.bad { border-color: #e3b3b3; background: var(--danger-soft); color: #8a2f2f; }
+    .section { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .section-heading p { margin: 5px 0 0; color: var(--muted); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; min-width: 640px; background: #fff; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+    th { background: var(--soft); font-size: 0.84rem; }
+    tr:last-child td { border-bottom: 0; }
+    pre { overflow: auto; margin: 14px 0; padding: 16px; border: 1px solid #ccd6dc; border-radius: 6px; background: #111b22; color: #edf5f4; font-size: 0.84rem; line-height: 1.55; }
+    pre code { color: inherit; }
+    .diff-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 980px) { .diff-grid { grid-template-columns: 1fr 1fr; } }
+    .diff-col h4 { margin: 0 0 8px; font-size: 0.9rem; }
+    .diff-col.before h4 { color: #8a2f2f; }
+    .diff-col.after h4 { color: #0b5f59; }
+    .diff-col.before pre { border-color: #e3b3b3; }
+    .diff-col.after pre { border-color: #9fcdc6; }
+    .callout, .warning, .risk { margin: 14px 0; padding: 13px 15px; border-left: 4px solid var(--primary); background: var(--primary-soft); }
+    .warning { border-left-color: var(--warning); background: var(--warning-soft); }
+    .risk { border-left-color: var(--danger); background: var(--danger-soft); }
+    ul, ol { padding-left: 21px; }
+    ul.checks li, ol.steps li { margin: 8px 0; }
+    footer { margin-top: 30px; color: var(--muted); font-size: 0.9rem; }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--line); }
+      main { padding: 26px 18px 48px; }
+      .section-heading { display: block; }
+      .section-heading .badge { margin-top: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 이동</a>
+  <div class="topbar"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 계약</strong></div>
+  <div class="layout">
+    <nav aria-label="문서 탐색">
+      <strong>문서</strong>
+      <a href="index.html">문서 허브</a>
+      <a href="development-c-28-addon-extension-api.html">C-28 변경 설계</a>
+      <a href="development-c-28-addon-api-v1-contract.html">API v1 계약·이관</a>
+      <a href="development-c-28-addon-api-v1-release-evidence.html">API 1.1 릴리스 증거</a>
+      <a href="development-c-28-addon-onready-migration.html" aria-current="page">onReady 전환 안내서</a>
+      <strong>섹션</strong>
+      <a href="#summary">한눈에 보기</a>
+      <a href="#why">왜 바뀌었는가</a>
+      <a href="#surface">삭제·추가된 공개 symbol</a>
+      <a href="#migrate">전환 절차</a>
+      <a href="#behavior-change">동작이 실제로 달라지는 부분</a>
+      <a href="#pitfalls">자주 하는 실수</a>
+      <a href="#checklist">전환 체크리스트</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <main id="main">
+      <header class="report-header" id="summary">
+        <p class="eyebrow">C-28 · Addon API v1 · Amendment AM-01</p>
+        <h1>onReady 전환 안내서</h1>
+        <p class="lede">이 문서는 <strong>Addon API v1을 사용해 이미 개발 중인 외부 애드온</strong>이 <code>oj_platform_loaded</code> / <code>AddonRuntimeGatewayV1::forAddon()</code> 기반 코드를 새 <code>AddonManifestBuilderV1::onReady(callable $callback)</code> 기반 코드로 옮기기 위한 실무 절차서다. 배경 설계와 정확한 signature는 각각 <a href="development-c-28-addon-extension-api.html">C-28 변경 설계</a>와 <a href="development-c-28-addon-api-v1-contract.html#amendments">API v1 계약 이관서의 계약 개정 기록(AM-01)</a>이 정본이며, 이 문서는 두 문서와 다르면 항상 그 두 문서를 따른다.</p>
+        <div class="meta">
+          <span class="badge">개정 ID AM-01</span>
+          <span class="badge">개정일 2026-08-11</span>
+          <span class="badge">AM-01 당시 Addon API 1.0.0</span>
+          <span class="badge good">현재 Addon API 1.1.0</span>
+          <span class="badge wait">필수 조치: Runtime 통합 코드 수정</span>
+        </div>
+        <div class="callout"><strong>한 줄 요약:</strong> Runtime 준비 알림을 받던 <code>add_action('oj_platform_loaded', ...)</code> 블록을 지우고, 그 안의 로직을 <code>register()</code> builder 안에서 <code>$addon-&gt;onReady(...)</code>로 옮긴다. Console/Public Route·Menu·Capability·AI Task 선언 코드는 전혀 바꿀 필요가 없다.</div>
+        <div class="callout"><strong>현재 적용 상태:</strong> AM-01의 전환 방식은 Addon API <code>1.1.0</code>에서도 그대로다. <code>2.0.0-dev.33</code>은 callback 결과를 <code>pending|ready|failed|not_required</code>로 별도 진단하며, 이 문서의 <code>1.0.0</code> 표기는 AM-01 발생 당시의 호환 이력이다.</div>
+      </header>
+
+      <section class="section" id="why">
+        <div class="section-heading"><div><h2>왜 바뀌었는가</h2><p>기계적인 rename이 아니라 실제 보안 결함을 고친 변경이다 — 이유를 알아야 전환 코드를 제대로 옮길 수 있다.</p></div><span class="badge bad">보안 수정</span></div>
+        <p><code>oj_platform_loaded</code>는 등록된 <strong>모든</strong> 애드온의 callback에 같은 전역 <code>AddonRuntimeGatewayV1</code> 인스턴스 하나를 방송했다. 이 Gateway의 유일한 메서드는 <code>forAddon(string $addonId)</code>였고, 인자로 어떤 문자열을 넘기든(자기 자신이 아닌 다른 승인된 addon ID를 넘겨도) 그 addon의 <code>AddonRuntimeContextV1</code>을 그대로 돌려줬다.</p>
+        <div class="risk">
+          <strong>결과적으로 가능했던 일:</strong> 애드온 A가 <code>$gateway-&gt;forAddon('addon-b')</code>를 호출하면 addon-b가 등록한 적 없는 접근권한으로 addon-b의 학사 Context 조회·인가(<code>AddonContextGatewayV1</code>)와 AI Task 실행(<code>AddonAiTaskGatewayV1</code>)을 그대로 수행할 수 있었다. 이는 특정 애드온의 코드 품질 문제가 아니라 <strong>API 자체의 설계 결함</strong>이었다 — 정직하게 작성된 addon-b도 이 결함으로부터 스스로를 지킬 방법이 없었다.
+        </div>
+        <p>AM-01은 "ID로 조회하면 아무 addon의 context나 나온다"는 구조를 근본적으로 없앴다. 이제 context는 조회되는 것이 아니라, <strong>등록 시점에 그 애드온이 직접 넘긴 callable</strong>에 플랫폼이 <strong>그 애드온만을 위해 만든 인스턴스</strong>를 인자로 넘겨 호출하는 방식으로만 전달된다. 다른 애드온의 callable을 알 방법이 없으므로 impersonation 경로 자체가 사라진다.</p>
+      </section>
+
+      <section class="section" id="surface">
+        <div class="section-heading"><div><h2>삭제·추가된 공개 symbol</h2><p>reflection 기준으로 정확히 무엇이 없어지고 무엇이 생겼는지.</p></div><span class="badge">C28-API-S01 갱신</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>symbol</th><th>변경</th><th>비고</th></tr></thead>
+          <tbody>
+            <tr><td><code>CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeGatewayV1</code></td><td><span class="badge bad">삭제</span></td><td>interface 자체가 코드베이스에서 완전히 제거됐다. <code>interface_exists()</code>는 <code>false</code>를 반환한다.</td></tr>
+            <tr><td>WordPress action <code>oj_platform_loaded</code></td><td><span class="badge bad">삭제</span></td><td>더 이상 어떤 시점에도 발행되지 않는다. <code>add_action('oj_platform_loaded', ...)</code>은 아무 것도 호출되지 않는 죽은 코드가 된다(오류는 나지 않지만 콜백이 절대 실행되지 않는다).</td></tr>
+            <tr><td><code>AddonManifestBuilderV1::onReady(callable $callback): void</code></td><td><span class="badge">신규</span></td><td><code>AddonManifestBuilderV1</code>에 추가된 8번째 메서드. <code>register()</code> builder 안에서, <code>manifest()</code>와 마찬가지로 호출한다.</td></tr>
+            <tr><td><code>CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeContextV1</code></td><td>변경 없음</td><td>interface 자체(<code>snapshot()</code>, <code>contexts()</code>, <code>aiTasks()</code>)는 그대로다. 받는 <strong>방법</strong>만 바뀌었다.</td></tr>
+            <tr><td><code>AddonContextGatewayV1</code>, <code>AddonAiTaskGatewayV1</code>과 그 아래 모든 DTO</td><td>변경 없음</td><td>Context·AI Task 관련 코드는 한 줄도 고칠 필요가 없다.</td></tr>
+            <tr><td><code>AddonRegistrationGatewayV1</code>, <code>oj_platform_register_addons</code></td><td>변경 없음</td><td>등록 창 자체는 그대로다. manifest·capability·페이지·메뉴·asset·AI task 선언 코드는 전혀 바꿀 필요가 없다.</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="section" id="migrate">
+        <div class="section-heading"><div><h2>전환 절차</h2><p>기존 통합 코드 기준으로 지우고 옮기는 두 단계다.</p></div><span class="badge">실무 diff</span></div>
+        <ol class="steps">
+          <li><code>use CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeGatewayV1;</code> import를 <code>use CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeContextV1;</code>로 바꾼다.</li>
+          <li><code>add_action('oj_platform_loaded', function (AddonRuntimeGatewayV1 $gateway) { ... })</code> 블록 전체를 지운다.</li>
+          <li>그 안에서 <code>$gateway-&gt;forAddon('내-addon-id')</code>로 얻은 <code>$runtime</code>을 사용하던 로직을 그대로 떼어내, <code>register()</code> builder 안 <code>$addon-&gt;onReady(function (AddonRuntimeContextV1 $runtime) { ... })</code>의 body로 옮긴다. <code>forAddon()</code> 호출 자체(과거엔 반드시 자기 자신의 ID를 넘겨야 했던 부분)는 그냥 없앤다 — 플랫폼이 이미 이 애드온의 context만 넘겨준다.</li>
+        </ol>
+        <div class="diff-grid">
+          <div class="diff-col before">
+            <h4>이전 (AM-01 이전, 더 이상 동작하지 않음)</h4>
+            <pre><code>use CodingPanda\OjPlatform\AddonApi\V1\AddonManifestBuilderV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRegistrationGatewayV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeGatewayV1;
+
+add_action('oj_platform_register_addons', static function (
+    AddonRegistrationGatewayV1 $gateway
+): void {
+    $gateway-&gt;register('my-addon', static function (
+        AddonManifestBuilderV1 $addon
+    ): void {
+        $addon-&gt;manifest(/* ... */);
+        // capability(), consolePage(), publicPage(),
+        // consoleMenu(), publicMenu(), assetBundle(), aiTask()
+    });
+}, 10, 1);
+
+add_action('oj_platform_loaded', static function (
+    AddonRuntimeGatewayV1 $gateway
+): void {
+    $runtime = $gateway-&gt;forAddon('my-addon');
+    if ($runtime-&gt;snapshot()-&gt;status() === 'accepted') {
+        MyAddonRuntimeBridge::connect($runtime);
+    }
+}, 10, 1);</code></pre>
+          </div>
+          <div class="diff-col after">
+            <h4>이후 (AM-01, 현재 계약)</h4>
+            <pre><code>use CodingPanda\OjPlatform\AddonApi\V1\AddonManifestBuilderV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRegistrationGatewayV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeContextV1;
+
+add_action('oj_platform_register_addons', static function (
+    AddonRegistrationGatewayV1 $gateway
+): void {
+    $gateway-&gt;register('my-addon', static function (
+        AddonManifestBuilderV1 $addon
+    ): void {
+        $addon-&gt;manifest(/* ... */);
+        // capability(), consolePage(), publicPage(),
+        // consoleMenu(), publicMenu(), assetBundle(), aiTask()
+        // — 위 선언 코드는 전혀 바꾸지 않는다.
+
+        $addon-&gt;onReady(static function (
+            AddonRuntimeContextV1 $runtime
+        ): void {
+            if ($runtime-&gt;snapshot()-&gt;status() === 'accepted') {
+                MyAddonRuntimeBridge::connect($runtime);
+            }
+        });
+    });
+}, 10, 1);</code></pre>
+          </div>
+        </div>
+        <div class="callout"><strong>Context·AI Task 사용 코드는 그대로:</strong> <code>MyAddonRuntimeBridge::connect($runtime)</code> 내부에서 <code>$runtime-&gt;contexts()-&gt;listTeachingContexts(...)</code>, <code>$runtime-&gt;aiTasks()-&gt;execute(...)</code> 등을 호출하는 코드는 한 글자도 바꿀 필요가 없다. <code>$runtime</code>의 타입과 제공 메서드가 이전과 동일하기 때문이다.</div>
+      </section>
+
+      <section class="section" id="behavior-change">
+        <div class="section-heading"><div><h2>동작이 실제로 달라지는 부분</h2><p>이름만 바뀐 게 아니라 관찰 가능한 동작이 달라지는 지점 — 놓치면 조용히 깨진다.</p></div><span class="badge wait">주의</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>상황</th><th>이전(AM-01 이전)</th><th>이후(AM-01)</th></tr></thead>
+          <tbody>
+            <tr><td>manifest가 <code>rejected</code>/<code>incompatible</code>/<code>disabled</code>인 경우</td><td><code>forAddon()</code>이 여전히 context를 반환하고, <code>snapshot()-&gt;status()</code>와 <code>code()</code>로 애드온 스스로 실패 사유를 읽을 수 있었다.</td><td><code>onReady</code> callback이 <strong>전혀 호출되지 않는다</strong>. 애드온 코드 안에서는 자신이 왜 거부됐는지 알 방법이 없다 — 실패 사유는 플랫폼 운영자용 상태 화면에만 나타난다.</td></tr>
+            <tr><td>다른 애드온의 context 조회</td><td><code>forAddon('다른-addon-id')</code>로 가능했다(결함).</td><td>불가능하다 — 애초에 ID로 조회하는 API가 없다.</td></tr>
+            <tr><td>callback 호출 시점</td><td>WordPress action이므로 다른 플러그인이 <code>add_action</code>으로 같은 hook에 끼어들 수 있었다.</td><td>plain PHP 함수 호출이라 다른 코드가 끼어들 수 없다.</td></tr>
+            <tr><td><code>onReady()</code>를 아예 호출하지 않으면</td><td>해당 없음(과거엔 두 번째 action을 구독하지 않으면 그냥 Runtime을 못 받았다).</td><td>manifest는 정상 승인되고 Route·Menu·Capability·AI Task는 모두 정상 동작하지만, Context/AI Task Runtime 접근만 조용히 없는 상태가 된다 — 오류나 경고는 없다(안전한 기본값).</td></tr>
+          </tbody>
+        </table></div>
+        <div class="risk"><strong>자기 진단이 필요하다면:</strong> "내 manifest가 왜 거부됐는지"를 애드온 코드 스스로 알아야 하는 요구가 있다면, 이는 AM-01 이전에도 다른 애드온을 impersonate할 수 있었던 것과 같은 API 표면(임의 ID로 조회 가능한 Runtime facade)을 다시 여는 방향이므로 현재 계약에는 없다. 필요하다면 플랫폼 운영자 대상 애드온 상태 화면(운영 콘솔)에서 확인하도록 안내하거나, 이 요구를 <a href="development-c-28-addon-api-v1-contract.html#amendments">계약 개정 기록</a>에 새 논의로 등록해 별도 안전한 self-diagnostics 계약을 검토해야 한다.</div>
+      </section>
+
+      <section class="section" id="pitfalls">
+        <div class="section-heading"><div><h2>자주 하는 실수</h2><p>전환 중 실제로 부딪히기 쉬운 지점.</p></div><span class="badge">체크</span></div>
+        <ul class="checks">
+          <li><strong><code>onReady()</code>를 두 번 호출:</strong> 같은 <code>register()</code> builder 안에서 <code>onReady()</code>를 두 번 부르면 <code>LogicException</code>이 발생하고 그 애드온의 등록 후보 전체가 거부된다. builder 하나당 정확히 0회 또는 1회만 호출한다.</li>
+          <li><strong><code>onReady()</code>를 <code>register()</code> 바깥에서 호출:</strong> <code>onReady()</code>는 <code>AddonManifestBuilderV1</code>의 메서드이므로 <code>register()</code>의 두 번째 인자로 넘긴 클로저 안, <code>manifest()</code>를 호출하는 것과 같은 위치에서만 호출할 수 있다. 별도 action이나 별도 시점에서 부를 수 있는 메서드가 아니다.</li>
+          <li><strong>callback 안에서 <code>status()</code> 분기를 지우고 무조건 연결:</strong> 현재 구현에서는 <code>onReady</code>가 호출되는 시점의 manifest 상태가 항상 <code>accepted</code>이므로 <code>if ($runtime-&gt;snapshot()-&gt;status() === 'accepted')</code> 검사는 사실상 항상 참이다. 그래도 이 검사를 지우지 말 것을 권한다 — 향후 계약이 바뀌어도(예: 조건부 승인 상태 추가) 방어적으로 동작한다.</li>
+          <li><strong>옛 import를 지우지 않고 남겨두기:</strong> <code>use ...AddonRuntimeGatewayV1;</code>가 남아있으면 그 interface가 삭제됐기 때문에 클래스 로드 시점에 <code>Fatal error: Interface ... not found</code>가 난다. 죽은 <code>add_action('oj_platform_loaded', ...)</code> 블록과 함께 반드시 지운다.</li>
+          <li><strong>Runtime 연결 로직을 <code>manifest()</code> 호출보다 먼저 두기:</strong> <code>onReady()</code>는 반드시 같은 builder 안에서 <code>manifest()</code>가 호출된 뒤에 등록해도 상관없지만(둘은 순서 의존이 없다), <code>manifest()</code> 자체를 호출하지 않고 <code>onReady()</code>만 호출하면 그 애드온 후보는 <code>addon_manifest_invalid</code>로 거부된다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="checklist">
+        <div class="section-heading"><div><h2>전환 체크리스트</h2><p>전환이 끝났다고 보기 전에 확인한다.</p></div><span class="badge">완료 확인</span></div>
+        <ul class="checks">
+          <li><code>AddonRuntimeGatewayV1</code>을 import하거나 참조하는 코드가 0건이다(<code>grep -r AddonRuntimeGatewayV1</code>로 확인).</li>
+          <li><code>add_action('oj_platform_loaded', ...)</code> 호출이 0건이다.</li>
+          <li>Runtime 연결 로직이 <code>register()</code> builder 안, <code>$addon-&gt;onReady(...)</code> callback 내부로 옮겨져 있다.</li>
+          <li>이전에 <code>forAddon('내-addon-id')</code>로 넘기던 자기 자신의 addon ID 문자열이 코드에서 사라졌다(더 이상 필요 없음).</li>
+          <li>플랫폼 활성화 상태에서 실제로 <code>onReady</code> callback이 호출되어 Runtime 연결이 이루어지는지 로그나 상태 화면으로 확인했다(예: 임시 로그 한 줄을 넣어 한 번 부팅해 본다).</li>
+          <li>manifest를 일부러 깨뜨려(예: <code>requiresPlatform</code>을 불가능한 범위로) 등록을 거부시켜 본 뒤, 이 경우 <code>onReady</code> callback이 호출되지 않는다는 것과 Runtime 연결 코드가 예외 없이 조용히 스킵된다는 것을 확인했다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="faq">
+        <div class="section-heading"><div><h2>FAQ</h2><p>전환 중 자주 나오는 질문.</p></div></div>
+        <h3>Addon API 버전이 왜 그대로 1.0.0인가? major bump 아닌가?</h3>
+        <p>공개 interface 삭제·action 삭제는 <a href="development-c-28-addon-api-v1-contract.html#compatibility">계약의 SemVer 규칙</a>상 major에 해당한다. 다만 이 변경 시점에 Addon API가 아직 <code>C28-I06</code> 공식 릴리스 전이었고 실제 배포된 소비자가 없었기 때문에, 병행 지원 없이 즉시 교체하는 예외를 사용자 승인으로 적용했다. 자세한 판정은 <a href="development-c-28-addon-api-v1-contract.html#amendments">계약 개정 기록 AM-01</a>을 참고한다. API가 정식 릴리스된 뒤에 이런 변경이 다시 필요하다면 이 예외는 적용되지 않는다.</p>
+        <h3>onReady를 여러 개 등록해서 여러 시점에 콜백을 받을 수 있는가?</h3>
+        <p>아니다. builder당 <code>onReady()</code>는 최대 1회만 등록할 수 있고, 플랫폼도 callback을 최대 한 번만 호출한다. accepted 뒤 Runtime Context 생성과 callback 진입이 정상일 때 한 번 전달되며 실패 뒤 같은 부팅 재시도는 없다. 여러 하위 시스템에 연결해야 한다면 하나의 <code>onReady</code> callback 안에서 원자적으로 연결한다.</p>
+        <h3>onReady callback 안에서 예외가 나면 어떻게 되는가?</h3>
+        <p><code>C28-I06-LC01</code>: 플랫폼이 이 예외를 잡아 진단 채널로 보고하고 부팅을 계속한다. core 부팅이나 다른 애드온에는 영향이 없지만 이미 합성된 이 애드온 Route·Menu와 accepted catalog 상태도 자동 철회되지 않고 callback을 같은 부팅에서 재시도하지 않는다. 애드온은 catalog accepted와 자체 Bridge ready를 분리하고 모든 handler·REST·Job에서 unavailable 상태를 fail-closed해야 한다. 재호출·상태 공개가 필요하면 별도 플랫폼 승인·SemVer·격리 fixture 뒤 변경한다.</p>
+        <h3>기존 addon-api-profile.html/addon-lifecycle.html 문서도 고쳐야 하는가?</h3>
+        <p>이 문서와 두 C-28 플랫폼 문서는 <code>oj-platform</code> 저장소 소유이며 플랫폼 제공자 쪽 계약을 기록한다. 애드온 저장소(예: <code>oj-ai-dashboard</code>) 쪽의 자체 소비자 문서(<code>a-ds-02-addon-api-profile.html</code>, <code>a-ds-02-addon-lifecycle.html</code> 등)는 그 저장소를 관리하는 쪽에서 이 안내서를 참고해 별도로 갱신해야 한다 — 이 문서가 대신 수정하지 않는다.</p>
+      </section>
+
+      <footer><a href="index.html">OJ Platform 문서 허브</a> · <a href="development-c-28-addon-extension-api.html">C-28 변경 설계</a> · <a href="development-c-28-addon-api-v1-release-evidence.html">API 1.1 릴리스 증거</a> · <a href="development-c-28-addon-api-v1-contract.html#amendments">Addon API v1 계약 개정 기록(AM-01)</a> · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 평가 설정</title>
+  <link rel="stylesheet" href="../../resources/css/assessment-configuration-settings.css">
+  <link rel="stylesheet" href="../../resources/css/curriculum-catalog-settings.css">
+  <link rel="stylesheet" href="../../resources/css/external-ai-consent-settings.css">
+  <link rel="stylesheet" href="../../resources/css/operations-diagnostics.css">
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #f3f5f7; }
+    body { padding: 28px; box-sizing: border-box; }
+    @media (max-width: 700px) { body { padding: 14px; } }
+  </style>
+  <style data-fixture-icon-style>.oj-ai-icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}</style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></symbol>
+    <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+  </svg>
+  <section id="oj-ai-assessment-settings" data-icon-sprite="" class="oj-ai-settings" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-cfg" data-locale="ko-KR"
+    data-worksheet-prompt-contract="worksheet_quality_prompt.v5"
+    data-worksheet-prompt-hash="50e6b1975975f76e0728f3b5a28a42c3439effa1ed0608a790b0990ba36b32e2"
+    data-worksheet-input-schema="oj_ai.worksheet_quality_request"
+    data-worksheet-input-version="1.0.0"
+    data-worksheet-input-hash="1d6466915ce82932c0f863c2f0b99e6cd7ddc42c50709ac7fe69e296f5af1eb0"
+    data-worksheet-output-schema="oj_ai.worksheet_quality_output"
+    data-worksheet-output-version="1.0.0"
+    data-worksheet-output-hash="708a70871d3c248b115a523dedad1d8ffff7d2ce0e0d4a6f80181613183042a9"
+    data-catalog-page-limit="100"
+    data-catalog-manual-source-kind="manual">
+    <header class="oj-ai-settings__header">
+      <div><h1>설정</h1><p>평가 기준과 AI 연결을 관리합니다.</p></div>
+      <button type="button" class="oj-ai-settings__refresh" data-config-action="refresh" aria-label="새로고침" title="새로고침"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button>
+    </header>
+    <nav class="oj-ai-settings__tabs" role="tablist" aria-label="설정 영역">
+      <button type="button" role="tab" data-settings-tab="policy" aria-selected="true">평가 정책</button>
+      <button type="button" role="tab" data-settings-tab="rubric" aria-selected="false">평가 기준</button>
+      <button type="button" role="tab" data-settings-tab="curriculum" aria-selected="false">성취기준</button>
+      <button type="button" role="tab" data-settings-tab="review-rule" aria-selected="false">검토·승인</button>
+      <button type="button" role="tab" data-settings-tab="connection" aria-selected="false">AI 연결</button>
+      <button type="button" role="tab" data-settings-tab="system" aria-selected="false">시스템 상태</button>
+    </nav>
+    <div class="oj-ai-settings__subject" data-config-role="subject-switch" aria-label="평가 종류">
+      <button type="button" data-config-subject="worksheet_quality" aria-pressed="true">활동지 자체 평가</button>
+      <button type="button" data-config-subject="student_submission" aria-pressed="false">학생 제출 평가</button>
+    </div>
+    <section id="oj-ai-assessment-configuration-app">
+      <p class="oj-ai-config__notice" data-config-role="notice" role="status">평가 설정을 불러오는 중입니다.</p>
+      <section class="oj-ai-config__panel" data-settings-panel="policy" role="tabpanel">
+        <header class="oj-ai-config__panel-header"><div><h2>평가 정책</h2><p data-config-role="subject-label">활동지 자체 평가</p></div><span class="oj-ai-config__summary" data-config-role="policy-summary">확인 중</span></header>
+        <p class="oj-ai-config__resource-error" data-config-role="policy-error" role="alert" hidden></p>
+        <div class="oj-ai-config__form"><label class="oj-ai-config__toggle"><input type="checkbox" data-config-field="policy-enabled" checked><span>평가 사용</span></label><div class="oj-ai-config__actions"><span></span><button type="button" class="oj-ai-config__button oj-ai-config__button--primary" data-config-action="save-policy">새 초안 저장</button></div></div>
+        <section class="oj-ai-config__history"><h3>변경 이력</h3><div class="oj-ai-config__history-list" data-config-role="policy-revisions"></div></section>
+      </section>
+      <section class="oj-ai-config__panel" data-settings-panel="rubric" role="tabpanel" hidden>
+        <header class="oj-ai-config__panel-header"><div><h2>평가 기준</h2><p data-config-role="subject-label">활동지 자체 평가</p></div><span class="oj-ai-config__summary" data-config-role="rubric-summary">확인 중</span></header>
+        <p class="oj-ai-config__resource-error" data-config-role="rubric-error" role="alert" hidden></p>
+        <div class="oj-ai-config__form"><div class="oj-ai-config__editor" data-config-role="rubric-editor"></div><div class="oj-ai-config__actions"><span></span><button type="button" class="oj-ai-config__button oj-ai-config__button--primary" data-config-action="save-rubric">새 초안 저장</button></div></div>
+        <section class="oj-ai-config__history"><h3>변경 이력</h3><div class="oj-ai-config__history-list" data-config-role="rubric-revisions"></div></section>
+      </section>
+      <section class="oj-ai-config__panel" data-settings-panel="review-rule" role="tabpanel" hidden>
+        <header class="oj-ai-config__panel-header"><div><h2>검토·승인 기준</h2><p data-config-role="subject-label">활동지 자체 평가</p></div><span class="oj-ai-config__summary" data-config-role="review-rule-summary">확인 중</span></header>
+        <p class="oj-ai-config__resource-error" data-config-role="review-rule-error" role="alert" hidden></p>
+        <div class="oj-ai-config__form"><label class="oj-ai-config__fixed-rule"><input type="checkbox" checked disabled data-config-fixed><span>사람 검토 필수</span></label><label class="oj-ai-config__fixed-rule"><input type="checkbox" checked disabled data-config-fixed><span>명시적 공개 필수</span></label><label class="oj-ai-config__field oj-ai-config__threshold"><span>우선 검토 기준</span><input type="number" min="0" max="1" step="0.05" value="0.8" data-config-field="confidence-threshold"></label><div class="oj-ai-config__actions"><span></span><button type="button" class="oj-ai-config__button oj-ai-config__button--primary" data-config-action="save-review-rule">새 초안 저장</button></div></div>
+        <section class="oj-ai-config__history"><h3>변경 이력</h3><div class="oj-ai-config__history-list" data-config-role="review-rule-revisions"></div></section>
+      </section>
+    </section>
+    <section class="oj-ai-catalog" data-settings-panel="curriculum" role="tabpanel" hidden>
+      <header class="oj-ai-catalog__header"><div><h2>성취기준</h2><p>교육과정별 성취기준을 관리합니다.</p></div><button type="button" class="oj-ai-catalog__primary" data-catalog-action="curriculum-new"><svg class="oj-ai-icon" aria-hidden="true"><use href="#plus"></use></svg><span>교육과정 추가</span></button></header>
+      <p class="oj-ai-catalog__notice" data-catalog-role="notice" role="status">불러오는 중</p>
+      <div class="oj-ai-catalog__curriculum-bar"><label><span>교육과정</span><select data-catalog-field="curriculum"></select></label><button type="button" class="oj-ai-catalog__icon-button" data-catalog-action="curriculum-edit" aria-label="교육과정 수정" title="교육과정 수정"><svg class="oj-ai-icon" aria-hidden="true"><use href="#edit"></use></svg></button></div>
+      <div class="oj-ai-catalog__standard-tools"><label><span class="screen-reader-text">성취기준 검색</span><span class="oj-ai-catalog__search-icon"><svg class="oj-ai-icon" aria-hidden="true"><use href="#search"></use></svg></span><input type="search" data-catalog-field="search" placeholder="코드 또는 내용 검색" autocomplete="off"></label><button type="button" class="oj-ai-catalog__primary" data-catalog-action="standard-new"><svg class="oj-ai-icon" aria-hidden="true"><use href="#plus"></use></svg><span>성취기준 추가</span></button></div>
+      <div class="oj-ai-catalog__list" data-catalog-role="standards" aria-live="polite"></div>
+      <dialog class="oj-ai-catalog__dialog" data-catalog-dialog="curriculum" aria-labelledby="fixture-curriculum-title"><form data-catalog-form="curriculum"><header><h2 id="fixture-curriculum-title" data-catalog-role="curriculum-dialog-title">교육과정 추가</h2><button type="button" class="oj-ai-catalog__icon-button" data-catalog-action="dialog-close" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true"><use href="#x"></use></svg></button></header><input type="hidden" data-catalog-field="curriculum-id"><input type="hidden" data-catalog-field="curriculum-lock"><label><span>이름</span><input type="text" maxlength="255" required data-catalog-field="curriculum-title" autocomplete="off"></label><div class="oj-ai-catalog__field-row"><label><span>교육과정 코드</span><input type="text" maxlength="191" required data-catalog-field="curriculum-source-key" autocomplete="off"></label><label><span>버전</span><input type="text" maxlength="64" required data-catalog-field="curriculum-source-version" autocomplete="off"></label></div><label><span>언어</span><input type="text" maxlength="16" required data-catalog-field="curriculum-locale" autocomplete="off"></label><p data-catalog-role="curriculum-error" role="alert"></p><footer><button type="button" data-catalog-action="dialog-close">취소</button><button type="submit" class="oj-ai-catalog__primary"><svg class="oj-ai-icon" aria-hidden="true"><use href="#save"></use></svg><span>저장</span></button></footer></form></dialog>
+      <dialog class="oj-ai-catalog__dialog" data-catalog-dialog="standard" aria-labelledby="fixture-standard-title"><form data-catalog-form="standard"><header><h2 id="fixture-standard-title" data-catalog-role="standard-dialog-title">성취기준 추가</h2><button type="button" class="oj-ai-catalog__icon-button" data-catalog-action="dialog-close" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true"><use href="#x"></use></svg></button></header><input type="hidden" data-catalog-field="standard-id"><input type="hidden" data-catalog-field="standard-lock"><div class="oj-ai-catalog__field-row"><label><span>코드</span><input type="text" maxlength="100" required data-catalog-field="standard-code" autocomplete="off"></label><label><span>학년·범위</span><input type="text" maxlength="100" data-catalog-field="standard-grade" autocomplete="off"></label></div><label><span>성취기준</span><input type="text" maxlength="255" required data-catalog-field="standard-title" autocomplete="off"></label><label><span>설명</span><textarea rows="5" maxlength="10000" data-catalog-field="standard-description"></textarea></label><p data-catalog-role="standard-error" role="alert"></p><footer><button type="button" data-catalog-action="dialog-close">취소</button><button type="submit" class="oj-ai-catalog__primary"><svg class="oj-ai-icon" aria-hidden="true"><use href="#save"></use></svg><span>저장</span></button></footer></form></dialog>
+    </section>
+    <section data-settings-panel="connection" role="tabpanel" hidden>
+      <div class="oj-ai-consent-settings-shell">
+        <div class="oj-ai-consent-settings__scope" role="tablist" aria-label="AI 처리 대상">
+          <button type="button" role="tab" data-consent-tab="worksheet" aria-selected="true" aria-controls="oj-ai-external-consent-app">활동지 평가</button>
+          <button type="button" role="tab" data-consent-tab="submission" aria-selected="false" aria-controls="oj-ai-submission-external-consent-app">학생 제출 평가</button>
+        </div>
+        <section id="oj-ai-external-consent-app" class="oj-ai-consent-settings" data-consent-root data-consent-panel="worksheet" data-status-path="/settings/external-ai-consent" data-response-key="external_ai_consent" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-cfg" data-locale="ko-KR">
+          <header class="oj-ai-consent-settings__header"><div><h1>활동지 평가</h1><p>활동지 자체 평가에 사용할 외부 AI를 관리합니다.</p></div><button type="button" class="oj-ai-consent-settings__icon" data-action="refresh" aria-label="새로고침" title="새로고침"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button></header>
+          <p class="oj-ai-consent-settings__notice" data-role="notice" role="status">상태를 불러오는 중입니다.</p>
+          <div class="oj-ai-consent-settings__content" data-role="content" hidden>
+            <section class="oj-ai-consent-settings__status" aria-labelledby="worksheet-status-title"><div><span class="oj-ai-consent-settings__badge" data-role="status-badge">확인 중</span><h2 id="worksheet-status-title" data-role="status-title">AI 처리 승인</h2><p data-role="status-message"></p></div><dl><div><dt>승인 일시</dt><dd data-role="approved-at">-</dd></div><div><dt>승인자</dt><dd data-role="approved-by">-</dd></div></dl></section>
+            <section class="oj-ai-consent-settings__section" aria-labelledby="worksheet-destination-title"><h2 id="worksheet-destination-title">연결 대상</h2><dl class="oj-ai-consent-settings__destination"><div><dt>제공자</dt><dd data-role="provider">-</dd></div><div><dt>모델</dt><dd data-role="model">-</dd></div><div><dt>연결 상태</dt><dd data-role="routing-state">확인 중</dd></div></dl></section>
+            <section class="oj-ai-consent-settings__section" aria-labelledby="worksheet-data-title"><h2 id="worksheet-data-title">전송 항목</h2><ul data-role="categories"><li>활동지 내용</li><li>활동지의 텍스트 자료</li><li>평가 기준</li></ul></section>
+            <section class="oj-ai-consent-settings__actions" aria-labelledby="worksheet-action-title"><h2 id="worksheet-action-title">처리 승인</h2><label><input type="checkbox" data-field="acknowledgement"><span>위 항목이 표시된 외부 AI로 전송되는 것에 동의합니다.</span></label><div><button type="button" class="oj-ai-consent-settings__primary" data-action="approve" disabled>승인</button><button type="button" class="oj-ai-consent-settings__danger" data-action="revoke" disabled>승인 철회</button></div></section>
+          </div>
+        </section>
+        <section id="oj-ai-submission-external-consent-app" class="oj-ai-consent-settings" data-consent-root data-consent-panel="submission" data-status-path="/settings/submission-external-ai-consent" data-response-key="submission_external_ai_consent" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-cfg" data-locale="ko-KR" hidden>
+          <header class="oj-ai-consent-settings__header"><div><h1>학생 제출 평가</h1><p>학생 제출 평가에 사용할 외부 AI를 관리합니다.</p></div><button type="button" class="oj-ai-consent-settings__icon" data-action="refresh" aria-label="새로고침" title="새로고침"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button></header>
+          <p class="oj-ai-consent-settings__notice" data-role="notice" role="status">상태를 불러오는 중입니다.</p>
+          <div class="oj-ai-consent-settings__content" data-role="content" hidden>
+            <section class="oj-ai-consent-settings__status" aria-labelledby="submission-status-title"><div><span class="oj-ai-consent-settings__badge" data-role="status-badge">확인 중</span><h2 id="submission-status-title" data-role="status-title">AI 처리 승인</h2><p data-role="status-message"></p></div><dl><div><dt>승인 일시</dt><dd data-role="approved-at">-</dd></div><div><dt>승인자</dt><dd data-role="approved-by">-</dd></div></dl></section>
+            <section class="oj-ai-consent-settings__section" aria-labelledby="submission-destination-title"><h2 id="submission-destination-title">연결 대상</h2><dl class="oj-ai-consent-settings__destination"><div><dt>제공자</dt><dd data-role="provider">-</dd></div><div><dt>모델</dt><dd data-role="model">-</dd></div><div><dt>연결 상태</dt><dd data-role="routing-state">확인 중</dd></div></dl></section>
+            <section class="oj-ai-consent-settings__section" aria-labelledby="submission-data-title"><h2 id="submission-data-title">전송 항목</h2><ul data-role="categories"><li>학생이 입력한 답변</li><li>제출한 자료의 텍스트</li><li>평가 정책과 루브릭</li><li>활동지 채점 내용</li></ul></section>
+            <section class="oj-ai-consent-settings__actions" aria-labelledby="submission-action-title"><h2 id="submission-action-title">처리 승인</h2><label><input type="checkbox" data-field="acknowledgement"><span>위 항목이 표시된 외부 AI로 전송되는 것에 동의합니다.</span></label><div><button type="button" class="oj-ai-consent-settings__primary" data-action="approve" disabled>승인</button><button type="button" class="oj-ai-consent-settings__danger" data-action="revoke" disabled>승인 철회</button></div></section>
+          </div>
+        </section>
+      </div>
+    </section>
+    <section data-settings-panel="system" role="tabpanel" hidden>
+      <section id="oj-ai-operations-diagnostics" class="oj-ai-diagnostics" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-cfg" data-locale="ko-KR" data-platform-operations-url="https://example.test/oj-console/system-status" data-platform-ai-url="https://example.test/oj-console/settings/ai-routing" data-storage-detail-url="https://example.test/oj-console/addons/oj-ai-dashboard/settings/storage-detail">
+        <header class="oj-ai-diagnostics__header"><div><h2>시스템 상태</h2><p data-diagnostics-role="checked-at">확인 중</p></div>
+          <div class="oj-ai-diagnostics__heading-actions"><span class="oj-ai-diagnostics__badge" data-diagnostics-role="summary" data-status="attention">확인 중</span><button type="button" class="oj-ai-diagnostics__refresh" data-diagnostics-action="refresh" aria-label="다시 확인" title="다시 확인"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button></div>
+        </header>
+        <p class="oj-ai-diagnostics__notice" data-diagnostics-role="notice" role="status">상태를 확인하는 중입니다.</p>
+        <div class="oj-ai-diagnostics__list" data-diagnostics-role="list" role="list" aria-live="polite" aria-busy="true" hidden></div>
+        <section class="oj-ai-diagnostics__repair" data-diagnostics-role="repair" hidden>
+          <header><h3>데이터 구조 복구</h3><p>최근 백업을 확인한 뒤 복구를 실행합니다.</p></header>
+          <div class="oj-ai-diagnostics__repair-form">
+            <label><span>백업 확인 메모</span><input type="text" maxlength="200" autocomplete="off" data-diagnostics-field="backup-reference"></label>
+            <label><span>백업 확인 시각</span><input type="datetime-local" data-diagnostics-field="backup-verified-at"></label>
+            <label class="oj-ai-diagnostics__repair-check"><input type="checkbox" data-diagnostics-field="forward-only"><span>앞으로만 복구</span></label>
+            <button type="button" data-diagnostics-action="repair" disabled>복구</button>
+          </div><p data-diagnostics-role="repair-status" role="status"></p>
+        </section>
+      </section>
+    </section>
+  </section>
+  <script>
+    const ids = {
+      quality: { rubric: '01K00000000000000000000101', review_rule: '01K00000000000000000000102', policy: '01K00000000000000000000103' },
+      student: { rubric: '01K00000000000000000000201', review_rule: '01K00000000000000000000202', policy: '01K00000000000000000000203' },
+    };
+    const dimensions = [
+      ['learning_goal_alignment', '학습 목표 정렬', '연결된 학습 목표·성취기준과 활동지 전체 또는 문항의 내용·응답이 실제로 맞닿는지 확인합니다. 연결이 없으면 판단하지 않습니다.'],
+      ['instruction_clarity', '안내 명확성', '학생이 해야 할 일, 사용할 자료, 답하는 방법을 문서의 안내와 문항 문구에서 확인합니다.'],
+      ['answerability', '응답 가능성', '제공된 자료와 문항 정보만으로 각 응답을 작성할 수 있는지 확인합니다.'],
+      ['difficulty_fit', '난이도 적합성', '성취기준 코드·내용에 학년 정보가 명시된 경우에만 사고 수준, 분량, 응답 형식이 어울리는지 확인합니다. 정보가 없으면 판단하지 않습니다.'],
+      ['rubric_quality', '평가 기준 품질', '활동지에 연결된 학생 평가 항목, 적용 범위, 등급 설명, 배점이 문항과 응답을 실제로 평가할 수 있는지 확인합니다.'],
+      ['safety', '안전성', '개인정보 노출, 유해하거나 차별적인 표현, 과도한 외부 공개 요구가 있는지 확인합니다.'],
+    ].map(([dimension_key, label, description]) => ({ dimension_key, label, description, evidence_required: true }));
+    const active = (revision_id, subject_type, value, extra = {}) => ({
+      revision_id, subject_type, revision_no: 1, state: 'active', lock_version: 0,
+      value, activated_at_utc: '2026-08-21 09:00:00', updated_at_utc: '2026-08-21 09:00:00', ...extra,
+    });
+    const subject = (subject_type, revision) => ({ subject_type, active_revision_id: revision.revision_id, latest_revision_no: 1, revisions: [revision] });
+    const resources = {
+      policy: { resource_type: 'policy', subjects: [
+        subject('worksheet_quality', active(ids.quality.policy, 'worksheet_quality', {
+          evaluation_enabled: true,
+          rubric_revision_id: ids.quality.rubric,
+          review_rule_revision_id: ids.quality.review_rule,
+          prompt: {
+            contract_version: 'worksheet_quality_prompt.v2',
+            content_hash: '5499f44428a9e504e045fb6035c6d650bef8601a8421567095063a231e5db2cd',
+          },
+          input_schema: {
+            schema_id: 'oj_ai.worksheet_quality_request', schema_version: '1.0.0',
+            content_hash: '1d6466915ce82932c0f863c2f0b99e6cd7ddc42c50709ac7fe69e296f5af1eb0',
+          },
+          output_schema: {
+            schema_id: 'oj_ai.worksheet_quality_output', schema_version: '1.0.0',
+            content_hash: '708a70871d3c248b115a523dedad1d8ffff7d2ce0e0d4a6f80181613183042a9',
+          },
+        })),
+        subject('student_submission', active(ids.student.policy, 'student_submission', { assessment_enabled: true, rubric_revision_id: ids.student.rubric, review_rule_revision_id: ids.student.review_rule })),
+      ] },
+      rubric: { resource_type: 'rubric', subjects: [
+        subject('worksheet_quality', active(ids.quality.rubric, 'worksheet_quality', { dimensions }, { total_points: null })),
+        subject('student_submission', active(ids.student.rubric, 'student_submission', { criteria: [{ criterion_id: '01K00000000000000000000211', label: '완성도와 사고 과정', levels: [
+          { label: '우수', level_key: '01K00000000000000000000221', points: '10', position: 0 },
+          { label: '보통', level_key: '01K00000000000000000000222', points: '7', position: 1 },
+          { label: '미흡', level_key: '01K00000000000000000000223', points: '4', position: 2 },
+          { label: '미제출', level_key: '01K00000000000000000000224', points: '0', position: 3 },
+        ], maximum_points: '10', position: 0, scope: 'submission' }] }, { total_points: '10' })),
+      ] },
+      review_rule: { resource_type: 'review_rule', subjects: [
+        subject('worksheet_quality', active(ids.quality.review_rule, 'worksheet_quality', { abstain_handling: 'require_review', safety_handling: 'require_explicit_review' }, { review_required: true, explicit_release_required: true, confidence_threshold: '0.8' })),
+        subject('student_submission', active(ids.student.review_rule, 'student_submission', { abstain_handling: 'require_review', safety_handling: 'require_explicit_review' }, { review_required: true, explicit_release_required: true, confidence_threshold: '0.8' })),
+      ] },
+    };
+    const consentRoutes = {
+      worksheet: { available: true, task_key: 'addon.oj_ai_dashboard.worksheet_quality_assessment', provider_key: 'openai', model_key: 'gpt-5-mini', profile_fingerprint: 'a'.repeat(64), routing_revision: 'routing-worksheet' },
+      submission: { available: true, task_key: 'addon.oj_ai_dashboard.student_submission_assessment', provider_key: 'openai', model_key: 'gpt-5-mini', profile_fingerprint: 'b'.repeat(64), routing_revision: 'routing-submission' },
+    };
+    const consents = {
+      worksheet: { state: 'missing', effective: false, consent_hash: null, approved_at_utc: null, approved_by_user_id: null, task_key: consentRoutes.worksheet.task_key, destination: null },
+      submission: { state: 'missing', effective: false, consent_hash: null, approved_at_utc: null, approved_by_user_id: null, task_key: consentRoutes.submission.task_key, destination: null },
+    };
+    let catalogCurriculums = [];
+    let catalogStandards = [];
+    const diagnosticAiTask = (status) => ({ status, label: 'server-only-label', code: 'server_only_code', details: {} });
+    const readyAiTasks = () => ({
+      worksheet_quality: diagnosticAiTask('ready'),
+      student_submission: diagnosticAiTask('ready'),
+    });
+    const diagnosticsMixed = {
+      profile: 'oj_ai.diagnostics@1.0.0', status: 'unavailable', label: '사용할 수 없음', checked_at_utc: '2026-08-25 12:00:00',
+      repair: { available: false, code: 'schema_repair_not_required', expected: null },
+      checks: {
+        bridge: { status: 'ready', label: '사용 준비됨', code: 'addon_runtime_ready', next_action: 'none', details: { platform_version: '2.0.0-dev.74' } },
+        schema: { status: 'ready', label: '사용 준비됨', code: 'schema_runtime_ready', next_action: 'none', issues: [] },
+        queue: { status: 'attention', label: '확인 필요', code: 'queue_attention', next_action: 'check_jobs', issues: ['hidden-queue-reason'], metrics: { expected_workers: 4, delayed: 1 } },
+        storage: { status: 'unavailable', label: '사용할 수 없음', code: 'storage_observation_failed', next_action: 'retry_storage_check', path: { private: false }, metrics: { original_name: 'secret-file.pdf' } },
+        ai_routing: { status: 'attention', label: '확인 필요', code: 'ai_routing_configuration_required', next_action: 'open_platform_ai_assignments', tasks: { worksheet_quality: { ...diagnosticAiTask('unroutable'), provider_key: 'secret-provider' }, student_submission: diagnosticAiTask('ready') } },
+      },
+    };
+    const diagnosticsReady = {
+      profile: 'oj_ai.diagnostics@1.0.0', status: 'ready', label: '사용 준비됨', checked_at_utc: '2026-08-25 12:05:00',
+      repair: { available: false, code: 'schema_repair_not_required', expected: null },
+      checks: {
+        bridge: { status: 'ready', label: '사용 준비됨', code: 'addon_runtime_ready', next_action: 'none', details: {} },
+        schema: { status: 'ready', label: '사용 준비됨', code: 'schema_runtime_ready', next_action: 'none', issues: [] },
+        queue: { status: 'ready', label: '사용 준비됨', code: 'queue_ready', next_action: 'none', issues: [], metrics: {} },
+        storage: { status: 'ready', label: '사용 준비됨', code: 'storage_runtime_ready', next_action: 'none', path: {}, metrics: {} },
+        ai_routing: { status: 'ready', label: '사용 준비됨', code: 'ai_routing_ready', next_action: 'none', tasks: readyAiTasks() },
+      },
+    };
+    const diagnosticsRuntime = {
+      ...diagnosticsReady, status: 'unavailable', label: '사용할 수 없음', checked_at_utc: '2026-08-25 12:07:00',
+      checks: { ...diagnosticsReady.checks, ai_routing: {
+        status: 'unavailable', label: '사용할 수 없음', code: 'ai_routing_observation_failed',
+        next_action: 'open_platform_operations',
+        tasks: { worksheet_quality: diagnosticAiTask('runtime_unavailable'), student_submission: diagnosticAiTask('runtime_unavailable') },
+      } },
+    };
+    const diagnosticsRepair = {
+      profile: 'oj_ai.diagnostics@1.0.0', status: 'unavailable', label: '사용할 수 없음', checked_at_utc: '2026-08-25 12:10:00',
+      repair: { available: true, code: 'schema_forward_repair_available', expected: {
+        installation_state: 'maintenance_required', catalog_fingerprint: 'e'.repeat(64), repair_state_hash: 'f'.repeat(64),
+      } },
+      checks: {
+        bridge: { status: 'ready', label: '사용 준비됨', code: 'addon_runtime_ready', next_action: 'none', details: {} },
+        schema: { status: 'unavailable', label: '사용할 수 없음', code: 'schema_maintenance_required', next_action: 'check_data_structure', issues: [] },
+        queue: { status: 'ready', label: '사용 준비됨', code: 'queue_ready', next_action: 'none', issues: [], metrics: {} },
+        storage: { status: 'ready', label: '사용 준비됨', code: 'storage_runtime_ready', next_action: 'none', path: {}, metrics: {} },
+        ai_routing: { status: 'ready', label: '사용 준비됨', code: 'ai_routing_ready', next_action: 'none', tasks: readyAiTasks() },
+      },
+    };
+    window.__diagnosticsMode = 'mixed';
+    window.__diagnosticsPermissionRevoked = false;
+    window.__diagnosticsRequests = [];
+    window.__schemaRepairRequests = [];
+    window.__settingsRequests = [];
+    window.__settingsFailureResource = new URLSearchParams(window.location.search).get('fail') || '';
+    const resourceForUrl = (url) => url.includes('/review-rules') ? 'review_rule' : url.includes('/rubrics') ? 'rubric' : 'policy';
+    const envelope = (data) => ({ data, meta: { correlation_id: 'corr-cfg' }, links: {}, actions: [] });
+    window.confirm = () => true;
+    window.fetch = async (url, options = {}) => {
+      const value = String(url);
+      const method = options.method || 'GET';
+      window.__settingsRequests.push({ url: value, method, headers: { ...(options.headers || {}) }, body: options.body ? JSON.parse(options.body) : null });
+      if (value.includes('/curriculums')) {
+        const body = options.body ? JSON.parse(options.body) : null;
+        if (method === 'GET' && value.includes('/standards?')) {
+          const search = new URL(value).searchParams.get('search')?.toLocaleLowerCase() || '';
+          const items = search ? catalogStandards.filter((item) => [item.code, item.title, item.description, item.grade_label].some((part) => String(part || '').toLocaleLowerCase().includes(search))) : catalogStandards;
+          return { ok: true, status: 200, async json() { return envelope({ items }); } };
+        }
+        if (method === 'GET') {
+          return { ok: true, status: 200, async json() { return envelope({ items: catalogCurriculums }); } };
+        }
+        if (value.endsWith('/curriculums/commands/save')) {
+          const input = body.payload;
+          const existing = catalogCurriculums.find((item) => item.curriculum_id === input.curriculum_id);
+          const curriculum = {
+            curriculum_id: existing?.curriculum_id || '01K00000000000000000000401',
+            source_kind: 'manual', source_key: input.source_key, source_version: input.source_version,
+            title: input.title, locale: input.locale, state: 'active',
+            lock_version: existing ? existing.lock_version + 1 : 0, updated_at_utc: '2026-08-27 09:00:00',
+          };
+          catalogCurriculums = existing ? catalogCurriculums.map((item) => item === existing ? curriculum : item) : [curriculum];
+          return { ok: true, status: 200, async json() { return envelope({ curriculum }); } };
+        }
+        if (value.endsWith('/standards/commands/save')) {
+          const input = body.payload;
+          const existing = catalogStandards.find((item) => item.standard_public_id === input.standard_id);
+          const standard = {
+            standard_public_id: existing?.standard_public_id || '01K00000000000000000000402',
+            curriculum_id: '01K00000000000000000000401', curriculum_title: catalogCurriculums[0]?.title || '',
+            curriculum_source_version: catalogCurriculums[0]?.source_version || '', code: input.code,
+            title: input.title, description: input.description, grade_label: input.grade_label,
+            lock_version: existing ? existing.lock_version + 1 : 0, updated_at_utc: '2026-08-27 09:01:00',
+          };
+          catalogStandards = existing ? catalogStandards.map((item) => item === existing ? standard : item) : [standard];
+          return { ok: true, status: 200, async json() { return envelope({ standard }); } };
+        }
+      }
+      if (value.endsWith('/operations/schema/commands/repair')) {
+        window.__schemaRepairRequests.push({ url: value, options, body: JSON.parse(options.body || '{}') });
+        return {
+          ok: true, status: 202,
+          async json() { return envelope({ schema_repair: { state: 'completed', code: 'schema_repaired', catalog_fingerprint: 'e'.repeat(64), completed_at_utc: '2026-08-25 12:11:00' } }); },
+        };
+      }
+      if (value.endsWith('/diagnostics')) {
+        window.__diagnosticsRequests.push({ url: value, options });
+        if (window.__diagnosticsPermissionRevoked) {
+          return {
+            ok: false, status: 403,
+            async json() { return { code: 'oj_ai_forbidden', message: 'forbidden', data: { status: 403 } }; },
+          };
+        }
+        const diagnostics = window.__diagnosticsMode === 'ready'
+          ? diagnosticsReady
+          : window.__diagnosticsMode === 'runtime'
+            ? diagnosticsRuntime
+            : window.__diagnosticsMode === 'repair' ? diagnosticsRepair : diagnosticsMixed;
+        return { ok: true, status: 200, async json() { return envelope(diagnostics); } };
+      }
+      if (value.includes('external-ai-consent')) {
+        const scope = value.includes('submission-external-ai-consent') ? 'submission' : 'worksheet';
+        const route = consentRoutes[scope];
+        if (value.endsWith('/commands/approve')) {
+          consents[scope] = { state: 'approved', effective: true, consent_hash: (scope === 'submission' ? 'd' : 'c').repeat(64), approved_at_utc: '2026-08-23 10:00:00', approved_by_user_id: 7, task_key: route.task_key, destination: { provider_key: route.provider_key, model_key: route.model_key, profile_fingerprint: route.profile_fingerprint } };
+        }
+        if (value.endsWith('/commands/revoke')) {
+          consents[scope] = { state: 'missing', effective: false, consent_hash: null, approved_at_utc: null, approved_by_user_id: null, task_key: route.task_key, destination: null };
+        }
+        const key = scope === 'submission' ? 'submission_external_ai_consent' : 'external_ai_consent';
+        return { ok: true, status: 200, async json() { return envelope({ [key]: { consent: consents[scope], routing: route, input_categories: [] } }); } };
+      }
+      const resourceType = resourceForUrl(value);
+      const resource = resources[resourceType];
+      if (method === 'GET') {
+        if (window.__settingsFailureResource === resourceType) {
+          return {
+            ok: false, status: 503,
+            async json() { return { code: 'configuration_unavailable', message: '이 설정을 불러오지 못했습니다.', data: { status: 503, correlation_id: 'corr-cfg-failure' } }; },
+          };
+        }
+        const key = resourceType === 'policy' ? 'evaluation_policies' : resourceType === 'rubric' ? 'rubrics' : 'review_rules';
+        return { ok: true, status: 200, async json() { return envelope({ [key]: resource }); } };
+      }
+      const body = JSON.parse(options.body || '{}');
+      if (value.includes('/commands/activate')) {
+        const revisionId = value.split('/revisions/')[1].split('/')[0];
+        const group = resource.subjects.find((entry) => entry.revisions.some((revision) => revision.revision_id === revisionId));
+        group.revisions.forEach((revision) => { if (revision.state === 'active') revision.state = 'retired'; });
+        const target = group.revisions.find((revision) => revision.revision_id === revisionId);
+        target.state = 'active'; target.lock_version += 1; target.activated_at_utc = '2026-08-21 10:05:00';
+        group.active_revision_id = revisionId;
+      } else {
+        const payload = body.payload;
+        const group = resource.subjects.find((entry) => entry.subject_type === payload.subject_type);
+        group.latest_revision_no += 1;
+        const suffix = String(group.latest_revision_no).padStart(2, '0');
+        const revision = { revision_id: `01K000000000000000000009${suffix}`, subject_type: payload.subject_type, revision_no: group.latest_revision_no, state: 'draft', lock_version: 0, value: payload.value, updated_at_utc: '2026-08-21 10:04:00' };
+        if (resourceType === 'rubric') revision.total_points = payload.total_points;
+        if (resourceType === 'review_rule') Object.assign(revision, { review_required: true, explicit_release_required: true, confidence_threshold: payload.confidence_threshold });
+        group.revisions.unshift(revision);
+      }
+      return { ok: true, status: 200, async json() { return envelope({ operation: 'accepted' }); } };
+    };
+  </script>
+  <script src="../../resources/js/external-ai-consent-settings.js"></script>
+  <script src="../../resources/js/assessment-configuration-settings.js"></script>
+  <script src="../../resources/js/curriculum-catalog-settings.js"></script>
+  <script src="../../resources/js/operations-diagnostics.js"></script>
+</body>
+</html>

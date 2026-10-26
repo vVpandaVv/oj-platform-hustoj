@@ -1,0 +1,13 @@
+parameters:
+    level: 5
+    phpVersion: 80300
+    bootstrapFiles:
+        - ../Support/structured-ai-bootstrap.php
+    paths:
+        - ../../modules/Settings/Contract/StructuredAiProviderClient.php
+        - ../../modules/Settings/Domain/AiStructuredOutput.php
+        - ../../modules/Settings/Domain/AiTaskAssignment.php
+        - ../../modules/Settings/Application/StoredAiTaskRouter.php
+        - ../../modules/Settings/Infrastructure/Ai/OllamaClient.php
+        - ../../modules/Settings/Infrastructure/Ai/MeteredAiProviderClient.php
+        - ../../modules/Settings/Presentation/Console/AiTaskRoutingPageHandler.php

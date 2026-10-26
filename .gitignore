@@ -1,0 +1,60 @@
+# OJ 플러그인 통합 저장소 (2026-10-13)
+# 플러그인별 세부 제외 규칙은 각 플러그인의 .gitignore를 따른다.
+
+# 현재 개발 대상이 아닌 플러그인·릴리스 복사본·옛 git 기록 보관 폴더
+/_attic/
+
+# 릴리스 킷 생성물 (_release-kit\release.cmd가 만든다)
+/_releases/
+
+# 다른 도구의 작업 폴더
+/.codex-work/
+/.claude/
+
+# 임시·검증 산출물 (AGENT.md 4항: 임시 파일은 _notes/tmp 아래에 두고 정리한다)
+_notes/tmp/
+tmp/
+
+# 의존성·캐시
+node_modules/
+.npm-cache/
+__pycache__/
+*.pyc
+
+# 편집기·OS 잔여 파일
+~$*
+*.log
+Thumbs.db
+.DS_Store
+
+# Local credentials and runtime data never belong in the public source snapshot.
+.env
+.env.*
+!.env.example
+!.env.sample
+wp-config.php
+*.pem
+*.pfx
+*.p12
+id_rsa
+id_ed25519
+*.sqlite
+*.sqlite3
+
+# Private deployment acceptance records; publish examples, not operator evidence.
+oj-code-lab/docs/release-gates.json
+oj-code-lab/docs/validation-results.json
+oj-code-lab/docs/history/*-release-gates.json
+
+# 용량이 큰 생성물·증빙 (다시 만들 수 있거나 검증 기록용 사본)
+*.zip
+**/_notes/**/*.png
+**/_notes/**/*.jpg
+**/_notes/**/*.jpeg
+**/_notes/**/*.gif
+**/_notes/**/*.webp
+**/_notes/**/*.mp4
+**/_notes/**/*.webm
+**/_notes/**/*.pdf
+**/_notes/**/assets/media/
+**/_notes/**/*phpcs*.json

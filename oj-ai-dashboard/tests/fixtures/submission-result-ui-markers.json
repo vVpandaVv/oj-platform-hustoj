@@ -1,0 +1,11 @@
+{
+  "unavailable": "결과를 확인할 수 없습니다.",
+  "renderUnavailable": "renderMessage('unavailable', '결과를 확인할 수 없습니다.')",
+  "renderUpdating": "renderMessage('updating', '결과를 업데이트하고 있어요.'",
+  "renderWithdrawn": "renderMessage('withdrawn', '공개가 종료된 결과예요.'",
+  "releaseLabels": "release.state === 'corrected' ? '수정된 결과' : '공개된 결과'",
+  "stepComplete": "G4-IMP-06-S05 완료",
+  "revocationClearsBody": "권한 회수 즉시 본문 제거",
+  "phaseComplete": "IMP-06 5/5 완료",
+  "noPlatformWrites": "oj-platform</code> 파일 write 0"
+}

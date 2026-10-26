@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-12 사용자 그룹 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds12-prototype.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <svg class="icon-symbols" aria-hidden="true">
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM20 4h-7v16h7a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  </svg>
+
+  <div class="prototype-bar"><div class="prototype-inner"><div class="prototype-title"><strong>DS-12 사용자 그룹 시안</strong><span>다섯 직접 화면과 수행 모드를 확인합니다.</span></div>
+    <div class="screen-switcher" role="tablist" aria-label="그룹 화면 선택"><button type="button" role="tab" data-screen-target="group-list" aria-selected="true">목록</button><button type="button" role="tab" data-screen-target="group-detail" aria-selected="false">상세</button><button type="button" role="tab" data-screen-target="group-members" aria-selected="false">구성원</button><button type="button" role="tab" data-screen-target="group-submissions" aria-selected="false">제출</button><button type="button" role="tab" data-screen-target="group-ranking" aria-selected="false">순위</button></div>
+  </div></div>
+
+  <header class="app-header"><div class="app-header-inner"><a class="brand" href="development-ds-12-learning-spaces.html"><span class="brand-mark">OJ</span><span>OJ Platform</span></a><nav class="primary-nav" aria-label="주 메뉴"><a href="#home">홈</a><a href="#problems">문제</a><a href="#submissions">제출</a><a href="#learning" aria-current="page">학습</a><a href="#community">커뮤니티</a></nav><a class="account-button header-utility" href="#profile" aria-label="내 정보" title="내 정보"><svg><use href="#i-user"/></svg></a></div></header>
+
+  <div class="workspace"><main class="page" id="main">
+    <nav class="learning-nav" aria-label="학습 메뉴"><a href="development-ds-12-user-classes-ui.html">수업</a><a href="development-ds-12-user-contests-ui.html">대회·평가</a><a href="development-ds-12-user-groups-ui.html" aria-current="page">그룹</a></nav>
+
+    <section class="screen" data-screen="group-list">
+      <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">학습 · 그룹</p><h1>그룹</h1><p>내 그룹과 가입할 수 있는 그룹을 확인합니다.</p></div></header><p class="route-caption">/groups</p>
+      <div class="filter-bar compact"><label class="field"><span>그룹 검색</span><input type="search" placeholder="그룹 이름"></label><label class="field"><span>상태</span><select><option>내 그룹</option><option>가입 가능</option><option>승인 대기</option></select></label><div class="filter-actions"><button class="button primary" type="button">검색</button></div></div>
+      <div class="space-list">
+        <div class="space-row"><div class="space-main"><strong>1과정 단계 알고리즘반</strong><span>구성원 24명 · 위임 운영자 2명</span></div><div class="space-meta"><strong>수행 모드</strong><span>오늘 13:00~17:00</span></div><span class="badge wait">활성 구성원</span><button class="button primary" type="button" data-open-screen="group-detail">그룹 보기</button></div>
+        <div class="space-row"><div class="space-main"><strong>파이썬 자율학습</strong><span>구성원 18명 · 자동 승인</span></div><div class="space-meta"><strong>일반 모드</strong><span>공개 그룹</span></div><span class="badge info">가입 가능</span><button class="button" type="button" data-toast="그룹 가입 확인 화면을 엽니다.">가입</button></div>
+        <div class="space-row"><div class="space-main"><strong>정보올림피아드 준비반</strong><span>구성원 12명 · 수동 승인</span></div><div class="space-meta"><strong>비공개 그룹</strong><span>운영자 승인 필요</span></div><span class="badge">승인 대기</span><button class="button" type="button" disabled>대기 중</button></div>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="group-detail" hidden>
+      <div class="breadcrumb"><span>그룹</span><span>/</span><span>1과정 단계 알고리즘반</span></div>
+      <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">활성 구성원</p><h1>1과정 단계 알고리즘반</h1><p>여러 수업과 평가에서 함께 사용하는 학습 구성원 그룹입니다.</p></div><div class="heading-actions"><button class="button" type="button" data-open-screen="group-members">구성원</button><button class="button" type="button" data-open-screen="group-submissions">제출 현황</button></div></header><p class="route-caption">/groups/{group_id}</p>
+      <div class="mode-banner"><div><strong>현재 수행 모드가 적용 중입니다.</strong><span>풀이·제출·채점·결과 목록은 사용할 수 있지만 모든 본인 제출의 상세·코드·오류·AI 피드백은 볼 수 없습니다.</span></div><span class="badge wait">17:00 종료</span></div>
+      <div class="overview-grid"><div class="overview-item"><strong>구성원</strong><span>24명</span></div><div class="overview-item"><strong>연결된 수업</strong><span>2개</span></div><div class="overview-item"><strong>진행 중 평가</strong><span>1개</span></div></div>
+      <section class="content-section"><div class="section-heading"><div><h2>연결된 학습 공간</h2><p>그룹은 참여 후보를 제공하며 수업·대회 권한을 자동으로 주지 않습니다.</p></div></div><div class="space-list"><div class="space-row"><div class="space-main"><strong>파이썬 알고리즘 기초</strong><span>수업 · 참여 승인</span></div><div class="space-meta"><strong>진도 67%</strong><span>공개 문제 2 / 3</span></div><span class="badge good">학습 중</span><button class="button" type="button">수업 보기</button></div><div class="space-row"><div class="space-main"><strong>여름 알고리즘 평가</strong><span>대회·평가 · 참가 승인</span></div><div class="space-meta"><strong>진행 중</strong><span>17:00 종료</span></div><span class="badge wait">참가 중</span><button class="button primary" type="button">계속하기</button></div></div></section>
+    </section>
+
+    <section class="screen" data-screen="group-members" hidden>
+      <header class="page-heading"><div class="page-heading-main"><h1>그룹 구성원</h1><p>공개가 허용된 기본 정보만 표시합니다.</p></div><button class="button" type="button" data-open-screen="group-detail">그룹으로</button></header><p class="route-caption">/groups/{group_id}/members</p>
+      <div class="filter-bar compact"><label class="field"><span>구성원 검색</span><input type="search" placeholder="이름 또는 표시 이름"></label><div class="filter-actions"><button class="button primary" type="button">검색</button></div></div>
+      <div class="table-wrap"><table><thead><tr><th>표시 이름</th><th>구분</th><th>가입일</th><th>최근 활동</th></tr></thead><tbody><tr><td>이민준</td><td><span class="badge info">소유자</span></td><td>2026.03.02</td><td>오늘</td></tr><tr><td>박서현</td><td><span class="badge">위임 운영자</span></td><td>2026.03.02</td><td>오늘</td></tr><tr class="selected-row"><td>김하늘 (나)</td><td>구성원</td><td>2026.03.04</td><td>오늘</td></tr><tr><td>최민준</td><td>구성원</td><td>2026.03.04</td><td>어제</td></tr></tbody></table></div>
+      <div class="scope-note">로그인 아이디·이메일·제출 수·개인 진도는 일반 구성원 목록에 표시하지 않습니다.</div>
+    </section>
+
+    <section class="screen" data-screen="group-submissions" hidden>
+      <header class="page-heading"><div class="page-heading-main"><h1>그룹 제출 현황</h1><p>허용된 기간의 구성원 제출 결과를 확인합니다.</p></div><button class="button" type="button" data-open-screen="group-detail">그룹으로</button></header><p class="route-caption">/groups/{group_id}/submissions</p>
+      <div class="mode-banner"><div><strong>수행 모드: 결과 목록만 제공됩니다.</strong><span>그룹 안팎에서 생성한 본인의 모든 제출 상세·코드·오류·AI 피드백 링크를 만들지 않습니다.</span></div></div>
+      <div class="table-wrap"><table><thead><tr><th>문제</th><th>언어</th><th>결과</th><th>제출 시각</th><th>상세</th></tr></thead><tbody><tr><td>1024 · 구간 합 구하기</td><td>Python 3</td><td><span class="badge wait">틀렸습니다</span></td><td>오늘 15:41</td><td><span class="result-only">결과만 확인 가능</span></td></tr><tr><td>1014 · 조건에 맞는 수 찾기</td><td>Blockly</td><td><span class="badge good">맞았습니다</span></td><td>어제 15:18</td><td><span class="result-only">결과만 확인 가능</span></td></tr></tbody></table></div>
+    </section>
+
+    <section class="screen" data-screen="group-ranking" hidden>
+      <header class="page-heading"><div class="page-heading-main"><h1>그룹 순위</h1><p>운영자가 공개한 집계 범위만 표시합니다.</p></div><button class="button" type="button" data-open-screen="group-detail">그룹으로</button></header><p class="route-caption">/groups/{group_id}/ranking</p>
+      <div class="filter-bar compact"><label class="field"><span>기간</span><select><option>이번 주</option><option>이번 달</option><option>전체</option></select></label><div class="filter-actions"><button class="button primary" type="button">조회</button></div></div>
+      <div class="table-wrap"><table><thead><tr><th>순위</th><th>구성원</th><th>해결</th><th>제출</th><th>정답률</th></tr></thead><tbody><tr><td>1</td><td>박서연</td><td>18</td><td>31</td><td>71%</td></tr><tr class="selected-row"><td>5</td><td>김하늘 (나)</td><td>12</td><td>26</td><td>62%</td></tr><tr><td>6</td><td>최민준</td><td>11</td><td>29</td><td>55%</td></tr></tbody></table></div>
+    </section>
+  </main></div>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴"><a href="#home"><svg><use href="#i-home"/></svg><span>홈</span></a><a href="#problems"><svg><use href="#i-book"/></svg><span>문제</span></a><a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a><a href="#learning" aria-current="page"><svg><use href="#i-learn"/></svg><span>학습</span></a><a href="#more"><svg><use href="#i-more"/></svg><span>더보기</span></a></nav>
+  <div class="toast" role="status" aria-live="polite"></div><script src="assets/oj-ui-prototype.js"></script>
+</body>
+</html>

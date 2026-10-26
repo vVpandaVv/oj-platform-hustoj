@@ -1,0 +1,68 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    [
+        'name' => 'submission_ai_feedback',
+        'owner_module' => 'ai_feedback',
+        'schema_version' => '1',
+        'columns' => [
+            ['name' => 'submission_id', 'type' => 'INT UNSIGNED'],
+            ['name' => 'content', 'type' => 'LONGTEXT'],
+            ['name' => 'input_hash', 'type' => 'CHAR(64)'],
+            ['name' => 'source_hash', 'type' => 'CHAR(64)'],
+            ['name' => 'problem_hash', 'type' => 'CHAR(64)'],
+            ['name' => 'result_code', 'type' => 'INT'],
+            ['name' => 'guide_key', 'type' => 'VARCHAR(100)'],
+            ['name' => 'guide_revision', 'type' => 'INT UNSIGNED'],
+            ['name' => 'analysis_status', 'type' => 'VARCHAR(20)'],
+            ['name' => 'level', 'type' => 'VARCHAR(20)', 'nullable' => true, 'default' => null],
+            ['name' => 'level_policy_version', 'type' => 'VARCHAR(50)'],
+            ['name' => 'profile_last_submission_id', 'type' => 'INT UNSIGNED', 'default' => 0],
+            ['name' => 'assignment_revision', 'type' => 'BIGINT UNSIGNED'],
+            ['name' => 'profile_key', 'type' => 'VARCHAR(100)'],
+            ['name' => 'provider_key', 'type' => 'VARCHAR(100)'],
+            ['name' => 'profile_fingerprint', 'type' => 'CHAR(64)'],
+            ['name' => 'model_key', 'type' => 'VARCHAR(191)'],
+            ['name' => 'metadata', 'type' => 'LONGTEXT'],
+            ['name' => 'created_at', 'type' => 'DATETIME', 'default_expression' => 'CURRENT_TIMESTAMP'],
+            ['name' => 'updated_at', 'type' => 'DATETIME', 'default_expression' => 'CURRENT_TIMESTAMP'],
+        ],
+        'indexes' => [
+            ['name' => null, 'columns' => ['submission_id'], 'unique' => true, 'primary' => true],
+            ['name' => 'ix_submission_ai_feedback_result', 'columns' => ['result_code', 'analysis_status', 'level', 'updated_at']],
+        ],
+    ],
+    [
+        'name' => 'learner_level_profiles',
+        'owner_module' => 'ai_feedback',
+        'schema_version' => '1',
+        'columns' => [
+            ['name' => 'user_id', 'type' => 'BIGINT UNSIGNED'],
+            ['name' => 'analysis_status', 'type' => 'VARCHAR(20)'],
+            ['name' => 'level', 'type' => 'VARCHAR(20)', 'nullable' => true, 'default' => null],
+            ['name' => 'proven_tier', 'type' => 'TINYINT UNSIGNED', 'nullable' => true, 'default' => null],
+            ['name' => 'proven_difficulty', 'type' => 'DECIMAL(5,1)', 'nullable' => true, 'default' => null],
+            ['name' => 'breadth', 'type' => 'DECIMAL(5,1)', 'nullable' => true, 'default' => null],
+            ['name' => 'recent_challenge', 'type' => 'DECIMAL(5,1)', 'nullable' => true, 'default' => null],
+            ['name' => 'stability', 'type' => 'DECIMAL(5,1)', 'nullable' => true, 'default' => null],
+            ['name' => 'skill_score', 'type' => 'DECIMAL(5,1)', 'nullable' => true, 'default' => null],
+            ['name' => 'submission_count', 'type' => 'INT UNSIGNED', 'default' => 0],
+            ['name' => 'attempted_problem_count', 'type' => 'INT UNSIGNED', 'default' => 0],
+            ['name' => 'solved_problem_count', 'type' => 'INT UNSIGNED', 'default' => 0],
+            ['name' => 'recent_sample_count', 'type' => 'INT UNSIGNED', 'default' => 0],
+            ['name' => 'difficulty_coverage', 'type' => 'DECIMAL(5,1)', 'default' => 0],
+            ['name' => 'topic_coverage', 'type' => 'DECIMAL(5,1)', 'default' => 0],
+            ['name' => 'policy_version', 'type' => 'VARCHAR(50)'],
+            ['name' => 'last_submission_id', 'type' => 'INT UNSIGNED', 'default' => 0],
+            ['name' => 'analyzed_at', 'type' => 'DATETIME'],
+            ['name' => 'created_at', 'type' => 'DATETIME', 'default_expression' => 'CURRENT_TIMESTAMP'],
+            ['name' => 'updated_at', 'type' => 'DATETIME', 'default_expression' => 'CURRENT_TIMESTAMP'],
+        ],
+        'indexes' => [
+            ['name' => null, 'columns' => ['user_id'], 'unique' => true, 'primary' => true],
+            ['name' => 'ix_learner_level_profiles_state', 'columns' => ['analysis_status', 'level', 'skill_score', 'last_submission_id', 'updated_at']],
+        ],
+    ],
+];

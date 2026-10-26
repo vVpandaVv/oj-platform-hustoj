@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 활동지 작업대 시각 검증</title>
+  <link rel="stylesheet" href="../../resources/css/admin-shell.css">
+  <link rel="stylesheet" href="../../resources/assets/builder/plate-template-builder.css">
+  <link rel="stylesheet" href="../../resources/css/worksheet-authoring-workbench.css">
+  <style>
+    html { background: #eef1f4; }
+    body { min-width: 320px; margin: 0; color: #20242a; background: #eef1f4; font-family: Arial, "Malgun Gothic", sans-serif; letter-spacing: 0; }
+    .fixture-shell { min-height: 100vh; background: #fff; }
+    .fixture-bar { height: 48px; padding: 0 24px; border-bottom: 1px solid #d7dbe1; background: #20262d; color: #fff; font-size: 14px; font-weight: 700; line-height: 48px; }
+    .fixture-main { padding: 18px 24px 48px; }
+    @media (max-width: 760px) {
+      .fixture-bar { height: 44px; padding: 0 14px; line-height: 44px; }
+      .fixture-main { padding: 10px 0 32px; }
+    }
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="arrow-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6M9 12h12"/></symbol>
+    <symbol id="ellipsis" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+    <symbol id="save" viewBox="0 0 24 24"><path d="M15 2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M17 22v-8H7v8M7 2v5h8"/></symbol>
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+  </svg>
+  <div class="fixture-shell">
+    <header class="fixture-bar">OJ Console · AI 활동지</header>
+    <main class="fixture-main">
+      <section
+        id="oj-ai-worksheet-authoring-app"
+        class="oj-ai-workbench oj-ai-workbench--editor"
+        data-view="edit"
+        data-rest-root="https://example.test/wp-json/oj-ai/v1"
+        data-rest-nonce="visual-rest-nonce"
+        data-list-url="/oj-console/addons/oj-ai-dashboard/worksheets"
+        data-edit-url-template="/oj-console/addons/oj-ai-dashboard/worksheets/{worksheet_id}"
+        data-locale="ko_KR"
+        data-can-manage="1"
+        data-worksheet-id="01HZY3M4N5P6Q7R8S9T0V1W2X3"
+        data-can-export="1"
+        data-assessments-url="/oj-console/addons/oj-ai-dashboard/assessments"
+        data-max-learning-goals="50"
+        data-max-learning-goal-characters="1000"
+        data-catalog-page-limit="100"
+      >
+        <header class="oj-ai-workbench__header oj-ai-workbench__header--editor">
+          <a class="oj-ai-workbench__back" href="#" aria-label="활동지 목록으로" title="뒤로"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#arrow-left"></use></svg></a>
+          <div class="oj-ai-workbench__heading">
+            <label class="oj-ai-workbench__title">
+              <span class="screen-reader-text">활동지 제목</span>
+              <input id="ws-template-title" type="text" maxlength="200" autocomplete="off" aria-label="활동지 제목">
+            </label>
+            <p class="oj-ai-workbench__meta">
+              <span class="oj-ai-workbench__state" data-role="worksheet-state">작성 중</span>
+              <span data-role="save-status" role="status">불러오는 중</span>
+            </p>
+          </div>
+          <div class="oj-ai-workbench__actions">
+            <a class="oj-ai-workbench__check" data-role="quality-link" href="/oj-console/addons/oj-ai-dashboard/assessments?type=worksheet&amp;worksheet_id=01HZY3M4N5P6Q7R8S9T0V1W2X3">AI 점검
+              <span class="screen-reader-text" data-role="quality-status">저장 후 점검할 수 있습니다.</span>
+            </a>
+            <details class="oj-ai-workbench__more">
+              <summary aria-label="편집 도구 더보기" title="더보기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#ellipsis"></use></svg></summary>
+              <div class="oj-ai-workbench__more-menu" role="group" aria-label="편집 도구">
+                <button type="button" data-action="asset-upload" disabled>파일 추가</button>
+                <button type="button" data-action="import-template" disabled>가져오기</button>
+                <button type="button" data-action="duplicate" disabled>복제</button>
+                <button type="button" data-action="validate" disabled>문서 검증</button>
+                <button type="button" data-action="preview-open" disabled>미리보기</button>
+              </div>
+            </details>
+            <button type="button" class="oj-ai-workbench__primary oj-ai-workbench__save" data-action="save" disabled><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#save"></use></svg><span>저장</span></button>
+          </div>
+        </header>
+        <input type="file" data-field="asset-file" accept=".jpg,.jpeg,.png,.webp,.mp3,.ogg,.wav,.mp4,.webm,.pdf,.txt,.csv,.docx,.xlsx,.pptx" hidden>
+        <input type="file" data-field="template-package" accept=".ojws,application/vnd.oj.ai-worksheet+zip" hidden>
+        <nav class="oj-ai-workbench__phases" aria-label="활동지 진행 단계">
+          <ol>
+            <li><span aria-current="step"><b>1</b>만들기</span></li>
+            <li><a href="/oj-console/addons/oj-ai-dashboard/assignments?worksheet_id=01HZY3M4N5P6Q7R8S9T0V1W2X3"><b>2</b>배포</a></li>
+            <li><a href="/oj-console/addons/oj-ai-dashboard/assessments?type=worksheet&amp;worksheet_id=01HZY3M4N5P6Q7R8S9T0V1W2X3"><b>3</b>평가</a></li>
+            <li><a href="#oj-ai-release-controls"><b>4</b>공개</a></li>
+          </ol>
+        </nav>
+        <div class="oj-ai-workbench__banner" data-role="recovery" hidden>
+          <span>복구할 내용이 있습니다.</span>
+          <div><button type="button" data-action="restore">복구</button><button type="button" data-action="discard-recovery">삭제</button></div>
+        </div>
+        <div class="oj-ai-workbench__banner oj-ai-workbench__banner--warning" data-role="conflict" hidden>
+          <span>다른 변경이 저장되었습니다.</span>
+          <div><button type="button" data-action="reload-latest">최신 내용 불러오기</button><button type="button" data-action="retry-local">내 내용 다시 저장</button></div>
+        </div>
+        <div class="oj-ai-workbench__notice" data-role="notice" role="alert" hidden></div>
+        <section class="oj-ai-workbench__asset-tray" data-role="asset-tray" hidden>
+          <strong>첨부 파일</strong><div data-role="staged-assets"></div>
+        </section>
+        <textarea id="ws-builder-schema" hidden aria-hidden="true"></textarea>
+        <textarea id="ws-render-schema" hidden aria-hidden="true"></textarea>
+        <div class="oj-ai-workbench__workspace">
+          <aside class="oj-ai-workbench__outline" aria-label="문항 목록">
+            <header><h2>문항</h2><button type="button" class="oj-ai-workbench__icon-button" data-action="add-question" aria-label="문항 추가" title="문항 추가">+</button></header>
+            <span class="oj-ai-workbench__outline-count" data-role="outline-count">0개</span>
+            <ol data-role="document-outline"><li class="oj-ai-workbench__outline-empty">내용을 불러오는 중</li></ol>
+          </aside>
+          <main class="oj-ai-workbench__canvas" aria-label="활동지 편집 영역">
+            <div id="ws-plate-template-builder-root" class="oj-ai-workbench__editor" aria-busy="true">
+              <p class="oj-ai-workbench__loading">편집기를 불러오는 중입니다.</p>
+            </div>
+          </main>
+          <aside class="oj-ai-workbench__inspector" aria-label="활동지 설정">
+            <header><h2>설정</h2></header>
+            <div class="oj-ai-workbench__inspector-tabs" role="tablist" aria-label="설정 종류">
+              <button type="button" role="tab" data-inspector-tab="question" aria-selected="true">문항</button>
+              <button type="button" role="tab" data-inspector-tab="goals" aria-selected="false">학습 목표</button>
+              <button type="button" role="tab" data-inspector-tab="assessment" aria-selected="false">평가 연결</button>
+            </div>
+            <section data-inspector-panel="question">
+              <div id="ws-response-inspector-root" class="oj-ai-workbench__question-settings">
+                <p class="oj-ai-workbench__inspector-empty">문항을 선택하거나 추가하세요.</p>
+              </div>
+            </section>
+            <section data-inspector-panel="goals" hidden>
+              <section class="oj-ai-workbench__inspector-section oj-ai-workbench__inspector-section--first"><h3>학습 목표</h3>
+                <label class="oj-ai-workbench__inspector-search"><span>목표 문장</span><textarea rows="3" maxlength="1000" data-field="learning-goal-text" placeholder="학생이 이 활동을 통해 할 수 있어야 하는 내용을 입력하세요."></textarea></label>
+                <label class="oj-ai-workbench__inspector-search"><span>적용 대상</span><select data-field="learning-goal-add-target"><option value="worksheet">활동지 전체</option></select></label>
+                <button type="button" class="oj-ai-workbench__inspector-add" data-action="add-learning-goal">목표 추가</button>
+                <p class="oj-ai-workbench__inspector-status" data-role="learning-goal-status" role="status"></p>
+                <div data-role="learning-goals"></div>
+              </section>
+              <section class="oj-ai-workbench__inspector-section"><h3>성취기준 연결</h3>
+                <label class="oj-ai-workbench__inspector-search"><span>교육과정</span><select data-field="curriculum-select"><option value="">불러오는 중</option></select></label>
+                <label class="oj-ai-workbench__inspector-search"><span>적용 대상</span><select data-field="achievement-add-target"><option value="worksheet">활동지 전체</option></select></label>
+                <label class="oj-ai-workbench__inspector-search"><span>성취기준 찾기</span><input type="search" data-field="achievement-search" placeholder="코드 또는 내용 검색" autocomplete="off"></label>
+                <p class="oj-ai-workbench__inspector-status" data-role="achievement-status" role="status"></p>
+                <section class="oj-ai-workbench__inspector-section"><h3>연결된 성취기준</h3><div data-role="achievement-links"></div></section>
+                <section class="oj-ai-workbench__inspector-section"><h3>선택할 성취기준</h3><div data-role="achievement-standards"></div></section>
+              </section>
+            </section>
+            <section data-inspector-panel="assessment" hidden>
+              <p class="oj-ai-workbench__inspector-status" data-role="assessment-map-summary"></p>
+              <div class="oj-ai-workbench__assessment-map" data-role="assessment-map"></div>
+            </section>
+          </aside>
+        </div>
+        <section class="oj-ai-workbench__workflow" aria-label="검토와 발행">
+          <section class="oj-ai-workbench__validation" data-role="validation-result" role="status" hidden>
+            <div><strong data-role="validation-title"></strong><span data-role="validation-message"></span></div>
+            <button type="button" data-action="validate-retry">다시 검증</button>
+          </section>
+          <section id="oj-ai-release-controls" class="oj-ai-workbench__release" data-role="release-controls">
+            <div><strong data-role="release-title">작성 중</strong><span data-role="release-message">검증 후 승인할 수 있습니다.</span></div>
+            <div><button type="button" data-action="approve" disabled>교사 검토 승인</button><button type="button" class="oj-ai-workbench__primary" data-action="publish" disabled>발행</button><button type="button" data-action="archive" disabled>보관</button><button type="button" data-action="restore-worksheet" disabled hidden>복원</button></div>
+          </section>
+          <section class="oj-ai-workbench__export" data-role="export-controls">
+            <div><strong>내보내기</strong><span data-role="export-status" role="status">저장된 버전</span></div>
+            <div><button type="button" data-action="export-pdf" disabled>PDF</button><button type="button" data-action="export-package" disabled>활동지 파일</button></div>
+          </section>
+        </section>
+        <div class="oj-ai-workbench__preview-shell" data-role="preview-shell" data-kind="student" hidden>
+          <button type="button" class="oj-ai-workbench__preview-scrim" data-action="preview-close" aria-label="미리보기 닫기"></button>
+          <section class="oj-ai-workbench__preview-panel" role="dialog" aria-modal="true" aria-labelledby="oj-ai-preview-title">
+            <header>
+              <h2 id="oj-ai-preview-title" data-role="preview-title">학생 미리보기</h2>
+              <div>
+                <button type="button" data-action="preview-print-page" hidden>인쇄</button>
+                <button type="button" class="oj-ai-workbench__preview-close" data-action="preview-close" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button>
+              </div>
+            </header>
+            <div class="oj-ai-workbench__preview-tabs" role="tablist" aria-label="미리보기 종류">
+              <button type="button" role="tab" data-action="preview-student" aria-selected="true">학생</button>
+              <button type="button" role="tab" data-action="preview-print" aria-selected="false">인쇄</button>
+            </div>
+            <div class="oj-ai-workbench__preview-status" data-role="preview-status" role="status">불러오는 중</div>
+            <div class="oj-ai-workbench__preview-content" data-role="preview-content"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    (() => {
+      const worksheetId = '01HZY3M4N5P6Q7R8S9T0V1W2X3';
+      let revisionId = '01HZY3M4N5P6Q7R8S9T0V1W2X4';
+      const importedRevisionId = '01HZY3M4N5P6Q7R8S9T0V1W2XC';
+      const assetId = '01HZY3M4N5P6Q7R8S9T0V1W2XB';
+      const publicationId = '01HZY3M4N5P6Q7R8S9T0V1W2XH';
+      const approvalDecisionHash = 'd'.repeat(64);
+      const approvalEvidenceHash = 'e'.repeat(64);
+      let rootState = 'draft';
+      const pdfJobId = '01HZY3M4N5P6Q7R8S9T0V1W2XJ';
+      const pdfArtifactId = '01HZY3M4N5P6Q7R8S9T0V1W2XK';
+      const packageJobId = '01HZY3M4N5P6Q7R8S9T0V1W2XM';
+      const packageArtifactId = '01HZY3M4N5P6Q7R8S9T0V1W2XN';
+      let revisionState = 'draft';
+      let lockVersion = 0;
+      let latestPublicationId = null;
+      const teacherDocument = {
+        schema_id: 'oj_ai.worksheet_document',
+        schema_version: '1.0.0',
+        editor_profile: 'worksheet_plate@1',
+        document_id: '01HZY3M4N5P6Q7R8S9T0V1W2X5',
+        locale: 'ko_KR',
+        title: '우리 동네 환경 조사',
+        nodes: [
+          { type: 'h1', node_id: '01HZY3M4N5P6Q7R8S9T0V1W2X6', children: [{ text: '우리 동네 환경 조사' }] },
+          { type: 'p', node_id: '01HZY3M4N5P6Q7R8S9T0V1W2X7', children: [{ text: '관찰한 내용을 근거와 함께 정리해 보세요.' }] },
+          {
+            type: 'oj_ai_response',
+            node_id: '01HZY3M4N5P6Q7R8S9T0V1W2X8',
+            response_id: '01HZY3M4N5P6Q7R8S9T0V1W2X9',
+            kind: 'long_text',
+            label: '관찰 내용',
+            required: true,
+            constraints: { min_chars: 20, max_chars: 1200 },
+            children: [{ text: '' }]
+          },
+          { type: 'p', node_id: '01HZY3M4N5P6Q7R8S9T0V1W2XA', children: [{ text: '' }] }
+        ],
+        settings: {
+          student_navigation: 'document',
+          print_profile: 'worksheet_a4@1',
+          learning_goals: [{
+            goal_id: '01K00000000000000000000304',
+            text: '관찰 결과를 근거와 함께 설명할 수 있다.',
+            scope: 'response',
+            response_id: '01HZY3M4N5P6Q7R8S9T0V1W2X9',
+          }],
+        }
+      };
+      if (new URLSearchParams(location.search).get('question_sections') === '1') {
+        const response = teacherDocument.nodes[2];
+        const quote = { type: 'blockquote', children: [{ type: 'p', children: [{ text: '인용 자료는 회색 배경과 왼쪽 선을 유지합니다.' }] }] };
+        teacherDocument.nodes = [
+          teacherDocument.nodes[0], quote,
+          { type: 'callout', tone: 'notice', icon: 'idea', children: [{ type: 'p', children: [{ text: '응답 없는 안내 상자' }] }] },
+          { type: 'callout', tone: 'notice', icon: 'idea', children: [
+            { type: 'h2', children: [{ text: '자료를 근거로 자신의 생각을 설명하세요.' }] },
+            { type: 'p', children: [{ text: '답변 안내와 입력칸은 별도의 흰색 문항 영역입니다.' }] },
+            quote,
+            { type: 'column', children: [response] },
+          ] },
+        ];
+      }
+      const curriculums = [{
+        curriculum_id: '01K00000000000000000000300',
+        source_kind: 'manual',
+        source_key: 'visual-science',
+        source_version: '2026',
+        title: '시각 검증 교육과정',
+        locale: 'ko-KR',
+        state: 'active',
+        lock_version: 0,
+        updated_at_utc: '2026-08-21 09:00:00',
+      }];
+      const achievementStandards = [
+        {
+          standard_public_id: '01K00000000000000000000301',
+          standard_key: 'SCI-02-ENV-01',
+          code: '[2과01-01]',
+          title: '주변 환경을 관찰하고 특징을 근거로 설명한다.',
+          description: '관찰 결과와 근거를 연결하여 표현한다.',
+          grade_label: '초등 2학년',
+          curriculum_title: '2022 개정 과학',
+        },
+        {
+          standard_public_id: '01K00000000000000000000302',
+          standard_key: 'SCI-02-ENV-02',
+          code: '[2과01-02]',
+          title: '환경을 보호하는 실천 방법을 제안한다.',
+          description: '생활 주변의 문제를 찾고 실천 방법을 제안한다.',
+          grade_label: '초등 2학년',
+          curriculum_title: '2022 개정 과학',
+        },
+      ];
+      let achievementLinks = [{
+        scope: 'response', response_id: '01HZY3M4N5P6Q7R8S9T0V1W2X9',
+        standard_public_id: '01K00000000000000000000301', alignment_type: 'primary',
+      }];
+      const achievementSnapshots = [{ standard_public_id: '01K00000000000000000000301', standard_code_snapshot: '[2과01-01]', standard_label_snapshot: '주변 환경을 관찰하고 특징을 근거로 설명한다.' }];
+
+      const envelope = (data, meta = {}) => ({ data, meta: { correlation_id: 'visual-fixture', ...meta }, links: {}, actions: [] });
+      const safeNodes = (nodes, responses) => nodes.map((node) => {
+        if (Object.hasOwn(node, 'text')) {
+          return { ...node };
+        }
+        const safe = {};
+        Object.entries(node).forEach(([key, value]) => {
+          if (key !== 'grading' && key !== 'children' && key !== 'url') {
+            safe[key] = JSON.parse(JSON.stringify(value));
+          }
+        });
+        if (safe.type === 'oj_ai_response') {
+          const response = {
+            response_id: safe.response_id,
+            kind: safe.kind,
+            label: safe.label,
+            required: safe.required,
+            position: responses.length,
+          };
+          if (safe.help_text) response.help_text = safe.help_text;
+          if (safe.constraints) response.constraints = safe.constraints;
+          responses.push(response);
+        }
+        safe.children = safeNodes(node.children || [], responses);
+        return safe;
+      });
+      const previewPayloads = () => {
+        const responses = [];
+        const nodes = safeNodes(teacherDocument.nodes, responses);
+        return {
+          document: {
+            document_id: teacherDocument.document_id,
+            editor_profile: teacherDocument.editor_profile,
+            locale: teacherDocument.locale,
+            title: teacherDocument.title,
+            navigation: 'document',
+            nodes,
+          },
+          responses: { items: responses },
+        };
+      };
+      const previewEnvelope = (schema, payload) => ({
+        schema_id: schema,
+        schema_version: '1.0.0',
+        projector_version: '1.0.0',
+        source_hash: 'a'.repeat(64),
+        payload_hash: 'b'.repeat(64),
+        payload,
+      });
+      const previewResult = (kind) => {
+        const payloads = previewPayloads();
+        const projection = kind === 'student'
+          ? {
+              kind: 'student',
+              profile: 'student',
+              student_document: previewEnvelope('oj_ai.student_document', payloads.document),
+              response_schema: previewEnvelope('oj_ai.student_response_schema', payloads.responses),
+            }
+          : {
+              kind: 'print',
+              profile: 'student_blank',
+              print_projection: previewEnvelope('oj_ai.worksheet_print', {
+                profile: 'student_blank',
+                layout: {
+                  page_size: 'A4',
+                  orientation: 'portrait',
+                  print_token: 'worksheet_a4@1',
+                  font_token: 'worksheet_system@1',
+                },
+                document: payloads.document,
+                response_schema: payloads.responses,
+              }),
+            };
+        return envelope({
+          worksheet_id: worksheetId,
+          revision: {
+            id: revisionId,
+            state: 'draft',
+            document_hash: 'a'.repeat(64),
+            validation_hash: 'b'.repeat(64),
+          },
+          preview: {
+            kind,
+            profile: kind === 'student' ? 'student' : 'student_blank',
+            projection_hash: 'c'.repeat(64),
+            projection,
+          },
+        }, { mutation_count: 0, private_asset_urls: 0 });
+      };
+      window.fetch = async (url, options = {}) => {
+        if (window.__teacherOnly && (options.method || 'GET') !== 'GET' && /evaluations|consent|ai-provider/.test(String(url))) {
+          window.__unexpectedAiRequests = (window.__unexpectedAiRequests || 0) + 1;
+          throw new Error('Teacher approval must not call AI.');
+        }
+        if (String(url).endsWith('/assessment-project')) return response({ data: { project: null } });
+        await new Promise((resolve) => setTimeout(resolve, 40));
+        const path = String(url);
+        if (path.includes('/curriculums/01K00000000000000000000300/standards?') && (options.method || 'GET') === 'GET') return response(envelope({ items: achievementStandards }));
+        if (path.includes('/curriculums?') && (options.method || 'GET') === 'GET') return response(envelope({ items: curriculums }));
+        if (path.endsWith('/settings/policies') && (options.method || 'GET') === 'GET') return response(envelope({ evaluation_policies: { subjects: [{ subject_type: 'student_submission', active_revision_id: '01K00000000000000000000203', revisions: [{ revision_id: '01K00000000000000000000203', value: { rubric_revision_id: '01K00000000000000000000201' } }] }] } }));
+        if (path.endsWith('/settings/rubrics') && (options.method || 'GET') === 'GET') return response(envelope({ rubrics: { subjects: [{ subject_type: 'student_submission', active_revision_id: '01K00000000000000000000201', revisions: [{ revision_id: '01K00000000000000000000201', value: { criteria: [{ criterion_id: '01K00000000000000000000211', label: '내용 정확성', description: '응답 내용이 관찰 사실과 일치하는지 확인합니다.', maximum_points: '3', scope: 'response' }, { criterion_id: '01K00000000000000000000212', label: '설명 근거', description: '주장을 뒷받침하는 구체적인 관찰 근거를 확인합니다.', maximum_points: '2', scope: 'response' }, { criterion_id: '01K00000000000000000000213', label: '전체 완성도', description: '모든 필수 응답을 빠짐없이 작성했는지 확인합니다.', maximum_points: '1', scope: 'submission' }] } }] }] } }));
+        if (path.includes('/worksheet-evaluations?') && (options.method || 'GET') === 'GET') {
+          window.__lastWorksheetQualityUrl = path;
+          if (window.__teacherOnly) return response({ ok: false, message: 'AI 점검 권한이 없습니다.' }, 403);
+          return response(envelope({ items: [{
+            id: '01HZY3M4N5P6Q7R8S9T0V1W2XD',
+            state: 'review_required',
+            is_stale: false,
+            worksheet: { id: worksheetId, title: teacherDocument.title },
+            revision: { id: revisionId, revision_no: 3, state: revisionState, source_hash: 'a'.repeat(64), is_current: true },
+            status: { finding_count: 2, needs_attention_count: 2, next_action: 'review' },
+          }] }));
+        }
+        if (path.endsWith(`/worksheets/${worksheetId}`) && (options.method || 'GET') === 'GET') {
+          return response(envelope({ worksheet: {
+            id: worksheetId,
+            title: teacherDocument.title,
+            state: rootState,
+            current_revision_id: revisionId,
+            latest_publication_id: latestPublicationId,
+            lock_version: lockVersion,
+            updated_at_utc: '2026-08-21T09:00:00Z'
+          } }));
+        }
+        if (path.endsWith(`/worksheet-revisions/${revisionId}`)) {
+          return response(envelope({
+            worksheet_id: worksheetId,
+            revision: { id: revisionId, revision_no: 1, state: revisionState, document_hash: 'a'.repeat(64) },
+            teacher_document: teacherDocument,
+            questions: [],
+            achievement_links: achievementLinks,
+            standard_snapshots: achievementSnapshots
+          }));
+        }
+        if (path.includes(`/worksheet-revisions/${revisionId}/preview?projection=student`)) {
+          window.__lastPreviewKind = 'student';
+          return response(previewResult('student'));
+        }
+        if (path.includes(`/worksheet-revisions/${revisionId}/preview?projection=print&profile=student_blank`)) {
+          window.__lastPreviewKind = 'print';
+          return response(previewResult('print'));
+        }
+        if (path.includes(`/worksheet-revisions/${revisionId}/commands/export-pdf`)) {
+          window.__lastWorksheetPdfExportRequest = JSON.parse(options.body || '{}');
+          return response(envelope({ export_job: {
+            id: pdfJobId,
+            state: 'queued',
+            source_type: 'worksheet_revision',
+            source_id: revisionId,
+            source_hash: 'a'.repeat(64),
+          } }), 202);
+        }
+        if (path.includes(`/worksheet-revisions/${revisionId}/commands/export-package`)) {
+          window.__lastWorksheetPackageExportRequest = JSON.parse(options.body || '{}');
+          return response(envelope({ export_job: {
+            id: packageJobId,
+            state: 'queued',
+            artifact_kind: 'worksheet_package',
+            source_type: 'worksheet_revision',
+            source_id: revisionId,
+            source_hash: 'a'.repeat(64),
+          } }), 202);
+        }
+        if (path.endsWith(`/export-jobs/${pdfJobId}`)) {
+          return response(envelope({ export_job: {
+            job_id: pdfJobId,
+            state: 'ready',
+            artifact_kind: 'worksheet_pdf',
+            source_type: 'worksheet_revision',
+            source_id: revisionId,
+            source_hash: 'a'.repeat(64),
+            artifact_id: pdfArtifactId,
+            expires_at_utc: '2026-08-23 10:00:00',
+          } }));
+        }
+        if (path.endsWith(`/export-jobs/${packageJobId}`)) {
+          return response(envelope({ export_job: {
+            job_id: packageJobId,
+            state: 'ready',
+            artifact_kind: 'worksheet_package',
+            source_type: 'worksheet_revision',
+            source_id: revisionId,
+            source_hash: 'a'.repeat(64),
+            artifact_id: packageArtifactId,
+            expires_at_utc: '2026-08-23 10:00:00',
+          } }));
+        }
+        if (path.endsWith(`/artifacts/${pdfArtifactId}/download`)) {
+          window.__lastExportDownloadRequest = { artifact_id: pdfArtifactId, kind: 'worksheet_pdf' };
+          return binaryResponse('%PDF-1.7\nvisual fixture\n%%EOF', 'application/pdf', 'worksheet_pdf');
+        }
+        if (path.endsWith(`/artifacts/${packageArtifactId}/download`)) {
+          window.__lastExportDownloadRequest = { artifact_id: packageArtifactId, kind: 'worksheet_package' };
+          return binaryResponse('PK visual worksheet package', 'application/vnd.oj.ai-worksheet+zip', 'worksheet_package');
+        }
+        if (path.includes(`/worksheet-revisions/${revisionId}/commands/validate`)) {
+          window.__lastValidationRequest = JSON.parse(options.body || '{}');
+          return response(envelope({
+            worksheet_id: worksheetId,
+            revision: {
+              id: revisionId,
+              state: revisionState,
+              document_hash: 'a'.repeat(64),
+              validation_hash: 'b'.repeat(64),
+            },
+            validation: {
+              schema_id: 'oj_ai.worksheet_validation_projection',
+              schema_version: '1.0.0',
+              status: 'ready',
+              release_ready: true,
+              projection_hash: 'c'.repeat(64),
+              checks: [
+                'document_profile', 'canonical_hash', 'validation_receipt', 'asset_readiness',
+                'student_projection', 'print_projection', 'renderer_parity', 'private_field_scan'
+              ].map((id) => ({ id, status: 'passed' })),
+              blockers: [],
+              warnings: [],
+              statistics: { forbidden_field_count: 0, private_asset_url_count: 0 },
+            },
+            approval: {
+              status: revisionState === 'approved' ? 'approved' : 'ready',
+              approval_ready: true,
+              decision_hash: approvalDecisionHash,
+              evidence_hash: approvalEvidenceHash,
+              blockers: [],
+              warnings: window.__teacherOnly ? [{ code: window.__approvalWarning || 'worksheet_evaluation_not_run' }] : [],
+            },
+          }, { mutation_count: 0, validated_at_utc: '2026-08-21 16:00:00' }));
+        }
+        if (path.includes(`/worksheet-revisions/${revisionId}/commands/approve`)) {
+          window.__lastApprovalRequest = JSON.parse(options.body || '{}');
+          revisionState = 'approved';
+          lockVersion += 1;
+          return response(envelope({
+            worksheet_id: worksheetId,
+            revision: { id: revisionId, revision_no: 2, state: revisionState, document_hash: 'a'.repeat(64) },
+            approval: { status: 'ready', decision_hash: approvalDecisionHash, evidence_hash: approvalEvidenceHash },
+          }, { mutation_count: 1 }));
+        }
+        if (path.includes(`/worksheet-revisions/${revisionId}/commands/publish`)) {
+          window.__publicationRequestCount = (window.__publicationRequestCount || 0) + 1;
+          window.__lastPublicationRequest = JSON.parse(options.body || '{}');
+          rootState = 'active';
+          latestPublicationId = publicationId;
+          lockVersion += 1;
+          return response(envelope({
+            worksheet_id: worksheetId,
+            revision: { id: revisionId, state: revisionState, document_hash: 'a'.repeat(64) },
+            publication: { id: publicationId, publication_no: 1, state: 'active' },
+            approval_decision_hash: approvalDecisionHash,
+          }, { mutation_count: 1 }), 201);
+        }
+        if (path.includes(`/worksheets/${worksheetId}/commands/archive`)) {
+          window.__lastLifecycleRequest = JSON.parse(options.body || '{}');
+          rootState = 'archived';
+          lockVersion += 1;
+          return response(envelope({ worksheet: {
+            id: worksheetId, state: rootState, current_revision_id: revisionId,
+            latest_publication_id: latestPublicationId, lock_version: lockVersion, archived_at_utc: '2026-08-21 16:10:00',
+          }, transition: { operation: 'archive', previous_state: 'active' } }, { mutation_count: 1 }));
+        }
+        if (path.includes(`/worksheets/${worksheetId}/commands/restore`)) {
+          window.__lastRestoreRequest = JSON.parse(options.body || '{}');
+          rootState = latestPublicationId ? 'active' : 'draft';
+          lockVersion += 1;
+          return response(envelope({ worksheet: {
+            id: worksheetId, state: rootState, current_revision_id: revisionId,
+            latest_publication_id: latestPublicationId, lock_version: lockVersion, archived_at_utc: null,
+          }, transition: { operation: 'restore', previous_state: 'archived' } }, { mutation_count: 1 }));
+        }
+        if (path.includes(`/worksheet-assets/${assetId}/content`)) {
+          const canvas = document.createElement('canvas');
+          canvas.width = 640;
+          canvas.height = 320;
+          const context = canvas.getContext('2d');
+          context.fillStyle = '#dce9df';
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          context.fillStyle = '#3b7352';
+          context.fillRect(32, 32, 576, 208);
+          context.fillStyle = '#ffffff';
+          context.font = 'bold 40px sans-serif';
+          context.fillText('관찰 사진', 220, 155);
+          const png = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+          return new Response(png, { status: 200, headers: { 'Content-Type': 'image/png' } });
+        }
+        if (path.includes('/commands/stage-asset')) {
+          const form = options.body;
+          window.__lastStageRequest = {
+            command_id: form.get('command_id'),
+            expected_state: form.get('expected_state'),
+            expected_revision_id: form.get('expected_revision_id'),
+            file_name: form.get('file')?.name || '',
+            content_type: options.headers?.['Content-Type'] || '',
+          };
+          return response({
+            data: { asset: {
+              id: assetId,
+              original_name: '현장 사진.png',
+              mime_type: 'image/png',
+              byte_size: 8,
+              sha256: 'a'.repeat(64),
+              state: 'quarantined',
+              scan_state: 'clean'
+            } },
+            meta: { correlation_id: 'visual-stage', expires_at_utc: '2026-08-21 12:30:00' },
+            links: {},
+            actions: ['worksheet.asset.discard']
+          }, 201);
+        }
+        if (path.includes('/commands/import-template')) {
+          const form = options.body;
+          window.__lastImportRequest = {
+            command_id: form.get('command_id'),
+            expected_state: form.get('expected_state'),
+            expected_revision_id: form.get('expected_revision_id'),
+            package_name: form.get('package')?.name || '',
+            content_type: options.headers?.['Content-Type'] || '',
+          };
+          revisionId = importedRevisionId;
+          revisionState = 'draft';
+          latestPublicationId = null;
+          teacherDocument.title = '가져온 생태 활동지';
+          teacherDocument.nodes = [
+            { type: 'h1', node_id: '01HZY3M4N5P6Q7R8S9T0V1W2XD', children: [{ text: teacherDocument.title }] },
+            { type: 'p', node_id: '01HZY3M4N5P6Q7R8S9T0V1W2XE', children: [{ text: '가져온 내용을 확인하세요.' }] },
+            {
+              type: 'oj_ai_response',
+              node_id: '01HZY3M4N5P6Q7R8S9T0V1W2XP',
+              response_id: '01HZY3M4N5P6Q7R8S9T0V1W2XQ',
+              kind: 'long_text',
+              label: '생태 관찰 내용',
+              required: true,
+              constraints: { min_chars: 20, max_chars: 1200 },
+              grading: { rubric_criterion_ids: ['01K00000000000000000000211', '01K00000000000000000000212'], max_points: '5' },
+              children: [{ text: '' }]
+            },
+            { type: 'p', node_id: '01HZY3M4N5P6Q7R8S9T0V1W2XR', children: [{ text: '' }] }
+          ];
+          teacherDocument.settings.learning_goals = [{
+            goal_id: '01HZY3M4N5P6Q7R8S9T0V1W2XS',
+            text: '관찰 결과를 근거와 함께 설명할 수 있다.',
+            scope: 'response',
+            response_id: '01HZY3M4N5P6Q7R8S9T0V1W2XQ',
+          }];
+          achievementLinks = [{
+            scope: 'response', response_id: '01HZY3M4N5P6Q7R8S9T0V1W2XQ',
+            standard_public_id: '01K00000000000000000000301', alignment_type: 'primary',
+          }];
+          return response(envelope({
+            worksheet: { id: worksheetId, title: teacherDocument.title, state: rootState, current_revision_id: revisionId },
+            revision: { id: revisionId, revision_no: 2, state: revisionState, document_id: teacherDocument.document_id, document_hash: 'a'.repeat(64) },
+            import: { package_source_revision_id: '01HZY3M4N5P6Q7R8S9T0V1W2XF', imported_asset_count: 0, reissued_id_count: 6 }
+          }, { package_hash: 'b'.repeat(64), saved_at_utc: new Date().toISOString() }));
+        }
+        if (path.includes('/commands/duplicate')) {
+          window.__lastDuplicateRequest = JSON.parse(options.body || '{}');
+          return response(envelope({ worksheet: { id: '01HZY3M4N5P6Q7R8S9T0V1W2XG' } }), 201);
+        }
+        if (path.includes('/commands/save-draft')) {
+          const body = JSON.parse(options.body || '{}');
+          teacherDocument.title = body.payload.teacher_document.title;
+          window.__lastSavedReceipts = body.payload.staged_asset_receipt_ids;
+          window.__lastSavedAchievementLinks = JSON.parse(JSON.stringify(body.payload.achievement_links));
+          window.__lastSavedTeacherDocument = JSON.parse(JSON.stringify(body.payload.teacher_document));
+          teacherDocument.nodes = body.payload.teacher_document.nodes;
+          return response(envelope({
+            worksheet: { id: worksheetId, title: teacherDocument.title, state: rootState, current_revision_id: revisionId },
+            revision: { id: revisionId, revision_no: 1, state: revisionState, document_id: teacherDocument.document_id, document_hash: 'a'.repeat(64) },
+            temporary_id_map: {}
+          }, { unchanged: true, saved_at_utc: new Date().toISOString() }));
+        }
+        return response({ code: 'fixture_not_found', message: '요청을 찾을 수 없습니다.', data: { status: 404 } }, 404);
+      };
+
+      function response(payload, status = 200) {
+        return { ok: status >= 200 && status < 300, status, json: async () => payload };
+      }
+
+      async function binaryResponse(value, mimeType, artifactKind) {
+        const bytes = new TextEncoder().encode(value);
+        const digest = await crypto.subtle.digest('SHA-256', bytes);
+        const sha256 = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+        return new Response(bytes, {
+          status: 200,
+          headers: {
+            'Content-Type': mimeType,
+            'Content-Length': String(bytes.byteLength),
+            'Content-Disposition': 'attachment',
+            'X-OJ-Artifact-Kind': artifactKind,
+            'X-OJ-Content-SHA256': sha256,
+          },
+        });
+      }
+    })();
+  </script>
+  <script src="../../resources/assets/builder/plate-template-builder.js"></script>
+  <script src="../../resources/js/worksheet-workflow.js"></script>
+  <script src="../../resources/js/worksheet-authoring-workbench.js"></script>
+</body>
+</html>

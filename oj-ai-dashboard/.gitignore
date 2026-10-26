@@ -1,0 +1,40 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Logs and caches
+*.log
+.codex-*.patch
+*.orig
+*.rej
+.cache/
+.phpunit.cache/
+.eslintcache
+coverage/
+build/
+tests/artifacts/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build and packaged artifacts
+*.zip
+*.sha256
+*.tar
+*.tar.gz
+*.tgz
+/dist/release-staging/
+
+# WordPress / runtime uploads
+uploads/
+tmp/
+temp/

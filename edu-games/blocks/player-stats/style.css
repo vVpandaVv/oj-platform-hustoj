@@ -1,0 +1,132 @@
+.edu-games-block-player-stats {
+    width: min(1120px, calc(100% - 24px));
+    margin: 0 auto;
+    color: #172033;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.eg-stats-header {
+    margin-bottom: 16px;
+}
+
+.eg-stats-header p {
+    margin: 0 0 6px;
+    color: #1d6fd8;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.eg-stats-header h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    line-height: 1.05;
+}
+
+.eg-stats-status {
+    margin-bottom: 10px;
+    color: #69758a;
+    font-weight: 800;
+}
+
+.eg-stats-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.eg-stat-card,
+.eg-stats-panel,
+.eg-empty {
+    border: 1px solid #d7dee9;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.eg-stat-card {
+    min-height: 94px;
+    padding: 14px;
+}
+
+.eg-stat-card span {
+    display: block;
+    margin-bottom: 10px;
+    color: #69758a;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+}
+
+.eg-stat-card strong {
+    display: block;
+    color: #164c96;
+    font-size: 2rem;
+    line-height: 1;
+    text-align: right;
+}
+
+.eg-stats-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.eg-stats-panel {
+    min-width: 0;
+    padding: 14px;
+}
+
+.eg-stats-panel h3 {
+    margin: 0 0 12px;
+    font-size: 1rem;
+}
+
+.eg-stats-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 0;
+    border-top: 1px solid #eef2f7;
+}
+
+.eg-stats-row:first-child {
+    border-top: 0;
+}
+
+.eg-stats-row strong,
+.eg-stats-row span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eg-stats-row strong {
+    color: #164c96;
+}
+
+.eg-stats-row span {
+    color: #69758a;
+    font-weight: 800;
+}
+
+.eg-empty {
+    padding: 18px;
+    color: #69758a;
+    font-weight: 800;
+}
+
+@media (max-width: 880px) {
+    .eg-stats-summary,
+    .eg-stats-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .eg-stats-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}

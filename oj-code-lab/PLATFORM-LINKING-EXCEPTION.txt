@@ -1,0 +1,25 @@
+OJ Code Lab — OJ Platform Linking Permission, version 1.0
+
+This permission supplements GNU GPL version 2 or, at your option,
+any later version. It applies only to OJ Code Lab code whose copyright
+holders have expressly applied this notice ("Covered Code").
+
+Those holders permit you to combine the Covered Code with OJ Platform
+through its public Addon API v1, including the associated documented
+registration and runtime hooks and version constants, and to distribute
+that combination. This permission removes any requirement arising
+solely from the GPL licensing of the Covered Code to license OJ Platform
+under the GPL.
+
+All other GPL obligations for the Covered Code remain, including
+applicable source-code and notice requirements. You must independently
+comply with the licenses of every other component.
+
+This permission grants no rights in OJ Platform, WordPress, Ace, datasets,
+or any other third-party material, and does not alter their licenses.
+It does not authorize incorporation of OJ Platform implementation code
+into the Covered Code or access through non-public platform interfaces.
+
+You may retain this permission in modifications of the Covered Code.
+You are not required to extend it to your contributions and may remove
+it from your modified version. Without it, the ordinary GPL terms apply.

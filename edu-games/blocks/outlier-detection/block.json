@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "edu-games/outlier-detection",
+  "title": "Outlier Detection",
+  "category": "widgets",
+  "icon": "chart-line",
+  "description": "Find outliers from contextual datasets and dot plots.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

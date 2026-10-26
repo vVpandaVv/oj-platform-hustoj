@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-14 관리자 커뮤니티 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds11-prototype.css">
+  <link rel="stylesheet" href="assets/ds14-prototype.css">
+</head>
+<body class="console">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M17 14a7 7 0 0 1 5 7"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4M20 4h-7v16h7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a2 2 0 0 0 .4 2.2l.1.1-2.6 2.6-.1-.1a2 2 0 0 0-2.2-.4A2 2 0 0 0 13.8 21h-3.6A2 2 0 0 0 9 19.4a2 2 0 0 0-2.2.4l-.1.1-2.6-2.6.1-.1A2 2 0 0 0 4.6 15 2 2 0 0 0 3 13.8v-3.6A2 2 0 0 0 4.6 9a2 2 0 0 0-.4-2.2l-.1-.1 2.6-2.6.1.1A2 2 0 0 0 9 4.6 2 2 0 0 0 10.2 3h3.6A2 2 0 0 0 15 4.6a2 2 0 0 0 2.2-.4l.1-.1 2.6 2.6-.1.1a2 2 0 0 0-.4 2.2 2 2 0 0 0 1.6 1.2v3.6a2 2 0 0 0-1.6 1.2z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V3h8v3m-9 0 1 15h8l1-15M10 10v7M14 10v7"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="m14 4 6 6-3 1-4 4-1 5-3-3-5 5-2-2 5-5-3-3 5-1 4-4z"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-14 관리자 커뮤니티 시안</strong><span>직접 화면 14개</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="관리자 커뮤니티 화면 선택">
+        <button type="button" role="tab" data-screen-target="admin-board-list" aria-selected="true">게시글</button>
+        <button type="button" role="tab" data-screen-target="admin-board-new" aria-selected="false">글 작성</button>
+        <button type="button" role="tab" data-screen-target="admin-board-detail" aria-selected="false">글 상세</button>
+        <button type="button" role="tab" data-screen-target="admin-board-edit" aria-selected="false">글 수정</button>
+        <button type="button" role="tab" data-screen-target="admin-board-comments" aria-selected="false">댓글</button>
+        <button type="button" role="tab" data-screen-target="admin-board-trash-confirm" aria-selected="false">글 휴지통 확인</button>
+        <button type="button" role="tab" data-screen-target="admin-board-trash" aria-selected="false">글 휴지통</button>
+        <button type="button" role="tab" data-screen-target="admin-notices-list" aria-selected="false">공지</button>
+        <button type="button" role="tab" data-screen-target="admin-notice-new" aria-selected="false">공지 작성</button>
+        <button type="button" role="tab" data-screen-target="admin-notice-edit" aria-selected="false">공지 수정</button>
+        <button type="button" role="tab" data-screen-target="admin-notice-comments" aria-selected="false">공지 댓글</button>
+        <button type="button" role="tab" data-screen-target="admin-notice-trash-confirm" aria-selected="false">공지 휴지통 확인</button>
+        <button type="button" role="tab" data-screen-target="admin-notice-trash" aria-selected="false">공지 휴지통</button>
+        <button type="button" role="tab" data-screen-target="community-settings" aria-selected="false">설정</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-14-community.html"><span class="brand-mark">OJ</span><span>관리자 콘솔</span></a>
+      <a class="button ghost header-utility" href="development-ds-14-user-community-ui.html">사용자 커뮤니티</a>
+    </div>
+  </header>
+
+  <div class="workspace console-workspace">
+    <aside class="console-sidebar" aria-label="관리자 메뉴">
+      <strong>관리자 메뉴</strong>
+      <div class="sidebar-role">커뮤니티 운영자 · 전역 범위</div>
+      <a href="development-ds-09-admin-dashboard-shell-ui.html"><svg><use href="#i-grid"/></svg>대시보드</a>
+      <a href="#users"><svg><use href="#i-users"/></svg>사용자</a>
+      <a href="development-ds-10-admin-problems-ui.html"><svg><use href="#i-book"/></svg>문제</a>
+      <a href="development-ds-11-admin-submissions-ui.html"><svg><use href="#i-send"/></svg>제출</a>
+      <a href="development-ds-12-admin-learning-hub-ui.html"><svg><use href="#i-learn"/></svg>학습 공간</a>
+      <a href="#admin-board-list" aria-current="page"><svg><use href="#i-message"/></svg>커뮤니티</a>
+      <a href="#operations"><svg><use href="#i-settings"/></svg>운영</a>
+    </aside>
+
+    <main class="page" id="main">
+      <nav class="community-nav" aria-label="커뮤니티 관리 메뉴">
+        <a href="#admin-board-list" data-sidebar-for="admin-board-list admin-board-new admin-board-detail admin-board-edit admin-board-comments admin-board-trash-confirm admin-board-trash" aria-current="page">게시판</a>
+        <a href="#admin-notices-list" data-sidebar-for="admin-notices-list admin-notice-new admin-notice-edit admin-notice-comments admin-notice-trash-confirm admin-notice-trash">공지</a>
+        <a href="#community-settings" data-sidebar-for="community-settings">설정</a>
+      </nav>
+
+      <section class="screen" id="admin-board-list" data-screen="admin-board-list">
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">커뮤니티 운영</p><h1>게시글 관리</h1><p>전체 글과 접근 Provider가 확인한 학습 공간 질문을 한곳에서 관리합니다.</p></div><div class="heading-actions"><button class="button" type="button" data-open-screen="admin-board-trash">휴지통</button><button class="button primary" type="button" data-open-screen="admin-board-new"><svg><use href="#i-plus"/></svg>글 작성</button></div></header>
+        <p class="route-caption">/oj-console/board</p>
+        <div class="moderation-summary"><div><span>게시 중</span><strong>248개</strong></div><div><span>답변 대기</span><strong>17개</strong></div><div><span>숨김</span><strong>3개</strong></div><div><span>연결 대상 없음</span><strong>1개</strong></div></div>
+        <div class="filter-bar"><label class="field wide"><span class="field-label">검색</span><input type="search" placeholder="제목·본문·작성자"></label><label class="field"><span class="field-label">공간</span><select><option>모든 공간</option><option>전체 게시판</option><option>문제</option><option>수업</option><option>대회·평가</option><option>그룹</option></select></label><label class="field"><span class="field-label">상태</span><select><option>게시 중</option><option>숨김</option><option>연결 대상 없음</option></select></label><div class="filter-actions"><button class="button primary" type="button"><svg><use href="#i-search"/></svg>조회</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>게시글</th><th>연결 공간</th><th>작성자</th><th>댓글</th><th>상태</th><th>최근 변경</th><th></th></tr></thead><tbody>
+          <tr><td><strong>질문을 올릴 때 확인해 주세요</strong><br><small>고정 게시글</small></td><td>전체 게시판</td><td>박지현</td><td>4</td><td><span class="badge info">고정</span></td><td>07-22 09:00</td><td><button class="button" type="button" data-open-screen="admin-board-detail">상세</button></td></tr>
+          <tr><td><strong>구간 합에서 인덱스를 어디서 바꿔야 하나요?</strong></td><td>문제 · 1024</td><td>김하늘</td><td>2</td><td><span class="badge good">게시 중</span></td><td>오늘 10:35</td><td><button class="button" type="button" data-open-screen="admin-board-detail">상세</button></td></tr>
+          <tr><td><strong>연결된 수업을 찾을 수 없는 질문</strong></td><td>수업 · 대상 없음</td><td>한유진</td><td>0</td><td><span class="badge wait">연결 대상 없음</span></td><td>어제 16:02</td><td><button class="button" type="button" data-open-screen="admin-board-edit">정리</button></td></tr>
+          <tr><td><strong>개인정보가 포함된 게시글</strong></td><td>전체 게시판</td><td>윤지호</td><td>1</td><td><span class="badge danger">숨김</span></td><td>07-23 14:20</td><td><button class="button" type="button">검토</button></td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="screen" id="admin-board-new" data-screen="admin-board-new" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">운영자 작성</p><h1>게시글 작성</h1><p>운영자는 검증된 연결 대상을 검색해 선택할 수 있습니다.</p></div></header>
+        <p class="route-caption">/oj-console/board/new</p>
+        <div class="composer-layout"><form class="composer-main"><div class="form-grid"><label class="field"><span class="field-label">연결 공간</span><select><option>전체 게시판</option><option>문제 검색</option><option>수업 검색</option><option>대회·평가 검색</option><option>그룹 검색</option></select></label><label class="field"><span class="field-label">대상 검색</span><input type="search" placeholder="번호나 이름 검색"></label><label class="field wide"><span class="field-label">제목</span><input type="text" maxlength="120" value="질문을 올릴 때 확인해 주세요"></label></div><label class="field"><span class="field-label">본문</span><textarea class="community-editor" maxlength="20000">개인정보와 풀이 전체 코드는 게시하지 않습니다.</textarea></label><div class="setting-line"><div><strong>상단 고정</strong><span>전체 게시판 목록 위에 표시합니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>사용</span></label></div><div class="form-actions"><button class="button" type="button" data-open-screen="admin-board-list">취소</button><button class="button primary" type="button" data-toast="운영자 게시글을 등록합니다.">등록</button></div></form><aside class="composer-side"><h2>연결 원칙</h2><ul><li>숫자 ID를 직접 입력하지 않습니다.</li><li>검색 결과는 현재 운영 범위만 제공합니다.</li><li>진행 평가 문제는 담당 범위에서만 연결합니다.</li></ul></aside></div>
+      </section>
+
+      <section class="screen" id="admin-board-detail" data-screen="admin-board-detail" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">게시글 운영</p><h1>게시글 상세</h1><p>원문과 운영 상태를 확인하고 필요한 명령만 실행합니다.</p></div><div class="heading-actions"><button class="button" type="button" data-open-screen="admin-board-comments">댓글 관리</button><button class="button primary" type="button" data-open-screen="admin-board-edit">수정</button></div></header>
+        <p class="route-caption">/oj-console/board/thread/{board_thread_id}</p>
+        <div class="post-layout"><article class="post-article"><header class="post-head"><div class="context-labels"><span class="context-label">문제 · 1024</span><span class="badge good">게시 중</span></div><h1>구간 합에서 인덱스를 어디서 바꿔야 하나요?</h1><div class="post-byline"><strong>김하늘</strong><span>오늘 10:21 작성</span><span>개정 1회</span></div></header><div class="post-body"><p>입력 번호와 리스트 위치의 기준을 어디에서 맞추는 것이 좋은지 궁금합니다.</p></div></article><aside class="post-side"><button class="button" type="button" data-toast="게시글을 목록 위에 고정했습니다."><svg><use href="#i-pin"/></svg>고정</button><button class="button" type="button" data-toast="게시글을 숨기고 사유를 기록합니다."><svg><use href="#i-eye"/></svg>숨김</button><button class="button danger" type="button" data-open-screen="admin-board-trash-confirm"><svg><use href="#i-trash"/></svg>휴지통</button></aside></div>
+        <section class="comments-panel"><div class="section-heading"><div><h2>최근 댓글</h2><p>전체 댓글 운영은 댓글 관리 화면에서 수행합니다.</p></div></div><div class="comment-list"><article class="comment"><div class="comment-author"><strong>이민준 강사</strong><span>오늘 10:29</span></div><div class="comment-body"><p>입력 단계에서 내부 기준을 통일하면 이후 계산이 단순해집니다.</p></div></article></div></section>
+      </section>
+
+      <section class="screen" id="admin-board-edit" data-screen="admin-board-edit" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">운영자 편집</p><h1>게시글 수정</h1><p>본문, 연결 문맥과 운영 상태를 수정하며 변경 이유를 남깁니다.</p></div></header>
+        <p class="route-caption">/oj-console/board/thread/{board_thread_id}/edit</p>
+        <div class="composer-layout"><form class="composer-main"><div class="form-grid"><label class="field"><span class="field-label">연결 공간</span><select><option>문제 · 1024 구간 합 구하기</option><option>전체 게시판</option></select></label><label class="field"><span class="field-label">상태</span><select><option>게시 중</option><option>숨김</option></select></label><label class="field wide"><span class="field-label">제목</span><input type="text" value="구간 합에서 인덱스를 어디서 바꿔야 하나요?"></label></div><label class="field"><span class="field-label">본문</span><textarea class="community-editor">입력 번호와 리스트 위치의 기준을 어디에서 맞추는 것이 좋은지 궁금합니다.</textarea></label><label class="field"><span class="field-label">변경 이유</span><input type="text" placeholder="운영 기록에 남길 이유"></label><div class="form-actions"><button class="button" type="button" data-open-screen="admin-board-detail">취소</button><button class="button primary" type="button" data-toast="변경 내용과 운영 이유를 저장합니다.">변경 저장</button></div></form><aside class="composer-side"><h2>연결 대상 없음</h2><ul><li>검증 가능한 새 문맥으로 배정하거나 휴지통으로 이동합니다.</li><li>전체 게시판으로 자동 이동하지 않습니다.</li><li>일반 사용자에게는 정리 전까지 보이지 않습니다.</li></ul></aside></div>
+      </section>
+
+      <section class="screen" id="admin-board-comments" data-screen="admin-board-comments" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">댓글 운영</p><h1>게시판 댓글</h1><p>숨김과 휴지통을 구분하고 실행자·사유·시각을 보존합니다.</p></div></header>
+        <p class="route-caption">/oj-console/board/comments</p>
+        <div class="filter-bar compact"><label class="field wide"><span class="field-label">검색</span><input type="search" placeholder="댓글 내용·작성자"></label><label class="field"><span class="field-label">상태</span><select><option>정상</option><option>숨김</option><option>휴지통</option></select></label><div class="filter-actions"><button class="button primary" type="button">조회</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>댓글</th><th>게시글</th><th>작성자</th><th>상태</th><th>작성 시각</th><th></th></tr></thead><tbody><tr><td class="revision-change">입력 단계에서 내부 기준을 통일하면 이후 계산이 단순해집니다.</td><td>구간 합에서 인덱스를...</td><td>이민준</td><td><span class="badge good">정상</span></td><td>오늘 10:29</td><td><button class="button" type="button" data-toast="숨김 사유 입력 화면을 엽니다.">숨김</button></td></tr><tr><td class="revision-change">개인 연락처가 포함된 댓글입니다.</td><td>스터디 구성원을...</td><td>윤지호</td><td><span class="badge danger">숨김</span></td><td>어제 18:02</td><td><button class="button" type="button" data-toast="숨김을 해제하고 운영 기록을 남깁니다.">복원</button></td></tr></tbody></table></div>
+      </section>
+
+      <section class="screen" id="admin-board-trash-confirm" data-screen="admin-board-trash-confirm" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">복구 가능한 처리</p><h1>게시글을 휴지통으로 이동할까요?</h1><p>댓글·첨부·연결 문맥은 함께 보존되며 일반 사용자 화면에서 즉시 제외됩니다.</p></div></header>
+        <p class="route-caption">/oj-console/board/thread/{board_thread_id}/trash</p>
+        <div class="confirm-layout"><section class="confirm-panel"><h2>대상 게시글</h2><dl><div><dt>제목</dt><dd>구간 합에서 인덱스를 어디서 바꿔야 하나요?</dd></div><div><dt>작성자</dt><dd>김하늘</dd></div><div><dt>댓글</dt><dd>2개</dd></div><div><dt>첨부</dt><dd>1개 · 파일 유지</dd></div></dl><label class="field"><span class="field-label">처리 이유</span><textarea placeholder="운영 기록에 남길 이유"></textarea></label><div class="form-actions"><button class="button" type="button" data-open-screen="admin-board-detail">취소</button><button class="button danger" type="button" data-toast="게시글을 휴지통으로 이동했습니다.">휴지통으로 이동</button></div></section></div>
+      </section>
+
+      <section class="screen" id="admin-board-trash" data-screen="admin-board-trash" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">복구 보관</p><h1>게시글 휴지통</h1><p>DS-15 보존 정책이 확정되기 전에는 영구 삭제하지 않습니다.</p></div><button class="button" type="button" data-open-screen="admin-board-list">게시글 관리</button></header>
+        <p class="route-caption">/oj-console/board/trash</p>
+        <div class="table-wrap"><table><thead><tr><th>게시글</th><th>작성자</th><th>연결 공간</th><th>이동 이유</th><th>이동 시각</th><th></th></tr></thead><tbody><tr><td>정답 코드 공유 글</td><td>윤지호</td><td>문제 · 1057</td><td>진행 평가 답안 공유</td><td>07-23 14:24</td><td><button class="button" type="button" data-toast="게시글과 관계를 복원했습니다.">복원</button></td></tr><tr><td>중복 질문</td><td>한유진</td><td>수업 · 파이썬 기초</td><td>작성자 요청</td><td>07-22 11:08</td><td><button class="button" type="button">복원</button></td></tr></tbody></table></div>
+      </section>
+
+      <section class="screen" id="admin-notices-list" data-screen="admin-notices-list" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">서비스 전체 안내</p><h1>공지 관리</h1><p>초안·예약·게시·종료 상태와 홈 노출을 한 목록에서 관리합니다.</p></div><div class="heading-actions"><button class="button" type="button" data-open-screen="admin-notice-trash">휴지통</button><button class="button primary" type="button" data-open-screen="admin-notice-new"><svg><use href="#i-plus"/></svg>공지 작성</button></div></header>
+        <p class="route-caption">/oj-console/notices</p>
+        <div class="filter-bar compact"><label class="field wide"><span class="field-label">검색</span><input type="search" placeholder="공지 제목"></label><label class="field"><span class="field-label">상태</span><select><option>전체</option><option>초안</option><option>예약</option><option>게시</option><option>종료</option></select></label><div class="filter-actions"><button class="button primary" type="button">조회</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>공지</th><th>상태</th><th>표시</th><th>게시 기간</th><th>댓글</th><th></th></tr></thead><tbody><tr><td><strong>7월 26일 채점 서버 점검 안내</strong></td><td><span class="badge good">게시</span></td><td>중요 · 고정 · 홈</td><td>07-24 09:00~07-27 00:00</td><td>사용 안 함</td><td><button class="button" type="button" data-open-screen="admin-notice-edit">수정</button></td></tr><tr><td><strong>여름집중 학습 알고리즘 대회</strong></td><td><span class="badge info">예약</span></td><td>홈</td><td>07-28 09:00~08-04 18:00</td><td>허용</td><td><button class="button" type="button">수정</button></td></tr><tr><td><strong>2운영 기간 운영 안내 초안</strong></td><td><span class="badge">초안</span></td><td>-</td><td>-</td><td>사용 안 함</td><td><button class="button" type="button">수정</button></td></tr></tbody></table></div>
+      </section>
+
+      <section class="screen" id="admin-notice-new" data-screen="admin-notice-new" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">새 공지</p><h1>공지 작성</h1><p>게시 시점과 종료 시점, 중요·고정·댓글 정책을 함께 정합니다.</p></div></header>
+        <p class="route-caption">/oj-console/notices/new</p>
+        <div class="composer-layout"><form class="composer-main"><div class="form-grid"><label class="field wide"><span class="field-label">제목</span><input type="text" maxlength="120" value="7월 26일 채점 서버 점검 안내"></label><label class="field"><span class="field-label">게시 상태</span><select data-notice-status="admin-new-notice"><option value="draft">초안</option><option value="future">예약</option><option value="publish">바로 게시</option></select></label><label class="field" data-schedule-fields="admin-new-notice" hidden><span class="field-label">게시 시작</span><input type="datetime-local" value="2026-07-26T08:00"></label><label class="field"><span class="field-label">게시 종료</span><input type="datetime-local" value="2026-07-27T00:00"></label></div><label class="field"><span class="field-label">본문</span><textarea class="community-editor">채점 서버 점검 시간과 제출 처리 방법을 안내합니다.</textarea></label><div class="setting-line"><div><strong>중요·상단 고정</strong><span>목록과 홈에서 먼저 표시합니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>사용</span></label></div><div class="setting-line"><div><strong>댓글 허용</strong><span>필요한 공지에서만 켭니다.</span></div><label class="toggle-line"><input type="checkbox"><span>사용</span></label></div><div class="form-actions"><button class="button" type="button" data-open-screen="admin-notices-list">취소</button><button class="button primary" type="button" data-toast="공지 저장 명령을 실행합니다.">저장</button></div></form><aside class="composer-side"><h2>공개 범위</h2><ul><li>활성 사용자 전체에게만 표시합니다.</li><li>수업·그룹 대상 공지는 해당 공간 질문을 사용합니다.</li><li>지속적인 읽음 기록은 저장하지 않습니다.</li></ul></aside></div>
+      </section>
+
+      <section class="screen" id="admin-notice-edit" data-screen="admin-notice-edit" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">게시 중</p><h1>공지 수정</h1><p>게시 상태를 유지하며 본문과 표시·종료 정책을 변경합니다.</p></div><div class="heading-actions"><button class="button" type="button" data-open-screen="admin-notice-comments">댓글 관리</button><button class="button danger" type="button" data-open-screen="admin-notice-trash-confirm">휴지통</button></div></header>
+        <p class="route-caption">/oj-console/notices/{notice_id}/edit</p>
+        <div class="composer-main"><div class="form-grid"><label class="field wide"><span class="field-label">제목</span><input type="text" value="7월 26일 채점 서버 점검 안내"></label><label class="field"><span class="field-label">상태</span><select><option>게시</option><option>초안</option><option>예약</option></select></label><label class="field"><span class="field-label">게시 종료</span><input type="datetime-local" value="2026-07-27T00:00"></label></div><label class="field"><span class="field-label">본문</span><textarea class="community-editor">7월 26일 오전 8시부터 9시까지 채점 서버 점검을 진행합니다.</textarea></label><div class="setting-line"><div><strong>중요·상단 고정</strong><span>현재 목록과 홈 상단에 표시 중입니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>사용</span></label></div><div class="setting-line"><div><strong>댓글 허용</strong><span>댓글을 켜면 기존 댓글 관리 화면을 사용합니다.</span></div><label class="toggle-line"><input type="checkbox"><span>사용</span></label></div><div class="form-actions"><button class="button" type="button" data-open-screen="admin-notices-list">취소</button><button class="button primary" type="button" data-toast="공지 변경을 저장했습니다.">변경 저장</button></div></div>
+      </section>
+
+      <section class="screen" id="admin-notice-comments" data-screen="admin-notice-comments" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">댓글 허용 공지</p><h1>공지 댓글</h1><p>공지별 댓글 허용 상태를 통과한 댓글만 관리합니다.</p></div></header>
+        <p class="route-caption">/oj-console/notices/comments</p>
+        <div class="notice"><div><strong>여름집중 학습 알고리즘 대회 참가 신청</strong><br>댓글 허용 · 게시 중 · 댓글 3개</div></div>
+        <div class="table-wrap"><table><thead><tr><th>댓글</th><th>작성자</th><th>상태</th><th>작성 시각</th><th></th></tr></thead><tbody><tr><td>개인 참가도 가능한가요?</td><td>김하늘</td><td><span class="badge good">정상</span></td><td>오늘 09:12</td><td><button class="button" type="button" data-toast="댓글을 휴지통으로 이동합니다.">휴지통</button></td></tr><tr><td>신청 기간을 확인했습니다.</td><td>박서연</td><td><span class="badge good">정상</span></td><td>오늘 09:20</td><td><button class="button" type="button">휴지통</button></td></tr></tbody></table></div>
+      </section>
+
+      <section class="screen" id="admin-notice-trash-confirm" data-screen="admin-notice-trash-confirm" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">복구 가능한 처리</p><h1>공지를 휴지통으로 이동할까요?</h1><p>홈과 공지 목록에서 즉시 제외되며 댓글과 첨부는 함께 보존됩니다.</p></div></header>
+        <p class="route-caption">/oj-console/notices/{notice_id}/trash</p>
+        <div class="confirm-layout"><section class="confirm-panel"><h2>대상 공지</h2><dl><div><dt>제목</dt><dd>7월 26일 채점 서버 점검 안내</dd></div><div><dt>현재 상태</dt><dd>게시 · 중요 · 고정</dd></div><div><dt>홈 표시</dt><dd>현재 표시 중</dd></div><div><dt>첨부</dt><dd>1개 · 파일 유지</dd></div></dl><label class="field"><span class="field-label">처리 이유</span><textarea placeholder="운영 기록에 남길 이유"></textarea></label><div class="form-actions"><button class="button" type="button" data-open-screen="admin-notice-edit">취소</button><button class="button danger" type="button" data-toast="공지를 휴지통으로 이동했습니다.">휴지통으로 이동</button></div></section></div>
+      </section>
+
+      <section class="screen" id="admin-notice-trash" data-screen="admin-notice-trash" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">복구 보관</p><h1>공지 휴지통</h1><p>원래 게시 상태와 관계를 보존한 채 복원할 수 있습니다.</p></div><button class="button" type="button" data-open-screen="admin-notices-list">공지 관리</button></header>
+        <p class="route-caption">/oj-console/notices/trash</p>
+        <div class="table-wrap"><table><thead><tr><th>공지</th><th>이전 상태</th><th>처리 이유</th><th>이동 시각</th><th></th></tr></thead><tbody><tr><td>6월 서비스 점검 안내</td><td>종료</td><td>중복 공지 정리</td><td>07-02 10:14</td><td><button class="button" type="button" data-toast="공지를 이전 상태로 복원했습니다.">복원</button></td></tr><tr><td>대회 일정 변경 초안</td><td>초안</td><td>새 공지로 대체</td><td>06-28 16:20</td><td><button class="button" type="button">복원</button></td></tr></tbody></table></div>
+      </section>
+
+      <section class="screen" id="community-settings" data-screen="community-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">기능별 소유</p><h1>커뮤니티 설정</h1><p>게시판·공지·첨부를 독립적으로 설정하며 다른 모듈의 설정은 소유하지 않습니다.</p></div><button class="button primary" type="button" data-toast="커뮤니티 설정을 저장했습니다.">설정 저장</button></header>
+        <p class="route-caption">/oj-console/community/settings</p>
+        <section class="settings-band"><h2>게시판</h2><p>전체 게시판과 연결형 질문의 사용 범위를 정합니다.</p><div class="setting-line"><div><strong>게시판 사용</strong><span>끄면 게시판 메뉴와 모든 문맥 질문만 제거됩니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>사용</span></label></div><div class="setting-line"><div><strong>전체 글쓰기</strong><span>활성 사용자가 전체 게시판에 글을 작성할 수 있습니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>허용</span></label></div><div class="setting-line"><div><strong>문맥 질문</strong><span>문제·수업·대회·그룹 Provider가 있는 공간만 사용합니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>허용</span></label></div></section>
+        <section class="settings-band"><h2>공지</h2><p>게시판과 독립적으로 서비스 전체 공지를 운영합니다.</p><div class="setting-line"><div><strong>공지 사용</strong><span>끄면 공지 목록과 홈 공지 영역만 제거됩니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>사용</span></label></div><div class="setting-line"><div><strong>공지 댓글 기본값</strong><span>공지별로 운영자가 다시 허용할 수 있습니다.</span></div><label class="toggle-line"><input type="checkbox"><span>사용 안 함</span></label></div></section>
+        <section class="settings-band"><h2>첨부</h2><p>보호 저장소와 전용 다운로드 응답을 사용합니다.</p><div class="setting-line"><div><strong>첨부 사용</strong><span>끄면 새 업로드만 막고 기존 파일은 권한 확인 후 제공합니다.</span></div><label class="toggle-line"><input type="checkbox" checked><span>사용</span></label></div><div class="setting-line"><div><strong>파일당 크기</strong><span>최대 10MB를 넘길 수 없습니다.</span></div><input class="compact-input" type="number" min="1" max="10" value="10" aria-label="파일당 최대 크기 MB"></div><div class="setting-line"><div><strong>ZIP 허용</strong><span>실행형 내부 파일 검사를 보장할 수 없어 기본 차단합니다.</span></div><label class="toggle-line"><input type="checkbox"><span>차단</span></label></div></section>
+        <section class="settings-band"><h2>작성 제한</h2><p>WordPress transient 또는 객체 캐시를 사용하며 영구 활동 테이블을 만들지 않습니다.</p><div class="setting-line"><div><strong>10분당 게시글</strong><span>사용자 1명 기준</span></div><input class="compact-input" type="number" min="1" max="5" value="5" aria-label="10분당 게시글 수"></div><div class="setting-line"><div><strong>10분당 댓글</strong><span>사용자 1명 기준</span></div><input class="compact-input" type="number" min="1" max="20" value="20" aria-label="10분당 댓글 수"></div></section>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds14-prototype.js"></script>
+</body>
+</html>

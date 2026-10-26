@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 연결</title>
+  <link rel="stylesheet" href="../../resources/css/external-ai-consent-settings.css">
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #f3f5f7; }
+    body { padding: 28px; box-sizing: border-box; }
+    @media (max-width: 700px) { body { padding: 16px; } }
+  </style>
+  <style data-fixture-icon-style>.oj-ai-icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}</style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+  </svg>
+  <div class="oj-ai-consent-settings-shell">
+    <div class="oj-ai-consent-settings__scope" role="tablist" aria-label="AI 처리 대상">
+      <button type="button" role="tab" data-consent-tab="worksheet" aria-selected="true" aria-controls="oj-ai-external-consent-app">활동지 평가</button>
+      <button type="button" role="tab" data-consent-tab="submission" aria-selected="false" aria-controls="oj-ai-submission-external-consent-app">학생 제출 평가</button>
+    </div>
+    <section id="oj-ai-external-consent-app" class="oj-ai-consent-settings" data-consent-root data-consent-panel="worksheet" data-status-path="/settings/external-ai-consent" data-response-key="external_ai_consent" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-r01" data-locale="ko-KR">
+      <header class="oj-ai-consent-settings__header"><div><h1>활동지 평가</h1><p>활동지 자체 평가에 사용할 외부 AI를 관리합니다.</p></div><button type="button" class="oj-ai-consent-settings__icon" data-action="refresh" aria-label="새로고침" title="새로고침"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button></header>
+      <p class="oj-ai-consent-settings__notice" data-role="notice" role="status">상태를 불러오는 중입니다.</p>
+      <div class="oj-ai-consent-settings__content" data-role="content" hidden>
+        <section class="oj-ai-consent-settings__status" aria-labelledby="worksheet-status-title"><div><span class="oj-ai-consent-settings__badge" data-role="status-badge">확인 중</span><h2 id="worksheet-status-title" data-role="status-title">AI 처리 승인</h2><p data-role="status-message"></p></div><dl><div><dt>승인 일시</dt><dd data-role="approved-at">-</dd></div><div><dt>승인자</dt><dd data-role="approved-by">-</dd></div></dl></section>
+        <section class="oj-ai-consent-settings__section" aria-labelledby="worksheet-destination-title"><h2 id="worksheet-destination-title">연결 대상</h2><dl class="oj-ai-consent-settings__destination"><div><dt>제공자</dt><dd data-role="provider">-</dd></div><div><dt>모델</dt><dd data-role="model">-</dd></div><div><dt>연결 상태</dt><dd data-role="routing-state">확인 중</dd></div></dl></section>
+        <section class="oj-ai-consent-settings__section" aria-labelledby="worksheet-data-title"><h2 id="worksheet-data-title">전송 항목</h2><ul data-role="categories"><li>활동지 내용</li><li>활동지의 텍스트 자료</li><li>평가 기준</li></ul></section>
+        <section class="oj-ai-consent-settings__actions" aria-labelledby="worksheet-action-title"><h2 id="worksheet-action-title">처리 승인</h2><label><input type="checkbox" data-field="acknowledgement"><span>위 항목이 표시된 외부 AI로 전송되는 것에 동의합니다.</span></label><div><button type="button" class="oj-ai-consent-settings__primary" data-action="approve" disabled>승인</button><button type="button" class="oj-ai-consent-settings__danger" data-action="revoke" disabled>승인 철회</button></div></section>
+      </div>
+    </section>
+    <section id="oj-ai-submission-external-consent-app" class="oj-ai-consent-settings" data-consent-root data-consent-panel="submission" data-status-path="/settings/submission-external-ai-consent" data-response-key="submission_external_ai_consent" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-r01" data-locale="ko-KR" hidden>
+      <header class="oj-ai-consent-settings__header"><div><h1>학생 제출 평가</h1><p>학생 제출 평가에 사용할 외부 AI를 관리합니다.</p></div><button type="button" class="oj-ai-consent-settings__icon" data-action="refresh" aria-label="새로고침" title="새로고침"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button></header>
+      <p class="oj-ai-consent-settings__notice" data-role="notice" role="status">상태를 불러오는 중입니다.</p>
+      <div class="oj-ai-consent-settings__content" data-role="content" hidden>
+        <section class="oj-ai-consent-settings__status" aria-labelledby="submission-status-title"><div><span class="oj-ai-consent-settings__badge" data-role="status-badge">확인 중</span><h2 id="submission-status-title" data-role="status-title">AI 처리 승인</h2><p data-role="status-message"></p></div><dl><div><dt>승인 일시</dt><dd data-role="approved-at">-</dd></div><div><dt>승인자</dt><dd data-role="approved-by">-</dd></div></dl></section>
+        <section class="oj-ai-consent-settings__section" aria-labelledby="submission-destination-title"><h2 id="submission-destination-title">연결 대상</h2><dl class="oj-ai-consent-settings__destination"><div><dt>제공자</dt><dd data-role="provider">-</dd></div><div><dt>모델</dt><dd data-role="model">-</dd></div><div><dt>연결 상태</dt><dd data-role="routing-state">확인 중</dd></div></dl></section>
+        <section class="oj-ai-consent-settings__section" aria-labelledby="submission-data-title"><h2 id="submission-data-title">전송 항목</h2><ul data-role="categories"><li>학생이 입력한 답변</li><li>제출한 자료의 텍스트</li><li>평가 정책과 루브릭</li><li>활동지 채점 내용</li></ul></section>
+        <section class="oj-ai-consent-settings__actions" aria-labelledby="submission-action-title"><h2 id="submission-action-title">처리 승인</h2><label><input type="checkbox" data-field="acknowledgement"><span>위 항목이 표시된 외부 AI로 전송되는 것에 동의합니다.</span></label><div><button type="button" class="oj-ai-consent-settings__primary" data-action="approve" disabled>승인</button><button type="button" class="oj-ai-consent-settings__danger" data-action="revoke" disabled>승인 철회</button></div></section>
+      </div>
+    </section>
+  </div>
+  <script>
+    const routes = {
+      worksheet: { available: true, task_key: 'addon.oj_ai_dashboard.worksheet_quality_assessment', provider_key: 'openai', model_key: 'gpt-5-mini', profile_fingerprint: 'a'.repeat(64), routing_revision: 'routing-worksheet' },
+      submission: { available: true, task_key: 'addon.oj_ai_dashboard.student_submission_assessment', provider_key: 'openai', model_key: 'gpt-5-mini', profile_fingerprint: 'b'.repeat(64), routing_revision: 'routing-submission' },
+    };
+    const consents = {
+      worksheet: { state: 'missing', effective: false, consent_hash: null, approved_at_utc: null, approved_by_user_id: null, task_key: routes.worksheet.task_key, destination: null },
+      submission: { state: 'missing', effective: false, consent_hash: null, approved_at_utc: null, approved_by_user_id: null, task_key: routes.submission.task_key, destination: null },
+    };
+    window.confirm = () => true;
+    window.fetch = async (url) => {
+      const value = String(url);
+      const scope = value.includes('submission-external-ai-consent') ? 'submission' : 'worksheet';
+      const route = routes[scope];
+      if (value.endsWith('/commands/approve')) {
+        consents[scope] = { state: 'approved', effective: true, consent_hash: (scope === 'submission' ? 'd' : 'c').repeat(64), approved_at_utc: '2026-08-23 10:00:00', approved_by_user_id: 7, task_key: route.task_key, destination: { provider_key: route.provider_key, model_key: route.model_key, profile_fingerprint: route.profile_fingerprint } };
+      }
+      if (value.endsWith('/commands/revoke')) {
+        consents[scope] = { state: 'missing', effective: false, consent_hash: null, approved_at_utc: null, approved_by_user_id: null, task_key: route.task_key, destination: null };
+      }
+      const key = scope === 'submission' ? 'submission_external_ai_consent' : 'external_ai_consent';
+      const data = {};
+      data[key] = { consent: consents[scope], routing: route, input_categories: [] };
+      return { ok: true, status: 200, async json() { return { data, meta: { correlation_id: 'corr-r01' }, links: {}, actions: [] }; } };
+    };
+  </script>
+  <script src="../../resources/js/external-ai-consent-settings.js"></script>
+</body>
+</html>

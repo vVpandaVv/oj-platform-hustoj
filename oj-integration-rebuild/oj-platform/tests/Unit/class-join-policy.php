@@ -1,0 +1,51 @@
+<?php
+
+declare(strict_types=1);
+
+use CodingPanda\OjPlatform\Modules\Classes\Domain\LearningClass;
+use CodingPanda\OjPlatform\Modules\Classes\Presentation\ClassRequestFactory;
+use CodingPanda\OjPlatform\Modules\Classes\Presentation\Route\ClassCatalogPageHandler;
+use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpRequest;
+use CodingPanda\OjPlatform\Ui\Component\PaginationView;
+
+require __DIR__ . '/class-invitations.php';
+$initialChecks = $classInvitationAssertions;
+$repository = new ClassInvitationRepository();
+$users = new ClassInvitationUsers();
+$service = classInvitationService($repository, $users, new ClassInvitationGroups(), new ClassInvitationClock('2026-10-23 12:00:00'));
+$repository->items[8] = new LearningClass(8, '승인 수업', 'approval', '', 'public', 'private', true, null, null, null, null, 10, null, true);
+$repository->items[9] = new LearningClass(9, '비밀번호 수업', 'password', '', 'password', 'private', true, null, null, password_hash('class-secret', PASSWORD_DEFAULT), null, 10, null);
+$service->membership(20, 2, 'request', 20);
+classInvitationSame('active', $repository->statuses[2][20], '공개 수업은 기본적으로 즉시 참여해야 합니다.');
+$service->membership(20, 2, 'request', 20);
+classInvitationSame('active', $repository->statuses[2][20], '재요청으로 활성 학생을 승인 대기로 바꾸면 안 됩니다.');
+$service->membership(20, 8, 'request', 20);
+classInvitationSame('pending', $repository->statuses[8][20], '승인 필요 수업은 담당자의 승인을 기다려야 합니다.');
+$service->membership(10, 8, 'approve', 20);
+classInvitationSame('active', $repository->statuses[8][20], '담당자는 승인 대기 학생을 승인할 수 있어야 합니다.');
+classInvitationSame(9, $service->findVisible(9, 20)->id(), '참여 전에도 비밀번호 수업 참가 화면을 열 수 있어야 합니다.');
+classInvitationSame([], $service->classProblemsForUser(9, 20), '참여 전에 비밀번호 수업 문제를 노출하면 안 됩니다.');
+classInvitationThrows(static fn () => $service->membership(20, 9, 'request', 20, 'wrong'), '비밀번호', '잘못된 비밀번호로는 참여할 수 없어야 합니다.');
+classInvitationAssert(! isset($repository->statuses[9][20]), '비밀번호 실패로 참가 상태를 생성하면 안 됩니다.');
+$catalog = new ClassCatalogPageHandler(new ClassInvitationPageResponder(), new ClassInvitationAccount($users->findById(20)), $service, new ClassInvitationActionUrls(), new ClassInvitationSecurity(), $html, new PaginationView());
+$response = $catalog->handle(classInvitationRoute('classes.show', '/classes/{class_id}', ['class_id' => '9']), new HttpRequest('GET', '/classes/9'));
+classInvitationSame(200, $response->status(), '비밀번호 수업을 목록에서 연 뒤 참가할 수 있어야 합니다.');
+classInvitationAssert(str_contains($response->body(), 'name="password"') && str_contains($response->body(), '>수업 참여<'), '비밀번호 입력과 즉시 참가 버튼을 제공해야 합니다.');
+$service->membership(20, 9, 'request', 20, 'class-secret');
+classInvitationSame('active', $repository->statuses[9][20], '비밀번호가 맞으면 즉시 참여해야 합니다.');
+$repository->statuses[2][20] = 'pending';
+$service->membership(20, 2, 'request', 20);
+classInvitationSame('active', $repository->statuses[2][20], '승인 불필요 수업의 기존 대기자는 재참여로 활성화할 수 있어야 합니다.');
+$repository->statuses[2][20] = 'removed';
+classInvitationThrows(static fn () => $service->membership(20, 2, 'request', 20), '제한', '제외된 학생의 재참여로 담당자 결정을 우회하면 안 됩니다.');
+classInvitationThrows(static fn () => $service->membership(20, 4, 'request', 20), '참여할 수 없는', '중지된 수업에는 참가할 수 없어야 합니다.');
+classInvitationThrows(static fn () => $service->findVisible(1, 20), '접근', '비공개 수업의 기존 접근 제한은 유지해야 합니다.');
+$repository->statuses[2][20] = null;
+$repository->beforeTransition = static function ($repository): void { $repository->statuses[2][20] = 'removed'; };
+classInvitationThrows(static fn () => $service->membership(20, 2, 'request', 20), '이미 변경', '동시 제외 처리 결과를 참가 요청이 덮어쓰면 안 됩니다.');
+classInvitationSame('removed', $repository->statuses[2][20], '동시 처리된 제외 상태를 보존해야 합니다.');
+$factory = new ClassRequestFactory($users);
+classInvitationAssert($factory->saveCommand(new HttpRequest('POST', '/', [], ['approval_required' => '1']))->requiresApproval(), '승인 설정을 저장 명령에 전달해야 합니다.');
+classInvitationAssert(! $factory->saveCommand(new HttpRequest('POST', '/'))->requiresApproval(), '승인 설정 기본값은 꺼짐이어야 합니다.');
+classInvitationAssert(LearningClass::fromRow(['approval_required' => 1])->requiresApproval(), '저장된 승인 설정을 복원해야 합니다.');
+echo 'Class join policy: ' . ($classInvitationAssertions - $initialChecks) . " checks passed\n";

@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-06 플랫폼 원장 Connector</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-06 플랫폼 원장 Connector</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html" aria-current="page">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="g1-common-rest-envelope.html">G1 공통 REST envelope</a>
+          <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">결론</a>
+          <a href="#scope">범위·입력</a>
+          <a href="#facts">확인 사실</a>
+          <a href="#boundary">경계</a>
+          <a href="#architecture">구조</a>
+          <a href="#ports">Port·DTO</a>
+          <a href="#contexts">Context</a>
+          <a href="#teacher-list">교사 대상 목록</a>
+          <a href="#learner-gap">학생 참여 공백</a>
+          <a href="#authorization">인가</a>
+          <a href="#snapshot">Snapshot</a>
+          <a href="#storage">저장</a>
+          <a href="#errors">오류</a>
+          <a href="#partial">부분 실패</a>
+          <a href="#cache">Cache</a>
+          <a href="#legacy">기존 Connector</a>
+          <a href="#judge">문제·제출</a>
+          <a href="#platform-record">플랫폼 기록</a>
+          <a href="#implementation">구현 이관</a>
+          <a href="#acceptance">수용 기준</a>
+          <a href="#decisions">결정 기록</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <p class="notice">이 문서는 당시 구현의 조사 기록입니다. 아래에서 제거됨으로 표시한 구형 소스는 현재 사용되지 않아 정리했습니다. <a href="retired-runtime-removal-2026-10-20.html">제거 범위와 유지한 호환 기능</a>을 참고하세요.</p>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-DS-06 · Platform Ledger Connector Contract</p>
+        <h2>플랫폼 원장 Connector</h2>
+        <p>사용자·학급·그룹·담당 관계는 OJ Platform 공개 Context API로만 조회하고 인가한다. 애드온은 플랫폼 내부 service·Container·table·Judge DB를 직접 읽지 않으며, stable Context ID와 최소 snapshot만 자기 데이터에 보존한다.</p>
+        <div class="meta">
+          <span class="badge">작성일 2026-08-13</span>
+          <span class="badge good">A-DS-05 사용자 확정·동결</span>
+          <span class="badge good">상태 사용자 확정·동결</span>
+          <span class="badge">확정일 2026-08-13</span>
+          <span class="badge">상세 설계 7/17 동결</span>
+          <span class="badge">공개 Context 연산 3개</span>
+          <span class="badge good">C28-I06 Context 구현 완료</span>
+          <span class="badge good">Addon API 1.1.0 · CG01·02·11</span>
+          <span class="badge">애드온 Runtime 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 결론</h2>
+      <section class="panel">
+        <p>정상 경로는 <code>AddonManifestBuilderV1::onReady()</code>가 전달한 <code>AddonRuntimeContextV1::contexts()</code> 하나뿐이다. <code>2.0.0-dev.33</code>·Addon API <code>1.1.0</code>은 교사 Context, 학생 자기 참여·학습 Context 목록과 exact assignment roster를 공개 Gateway로 제공한다. G1 애드온은 이 계약만 소비하고 로컬 학사 master나 플랫폼 내부 저장소를 만들지 않는다.</p>
+        <div class="warning callout"><strong>우회 금지:</strong> 이 공백을 <code>Oj_Table_Resolver</code>, <code>$wpdb</code>, 플랫폼 내부 Repository, WordPress filter, 로컬 학사 master 또는 전체 assignment를 읽고 PHP에서 숨기는 방식으로 메우지 않는다.</div>
+      </section>
+
+      <h2 id="scope">결정 범위와 동결 입력</h2>
+      <table>
+        <thead><tr><th>입력</th><th>A-DS-06에서 계승하는 결정</th></tr></thead>
+        <tbody>
+          <tr><td><a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a><br><a href="a-ds-02-am-01-onready-adoption.html">AM-01</a></td><td>Manifest builder의 단일 <code>onReady()</code>, 애드온 전용 Runtime Context, 원자적인 Bridge ready 전이, Container·service locator 금지</td></tr>
+          <tr><td><a href="a-ds-03-access-policy.html">A-DS-03 권한 정책</a></td><td><code>capability + platform context + add-on object + state</code>, <code>class|group</code>, 여섯 operation, 요청·Job·다운로드 재인가</td></tr>
+          <tr><td><a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a></td><td>학사 master 0개, Context stable ID·revision·최소 표시 snapshot만 저장, 플랫폼 FK·JOIN·write 0건</td></tr>
+          <tr><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-api-v1-contract.html#contexts">C28-API-C01</a></td><td><code>listTeachingContexts()</code>, <code>authorize()</code>, <code>snapshot()</code>과 공개 DTO·오류·상한</td></tr>
+          <tr><td><a href="../../../oj-integration-rebuild/oj-platform/src/Kernel/Addon/RealAddonContextGateway.php">현재 Real Context Gateway</a><br><a href="../../../oj-integration-rebuild/oj-platform/tests/Contract/addon-i05-runtime.php">I05 계약 검사</a></td><td>현재 구현의 실제 지원 범위와 fail-closed 동작을 추측 없이 기준선으로 사용</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>구현 이관:</strong> A-DS-06 동결 뒤 플랫폼 보완은 별도 OJ Platform G0 변경 집합에서 끝냈다. 이 문서의 다음 작업은 G1에서 C28 adapter와 fail-closed Bridge를 구현하는 것이며, 애드온 설치·업데이트가 플랫폼 Runtime·schema·파일을 수정하는 경로는 계속 금지한다.</div>
+
+      <h2 id="facts">공개 계약과 현재 구현 확인 사실</h2>
+      <table>
+        <thead><tr><th>항목</th><th>공개 계약</th><th>현재 구현·검사</th><th>A-DS-06 판정</th></tr></thead>
+        <tbody>
+          <tr><td>Gateway</td><td><code>AddonContextGatewayV1</code>의 목록·인가·snapshot 3개</td><td>세 메서드 모두 구현</td><td>그대로 사용</td></tr>
+          <tr><td>Context type</td><td><code>site|class|group|user</code></td><td><code>class|group</code>만 원장 연결, <code>site|user</code>는 목록 0·인가 거부</td><td>v1 제품 대상은 <code>class|group</code>만</td></tr>
+          <tr><td>교사 목록</td><td>actor의 담당·관리 범위 최소 정보</td><td><code>managedBy(actor)</code>, 삭제 제외, 검색·cursor·limit 지원</td><td>배포 대상 선택에 사용</td></tr>
+          <tr><td>교사의 학생 대상 검증</td><td>선택 <code>learnerUserId</code> 존재</td><td>관리 교사가 요청하면 WordPress 사용자 존재와 class active participant·group active member 관계를 검사</td><td>배포·평가·보고서의 학생 범위 검증에 사용</td></tr>
+          <tr><td>학생 자기 참여</td><td><code>participate</code> operation</td><td>학생 actor 자신의 active participant/member 관계만 허용하고 타인 대리는 거부</td><td><span class="badge good">CG01 구현</span></td></tr>
+          <tr><td>학생 Context 목록</td><td><code>AddonLearningContextGatewayV1</code></td><td><code>listLearningContexts()</code>가 학생 본인의 active class·group 최소 summary만 반환</td><td><span class="badge good">CG02 구현</span></td></tr>
+          <tr><td>교사 배정 명단</td><td><code>AddonAssignmentRosterGatewayV1</code></td><td>exact active learner와 membership·roster revision을 bounded page로 반환</td><td><span class="badge good">CG11 구현</span></td></tr>
+          <tr><td>학년 표시</td><td>Addon API 1.1 필수 속성이 아님</td><td>현재 Gateway는 <code>enabled</code>만 보장</td><td>optional 표시 보조로만 취급하고 핵심 업무·인가에 사용 금지</td></tr>
+          <tr><td>revision</td><td>Context 상태·인가 유효성 신호</td><td>enabled·deleted·owner를 hash하며 담당 명단은 포함하지 않음</td><td>권한 증명으로 사용 금지</td></tr>
+          <tr><td>operation</td><td><code>view|assign|evaluate|report|manage|participate</code></td><td>DTO allowlist는 강제하지만 교사 다섯 operation의 platform 판정은 동일</td><td>A-DS-03 capability·객체 Policy를 반드시 AND</td></tr>
+          <tr><td>문제·제출</td><td>Context API에 catalog·submission 조회 없음</td><td>공개 Problem·Submission Gateway 없음</td><td>정상 활동지 업무의 의존 대상에서 제외</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="boundary">소유권과 접근 경계</h2>
+      <table>
+        <thead><tr><th>데이터</th><th>정본</th><th>애드온 허용</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>WordPress 사용자 식별자</td><td>WordPress·플랫폼 Auth</td><td>현재 로그인 사용자의 양수 integer ID를 공개 DTO에 전달</td><td>사용자 table JOIN, 로그인명 기반 외부 ID 추정</td></tr>
+          <tr><td>학급·그룹·담당 관계</td><td>OJ Platform</td><td>공개 Context 목록·인가·snapshot 결과</td><td>플랫폼 table SELECT·SHOW, 내부 Repository·Contract 직접 import</td></tr>
+          <tr><td>활동지·배포·학생 응답·평가</td><td>AI 평가 애드온</td><td>소유 Repository와 고정 <code>oj_ai_*</code> table</td><td>플랫폼에 쓰기·복제, 플랫폼 FK·JOIN</td></tr>
+          <tr><td>배정 당시 Context 설명</td><td>애드온 불변 snapshot</td><td>type·ID·label·lifecycle·revision·허용 속성·hash 저장</td><td>전체 Context DTO 직렬화, roster·담당자 명단 저장</td></tr>
+          <tr><td>배정 당시 학생 대상 증빙</td><td>애드온 assignment</td><td><code>CG11</code>이 반환한 exact learner ID·membership revision·roster revision을 해당 배정의 target row로만 저장</td><td>재사용 가능한 roster master·현재 권한 cache·email·login·담당자 명단</td></tr>
+          <tr><td>현재 접근 가능 여부</td><td>현재 플랫폼 Context + A-DS-03 Policy</td><td>민감 작업 직전마다 재인가</td><td>과거 snapshot·creator ID·capability 하나만으로 허용</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="architecture">목표 연결 구조</h2>
+      <div class="flow">
+        <div class="step"><div><strong>1 · Manifest 등록</strong><br><code>Addon_Integration</code>이 기여와 단일 <code>onReady()</code>를 같은 builder에 등록한다.</div></div>
+        <div class="step"><div><strong>2 · Runtime 연결</strong><br><code>Addon_Runtime_Bridge</code>가 accepted snapshot과 <code>contexts()</code>를 검증한 뒤 한 번만 ready가 된다.</div></div>
+        <div class="step"><div><strong>3 · 공개 API 변환</strong><br><code>C28_Context_Gateway_Adapter</code>만 플랫폼 V1 DTO를 알고 애드온 중립 DTO로 변환한다.</div></div>
+        <div class="step"><div><strong>4 · Application Policy</strong><br>Use Case가 capability·Context·애드온 객체·상태를 조합하고 Repository query 전에 범위를 확정한다.</div></div>
+        <div class="step"><div><strong>5 · 불변 기록</strong><br>배정·Job·내보내기에 필요한 최소 Context snapshot과 authorization envelope만 애드온 저장소에 남긴다.</div></div>
+      </div>
+      <table>
+        <thead><tr><th>계층</th><th>플랫폼 공개 타입 import</th><th><code>$wpdb</code></th><th>책임</th></tr></thead>
+        <tbody>
+          <tr><td><code>Platform/Integration</code></td><td>Manifest·Runtime interface만</td><td>금지</td><td>등록과 Bridge 연결</td></tr>
+          <tr><td><code>Platform/Context/C28 adapter</code></td><td>Context interface·DTO만</td><td>금지</td><td>입력 생성·출력 검증·오류 변환</td></tr>
+          <tr><td><code>Application Port</code></td><td>금지</td><td>금지</td><td>플랫폼 중립 query·decision·snapshot 계약</td></tr>
+          <tr><td><code>Application Policy</code></td><td>금지</td><td>금지</td><td>복합 권한과 업무 상태 판정</td></tr>
+          <tr><td>애드온 Repository</td><td>금지</td><td>자기 table만 허용</td><td>객체 관계·snapshot·감사 기록</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="ports">Application Port와 중립 DTO</h2>
+      <section class="panel">
+        <pre><code>interface Platform_Context_Port {
+    public function list_teaching_contexts(Teaching_Context_Query $query): Context_Page;
+    public function authorize(Context_Access_Request $request): Context_Access_Decision;
+    public function capture_snapshot(Context_Snapshot_Request $request): Context_Snapshot_Result;
+}
+
+interface Learner_Context_Port {
+    public function list_learning_contexts(Learning_Context_Query $query): Context_Page;
+}</code></pre>
+        <p><code>Learner_Context_Port</code>는 Addon API 1.1의 <code>AddonLearningContextGatewayV1</code>로 구현한다. Gateway가 없거나 Bridge가 ready가 아니면 unavailable adapter가 fail closed하며, 교사용 목록이나 로컬 roster로 폴백하지 않는다.</p>
+      </section>
+      <table>
+        <thead><tr><th>DTO</th><th>고정 필드</th><th>불변식</th></tr></thead>
+        <tbody>
+          <tr><td><code>Teaching_Context_Query</code></td><td>actor user ID, types, search, cursor, limit</td><td>types는 <code>class|group</code>, limit 1~100, cursor 해석 금지</td></tr>
+          <tr><td><code>Context_Reference</code></td><td>type, stable ID, revision</td><td>ID·revision은 최대 160자의 불투명 safe token</td></tr>
+          <tr><td><code>Context_Summary</code></td><td>reference, label, lifecycle state, enabled, 선택 academic year·grade label</td><td>label 최대 80자, 알 수 없는 속성 폐기</td></tr>
+          <tr><td><code>Context_Page</code></td><td>status, items, next cursor, safe problem</td><td>성공과 문제 동시 존재 금지, item 최대 100개</td></tr>
+          <tr><td><code>Context_Access_Request</code></td><td>actor, reference, operation, 선택 learner, 선택 expected revision</td><td>operation 고정 6개, actor·learner는 양수 WordPress user ID</td></tr>
+          <tr><td><code>Context_Access_Decision</code></td><td>allowed, reason, 현재 snapshot, correlation ID</td><td>허용은 snapshot 필수, 거부는 snapshot 금지</td></tr>
+          <tr><td><code>Context_Snapshot</code></td><td>type, ID, label, lifecycle, revision, actor relation, 허용 속성</td><td>현재 인가 결과이며 전체 원장 객체가 아님</td></tr>
+          <tr><td><code>Safe_Platform_Problem</code></td><td>reason, retryable, correlation ID</td><td>플랫폼 message·details·class·stack을 application에 전달하지 않음</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="contexts">Context type·상태·속성 계약</h2>
+      <table>
+        <thead><tr><th>항목</th><th>허용 값</th><th>제품 사용</th><th>보존 규칙</th></tr></thead>
+        <tbody>
+          <tr><td>type</td><td><code>class</code>, <code>group</code></td><td>배포·제출·평가·보고서 범위</td><td>문자열 그대로 저장, 숫자 suffix 파싱 금지</td></tr>
+          <tr><td><code>site|user</code></td><td>공개 DTO에는 존재</td><td>현재 미지원</td><td>응답에 오면 <code>unsupported_context</code>, 자동 변환 금지</td></tr>
+          <tr><td>lifecycle</td><td>현재 <code>active|inactive</code></td><td><code>active</code>만 새 배포 선택 가능</td><td>알 수 없는 값은 표시만 가능하고 명령은 차단</td></tr>
+          <tr><td><code>enabled</code></td><td>boolean</td><td>lifecycle 교차 검산</td><td>누락·type 불일치는 명령 불가</td></tr>
+          <tr><td><code>academic_year</code></td><td>선택 scalar</td><td>검색·표시 보조</td><td>없어도 정상, 권한·그룹 식별에 사용 금지</td></tr>
+          <tr><td><code>grade_label</code></td><td>선택 문자열</td><td>짧은 표시 보조</td><td>별도 학년 그룹·local master 생성 금지</td></tr>
+          <tr><td>기타 attributes</td><td>없음</td><td>사용 안 함</td><td>allowlist 밖 key는 즉시 폐기</td></tr>
+          <tr><td>actor relation</td><td>플랫폼 safe token</td><td>운영 진단 보조</td><td>권한 증명·assignment target identity로 사용 금지</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>학년 그룹의 의미:</strong> 학년은 사이트 그룹과 다른 애드온 그룹이 아니다. 플랫폼이 class의 안전한 표시 속성을 제공할 때만 보여 주며, 현재 구현처럼 속성이 없으면 이름 검색과 class·group 목록만 사용한다.</div>
+
+      <h2 id="teacher-list">교사 배포 대상 목록</h2>
+      <table>
+        <thead><tr><th>단계</th><th>입력·처리</th><th>실패 처리</th></tr></thead>
+        <tbody>
+          <tr><td>초기 목록</td><td><code>actorUserId</code>, <code>types=['class','group']</code>, 빈 search·cursor, limit 30</td><td>실패하면 빈 목록으로 위장하지 않고 “수업을 불러올 수 없습니다” 상태</td></tr>
+          <tr><td>검색</td><td>trim한 최대 200자 문자열, debounce 후 첫 cursor부터 재조회</td><td>이전 검색 결과를 새 결과로 표시하지 않음</td></tr>
+          <tr><td>다음 페이지</td><td>플랫폼의 최대 512자 cursor를 그대로 반환하고 요청 수명 동안 seen-cursor 집합·페이지 상한을 적용</td><td>cursor를 decode·조합·장기 저장하지 않으며 같은 cursor·진행 없는 page 재등장은 전체 조회 실패</td></tr>
+          <tr><td>항목 검증</td><td>type·ID·revision·label·lifecycle·attributes allowlist 확인</td><td>애드온이 실제로 받은 잘못된 항목만 제외 count에 포함한다. 플랫폼이 내부에서 조용히 제외한 원장 row 수는 공개 DTO로 알 수 없으며 추정하지 않는다. 중복 ID는 페이지 전체 실패</td></tr>
+          <tr><td>선택 가능</td><td><code>active</code>이며 <code>enabled=true</code></td><td>inactive·unknown은 비활성 표시, 신규 배포 금지</td></tr>
+          <tr><td>명령 전 확인</td><td>선택한 각 항목을 <code>assign</code> + expected revision으로 인가</td><td>목록 결과만으로 배포 허용 금지</td></tr>
+        </tbody>
+      <div class="callout"><strong>G1-REST-GAP-01 해결:</strong> 공통 QueryInput의 기본 cursor 상한은 191자로 유지하고 Q01에만 플랫폼 opaque cursor 최대 512자의 endpoint profile을 적용한다. 구현은 cursor를 자르거나 해석하지 않으며 <a href="g1-context-list-q01.html#cursor">G1-IMP-09 기록</a>의 fixture로 왕복을 검증한다.</div>
+      </table>
+
+      <h2 id="learner-gap">학생 참여·배정 명단 Addon API 1.1 계약</h2>
+      <section class="panel">
+        <p>학생 활동지 목록은 Repository query 전에 <code>listLearningContexts()</code>로 얻은 현재 active <code>class|group</code> ID 집합으로 제한한다. 직접 URL·작성·제출·본인 PDF는 다시 <code>authorize(... participate ...)</code>를 호출하며, exact 전체 배포는 <code>listAssignmentLearners()</code>의 context·roster revision을 모든 page에서 고정한 뒤에만 commit한다.</p>
+        <pre><code>interface AddonLearningContextGatewayV1 extends AddonContextGatewayV1 {
+    public function listLearningContexts(
+        AddonLearningContextQueryV1 $query
+    ): AddonContextPageV1;
+}
+
+final class AddonLearningContextQueryV1 {
+    public function __construct(
+        int $actorUserId,
+        array $types,
+        string $search = '',
+        string $cursor = '',
+        int $limit = 30
+    );
+}</code></pre>
+        <h3>CG11 배정 명단 snapshot 확정 계약</h3>
+        <p>교사가 class·group 전체에 배포할 때 개별 학생을 반복 검증하는 방식만으로는 누락 없는 대상 집합을 증명할 수 없다. 플랫폼이 배정 목적으로만 현재 활성 학생 ID와 membership revision을 bounded page로 제공하고, 첫 page의 roster revision을 나머지 page가 고정해야 한다.</p>
+        <pre><code>interface AddonAssignmentRosterGatewayV1 extends AddonContextGatewayV1 {
+    public function listAssignmentLearners(
+        AddonAssignmentRosterQueryV1 $query
+    ): AddonAssignmentLearnerPageV1;
+}
+
+final class AddonAssignmentRosterQueryV1 {
+    public function __construct(
+        int $actorUserId,
+        string $contextType,
+        string $contextId,
+        string $expectedContextRevision,
+        ?string $expectedRosterRevision = null,
+        string $cursor = '',
+        int $limit = 100
+    );
+    public function actorUserId(): int;
+    public function contextType(): string;
+    public function contextId(): string;
+    public function expectedContextRevision(): string;
+    public function expectedRosterRevision(): ?string;
+    public function cursor(): string;
+    public function limit(): int;
+}
+
+final class AddonAssignmentLearnerV1 {
+    public function __construct(int $learnerUserId, string $membershipRevision);
+    public function learnerUserId(): int;
+    public function membershipRevision(): string;
+}
+
+final class AddonAssignmentLearnerPageV1 {
+    public function __construct(
+        bool $successful,
+        array $items,
+        string $nextCursor,
+        ?string $rosterRevision,
+        ?AddonApiProblemV1 $problem
+    );
+    public function isSuccessful(): bool;
+    public function items(): array;
+    public function nextCursor(): string;
+    public function rosterRevision(): ?string;
+    public function problem(): ?AddonApiProblemV1;
+}</code></pre>
+        <div class="callout"><strong>CG11 DTO 불변식:</strong> <code>CG11-QUERY-INV-01</code>은 첫 요청과 후속 cursor 요청을 섞지 못하게 하고, <code>CG11-PAGE-INV-01</code>은 성공 page에만 roster revision을 허용한다. <code>CG11-ERROR-01</code>에 따라 거부는 <code>addon_context_denied</code>, stale·명단 race·cursor·provider 실패는 <code>addon_context_unavailable</code>로만 소비하며 raw message를 판별하지 않는다.</div>
+      </section>
+      <table>
+        <thead><tr><th>API 1.1 계약</th><th>필수 의미</th><th>보안 불변식</th></tr></thead>
+        <tbody>
+          <tr><td><code>listLearningContexts()</code></td><td>actor가 현재 active participant/member인 class·group 최소 summary만 반환</td><td>다른 학생 ID 입력, roster·담당자·member count 반환 메서드 없음</td></tr>
+          <tr><td><code>listAssignmentLearners()</code></td><td>현재 <code>assign</code> 권한이 있는 교사에게 active learner ID·membership revision만 안정된 roster revision으로 page 반환</td><td>이름·email·login·전체 사용자 검색 비노출, page 중 명단 변경 시 전체 실패, 배정당 최대 5,000명</td></tr>
+          <tr><td><code>authorize(... participate ...)</code></td><td>actor가 해당 Context의 active participant/member이면 허용</td><td><code>learnerUserId</code>가 있으면 actor와 같아야 하며 타인 대리 참여 금지</td></tr>
+          <tr><td>교사 operation</td><td><code>view|assign|evaluate|report|manage</code>는 현재 담당·관리 관계 유지</td><td>학생 참여가 교사 operation으로 승격되지 않음</td></tr>
+          <tr><td>간접 group 연결</td><td>플랫폼이 실제 학습 접근으로 인정한 간접 membership까지 동일 정책으로 판정</td><td>추측한 class/group 연결이나 애드온 roster cache 금지</td></tr>
+          <tr><td>호환 방식</td><td><code>CG02</code>·<code>CG11</code> extension interface·DTO가 Addon API <code>1.1.0</code>에 추가됐고 기존 V1 signature는 유지</td><td><code>method_exists</code>·내부 class 탐지 대신 공개 interface <code>instanceof</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>G0 구현 인수:</strong> <code>CG01</code>·<code>CG02</code>·<code>CG11</code> 공개 계약과 양수·음수 fixture가 <code>2.0.0-dev.33</code>·Addon API <code>1.1.0</code>에 구현됐다. G1은 <code>&gt;=1.1.0 &lt;2.0.0</code>을 요구하고, 공개 extension을 사용할 수 없을 때 PublicUI·전체 배포·본인 PDF를 fail closed한다.</div>
+
+      <h2 id="authorization">operation과 복합 인가</h2>
+      <table>
+        <thead><tr><th>애드온 작업</th><th>Context operation</th><th>learner</th><th>추가 A-DS-03 조건</th></tr></thead>
+        <tbody>
+          <tr><td>배포 대상 요약·안전한 상세</td><td><code>view</code></td><td>없음</td><td>worksheet view capability와 객체 범위</td></tr>
+          <tr><td>배포 생성·대상 추가</td><td><code>assign</code></td><td>개별 선택은 지정 학생, 전체 배포는 <code>CG11</code> target 각 learner</td><td>assign capability, 발행 revision, assignment state, roster revision</td></tr>
+          <tr><td>마감·재개방·배포 관리</td><td><code>manage</code></td><td>없음</td><td>assignment manage capability와 허용 상태 전이</td></tr>
+          <tr><td>학생 제출 조회·AI 평가·검토</td><td><code>evaluate</code></td><td>해당 제출 소유 학생 ID</td><td>평가 capability, assignment·submission relation과 revision</td></tr>
+          <tr><td>대시보드·보고서·내보내기</td><td><code>report</code></td><td>학생 상세일 때 해당 ID</td><td>report/export capability, filter·privacy threshold</td></tr>
+          <tr><td>학생 목록·작성·제출·본인 PDF</td><td><code>participate</code></td><td>actor와 같은 ID</td><td>participate capability, 본인 assignment·submission, 마감·공개 상태</td></tr>
+        </tbody>
+      </table>
+      <ol>
+        <li>현재 WordPress actor와 surface capability를 확인한다.</li>
+        <li>Context Port에서 현재 relation을 인가한다.</li>
+        <li>애드온 Repository query에 허용 Context ID와 객체 ID를 조건으로 넣는다.</li>
+        <li>객체 relation·revision·업무 state를 확인한다.</li>
+        <li>명령·다운로드·Job commit 직전에 같은 목적의 Policy를 다시 실행한다.</li>
+      </ol>
+      <div class="warning callout"><strong>expected revision 사용 범위:</strong> 대상 선택→배포 생성과 Job enqueue→start→commit처럼 하나의 명령이 같은 Context 상태를 전제로 할 때 사용한다. 과거 assignment snapshot revision을 영구 권한 증명으로 재사용하지 않으며, 새 요청은 현재 authorize snapshot을 다시 얻는다. 현재 Gateway allow는 inactive를 자동 거부하지 않고 여섯 operation을 목적별로 분기하지 않으므로, 반환 snapshot의 active/enabled와 애드온 capability·객체·state를 allow 뒤에도 별도 검사한다.</div>
+
+      <h2 id="snapshot">배정 snapshot 생성 순서</h2>
+      <div class="flow">
+        <div class="step"><div><strong>목록 선택</strong><br>교사가 summary의 type·ID·revision을 선택한다.</div></div>
+        <div class="step"><div><strong>현재 인가</strong><br><code>authorize(assign, expectedRevision)</code>가 허용 snapshot을 반환해야 한다.</div></div>
+        <div class="step"><div><strong>TOCTOU 확인</strong><br>허용 snapshot revision으로 <code>snapshot()</code>을 한 번 더 호출한다.</div></div>
+        <div class="step"><div><strong>명단 고정</strong><br><code>CG11</code> 첫 page의 roster revision을 후속 page마다 expected 값으로 보내고 최대 50 page·5,000명을 검증한다.</div></div>
+        <div class="step"><div><strong>정규화·hash</strong><br>허용 필드만 canonical JSON으로 만들고 SHA-256을 계산한다.</div></div>
+        <div class="step"><div><strong>원자 commit</strong><br>Context와 모든 roster page가 성공한 경우에만 assignment와 target snapshot을 함께 저장한다.</div></div>
+      </div>
+      <table>
+        <thead><tr><th>저장 필드</th><th>값</th><th>제외</th></tr></thead>
+        <tbody>
+          <tr><td>identity</td><td>type, stable context ID, revision</td><td>파싱한 내부 숫자 ID, 플랫폼 FK</td></tr>
+          <tr><td>display</td><td>label, lifecycle state, enabled, 선택 academic year·grade label</td><td>description, roster, 담당자 이름, 임의 attributes</td></tr>
+          <tr><td>integrity</td><td>schema ID·version, canonical JSON, SHA-256</td><td>PHP serialize, 원본 DTO dump</td></tr>
+          <tr><td>authorization</td><td>별도 envelope의 operation·actor·correlation ID·authorized time</td><td>snapshot을 영구 allow token으로 저장</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="storage">식별자 매핑과 저장 규칙</h2>
+      <table>
+        <thead><tr><th>질문</th><th>고정 답</th></tr></thead>
+        <tbody>
+          <tr><td>로컬 Context mapping table이 필요한가</td><td>아니다. <code>oj_ai_assignment_targets</code> 등에 플랫폼 stable ID를 그대로 저장한다.</td></tr>
+          <tr><td><code>class:42</code>를 숫자 42로 분해하는가</td><td>아니다. prefix와 suffix는 플랫폼 내부 표현이며 애드온은 불투명 문자열로 취급한다.</td></tr>
+          <tr><td>label 변경을 과거 배정에 반영하는가</td><td>아니다. 과거 snapshot label은 당시 감사 자료이고 현재 화면은 필요할 때 새 인가 snapshot을 별도 표시한다.</td></tr>
+          <tr><td>학생 roster를 저장하는가</td><td>재사용 가능한 roster master·cache는 저장하지 않는다. 다만 <code>CG11</code>에서 받은 learner ID·membership revision은 그 배정의 immutable target 증빙으로만 저장하고 현재 권한이나 다른 배정의 명단으로 재사용하지 않는다.</td></tr>
+          <tr><td>Context가 삭제·비활성화되면 과거 데이터를 지우는가</td><td>아니다. 신규 명령·공개를 차단하고 과거 snapshot과 감사 이력은 보존 정책에 따라 유지한다.</td></tr>
+          <tr><td>플랫폼 Context에 FK를 두는가</td><td>아니다. DB·connection·release lifecycle이 다르므로 Contract와 hash로만 검증한다.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="errors">오류·상태 변환</h2>
+      <table>
+        <thead><tr><th>플랫폼·Adapter 입력</th><th>애드온 reason</th><th>교사 화면</th><th>학생 화면</th></tr></thead>
+        <tbody>
+          <tr><td>Bridge not ready·callback 미호출</td><td><code>runtime_unavailable</code></td><td>연결 상태 확인</td><td>지금 이용할 수 없음</td></tr>
+          <tr><td><code>addon_context_denied</code></td><td><code>context_denied</code></td><td>이 수업에 권한 없음</td><td>항목 없음 또는 접근 불가</td></tr>
+          <tr><td><code>addon_context_unavailable</code> (expected revision 불일치·provider 예외 공통)</td><td><code>context_unavailable</code></td><td>수업 정보를 다시 불러오기</td><td>새로고침 필요</td></tr>
+          <tr><td>inactive·enabled false</td><td><code>context_inactive</code></td><td>비활성 수업</td><td>항목 없음</td></tr>
+          <tr><td><code>site|user</code> 또는 unknown type</td><td><code>unsupported_context</code></td><td>지원하지 않는 대상</td><td>항목 없음</td></tr>
+          <tr><td>학생 확장 interface 없음</td><td><code>learner_context_api_required</code></td><td>플랫폼 업데이트 필요</td><td>지금 이용할 수 없음</td></tr>
+          <tr><td>DTO 불변식·중복 ID·unknown code·예외</td><td><code>invalid_platform_response</code></td><td>연결 진단 확인</td><td>지금 이용할 수 없음</td></tr>
+        </tbody>
+      </table>
+      <p>Adapter는 플랫폼 <code>correlationId</code>를 안전한 진단과 감사에 전달하지만 학생 응답에는 노출하지 않는다. expected revision 불일치와 provider 예외는 공개 code가 같으므로 <code>message</code>로 <code>context_changed</code>를 추정하지 않고 모두 <code>context_unavailable</code>로 닫는다. 플랫폼 <code>message</code>, <code>details</code>, exception message, class name과 stack trace는 버린다.</p>
+
+      <h2 id="partial">부분 실패와 원자성</h2>
+      <table>
+        <thead><tr><th>업무</th><th>부분 실패 정책</th><th>저장·출력</th></tr></thead>
+        <tbody>
+          <tr><td>교사 Context 목록</td><td>Gateway가 성공 페이지를 반환한 경우 유효 item만 표시하되 애드온 수신 후 제외 count만 진단에 기록한다. 중복 ID·반복 cursor·페이지 상한 초과·페이지 자체 실패는 전체 실패다.</td><td>영속 cache 0건, 플랫폼 내부 제외 수 추정 0건</td></tr>
+          <tr><td>여러 대상 배포 생성</td><td>한 대상이라도 deny·inactive·stale·invalid이면 전체 명령을 중단한다.</td><td>assignment·target·audit 부분 row 0건</td></tr>
+          <tr><td>교사 dashboard</td><td>각 Context를 독립 재인가하고 허용 영역만 보여 줄 수 있다. 누락 수만 짧게 표시하고 거부 대상의 이름·수량은 노출하지 않는다.</td><td>부분 표시 가능, projection에 허용 Context만 사용</td></tr>
+          <tr><td>보고서 PDF·CSV·ZIP</td><td>요청한 Context 하나라도 재인가 실패하면 전체 artifact 생성을 중단한다.</td><td>부분 파일·공개 lease 0건</td></tr>
+          <tr><td>평가·PDF Job</td><td>start와 commit에서 재인가한다. 철회·변경 시 공식 결과와 공개 artifact commit을 하지 않는다.</td><td>안전한 실패 사건과 correlation ID만</td></tr>
+          <tr><td>학생 목록</td><td>학습 Context 목록을 먼저 얻고 그 ID 집합을 Repository query 조건으로 사용한다.</td><td>전체 assignment scan 후 PHP filtering 금지</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="cache">Cache·동시성·재시도</h2>
+      <table>
+        <thead><tr><th>항목</th><th>규칙</th></tr></thead>
+        <tbody>
+          <tr><td>Bridge</td><td>요청 수명 동안 한 번만 연결하고 부분 adapter를 공개하지 않는다. 중복 connect는 계약 오류다.</td></tr>
+          <tr><td>목록·인가 cache</td><td>동일 요청 안의 중복 호출만 actor·type·ID·operation·learner·expected revision key로 memoize할 수 있다.</td></tr>
+          <tr><td>영속 cache</td><td>Context 목록·권한 결정을 option·transient·table에 cache하지 않는다.</td></tr>
+          <tr><td>배정 snapshot</td><td>cache가 아니라 불변 업무 기록이므로 A-DS-05 보존 정책을 따른다.</td></tr>
+          <tr><td>stale 재시도</td><td>명령 안에서 자동으로 새 revision을 승인하지 않는다. 새 목록·확인 화면을 보여 주고 사용자가 다시 제출한다.</td></tr>
+          <tr><td>일시 장애 재시도</td><td>동기 화면은 사용자가 재시도하고, Job은 A-DS-07 정책의 제한된 backoff를 사용하되 commit 전 재인가한다.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="legacy">기존 Platform Connector 퇴출 지도</h2>
+      <table>
+        <thead><tr><th>현재 코드</th><th>문제</th><th>A-DS-16 승인 뒤 목표</th></tr></thead>
+        <tbody>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Oj_Table_Resolver</code> (제거됨)</span></td><td>table·column 존재와 prefix 후보를 추측</td><td>목표 composition에서 참조 0건 후 퇴출</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Abstract_Oj_Read_Connector</code> (제거됨)</span></td><td><code>$wpdb</code>와 filter fallback을 공통 제공</td><td>C28 adapter로 대체, 상속 계열 퇴출</td></tr>
+          <tr><td><code>Oj_Group_Connector</code>·<code>Oj_User_Connector</code></td><td>플랫폼 원장 직접 SELECT와 로컬 정규화</td><td>Context Port로 대체</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Oj_Problem_Connector</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Oj_Submission_Connector</code> (제거됨)</span></td><td>Judge table을 WordPress DB로 가정하고 문제 본문·소스까지 직접 조회</td><td>정상 업무 의존에서 제거, 공개 계약 없는 fallback 금지</td></tr>
+          <tr><td><code>Oj_Connector</code></td><td>서로 다른 데이터 소스를 하나의 facade로 숨김</td><td>Context·AI·Import Port를 분리</td></tr>
+          <tr><td><code>Oj_Console_Connector (이전)</code> → <a href="../../src/Platform/Addon_Integration.php"><code>Addon_Integration</code></a></td><td>Container 문자열 service lookup</td><td>Manifest Page·Menu 기여로 대체</td></tr>
+          <tr><td><code>Platform_Module (이전)</code> → <a href="../../src/Platform/Addon_Module.php"><code>Addon_Module</code></a></td><td>독립 메뉴·REST와 legacy facade 조립</td><td><code>Addon_Integration</code>과 단일 CompositionRoot로 이관</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>현재 파일 삭제 0건:</strong> 위 표는 구현 이관 계약이다. 이 단계에서는 기존 PHP를 수정·삭제하지 않으며 A-DS-16 뒤 수직 기능 테스트와 함께 참조를 제거한다.</div>
+
+      <h2 id="judge">OJ 문제·채점 제출 데이터 판정</h2>
+      <table>
+        <thead><tr><th>데이터</th><th>v1 정상 업무 정본</th><th>가져오기·연결 정책</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 본문·문항</td><td>애드온 Plate revision</td><td>활동지 template package는 A-DS-09·15의 검증된 파일 import</td></tr>
+          <tr><td>학생 활동지 응답·제출</td><td>애드온 Submission revision</td><td>PublicUI에서 애드온이 수집하며 플랫폼 submission table을 읽지 않음</td></tr>
+          <tr><td>OJ coding problem</td><td>v1 범위 아님</td><td>직접 DB import 금지. 필요해지면 별도 공개 read Gateway와 source contract를 먼저 설계</td></tr>
+          <tr><td>OJ Judge submission·source code</td><td>v1 범위 아님</td><td>학생 제출 평가의 source가 아니며 <code>platform_submission</code>으로 우회하지 않음</td></tr>
+          <tr><td>기존 평가 플러그인 데이터</td><td>legacy read-only source</td><td>A-DS-15에서 preview·mapping·명시 승인 후 애드온 target으로 이관</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>정리:</strong> 활동지 자체 평가와 학생 제출 평가는 모두 애드온이 소유한 revision을 AI input으로 사용한다. 따라서 현재 공개 API에 Problem·Submission Gateway가 없는 것은 핵심 v1 업무의 차단 사유가 아니며, 기존 직접 조회 코드를 유지할 이유도 아니다.</div>
+
+      <h2 id="platform-record">OJ Platform 후속 변경 기록</h2>
+      <table>
+        <thead><tr><th>ID</th><th>현재 사실</th><th>필요 조치</th><th>관문</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>C28-I06-CG01</code></td><td>학생 자기 active participation만 허용하고 타인 대리를 거부</td><td>기존 교사 learner 검증 유지</td><td>class·group 직접·간접 membership 양수/음수 fixture</td><td><span class="badge good">G0 구현 완료</span></td></tr>
+          <tr><td><code>C28-I06-CG02</code></td><td><code>AddonLearningContextGatewayV1</code>·query DTO 공개</td><td>학생 본인의 active Context만 bounded page로 반환</td><td>roster 비노출·cursor·검색·탈퇴 반영 fixture</td><td><span class="badge good">API 1.1 구현</span></td></tr>
+          <tr><td><code>C28-I06-CG03</code></td><td>학년 값은 공개 필수 속성이 아님</td><td>없어도 정상이며 표시 보조 외 핵심 업무에 사용 금지</td><td>제공자 문서·source·fixture 일치</td><td><span class="badge good">문서 정합화</span></td></tr>
+          <tr><td><code>C28-I06-CG04</code></td><td>Context revision이 담당 명단을 포함하지 않음</td><td>revision을 권한 증명으로 쓰지 않는 소비자 재인가 E2E 유지</td><td>담당 해제 직후 화면·REST·Job·download 거부</td><td>보상 정책 적용</td></tr>
+          <tr><td><code>C28-I06-CG05</code></td><td>Problem·Judge Submission 공개 Gateway 없음</td><td>AI 평가 v1 비목표로 기록, 향후 요구가 생길 때 별도 API 변경으로 시작</td><td>목표 애드온의 직접 DB 접근 0건</td><td>의도된 비범위</td></tr>
+          <tr><td><code>C28-I06-CG06</code></td><td><code>participate</code>는 active self-membership 분기, staff 5개 operation은 같은 <code>canManage</code> gate</td><td>staff operation을 목적별 권한 증명으로 쓰지 않고 작업별 capability·객체·state를 추가 강제</td><td>self·대리·inactive 참여와 staff 관리 gate fixture</td><td>정본 확정·소비자 보상</td></tr>
+          <tr><td><code>C28-I06-CG07</code></td><td>inactive는 학생 <code>participate</code>·exact roster에서 거부되고 staff 5개 operation·snapshot에서는 상태 보존 성공</td><td>배포·평가·공개 같은 상태 변경 명령에서 active·enabled를 별도 강제</td><td>active/inactive/deleted × participate·roster·staff·snapshot</td><td>정본 확정·소비자 보상</td></tr>
+          <tr><td><code>C28-I06-CG08</code></td><td>교사용 목록만 unknown·stale cursor가 첫 페이지로 되감기며 learning Context·exact roster는 fail closed</td><td>교사용 목록에 반복 cursor·페이지 상한 guard 적용, 다른 두 목록 실패 시 전체 수집 폐기</td><td>세 목록의 정상·unknown·반복 cursor fixture</td><td>정본 확정·소비자 보상</td></tr>
+          <tr><td><code>C28-I06-CG09</code></td><td>malformed 원장 항목을 구현이 조용히 제외하며 제외 수를 공개하지 않음</td><td>필요 시 page diagnostics를 additive 계약으로 설계. 소비자는 내부 제외 수를 추정하지 않음</td><td>malformed item·개인정보 비노출 fixture</td><td>의미 명확화</td></tr>
+          <tr><td><code>C28-I06-CG10</code></td><td>expected revision 불일치와 Context provider 예외가 같은 <code>addon_context_unavailable</code>로 반환됨</td><td>raw message로 원인을 분류하지 않고 명령을 중단한 뒤 Context를 새로 불러오게 함. 안정 reason이 필요하면 additive 계약으로 별도 승인</td><td>stale·provider 예외·message 비의존 fixture</td><td>소비자 보상 적용</td></tr>
+          <tr><td><code>C28-I06-CG11</code></td><td><code>AddonAssignmentRosterGatewayV1</code>과 query·learner·page DTO 공개</td><td>stable context·roster revision, 최대 5,000명, PII 비노출</td><td>권한·membership·race·cursor·상한 fixture</td><td><span class="badge good">API 1.1 구현</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>변경 통제 결과:</strong> CG01·02·03·11은 애드온 작업과 분리된 OJ Platform G0 변경 집합에서 API <code>1.1.0</code>·SemVer·fixture·rollback 기록과 함께 구현했다. 이후 애드온 G1은 이 공개 계약을 소비할 뿐 플랫폼 PHP·config·migration을 수정하지 않는다.</div>
+
+      <h2 id="implementation">A-DS-16 뒤 구현 이관 순서</h2>
+      <ol>
+        <li><strong>플랫폼 인수:</strong> <code>CG01~CG02·CG11</code> 구현과 <code>CG03</code> 의미 정합화를 완료했다. <code>CG04~CG10</code>은 동결된 소비자 보상 정책을 G1 adapter·Policy 검사로 구현한다.</li>
+        <li><strong>소비자 호환:</strong> 확정된 플랫폼·Addon API 최소 버전과 공개 interface fixture를 애드온 package에 고정한다.</li>
+        <li><strong>Integration·Bridge:</strong> 단일 Manifest와 <code>onReady()</code>, 원자 ready 전이와 unavailable adapter를 구현한다.</li>
+        <li><strong>Context adapter:</strong> 공개 V1 DTO 변환, allowlist, 오류 mapping과 request memoization을 구현한다.</li>
+        <li><strong>수직 업무 연결:</strong> 배포 선택·학생 목록·평가·보고서·PDF의 복합 Policy와 Repository 선필터를 각각 완성한다.</li>
+        <li><strong>legacy 퇴출:</strong> 직접 table·Container connector의 모든 참조를 제거하고 별도 fallback이 0건인지 검사한다.</li>
+        <li><strong>C28-I06 인수:</strong> 검증 package·platform fingerprint·upgrade·rollback 기록을 고정했다. clean production package 뒤 G1에서 두 shell E2E를 실행한다.</li>
+      </ol>
+
+      <h2 id="acceptance">A-DS-06 수용 기준</h2>
+      <table>
+        <thead><tr><th>ID</th><th>검증 가능한 완료 조건</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS06-A01</code></td><td>플랫폼 연결 코드가 공개 <code>CodingPanda\OjPlatform\AddonApi\V1</code> allowlist만 import하고 Kernel·Modules·Container import가 0건임</td></tr>
+          <tr><td><code>A-DS06-A02</code></td><td>플랫폼 Context·사용자·그룹·문제·제출 table에 대한 SELECT·SHOW·JOIN·write와 table 후보 추측이 0건임</td></tr>
+          <tr><td><code>A-DS06-A03</code></td><td>교사 대상 목록이 <code>types=['class','group']</code>, search 200자 이하, opaque cursor 512자 이하, limit 1~100을 강제함</td></tr>
+          <tr><td><code>A-DS06-A04</code></td><td>Context ID·revision을 파싱·재작성하지 않고 최대 160자 불투명 token으로 왕복함</td></tr>
+          <tr><td><code>A-DS06-A05</code></td><td>여섯 operation이 A-DS-03 capability·객체·state와 AND되고 operation 하나만으로 허용되는 경로가 0건임</td></tr>
+          <tr><td><code>A-DS06-A06</code></td><td>학생 PublicUI 전에 self <code>participate</code>와 학습 Context 목록의 양수·음수·탈퇴 E2E가 통과함</td></tr>
+          <tr><td><code>A-DS06-A07</code></td><td>assignment 생성이 Context list→authorize→snapshot→<code>CG11</code> stable roster pages→canonical hash→원자 commit 순서를 지킴</td></tr>
+          <tr><td><code>A-DS06-A08</code></td><td>Context snapshot은 type·ID·label·lifecycle·revision·허용 속성 외 roster·담당자·임의 attributes를 저장하지 않고, exact assignment target learner 증빙은 별도 row로만 보존함</td></tr>
+          <tr><td><code>A-DS06-A09</code></td><td>학년·학급·그룹·학생·담당 local master와 Context mapping·permission cache table·option·transient가 0건임</td></tr>
+          <tr><td><code>A-DS06-A10</code></td><td>여러 대상 배포의 deny·stale·inactive·invalid failure injection에서 부분 assignment·target row가 0건임</td></tr>
+          <tr><td><code>A-DS06-A11</code></td><td>학생 목록 query가 현재 학습 Context ID를 먼저 조건으로 적용하고 전체 assignment scan 후 PHP filtering이 0건임</td></tr>
+          <tr><td><code>A-DS06-A12</code></td><td>보고서 artifact는 포함 Context 하나라도 재인가 실패 시 파일·lease·공식 projection을 만들지 않음</td></tr>
+          <tr><td><code>A-DS06-A13</code></td><td>Runtime·Context unavailable(stale·provider 공통)·inactive·unsupported·invalid response가 고정 reason으로 변환되고 raw exception·message·details가 노출되지 않으며 Gateway allow 뒤 inactive가 별도 거부됨</td></tr>
+          <tr><td><code>A-DS06-A14</code></td><td>목록·인가 cache가 요청 범위를 넘지 않고 권한 철회 뒤 새 요청·Job start·commit·download가 즉시 거부됨</td></tr>
+          <tr><td><code>A-DS06-A15</code></td><td><code>Oj_Table_Resolver</code>, <code>Abstract_Oj_Read_Connector</code>, 기존 Group·User·Problem·Submission·Console connector가 목표 CompositionRoot에서 도달 불가함</td></tr>
+          <tr><td><code>A-DS06-A16</code></td><td>OJ problem·Judge submission을 핵심 평가 input으로 읽는 경로와 <code>platform_submission</code> fallback이 0건임</td></tr>
+          <tr><td><code>A-DS06-A17</code></td><td><code>C28-I06-CG01~CG11</code> 상태·SemVer·fixture·소비자 영향이 플랫폼·애드온 HTML에서 같은 값으로 추적됨</td></tr>
+          <tr><td><code>A-DS06-A18</code></td><td>애드온 설치·Connector 전환 전후 OJ Platform source·config·schema·migration fingerprint가 동일하고 <code>C28-I06-CG06~CG11</code> 구현 baseline 변경 시 설계 validator가 실패함</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">사용자 확정 결정 기록</h2>
+      <table>
+        <thead><tr><th>ID</th><th>확정 제안</th><th>영향</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS06-D01</code></td><td>플랫폼 원장 접근은 <code>AddonRuntimeContextV1::contexts()</code>의 공개 Context Gateway만 사용한다.</td><td>플랫폼 내부 API·DB 결합 제거</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D02</code></td><td>Context·AI adapter는 단일 <code>onReady()</code>가 성공한 뒤 원자적으로 Bridge에 연결한다.</td><td>부분 Runtime 연결 방지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D03</code></td><td>제품 v1 배포 대상 type은 <code>class|group</code> 두 가지로 제한한다.</td><td>현재 원장 구현과 A-DS-03 정렬</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D04</code></td><td>Context ID·revision은 불투명 문자열로 취급하고 숫자 ID로 파싱하거나 로컬 ID로 치환하지 않는다.</td><td>플랫폼 내부 표현 독립</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D05</code></td><td>학년은 선택 표시 속성이며 별도 Context·그룹·local master가 아니다.</td><td>학년 데이터 부재에서도 핵심 업무 유지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D06</code></td><td>교사 대상 선택은 <code>listTeachingContexts()</code>의 검색·opaque cursor·limit 30을 사용한다.</td><td>전체 원장·offset pagination 금지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D07</code></td><td>학생 목록은 별도 공개 학습 Context 열거 계약 없이는 구현하지 않는다.</td><td>전체 assignment scan·로컬 roster 우회 차단</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D08</code></td><td><code>participate</code>는 actor 자신의 active participant/member 관계만 허용하도록 플랫폼 후속 계약을 요구한다.</td><td>CG01 구현으로 조건 충족</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D09</code></td><td>최종 인가는 capability·현재 Context·애드온 객체·state의 교집합이다.</td><td>operation·snapshot 단독 허용 방지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D10</code></td><td>애드온 작업을 <code>view|assign|evaluate|report|manage|participate</code>에 고정 매핑한다.</td><td>화면·REST·Job 목적 일치</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D11</code></td><td>Context snapshot과 revision은 감사·TOCTOU 검사용이며 영구 권한 증명이 아니다.</td><td>담당 해제 즉시 반영</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D12</code></td><td>배정은 list→authorize→snapshot→hash→원자 commit 순서를 사용한다.</td><td>대상 변경과 부분 배포 방지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D13</code></td><td>stable ID·최소 display snapshot 외 Context mapping·roster·permission cache를 저장하지 않는다.</td><td>플랫폼 원장 복제 금지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D14</code></td><td>Context 목록·인가 memoization은 동일 요청 안으로 제한한다.</td><td>오래된 권한 cache 제거</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D15</code></td><td>여러 대상 배포는 한 대상 실패 시 전체를 중단하고 부분 assignment를 만들지 않는다.</td><td>배포 원자성</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D16</code></td><td>dashboard는 허용 Context만 부분 표시할 수 있지만 PDF·CSV·ZIP export는 전체 재인가 성공을 요구한다.</td><td>부분 화면과 공식 산출물 기준 분리</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D17</code></td><td>플랫폼 오류는 고정 애드온 reason과 correlation ID로만 변환하고 raw message·details·exception을 버린다.</td><td>정보 노출 차단</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D18</code></td><td>학생에게 내부 API·버전·class·오류 code를 표시하지 않는다.</td><td>짧고 안전한 PublicUI 오류</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D19</code></td><td>Job은 enqueue·start·commit에서 책임 actor와 현재 Context를 재인가한다.</td><td>권한 철회 뒤 공식 쓰기 차단</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D20</code></td><td>기존 table 추측·filter fallback·Container connector는 목표 CompositionRoot에서 모두 퇴출한다.</td><td>이중 연결 경로 제거</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D21</code></td><td>OJ problem·Judge submission은 활동지 v1 정상 업무의 데이터 원장이 아니다.</td><td>애드온 revision 중심 평가 유지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D22</code></td><td>향후 OJ 문제·제출 가져오기가 필요하면 package import 또는 별도 공개 read Gateway를 먼저 설계한다.</td><td>직접 DB 조회 재도입 방지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D23</code></td><td>플랫폼 공백은 <code>C28-I06-CG01~CG11</code>로 제공자 HTML에 기록하고 별도 승인·SemVer·fixture 뒤 수정한다.</td><td>API 1.1·AM-02·fixture로 이행 완료</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS06-D24</code></td><td>A-DS-16 사용자 승인 전 애드온 Connector와 플랫폼 Runtime을 구현·수정하지 않는다.</td><td>설계 동결 전 코드 변경 차단</td><td>사용자 확정</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout"><strong>Addendum 01 · A-DS-11 정합화:</strong> <code>A-DS06-D13</code>의 roster 금지는 재사용 가능한 로컬 학사 master·cache 금지다. <code>CG11</code>이 제공한 exact learner ID·membership revision을 해당 assignment의 불변 target 증빙으로 보존하는 것은 이 금지를 위반하지 않는다. 기존 <code>A-DS06-D01~D24</code>는 변경하지 않고 <code>A-DS06-D23</code>의 플랫폼 추적 범위만 <code>CG11</code>까지 확장한다.</div>
+
+      <h2 id="completion">A-DS-06 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>현재 판정</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td>공개 API·실제 구현 대조</td><td>충족</td><td>V1 DTO·Real Gateway·I05 fixture 확인</td></tr>
+          <tr><td>Port·Adapter·DTO 경계</td><td>충족</td><td>플랫폼 공개 타입 격리와 중립 application contract</td></tr>
+          <tr><td>교사 목록·인가·snapshot</td><td>충족</td><td>query 상한, operation mapping, TOCTOU·원자 commit</td></tr>
+          <tr><td>학생 참여·교사 배정 명단 경로</td><td>플랫폼 G0 구현 인수</td><td><code>C28-I06-CG01~CG02·CG11</code>·Addon API 1.1.0</td></tr>
+          <tr><td>학년 속성</td><td>공백 확인·선택 처리</td><td><code>C28-I06-CG03</code>, 핵심 업무 의존 금지</td></tr>
+          <tr><td>식별자·snapshot·cache</td><td>충족</td><td>불투명 ID, 최소 canonical snapshot, request-only memo</td></tr>
+          <tr><td>부분 실패·오류·보안</td><td>충족</td><td>업무별 원자성, 고정 reason, PII·raw 오류 비노출</td></tr>
+          <tr><td>기존 직접 Connector 처리</td><td>충족</td><td>퇴출 지도와 Problem·Submission 비범위</td></tr>
+          <tr><td>수용 기준</td><td>충족</td><td><code>A-DS06-A01~A18</code></td></tr>
+          <tr><td>사용자 결정 확인</td><td>충족·동결</td><td>2026-08-13 <code>A-DS06-D01~D24</code> 사용자 확정</td></tr>
+          <tr><td>애드온·플랫폼 Runtime 변경</td><td>0건</td><td>HTML 설계·검증 문서만 변경</td></tr>
+        </tbody>
+      </table>
+
+      <section class="panel">
+        <h2>확정 결과와 다음 단계</h2>
+        <p><code>A-DS06-D01~D24</code>는 공개 Context API 전용 연결, 학생 참여 API 공백, snapshot·인가·부분 실패, 기존 직접 Connector 퇴출을 한 묶음으로 확정했다.</p>
+        <ol>
+          <li>교사 기능은 현재 <code>class|group</code> 공개 Gateway만 사용한다.</li>
+          <li>정확한 전체 배포와 학생 기능은 플랫폼의 assignment roster, self participate, 학습 Context 목록 보완 전까지 구현 완료로 보지 않는다.</li>
+          <li>학년 표시는 선택 속성으로만 사용하고 애드온 전용 학년 그룹을 만들지 않는다.</li>
+          <li>OJ 문제·Judge 제출 직접 조회는 핵심 v1에서 제거하고 필요 시 별도 공개 계약으로 시작한다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>동결:</strong> 2026-08-13 <code>A-DS06-D01~D24</code>를 사용자 확정했다. 다음 단계는 <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 작업 실행·큐</a> 상세 설계이며 플랫폼 공백은 이 애드온에서 임의 구현하지 않는다.</div>
+
+      <p class="footer">A-DS-06 플랫폼 원장 Connector · 2026-08-13 사용자 확정·동결 · HTML 정본 · Runtime 변경 0건</p>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "reviewed_at": "2026-09-09",
+  "scope": "Public release ZIP sample CSV allowlist; does not assign a license to OJ Code Lab code.",
+  "datasets": [
+    {
+      "file": "penguins.csv",
+      "bytes": 13478,
+      "sha256": "e07636bd8af74260099ea2f8678e2eabbf35def579940cc76f67061ee16c06c1",
+      "license": "CC0-1.0",
+      "redistribution": "approved",
+      "source_url": "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/8957207b78d6ccd1b4654a9dd9c9041b657478ab/inst/extdata/penguins.csv",
+      "source_revision": "8957207b78d6ccd1b4654a9dd9c9041b657478ab",
+      "source_bytes": 15241,
+      "source_sha256": "f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93",
+      "evidence": "docs/PUBLIC_DATASETS.md",
+      "license_file": "docs/licenses/palmerpenguins-CC0-1.0.md",
+      "license_source_url": "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/8957207b78d6ccd1b4654a9dd9c9041b657478ab/LICENSE.md",
+      "license_sha256": "8e2c443dd9aea6fcd6c293dbf66935bd5ef502fc0ca9b466c773cf9316d5e04c",
+      "license_declaration_url": "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/8957207b78d6ccd1b4654a9dd9c9041b657478ab/README.md",
+      "license_declaration_sha256": "30248c3c8c97d7b2f3a4bc361f9209c64ad9c53f47169eb9fbb5c2d00fe5db92",
+      "package_description_url": "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/8957207b78d6ccd1b4654a9dd9c9041b657478ab/DESCRIPTION",
+      "package_description_sha256": "71ffb68cb47285e2ea534da56b2e9af4532148542a063868c38646bd8c990a31",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "gpl_compatibility_evidence": "https://www.gnu.org/philosophy/license-list.html#CC0",
+      "original_data_creators": [
+        "Kristen B. Gorman",
+        "Palmer Station Antarctica Long Term Ecological Research (LTER)"
+      ],
+      "package_authors": [
+        "Allison Marie Horst",
+        "Alison Presmanes Hill",
+        "Kristen B. Gorman"
+      ],
+      "package_citation_doi": "10.5281/zenodo.3960218",
+      "research_citation_doi": "10.1371/journal.pone.0090081",
+      "source_dataset_dois": [
+        "10.6073/pasta/98b16d7d563f265cb52372c8ca99e60f",
+        "10.6073/pasta/7fca67fb28d56ee2ffa3d9370ebda689",
+        "10.6073/pasta/c14dfcfada8ea13a17536e73eb6fbe9e"
+      ],
+      "verification": {
+        "result": "exact_bytes_after_documented_transform",
+        "rows": 344,
+        "columns": 7,
+        "transform": [
+          "Decode upstream CSV as UTF-8 without changing field values.",
+          "Stable sort all data rows by species ascending; retain within-species order.",
+          "Remove the final year column from header and rows.",
+          "Replace fields exactly equal to NA with an empty string.",
+          "Convert the sex field to uppercase.",
+          "Serialize with Python csv.writer default quoting, LF record terminators, UTF-8 without BOM."
+        ],
+        "comparison": "All bytes equal the existing local penguins.csv; no existing CSV was modified.",
+        "historical_scope": "This proves reproducibility from the pinned official data; it does not establish the original collection or transformation date."
+      }
+    }
+  ],
+  "excluded": [
+    "anagrams.csv",
+    "anscombe.csv",
+    "attention.csv",
+    "brain_networks.csv",
+    "car_crashes.csv",
+    "diamonds.csv",
+    "dots.csv",
+    "dowjones.csv",
+    "exercise.csv",
+    "flights.csv",
+    "fmri.csv",
+    "geyser.csv",
+    "glue.csv",
+    "healthexp.csv",
+    "iris.csv",
+    "kosis_airline_company.csv",
+    "kosis_customer_price.csv",
+    "kosis_economic_index.csv",
+    "kosis_job_seeker_giveup.csv",
+    "krx_listed_companies.csv",
+    "mpg.csv",
+    "planets.csv",
+    "seaice.csv",
+    "seoul_bike_rental_gu.csv",
+    "seoul_covid19.csv",
+    "taxis.csv",
+    "tips.csv",
+    "titanic.csv"
+  ],
+  "excluded_reason": "Individual redistribution terms, exact derivative coverage, or GPL compatibility are not yet fully established. Exclusion applies to release packaging and does not delete local files or installed user data.",
+  "development_history": {
+    "scope": "Developer repository records only; these files are intentionally absent from public release ZIPs. This history is not required to resolve the packaged license evidence.",
+    "prior_inventory": "docs/dataset-inventory.json",
+    "prior_provenance_review": "docs/DATASET_PROVENANCE_2026-09-08.md"
+  }
+}

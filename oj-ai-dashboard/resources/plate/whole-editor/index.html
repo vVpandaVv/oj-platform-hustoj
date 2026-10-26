@@ -1,0 +1,30 @@
+﻿<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plate Template Builder</title>
+  </head>
+  <body>
+    <div id="ws-plate-template-builder-root" class="hws-plate-template-builder-root" data-dev-fixture="1"></div>
+    <textarea id="ws-builder-schema" hidden autocomplete="off"></textarea>
+    <textarea id="ws-render-schema" hidden autocomplete="off"></textarea>
+    <script>
+      window.ojAiDashboardWorksheetPlateBuilder = {
+        defaultSchema: {
+          version: 1,
+          engine: 'plate',
+          title: '',
+          plate_value: [
+            { type: 'h1', children: [{ text: '새 활동지' }] },
+            { type: 'p', children: [{ text: '활동 안내를 입력하세요.' }] }
+          ],
+          response_fields: []
+        },
+        strings: {}
+      };
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

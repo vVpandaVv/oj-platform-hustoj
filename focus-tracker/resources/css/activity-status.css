@@ -1,0 +1,43 @@
+.ftk-activity-status {
+    position: sticky;
+    top: calc(var(--ojp-header-height, 64px) + var(--ojp-space-2, 8px));
+    z-index: 30;
+    box-sizing: border-box;
+    max-width: 100%;
+    margin: var(--ojp-space-3, 12px) 0;
+    padding: var(--ojp-space-3, 12px);
+    border: 1px solid var(--ojp-color-line);
+    border-radius: var(--ojp-radius-sm, 8px);
+    background: var(--ojp-color-surface);
+    color: var(--ojp-color-ink);
+    box-shadow: var(--ojp-shadow-1);
+    font-size: var(--ojp-text-subhead, 13px);
+    overflow-wrap: anywhere;
+}
+
+.ftk-activity-status [data-ftk-gate-label] {
+    display: block;
+    font-size: var(--ojp-text-headline, 15px);
+}
+
+.ftk-activity-status [data-ftk-gate-detail],
+.ftk-activity-status [data-ftk-gate-time] {
+    margin: var(--ojp-space-1, 4px) 0 0;
+    color: var(--ojp-color-muted);
+}
+
+.ftk-activity-status--active {
+    border-color: var(--ojp-color-primary);
+}
+
+.ftk-activity-status--active [data-ftk-gate-label] {
+    color: var(--ojp-color-primary);
+}
+
+.ftk-activity-status--warning {
+    border-color: var(--ojp-color-warning);
+}
+
+.ftk-activity-status--warning [data-ftk-gate-label] {
+    color: var(--ojp-color-warning);
+}

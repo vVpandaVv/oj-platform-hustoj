@@ -1,0 +1,1691 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-10 문제 상세 화면 시안 | OJ Platform</title>
+  <style>
+    :root {
+      --ink: #182126;
+      --muted: #647078;
+      --line: #d9dfe2;
+      --line-strong: #bec8cd;
+      --surface: #ffffff;
+      --surface-soft: #f5f7f7;
+      --surface-teal: #edf7f6;
+      --teal: #087d78;
+      --teal-strong: #056560;
+      --green: #227a4b;
+      --green-soft: #edf8f1;
+      --amber: #9b6500;
+      --amber-soft: #fff7df;
+      --red: #b13b3b;
+      --red-soft: #fff1f1;
+      --blue: #3367a8;
+      --blue-soft: #eef5fc;
+      --focus: #111f8f;
+      --shadow: 0 8px 24px rgba(21, 38, 45, 0.09);
+      --shell-width: 1180px;
+      --radius: 6px;
+      --font-code: Consolas, "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--surface);
+      font-family: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: 8px;
+      left: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      background: var(--ink);
+      border-radius: 4px;
+      transform: translateY(-140%);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .prototype-bar {
+      min-height: 48px;
+      color: #eef8f7;
+      background: #183a3a;
+      border-bottom: 1px solid #315453;
+    }
+
+    .prototype-inner {
+      width: min(calc(100% - 32px), var(--shell-width));
+      min-height: 48px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .prototype-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .prototype-title strong {
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .preview-switcher {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 3px;
+      background: #274b4a;
+      border: 1px solid #476766;
+      border-radius: var(--radius);
+    }
+
+    .preview-switcher button {
+      min-height: 32px;
+      padding: 5px 11px;
+      border: 0;
+      border-radius: 4px;
+      color: #d7e6e5;
+      background: transparent;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .preview-switcher button[aria-selected="true"] {
+      color: #173433;
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .app-header {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      height: 64px;
+      background: rgba(255, 255, 255, 0.97);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .app-header-inner {
+      width: min(calc(100% - 32px), var(--shell-width));
+      height: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      flex: 0 0 auto;
+      font-weight: 800;
+      color: #173433;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .primary-nav {
+      height: 100%;
+      display: flex;
+      align-items: stretch;
+      gap: 4px;
+    }
+
+    .primary-nav a {
+      min-width: 66px;
+      padding: 0 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #3e4b52;
+      border-bottom: 3px solid transparent;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .primary-nav a:hover {
+      color: var(--teal-strong);
+      background: var(--surface-teal);
+    }
+
+    .primary-nav a[aria-current="page"] {
+      color: var(--teal-strong);
+      border-bottom-color: var(--teal);
+    }
+
+    .account-button {
+      width: 38px;
+      height: 38px;
+      margin-left: auto;
+      display: grid;
+      place-items: center;
+      color: #334148;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .page {
+      width: min(calc(100% - 32px), var(--shell-width));
+      margin: 0 auto;
+      padding: 24px 0 100px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--teal-strong);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .problem-header {
+      padding: 0 0 26px;
+      border-bottom: 1px solid var(--line-strong);
+    }
+
+    .problem-header-main {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .problem-title-wrap {
+      min-width: 0;
+    }
+
+    .problem-number {
+      margin: 0 0 7px;
+      color: var(--teal-strong);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      color: #152128;
+      font-size: 32px;
+      line-height: 1.28;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .runtime-meta {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .runtime-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .runtime-item + .runtime-item {
+      padding-left: 18px;
+      border-left: 1px solid var(--line-strong);
+    }
+
+    .runtime-item svg {
+      width: 17px;
+      height: 17px;
+      color: var(--teal);
+    }
+
+    .runtime-item strong {
+      color: #27373e;
+    }
+
+    .problem-tags {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .tag {
+      min-height: 28px;
+      padding: 3px 9px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #354249;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tag.difficulty {
+      color: #754b00;
+      background: var(--amber-soft);
+      border-color: #ead39a;
+    }
+
+    .level-dots {
+      display: inline-flex;
+      gap: 3px;
+    }
+
+    .level-dots i {
+      width: 5px;
+      height: 5px;
+      display: block;
+      background: #d7bd78;
+      border-radius: 50%;
+    }
+
+    .level-dots i.on {
+      background: var(--amber);
+    }
+
+    .header-actions {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-tools {
+      display: none;
+      margin-top: 20px;
+      padding-top: 16px;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    [data-preview-state="admin"] .admin-tools {
+      display: flex;
+    }
+
+    .admin-tools-label {
+      margin-right: auto;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .admin-tools .button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .button {
+      min-height: 42px;
+      padding: 8px 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .button:hover {
+      border-color: var(--teal);
+      color: var(--teal-strong);
+      background: var(--surface-teal);
+    }
+
+    .button.primary {
+      min-width: 120px;
+      color: #fff;
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .button.primary:hover {
+      color: #fff;
+      background: var(--teal-strong);
+      border-color: var(--teal-strong);
+    }
+
+    .button.subtle {
+      color: #3f4c53;
+      background: var(--surface-soft);
+      border-color: var(--line);
+    }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      color: #425158;
+      background: #fff;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+
+    .icon-button:hover {
+      color: var(--teal-strong);
+      background: var(--surface-teal);
+      border-color: var(--teal);
+    }
+
+    .icon-button[aria-pressed="true"] {
+      color: var(--amber);
+      background: var(--amber-soft);
+      border-color: #dfc47c;
+    }
+
+    .icon-button[aria-pressed="true"] svg {
+      fill: currentColor;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 276px;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .problem-content {
+      min-width: 0;
+      padding-top: 30px;
+    }
+
+    .content-section {
+      padding: 0 0 30px;
+    }
+
+    .content-section + .content-section {
+      padding-top: 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 15px;
+      color: #1a2b32;
+      font-size: 21px;
+      line-height: 1.4;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 16px;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    .problem-content strong {
+      color: #17252b;
+    }
+
+    .formula {
+      padding: 12px 16px;
+      overflow-x: auto;
+      color: #173433;
+      background: var(--surface-teal);
+      border-left: 4px solid var(--teal);
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .constraints {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    .constraints li + li {
+      margin-top: 5px;
+    }
+
+    .blocked-code-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 14px 0 18px;
+    }
+
+    .blocked-code {
+      padding: 5px 9px;
+      color: #8f2f2f;
+      background: var(--red-soft);
+      border: 1px solid #e3b8b8;
+      border-radius: 4px;
+      font-family: var(--font-code);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .completion-policy-summary {
+      margin: 12px 0 16px;
+      padding: 13px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border: 1px solid #d7c450;
+      border-left: 4px solid #b77b00;
+      border-radius: var(--radius);
+      background: #fffbea;
+    }
+
+    .completion-policy-summary strong,
+    .completion-policy-summary span {
+      display: block;
+    }
+
+    .completion-policy-summary span {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .completion-policy-chip {
+      flex: 0 0 auto;
+      padding: 5px 9px;
+      color: #3f3400;
+      border: 1px solid #b77b00;
+      border-radius: 4px;
+      background: #fff36d;
+      font-family: var(--font-code);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .wrapper-details {
+      border-top: 1px solid var(--line);
+    }
+
+    .wrapper-details summary {
+      padding: 13px 0;
+      cursor: pointer;
+      color: #27373e;
+      font-weight: 800;
+    }
+
+    .wrapper-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding-bottom: 2px;
+    }
+
+    .wrapper-code {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #f7f9fa;
+    }
+
+    .wrapper-code h3 {
+      margin: 0;
+      padding: 9px 12px;
+      background: #eef2f3;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .wrapper-code pre {
+      min-height: 76px;
+      margin: 0;
+      padding: 12px;
+      overflow-x: auto;
+      color: #dce8eb;
+      background: #26353b;
+      font-family: var(--font-code);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .example-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .code-sample {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #f7f9fa;
+    }
+
+    .code-sample-header {
+      min-height: 42px;
+      padding: 8px 10px 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #eef2f3;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .copy-button {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      color: #536169;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .copy-button:hover {
+      color: var(--teal-strong);
+      background: #fff;
+      border-color: var(--line);
+    }
+
+    .copy-button svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow: auto;
+      color: #243138;
+      background: #f7f9fa;
+      font: 14px/1.6 Consolas, "Courier New", monospace;
+      white-space: pre;
+    }
+
+    details {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    summary {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      color: #2d3d44;
+      font-weight: 800;
+    }
+
+    details p {
+      padding: 0 0 14px 29px;
+      color: #46545b;
+    }
+
+    .problem-aside {
+      position: sticky;
+      top: 88px;
+      margin-top: 30px;
+      padding-left: 24px;
+      border-left: 1px solid var(--line);
+    }
+
+    .aside-section {
+      padding: 0 0 22px;
+    }
+
+    .aside-section + .aside-section {
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+    }
+
+    .aside-title {
+      margin: 0 0 12px;
+      color: #26373e;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .info-list {
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 8px;
+      align-items: baseline;
+      font-size: 13px;
+    }
+
+    .info-row dt {
+      color: var(--muted);
+    }
+
+    .info-row dd {
+      margin: 0;
+      text-align: right;
+      color: #26353c;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .status-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      color: #4a5860;
+      font-size: 13px;
+    }
+
+    .status-line svg {
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      color: var(--blue);
+    }
+
+    .aside-links {
+      display: grid;
+      gap: 4px;
+    }
+
+    .aside-link {
+      min-height: 40px;
+      padding: 8px 5px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #34464e;
+      border-bottom: 1px solid #edf0f1;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .aside-link:hover {
+      color: var(--teal-strong);
+    }
+
+    .aside-link svg {
+      width: 18px;
+      height: 18px;
+      color: var(--teal);
+    }
+
+    .questions-section {
+      padding-top: 30px;
+      border-top: 2px solid #bfcacd;
+    }
+
+    .questions-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 12px;
+    }
+
+    .questions-heading p {
+      margin: -7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .question-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .question-list {
+      border-top: 1px solid var(--line-strong);
+    }
+
+    .question-row {
+      min-height: 72px;
+      padding: 13px 4px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .question-row:hover {
+      background: #fafcfc;
+    }
+
+    .question-main {
+      min-width: 0;
+    }
+
+    .question-title {
+      display: inline;
+      color: #21333a;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .question-title:hover {
+      color: var(--teal-strong);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .question-meta {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .answer-status {
+      min-height: 24px;
+      padding: 2px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .answer-status.answered {
+      color: var(--green);
+      background: var(--green-soft);
+      border: 1px solid #b9dfca;
+    }
+
+    .answer-status.waiting {
+      color: #6b7780;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+    }
+
+    .answer-status svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .evaluation-notice {
+      display: none;
+      padding: 20px;
+      align-items: flex-start;
+      gap: 12px;
+      color: #624500;
+      background: var(--amber-soft);
+      border: 1px solid #e8d08c;
+      border-radius: var(--radius);
+    }
+
+    .evaluation-notice svg {
+      flex: 0 0 auto;
+      color: var(--amber);
+    }
+
+    .evaluation-notice strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #4e3900;
+    }
+
+    [data-preview-state="evaluation"] .question-list,
+    [data-preview-state="evaluation"] .question-actions {
+      display: none;
+    }
+
+    [data-preview-state="evaluation"] .evaluation-notice {
+      display: flex;
+    }
+
+    [data-preview-state="board-off"] .questions-section {
+      display: none;
+    }
+
+    .mobile-bottom-nav,
+    .mobile-submit {
+      display: none;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 60;
+      right: 20px;
+      bottom: 20px;
+      max-width: min(360px, calc(100% - 40px));
+      padding: 11px 14px;
+      color: #fff;
+      background: #203238;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .primary-nav {
+        display: none;
+      }
+
+      .problem-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .problem-aside {
+        position: static;
+        margin-top: 0;
+        padding: 20px 0 0;
+        border-left: 0;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .aside-section {
+        padding: 0 0 20px;
+      }
+
+      .aside-section + .aside-section {
+        padding-top: 0;
+        padding-left: 20px;
+        border-top: 0;
+        border-left: 1px solid var(--line);
+      }
+
+      .aside-section:last-child {
+        grid-column: 1 / -1;
+        padding: 0 0 20px;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .aside-links {
+        padding-top: 10px;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+    }
+
+    @media (max-width: 680px) {
+      body {
+        font-size: 14px;
+      }
+
+      .prototype-inner,
+      .app-header-inner,
+      .page {
+        width: min(calc(100% - 24px), var(--shell-width));
+      }
+
+      .prototype-inner {
+        padding: 7px 0;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .prototype-title span {
+        display: none;
+      }
+
+      .preview-switcher {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .preview-switcher button {
+        width: 100%;
+        padding: 5px 4px;
+        font-size: 12px;
+      }
+
+      .app-header {
+        top: 0;
+        height: 56px;
+      }
+
+      .brand span:last-child {
+        display: none;
+      }
+
+      .brand-mark {
+        width: 32px;
+        height: 32px;
+      }
+
+      .page {
+        padding-top: 17px;
+        padding-bottom: 154px;
+      }
+
+      .breadcrumb {
+        margin-bottom: 15px;
+      }
+
+      .problem-header {
+        padding-bottom: 21px;
+      }
+
+      .problem-header-main {
+        gap: 14px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .header-actions {
+        margin-top: 25px;
+      }
+
+      .header-actions .button.subtle {
+        display: none;
+      }
+
+      .header-actions .button.primary {
+        display: none;
+      }
+
+      .problem-tags {
+        gap: 6px;
+      }
+
+      .runtime-meta {
+        gap: 8px 14px;
+      }
+
+      .runtime-item + .runtime-item {
+        padding-left: 14px;
+      }
+
+      .tag {
+        font-size: 12px;
+      }
+
+      .admin-tools {
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+
+      .admin-tools-label {
+        width: 100%;
+        margin-right: 0;
+      }
+
+      .admin-tools .button {
+        flex: 1 1 calc(50% - 4px);
+      }
+
+      .problem-aside {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .aside-section + .aside-section {
+        padding: 18px 0;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .aside-section:last-child {
+        grid-column: auto;
+      }
+
+      .aside-links {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .aside-link {
+        min-width: 0;
+        padding: 10px 4px;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        border: 0;
+        font-size: 12px;
+      }
+
+      .problem-content {
+        padding-top: 24px;
+      }
+
+      .content-section {
+        padding-bottom: 24px;
+      }
+
+      .content-section + .content-section {
+        padding-top: 24px;
+      }
+
+      h2 {
+        font-size: 19px;
+      }
+
+      .example-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wrapper-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .questions-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .question-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .question-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .question-row .answer-status {
+        justify-self: start;
+      }
+
+      .completion-policy-summary {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .completion-policy-chip {
+        align-self: flex-start;
+      }
+
+      .mobile-submit {
+        position: fixed;
+        z-index: 40;
+        right: 12px;
+        bottom: 71px;
+        left: 12px;
+        min-height: 48px;
+        display: flex;
+        color: #fff;
+        background: var(--teal);
+        border: 1px solid var(--teal);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 900;
+      }
+
+      .mobile-bottom-nav {
+        position: fixed;
+        z-index: 35;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 64px;
+        padding: 4px 10px max(4px, env(safe-area-inset-bottom));
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        background: rgba(255, 255, 255, 0.98);
+        border-top: 1px solid var(--line);
+      }
+
+      .mobile-bottom-nav a {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 2px;
+        color: #5f6b72;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .mobile-bottom-nav a[aria-current="page"] {
+        color: var(--teal-strong);
+      }
+
+      .mobile-bottom-nav svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .toast {
+        right: 12px;
+        bottom: 132px;
+        left: 12px;
+        max-width: none;
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .toast {
+        transition: none;
+      }
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"], ["$$", "$$"]],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        processHtmlClass: "oj-math-content",
+        ignoreHtmlClass: "tex2jax_ignore"
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body data-preview-state="normal">
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 5.5A3.5 3.5 0 0 1 5.5 2H11v18H5.5A3.5 3.5 0 0 0 2 23z"/><path d="M22 5.5A3.5 3.5 0 0 0 18.5 2H13v18h5.5A3.5 3.5 0 0 1 22 23z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5Z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/><path d="M22 10v6"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4Z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M7 6H4v2a4 4 0 0 0 4 4"/><path d="M17 6h3v2a4 4 0 0 1-4 4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M8.5 14.5A7 7 0 1 1 15.5 14.5L15 16H9Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v3"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-memory" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01"/><path d="M11 10h.01"/><path d="M15 10h2"/><path d="M6 18v3"/><path d="M10 18v3"/><path d="M14 18v3"/><path d="M18 18v3"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#main">본문 바로가기</a>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title">
+        <strong>DS-10 문제 상세 시안</strong>
+        <span>화면 상태를 선택해 접근 제한 동작을 비교할 수 있습니다.</span>
+      </div>
+      <div class="preview-switcher" role="tablist" aria-label="미리보기 상태">
+        <button type="button" role="tab" data-preview="normal" aria-selected="true">일반</button>
+        <button type="button" role="tab" data-preview="evaluation" aria-selected="false">평가 중</button>
+        <button type="button" role="tab" data-preview="board-off" aria-selected="false">게시판 꺼짐</button>
+        <button type="button" role="tab" data-preview="admin" aria-selected="false">관리자</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-10-problems.html" aria-label="OJ Platform 설계 문서로 이동">
+        <span class="brand-mark">OJ</span>
+        <span>OJ Platform</span>
+      </a>
+      <nav class="primary-nav" aria-label="주 메뉴">
+        <a href="#home">홈</a>
+        <a href="#main" aria-current="page">문제</a>
+        <a href="#submissions">제출</a>
+        <a href="#learning">학습</a>
+        <a href="#community">커뮤니티</a>
+      </nav>
+      <button class="account-button" type="button" aria-label="내 계정" title="내 계정">
+        <svg><use href="#i-user"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <nav class="breadcrumb" aria-label="현재 위치">
+      <a href="#problems">문제</a>
+      <svg width="15" height="15" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+      <span>1024번</span>
+    </nav>
+
+    <header class="problem-header">
+      <div class="problem-header-main">
+        <div class="problem-title-wrap">
+          <p class="problem-number">문제 1024</p>
+          <h1>구간 합 구하기</h1>
+          <div class="runtime-meta" aria-label="채점 제한">
+            <span class="runtime-item">
+              <svg aria-hidden="true"><use href="#i-clock"/></svg>
+              시간 제한 <strong>1초</strong>
+            </span>
+            <span class="runtime-item">
+              <svg aria-hidden="true"><use href="#i-memory"/></svg>
+              메모리 제한 <strong>256MB</strong>
+            </span>
+          </div>
+          <div class="problem-tags" aria-label="문제 정보">
+            <span class="tag difficulty">
+              <span class="level-dots" aria-hidden="true">
+                <i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i>
+              </span>
+              난이도 3 · 보통
+            </span>
+            <span class="tag">누적 합</span>
+            <span class="tag">배열</span>
+            <span class="tag">Python 3</span>
+            <span class="tag">코드 빈칸 완성 · 2개</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-button bookmark-button" type="button" aria-label="내 문제집에 추가" aria-pressed="false" title="내 문제집에 추가">
+            <svg><use href="#i-bookmark"/></svg>
+          </button>
+          <button class="button subtle" type="button">
+            <svg><use href="#i-chevron-left"/></svg>
+            목록
+          </button>
+          <a class="button primary submit-button" href="development-ds-11-user-submissions-ui.html#submit-problem-completion">
+            <svg><use href="#i-send"/></svg>
+            제출하기
+          </a>
+        </div>
+      </div>
+      <div class="admin-tools" aria-label="관리 작업">
+        <span class="admin-tools-label">관리 작업</span>
+        <button class="button subtle" type="button" data-admin-action="문제 수정">
+          <svg><use href="#i-pencil"/></svg>
+          문제 수정
+        </button>
+        <button class="button subtle" type="button" data-admin-action="테스트데이터 수정">
+          <svg><use href="#i-database"/></svg>
+          테스트데이터 수정
+        </button>
+      </div>
+    </header>
+
+    <div class="problem-grid">
+      <article class="problem-content">
+        <section class="content-section oj-math-content" aria-labelledby="description-heading">
+          <h2 id="description-heading">문제</h2>
+          <p>길이가 \(N\)인 수열이 주어진다. 수열의 일부 구간에 포함된 수의 합을 구하는 질문 \(M\)개에 답하는 프로그램을 작성하자.</p>
+          <p>각 질문은 두 정수 \(i\)와 \(j\)로 주어진다. 수열의 \(i\)번째 수부터 \(j\)번째 수까지의 합을 출력한다.</p>
+          <div class="formula">\[
+            \sum_{k=i}^{j} A_k
+          \]</div>
+        </section>
+
+        <section class="content-section oj-math-content" aria-labelledby="input-heading">
+          <h2 id="input-heading">입력</h2>
+          <p>첫째 줄에 수의 개수 \(N\)과 합을 구해야 하는 횟수 \(M\)이 주어진다.</p>
+          <p>둘째 줄에는 수열을 이루는 \(N\)개의 정수가 주어진다. 다음 \(M\)개의 줄에는 합을 구해야 하는 구간 \(i\)와 \(j\)가 주어진다.</p>
+          <p>\(1 \le N, M \le 100{,}000\)이며 \(1 \le i \le j \le N\)이다.</p>
+        </section>
+
+        <section class="content-section oj-math-content" aria-labelledby="output-heading">
+          <h2 id="output-heading">출력</h2>
+          <p>각 질문 \((i, j)\)에 대한 구간의 합을 한 줄에 하나씩 출력한다.</p>
+        </section>
+
+        <section class="content-section" aria-labelledby="limits-heading">
+          <h2 id="limits-heading">제한</h2>
+          <ul class="constraints">
+            <li><strong>1 ≤ N, M ≤ 100,000</strong></li>
+            <li>수열의 각 수는 1 이상 1,000 이하의 정수이다.</li>
+            <li><strong>1 ≤ i ≤ j ≤ N</strong></li>
+            <li>시간 제한 1초, 메모리 제한 256MB</li>
+          </ul>
+        </section>
+
+        <section class="content-section" aria-labelledby="submission-code-policy-heading">
+          <h2 id="submission-code-policy-heading">제출 코드 규칙</h2>
+          <p>이 문제는 Python 3 코드 빈칸 완성 전용입니다. 제출 화면에서 형광색 빈칸만 클릭해 입력하며 일반 코드·Blockly로 전환할 수 없습니다.</p>
+          <div class="completion-policy-summary">
+            <div><strong>고정 코드 + 필수 빈칸 2개</strong><span>빈칸 밖 코드는 수정할 수 없고 모든 빈칸을 입력해야 제출할 수 있습니다.</span></div>
+            <span class="completion-policy-chip">클릭하여 입력</span>
+          </div>
+          <p>아래 코드 조각이 학생이 입력한 빈칸에 하나라도 포함되면 제출할 수 없습니다.</p>
+          <div class="blocked-code-list" aria-label="제출 금지 코드">
+            <code class="blocked-code">eval(</code>
+            <code class="blocked-code">exec(</code>
+            <code class="blocked-code">open(</code>
+          </div>
+          <details class="wrapper-details" open>
+            <summary>자동으로 붙는 앞·뒤 코드</summary>
+            <p>편집기에는 작성한 코드만 보이며, 금지 코드 검사를 통과하면 서버가 아래 코드를 채점용 소스에 자동으로 붙입니다.</p>
+            <div class="wrapper-grid">
+              <div class="wrapper-code">
+                <h3>앞에 붙는 코드</h3>
+                <pre><code>from sys import stdin
+input = stdin.readline</code></pre>
+              </div>
+              <div class="wrapper-code">
+                <h3>뒤에 붙는 코드</h3>
+                <pre><code># 제출 코드 끝</code></pre>
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <section class="content-section tex2jax_ignore" aria-labelledby="example-heading">
+          <h2 id="example-heading">예시</h2>
+          <div class="example-grid">
+            <div class="code-sample">
+              <div class="code-sample-header">
+                <span>입력</span>
+                <button class="copy-button" type="button" data-copy="5 3&#10;5 4 3 2 1&#10;1 3&#10;2 4&#10;5 5" aria-label="예시 입력 복사" title="예시 입력 복사">
+                  <svg><use href="#i-copy"/></svg>
+                </button>
+              </div>
+              <pre><code>5 3
+5 4 3 2 1
+1 3
+2 4
+5 5</code></pre>
+            </div>
+            <div class="code-sample">
+              <div class="code-sample-header">
+                <span>출력</span>
+                <button class="copy-button" type="button" data-copy="12&#10;9&#10;1" aria-label="예시 출력 복사" title="예시 출력 복사">
+                  <svg><use href="#i-copy"/></svg>
+                </button>
+              </div>
+              <pre><code>12
+9
+1</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section oj-math-content" aria-labelledby="hint-heading">
+          <h2 id="hint-heading">힌트</h2>
+          <details>
+            <summary>
+              <svg aria-hidden="true"><use href="#i-bulb"/></svg>
+              풀이 방향 확인
+            </summary>
+            <p>질문마다 구간을 처음부터 더하면 시간이 오래 걸린다. \(P_0=0\), \(P_i=P_{i-1}+A_i\)인 누적 합을 만들면 구간 합을 \(P_j-P_{i-1}\)로 구할 수 있다.</p>
+          </details>
+        </section>
+
+        <section class="questions-section" aria-labelledby="questions-heading">
+          <div class="questions-header">
+            <div class="questions-heading">
+              <h2 id="questions-heading">질문과 답변</h2>
+              <p>이 문제에 연결된 최근 질문입니다.</p>
+            </div>
+            <div class="question-actions">
+              <button class="button subtle" type="button">
+                <svg><use href="#i-list"/></svg>
+                전체 질문
+              </button>
+              <button class="button" type="button">
+                <svg><use href="#i-plus"/></svg>
+                질문하기
+              </button>
+            </div>
+          </div>
+
+          <div class="evaluation-notice" role="status">
+            <svg><use href="#i-lock"/></svg>
+            <div>
+              <strong>평가가 진행 중입니다.</strong>
+              질문과 답변은 평가가 끝난 뒤 확인할 수 있습니다.
+            </div>
+          </div>
+
+          <div class="question-list">
+            <article class="question-row">
+              <div class="question-main">
+                <a class="question-title" href="#question-1">누적 합 배열의 첫 번째 값을 0으로 두는 이유가 궁금합니다.</a>
+                <div class="question-meta"><span>김하늘</span><span>댓글 3</span><span>12분 전</span></div>
+              </div>
+              <span class="answer-status answered"><svg><use href="#i-check"/></svg>답변 있음</span>
+            </article>
+            <article class="question-row">
+              <div class="question-main">
+                <a class="question-title" href="#question-2">입력 크기가 큰 경우 일반 input()을 사용해도 되나요?</a>
+                <div class="question-meta"><span>이도윤</span><span>댓글 2</span><span>35분 전</span></div>
+              </div>
+              <span class="answer-status answered"><svg><use href="#i-check"/></svg>답변 있음</span>
+            </article>
+            <article class="question-row">
+              <div class="question-main">
+                <a class="question-title" href="#question-3">시간 초과가 발생하는 반복문을 어떻게 줄일 수 있나요?</a>
+                <div class="question-meta"><span>박서연</span><span>댓글 0</span><span>1시간 전</span></div>
+              </div>
+              <span class="answer-status waiting">답변 대기</span>
+            </article>
+            <article class="question-row">
+              <div class="question-main">
+                <a class="question-title" href="#question-4">구간이 하나의 수만 포함할 때도 같은 공식을 사용하나요?</a>
+                <div class="question-meta"><span>정민준</span><span>댓글 1</span><span>어제</span></div>
+              </div>
+              <span class="answer-status answered"><svg><use href="#i-check"/></svg>답변 있음</span>
+            </article>
+            <article class="question-row">
+              <div class="question-main">
+                <a class="question-title" href="#question-5">배열 인덱스가 하나씩 어긋날 때 확인할 부분은 무엇인가요?</a>
+                <div class="question-meta"><span>최지우</span><span>댓글 4</span><span>2일 전</span></div>
+              </div>
+              <span class="answer-status answered"><svg><use href="#i-check"/></svg>답변 있음</span>
+            </article>
+          </div>
+        </section>
+      </article>
+
+      <aside class="problem-aside" aria-label="문제 요약">
+        <section class="aside-section">
+          <h2 class="aside-title">문제 정보</h2>
+          <dl class="info-list">
+            <div class="info-row"><dt>정답률</dt><dd>48.6%</dd></div>
+            <div class="info-row"><dt>제출</dt><dd>1,284회</dd></div>
+            <div class="info-row"><dt>맞힌 사람</dt><dd>403명</dd></div>
+          </dl>
+        </section>
+
+        <section class="aside-section">
+          <h2 class="aside-title">내 상태</h2>
+          <div class="status-line">
+            <svg><use href="#i-info"/></svg>
+            <span>아직 제출하지 않았습니다.<br>풀이를 시작해 보세요.</span>
+          </div>
+        </section>
+
+        <section class="aside-section">
+          <h2 class="aside-title">더 보기</h2>
+          <nav class="aside-links" aria-label="문제 관련 화면">
+            <a class="aside-link" href="#statistics"><svg><use href="#i-chart"/></svg><span>통계</span></a>
+            <a class="aside-link" href="#ranking"><svg><use href="#i-trophy"/></svg><span>순위</span></a>
+            <a class="aside-link" href="#history"><svg><use href="#i-clock"/></svg><span>내 제출</span></a>
+          </nav>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <a class="mobile-submit submit-button" href="development-ds-11-user-submissions-ui.html#submit-problem-completion">
+    <svg><use href="#i-send"/></svg>
+    제출하기
+  </a>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴">
+    <a href="#home"><svg><use href="#i-home"/></svg><span>홈</span></a>
+    <a href="#main" aria-current="page"><svg><use href="#i-book"/></svg><span>문제</span></a>
+    <a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a>
+    <a href="#learning"><svg><use href="#i-learn"/></svg><span>학습</span></a>
+    <a href="#community"><svg><use href="#i-message"/></svg><span>더보기</span></a>
+  </nav>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const stateButtons = document.querySelectorAll("[data-preview]");
+      const toast = document.querySelector(".toast");
+      let toastTimer;
+
+      const showToast = (message) => {
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+      };
+
+      stateButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          document.body.dataset.previewState = button.dataset.preview;
+          stateButtons.forEach((item) => {
+            item.setAttribute("aria-selected", String(item === button));
+          });
+        });
+      });
+
+      document.querySelectorAll(".copy-button").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const value = button.dataset.copy || "";
+          try {
+            await navigator.clipboard.writeText(value);
+          } catch (error) {
+            const input = document.createElement("textarea");
+            input.value = value;
+            input.setAttribute("readonly", "");
+            input.style.position = "fixed";
+            input.style.opacity = "0";
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand("copy");
+            input.remove();
+          }
+          showToast("예시를 복사했습니다.");
+        });
+      });
+
+      const bookmarkButton = document.querySelector(".bookmark-button");
+      bookmarkButton.addEventListener("click", () => {
+        const isSaved = bookmarkButton.getAttribute("aria-pressed") === "true";
+        bookmarkButton.setAttribute("aria-pressed", String(!isSaved));
+        bookmarkButton.setAttribute("aria-label", isSaved ? "내 문제집에 추가" : "내 문제집에서 제거");
+        bookmarkButton.setAttribute("title", isSaved ? "내 문제집에 추가" : "내 문제집에서 제거");
+        showToast(isSaved ? "내 문제집에서 제거했습니다." : "내 문제집에 추가했습니다.");
+      });
+
+      document.querySelectorAll("[data-admin-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          showToast(`${button.dataset.adminAction} 화면으로 이동합니다.`);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "edu-games/data-structure-lab",
+  "title": "Data Structure Lab",
+  "category": "widgets",
+  "icon": "sort",
+  "description": "Predict stack, queue, and priority queue behavior.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

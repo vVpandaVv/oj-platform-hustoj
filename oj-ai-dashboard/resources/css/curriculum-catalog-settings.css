@@ -1,0 +1,306 @@
+.oj-ai-catalog {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  color: var(--config-ink);
+}
+
+.oj-ai-catalog__header,
+.oj-ai-catalog__curriculum-bar,
+.oj-ai-catalog__standard-tools,
+.oj-ai-catalog__row,
+.oj-ai-catalog__row-actions,
+.oj-ai-catalog__dialog header,
+.oj-ai-catalog__dialog footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.oj-ai-catalog__header,
+.oj-ai-catalog__row,
+.oj-ai-catalog__dialog header,
+.oj-ai-catalog__dialog footer {
+  justify-content: space-between;
+}
+
+.oj-ai-catalog__header {
+  align-items: flex-start;
+}
+
+.oj-ai-catalog__header h2,
+.oj-ai-catalog__dialog h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.oj-ai-catalog__header p {
+  margin: 0;
+  color: var(--config-muted);
+  font-size: 13px;
+}
+
+.oj-ai-catalog__notice {
+  min-height: 20px;
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--config-line);
+  background: var(--config-soft);
+  color: var(--config-muted);
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-catalog__notice[data-tone="success"] {
+  border-color: var(--config-success);
+  color: var(--config-success);
+}
+
+.oj-ai-catalog__notice[data-tone="danger"] {
+  border-color: var(--config-danger);
+  background: var(--ojp-color-danger-bg, #fff4f2);
+  color: var(--config-danger);
+}
+
+.oj-ai-catalog__curriculum-bar,
+.oj-ai-catalog__standard-tools {
+  min-width: 0;
+}
+
+.oj-ai-catalog__curriculum-bar {
+  padding: 14px 0;
+  border-top: 1px solid var(--config-line);
+  border-bottom: 1px solid var(--config-line);
+}
+
+.oj-ai-catalog__curriculum-bar label {
+  display: grid;
+  flex: 1 1 420px;
+  max-width: 560px;
+  gap: 6px;
+  min-width: 0;
+  color: var(--config-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.oj-ai-catalog select,
+.oj-ai-catalog input,
+.oj-ai-catalog textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--ojp-color-line, #b9c5d3);
+  border-radius: 6px;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--config-ink);
+  font: inherit;
+  letter-spacing: 0;
+}
+
+.oj-ai-catalog textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.oj-ai-catalog__standard-tools {
+  justify-content: space-between;
+}
+
+.oj-ai-catalog__standard-tools label {
+  position: relative;
+  flex: 1 1 420px;
+  max-width: 560px;
+  min-width: 180px;
+}
+
+.oj-ai-catalog__standard-tools input {
+  padding-left: 38px;
+}
+
+.oj-ai-catalog__search-icon {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+  z-index: 1;
+  width: 17px;
+  height: 17px;
+  color: var(--config-muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.oj-ai-catalog__search-icon svg,
+.oj-ai-catalog button svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.oj-ai-catalog__primary,
+.oj-ai-catalog__icon-button,
+.oj-ai-catalog__dialog footer button {
+  min-height: 38px;
+  border: 1px solid var(--ojp-color-line, #b9c5d3);
+  border-radius: 6px;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--config-ink);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.oj-ai-catalog__primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-color: var(--config-primary);
+  background: var(--config-primary);
+  color: var(--ojp-color-on-accent, #fff);
+  white-space: nowrap;
+}
+
+.oj-ai-catalog__icon-button {
+  display: inline-grid;
+  flex: 0 0 38px;
+  width: 38px;
+  padding: 0;
+  place-items: center;
+}
+
+.oj-ai-catalog button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.oj-ai-catalog__list {
+  display: grid;
+  min-width: 0;
+  border-top: 1px solid var(--config-line);
+}
+
+.oj-ai-catalog__row {
+  min-width: 0;
+  padding: 14px 2px;
+  border-bottom: 1px solid var(--config-line);
+}
+
+.oj-ai-catalog__row-main {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.oj-ai-catalog__row-main strong,
+.oj-ai-catalog__row-main p,
+.oj-ai-catalog__row-main small {
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-catalog__row-main strong {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.oj-ai-catalog__row-main p {
+  margin: 0;
+  color: var(--config-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.oj-ai-catalog__row-main small {
+  color: var(--config-muted);
+  font-size: 12px;
+}
+
+.oj-ai-catalog__empty {
+  margin: 0;
+  padding: 36px 12px;
+  color: var(--config-muted);
+  text-align: center;
+  font-size: 13px;
+}
+
+.oj-ai-catalog__dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-width: 100%;
+  padding: 0;
+  border: 1px solid var(--ojp-color-separator, var(--config-line));
+  border-radius: var(--ojp-radius-lg, 8px);
+  background: var(--ojp-color-elevated, #fff);
+  color: var(--config-ink);
+  box-shadow: var(--ojp-shadow-3, none);
+}
+
+.oj-ai-catalog__dialog::backdrop {
+  background: var(--ojp-color-scrim, rgba(15, 23, 42, 0.48));
+}
+
+.oj-ai-catalog__dialog form {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+}
+
+.oj-ai-catalog__dialog label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: var(--config-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.oj-ai-catalog__field-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
+  gap: 12px;
+}
+
+.oj-ai-catalog__dialog [role="alert"] {
+  min-height: 18px;
+  margin: 0;
+  color: var(--config-danger);
+  font-size: 12px;
+}
+
+.oj-ai-catalog__dialog footer {
+  padding-top: 4px;
+}
+
+.oj-ai-catalog__dialog footer button {
+  padding: 8px 13px;
+}
+
+@media (max-width: 680px) {
+  .oj-ai-catalog__header,
+  .oj-ai-catalog__standard-tools {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .oj-ai-catalog__header .oj-ai-catalog__primary,
+  .oj-ai-catalog__standard-tools .oj-ai-catalog__primary {
+    width: 100%;
+  }
+
+  .oj-ai-catalog__curriculum-bar label,
+  .oj-ai-catalog__standard-tools label {
+    flex-basis: auto;
+    max-width: none;
+  }
+
+  .oj-ai-catalog__field-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oj-ai-catalog__row {
+    align-items: flex-start;
+  }
+}

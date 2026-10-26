@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C-28 Addon API v1 정확한 계약 및 구현 이관서 | OJ Platform</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17212b;
+      --muted: #596674;
+      --line: #d7dee5;
+      --surface: #ffffff;
+      --soft: #f3f6f8;
+      --primary: #0f766e;
+      --primary-soft: #e5f5f2;
+      --warning: #9a5b08;
+      --warning-soft: #fff5dd;
+      --danger: #a33a3a;
+      --danger-soft: #fff0f0;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #eef2f4; color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.65; }
+    a { color: #0b6861; }
+    a:focus-visible { outline: 3px solid #f0b44c; outline-offset: 3px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { color: #174e49; }
+    .skip-link { position: fixed; left: 12px; top: -48px; z-index: 10; padding: 8px 12px; background: #fff; border: 1px solid var(--line); }
+    .skip-link:focus { top: 12px; }
+    .topbar { min-height: 58px; display: flex; align-items: center; gap: 10px; padding: 0 24px; border-bottom: 1px solid #bcc7cf; background: #18242d; color: #fff; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 5px; background: #d7f0ec; color: #164e49; font-weight: 900; }
+    .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); width: min(1440px, 100%); margin: 0 auto; }
+    nav { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow: auto; padding: 24px 18px; border-right: 1px solid var(--line); background: #f8fafb; }
+    nav strong { display: block; margin: 18px 8px 6px; font-size: 0.76rem; color: var(--muted); text-transform: uppercase; }
+    nav a { display: block; padding: 7px 8px; border-left: 3px solid transparent; color: #32414e; text-decoration: none; }
+    nav a:hover, nav a[aria-current="page"] { border-left-color: var(--primary); background: var(--primary-soft); color: #0b514c; }
+    main { min-width: 0; padding: 34px clamp(20px, 4vw, 58px) 64px; background: var(--surface); }
+    .report-header { padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 6px; color: var(--primary); font-weight: 800; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.5rem); letter-spacing: 0; }
+    h2 { margin: 0; font-size: 1.34rem; letter-spacing: 0; }
+    h3 { margin: 26px 0 10px; font-size: 1.05rem; letter-spacing: 0; }
+    .lede { max-width: 930px; color: var(--muted); }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .badge { display: inline-flex; align-items: center; min-height: 28px; padding: 3px 9px; border: 1px solid #bfd9d5; border-radius: 5px; background: var(--primary-soft); color: #155c56; font-size: 0.82rem; font-weight: 700; }
+    .badge.wait { border-color: #efd59f; background: var(--warning-soft); color: #744407; }
+    .section { padding: 30px 0; border-bottom: 1px solid var(--line); }
+    .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .section-heading p { margin: 5px 0 0; color: var(--muted); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; min-width: 760px; background: #fff; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+    th { background: var(--soft); font-size: 0.84rem; }
+    tr:last-child td { border-bottom: 0; }
+    pre { overflow: auto; margin: 14px 0; padding: 16px; border: 1px solid #ccd6dc; border-radius: 6px; background: #111b22; color: #edf5f4; font-size: 0.84rem; line-height: 1.55; }
+    pre code { color: inherit; }
+    .callout, .warning, .risk { margin: 14px 0; padding: 13px 15px; border-left: 4px solid var(--primary); background: var(--primary-soft); }
+    .warning { border-left-color: var(--warning); background: var(--warning-soft); }
+    .risk { border-left-color: var(--danger); background: var(--danger-soft); }
+    .flow { display: grid; gap: 8px; }
+    .step { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; align-items: start; padding: 11px 0; border-bottom: 1px solid var(--line); }
+    .step span { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: #dcefeb; color: #145a54; font-weight: 900; }
+    ul { padding-left: 21px; }
+    footer { margin-top: 30px; color: var(--muted); font-size: 0.9rem; }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--line); }
+      main { padding: 26px 18px 48px; }
+      .section-heading { display: block; }
+      .section-heading .badge { margin-top: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 이동</a>
+  <div class="topbar"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 계약</strong></div>
+  <div class="layout">
+    <nav aria-label="문서 탐색">
+      <strong>문서</strong>
+      <a href="index.html">문서 허브</a>
+      <a href="development-sequence.html">전체 개발 순서</a>
+      <a href="development-c-28-addon-extension-api.html">C-28 변경 설계</a>
+      <a href="development-c-28-addon-api-v1-contract.html" aria-current="page">API v1 계약·이관</a>
+      <a href="development-c-28-addon-api-v1-release-evidence.html">API 1.1 릴리스 증거</a>
+      <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-02-addon-api-profile.html">AI 평가 소비자 프로필</a>
+      <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-03-access-policy.html">AI 평가 권한 정책 동결</a>
+      <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-04-settings-ai-connection.html">AI 평가 설정·연결 정책 동결</a>
+      <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-05-addon-database.html">AI 평가 데이터베이스 동결</a>
+      <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-06-platform-ledger-connector.html">AI 평가 원장 Connector 동결</a>
+      <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-07-ai-job-execution.html">AI 평가 실행·큐 동결</a>
+      <strong>섹션</strong>
+      <a href="#decision">판정</a>
+      <a href="#authority">정본·변경 규칙</a>
+      <a href="#amendments">계약 개정 기록</a>
+      <a href="#lifecycle">부팅·Hook</a>
+      <a href="#api-v1-contract">공개 API</a>
+      <a href="#dto-signatures">DTO 정확한 시그니처</a>
+      <a href="#manifest">Manifest DTO</a>
+      <a href="#page">페이지 계약</a>
+      <a href="#runtime">Runtime 계약</a>
+      <a href="#contexts">Context 계약</a>
+      <a href="#a-ds06-consumer-gap">A-DS-06 인수 공백</a>
+      <a href="#ai">AI 계약</a>
+      <a href="#a-ds07-ai-job-gap">A-DS-07 AI 인수 기록</a>
+      <a href="#validation">검증·상한</a>
+      <a href="#errors">상태·오류</a>
+      <a href="#compatibility">버전</a>
+      <a href="#compatibility-snapshot">호환 스냅샷</a>
+      <a href="#implementation-record">구현 이관 기록</a>
+      <a href="#gates">완료 관문</a>
+    </nav>
+
+    <main id="main">
+      <header class="report-header" id="decision">
+        <p class="eyebrow">C-28 · Addon API v1 Normative Contract</p>
+        <h1>Addon API v1 정확한 계약 및 구현 이관서</h1>
+        <p class="lede">C-28 변경 설계의 공개 이름·입력·출력·시점·오류를 구현 가능한 수준으로 고정한다. 이 문서는 플랫폼 제공자 정본이며, 이후 OJ Platform Runtime 변경은 C28-I01~I06 기록과 검증을 이 문서에 누적한 경우에만 완료로 인정한다.</p>
+        <div class="meta">
+          <span class="badge">계약 ID C28-API-V1-LOCK-01</span>
+          <span class="badge">정의일 2026-08-10</span>
+          <span class="badge good">Addon API 1.2.0</span>
+          <span class="badge">PHP 8.1+</span>
+          <span class="badge good">C28-I06 코드·검증 ZIP 통과</span><span class="badge wait">clean production build 대기</span>
+          <span class="badge">AM-01 계약 개정 반영</span>
+        </div>
+        <div class="callout"><strong>결론(AM-01 반영):</strong> 애드온은 <code>oj_platform_register_addons</code>에서 Manifest를 동결 전에 등록하고, 같은 builder에서 <code>AddonManifestBuilderV1::onReady(callable $callback)</code>으로 Runtime 준비 callback을 등록한다. 이 manifest가 승인되고 Runtime Context 생성까지 성공하면 플랫폼은 해당 callback을 addon마다 최대 한 번, 오직 이 addon의 <code>AddonRuntimeContextV1</code>만 인자로 직접 PHP 함수 호출로 실행한다. WordPress action으로 전역 Runtime Gateway를 방송하지 않으므로 다른 애드온이 이 callback을 가로채거나 남의 context를 받을 수 없다. <code>AddonRuntimeGatewayV1</code>과 <code>oj_platform_loaded</code>는 AM-01에서 제거했다 — 자세한 배경은 <a href="#amendments">계약 개정 기록</a>과 <a href="development-c-28-addon-onready-migration.html">onReady 전환 안내서</a>를 참고한다.</div>
+      </header>
+
+      <section class="section" id="authority">
+        <div class="section-heading"><div><h2>정본과 변경 통제</h2><p>설계 설명, 공개 계약, 소비자 프로필과 구현 증거의 역할을 분리한다.</p></div><span class="badge">Normative</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>자료</th><th>권한</th><th>변경 규칙</th></tr></thead>
+          <tbody>
+            <tr><td><a href="development-c-28-addon-extension-api.html">C-28 범용 애드온 확장 API 변경 설계</a></td><td>배경·소유권·아키텍처·사용자 경험 원본</td><td>왜 필요한지와 C28-R/D 결정을 관리</td></tr>
+            <tr><td>이 문서</td><td>공개 PHP symbol·hook·DTO·오류·버전 정본</td><td>API signature 변경은 SemVer와 C28 변경 기록 필수</td></tr>
+            <tr><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-02-addon-api-profile.html">AI 평가 애드온 소비자 프로필</a></td><td>실제 addon ID·기여 key·호출 순서</td><td>플랫폼 정본과 자동 교차 검증</td></tr>
+            <tr><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-03-access-policy.html">AI 평가 애드온 권한 정책 동결</a></td><td>15개 capability key·Context operation·애드온 객체 Policy</td><td>C28-D09~D10 제공자 계약과 자동 교차 검증</td></tr>
+            <tr><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-04-settings-ai-connection.html">AI 평가 애드온 설정·연결 정책 동결</a></td><td>provider·secret·routing 소유권, 정책·rubric·review revision과 두 task 진단</td><td>C28-D11 AI Task 계약과 비밀 비노출 자동 교차 검증</td></tr>
+            <tr><td><a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-05-addon-database.html">AI 평가 애드온 데이터베이스 동결</a></td><td>무접두어 45 table, 플랫폼 원장 비복제, 두 평가 storage와 안전 routing snapshot</td><td>C28-D10~D11의 Context·AI projection만 저장하고 플랫폼 table·secret 접근이 없는지 교차 검증</td></tr>
+            <tr><td>C28-I01~I06 이관표</td><td>플랫폼 구현·검사·릴리스 증거</td><td>기존 행을 덮어쓰지 않고 단계별 실행 기록 누적</td></tr>
+            <tr><td><a href="development-c-28-addon-api-v1-release-evidence.html">Addon API 1.1 릴리스 증거</a></td><td>47개 회귀 script, source·package fingerprint, upgrade·rollback</td><td>검증 ZIP과 production clean build를 구분해 기록</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>현재 정본 · 2026-09-16:</strong> 공통 Addon API <code>1.2.0</code>에 선택적 연구 확장 등록 단계를 추가했다. 기존 <code>1.1.0</code> 일반 애드온의 hook·시점·signature는 유지한다. <a href="addon-api-1.2.md">1.2.0 계약·호환 범위·설치 순서</a>를 함께 확인한다. 일반 애드온이 플랫폼 파일·table·migration을 직접 수정하는 방식은 계속 금지한다. 연구 확장은 초기 등록 계약으로 구성 정보를 전달하고 플랫폼 설치기가 적용한다.</div>
+      </section>
+
+      <section class="section" id="amendments">
+        <div class="section-heading"><div><h2>계약 개정 기록</h2><p>Lock 이후 공개 signature를 바꿀 때마다 사유·SemVer 판정·소비자 영향을 이전 기록을 지우지 않고 누적한다.</p></div><span class="badge wait">AM-01</span></div>
+        <div class="risk">
+          <strong>AM-01 · <code>AddonRuntimeGatewayV1</code>·<code>oj_platform_loaded</code> 제거, <code>onReady()</code> 도입 (2026-08-11)</strong>
+          <p><strong>사유:</strong> C28-I05 구현 뒤 보안 검토에서 <code>oj_platform_loaded(AddonRuntimeGatewayV1 $gateway)</code> 설계 자체의 구조적 취약점을 발견했다. 이 action은 등록된 모든 애드온의 callback에 동일한 전역 <code>$gateway</code> 인스턴스를 방송하고, 각 callback은 <code>$gateway-&gt;forAddon($anyAddonId)</code>을 호출해 <strong>임의의 다른 승인된 애드온 ID</strong>의 <code>AddonRuntimeContextV1</code>을 받을 수 있었다. 즉 애드온 A가 <code>forAddon('addon-b')</code>를 호출하면 addon-b 전용 Context·AI Task Gateway에 접근할 수 있어, WordPress action 순서와 무관하게 애드온 간 권한 격리가 API 표면에서부터 깨져 있었다. 이는 애드온 코드 품질과 무관한 API 설계 결함이었다.</p>
+          <p><strong>변경:</strong> 전역 방송 hook을 없애고, 각 애드온이 <code>register()</code> builder 안에서 <code>AddonManifestBuilderV1::onReady(callable $callback)</code>으로 자신의 준비 callback을 직접 등록하도록 바꿨다. manifest가 승인되면 플랫폼은 accepted catalog를 순회하며 각 애드온이 등록한 정확히 그 callable만, 이 애드온만을 위해 생성한 <code>AddonRuntimeContextV1</code> 하나를 인자로 plain PHP 함수 호출로 실행한다. WordPress action이 아니므로 다른 코드가 이 호출을 가로챌 방법이 없고, 애드온은 자신이 넘긴 callable 외에 어떤 <code>AddonRuntimeContextV1</code>도 참조할 수 없다. <code>AddonRuntimeGatewayV1</code> interface와 <code>forAddon()</code>, <code>oj_platform_loaded</code> action은 코드베이스에서 완전히 삭제했다(하위 호환 shim 없음).</p>
+          <p><strong>SemVer 판정:</strong> major(공개 interface 삭제, action 삭제, 새 필수 통합 지점 추가). 이 문서의 <a href="#compatibility">버전 규칙</a>에 따르면 새 major namespace와 병행 지원 계획이 원칙이지만, Addon API가 아직 <code>C28-I06</code> 공식 릴리스 전 단계(<code>C28-I02~I05</code> 구현·검증 중)이고 실제 배포된 소비자가 없어 병행 지원 없이 <code>1.0.0</code> 표기를 유지한 채 즉시 교체하기로 사용자 승인을 받았다. API가 정식 릴리스된 뒤라면 이 판정은 유효하지 않으며 major bump와 병행 지원이 필수다.</p>
+          <p><strong>소비자 영향:</strong> <code>oj_platform_loaded</code>를 구독하거나 <code>AddonRuntimeGatewayV1</code>/<code>forAddon()</code>을 import하는 기존 통합 코드는 모두 깨진다. 전환 절차와 전후 코드 예시는 별도 <a href="development-c-28-addon-onready-migration.html"><strong>onReady 전환 안내서</strong></a>에 기록했다. <a href="development-c-28-addon-extension-api.html">C-28 변경 설계</a>의 관련 서술과 코드 예시도 이 개정에 맞춰 갱신했다.</p>
+        </div>
+        <div class="callout">
+          <strong>AM-02 · Addon API 1.1.0 additive Context·AI 계약 (2026-08-14)</strong>
+          <p><strong>사유:</strong> AI 평가 애드온의 학생 학습 Context 진입, exact assignment roster, 활동지 자체 평가와 학생 제출 평가를 구현하려면 기존 1.0 공개 표면에 없던 CG02·CG11·AJ08 계약이 필요했다.</p>
+          <p><strong>변경:</strong> <code>AddonLearningContextGatewayV1</code>·<code>AddonAssignmentRosterGatewayV1</code> interface 2개와 query·learner·page·instruction DTO 5개를 추가했다. <code>AddonAiTaskDefinitionV1</code>에는 마지막 nullable <code>instruction</code> parameter와 getter만 추가했다. 기존 공개 symbol 30개와 기존 4-argument AI task 선언은 모두 유지한다.</p>
+          <p><strong>SemVer:</strong> additive minor다. API 상수는 <code>1.0.0</code>에서 <code>1.1.0</code>으로 변경했고 공개 표면은 interface 8개·DTO 28개·권한 utility 1개, 총 37개다. 새 기능을 쓰는 소비자는 <code>requiresAddonApi &gt;= 1.1.0</code>을 선언한다.</p>
+          <p><strong>저장소 영향:</strong> 플랫폼 DB migration과 애드온 소유 <code>oj_ai_*</code> table 변경은 없다. 1.0.x rollback 전에는 1.1 전용 기능을 사용하는 애드온을 비활성화하거나 호환 릴리스로 되돌린다.</p>
+        </div>
+      </section>
+
+      <section class="section" id="lifecycle">
+        <div class="section-heading"><div><h2>부팅 순서와 등록 action·onReady callback</h2><p>등록 가능 시점과 Runtime 사용 가능 시점을 같은 이벤트로 섞지 않는다.</p></div><span class="badge">C28-API-H01</span></div>
+        <div class="flow">
+          <div class="step"><span>1</span><div><strong>플러그인 파일 로드</strong><br>활성 애드온 root가 등록 action callback 하나를 선언하고 그 builder 안에 <code>onReady()</code> callback을 함께 등록한다. 플랫폼 class를 생성하거나 존재한다고 가정하지 않는다.</div></div>
+          <div class="step"><span>2</span><div><strong>플랫폼 부팅</strong><br><code>plugins_loaded</code> priority 1에서 core Module 계약을 등록한다.</div></div>
+          <div class="step"><span>3</span><div><strong>등록 창</strong><br>Registry 동결 직전에 <code>oj_platform_register_addons</code>을 정확히 한 번 발행한다.</div></div>
+          <div class="step"><span>4</span><div><strong>원자 승인</strong><br>모든 후보를 수집·정렬·검증하고 addon별 전체 또는 0개로 Accepted Addon Catalog를 동결한다.</div></div>
+          <div class="step"><span>5</span><div><strong>Adapter 연결</strong><br>core와 accepted addon의 Route·Menu·Capability·Asset·AI Task를 읽기 전용 Composite Catalog로 합성한다.</div></div>
+          <div class="step"><span>6</span><div><strong>Runtime 준비 dispatch (AM-01)</strong><br>정상 Runtime이 준비된 뒤, accepted catalog의 애드온마다 그 애드온이 <code>onReady()</code>로 등록한 callback을 이 애드온 전용 <code>AddonRuntimeContextV1</code> 하나와 함께 최대 한 번 직접 호출한다. Context 생성 또는 callback에서 예외가 나면 보고하고 다음 애드온으로 진행하며 같은 부팅에서 재시도하지 않는다. 두 번째 WordPress action은 발행하지 않는다.</div></div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>통합 지점</th><th>종류</th><th>인자 1개</th><th>발행 조건</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td><code>oj_platform_register_addons</code></td><td>WordPress action</td><td><code>AddonRegistrationGatewayV1</code></td><td>core ContractRegistration 완료·RegistryFreeze 전</td><td>Container·Registry 전달, Runtime 호출</td></tr>
+            <tr><td><code>AddonManifestBuilderV1::onReady()</code>가 받은 callback</td><td>plain PHP 함수 호출(action 아님)</td><td>이 애드온만의 <code>AddonRuntimeContextV1</code></td><td>이 애드온의 manifest가 <code>accepted</code>로 동결된 후, RuntimeReady 완료 시</td><td>다른 애드온 context 접근, Manifest 재작성, service lookup</td></tr>
+          </tbody>
+        </table></div>
+        <div class="risk"><strong>AM-01 (2026-08-11) — 제거됨:</strong> 이전 초안에 있던 <code>oj_platform_loaded</code> action과 <code>AddonRuntimeGatewayV1</code>/<code>forAddon()</code> facade는 모든 애드온 callback에 같은 전역 Gateway를 방송해 임의 addon ID로 다른 애드온의 Runtime Context를 받을 수 있는 애드온 간 impersonation 결함이 있어 완전히 삭제했다. 새 통합 지점은 애드온별 <code>onReady()</code> 직접 호출뿐이다. 상세 사유는 <a href="#amendments">계약 개정 기록</a>을 참고한다.</div>
+      </section>
+
+      <section class="section" id="api-v1-contract">
+        <div class="section-heading"><div><h2>API v1 공개 namespace와 interface</h2><p>아래 symbol만 외부 애드온이 import할 수 있는 공개 allowlist다.</p></div><span class="badge">C28-API-S01</span></div>
+        <p><code>CodingPanda\OjPlatform\AddonApi\V1</code>을 단일 공개 namespace로 사용하며 PSR-4 경로는 <code>src/AddonApi/V1/</code>이다. 구현 class는 <code>Internal</code> 또는 기존 Kernel·Module namespace에 두고 이 allowlist에 포함하지 않는다.</p>
+        <pre><code>namespace CodingPanda\OjPlatform\AddonApi\V1;
+
+final class AddonCapabilityKeyV1
+{
+    public static function wordpress(string $declaredKey): string;
+}
+
+interface AddonRegistrationGatewayV1
+{
+    public function apiVersion(): string;
+
+    /** @param callable(AddonManifestBuilderV1): void $build */
+    public function register(string $addonId, callable $build): void;
+}
+
+interface AddonManifestBuilderV1
+{
+    public function manifest(
+        string $namespace,
+        string $version,
+        string $pluginFile,
+        string $requiresPlatform,
+        string $requiresAddonApi,
+        string $diagnosticLabel,
+        string $supportReference
+    ): void;
+
+    public function capability(AddonCapabilityDefinitionV1 $definition): void;
+    public function consolePage(AddonConsolePageDefinitionV1 $definition): void;
+    public function publicPage(AddonPublicPageDefinitionV1 $definition): void;
+    public function consoleMenu(AddonConsoleMenuDefinitionV1 $definition): void;
+    public function publicMenu(AddonPublicMenuDefinitionV1 $definition): void;
+    public function assetBundle(AddonAssetBundleDefinitionV1 $definition): void;
+    public function aiTask(AddonAiTaskDefinitionV1 $definition): void;
+
+    /**
+     * @param callable(AddonRuntimeContextV1): void $callback
+     */
+    public function onReady(callable $callback): void;
+}
+
+interface AddonPageHandlerV1
+{
+    public function handle(AddonPageRequestV1 $request): AddonPageResponseV1;
+}
+
+interface AddonRuntimeContextV1
+{
+    public function snapshot(): AddonRuntimeSnapshotV1;
+    public function contexts(): AddonContextGatewayV1;
+    public function aiTasks(): AddonAiTaskGatewayV1;
+}
+
+interface AddonContextGatewayV1
+{
+    public function listTeachingContexts(AddonTeachingContextQueryV1 $query): AddonContextPageV1;
+    public function authorize(AddonContextAccessRequestV1 $request): AddonContextAccessDecisionV1;
+    public function snapshot(AddonContextSnapshotRequestV1 $request): AddonContextSnapshotResultV1;
+}
+
+interface AddonLearningContextGatewayV1 extends AddonContextGatewayV1
+{
+    public function listLearningContexts(AddonLearningContextQueryV1 $query): AddonContextPageV1;
+}
+
+interface AddonAssignmentRosterGatewayV1 extends AddonContextGatewayV1
+{
+    public function listAssignmentLearners(
+        AddonAssignmentRosterQueryV1 $query
+    ): AddonAssignmentLearnerPageV1;
+}
+
+interface AddonAiTaskGatewayV1
+{
+    public function canRoute(string $taskKey): AddonAiTaskRouteDecisionV1;
+    public function snapshot(string $taskKey): AddonAiTaskRoutingSnapshotV1;
+    public function execute(AddonAiTaskRequestV1 $request): AddonAiTaskResultV1;
+}</code></pre>
+        <div class="callout"><strong>API 상수:</strong> 플랫폼 root는 정상 autoload 설정 뒤 <code>OJ_PLATFORM_ADDON_API_VERSION</code>을 문자열 <code>1.2.0</code>으로 정의한다. 연구용 별도 API 버전 상수는 없다. 애드온은 이 상수와 hook·interface 존재를 모두 확인하며 상수 하나만으로 Runtime 준비를 추정하지 않는다.</div>
+        <div class="callout"><strong>C28-I06 공개 표면:</strong> <code>2.0.0-dev.33</code> 구현은 interface 8개·DTO 28개·권한 utility 1개, 총 37개 공개 symbol이다. reflection allowlist는 <code>tests/Contract/addon-api-v1.php</code>가 정확히 고정한다.</div>
+        <div class="callout"><strong>WordPress 권한 검사:</strong> Manifest에 선언한 키를 애드온의 REST·명령·블록에서 직접 검사할 때는 반드시 <code>AddonCapabilityKeyV1::wordpress($declaredKey)</code>를 사용한다. 예를 들어 <code>hustoj_edu_games_play</code>는 <code>oj_addon_hustoj_edu_games_play</code>로 변환된다. 애드온이 <code>oj_addon_</code> 접두사를 복제하거나 선언 키를 그대로 <code>current_user_can()</code>에 넘기는 것은 금지한다.</div>
+      </section>
+
+      <section class="section" id="dto-signatures">
+        <div class="section-heading"><div><h2>DTO·factory 정확한 공개 시그니처</h2><p>구현자가 reflection fixture를 바로 작성할 수 있도록 생성자·factory·getter의 parameter 이름과 반환형을 고정한다.</p></div><span class="badge">C28-API-S02</span></div>
+        <div class="callout"><strong>표기 규칙:</strong> 아래 메서드는 모두 <code>public</code>이며, 생성자·factory·getter의 이름·순서·기본값·nullable·반환형은 계약이다. DTO는 <code>final</code>, 속성은 <code>private readonly</code>, setter와 공개 속성은 0개다. <code>AddonPageResponseV1</code>만 private constructor와 공개 static factory를 사용한다.</div>
+
+        <h3>배열 shape</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>문서 alias</th><th>PHP <code>array</code> shape</th><th>사용 위치</th></tr></thead>
+          <tbody>
+            <tr><td><code>StringList</code></td><td><code>list&lt;string&gt;</code></td><td>asset bundle key·style·script·dependency</td></tr>
+            <tr><td><code>RouteParameterMap</code></td><td><code>array&lt;string,string&gt;</code></td><td>Route parameter·내부 redirect parameter</td></tr>
+            <tr><td><code>QueryMap</code></td><td><code>array&lt;string,string|list&lt;string&gt;&gt;</code></td><td>정규화된 GET query</td></tr>
+            <tr><td><code>ScalarMap</code></td><td><code>array&lt;string,bool|int|float|string|null&gt;</code></td><td>안전한 진단 details·Context attributes</td></tr>
+            <tr><td><code>JsonMap</code></td><td><code>array&lt;string,mixed&gt;</code></td><td>JSON 직렬화 가능한 object root. resource·closure·object·비정상 UTF-8 금지</td></tr>
+            <tr><td><code>ContributionCountMap</code></td><td><code>array&lt;string,int&gt;</code></td><td>종류별 승인 기여 수량</td></tr>
+            <tr><td><code>ContextSummaryList</code></td><td><code>list&lt;AddonContextSummaryV1&gt;</code></td><td>Context page items</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>Manifest DTO 7개</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>final class</th><th>정확한 constructor</th><th>정확한 getter</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonCapabilityDefinitionV1</code></td><td><code>__construct(string $key, string $label, string $audience)</code></td><td><code>key(): string</code><br><code>label(): string</code><br><code>audience(): string</code></td></tr>
+            <tr><td><code>AddonConsolePageDefinitionV1</code></td><td><code>__construct(string $key, string $path, AddonPageHandlerV1 $handler, string $capability, array $assetBundles = [])</code></td><td><code>key(): string</code><br><code>path(): string</code><br><code>handler(): AddonPageHandlerV1</code><br><code>capability(): string</code><br><code>assetBundles(): array</code> <small>StringList</small></td></tr>
+            <tr><td><code>AddonPublicPageDefinitionV1</code></td><td><code>__construct(string $key, string $path, AddonPageHandlerV1 $handler, string $capability, array $assetBundles = [])</code></td><td><code>key(): string</code><br><code>path(): string</code><br><code>handler(): AddonPageHandlerV1</code><br><code>capability(): string</code><br><code>assetBundles(): array</code> <small>StringList</small></td></tr>
+            <tr><td><code>AddonConsoleMenuDefinitionV1</code></td><td><code>__construct(string $key, string $label, string $anchor, string $route, string $capability, int $order, string $icon = '')</code></td><td><code>key(): string</code><br><code>label(): string</code><br><code>anchor(): string</code><br><code>route(): string</code><br><code>capability(): string</code><br><code>order(): int</code><br><code>icon(): string</code></td></tr>
+            <tr><td><code>AddonPublicMenuDefinitionV1</code></td><td><code>__construct(string $key, string $label, string $parent, string $route, string $capability, int $order, string $scope, bool $mobile = true, bool $defaultEnabled = true)</code></td><td><code>key(): string</code><br><code>label(): string</code><br><code>parent(): string</code><br><code>route(): string</code><br><code>capability(): string</code><br><code>order(): int</code><br><code>scope(): string</code><br><code>mobile(): bool</code><br><code>defaultEnabled(): bool</code></td></tr>
+            <tr><td><code>AddonAssetBundleDefinitionV1</code></td><td><code>__construct(string $key, string $handle, array $styles, array $scripts, array $dependencies, string $version)</code></td><td><code>key(): string</code><br><code>handle(): string</code><br><code>styles(): array</code> <small>StringList</small><br><code>scripts(): array</code> <small>StringList</small><br><code>dependencies(): array</code> <small>StringList</small><br><code>version(): string</code></td></tr>
+            <tr><td><code>AddonAiTaskDefinitionV1</code></td><td><code>__construct(string $key, string $label, string $inputContractVersion, string $sourceKind, ?AddonAiTaskInstructionV1 $instruction = null)</code></td><td><code>key(): string</code><br><code>label(): string</code><br><code>inputContractVersion(): string</code><br><code>sourceKind(): string</code><br><code>instruction(): ?AddonAiTaskInstructionV1</code></td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>페이지·Runtime DTO 4개</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>final class</th><th>정확한 constructor·factory</th><th>정확한 getter</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonPageRequestV1</code></td><td><code>__construct(string $routeKey, int $actorUserId, array $parameters, array $query, string $locale, string $correlationId)</code></td><td><code>routeKey(): string</code><br><code>actorUserId(): int</code><br><code>parameters(): array</code> <small>RouteParameterMap</small><br><code>query(): array</code> <small>QueryMap</small><br><code>locale(): string</code><br><code>correlationId(): string</code></td></tr>
+            <tr><td><code>AddonPageResponseV1</code></td><td><code>public static function html(string $title, string $body, int $status = 200): self;</code><br><code>public static function redirect(string $route, array $parameters = []): self;</code><br><code>public static function unavailable(string $message, string $code): self;</code></td><td><code>kind(): string</code><br><code>title(): ?string</code><br><code>body(): ?string</code><br><code>status(): int</code><br><code>route(): ?string</code><br><code>parameters(): array</code> <small>RouteParameterMap</small><br><code>message(): ?string</code><br><code>code(): ?string</code></td></tr>
+            <tr><td><code>AddonRuntimeSnapshotV1</code></td><td><code>__construct(string $addonId, string $addonVersion, string $requiredPlatform, string $actualPlatform, string $requiredAddonApi, string $actualAddonApi, string $status, string $code, string $catalogRevision, array $contributionCounts, string $correlationId)</code></td><td><code>addonId(): string</code><br><code>addonVersion(): string</code><br><code>requiredPlatform(): string</code><br><code>actualPlatform(): string</code><br><code>requiredAddonApi(): string</code><br><code>actualAddonApi(): string</code><br><code>status(): string</code><br><code>code(): string</code><br><code>catalogRevision(): string</code><br><code>contributionCounts(): array</code> <small>ContributionCountMap</small><br><code>correlationId(): string</code></td></tr>
+            <tr><td><code>AddonApiProblemV1</code></td><td><code>__construct(string $code, string $message, string $correlationId, bool $retryable, array $details = [])</code></td><td><code>code(): string</code><br><code>message(): string</code><br><code>correlationId(): string</code><br><code>retryable(): bool</code><br><code>details(): array</code> <small>ScalarMap</small></td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>학습 Context DTO 12개</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>final class</th><th>정확한 constructor</th><th>정확한 getter</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonTeachingContextQueryV1</code></td><td><code>__construct(int $actorUserId, array $types, string $search = '', string $cursor = '', int $limit = 30)</code></td><td><code>actorUserId(): int</code><br><code>types(): array</code> <small>StringList</small><br><code>search(): string</code><br><code>cursor(): string</code><br><code>limit(): int</code></td></tr>
+            <tr><td><code>AddonContextPageV1</code></td><td><code>__construct(bool $successful, array $items, string $nextCursor, ?AddonApiProblemV1 $problem)</code></td><td><code>isSuccessful(): bool</code><br><code>items(): array</code> <small>ContextSummaryList</small><br><code>nextCursor(): string</code><br><code>problem(): ?AddonApiProblemV1</code></td></tr>
+            <tr><td><code>AddonContextSummaryV1</code></td><td><code>__construct(string $type, string $id, string $label, string $lifecycleState, string $revision, array $attributes = [])</code></td><td><code>type(): string</code><br><code>id(): string</code><br><code>label(): string</code><br><code>lifecycleState(): string</code><br><code>revision(): string</code><br><code>attributes(): array</code> <small>ScalarMap</small></td></tr>
+            <tr><td><code>AddonContextAccessRequestV1</code></td><td><code>__construct(int $actorUserId, string $contextType, string $contextId, string $operation, ?int $learnerUserId = null, ?string $expectedRevision = null)</code></td><td><code>actorUserId(): int</code><br><code>contextType(): string</code><br><code>contextId(): string</code><br><code>operation(): string</code><br><code>learnerUserId(): ?int</code><br><code>expectedRevision(): ?string</code></td></tr>
+            <tr><td><code>AddonContextAccessDecisionV1</code></td><td><code>__construct(bool $allowed, string $code, ?AddonContextSnapshotV1 $snapshot, string $correlationId)</code></td><td><code>isAllowed(): bool</code><br><code>code(): string</code><br><code>snapshot(): ?AddonContextSnapshotV1</code><br><code>correlationId(): string</code></td></tr>
+            <tr><td><code>AddonContextSnapshotRequestV1</code></td><td><code>__construct(int $actorUserId, string $contextType, string $contextId, string $expectedRevision)</code></td><td><code>actorUserId(): int</code><br><code>contextType(): string</code><br><code>contextId(): string</code><br><code>expectedRevision(): string</code></td></tr>
+            <tr><td><code>AddonContextSnapshotResultV1</code></td><td><code>__construct(bool $successful, ?AddonContextSnapshotV1 $snapshot, ?AddonApiProblemV1 $problem)</code></td><td><code>isSuccessful(): bool</code><br><code>snapshot(): ?AddonContextSnapshotV1</code><br><code>problem(): ?AddonApiProblemV1</code></td></tr>
+            <tr><td><code>AddonContextSnapshotV1</code></td><td><code>__construct(string $type, string $id, string $label, string $lifecycleState, string $revision, string $actorRelation, array $attributes = [])</code></td><td><code>type(): string</code><br><code>id(): string</code><br><code>label(): string</code><br><code>lifecycleState(): string</code><br><code>revision(): string</code><br><code>actorRelation(): string</code><br><code>attributes(): array</code> <small>ScalarMap</small></td></tr>
+            <tr><td><code>AddonLearningContextQueryV1</code></td><td><code>__construct(int $actorUserId, array $types, string $search = '', string $cursor = '', int $limit = 30)</code></td><td><code>actorUserId(): int</code><br><code>types(): array</code><br><code>search(): string</code><br><code>cursor(): string</code><br><code>limit(): int</code></td></tr>
+            <tr><td><code>AddonAssignmentRosterQueryV1</code></td><td><code>__construct(int $actorUserId, string $contextType, string $contextId, string $expectedContextRevision, ?string $expectedRosterRevision = null, string $cursor = '', int $limit = 100)</code></td><td><code>actorUserId(): int</code><br><code>contextType(): string</code><br><code>contextId(): string</code><br><code>expectedContextRevision(): string</code><br><code>expectedRosterRevision(): ?string</code><br><code>cursor(): string</code><br><code>limit(): int</code></td></tr>
+            <tr><td><code>AddonAssignmentLearnerV1</code></td><td><code>__construct(int $learnerUserId, string $membershipRevision)</code></td><td><code>learnerUserId(): int</code><br><code>membershipRevision(): string</code></td></tr>
+            <tr><td><code>AddonAssignmentLearnerPageV1</code></td><td><code>__construct(bool $successful, array $items, string $nextCursor, ?string $rosterRevision, ?AddonApiProblemV1 $problem)</code></td><td><code>isSuccessful(): bool</code><br><code>items(): array</code><br><code>nextCursor(): string</code><br><code>rosterRevision(): ?string</code><br><code>problem(): ?AddonApiProblemV1</code></td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>AI Task DTO 5개</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>final class</th><th>정확한 constructor</th><th>정확한 getter</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonAiTaskInstructionV1</code></td><td><code>__construct(string $contractVersion, string $content)</code></td><td><code>contractVersion(): string</code><br><code>content(): string</code><br><code>contentHash(): string</code></td></tr>
+            <tr><td><code>AddonAiTaskRouteDecisionV1</code></td><td><code>__construct(bool $canRoute, string $code, string $routingRevision, string $correlationId)</code></td><td><code>canRoute(): bool</code><br><code>code(): string</code><br><code>routingRevision(): string</code><br><code>correlationId(): string</code></td></tr>
+            <tr><td><code>AddonAiTaskRoutingSnapshotV1</code></td><td><code>__construct(bool $available, string $taskKey, string $providerKey, string $modelKey, string $profileFingerprint, string $routingRevision, ?AddonApiProblemV1 $problem)</code></td><td><code>isAvailable(): bool</code><br><code>taskKey(): string</code><br><code>providerKey(): string</code><br><code>modelKey(): string</code><br><code>profileFingerprint(): string</code><br><code>routingRevision(): string</code><br><code>problem(): ?AddonApiProblemV1</code></td></tr>
+            <tr><td><code>AddonAiTaskRequestV1</code></td><td><code>__construct(string $taskKey, string $contractVersion, int $actorUserId, string $idempotencyKey, array $input)</code></td><td><code>taskKey(): string</code><br><code>contractVersion(): string</code><br><code>actorUserId(): int</code><br><code>idempotencyKey(): string</code><br><code>input(): array</code> <small>JsonMap</small></td></tr>
+            <tr><td><code>AddonAiTaskResultV1</code></td><td><code>__construct(bool $successful, array $output, AddonAiTaskRoutingSnapshotV1 $routingSnapshot, string $correlationId, ?AddonApiProblemV1 $problem)</code></td><td><code>isSuccessful(): bool</code><br><code>output(): array</code> <small>JsonMap</small><br><code>routingSnapshot(): AddonAiTaskRoutingSnapshotV1</code><br><code>correlationId(): string</code><br><code>problem(): ?AddonApiProblemV1</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>성공·실패 불변식:</strong> 성공 결과의 <code>problem()</code>은 <code>null</code>, 실패 결과는 allowlist 오류를 가진 <code>AddonApiProblemV1</code>이다. nullable snapshot은 거부·조회 실패에서만 <code>null</code>이며, 빈 문자열은 nullable 값을 대신하지 않는다. 단, Runtime snapshot의 <code>code()</code>는 <code>accepted</code>일 때 빈 문자열을 사용한다.</div>
+      </section>
+
+      <section class="section" id="manifest">
+        <div class="section-heading"><div><h2>Manifest와 기여 DTO</h2><p>모든 DTO는 final, 생성자 검증, private readonly 필드와 같은 이름의 getter를 사용한다.</p></div><span class="badge">C28-API-M01</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>공개 DTO</th><th>생성자 parameter</th><th>허용 값·의미</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonCapabilityDefinitionV1</code></td><td><code>string $key, string $label, string $audience</code></td><td>audience는 <code>operator|educator|learner</code></td></tr>
+            <tr><td><code>AddonConsolePageDefinitionV1</code></td><td><code>string $key, string $path, AddonPageHandlerV1 $handler, string $capability, array $assetBundles = []</code></td><td>GET Console HTML, <code>/oj-console/addons/{id}</code> 아래</td></tr>
+            <tr><td><code>AddonPublicPageDefinitionV1</code></td><td>Console Page와 동일</td><td>로그인 PublicUI HTML, <code>/oj-addons/{id}</code> 아래</td></tr>
+            <tr><td><code>AddonConsoleMenuDefinitionV1</code></td><td><code>string $key, string $label, string $anchor, string $route, string $capability, int $order, string $icon = ''</code></td><td>공개 core anchor 아래 2차 메뉴</td></tr>
+            <tr><td><code>AddonPublicMenuDefinitionV1</code></td><td><code>string $key, string $label, string $parent, string $route, string $capability, int $order, string $scope, bool $mobile = true, bool $defaultEnabled = true</code></td><td>scope는 <code>learner</code>, parameter 없는 Public Route만 대상. 시스템 관리자는 직접 Route 접근 정책과 동일하게 운영 확인용 메뉴를 미리 볼 수 있음</td></tr>
+            <tr><td><code>AddonAssetBundleDefinitionV1</code></td><td><code>string $key, string $handle, array $styles, array $scripts, array $dependencies, string $version</code></td><td><code>pluginFile</code> 기준 상대 경로만 허용, 외부 URL·inline 자산 금지</td></tr>
+            <tr><td><code>AddonAiTaskDefinitionV1</code></td><td><code>string $key, string $label, string $inputContractVersion, string $sourceKind</code></td><td>sourceKind는 <code>none|addon_payload|platform_submission</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Manifest field</th><th>정확한 규칙</th></tr></thead>
+          <tbody>
+            <tr><td><code>addonId</code></td><td><code>^[a-z][a-z0-9-]{2,63}$</code>, <code>plugin_basename($pluginFile)</code>의 directory slug와 동일</td></tr>
+            <tr><td><code>namespace</code></td><td><code>^[a-z][a-z0-9_]{2,63}$</code>, 모든 contribution key는 <code>addon.{namespace}.</code> prefix</td></tr>
+            <tr><td><code>version</code></td><td>정규 SemVer, prerelease 허용</td></tr>
+            <tr><td><code>pluginFile</code></td><td>활성 플러그인의 실제 root file, asset 상대 경로와 addon ID 검증 기준</td></tr>
+            <tr><td><code>requiresPlatform</code></td><td>제품 SemVer 범위. C28-I06에서 최초 제공 릴리스 값을 소비자 profile 토큰에 기록</td></tr>
+            <tr><td><code>requiresAddonApi</code></td><td>API SemVer 범위. v1 소비자는 <code>^1.0</code></td></tr>
+            <tr><td><code>diagnosticLabel</code></td><td>운영 상태 화면의 짧은 이름, 1~80자</td></tr>
+            <tr><td><code>supportReference</code></td><td>비밀값 없는 문서 식별자, 1~160자. 임의 HTML·URL query 금지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>원자성:</strong> <code>register()</code> callback 안의 Manifest 작성·DTO 생성·검증 예외는 해당 후보만 <code>rejected</code>로 만든다. callback 밖의 전역 부작용은 API 위반이다. 후보가 실패하면 기여 일부를 core 또는 Composite Catalog에 남기지 않는다.</div>
+      </section>
+
+      <section class="section" id="page">
+        <div class="section-heading"><div><h2>페이지 요청·응답 계약</h2><p>애드온은 shell fragment만 반환하고 플랫폼이 전역 레이아웃과 최종 응답을 소유한다.</p></div><span class="badge">C28-API-P01</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>DTO·factory</th><th>필드·signature</th><th>규칙</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonPageRequestV1</code></td><td><code>routeKey(), actorUserId(), parameters(), query(), locale(), correlationId()</code></td><td>플랫폼이 생성. cookie·raw superglobal·Container를 포함하지 않음</td></tr>
+            <tr><td><code>AddonPageResponseV1::html()</code></td><td><code>html(string $title, string $body, int $status = 200): self</code></td><td>상태 200·403·404·409·422·503만 허용, body 최대 2MiB</td></tr>
+            <tr><td><code>AddonPageResponseV1::redirect()</code></td><td><code>redirect(string $route, array $parameters = []): self</code></td><td>승인된 core·자기 addon Route만 허용, 외부 URL 금지</td></tr>
+            <tr><td><code>AddonPageResponseV1::unavailable()</code></td><td><code>unavailable(string $message, string $code): self</code></td><td>안전한 사용자 메시지와 공개 오류 코드만 전달</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>보안:</strong> Page Handler는 애드온 내부 서비스를 생성자 주입으로 받는다. 출력 escaping·nonce·자체 REST permission은 애드온 책임이며 플랫폼 shell 접근과 선언 capability는 플랫폼이 Handler 호출 전에 검사한다.</div>
+      </section>
+
+      <section class="section" id="runtime">
+        <div class="section-heading"><div><h2>Runtime Context와 snapshot</h2><p>승인된 애드온의 <code>onReady()</code>가 자기 전용 context를 직접 받고, context는 세 공개 접근점만 제공한다.</p></div><span class="badge">C28-API-R01</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>DTO</th><th>getter</th><th>비고</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonRuntimeSnapshotV1</code></td><td><code>addonId(), addonVersion(), requiredPlatform(), actualPlatform(), requiredAddonApi(), actualAddonApi(), status(), code(), catalogRevision(), contributionCounts(), correlationId()</code></td><td>상태·버전·수량·안전 진단만 제공</td></tr>
+            <tr><td><code>AddonApiProblemV1</code></td><td><code>code(), message(), correlationId(), retryable(), details()</code></td><td>details는 allowlist key와 scalar만 허용</td></tr>
+          </tbody>
+        </table></div>
+        <p>AM-01 이후 <code>AddonRuntimeContextV1</code>은 <code>forAddon(addonId)</code> 같은 조회형 호출로 얻지 않는다. 애드온이 <code>onReady()</code>로 등록한 callback에 플랫폼이 이 애드온만을 위해 생성한 인스턴스 하나를 직접 전달하며, 같은 callback이 두 번 호출되거나 다른 애드온의 인스턴스를 받는 경로는 없다. manifest가 <code>accepted</code>로 승인되지 못하면(비호환·충돌·검증 실패 등) 그 애드온의 <code>onReady</code> callback은 아예 호출되지 않는다. accepted 상태라도 Runtime Context 생성 또는 callback 예외가 나면 해당 예외를 보고하고 같은 부팅에서 재시도하지 않으며, 이미 합성된 Route·Menu와 catalog status는 accepted로 남는다. 따라서 소비자는 catalog accepted와 자체 Runtime Bridge ready를 분리하고 모든 handler에서 fail-closed해야 한다.</p>
+        <div class="warning"><strong><code>C28-I06-LC01</code> 생명주기 계약:</strong> Runtime Ready dispatch는 등록별 최대 한 번 시도하며 같은 부팅에서 자동 재시도하지 않는다. catalog의 <code>accepted|incompatible|rejected</code>와 Runtime의 <code>pending|ready|failed|not_required</code>를 분리하고 callback 예외는 <code>addon_runtime_callback_failed</code>로 축약한다. 소비자는 자체 Bridge가 <code>ready</code>가 될 때까지 Runtime 의존 기능을 fail closed한다.</div>
+      </section>
+
+      <section class="section" id="contexts">
+        <div class="section-heading"><div><h2>학습 Context API</h2><p>플랫폼 학사 원장을 조회·인가하되 repository와 전체 명단을 노출하지 않는다.</p></div><span class="badge">C28-API-C01</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>DTO</th><th>생성자 parameter 또는 getter</th><th>규칙</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonTeachingContextQueryV1</code></td><td><code>int $actorUserId, array $types, string $search = '', string $cursor = '', int $limit = 30</code></td><td>types는 <code>site|class|group|user</code>, limit 1~100</td></tr>
+            <tr><td><code>AddonContextPageV1</code></td><td><code>isSuccessful(), items(), nextCursor(), problem()</code></td><td>담당·관리 범위의 최소 snapshot만 포함</td></tr>
+            <tr><td><code>AddonContextSummaryV1</code></td><td><code>type(), id(), label(), lifecycleState(), revision(), attributes()</code></td><td>attributes는 type별 공개 allowlist만 포함</td></tr>
+            <tr><td><code>AddonContextAccessRequestV1</code></td><td><code>int $actorUserId, string $contextType, string $contextId, string $operation, ?int $learnerUserId = null, ?string $expectedRevision = null</code></td><td>operation은 <code>view|assign|evaluate|report|manage|participate</code></td></tr>
+            <tr><td><code>AddonContextAccessDecisionV1</code></td><td><code>isAllowed(), code(), snapshot(), correlationId()</code></td><td>없음·provider 예외·stale은 deny. allowlist 밖 operation은 요청 DTO 생성에서 거부되며, 현재 Real Gateway는 허용된 여섯 operation을 목적별로 분기하지 않음</td></tr>
+            <tr><td><code>AddonContextSnapshotRequestV1</code></td><td><code>int $actorUserId, string $contextType, string $contextId, string $expectedRevision</code></td><td>인가된 최신 revision만 조회</td></tr>
+            <tr><td><code>AddonContextSnapshotResultV1</code></td><td><code>isSuccessful(), snapshot(), problem()</code></td><td>애드온 배정 시점에 저장할 불변 projection</td></tr>
+            <tr><td><code>AddonContextSnapshotV1</code></td><td><code>type(), id(), label(), lifecycleState(), revision(), actorRelation(), attributes()</code></td><td>SQL·수정 메서드·전체 roster·불필요한 개인정보 없음</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>학년 의미:</strong> API v1에서 학년은 별도 context type이 아니다. <code>academic_year</code>·<code>grade_label</code>은 class의 선택 표시 속성 후보이고, <code>group</code>은 플랫폼 Groups 원장의 stable ID를 사용한다.</div>
+        <div class="warning"><strong>현재 구현 공백:</strong> C28-I05의 <code>RealAddonContextGateway</code>는 class·group 모두 <code>enabled</code> 속성만 반환하며 현재 <code>LearningClass</code> 원장에도 학년 필드가 없다. 소비자는 학년 속성을 필수값으로 사용하지 않는다. 제공 또는 문서 의미 확정은 아래 <code>C28-I06-CG03</code>에서 추적한다.</div>
+      </section>
+
+      <section class="section" id="a-ds06-consumer-gap">
+        <div class="section-heading"><div><h2>A-DS-06 소비자 인수 구현 결과</h2><p>플랫폼 원장 Connector에 필요한 제공자 계약과 소비자 보상 경계를 기록한다.</p></div><span class="badge good">C28-I06-CG01~CG11 정합화</span></div>
+        <div class="callout"><strong>C28-I06 적용:</strong> CG01·CG02·CG11은 <code>2.0.0-dev.33</code>·Addon API <code>1.1.0</code>에 구현했고, CG03은 학년 값을 제공하지 않는 것으로 정합화했다. CG04~CG10은 아래 소비자 보상·비범위 계약을 유지한다.</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>현재 사실</th><th>후속 제공자 작업</th><th>SemVer·관문</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-I06-CG01</code></td><td>학생 actor의 자기 active class·group participation을 <code>participate</code>에서 허용한다.</td><td>타인 대리와 교사 operation 승격은 계속 거부한다.</td><td>직접·간접 membership, 탈퇴·비활성·대리 거부 fixture 통과</td><td><span class="badge good">구현 완료</span></td></tr>
+            <tr><td><code>C28-I06-CG02</code></td><td><code>AddonLearningContextGatewayV1</code>이 actor 자신의 active class·group 최소 summary를 반환한다.</td><td>검색·cursor·상한을 적용하고 roster·다른 learner·담당자 목록을 노출하지 않는다.</td><td>Addon API <code>1.1.0</code>, reflection·탈퇴·cursor fixture 통과</td><td><span class="badge good">구현 완료</span></td></tr>
+            <tr><td><code>C28-I06-CG03</code></td><td>현재 플랫폼 원장에는 정규화된 학년 필드가 없고 Context attributes는 <code>enabled</code>만 제공한다.</td><td>Addon API 1.1은 학년을 제공하지 않는다. 학년 표시는 향후 additive 후보이며 핵심 배포·평가·권한은 이에 의존하지 않는다.</td><td>source·fixture·양쪽 HTML 일치</td><td><span class="badge good">문서 정합화</span></td></tr>
+            <tr><td><code>C28-I06-CG04</code></td><td>Context revision은 enabled·deleted·owner를 반영하지만 담당 명단은 포함하지 않는다.</td><td>소비자가 snapshot을 권한 증명으로 쓰지 않고 요청·Job·download마다 현재 authorize를 호출하는 인수 E2E를 유지한다.</td><td>담당 해제 직후 모든 surface 거부</td><td>보상 정책</td></tr>
+            <tr><td><code>C28-I06-CG05</code></td><td>Problem·Judge Submission 공개 read Gateway는 API v1에 없다.</td><td>AI 활동지 v1 비목표로 유지한다. 향후 요구가 생기면 별도 공개 API 설계·권한·PII·source 계약부터 시작한다.</td><td>AI 평가 애드온 직접 DB 접근 0건</td><td>의도된 비범위</td></tr>
+            <tr><td><code>C28-I06-CG06</code></td><td><code>participate</code>는 actor 자신의 active membership만 허용하는 별도 분기다. <code>view|assign|evaluate|report|manage</code>는 같은 staff <code>canManage</code> gate를 사용한다.</td><td>staff operation 문자열은 목적별 세부 권한 증명이 아니다. 소비자는 capability·객체 관계·state를 명령별 최종 권한으로 강제한다.</td><td>self·대리 참여와 staff 관리 gate fixture, 목적별 소비자 Policy</td><td>정본 확정·소비자 보상</td></tr>
+            <tr><td><code>C28-I06-CG07</code></td><td>삭제 Context는 항상 거부한다. inactive Context는 학생 <code>participate</code>와 exact roster에서 거부하지만, staff 5개 operation과 snapshot은 관리 관계가 있으면 <code>lifecycleState=inactive</code>·<code>enabled=false</code>로 반환한다.</td><td>소비자는 배포·평가·공개 같은 상태 변경 명령에서 active·enabled를 추가 강제한다. 읽기·관리 허용 여부는 명령별 Policy로 결정한다.</td><td>active/inactive/deleted × participate·roster·staff·snapshot fixture</td><td>정본 확정·소비자 보상</td></tr>
+            <tr><td><code>C28-I06-CG08</code></td><td>교사용 Context 목록의 unknown·stale cursor는 첫 페이지로 되감긴다. 학생 learning Context와 exact roster는 unknown cursor를 <code>addon_context_unavailable</code>로 fail closed한다.</td><td>소비자는 교사용 목록에 seen-cursor·페이지 상한 guard를 유지하고, learning·roster 실패에서는 전체 수집을 폐기한다.</td><td>세 목록의 정상·unknown·반복 cursor와 원장 변경 중 pagination</td><td>소비자 보상</td></tr>
+            <tr><td><code>C28-I06-CG09</code></td><td>DTO로 만들 수 없는 Context row를 구현이 조용히 제외하며 제외 수를 공개하지 않는다.</td><td>운영 요구가 있으면 비식별 page diagnostics를 additive 계약으로 검토한다. 소비자는 내부 제외 수를 추정하지 않는다.</td><td>malformed row·개인정보 비노출·DTO SemVer</td><td>의미 명확화</td></tr>
+            <tr><td><code>C28-I06-CG10</code></td><td>expected revision 불일치와 Context provider 예외가 공개적으로 같은 <code>addon_context_unavailable</code>이다.</td><td>소비자는 raw message로 stale 여부를 분류하지 않고 모두 중단·새로고침으로 처리한다. 안정 reason이 필요하면 additive 계약으로 검토한다.</td><td>stale·provider 예외·message 비의존·SemVer fixture</td><td>소비자 보상·후속 후보</td></tr>
+            <tr><td><code>C28-I06-CG11</code></td><td><code>AddonAssignmentRosterGatewayV1</code>이 exact active learner ID·membership revision·roster revision을 page로 반환한다.</td><td>첫 roster revision을 후속 page가 고정하며 명단 race·unknown/repeated cursor를 fail closed한다.</td><td>직접·간접 membership·5,000명 상한·PII 비노출·SemVer fixture 통과</td><td><span class="badge good">구현 완료</span></td></tr>
+          </tbody>
+        </table></div>
+        <h3>CG02 additive API 1.1 계약</h3>
+        <pre><code>interface AddonLearningContextGatewayV1 extends AddonContextGatewayV1
+{
+    public function listLearningContexts(
+        AddonLearningContextQueryV1 $query
+    ): AddonContextPageV1;
+}
+
+final class AddonLearningContextQueryV1
+{
+    public function __construct(
+        int $actorUserId,
+        array $types,
+        string $search = '',
+        string $cursor = '',
+        int $limit = 30
+    );
+}</code></pre>
+        <div class="risk"><strong>후보 불변식:</strong> types는 <code>class|group</code>, actor 본인의 active participation만 반환하고 roster·다른 learner ID·담당자 목록은 노출하지 않는다. <code>AddonRuntimeContextV1::contexts()</code>의 기존 반환형은 바꾸지 않으며 소비자는 공개 extension interface <code>instanceof</code>로만 지원을 확인한다. <code>method_exists</code>, 내부 class 탐지와 DB fallback은 금지한다.</div>
+
+        <h3>CG11 additive API 1.1 계약</h3>
+        <div class="callout"><strong>확정 SemVer:</strong> CG02·CG11·AJ08을 묶은 Addon API <code>1.1.0</code> additive minor다. 기존 Context Gateway signature는 유지하고 공개 extension <code>instanceof</code>로만 지원을 확인한다.</div>
+        <pre><code>interface AddonAssignmentRosterGatewayV1 extends AddonContextGatewayV1
+{
+    public function listAssignmentLearners(
+        AddonAssignmentRosterQueryV1 $query
+    ): AddonAssignmentLearnerPageV1;
+}
+
+final class AddonAssignmentRosterQueryV1
+{
+    public function __construct(
+        int $actorUserId,
+        string $contextType,
+        string $contextId,
+        string $expectedContextRevision,
+        ?string $expectedRosterRevision = null,
+        string $cursor = '',
+        int $limit = 100
+    );
+    public function actorUserId(): int;
+    public function contextType(): string;
+    public function contextId(): string;
+    public function expectedContextRevision(): string;
+    public function expectedRosterRevision(): ?string;
+    public function cursor(): string;
+    public function limit(): int;
+}
+
+final class AddonAssignmentLearnerV1
+{
+    public function __construct(int $learnerUserId, string $membershipRevision);
+    public function learnerUserId(): int;
+    public function membershipRevision(): string;
+}
+
+final class AddonAssignmentLearnerPageV1
+{
+    public function __construct(
+        bool $successful,
+        array $items,
+        string $nextCursor,
+        ?string $rosterRevision,
+        ?AddonApiProblemV1 $problem
+    );
+    public function isSuccessful(): bool;
+    public function items(): array;
+    public function nextCursor(): string;
+    public function rosterRevision(): ?string;
+    public function problem(): ?AddonApiProblemV1;
+}</code></pre>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>후보 계약</th><th>검증·금지</th></tr></thead>
+          <tbody>
+            <tr><td>인가</td><td>actor는 현재 Context의 <code>assign</code> 권한을 가진 교사이며 context type은 <code>class|group</code>만</td><td>학생 actor·비담당 교사·inactive/deleted Context·site/user 거부</td></tr>
+            <tr><td>최소 항목</td><td>active learner의 양수 WordPress user ID와 160자 이하 opaque membership revision만 반환</td><td>이름·email·login·담당자·member count·원장 PK 비노출</td></tr>
+            <tr><td><code>CG11-QUERY-INV-01</code></td><td>actor는 양수, context type은 <code>class|group</code>, context ID·Context revision·roster revision은 160자 이하 safe token, cursor는 512자 이하, limit은 1~100</td><td>첫 요청은 cursor 빈 문자열·expected roster revision <code>null</code>, 후속 요청은 둘 다 필수이며 한쪽만 있는 조합 거부</td></tr>
+            <tr><td><code>CG11-PAGE-INV-01</code></td><td>성공은 problem <code>null</code>·roster revision 필수·최대 100개 learner, 실패는 items 빈 목록·next cursor 빈 문자열·roster revision <code>null</code>·problem 필수</td><td>잘못된 DTO 종류·page 내부 learner 중복·성공과 실패 필드 혼합은 생성자에서 거부</td></tr>
+            <tr><td><code>CG11-ERROR-01</code></td><td>권한 거부는 <code>addon_context_denied</code>, stale Context·roster race·unknown/repeated cursor·provider 실패는 <code>addon_context_unavailable</code></td><td>소비자는 raw message를 분류하지 않고 실패한 명단 수집 전체를 폐기한 뒤 Context부터 다시 조회</td></tr>
+            <tr><td>일관성</td><td>첫 page는 stable <code>rosterRevision</code>을 반환하고 후속 page는 같은 값을 <code>expectedRosterRevision</code>으로 요구</td><td>pagination 중 membership 변경·unknown/repeated cursor는 성공 빈 page가 아니라 전체 실패</td></tr>
+            <tr><td>상한</td><td>cursor 512자, limit 1~100, 소비자 assignment 한 건당 50 page·5,000 learner</td><td>전체 사용자 export·unbounded list·offset 추정 금지</td></tr>
+            <tr><td>호환</td><td>기존 <code>AddonContextGatewayV1</code>와 <code>AddonRuntimeContextV1::contexts()</code> signature 불변</td><td>공개 extension <code>instanceof</code> 외 method 탐지·내부 adapter·DB fallback 금지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>CG11 구현 증거:</strong> <code>tests/Contract/addon-i06-context.php</code>가 assign 권한, class/group 직접·간접 membership, roster race, unknown/repeated cursor, 5,000명 상한과 PII 비노출을 검증한다.</div>
+      </section>
+      <section class="section" id="ai">
+        <div class="section-heading"><div><h2>AI Task API</h2><p>작업 배정·provider·model·비밀값은 플랫폼이, task 입력·결과 schema와 평가 상태는 애드온이 소유한다.</p></div><span class="badge">C28-API-AI01</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>DTO</th><th>생성자 parameter 또는 getter</th><th>규칙</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonAiTaskRouteDecisionV1</code></td><td><code>canRoute(), code(), routingRevision(), correlationId()</code></td><td>비밀·endpoint·raw client 없음</td></tr>
+            <tr><td><code>AddonAiTaskRoutingSnapshotV1</code></td><td><code>isAvailable(), taskKey(), providerKey(), modelKey(), profileFingerprint(), routingRevision(), problem()</code></td><td>실행 이력에 보존 가능한 안전 projection</td></tr>
+            <tr><td><code>AddonAiTaskRequestV1</code></td><td><code>string $taskKey, string $contractVersion, int $actorUserId, string $idempotencyKey, array $input</code></td><td>JSON 직렬화 가능·최대 1MiB, 승인된 자기 task만 실행</td></tr>
+            <tr><td><code>AddonAiTaskResultV1</code></td><td><code>isSuccessful(), output(), routingSnapshot(), correlationId(), problem()</code></td><td>provider·transport·플랫폼 처리 실패는 exception 대신 실패 결과. 애드온별 output schema 검증은 소비자 책임</td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>AI 평가 task</th><th>sourceKind</th><th>소유 경계</th></tr></thead>
+          <tbody>
+            <tr><td><code>addon.oj_ai_dashboard.worksheet_quality_assessment</code></td><td><code>none</code></td><td>애드온이 활동지 revision·rubric·목표를 구조화 input으로 전달</td></tr>
+            <tr><td><code>addon.oj_ai_dashboard.student_submission_assessment</code></td><td><code>addon_payload</code></td><td>애드온이 학생 제출 revision을 승인 input으로 전달, 플랫폼은 애드온 DB를 조회하지 않음</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="section" id="a-ds07-ai-job-gap">
+        <div class="callout"><strong>2026-09-14 실행 대기 개선:</strong> 공개 <code>aiTasks()-&gt;execute()</code>는 호출되면 곧바로 Provider에 요청하는 동기 계약을 유지한다. 플랫폼 Jobs와 AI 평가 애드온은 각각 자기 큐의 commit 직후 비동기 Worker를 깨우고, 완료 후 다음 실행 가능 항목을 즉시 처리한다. 1분 cron은 실패 복구·재시도 회수용이며 새 요청의 필수 대기 시간이 아니다. API 1.1.0 메서드·DTO·작업/결과 소유권은 변경하지 않는다. 애드온에 플랫폼 내부 Jobs 접근 권한을 추가하지 않는다.</div>
+        <div class="section-heading"><div><h2>A-DS-07·A-DS-10·A-DS-12 AI 실행 소비자 인수 기록</h2><p>AI 평가 애드온의 queue·worker 상세 설계에서 실제 Runtime 구현과 공개 DTO를 다시 대조한 결과다.</p></div><span class="badge wait">C28-I06-AJ01~AJ08</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>현재 제공자 사실</th><th>소비자 불변식·후속</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-I06-AJ01</code></td><td><code>actorUserId</code>·<code>idempotencyKey</code>는 요청 DTO에서 검증되지만 내부 <code>AiTaskRequest</code>에는 task·contract·input만 전달된다.</td><td>플랫폼 인가·provider dedupe를 가정하지 않는다. 애드온이 enqueue·start·commit 재인가와 공식 결과 멱등성을 보장한다.</td><td>계약 명확화</td></tr>
+            <tr><td><code>C28-I06-AJ02</code></td><td><code>execute()</code> 요청에는 expected routing revision이 없고 호출 시점의 현재 배정으로 실행한다.</td><td>애드온이 plan·실행 결과·fresh postflight revision과 fingerprint를 비교해 drift 결과를 폐기한다. 호출 전 drift 차단이 제품 요구가 되면 additive API를 별도 승인한다.</td><td>소비자 보상·후속 후보</td></tr>
+            <tr><td><code>C28-I06-AJ03</code></td><td>공개 결과 DTO에는 token·실제 비용 telemetry가 없다. 2026-09-14부터 플랫폼 내부 공통 호출 계층은 Provider 토큰을 수집해 <a href="development-ds-15-operations-migration.html#ai-usage">운영 → AI 사용량</a>에서 코어·애드온을 통합 표시한다.</td><td>API 1.1.0의 타입·메서드·결과 필드는 변경하지 않는다. 애드온 소비자는 여전히 값을 추정하지 않고 <code>measurement=unavailable</code>로 기록한다. 플랫폼 내부 원장은 애드온 공개 조회 계약이 아니며 직접 DB 조회하지 않는다. 소비자별 예산 통제가 필요하면 별도 usage DTO를 설계한다.</td><td>관리자 통합 통계 추가 · 공개 API 변경 없음</td></tr>
+            <tr><td><code>C28-I06-AJ04</code></td><td>플랫폼은 output이 JSON map이라는 점까지만 보장하고 애드온별 결과 schema는 검증하지 않는다.</td><td>애드온 normalizer가 byte·schema·허용 key·점수·근거를 공식 저장 전에 엄격히 검증한다.</td><td>의도된 소유 경계</td></tr>
+            <tr><td><code>C28-I06-AJ05</code></td><td><code>sourceKind=addon_payload</code>는 애드온 제공 payload 표식이며 플랫폼 제출 조회나 submission-source profile 조건이 아니다. 현재 그 조건은 <code>platform_submission</code>에만 적용된다.</td><td>플랫폼 DB·submission gateway로 해석하지 않고 애드온이 허가·최소화한 payload만 전달한다.</td><td>계약 명확화</td></tr>
+            <tr><td>AI 연결 승인 정책</td><td>내부·외부 Provider 구분 없이 관리자가 프로필별로 제출 코드 전송을 승인할 수 있다. <code>platform_submission</code> 작업만으로도 해당 승인의 후보 검사가 가능하다.</td><td>공개 API 1.1.0의 타입·필드·sourceKind 의미는 변경하지 않는다. 작업 배정과 Worker의 승인 검사는 유지한다. 연결 검사 동시 실행·재시도·초기화는 <a href="development-ds-15-operations-migration.html#ai-contract">DS-15 운영 계약</a>을 따른다.</td><td>관리 정책 보완 · 공개 API 변경 없음</td></tr>
+            <tr><td><code>C28-I06-AJ06</code></td><td>task 미배정·profile 누락/비허용·source 조건·route 조회 실패는 공개적으로 모두 <code>addon_ai_task_unroutable</code>이다.</td><td>소비자는 raw message로 원인을 분류하지 않는다. 안정 reason이 제품 요구면 비밀 비노출 enum/code를 additive 계약으로 별도 승인한다.</td><td>소비자 보상·후속 후보</td></tr>
+            <tr><td><code>C28-I06-AJ07</code></td><td>성공 결과의 routing snapshot은 실행에 사용한 배정이며 응답 반환 시점의 현재 배정을 다시 읽은 값이 아니다.</td><td>소비자는 commit 전에 fresh <code>snapshot(taskKey)</code>을 호출해 plan·result·postflight revision/fingerprint를 비교하고 실패·불일치 output을 폐기한다. 시점 보장은 fixture로 고정한다.</td><td>소비자 보상·계약 명확화</td></tr>
+            <tr><td><code>C28-I06-AJ08</code></td><td><code>AddonAiTaskInstructionV1</code>과 task definition의 trailing nullable instruction이 accepted Manifest의 package-owned 지시문을 제공한다.</td><td><code>platform_system → addon_task_instruction → untrusted_user_data</code> 순서를 유지하고 request·활동지·학생 답안을 instruction으로 승격하지 않는다.</td><td><span class="badge good">Addon API 1.1 구현 완료</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>변경 통제:</strong> 이 기록은 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-07-ai-job-execution.html">A-DS-07 소비자 초안</a>과 <a href="../../../oj-ai-dashboard/docs/ai-assessment/platform-api-implementation-audit.html">API 구현 재검증</a>을 현재 제공자 동작과 일치시키는 문서 변경이다. 공개 signature·API version·PHP source·schema·migration 변경은 0건이며 AJ02·AJ03·AJ06·AJ07·AJ08의 API 확대나 의미 변경은 별도 승인 전 구현하지 않는다.</div>
+
+        <h3 id="aj08-candidate-contract">AJ08 Addon API 1.1 공개 계약</h3>
+        <div class="callout"><strong>확정 SemVer:</strong> <code>AddonAiTaskInstructionV1</code>과 trailing nullable instruction을 Addon API <code>1.1.0</code>에 추가했다. 기존 4-argument 호출은 그대로 유효하다.</div>
+        <pre><code>final class AddonAiTaskInstructionV1
+{
+    public function __construct(string $contractVersion, string $content);
+    public function contractVersion(): string;
+    public function content(): string;
+    public function contentHash(): string;
+}
+
+new AddonAiTaskDefinitionV1(
+    key: $key,
+    label: $label,
+    inputContractVersion: $inputContractVersion,
+    sourceKind: $sourceKind,
+    instruction: $instruction // ?AddonAiTaskInstructionV1 = null
+);
+
+public function instruction(): ?AddonAiTaskInstructionV1;</code></pre>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>구현 계약</th><th>검증·금지</th></tr></thead>
+          <tbody>
+            <tr><td>값 객체</td><td><code>contractVersion</code> safe token 1~64 bytes. content는 CRLF·CR을 LF로 정규화한 유효 UTF-8 plain text, 공백 제외 1자 이상, 최대 <code>16,384 bytes</code>. <code>contentHash()</code>는 플랫폼이 정규화 bytes의 lowercase SHA-256으로 계산한다.</td><td>TAB·LF 외 C0 control과 DEL 거부. 호출자 hash, HTML 렌더링, secret·endpoint·개인정보 금지</td></tr>
+            <tr><td>신뢰 원본</td><td>instruction은 accepted Manifest의 task 정의에서만 해석한다. <code>AddonAiTaskContributor</code>가 immutable descriptor를 내부 <code>AddonAiTaskContributions</code>에 복사하고 prompt factory가 task key로 조회한다.</td><td><code>AddonAiTaskRequestV1</code> signature 불변. input·REST·option·worksheet text의 override 무시</td></tr>
+            <tr><td>Fingerprint</td><td><code>AcceptedAddonCatalog</code> canonical revision과 routing assignment fingerprint에 task key·input contract·source kind·instruction contract version·content hash를 포함한다.</td><td>raw instruction을 catalog revision 자료·운영 화면·로그·correlation에 기록하지 않음</td></tr>
+            <tr><td>Prompt</td><td>논리 순서는 <code>platform_system → addon_task_instruction → untrusted_user_data</code>. 현재 OpenAI-compatible·Ollama는 <code>system → system → user</code>, Gemini는 앞의 두 값을 순서대로 <code>systemInstruction</code>에 결합한다.</td><td>우선순위를 보존하지 못하면 전송 전 fail closed. instruction을 user role로 downgrade 금지</td></tr>
+            <tr><td>호환</td><td>기존 4-argument 정의는 <code>instruction=null</code>과 일반 prompt 동작을 유지한다. instruction 의존 addon은 <code>requiresAddonApi &gt;= 1.1.0</code>과 bootstrap guard를 사용한다.</td><td>1.0.x에서 instruction을 조용히 제거하거나 일반 prompt로 실행 금지</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>구현 fixture:</strong> reflection은 interface 8개·DTO 28개·권한 utility 1개·공개 symbol 37개를 고정한다. <code>tests/Contract/addon-i06-ai-instruction.php</code>가 4-argument 호환, UTF-8·LF·16KiB·control·hash 결정성, catalog·routing fingerprint 변화, 두 addon 격리, prompt injection 차단, adapter 역할 순서, probe 동일 instruction과 raw content 비노출을 검증한다.</p>
+        <div class="callout"><strong>AJ08 구현 완료:</strong> accepted Manifest의 immutable instruction만 <code>platform_system → addon_task_instruction → untrusted_user_data</code> 순서로 전달한다. 요청·활동지·학생 답안은 instruction을 덮어쓸 수 없으며 DB migration은 없다.</div>
+        <div class="callout"><strong>A-DS-13 단일 task 계약 인수:</strong> 현재 <code>AddonAiTaskDefinitionV1</code>은 task당 <code>inputContractVersion</code> 하나만 선언하고 Runtime은 request의 contract와 정확히 비교한다. 사용자 확정된 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-13-teacher-review-feedback-release.html"><code>A-DS13-CA01</code></a>은 새 플랫폼 API 없이 <code>student_submission_assessment.v1</code> outer envelope와 <code>score|feedback_draft</code>별 inner contract를 사용한다.</div>
+        <div class="callout"><strong>A-DS-14 보고서·특기사항 인수:</strong> <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-14-dashboard-report-export.html"><code>A-DS14-CA01</code></a>은 같은 outer envelope에 <code>special_note_draft</code>·<code>student_special_note.v1</code> inner contract를 추가한 사용자 확인·동결 소비자 계약이며 새 플랫폼 API가 아니다. 보고서·PDF·CSV·JSON·ZIP은 애드온 내부 projection·private storage 책임이다. 특기사항 AI 생성은 <code>AJ08</code>, exact roster 기반 보고서 분모·assignment ZIP은 <code>CG11</code>, Console/PublicUI 진입은 <code>RC01·RC02</code>의 API 1.1 구현을 사용하며 G1 소비자 Policy·Bridge 인수를 추가로 통과해야 한다. 이 기록은 OJ Platform Runtime을 수정하지 않는다.</div>
+        <div class="callout"><strong>A-DS-15 G0 구현 결과:</strong> 2026-08-14 사용자 확정된 <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-15-install-upgrade-migration-operations.html"><code>A-DS-15</code></a>의 운영 요구를 <code>2.0.0-dev.33</code>에 반영했다. <code>AddonRuntimeReadiness</code>와 <code>AddonSystemStatusProvider</code>는 catalog의 accepted·incompatible·rejected와 별도로 <code>pending|ready|failed|not_required</code> Runtime 준비 상태를 표시하며 callback 예외는 <code>addon_runtime_callback_failed</code>로 축약한다. 애드온 내부 이전 plan/package, 무접두어 <code>oj_ai_*</code> 45-table schema와 <code>oj-ai/v1</code> Page 9·GET 36·POST 75 계약은 플랫폼 API·table을 요구하지 않는다. 애드온 Bridge는 자기 연결 성공 전까지 계속 fail closed한다.</div>
+        <div class="callout"><strong>A-DS-16 G0 구현 결과:</strong> <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-16-cross-validation-freeze.html"><code>A-DS-16</code></a>이 묶은 C28-I06 항목을 <code>2.0.0-dev.33</code>·Addon API <code>1.1.0</code>으로 구현했다. 공개 표면은 기존 30개를 유지하면서 interface 2개와 DTO 5개를 더한 37개이며 계약 fixture 6종과 관련 단위 검사를 통과한다. CG01·CG02·CG11·AJ08·RC01·RC02·RC04·RC05와 LC01 진단 경계는 구현됐고, CG03은 학년 값을 공개하지 않는 optional 의미로 정합화했다. 검증 ZIP·upgrade·rollback·source/package fingerprint 증거는 <a href="development-c-28-addon-api-v1-release-evidence.html">릴리스 증거서</a>에 고정했다. 남은 관문은 문서 commit 뒤 <code>source_dirty=false</code> clean production package와 G1 애드온 소비자 인수다.</div>
+      </section>
+
+      <section class="section" id="a-ds08-route-command-gap">
+        <div class="section-heading"><div><h2>A-DS-08 경로·REST·명령 정합화 결과</h2><p>Page Route·menu·REST 권한 계약을 C28-I06 구현과 일치시킨다.</p></div><span class="badge good">RC01~RC05 정합화</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>현재 구현 사실</th><th>필수 후속·관문</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-I06-RC01</code></td><td>Console access rule·handler·menu가 <code>oj_access_console</code>과 선언 addon capability를 모두 검사한다.</td><td><span class="badge good">구현 완료</span> 한쪽 권한만 가진 menu·route·direct URL을 거부한다.</td></tr>
+            <tr><td><code>C28-I06-RC02</code></td><td>Public menu contribution이 선언 capability를 보존하고 resolver가 scope와 capability를 모두 검사한다.</td><td><span class="badge good">구현 완료</span> direct route와 menu가 같은 선언 capability를 사용한다.</td></tr>
+            <tr><td><code>C28-I06-RC03</code></td><td><code>AddonCapabilityKeyV1::wordpress(string $declaredKey): string</code>을 공개하고 내부 <code>AddonCapabilityKeys</code>도 같은 변환기를 사용하도록 통일했다.</td><td><span class="badge good">구현 완료</span> key validation·reflection·서로 다른 애드온의 동시 role grant·개별 revoke fixture를 통과해야 한다. 소비자의 내부 prefix 복제와 선언 키 직접 검사는 금지한다.</td></tr>
+            <tr><td><code>C28-I06-RC04</code></td><td>Addon API v1 권한 배정은 기존 WordPress 역할에 대한 명시적 grant·revoke만 지원한다.</td><td><span class="badge good">정본 확정</span> 사용자 직접 capability 배정은 v1 비범위이며 별도 additive 설계 전까지 제공하지 않는다.</td></tr>
+            <tr><td><code>C28-I06-RC05</code></td><td>Addon Console·Public Page Route는 로그인된 <code>GET</code> HTML만 등록한다.</td><td><span class="badge good">정본 확정</span> HEAD는 v1 비범위이며 소비자도 GET만 사용한다.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>RC01~RC05 완료:</strong> RC01·RC02는 코드와 음수 fixture로 닫았고, RC03 mapper를 유지하며, RC04는 역할 전용·RC05는 GET 전용 계약으로 구현과 문서를 일치시켰다.</div>
+      </section>
+      <section class="section" id="validation">
+        <div class="section-heading"><div><h2>유효성·수량·자원 상한</h2><p>실수와 과도한 기여가 core 부팅·메뉴·메모리를 흔들지 않게 v1 상한을 고정한다.</p></div><span class="badge">C28-API-L01</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>애드온당 상한</th><th>추가 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>Console Page</td><td>32</td><td>GET만, path parameter 8개 이하</td></tr>
+            <tr><td>Public Page</td><td>32</td><td>로그인 필수, 메뉴 대상 Route는 parameter 0개</td></tr>
+            <tr><td>Console Menu</td><td>8</td><td>공개 anchor 아래 2차만</td></tr>
+            <tr><td>Public Menu</td><td>8</td><td>core root당 전체 child 12개 상한 별도 적용</td></tr>
+            <tr><td>Capability</td><td>32</td><td><code>{namespace}_*</code>, 역할 자동 생성 0</td></tr>
+            <tr><td>Asset Bundle</td><td>32</td><td>bundle당 style 8·script 8, Route당 bundle 4</td></tr>
+            <tr><td>AI Task</td><td>16</td><td>task key·input contract·sourceKind 고정</td></tr>
+            <tr><td>전체 contribution key</td><td>128</td><td>key 길이 최대 160 ASCII, addon namespace 소유</td></tr>
+            <tr><td>label</td><td>각 1~80자</td><td>HTML·개행·개발자 설명 금지</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="section" id="errors">
+        <div class="section-heading"><div><h2>상태와 안정 오류 코드</h2><p>예상 가능한 운영 실패는 결과 DTO로, 프로그래머 오류는 등록 후보 거부로 처리한다.</p></div><span class="badge">C28-API-E01</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>종류</th><th>고정 값</th></tr></thead>
+          <tbody>
+            <tr><td>Runtime status</td><td><code>accepted</code>, <code>incompatible</code>, <code>rejected</code>, <code>disabled</code>, <code>unregistered</code></td></tr>
+            <tr><td>등록·호환</td><td><code>addon_api_incompatible</code>, <code>addon_platform_incompatible</code>, <code>addon_manifest_invalid</code>, <code>addon_contribution_conflict</code>, <code>addon_registration_failed</code>, <code>addon_namespace_reserved</code> <small>(minor 추가, 2026-08-12)</small></td></tr>
+            <tr><td>Runtime</td><td><code>addon_runtime_unavailable</code>, <code>addon_runtime_callback_failed</code>, <code>addon_handler_failed</code>, <code>addon_public_menu_unavailable</code></td></tr>
+            <tr><td>권한·Context</td><td><code>addon_access_denied</code>, <code>addon_capability_assignment_invalid</code>, <code>addon_context_unavailable</code>, <code>addon_context_denied</code></td></tr>
+            <tr><td>AI</td><td><code>addon_ai_task_unroutable</code>, <code>addon_ai_task_failed</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="risk"><strong>비노출:</strong> 운영자에게도 API key·secret·Authorization header·raw provider response·전체 stack trace를 반환하지 않는다. 학생에게는 내부 addon ID·class·path·버전·오류 code를 노출하지 않는다.</div>
+      </section>
+
+      <section class="section" id="compatibility">
+        <div class="section-heading"><div><h2>SemVer와 공개 계약 변경</h2><p>플랫폼 제품 버전과 Addon API 버전을 분리한다.</p></div><span class="badge good">1.2.0</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>변경</th><th>API 버전</th><th>필수 조치</th></tr></thead>
+          <tbody>
+            <tr><td>새 optional DTO getter·새 오류 code·새 context type 추가</td><td>minor</td><td>기존 소비자 fixture 유지, 문서·호환 행렬 갱신</td></tr>
+            <tr><td>문서 오탈자·구현 내부 변경</td><td>patch</td><td>공개 reflection snapshot 동일 증명</td></tr>
+            <tr><td>hook 이름·시점·인자, interface method, parameter 이름·타입·기본값, 기존 DTO 의미 변경</td><td>major</td><td>새 namespace major, 병행 지원·이전·rollback 계획</td></tr>
+            <tr><td>Addon API 1.1 최초 제공 제품 버전</td><td><code>2.0.0-dev.33</code></td><td>소비자 최솟값·index·changelog를 같은 변경 집합에서 동기화</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>named argument:</strong> 소비자 예제는 PHP named argument를 사용하므로 public constructor와 method parameter 이름도 API 계약이다.</div>
+      </section>
+
+      <section class="section" id="compatibility-snapshot">
+        <div class="section-heading"><div><h2>호환 버전 이력</h2><p>현재 API 1.2와 C28-I06 당시의 검증 기록을 구분한다.</p></div><span class="badge good">2.0.5 · Addon API 1.2</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>플랫폼 버전 범위</th><th>Addon API 범위</th><th>현재 상태</th></tr></thead>
+          <tbody>
+            <tr><td><code>2.0.5</code></td><td><code>1.2.0</code></td><td>기존 1.1 호출 계약 유지, 선택적 초기 등록 게이트웨이와 연구 계약 추가. <a href="addon-api-1.2.md">현재 계약과 설치 순서</a></td></tr>
+            <tr><td><code>&gt;=2.0.0-dev.33 &lt;3.0.0</code></td><td><code>&gt;=1.1.0 &lt;2.0.0</code></td><td>C28-I06 당시: CG01·CG02·CG11·AJ08·LC01·RC01·RC02 구현, CG03·RC04·RC05 정합화, 공개 symbol 37개</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>production 표시 대기:</strong> 47개 회귀 script, 91-file source fingerprint, upgrade·rollback과 <code>source_dirty=true</code> 검증 ZIP의 package hash는 <a href="development-c-28-addon-api-v1-release-evidence.html">릴리스 증거서</a>에 기록했다. 제공자 문서를 commit한 clean tree에서 공식 패키지를 다시 만들고 manifest가 <code>source_dirty=false</code>일 때만 production release로 표시한다.</div>
+      </section>
+
+      <section class="section" id="implementation-record">
+        <div class="section-heading"><div><h2>C-28 플랫폼 구현 이관 기록</h2><p>구현 완료와 릴리스 증거를 분리해 누적한다.</p></div><span class="badge good">C28-I01~I06 코드·검증 ZIP 통과</span><span class="badge wait">clean production build 대기</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>단계</th><th>예상 변경 위치</th><th>필수 구현</th><th>필수 기록·검사</th><th>현재</th></tr></thead>
+          <tbody>
+            <tr><td><code>C28-I01</code></td><td><code>docs/artifacts</code>, 기존 Architecture fixture</td><td>core 152/128/58/19/42/AI 4와 공개 addon surface 0 기준선</td><td>시작 commit, Runtime fingerprint, 전체 fast test</td><td>2026-08-10 완료 · <code>docs/artifacts/c-28/baseline.json</code></td></tr>
+            <tr><td><code>C28-I02</code></td><td><code>src/AddonApi/V1/</code>, <code>tests/Contract/</code></td><td>이 문서의 interface·DTO·상수·reflection allowlist</td><td>public symbol·signature·invalid DTO·SemVer fixture</td><td>2026-08-10 완료 · <code>tests/Contract/addon-api-v1.php</code></td></tr>
+            <tr><td><code>C28-I03</code></td><td><code>src/Kernel/Addon/</code>, <code>src/Kernel/Boot/Kernel.php</code>, <code>src/Kernel/Composition/CompositionRoot.php</code></td><td>등록 action, 후보 collector, validator, accepted catalog, runtime dispatch</td><td>hook 순서·1회성·예외 격리·원자 commit·freeze 검사</td><td>완료(AM-01로 runtime dispatch 방식 개정)</td></tr>
+            <tr><td><code>C28-I04</code></td><td><code>modules/AccessRouter</code>, <code>AdminConsole</code>, <code>PublicUi</code>, <code>Permission</code>, <code>Settings</code></td><td>Composite Route·Menu·Capability·Asset·AI Task와 public menu override</td><td>core 수량 불변·두 shell·direct URL·권한·rewrite·메뉴 설정 E2E</td><td>완료 · <code>tests/Contract/addon-contribution-composition.php</code></td></tr>
+            <tr><td><code>C28-I05</code></td><td><code>modules/Classes</code>, <code>Groups</code>, <code>Auth</code>, <code>src/Shared/Ai</code>, Gateway adapter</td><td>Context list·authorize·snapshot, AI canRoute·snapshot·execute</td><td>담당·비담당·학생·stale·provider 장애·비밀 비노출 fixture</td><td>완료 · <code>tests/Contract/addon-i05-runtime.php</code>. 완료 뒤 보안 검토에서 AM-01 대상 결함 발견·수정, <code>tests/Contract/addon-runtime-dispatch.php</code> 추가</td></tr>
+            <tr><td><code>C28-I06</code></td><td><code>src/AddonApi/V1</code>, Context·AI·Menu·Lifecycle adapter, HTML, changelog</td><td>제품 <code>2.0.0-dev.33</code>, Addon API <code>1.1.0</code>, LC01·CG01·CG02·CG11·AJ08·RC01·RC02 구현, CG03·RC04·RC05 정합화</td><td>reflection 37, context·instruction·authorization·readiness fixture, 전체 검사, 소비자 프로필, upgrade·rollback·fingerprint</td><td><strong>코드·검증 ZIP 통과.</strong> 47개 회귀 script, 91-file source fingerprint, upgrade·rollback과 검증 package hash를 기록했다. 제공자 HTML commit과 <code>source_dirty=false</code> clean production package, G1 소비자 인수가 남아 있다.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>AM-01 검증:</strong> <code>tests/Contract/addon-runtime-dispatch.php</code>는 두 정상 애드온이 각자 다른 <code>AddonRuntimeContextV1</code> 인스턴스를 정확히 한 번씩 받고(<code>snapshot()-&gt;addonId()</code>로 확인), manifest 등록에 실패한 애드온의 <code>onReady</code>는 호출되지 않으며, <code>AddonRuntimeGatewayV1</code> interface가 더 이상 존재하지 않음을 확인한다. 전체 fast test(architecture·contract·unit·integration·e2e)가 이 개정을 포함해 통과했다.</div>
+
+        <h3>변경 기록 양식</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>필드</th><th>기록 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>단계·상태</td><td><code>C28-Ixx</code>, 시작일, 완료일, 담당, <code>대기|진행|완료|중단</code></td></tr>
+            <tr><td>기준점</td><td>branch, 시작 commit, Runtime source fingerprint, core 수량</td></tr>
+            <tr><td>변경 범위</td><td>실제 추가·수정·삭제 파일과 schema·option·hook·public symbol diff</td></tr>
+            <tr><td>계약 diff</td><td>이 문서의 C28-API ID, SemVer 판정, 소비자 영향, migration 필요 여부</td></tr>
+            <tr><td>검증</td><td>실행 명령, 성공·실패 수, skip 이유, E2E·시각·보안·복구 증거</td></tr>
+            <tr><td>문서 동기화</td><td>C-28 설계, 이 정본, 문서 허브·개발 순서, 애드온 프로필, changelog 링크</td></tr>
+            <tr><td>종료점</td><td>완료 commit, package hash, rollback 기준점, 남은 위험·후속 단계</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>기록 원칙:</strong> 상태를 바꿀 때 기존 근거를 삭제하거나 현재 수량으로 과거 기준을 덮어쓰지 않는다. 구현 중 공개 계약을 바꿔야 하면 먼저 이 문서에 변경 사유·SemVer·소비자 영향을 추가하고 사용자 확인 뒤 코드와 fixture를 변경한다.</div>
+      </section>
+
+      <section class="section" id="gates">
+        <div class="section-heading"><div><h2>구현 완료 관문</h2><p>코드 관문과 배포 증거를 모두 충족해야 production release로 표시한다.</p></div><span class="badge wait">코드 통과 · 배포 증거 대기</span></div>
+        <ul>
+          <li>공개 namespace의 reflection 결과가 이 문서 allowlist·signature·parameter 이름과 정확히 일치한다.</li>
+          <li><code>oj_platform_register_addons</code>은 freeze 전 1회 발행되고, 각 등록의 <code>onReady</code> callback은 RuntimeReady 후 이 애드온 전용 <code>AddonRuntimeContextV1</code>과 함께 최대 1회 직접 호출된다. 정상 callback은 1회 완료되고 실패 callback은 같은 부팅에서 재시도되지 않는다(<code>C28-I06-LC01</code>).</li>
+          <li>Container·core Registry·DB·SecretVault·provider client 공개가 0건이다.</li>
+          <li>잘못된 애드온 하나가 core 또는 다른 애드온을 중단하지 않고 부분 commit이 0건이다.</li>
+          <li>core GET 152·Action 128·Console Menu 58·Public 기본 Menu 19·Table 42·AI Task 4가 유지된다.</li>
+          <li>Console·PublicUI·capability·Context·AI task와 비활성화·재활성화·충돌·비호환 E2E가 통과한다.</li>
+          <li><code>CG01~CG02</code>의 학생 self <code>participate</code>·학습 Context 목록과 <code>CG11</code>의 exact assignment roster가 별도 플랫폼 변경으로 구현·검증되고, <code>CG03</code>의 학년 의미가 source·문서와 일치하며, <code>CG04~CG10</code>은 기록된 소비자 보상 또는 별도 승인한 제공자 변경으로 각각 닫힌다.</li>
+          <li><code>C28-I06-AJ01~AJ08</code>의 비보장·소유 경계가 제공자·소비자 HTML에 일치하고, 소비자 fixture가 플랫폼 인가·dedupe·task schema·usage telemetry·task별 높은 우선순위 instruction을 임의로 가정하지 않음을 증명한다.</li>
+          <li><code>C28-I06-RC01~RC05</code>가 양쪽 HTML에 일치하고 Console shell+addon capability AND, Public menu capability, 공개 REST capability 변환, 역할 전용 배정 범위와 GET 전용 의미가 구현·fixture와 일치한다.</li>
+          <li>AI 평가 애드온의 고정 기여 17개와 A-DS-03 capability가 승인되고 별도 wp-admin·standalone fallback이 0건이다.</li>
+          <li>C-28 설계·이 정본·문서 허브·개발 순서·애드온 소비자 프로필·changelog의 hook·버전·DTO·오류가 일치한다.</li>
+          <li>애드온 설치·업데이트 전후 플랫폼 source·config·migration hash가 동일하다.</li>
+        </ul>
+        <div class="callout"><strong>C28-I01 기준점:</strong> 시작 commit은 <code>af444f0463f3e40db65e4799bf6db166c3ea9e8f</code>다. 플랫폼 Runtime 1170파일의 fingerprint는 <code>12be19836441df1b51e5dcb625a42d1e34cf300bab2fee8ef51b1668094cc0cf</code>이며 전체 fast test 40/40, core Route 152·Action 128·Console Menu 58·Public 기본 Menu 19·Table 42·AI Task 4와 공개 addon surface 0을 확인했다. 재현 규칙과 소비자 프로필 hash는 <code>docs/artifacts/c-28/baseline.json</code>에 기록한다.</div>
+      </section>
+
+      <section class="section" id="editor-appearance">
+        <div class="section-heading"><div><h2>편집기 표시 설정 공유: 선택적 확장</h2><p>2026-09-10 · Platform 2.0.0-dev.104 · 코드 실습실의 제출 편집기 테마 공유 요청에 따른 추가 계약</p></div></div>
+        <p><code>AddonEditorRuntimeContextV1 extends AddonRuntimeContextV1</code>에만 <code>editor(): AddonEditorGatewayV1</code>을 추가한다. 기존 <code>AddonRuntimeContextV1</code>의 세 메서드와 API 버전 1.1.0은 유지한다. 소비자는 버전 문자열 대신 선택적 인터페이스를 확인하며 이전 플랫폼에서는 기존 입력창으로 동작한다.</p>
+        <pre><code>use CodingPanda\OjPlatform\AddonApi\V1\AddonEditorRuntimeContextV1;
+
+if ($runtime instanceof AddonEditorRuntimeContextV1) {
+    $editor = $runtime-&gt;editor()-&gt;current();
+    // isAvailable()을 확인하고 coreUrl(), baseUrl(), theme(), fontSize()를 사용한다.
+}</code></pre>
+        <div class="table-wrap"><table>
+          <thead><tr><th>공개 계약</th><th>반환값과 의미</th></tr></thead>
+          <tbody>
+            <tr><td><code>AddonEditorGatewayV1::current(): AddonEditorSnapshotV1</code></td><td>인자 없는 읽기 전용 현재 계정 조회. 다른 사용자 ID 입력 및 저장 메서드는 제공하지 않는다.</td></tr>
+            <tr><td><code>theme(): string</code></td><td>제출 설정과 같은 정규화된 Ace 테마 slug. 예: <code>chrome</code>, <code>monokai</code>. <code>ace/theme/</code> 접두사는 포함하지 않는다.</td></tr>
+            <tr><td><code>fontSize(): int</code></td><td>제출 설정과 같은 14, 16, 18 중 하나.</td></tr>
+            <tr><td><code>isAvailable(): bool</code></td><td>플랫폼에 기존 제출 Ace 자산이 준비되어 있는지 여부.</td></tr>
+            <tr><td><code>coreUrl(): string</code>, <code>baseUrl(): string</code></td><td>기존 제출 편집기가 사용하는 로컬 Ace core 및 base 주소. 사용 불가 시 둘 다 빈 문자열.</td></tr>
+          </tbody>
+        </table></div>
+        <p><code>AddonEditorSnapshotV1</code>은 final DTO이며 생성자 인자는 <code>string $theme, int $fontSize, bool $available, string $coreUrl, string $baseUrl</code>이다. 모든 속성은 private readonly다. 공개 심벌은 기존 37개에 인터페이스 2개와 DTO 1개를 추가한 40개다.</p>
+        <p>현재 계정은 매 <code>current()</code> 호출 시 <code>CurrentAccountProvider</code>로 결정하고 <code>UserSubmissionPreferenceProvider</code>와 <code>SubmissionCodeEditorAssets</code>를 재사용한다. DB 직접 조회, 사용자 ID·이메일·코드 템플릿 공개, 설정 변경, 새 네트워크 의존성은 없다. 게스트 또는 계정·설정 조회 실패는 Chrome/16px 기본값을 사용하고 자산 오류는 기존 입력창으로 복구할 수 있도록 표시한다.</p>
+        <p>소비자는 스냅샷을 계정 간에 캐시하지 않고 페이지 요청마다 읽는다. 셀 실행·저장 권한은 기존 애드온 권한 검사로 계속 판단한다. 이 API는 화면 테마만 제공하므로 다른 계정 또는 노트북 접근 권한을 부여하지 않는다.</p>
+        <p>검증: <code>tests/Contract/addon-editor-runtime.php</code>의 계정 전환·비로그인·개인 정보 비노출·조회 오류·자산 대체·구버전 생성자 호환 22개 검사와 기존 공개 계약·런타임 전달·조립·부팅 검사를 실행한다. 기존 DB 스키마·설정 저장 형식·제출 화면에는 변경이 없다.</p>
+      </section>
+      <footer><a href="index.html">OJ Platform 문서 허브</a> · <a href="development-c-28-addon-extension-api.html">C-28 변경 설계</a> · <a href="development-c-28-addon-api-v1-release-evidence.html">API 1.1 릴리스 증거</a> · <a href="development-c-28-addon-onready-migration.html">onReady 전환 안내서(AM-01)</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-02-addon-api-profile.html">AI 평가 소비자 프로필</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-03-access-policy.html">AI 평가 권한 정책 동결</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-04-settings-ai-connection.html">AI 평가 설정·연결 정책 동결</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-05-addon-database.html">AI 평가 데이터베이스 동결</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-06-platform-ledger-connector.html">AI 평가 플랫폼 원장 Connector 동결</a> · <a href="../../../oj-ai-dashboard/docs/ai-assessment/a-ds-07-ai-job-execution.html">AI 평가 실행·큐 동결</a> · C28-API-V1-LOCK-01 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

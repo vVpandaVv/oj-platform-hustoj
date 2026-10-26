@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "a238a8ff6151b881240be9df04d1d4e5ddbc9a9b",
+  "source_of_truth": "development-ds-16-integration-freeze.html",
+  "comparison": [
+    {
+      "contract": "modules",
+      "current": 19,
+      "target_transition": 20,
+      "target_normal_operation": 19,
+      "change": "전환기에 Jobs를 추가하고 I-09에서 임시 Migration을 제거"
+    },
+    {
+      "contract": "features",
+      "current": 30,
+      "target": 30,
+      "delta": 0,
+      "change": "수량은 유지하되 소유권과 의존 계약을 재작성"
+    },
+    {
+      "contract": "routes",
+      "current": 176,
+      "current_direct": 137,
+      "current_compatibility": 39,
+      "target": 151,
+      "target_bootstrap_wp_admin": 1,
+      "target_compatibility": 0,
+      "delta": -25,
+      "change": "정상 운영은 호환 경로 39개를 제거하고 최신 직접 GET·파일 응답을 14개 순증한다. 설치 미완료 동안에만 AccessRouter 밖의 WordPress 관리자 setup 화면 1개를 등록하고 완료 뒤 0개로 만든다."
+    },
+    {
+      "contract": "actions",
+      "current": 122,
+      "target": 132,
+      "target_bootstrap": 1,
+      "delta": 10,
+      "change": "정상 운영은 Jobs 공통·문제 AI·가입 승인·퀴즈 응시·제출 복원·주제 생성·AI 작업 배정 명령을 반영한다. 설치 미완료 동안에만 별도 setup 액션 1개를 등록하고 완료 뒤 0개로 만든다."
+    },
+    {
+      "contract": "console_menu_items",
+      "current": 51,
+      "target": 57,
+      "delta": 6,
+      "change": "단일 AdminConsole Registry에서 역할·기능·경로 정책과 함께 계산"
+    },
+    {
+      "contract": "capabilities",
+      "current": 60,
+      "target": 61,
+      "delta": 1,
+      "change": "가입 승인 전용 oj_approve_user_registrations 추가"
+    },
+    {
+      "contract": "roles",
+      "current": 15,
+      "target": 16,
+      "delta": 1,
+      "change": "가입 승인 담당 역할 추가"
+    },
+    {
+      "contract": "presets",
+      "current": 9,
+      "target": 10,
+      "delta": 1,
+      "change": "가입 승인 담당 preset 추가"
+    },
+    {
+      "contract": "platform_tables",
+      "current": 32,
+      "target": 40,
+      "delta": 8,
+      "change": "기존 접두어 테이블을 자동 이름 변경하지 않고 검증·승인된 이전 원본으로만 사용"
+    },
+    {
+      "contract": "judge_tables",
+      "current_exposed": 14,
+      "current_required": 4,
+      "target_required": 8,
+      "target_optional": 1,
+      "change": "기본 problem·solution·source_code·source_code_user·compileinfo·runtimeinfo·contest·contest_problem과 선택 custominput만 Gateway에 노출"
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>배포 상태 관리</title>
+  <link rel="stylesheet" href="../../resources/css/assignment-workbench.css">
+  <link rel="stylesheet" href="../../resources/css/worksheet-workflow.css">
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #f3f5f7; }
+    body { padding: 24px; box-sizing: border-box; }
+    @media (max-width: 680px) { body { padding: 0; } }
+  </style>
+  <style data-fixture-icon-style>.oj-ai-icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}</style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+  </svg>
+  <section id="oj-ai-assignment-app" class="oj-ai-assignment" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-g3-lifecycle" data-locale="ko-KR" data-can-manage-submissions="true">
+    <header class="oj-ai-assignment__header">
+      <div><h1>배포 관리</h1><p data-role="summary">수업을 선택하세요.</p></div>
+      <button type="button" class="oj-ai-assignment__primary" data-action="new" disabled>새 배포</button>
+    </header>
+    <div class="oj-ai-assignment__filters"><label><span>수업</span><select data-field="context-filter"><option value="">수업 선택</option></select></label></div>
+    <div class="oj-ai-assignment__notice" data-role="notice" role="status">수업과 활동지를 불러오는 중입니다.</div>
+    <div class="oj-ai-assignment__table-wrap" data-role="assignment-content" hidden>
+      <table class="oj-ai-assignment__table"><thead><tr><th>활동지</th><th>상태</th><th>대상</th><th>제출</th><th>마감</th><th>관리</th></tr></thead><tbody data-role="assignment-list"></tbody></table>
+    </div>
+    <section class="oj-ai-assignment__detail" data-role="assignment-detail" hidden aria-labelledby="oj-ai-assignment-detail-title">
+      <header><div><p data-detail="state">-</p><h2 id="oj-ai-assignment-detail-title" data-detail="title">배포 상세</h2></div><button type="button" class="oj-ai-assignment__icon" data-action="close-detail" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+      <dl><div><dt>대상</dt><dd data-detail="target-count">-</dd></div><div><dt>제출</dt><dd data-detail="progress">-</dd></div><div><dt>공개</dt><dd data-detail="opens">-</dd></div><div><dt>마감</dt><dd data-detail="due">-</dd></div><div><dt>종료</dt><dd data-detail="closes">-</dd></div></dl>
+      <div class="oj-ai-assignment__actions" data-role="detail-actions"></div>
+      <h3>학생</h3><ul class="oj-ai-assignment__targets" data-role="target-list"></ul>
+    </section>
+    <section class="oj-ai-assignment__submissions" data-role="submission-panel" hidden aria-labelledby="oj-ai-submissions-title">
+      <header><div><p>학생 제출</p><h2 id="oj-ai-submissions-title" data-role="submission-title">제출 현황</h2></div><button type="button" class="oj-ai-assignment__icon" data-action="close-submissions" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+      <div class="oj-ai-assignment__student-display"><label><span>학생 표시</span><select data-learner-label-mode><option value="management_name">관리용 이름</option><option value="login">아이디</option><option value="display_name" selected>표시이름</option></select></label></div>
+      <p class="oj-ai-assignment__notice" data-role="submission-notice" role="status"></p>
+      <div class="oj-ai-assignment__submission-list" data-role="submission-list">
+        <div class="oj-ai-assignment__table-wrap"><table class="oj-ai-assignment__table"><thead><tr><th>학생</th><th>상태</th><th>제출</th><th>제출 시각</th><th>보기</th></tr></thead><tbody data-role="submission-rows"></tbody></table></div>
+      </div>
+      <section class="oj-ai-assignment__submission-detail" data-role="submission-detail" hidden aria-labelledby="oj-ai-submission-detail-title">
+        <button type="button" class="oj-ai-assignment__back" data-action="back-submissions">제출 목록</button>
+        <header><div><p data-submission="state">-</p><h3 id="oj-ai-submission-detail-title" data-submission="student">학생 제출</h3></div></header>
+        <dl><div><dt>제출 횟수</dt><dd data-submission="attempt">-</dd></div><div><dt>제출 시각</dt><dd data-submission="submitted">-</dd></div><div><dt>평가</dt><dd data-submission="evaluation">-</dd></div><div><dt>결과 공개</dt><dd data-submission="release">-</dd></div></dl>
+        <h4>제출 내용</h4><dl class="oj-ai-assignment__answers" data-role="submission-answers"></dl>
+        <div class="oj-ai-assignment__actions" data-role="submission-actions"></div>
+        <h4>변경 기록</h4><ol class="oj-ai-assignment__history" data-role="submission-history"></ol>
+      </section>
+    </section>
+    <section class="oj-ai-assignment__lifecycle" data-role="lifecycle-dialog" role="dialog" aria-modal="true" hidden aria-labelledby="oj-ai-assignment-lifecycle-title">
+      <header><div><p>일정</p><h2 id="oj-ai-assignment-lifecycle-title" data-role="lifecycle-title">일정 변경</h2></div><button type="button" class="oj-ai-assignment__icon" data-action="cancel-lifecycle" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+      <div class="oj-ai-assignment__schedule">
+        <label><span>공개 시각</span><input type="datetime-local" data-field="lifecycle-opens"></label>
+        <label><span>제출 마감</span><input type="datetime-local" data-field="lifecycle-due" required></label>
+        <label><span>종료 시각</span><input type="datetime-local" data-field="lifecycle-closes" required></label>
+        <label class="oj-ai-assignment__check"><input type="checkbox" data-field="lifecycle-auto-submit"><span>종료 시 자동 제출</span></label>
+      </div>
+      <p class="oj-ai-assignment__wizard-notice" data-role="lifecycle-notice" role="alert" hidden></p>
+      <footer><span></span><button type="button" data-action="cancel-lifecycle">취소</button><button type="button" class="oj-ai-assignment__primary" data-action="save-lifecycle">저장</button></footer>
+    </section>
+    <section class="oj-ai-assignment__control" data-role="submission-control-dialog" role="dialog" aria-modal="true" hidden aria-labelledby="oj-ai-submission-control-title">
+      <header><div><p data-role="submission-control-label">제출</p><h2 id="oj-ai-submission-control-title" data-role="submission-control-title">제출 처리</h2></div><button type="button" class="oj-ai-assignment__icon" data-action="cancel-submission-control" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+      <label><span>사유</span><textarea data-field="submission-control-reason" rows="4" maxlength="500" required></textarea></label>
+      <p class="oj-ai-assignment__wizard-notice" data-role="submission-control-notice" role="alert" hidden></p>
+      <footer><span></span><button type="button" data-action="cancel-submission-control">취소</button><button type="button" class="oj-ai-assignment__primary" data-action="confirm-submission-control">확인</button></footer>
+    </section>
+  </section>
+  <script>
+    const publicationId = '01HZY3M4N5P6Q7R8S9T0V1W2X3';
+    const publicationHash = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+    const contexts = [{ type: 'class', id: 'class-21', revision: 'context-r1', label: '2학년 1반', lifecycle_state: 'active', enabled: true, selectable: true }];
+    const worksheets = [{ id: '01HZY3M4N5P6Q7R8S9T0V1W2X2', title: '분수 비교 활동지', state: 'active', latest_publication_id: publicationId, latest_publication_hash: publicationHash }];
+    const targets = [{ id: 'target-1', display_name: '김하늘' }, { id: 'target-2', display_name: '이바다' }, { id: 'target-3', display_name: '박새봄' }];
+    const assignment = {
+      id: '01HZY3M4N5P6Q7R8S9T0V1W2X4', worksheet_publication_id: publicationId, publication_hash: publicationHash,
+      title: '분수 비교 활동지', state: 'scheduled', lock_version: 1, schedule_version: 1,
+      schedule_hash: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+      context: { type: 'class', id: 'class-21', revision: 'context-r1' }, target_count: 24,
+      progress: { started: 5, submitted: 3 },
+      schedule: { opens_at_utc: '2026-08-22 09:00:00', due_at_utc: '2026-08-22 10:00:00', closes_at_utc: '2026-08-22 11:00:00', auto_submit_enabled: true },
+      actions: ['assignment.update_schedule', 'assignment.open', 'assignment.withdraw'],
+    };
+    const submissionId = '11040G2081040G2081040G2081';
+    const officialRevisionId = '12040G2081040G2081040G2082';
+    const reopenedRevisionId = '13040G2081040G2081040G2083';
+    const receiptId = '14040G2081040G2081040G2084';
+    const submissionPdfJobId = '19040G2081040G2081040G2089';
+    const submissionPdfArtifactId = '1A040G2081040G2081040G208A';
+    const studentTarget = { id: '15040G2081040G2081040G2085', learner_user_id: 7, display_name: '김하늘', labels: { management_name: '김하늘 (1반)', login: 'student10101', display_name: '김하늘' }, membership_revision: 'member-r1', state: 'active' };
+    const officialRevision = {
+      id: officialRevisionId, revision_no: 1, base_revision_no: null, state: 'saved', response_schema_version: '1.0.0',
+      response: { answers: { 'response-1': '3/4가 2/3보다 큽니다.' }, publication_hash: publicationHash, publication_id: publicationId, response_schema_version: '1.0.0' },
+      content_hash: 'd'.repeat(64), attachment_set_hash: 'e'.repeat(64), created_at_utc: '2026-08-22 10:20:00',
+    };
+    const officialReceipt = {
+      id: receiptId, content_hash: 'f'.repeat(64), receipt_no: 1, action: 'submit', context_revision: 'context-r1', actor: { type: 'learner', user_id: 7 }, reason: null,
+      attempt_no: 1, submission_revision_id: officialRevisionId, submission_revision_hash: officialRevision.content_hash, publication_hash: publicationHash,
+      attachment_set_hash: officialRevision.attachment_set_hash, assignment_schedule: { version: 2, hash: 'c'.repeat(64) }, resubmission_policy_hash: '9'.repeat(64), timeliness: 'on_time', received_at_utc: '2026-08-22 10:21:00',
+    };
+    const teacherSubmission = {
+      id: submissionId, assignment_id: assignment.id, assignment_title: assignment.title, assignment_state: 'open',
+      context: { type: 'class', id: 'class-21', revision: 'context-r1' }, target: studentTarget,
+      state: 'submitted', lock_version: 4, current_revision_id: officialRevisionId, official_revision_id: officialRevisionId, official_attempt_no: 1,
+      evaluation: { status: 'not_evaluated', review_id: null, review_hash: null }, release: { status: 'not_released', release_id: null, release_hash: null },
+      started_at_utc: '2026-08-22 09:10:00', submitted_at_utc: '2026-08-22 10:21:00', closed_at_utc: null,
+      source: { worksheet_publication_id: publicationId, publication_hash: publicationHash },
+      schedule: { version: 2, hash: 'c'.repeat(64), opens_at_utc: '2026-08-22 09:00:00', due_at_utc: '2026-08-22 20:00:00', closes_at_utc: '2026-08-22 21:00:00', auto_submit_enabled: true },
+      current_revision: officialRevision, official_revision: officialRevision, receipt: officialReceipt, attachments: [],
+    };
+    const submissionItems = [
+      { target: studentTarget, status: 'submitted', submission: { id: submissionId, state: 'submitted', lock_version: 4, current_revision_id: officialRevisionId, official_revision_id: officialRevisionId, official_attempt_no: 1, started_at_utc: teacherSubmission.started_at_utc, submitted_at_utc: teacherSubmission.submitted_at_utc, closed_at_utc: null }, evaluation_status: 'not_evaluated', release_status: 'not_released' },
+      { target: { ...targets[1], learner_user_id: 8, membership_revision: 'member-r1', state: 'active' }, status: 'not_started', submission: null, evaluation_status: 'not_evaluated', release_status: 'not_released' },
+      { target: { ...targets[2], learner_user_id: 9, membership_revision: 'member-r1', state: 'active' }, status: 'draft', submission: { id: '16040G2081040G2081040G2086', state: 'draft', lock_version: 1, current_revision_id: null, official_revision_id: null, official_attempt_no: 0, started_at_utc: '2026-08-22 09:30:00', submitted_at_utc: null, closed_at_utc: null }, evaluation_status: 'not_evaluated', release_status: 'not_released' },
+    ];
+    const history = [{ ...officialRevision, is_current: true, is_official: true, receipts: [officialReceipt] }];
+    const listAssignment = () => ({
+      id: assignment.id, title: assignment.title, state: assignment.state, lock_version: assignment.lock_version,
+      context: assignment.context, target_count: assignment.target_count,
+      source: { worksheet_publication_id: publicationId, publication_hash: publicationHash },
+      schedule: { version: teacherSubmission.schedule.version, hash: teacherSubmission.schedule.hash, ...assignment.schedule },
+    });
+    const envelope = (data, meta = {}) => ({ data, meta: { correlation_id: 'g3-lifecycle-fixture', ...meta }, links: {}, actions: [] });
+    window.__lifecycleRequests = [];
+    window.__submissionRequests = [];
+    window.__submissionPdfRequests = [];
+    window.__submissionPdfPolls = [];
+    window.__submissionPdfDownloads = [];
+    window.__submissionPdfReady = false;
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest?.('a[download]');
+      if (!link) return;
+      event.preventDefault();
+      window.__submissionPdfDownloads.push({ kind: 'browser', name: link.download, href: link.href });
+    }, true);
+    window.fetch = async (url, options = {}) => {
+      const value = String(url);
+      const method = options.method || 'GET';
+      if (value.includes('/contexts?')) return { ok: true, status: 200, async json() { return envelope({ items: contexts }); } };
+      if (value.includes('/worksheets?')) return { ok: true, status: 200, async json() { return envelope({ items: worksheets }); } };
+      if (method === 'POST' && value.includes(`/submission-revisions/${officialRevisionId}/commands/export-pdf?`)) {
+        const body = JSON.parse(options.body || '{}');
+        window.__submissionPdfRequests.push({ url: value, body, headers: { ...(options.headers || {}) } });
+        return { ok: true, status: 202, async json() { return envelope({ export_job: { id: submissionPdfJobId, source_id: officialRevisionId, artifact_kind: 'submission_pdf', state: 'queued' } }); } };
+      }
+      if (method === 'GET' && value.endsWith(`/export-jobs/${submissionPdfJobId}`)) {
+        window.__submissionPdfPolls.push({ url: value, ready: window.__submissionPdfReady });
+        return { ok: true, status: 200, async json() { return envelope({ export_job: { job_id: submissionPdfJobId, source_id: officialRevisionId, artifact_kind: 'submission_pdf', state: window.__submissionPdfReady ? 'ready' : 'running', artifact_id: window.__submissionPdfReady ? submissionPdfArtifactId : null } }); } };
+      }
+      if (method === 'GET' && value.endsWith(`/artifacts/${submissionPdfArtifactId}/download`)) {
+        window.__submissionPdfDownloads.push({ kind: 'request', url: value, headers: { ...(options.headers || {}) } });
+        return {
+          ok: true,
+          status: 200,
+          headers: { get(name) { return name.toLowerCase() === 'content-disposition' ? "attachment; filename*=UTF-8''kim-haneul-submission.pdf" : null; } },
+          async blob() { return new Blob(['%PDF-1.7\\nfixture'], { type: 'application/pdf' }); },
+        };
+      }
+      if (method === 'POST' && value.includes(`/submissions/${submissionId}/commands/`)) {
+        const body = JSON.parse(options.body || '{}');
+        const action = value.match(/\/commands\/([^?]+)/)?.[1] || '';
+        window.__submissionRequests.push({ action, url: value, body, headers: { ...(options.headers || {}) } });
+        teacherSubmission.lock_version += 1;
+        const reason = String(body.payload?.reason || '');
+        const controlReceipt = { ...officialReceipt, id: action === 'reopen' ? '17040G2081040G2081040G2087' : '18040G2081040G2081040G2088', receipt_no: history.flatMap((item) => item.receipts || []).length + 1, action, actor: { type: 'teacher', user_id: 19 }, reason, received_at_utc: action === 'reopen' ? '2026-08-22 10:30:00' : '2026-08-22 10:40:00' };
+        if (action === 'reopen') {
+          const fork = { ...officialRevision, id: reopenedRevisionId, revision_no: 2, base_revision_no: 1, state: 'reopened_fork', created_at_utc: '2026-08-22 10:30:00', content_hash: '8'.repeat(64) };
+          controlReceipt.submission_revision_id = fork.id; controlReceipt.submission_revision_hash = fork.content_hash;
+          teacherSubmission.state = 'reopened'; teacherSubmission.current_revision_id = fork.id; teacherSubmission.current_revision = fork;
+          history.forEach((item) => { item.is_current = false; }); history.unshift({ ...fork, is_current: true, is_official: false, receipts: [controlReceipt] });
+        } else {
+          teacherSubmission.state = 'locked'; teacherSubmission.current_revision_id = officialRevisionId; teacherSubmission.current_revision = officialRevision; teacherSubmission.closed_at_utc = '2026-08-22 10:40:00';
+          history.forEach((item) => { item.is_current = item.id === officialRevisionId; }); history.find((item) => item.id === officialRevisionId)?.receipts.unshift(controlReceipt);
+        }
+        submissionItems[0].status = teacherSubmission.state;
+        Object.assign(submissionItems[0].submission, { state: teacherSubmission.state, lock_version: teacherSubmission.lock_version, current_revision_id: teacherSubmission.current_revision_id, closed_at_utc: teacherSubmission.closed_at_utc });
+        return { ok: true, status: 201, async json() { return envelope({ submission: teacherSubmission, receipt: controlReceipt, editable_revision: action === 'reopen' ? teacherSubmission.current_revision : null }); } };
+      }
+      if (method === 'POST' && value.includes('/commands/')) {
+        const body = JSON.parse(options.body || '{}');
+        const action = value.match(/\/commands\/([^?]+)/)?.[1] || '';
+        window.__lifecycleRequests.push({ action, url: value, body, headers: { ...(options.headers || {}) } });
+        assignment.lock_version += 1;
+        if (action === 'update-schedule') {
+          assignment.schedule = body.payload.schedule;
+          assignment.schedule_version += 1;
+          assignment.schedule_hash = 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc';
+        }
+        if (action === 'open') {
+          assignment.state = 'open';
+          assignment.actions = ['assignment.update_schedule', 'assignment.close', 'assignment.withdraw'];
+        }
+        if (action === 'close') {
+          assignment.state = 'closed';
+          assignment.actions = ['assignment.reopen', 'assignment.withdraw'];
+        }
+        if (action === 'reopen') {
+          assignment.state = 'open'; assignment.schedule = body.payload.schedule;
+          assignment.actions = ['assignment.update_schedule', 'assignment.close', 'assignment.withdraw'];
+        }
+        if (action === 'withdraw') { assignment.state = 'withdrawn'; assignment.actions = []; }
+        return { ok: true, status: 200, async json() { return envelope({ assignment }); } };
+      }
+      if (method === 'GET' && value.includes(`/assignments/${assignment.id}/submissions?`)) {
+        return { ok: true, status: 200, async json() { return envelope({ assignment: listAssignment(), items: submissionItems }, { next_cursor: '', has_more: false, limit: 100 }); } };
+      }
+      if (method === 'GET' && value.includes(`/submissions/${submissionId}/revisions?`)) {
+        return { ok: true, status: 200, async json() { return envelope({ submission: teacherSubmission, revisions: history }, { next_cursor: '', has_more: false, limit: 100 }); } };
+      }
+      if (method === 'GET' && value.includes(`/submissions/${submissionId}?`)) {
+        return { ok: true, status: 200, async json() { return envelope({ submission: teacherSubmission }); } };
+      }
+      if (method === 'GET' && value.includes(`/assignments/${assignment.id}?`)) return { ok: true, status: 200, async json() { return envelope({ assignment, targets }); } };
+      if (method === 'GET' && value.includes('/assignments?')) return { ok: true, status: 200, async json() { return envelope({ items: [assignment] }); } };
+      return { ok: false, status: 404, async json() { return { message: 'fixture route missing' }; } };
+    };
+  </script>
+  <script src="../../resources/js/worksheet-workflow.js"></script>
+  <script src="../../resources/js/learner-labels.js"></script>
+  <script src="../../resources/js/assignment-workbench.js"></script>
+</body>
+</html>

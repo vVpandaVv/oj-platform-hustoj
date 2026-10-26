@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-12 학생 제출물 AI 평가</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-12 학생 제출물 AI 평가</p>
+      <nav><div class="nav-group"><strong>문서</strong>
+        <a href="index.html">허브</a>
+        <a href="design-procedure.html">전체 설계 순서</a>
+        <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+        <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+        <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+        <a href="a-d-004-data-storage.html">A-D-004 데이터·저장</a>
+        <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+        <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+        <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+        <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+        <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+        <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+        <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+        <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+        <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+        <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+        <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+        <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+        <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+        <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+        <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+        <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html" aria-current="page">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+        <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+        <a href="g4-imp-01-s01-score-task-instruction.html">G4-IMP-01-S01 평가 지시문</a>
+        <a href="g4-imp-01-s02-official-input-projection.html">G4-IMP-01-S02 공식 입력</a>
+        <a href="g4-imp-01-s03-single-evaluation-enqueue.html">G4-IMP-01-S03 단건 요청</a>
+        <a href="g4-imp-01-s04-assignment-evaluation-enqueue.html">G4-IMP-01-S04 일괄 요청</a>
+        <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+        <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+        <a href="redesign.html">재설계 기준</a>
+        <a href="code-consistency.html">코드 일관성</a>
+      </div><div class="nav-group"><strong>섹션</strong>
+        <a href="#result">결론</a>
+        <a href="#scope">범위·입력</a>
+        <a href="#baseline">현재 구현</a>
+        <a href="#task">Task 계약</a>
+        <a href="#source">평가 원본</a>
+        <a href="#artifacts">응답·첨부</a>
+        <a href="#input">입력 계약</a>
+        <a href="#grading-bindings">P03·배점</a>
+        <a href="#limits">한도</a>
+        <a href="#output">출력 계약</a>
+        <a href="#normalizer">정규화</a>
+        <a href="#scoring">점수 계산</a>
+        <a href="#flow">실행 흐름</a>
+        <a href="#retry">재평가</a>
+        <a href="#review">검토 인계</a>
+        <a href="#rest">REST 추적</a>
+        <a href="#storage">저장 정합성</a>
+        <a href="#platform-gap">플랫폼 공백</a>
+        <a href="#ui">화면 설계</a>
+        <a href="#security">보안·개인정보</a>
+        <a href="#errors">오류·복구</a>
+        <a href="#acceptance">수용 기준</a>
+        <a href="#decisions">결정 기록</a>
+        <a href="#completion">완료 판정</a>
+      </div></nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">Detailed Design 13 / 17</p>
+        <h2>학생 제출물 AI 평가</h2>
+        <p>학생의 공식 제출본과 그 활동지에 고정된 채점 기준만 AI에 전달해 기준별 점수 후보와 근거를 만든다. AI가 읽을 수 없는 응답은 0점으로 만들지 않고 교사 확인으로 넘기며, 모든 결과는 교사가 검토하기 전까지 학생에게 공개되지 않는다.</p>
+        <div class="meta"><span class="badge">작성일 2026-08-13</span><span class="badge good">상태 사용자 확인·동결</span><span class="badge good">확정일 2026-08-13</span><span class="badge good">A-DS-11 사용자 확인·동결</span><span class="badge">Task 1종</span><span class="badge">Operation score</span><span class="badge">응답칸 10종</span><span class="badge">REST 추가 0건</span><span class="badge good">A-DS-05 Amendment 05 반영</span><span class="badge good">A-DS-09 Projection Amendment 01 반영</span><span class="badge good">A-DS-13 Contract Amendment 01 반영</span><span class="badge good">플랫폼 AJ08·API 1.1 인수</span><span class="badge good">C29·C30 구현 완료</span></div>
+      </section>
+
+      <h2 id="scope">목적·범위·동결 입력</h2>
+      <section class="panel">
+        <p>이 단계는 제출물 채점의 원본, AI 입력·출력, 기준별 점수 후보, 근거·불확실성, 재평가와 검토 인계까지 정한다. 교사의 최종 점수 조정·확정, 피드백 작성·승인, 학생 공개는 A-DS-13에서 정한다.</p>
+        <table>
+          <thead><tr><th>입력</th><th>계승하는 동결 계약</th><th>A-DS-12 처리</th></tr></thead>
+          <tbody>
+            <tr><td><a href="a-ds-03-access-policy.html">A-DS-03</a></td><td><code>assess_submissions</code> 실행과 <code>review_assessments</code> 검토 분리, Context·객체 Policy</td><td>enqueue·start·commit 때 현재 담당과 제출 범위를 재검사</td></tr>
+            <tr><td><a href="a-ds-04-settings-ai-connection.html">A-DS-04</a></td><td>학생 제출 전용 정책·루브릭·검토 revision, <code>review_required=true</code>, <code>explicit_release_required=true</code></td><td>exact configuration snapshot과 검토 차단 규칙을 사용</td></tr>
+            <tr><td><a href="a-ds-05-addon-database.html">A-DS-05</a></td><td>제출 평가 전용 7개 table, 공통 run·attempt, 제출 첨부와 private file</td><td>평가 table은 유지하고 추출 provenance용 <code>A-DS12-DBA01</code> JSON profile 1건을 Amendment 05로 반영</td></tr>
+            <tr><td><a href="a-ds-07-ai-job-execution.html">A-DS-07</a></td><td>애드온 queue·lease·retry·cancel·postflight 검산</td><td><code>score</code> operation의 payload와 normalizer를 확정</td></tr>
+            <tr><td><a href="a-ds-08-route-rest-command.html">A-DS-08</a></td><td><code>Q16~Q17</code>, <code>C29~C32</code></td><td>추가 경로 없이 단건·일괄·재시도·취소 DTO를 상세화</td></tr>
+            <tr><td><a href="a-ds-09-worksheet-authoring-version.html">A-DS-09</a></td><td>P03 <code>oj_ai.grading_schema@1.1.0</code>, stable response·criterion·binding, 응답칸 10종</td><td><code>A-DS12-PA01</code>을 Projection Amendment 01로 반영</td></tr>
+            <tr><td><a href="a-ds-11-assignment-student-submission.html">A-DS-11</a></td><td>exact official submission revision·hash, publication hash, ready attachment set</td><td>mutable draft·현재 편집 pointer를 다시 읽지 않음</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>사용자 확정·동결:</strong> 2026-08-13 <code>A-DS12-D01~D24</code>과 <code>A-DS12-PA01</code>·<code>A-DS12-DBA01</code>을 함께 확정했다. 구현은 A-DS-16 최종 승인 뒤에만 시작하며 OJ Platform PHP·schema·migration은 이 애드온 설계 과정에서 수정하지 않는다.</div>
+      </section>
+
+      <h2 id="baseline">현재 구현 기준선과 교체 지점</h2>
+      <table>
+        <thead><tr><th>ID</th><th>실제 구현 사실</th><th>목표 계약</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS12-B01</code></td><td><code>Ai_Scoring_Service</code>가 request의 <code>ai_result</code>를 신뢰한다.</td><td>브라우저가 AI 결과나 점수를 제출하지 못하고 worker만 Gateway output을 수신</td><td>교체</td></tr>
+          <tr><td><code>A-DS12-B02</code></td><td>수동 항목·WordPress filter·정답 문자열 일치 fallback이 모두 AI 결과처럼 합쳐질 수 있다.</td><td>AI·사람·규칙 결과 source를 섞지 않고 이 단계는 AI <code>score</code>만 생성</td><td>교체</td></tr>
+          <tr><td><code>A-DS12-B03</code></td><td><code>Grading_Input_Builder</code>가 mutable grading JSON, 학생 ID, model key, 파일 URL·이름을 입력에 넣는다.</td><td>exact P03·공식 제출본·최소화한 익명 payload만 결정적으로 구성</td><td>교체</td></tr>
+          <tr><td><code>A-DS12-B04</code></td><td><code>Scoring_Normalizer</code>가 누락 항목을 0점으로 만들고 범위 밖 점수를 clamp하며 raw 응답을 저장한다.</td><td>누락·범위 밖은 전체 output 거부, 판독 불가는 명시적 abstain, raw 비저장</td><td>교체</td></tr>
+          <tr><td><code>A-DS12-B05</code></td><td><code>Assessment_Service</code>가 요청 중 동기 채점하고 payload에서 model·policy를 선택한다.</td><td>C29·C30은 202 enqueue만 수행하고 동결 configuration·platform routing을 worker가 사용</td><td>교체</td></tr>
+          <tr><td><code>A-DS12-B06</code></td><td>기존 결과 accept와 item replace가 불변 이력·원자 commit을 보장하지 않는다.</td><td>run별 immutable result·item을 원자 append하고 검토가 exact result를 pin</td><td>교체</td></tr>
+          <tr><td><code>A-DS12-B07</code></td><td>플랫폼 <code>AddonAiTaskGatewayV1</code>는 JSON map 최대 1MiB와 구조화 JSON output을 제공한다.</td><td>공개 Gateway만 사용하고 로컬 입력을 900KiB로 제한</td><td>사용 가능</td></tr>
+          <tr><td><code>A-DS12-B08</code></td><td>현재 플랫폼 요청에는 binary·multimodal attachment 전달 계약이 없다.</td><td>검증된 text representation만 보내고 없는 첨부 기준은 abstain</td><td>의도된 v1 제한</td></tr>
+          <tr><td><code>A-DS12-B09</code></td><td><code>AiTaskPromptFactory</code>가 모든 addon task에 같은 일반 system prompt를 쓴다.</td><td>package-owned 제출 채점 instruction을 높은 우선순위로 전달</td><td><code>AJ08</code> 차단 공백</td></tr>
+          <tr><td><code>A-DS12-B10</code></td><td>현재 검토 화면은 숫자 입력만 보여 주고 AI 제안·근거·확인 필요를 구분하지 않는다.</td><td>답변과 기준별 AI 제안·근거·확인 필요를 한 화면에서 비교</td><td>시안 보강 대상</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>현재 코드 격리:</strong> 기존 <code>Assessment_Service</code>, <code>Ai_Scoring_Service</code>, <code>Grading_Input_Builder</code>, <code>Scoring_Normalizer</code>와 mutable Repository 흐름은 목표 구현 기반으로 재사용하지 않는다. 일반 JSON canonicalization처럼 독립적으로 검증된 알고리즘만 새 계약 아래에서 선별한다.</div>
+
+      <h2 id="task">Manifest task와 동결 contract</h2>
+      <table>
+        <thead><tr><th>항목</th><th>A-DS-12 후보 값</th><th>규칙</th></tr></thead>
+        <tbody>
+          <tr><td>Task key</td><td><code>addon.oj_ai_dashboard.student_submission_assessment</code></td><td>Manifest의 기존 두 task 중 제출 전용 task</td></tr>
+          <tr><td>Manifest label</td><td><code>학생 제출 평가</code></td><td>플랫폼 운영 화면의 routing 행 이름</td></tr>
+          <tr><td><code>sourceKind</code></td><td><code>addon_payload</code></td><td>플랫폼 제출 조회가 아니라 애드온이 최소화 payload를 제공한다는 표식</td></tr>
+          <tr><td>Outer input contract</td><td><code>student_submission_assessment.v1</code></td><td>Manifest와 <code>AddonAiTaskRequestV1</code>에서 같은 task-level 안전 토큰 사용</td></tr>
+          <tr><td>Inner operation contract</td><td><code>submission_score.v1</code></td><td>outer envelope의 <code>operation=score</code>와 정확히 결합</td></tr>
+          <tr><td>Operation</td><td><code>score</code></td><td>피드백·특기사항 operation과 한 run에 섞지 않음</td></tr>
+          <tr><td>Task instruction</td><td><code>student_submission_assessment_prompt.v2</code></td><td>package-owned 불변 instruction·hash, v1 이력 보존</td></tr>
+          <tr><td>Score section</td><td><code>submission_score_prompt.v1</code></td><td>task instruction 안의 score 전용 고정 section</td></tr>
+          <tr><td>Input schema</td><td><code>oj_ai.submission_score_request@1.0.0</code></td><td>공식 답안·P03·정책·루브릭·output descriptor envelope</td></tr>
+          <tr><td>Output schema</td><td><code>oj_ai.submission_score_output@1.0.0</code></td><td>provider가 반환하는 엄격 JSON object</td></tr>
+          <tr><td>Normalized schema</td><td><code>oj_ai.submission_score_result@1.0.0</code></td><td>서버가 점수·상태·flag·hash를 다시 계산한 저장 정본</td></tr>
+        </tbody>
+      </table>
+      <p><code>feedback_draft</code>는 A-DS-13에서 같은 outer task 아래 inner <code>submission_feedback.v1</code>로 확정했지만 이 점수 run에는 포함하지 않는다. <code>special_note_draft</code>는 A-DS-14가 별도 inner operation·input·output·권한을 확정하기 전까지 거부한다.</p>
+
+      <h2 id="source">평가 원본과 identity</h2>
+      <pre><code>SubmissionEvaluation
+  source = exact OfficialSubmissionRevision public ID + hash
+  worksheet = exact Publication public ID + publication hash + P03 hash
+  configuration = P03-pinned policy + rubric + review rule + prompt + schema hashes
+  artifact = representation set hash + extractor contract version
+  routing = preflight revision + fingerprint
+  provider subject = random evaluation-scoped evaluation_ref, learner identity 없음</code></pre>
+      <table>
+        <thead><tr><th>검사 시점</th><th>필수 일치</th><th>불일치 처리</th></tr></thead>
+        <tbody>
+          <tr><td>enqueue</td><td>official pointer, revision·publication·attachment set hash, representation set hash, P03-pinned configuration 존재·호환, 현재 Context</td><td>평가 root·run 0건</td></tr>
+          <tr><td>worker start</td><td>동결 source 존재, 현재 담당 권한, preflight routing revision·fingerprint</td><td>terminal failure 또는 stale</td></tr>
+          <tr><td>provider 호출 뒤</td><td>result routing과 fresh platform snapshot, output source hash·evaluation ref</td><td>output 폐기</td></tr>
+          <tr><td>commit</td><td>lease token·run state·동결 source hash·현재 Context</td><td>result·item 0건</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>재개방 이후:</strong> 학생이 다시 제출해 official revision이 바뀌면 과거 평가는 그대로 보존하고 새 source identity로 새 evaluation을 만든다. 기존 AI 점수 후보나 교사 검토 결과를 새 제출본에 복사하지 않는다.</div>
+
+      <h2 id="artifacts">응답칸 10종과 첨부 표현</h2>
+      <table>
+        <thead><tr><th>응답 kind</th><th>AI 입력 표현</th><th>판독 불가 처리</th></tr></thead>
+        <tbody>
+          <tr><td><code>short_text</code>·<code>long_text</code></td><td>NFC plain text, 공백·줄바꿈을 보존한 구조화 값</td><td>빈 답변도 값으로 전달하고 rubric에 따라 판단</td></tr>
+          <tr><td><code>single_choice</code>·<code>multiple_choice</code>·<code>checkbox</code></td><td>stable option ID와 학생에게 보인 label snapshot</td><td>알 수 없는 option ID면 enqueue 차단</td></tr>
+          <tr><td><code>number</code></td><td>원문 decimal string과 단위·허용 범위 snapshot</td><td>유효하지 않은 숫자는 답안 상태로 전달하되 점수를 추측하지 않음</td></tr>
+          <tr><td><code>table</code></td><td>행·열 stable key와 cell plain text의 bounded matrix</td><td>shape 불일치는 source validation 실패</td></tr>
+          <tr><td><code>image_upload</code>·<code>drawing</code></td><td>검증된 OCR text·좌표 없는 읽기 순서·representation hash</td><td>시각 의미를 표현할 text가 없으면 관련 criterion을 <code>abstain</code></td></tr>
+          <tr><td><code>file_upload</code></td><td>허용 MIME의 검사 완료 text extraction, page·paragraph anchor와 hash</td><td>암호화·손상·지원하지 않는 형식·text 없음이면 <code>abstain</code></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>Artifact representation 상태</th><th>의미</th><th>채점 처리</th></tr></thead>
+        <tbody>
+          <tr><td><code>pending</code></td><td>원본 검사는 끝났지만 파생 text 생성이 진행 중</td><td>평가 root를 만들지 않고 잠시 뒤 다시 시도</td></tr>
+          <tr><td><code>ready</code></td><td>원본 private file hash와 extraction version·content hash가 일치</td><td>bounded text만 provider input에 포함</td></tr>
+          <tr><td><code>unavailable</code></td><td>지원 형식이 아니거나 text 표현이 없음</td><td>관련 binding을 <code>artifact_unavailable</code>로 abstain</td></tr>
+          <tr><td><code>failed</code></td><td>추출 작업이 안전 오류로 끝나 재처리가 필요함</td><td>평가 root를 만들지 않고 추출 재시도 안내</td></tr>
+          <tr><td><code>rejected</code></td><td>원본이 scan·MIME·안전 검사를 통과하지 못함</td><td>평가 enqueue 차단, 교사에게 파일 확인 안내</td></tr>
+          <tr><td><code>stale</code></td><td>원본·extraction hash가 현재 official attachment와 불일치</td><td>provider 호출 전 실패</td></tr>
+        </tbody>
+      </table>
+      <p>첨부 처리 worker는 원본을 변경하지 않고 <code>oj_ai_private_files</code>에 <code>owner_type=submission_attachment</code>, <code>owner_public_id=attachment public ID</code>, <code>purpose=ai_text_representation</code>, <code>mime_type=text/plain</code>인 파생 private file을 만든다. 원본 attachment의 <code>JSON(ai_representation)</code> manifest가 원본 SHA-256, extractor contract version, 상태, 파생 file public ID·SHA-256·byte, 생성 시각과 안전 reason code를 참조한다. 원본 파일명·storage key·추출 text는 manifest에 넣지 않는다.</p>
+      <div class="callout"><strong>평가 전 관문:</strong> C29·C30은 추출을 동기로 수행하지 않는다. official attachment마다 manifest가 <code>ready|unavailable</code>로 끝난 뒤에만 canonical input을 만들며 <code>pending|failed|rejected|stale</code>가 하나라도 있으면 evaluation·run·outbox를 0건으로 유지한다. ready manifest도 파생 private file의 owner·state·hash를 다시 검산한다.</div>
+      <div class="warning callout"><strong>binary 비전송:</strong> v1은 이미지·그림·PDF·문서 binary, private URL, storage key와 파일명을 플랫폼 AI Gateway에 보내지 않는다. 향후 실제 멀티모달 평가가 필요하면 별도 플랫폼 API·동의·용량·보존·provider 허용 계약을 승인한다.</div>
+
+      <h2 id="input">AI 입력 계약</h2>
+      <p><code>SubmissionScoreInputBuilder</code>는 브라우저 payload가 아니라 동결된 official revision, publication P03 <code>oj_ai.grading_schema@1.1.0</code>, 그 P03에 pin된 configuration과 ready artifact representation에서 canonical JSON을 만든다. 평가 시점에 현재 기본 rubric으로 바꾸지 않으며 학생 이름·계정·학급은 provider 입력에 없다.</p>
+      <pre><code>{
+  "schema_id": "oj_ai.submission_score_request",
+  "schema_version": "1.0.0",
+  "operation": "score",
+  "subject": {
+    "evaluation_ref": "EV_7B2K...",
+    "source_hash": "sha256...",
+    "publication_hash": "sha256...",
+    "grading_schema_hash": "sha256...",
+    "representation_set_hash": "sha256...",
+    "locale": "ko-KR"
+  },
+  "responses": [
+    {
+      "response_id": "01J...",
+      "kind": "long_text",
+      "answer": { "text": "..." }
+    }
+  ],
+  "bindings": [
+    { "binding_key": "bnd_...", "scope": "response", "response_id": "01J...", "criterion_id": "crit_...", "maximum_points": "30.0000" },
+    { "binding_key": "bnd_...", "scope": "submission", "response_id": null, "criterion_id": "crit_...", "maximum_points": "10.0000" }
+  ],
+  "rubric": { "revision_ref": "rub_...", "content_hash": "sha256...", "total_points": "100.0000", "criteria": [] },
+  "policy": { "revision_ref": "pol_...", "rules": {} },
+  "artifacts": [],
+  "output_contract": { "schema_id": "oj_ai.submission_score_output", "schema_version": "1.0.0" }
+}</code></pre>
+      <table>
+        <thead><tr><th>영역</th><th>포함</th><th>제외</th></tr></thead>
+        <tbody>
+          <tr><td>Subject</td><td>evaluation-scoped 무작위 evaluation ref, source·publication·grading schema·representation set hash, locale</td><td>submission ID, learner user ID, 이름·email·login, 학급·그룹 label</td></tr>
+          <tr><td>채점 기준</td><td>P03 1.1 response ID, correct·example answer, response|submission binding, criterion 설명·배점, pin된 policy rule</td><td>현재 편집본·현재 기본 rubric, 교사 메모, 과거 학생 점수, 다른 학생 답안</td></tr>
+          <tr><td>학생 응답</td><td>10종의 정규화 값과 exact response ID</td><td>브라우저 HTML, local recovery, 타인 답안, client 계산 점수</td></tr>
+          <tr><td>첨부</td><td>evaluation-local artifact ref, 안전한 text representation·anchor·hash</td><td>binary, private file ID·URL·경로·원본 파일명, EXIF</td></tr>
+          <tr><td>연결</td><td>output schema descriptor와 task instruction hash의 참조</td><td>provider·model 강제, endpoint·secret·Authorization</td></tr>
+        </tbody>
+      </table>
+      <p>정답·rubric은 AI 채점에 필요하므로 provider 입력에는 포함하지만, 학생 projection·브라우저·로그·오류·결과 PDF에는 공개하지 않는다. input row의 <code>artifact_references</code>는 원본 private file과 extraction provenance를 내부에서 검산하는 별도 JSON이며 Gateway payload로 전달하지 않는다. 파생 text 안의 알려진 학생 이름·email·login·직접 ID는 <code>redaction_version</code>에 따라 evaluation-local text에서 제거하고, canonical input content hash에는 redacted text와 representation set hash를 함께 포함한다.</p>
+
+      <h2 id="grading-bindings">P03 criterion·배점 Projection Amendment 01 · 사용자 확인·동결</h2>
+      <table>
+        <thead><tr><th>항목</th><th><code>A-DS12-PA01</code> 동결 계약</th><th>실패 처리</th></tr></thead>
+        <tbody>
+          <tr><td>Schema</td><td>P03을 <code>oj_ai.grading_schema@1.1.0</code>으로 발행하고 과거 <code>oj_ai.grading_schema@1.0.0</code>은 제자리 수정하지 않음</td><td>1.1.0 없는 발행본은 AI 평가 전 새 발행 안내</td></tr>
+          <tr><td>설정 pin</td><td><code>student_submission</code> policy·rubric·review revision public ID·content hash를 P03에 고정</td><td>현재 기본값으로 대체 금지</td></tr>
+          <tr><td>Binding</td><td><code>binding_key</code>, <code>scope=response|submission</code>, nullable response ID, criterion ID, maximum points, position을 저장</td><td>unknown·duplicate·missing 발행 차단</td></tr>
+          <tr><td>Criterion 소속</td><td>pin된 rubric의 점수 criterion은 전체 binding에서 정확히 한 번만 나타남</td><td>같은 criterion 이중 채점 금지</td></tr>
+          <tr><td>Response 합계</td><td>각 response <code>max_points</code>는 그 response scope binding maximum 합과 같음</td><td>strict decimal 불일치 발행 차단</td></tr>
+          <tr><td>전체 합계</td><td>response scope 합과 submission scope 합의 총합이 rubric <code>total_points</code>와 같음</td><td>불일치 발행 차단</td></tr>
+          <tr><td>Binding key</td><td>source revision hash·rubric hash·scope·response ID 또는 null·criterion ID의 canonical tuple에서 결정적으로 생성</td><td>publication hash를 입력으로 쓰는 순환 계산 금지</td></tr>
+          <tr><td>Weight</td><td>criterion weight는 설명·분석 metadata이며 점수는 maximum points로만 합산</td><td>provider·서버 이중 가중 금지</td></tr>
+        </tbody>
+      </table>
+      <div class="good callout"><strong>G4-IMP-01-S02 구현 보정:</strong> P03 schema <code>1.1.0</code>은 유지하고 grading projector를 <code>1.1.0</code>으로 올려 위 5요소 tuple을 코드와 회귀 fixture에 고정했다. grading projector <code>1.0.0</code> 발행본은 제자리 수정하지 않고 제출 평가 전 새 publication을 만든다.</div>
+      <div class="warning callout"><strong>문항·종합 기준을 함께 지원:</strong> response scope는 특정 답변을 채점하고 submission scope는 여러 답변을 함께 보는 구성·표현 같은 종합 기준을 채점한다. 같은 관점을 여러 문항에서 별도 점수로 쓰려면 rubric draft에서 서로 다른 criterion ID를 만든다. A-DS-12 승인 시 이 후보를 A-DS-09 Projection Amendment 01로 반영한다.</div>
+
+      <h2 id="limits">입력·출력 한도</h2>
+      <table>
+        <thead><tr><th>ID</th><th>대상</th><th>v1 상한</th><th>초과 처리</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS12-L01</code></td><td>Gateway input map</td><td>UTF-8 canonical JSON <code>921,600 bytes</code></td><td>enqueue 전 <code>submission_evaluation_input_too_large</code></td></tr>
+          <tr><td><code>A-DS12-L02</code></td><td>Provider output</td><td>UTF-8 JSON <code>524,288 bytes</code></td><td>result 없이 <code>output_too_large</code></td></tr>
+          <tr><td><code>A-DS12-L03</code></td><td>응답</td><td>A-DS-09과 같은 최대 200개</td><td>source validation 실패</td></tr>
+          <tr><td><code>A-DS12-L04</code></td><td>Criterion binding</td><td>전체 400개, 응답당 20개</td><td>enqueue 차단</td></tr>
+          <tr><td><code>A-DS12-L05</code></td><td>Artifact representation</td><td>전체 100개, 항목당 text 20,000자, 합계 300,000자</td><td>자르지 않고 해당 첨부 기준 abstain 또는 입력 초과</td></tr>
+          <tr><td><code>A-DS12-L06</code></td><td>Evidence</td><td>binding당 3개, 전체 1,200개</td><td>초과 output 전체 거부</td></tr>
+          <tr><td><code>A-DS12-L07</code></td><td>Evidence 인용</td><td>항목당 240자</td><td>입력 substring·anchor 불일치 거부</td></tr>
+          <tr><td><code>A-DS12-L08</code></td><td>설명</td><td>항목 rationale 1,500자, 전체 summary 3,000자</td><td>truncation 없이 output 거부</td></tr>
+          <tr><td><code>A-DS12-L09</code></td><td>제한 사항</td><td>20개, 항목당 500자</td><td>초과 output 거부</td></tr>
+          <tr><td><code>A-DS12-L10</code></td><td>JSON 깊이</td><td>12단</td><td>parse 전 거부</td></tr>
+          <tr><td><code>A-DS12-L11</code></td><td>Confidence</td><td>유한 소수 0~1, 소수점 4자리</td><td>NaN·Infinity·범위 밖 거부</td></tr>
+          <tr><td><code>A-DS12-L12</code></td><td>점수 decimal</td><td>0 이상, 소수점 4자리, 총점 <code>99999999.9999</code> 이하</td><td>clamp하지 않고 전체 output 거부</td></tr>
+        </tbody>
+      </table>
+      <p>입력이 900KiB를 넘으면 일부 답변을 잘라 채점하지 않는다. v1은 활동지를 더 작은 평가 단위로 다시 구성하도록 안내하며 chunk 채점은 중간 결과·합산 provenance를 별도 설계한 뒤에만 추가한다.</p>
+
+      <h2 id="output">Provider output 계약</h2>
+      <pre><code>{
+  "schema_id": "oj_ai.submission_score_output",
+  "schema_version": "1.0.0",
+  "evaluation_ref": "EV_7B2K...",
+  "source_hash": "sha256...",
+  "items": [
+    {
+      "binding_key": "bnd_...",
+      "decision": "score",
+      "candidate_points": "28.0000",
+      "confidence": 0.8600,
+      "rationale": "자료의 두 변화를 설명했습니다.",
+      "evidence": [
+        { "source": "response", "anchor": "response:01J...", "quote": "최근 3년 동안" }
+      ],
+      "flags": []
+    },
+    {
+      "binding_key": "bnd_...",
+      "decision": "abstain",
+      "candidate_points": null,
+      "confidence": 0.0000,
+      "abstain_reason": "artifact_unavailable",
+      "evidence": [],
+      "flags": ["teacher_review_required"]
+    }
+  ],
+  "summary": "...",
+  "limitations": []
+}</code></pre>
+      <table>
+        <thead><tr><th>필드</th><th>허용 값</th><th>서버 규칙</th></tr></thead>
+        <tbody>
+          <tr><td><code>decision</code></td><td><code>score|abstain</code></td><td>모든 expected binding이 정확히 한 번 나타나야 함</td></tr>
+          <tr><td><code>candidate_points</code></td><td><code>score</code>이면 decimal string, abstain이면 null</td><td>maximum은 provider output에서 받지 않고 P03 1.1 binding·pin된 rubric에서 join</td></tr>
+          <tr><td><code>abstain_reason</code></td><td><code>artifact_unavailable|insufficient_evidence|ambiguous_response|safety_review</code></td><td>허용 enum 외 거부, 0점 변환 금지</td></tr>
+          <tr><td><code>confidence</code></td><td>0~1</td><td>검토 정렬용이며 점수 가중치·자동 승인에 사용하지 않음</td></tr>
+          <tr><td><code>evidence</code></td><td>response·artifact representation의 known anchor와 짧은 quote</td><td>근거 없는 score 거부</td></tr>
+          <tr><td><code>flags</code></td><td>허용된 safety·quality token</td><td>정렬·차단용이며 자동 감점하지 않음</td></tr>
+          <tr><td>금지 key</td><td><code>final_grade</code>, <code>official_score</code>, <code>student_feedback</code>, <code>release</code>, <code>reasoning</code></td><td>하나라도 있으면 output 전체 거부</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>사고과정 비저장:</strong> 짧은 판정 이유와 입력에 결합된 근거만 받는다. chain-of-thought, 숨은 추론, raw provider response는 요청하지도 저장하지도 않는다.</div>
+
+      <h2 id="normalizer">엄격 정규화 순서</h2>
+      <ol>
+        <li>UTF-8 byte·JSON 깊이·root object·허용 key와 schema ID·version을 검사한다.</li>
+        <li><code>evaluation_ref</code>와 <code>source_hash</code>를 저장된 immutable input과 constant-time 비교한다.</li>
+        <li>expected binding 집합과 output 집합이 정확히 같고 unknown·duplicate·missing이 0건인지 검사한다.</li>
+        <li><code>score</code>와 <code>abstain</code>의 필수·금지 field 조합을 검사한다.</li>
+        <li>candidate decimal을 strict parse하고 0~server-side maximum 범위인지 확인한다. 반올림·clamp하지 않는다.</li>
+        <li>confidence가 유한 범위이고 text·array 상한과 enum allowlist를 지키는지 확인한다.</li>
+        <li>evidence anchor가 해당 binding의 response·artifact에 속하고 quote가 canonical input substring인지 확인한다.</li>
+        <li>HTML·script·URL·내부 ID·PII·정답 재노출·금지 reasoning key를 거부한다.</li>
+        <li>item을 response position·criterion position으로 정렬하고 flags를 중복 없는 canonical token 목록으로 만든다.</li>
+        <li>모든 binding이 score일 때만 candidate total을 서버 decimal 합산하고 하나라도 abstain이면 null로 둔다.</li>
+        <li>overall confidence·abstained·safety flag와 <code>complete|partial|abstained</code> 상태를 서버가 계산한다.</li>
+        <li>normalized JSON·hash, result·item, run·attempt·audit·outbox를 lease 조건 한 transaction으로 append한다.</li>
+      </ol>
+      <div class="warning callout"><strong>전체 거부 원칙:</strong> 일부 항목만 정상이어도 schema·coverage·점수 범위 위반이 있으면 결과 전체를 저장하지 않는다. 정상적인 <code>abstain</code>만 부분 평가로 저장할 수 있다.</div>
+
+      <h2 id="scoring">점수·보류·안전 계산</h2>
+      <table>
+        <thead><tr><th>조건</th><th>candidate score</th><th>검토 상태</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>모든 binding이 score</td><td>서버 합산한 0~maximum</td><td>항상 검토 필요</td><td>AI total 신뢰·자동 확정</td></tr>
+          <tr><td>한 개 이상 abstain</td><td>null, 채점된 범위 subtotal만 보조 표시</td><td>직접 확인 필수</td><td>누락을 0점으로 계산</td></tr>
+          <tr><td>confidence threshold 미만</td><td>후보는 유지 가능</td><td>우선 검토</td><td>가중 감점·자동 반려</td></tr>
+          <tr><td>safety flag</td><td>후보가 있어도 그대로 보존</td><td>공개 차단·교사 확인</td><td>자동 0점·학생 경고 공개</td></tr>
+          <tr><td>grading binding 0개</td><td>평가 생성 안 함</td><td>채점 기준 설정 안내</td><td>임의 총점 생성</td></tr>
+        </tbody>
+      </table>
+      <p><code>maximum_score</code>는 <code>A-DS12-PA01</code>을 통과한 P03 1.1 binding·pin된 rubric snapshot의 criterion maximum 합으로만 계산한다. provider가 보낸 합계·최대점수·overall status는 사용하지 않으며 criterion별 candidate만 검증한 뒤 합산한다.</p>
+
+      <h2 id="flow">단건·일괄 실행 흐름</h2>
+      <div class="flow">
+        <div class="step"><div><strong>1 · 대상 확인</strong><br>공식 제출본·P03 1.1·첨부 준비·현재 담당을 확인</div></div>
+        <div class="step"><div><strong>2 · 입력 동결</strong><br>pin된 기준·최소화 payload·artifact provenance·hash를 저장</div></div>
+        <div class="step"><div><strong>3 · Queue</strong><br>evaluation·run·outbox를 원자 생성하고 202 반환</div></div>
+        <div class="step"><div><strong>4 · 실행</strong><br>worker가 재인가·routing 검산 뒤 Gateway 호출</div></div>
+        <div class="step"><div><strong>5 · 정규화</strong><br>coverage·점수·근거·privacy·postflight 검증</div></div>
+        <div class="step"><div><strong>6 · 검토 대기</strong><br>immutable 제안과 확인할 기준을 교사 작업함에 표시</div></div>
+      </div>
+      <p>C30 일괄 평가는 assignment batch master를 만들지 않고 공식 제출본마다 C29의 독립 transaction을 실행한다. 기준 시각과 target cursor를 고정하고 미제출·비공식·철회·기준 시각 이후·공식본 없음·같은 의미의 기존 평가를 항목별 안전 결과로 반환하며 다른 학생 작업을 rollback하지 않는다.</p>
+
+      <h2 id="retry">재시도·재평가·비교</h2>
+      <table>
+        <thead><tr><th>상황</th><th>행동</th><th>이력</th></tr></thead>
+        <tbody>
+          <tr><td>일시 provider 실패</td><td>A-DS-07 자동 retry, 같은 run·idempotency key와 최대 3 attempt</td><td>result 0건, attempt별 안전 오류</td></tr>
+          <tr><td>교사 C31 재시도</td><td>같은 evaluation에 새 run 생성, reason·expected latest result 요구</td><td>과거 run·result 유지, 최신 유효 result를 작업함 후보로 표시</td></tr>
+          <tr><td>routing·policy·rubric·prompt 변경</td><td>새 configuration identity의 새 evaluation 생성</td><td>두 후보를 source·설정 label로 비교</td></tr>
+          <tr><td>학생 재제출</td><td>새 official revision source의 새 evaluation 생성</td><td>과거 제출 평가와 교사 결정을 복사하지 않음</td></tr>
+          <tr><td>queued·running 취소</td><td>C32 cooperative cancel, commit 전에 state 재검사</td><td>late output 폐기, result 0건</td></tr>
+        </tbody>
+      </table>
+      <p>같은 source·P03-pinned configuration·canonical input content hash에 이미 성공한 result가 있으면 C29 재전송은 기존 evaluation을 반환한다. extractor contract 또는 representation set hash가 바뀌면 새 input identity의 새 evaluation을 만들며, 같은 immutable input으로 AI만 다시 실행할 때 C31을 사용한다. A-DS-13 review는 선택한 exact result ID를 pin한다.</p>
+
+      <h2 id="review">교사 검토 인계</h2>
+      <table>
+        <thead><tr><th>작업함 표시</th><th>교사가 보는 내용</th><th>A-DS-13 인계</th></tr></thead>
+        <tbody>
+          <tr><td>검토 필요</td><td>AI 총점 제안, 기준별 제안·근거·confidence</td><td>각 점수 유지·수정·직접 채점</td></tr>
+          <tr><td>직접 확인</td><td>abstain 기준, 읽지 못한 첨부·불충분 근거의 짧은 이유</td><td>필수 점수 입력 전 확정 불가</td></tr>
+          <tr><td>안전 확인</td><td>허용 flag와 관련 응답 근거</td><td>flag 처리 결정 전 공개 불가</td></tr>
+          <tr><td>이전 제안 있음</td><td>동일 source의 run별 후보 차이, 사용 모델 label·실행 시각</td><td>exact result 선택 뒤 review 생성</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>학생 비노출:</strong> Q16·Q17의 AI 제안·confidence·abstain·safety·rubric·정답은 Console 교사용 자료다. 학생은 A-DS-13의 명시적 release 뒤 Q33에서 허용된 최종 점수·피드백만 본다.</div>
+
+      <h2 id="rest">A-DS-08 REST·명령 추적</h2>
+      <table>
+        <thead><tr><th>계약</th><th>A-DS-12 DTO·결과</th><th>권한·상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS08-Q16</code></td><td>Context·assignment filter, 상태·확인 필요 수·latest candidate summary</td><td><code>assess_submissions + Context</code></td></tr>
+          <tr><td><code>A-DS08-Q17</code></td><td>exact source·configuration·run·item·evidence·review/release history projection</td><td>평가 또는 검토 capability + evaluation</td></tr>
+          <tr><td><code>A-DS08-C29</code></td><td>submission ID, expected official revision·hash, Idempotency-Key → 202 evaluation·run</td><td><code>assess_submissions</code></td></tr>
+          <tr><td><code>A-DS08-C30</code></td><td>assignment ID, expected schedule version·state, source cutoff, item cursor, limit → 제출별 created|existing|skipped|failed</td><td><code>assess_submissions + assignment evaluate_submissions</code></td></tr>
+          <tr><td><code>A-DS08-C31</code></td><td>expected state·latest result ID, reason → 새 run</td><td><code>assess_submissions + evaluation</code></td></tr>
+          <tr><td><code>A-DS08-C32</code></td><td>expected state·run ID, reason → cancel requested|cancelled</td><td><code>assess_submissions + evaluation</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>REST 보강 후보 0건:</strong> 단건·일괄·재시도·취소와 목록·상세는 이미 A-DS-08에 있다. 검토 C34와 공개 C43은 A-DS-13에서 상세화하므로 이 단계에서 새 endpoint를 만들지 않는다.</div>
+      <div class="good callout"><strong>C30 구현 상세:</strong> body는 <code>command_id</code>·<code>expected</code>·<code>payload</code> exact object다. payload의 <code>limit</code>은 1~100, cursor는 최대 191자이며 assignment·cutoff·schedule version·마지막 target을 서명해 다음 페이지 drift를 차단한다.</div>
+      <div class="callout"><strong>Batch receipt:</strong> schema <code>oj_ai.assignment_evaluation_batch_receipt@1.0.0</code>을 기존 <code>oj_ai_outbox_events</code>에 이미 published된 영수증으로 저장한다. 같은 요청은 target·C29 재실행 없이 최초 영수증을 반환한다.</div>
+
+      <h2 id="storage">A-DS-05 저장 정합성</h2>
+      <table>
+        <thead><tr><th>Table</th><th>A-DS-12 사용</th><th>불변식</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_submission_attachments</code></td><td><code>JSON(ai_representation)</code> 후보가 원본·extractor·파생 file provenance와 상태를 보존</td><td>원본 이름·storage key·추출 text 저장 금지</td></tr>
+          <tr><td><code>oj_ai_private_files</code></td><td><code>ai_text_representation</code> purpose의 파생 text private file</td><td>attachment owner·ready state·hash·retention을 검산</td></tr>
+          <tr><td><code>oj_ai_submission_evaluations</code></td><td>source·publication·policy·rubric·review·prompt·schema·authorization snapshot</td><td>semantic identity와 idempotency 고정</td></tr>
+          <tr><td><code>oj_ai_submission_evaluation_inputs</code></td><td>exact provider input JSON, 내부 artifact reference JSON, redaction version</td><td>각 JSON profile의 schema·version·hash와 byte 보존</td></tr>
+          <tr><td><code>oj_ai_evaluation_runs</code>·<code>oj_ai_evaluation_attempts</code></td><td>operation <code>score</code>, contract·routing·lease·시도·correlation</td><td>run별 result 최대 1개</td></tr>
+          <tr><td><code>oj_ai_submission_evaluation_results</code></td><td>candidate·maximum·confidence·abstained·safety·normalized JSON·provider digest</td><td>provider raw response 저장 금지</td></tr>
+          <tr><td><code>oj_ai_submission_evaluation_items</code></td><td>criterion·response·position·candidate·maximum·confidence·evidence·flags</td><td>expected binding 전수와 canonical order</td></tr>
+          <tr><td><code>oj_ai_submission_evaluation_reviews</code></td><td>A-DS-13이 exact result를 pin해 append</td><td>A-DS-12 worker가 작성하지 않음</td></tr>
+          <tr><td><code>oj_ai_outbox_events</code></td><td>C30 페이지 처리 완료 batch receipt</td><td><code>published_at_utc</code> 즉시 설정, worker dispatch 0건</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong><code>A-DS12-DBA01</code> · 사용자 확인·동결:</strong> 신규 table 없이 <code>oj_ai_submission_attachments</code>에 <code>JSON(ai_representation) nullable</code> profile을 추가한다. 물리 column은 <code>ai_representation_schema VARCHAR(100)</code>, <code>ai_representation_version SMALLINT UNSIGNED</code>, <code>ai_representation_json LONGTEXT</code>, <code>ai_representation_hash CHAR(64)</code> 4개다. 기존 평가 table·공통 run·attempt는 그대로 사용하고 table 수 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code> 원칙을 유지한다.</div>
+      <div class="callout"><strong>정본 반영 완료:</strong> <code>A-DS12-PA01</code>은 A-DS-09 Projection Amendment 01로, <code>A-DS12-DBA01</code>은 A-DS-05 Amendment 05로 반영했다. table 수 45개·owner 10개·고정 무접두어 원칙은 변하지 않는다.</div>
+
+      <h2 id="platform-gap">OJ Platform API 적합성과 후속 기록</h2>
+      <table>
+        <thead><tr><th>플랫폼 계약</th><th>A-DS-12 사용</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td><code>AddonAiTaskGatewayV1</code></td><td>task·contract·actor·idempotency·JSON input, structured output·routing snapshot</td><td>현재 공개 API 범위 안</td></tr>
+          <tr><td><code>sourceKind=addon_payload</code></td><td>애드온이 official submission에서 최소화 payload를 구성</td><td>플랫폼 submission 조회 의미로 확대 금지</td></tr>
+          <tr><td>JSON 최대 1MiB</td><td>로컬 921,600-byte 입력과 binary 비전송</td><td>현재 구현 준수</td></tr>
+          <tr><td><code>C28-I06-AJ04</code></td><td>애드온이 output schema·점수·근거를 검증</td><td>의도된 소비자 책임</td></tr>
+          <tr><td><code>C28-I06-AJ07</code></td><td>commit 전 fresh routing snapshot 재조회</td><td>소비자 보상 유지</td></tr>
+          <tr><td><code>C28-I06-AJ08</code></td><td><code>student_submission_assessment_prompt.v2</code> 안의 <code>submission_score_prompt.v1</code> section을 Addon API 1.1의 높은 우선순위 instruction으로 전달</td><td><span class="badge good">G4-IMP-01-S01 Manifest 연결·제공자 계약 통과</span></td></tr>
+          <tr><td><code>sourceKind=addon_payload</code> 소비</td><td>S02 builder가 exact official source와 P03를 <code>student_submission_assessment.v1</code> 5-key envelope로 투영</td><td><span class="badge good">G4-IMP-01-S02 공식 입력 계약 통과</span></td></tr>
+          <tr><td>공개 routing snapshot</td><td>C29가 <code>canRoute</code>·<code>snapshot</code>만 사용하고 C30이 C29 application을 재사용</td><td><span class="badge good">G4-IMP-01-S03~S04 계약 통과</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>플랫폼 G0 인수·G4 적용:</strong> A-DS-12는 별도 신규 public interface를 요구하지 않는다. A-DS-10과 공유하는 AJ08 instruction 계약은 API 1.1에 구현됐고 두 task는 서로 다른 instruction hash로 격리된다. S01~S04는 지시문·공식 입력·C29·C30을 애드온 안에서 완성했다.</div>
+
+      <h2 id="ui">교사 화면 시안</h2>
+      <table>
+        <thead><tr><th>화면</th><th>항상 보이는 정보</th><th>주요 행동</th><th>노출 금지</th></tr></thead>
+        <tbody>
+          <tr><td>평가 작업함</td><td>활동지·학생·제출 시각·평가 중|검토 필요|직접 확인|실패</td><td>평가 시작·검토 열기·재시도</td><td>task key·schema·hash·provider 오류</td></tr>
+          <tr><td>검토 대화상자</td><td>학생 답변, AI 점수 제안, 기준별 근거, 확인할 기준 수</td><td>점수 입력·근거 이동·보류·검토 계속</td><td>chain-of-thought·원시 JSON·confidence 백분율 과장</td></tr>
+          <tr><td>첨부 확인</td><td>파일 미리보기와 읽은 text, 읽지 못함 상태</td><td>직접 확인·점수 입력</td><td>private storage URL·서버 경로</td></tr>
+          <tr><td>실행 이력</td><td>실행 시각·상태·사용 모델 label·후보 차이</td><td>비교·선택·재시도</td><td>API key·endpoint·raw provider 응답</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>시안 반영:</strong> <a href="a-ds-01-ui-prototype.html">클릭형 UI 시안</a>의 평가 검토 화면에 “AI 제안”, “검토할 기준”, 답변 근거와 criterion별 확인 상태를 추가한다. 긴 설계 설명 대신 교사가 바로 비교하고 판단할 정보만 표시한다.</div>
+
+      <h2 id="security">보안·개인정보·prompt injection</h2>
+      <ul>
+        <li>학생 답변·첨부 text·활동지 안내·rubric 예시는 모두 신뢰하지 않는 data로 취급하며 instruction이나 tool 명령으로 승격하지 않는다.</li>
+        <li>provider payload에는 learner ID·이름·email·login·학급·그룹·파일명·URL·private ID를 넣지 않는다.</li>
+        <li>provider output의 이름·점수 합계·최대점수·공개 지시·URL·HTML을 신뢰하지 않는다.</li>
+        <li>정답·rubric 원문은 평가 input에만 존재하고 학생 API·로그·오류·artifact·분석 telemetry에는 넣지 않는다.</li>
+        <li>교사 담당 해제·학생 탈퇴·submission access 철회는 worker start·commit과 Q16·Q17에서 fail closed한다.</li>
+        <li>private attachment는 원본 Policy로만 stream하며 provider가 외부 URL을 fetch하게 하지 않는다.</li>
+        <li>raw request·raw response·chain-of-thought는 저장하지 않고 canonical input·normalized output·digest만 보존한다.</li>
+      </ul>
+
+      <h2 id="errors">안정 오류·복구</h2>
+      <table>
+        <thead><tr><th>안정 code</th><th>조건</th><th>사용자 문구</th><th>다음 행동</th></tr></thead>
+        <tbody>
+          <tr><td><code>submission_not_official</code></td><td>draft 또는 official pointer 없음</td><td>제출된 결과물이 없습니다</td><td>제출 상태 확인</td></tr>
+          <tr><td><code>grading_schema_unsupported</code></td><td>P03 1.1 projection 없음</td><td>새 평가 기준이 필요합니다</td><td>활동지 확인 뒤 새 발행</td></tr>
+          <tr><td><code>grading_schema_invalid</code></td><td>P03·pin된 rubric·binding·배점 불일치</td><td>채점 기준을 확인해 주세요</td><td>활동지 기준 수정·새 발행</td></tr>
+          <tr><td><code>artifact_not_ready</code></td><td>첨부 rejected·stale·검사 중</td><td>파일 확인이 끝나지 않았습니다</td><td>파일 상태 확인</td></tr>
+          <tr><td><code>submission_evaluation_input_too_large</code></td><td>canonical input 900KiB 초과</td><td>평가할 내용이 너무 많습니다</td><td>활동지 평가 단위 조정</td></tr>
+          <tr><td><code>output_schema_invalid</code></td><td>구조·key·enum·text 위반</td><td>AI 결과를 확인하지 못했습니다</td><td>재시도 또는 직접 평가</td></tr>
+          <tr><td><code>output_coverage_invalid</code></td><td>binding 누락·중복·unknown</td><td>AI 결과가 완전하지 않습니다</td><td>재시도 또는 직접 평가</td></tr>
+          <tr><td><code>output_score_invalid</code></td><td>점수 parse·범위 위반</td><td>AI 점수를 사용할 수 없습니다</td><td>직접 평가</td></tr>
+          <tr><td><code>routing_changed_during_execute</code></td><td>plan·result·fresh routing 불일치</td><td>AI 연결이 변경되었습니다</td><td>연결 확인 뒤 새 평가</td></tr>
+          <tr><td><code>submission_evaluation_stale</code></td><td>source·권한·lease 변경</td><td>제출 상태가 변경되었습니다</td><td>새로고침 뒤 현재 제출 평가</td></tr>
+        </tbody>
+      </table>
+      <p><code>artifact_unavailable</code>은 정상적인 abstain 이유이므로 전체 AI 호출 실패 code가 아니다. 반대로 rejected·stale 원본을 평가하는 것은 안전 문제가 있어 enqueue 또는 commit을 차단한다.</p>
+
+      <h2 id="acceptance">A-DS-12 수용 기준</h2>
+      <table>
+        <thead><tr><th>ID</th><th>검증 가능한 완료 조건</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS12-A01</code></td><td>Manifest task key·<code>sourceKind=addon_payload</code>·<code>submission_score.v1</code>이 A-DS-02·04·07과 일치함</td></tr>
+          <tr><td><code>A-DS12-A02</code></td><td>평가 source가 exact official submission revision·publication P03 1.1·pin된 configuration·representation set hash이고 mutable draft·현재 기본 rubric 재조회가 0건임</td></tr>
+          <tr><td><code>A-DS12-A03</code></td><td>provider input에 learner ID·이름·email·login·학급·그룹 label이 0건임</td></tr>
+          <tr><td><code>A-DS12-A04</code></td><td>provider input에 binary·private URL·storage key·원본 파일명이 0건임</td></tr>
+          <tr><td><code>A-DS12-A05</code></td><td>응답칸 10종이 정규화되고 attachment manifest의 원본·extractor·파생 hash를 검산하며 unavailable은 관련 binding abstain, pending·failed·rejected·stale은 enqueue 차단됨</td></tr>
+          <tr><td><code>A-DS12-A06</code></td><td>입력·출력·응답·binding·artifact·evidence·text·depth·decimal 상한이 모든 경계에서 동일함</td></tr>
+          <tr><td><code>A-DS12-A07</code></td><td>expected binding이 output에 정확히 한 번씩 있고 unknown·duplicate·missing 하나라도 전체 결과가 거부됨</td></tr>
+          <tr><td><code>A-DS12-A08</code></td><td>범위 밖 점수를 clamp하지 않고 누락·abstain을 0점으로 바꾸지 않음</td></tr>
+          <tr><td><code>A-DS12-A09</code></td><td>모든 score item에 해당 응답·artifact의 검증 가능한 evidence가 있고 quote가 input substring임</td></tr>
+          <tr><td><code>A-DS12-A10</code></td><td>P03 1.1의 criterion 전수·response 합계·submission 합계·rubric total이 일치하고 maximum·candidate total·overall 상태를 서버가 재계산하며 provider total을 사용하지 않음</td></tr>
+          <tr><td><code>A-DS12-A11</code></td><td>abstain이 하나라도 있으면 candidate total이 null이고 교사 화면에 직접 확인으로 표시됨</td></tr>
+          <tr><td><code>A-DS12-A12</code></td><td>confidence·safety가 검토 정렬·차단에만 쓰이고 자동 감점·0점·승인·공개가 0건임</td></tr>
+          <tr><td><code>A-DS12-A13</code></td><td>C29·C30이 AI 완료를 기다리지 않고 202를 반환하며 submission별 독립 evaluation을 생성함</td></tr>
+          <tr><td><code>A-DS12-A14</code></td><td>같은 의미의 C29 재전송이 기존 evaluation을 반환하고 중복 root·run이 0건임</td></tr>
+          <tr><td><code>A-DS12-A15</code></td><td>C31이 같은 evaluation에 새 run을 append하고 과거 result를 update·delete하지 않음</td></tr>
+          <tr><td><code>A-DS12-A16</code></td><td>학생 재제출·configuration 변경이 새 evaluation identity를 만들고 과거 검토를 복사하지 않음</td></tr>
+          <tr><td><code>A-DS12-A17</code></td><td>취소·lease expiry·routing drift·권한 철회 뒤 늦은 output의 result·item commit이 0건임</td></tr>
+          <tr><td><code>A-DS12-A18</code></td><td>raw request·raw response·chain-of-thought 저장이 0건이고 canonical input·normalized output·digest만 남음</td></tr>
+          <tr><td><code>A-DS12-A19</code></td><td>result·item·run·attempt·audit·outbox가 조건부 한 transaction에서 commit됨</td></tr>
+          <tr><td><code>A-DS12-A20</code></td><td>Q16·Q17과 worker가 현재 capability·Context·submission Policy를 같은 Application Policy로 검사함</td></tr>
+          <tr><td><code>A-DS12-A21</code></td><td>학생 API·PDF에 AI 후보·confidence·abstain·safety·정답·rubric이 release 전에 0건임</td></tr>
+          <tr><td><code>A-DS12-A22</code></td><td>검토 시안이 답변·AI 제안·criterion·근거·확인 필요를 짧은 제품 문구로 비교 가능함</td></tr>
+          <tr><td><code>A-DS12-A23</code></td><td><code>AJ08</code> 미구현 시 제출 평가 release-ready 검사가 실패하고 input에 instruction을 숨기는 우회가 0건임</td></tr>
+          <tr><td><code>A-DS12-A24</code></td><td>A-DS-16 승인 전 제출 평가 Runtime·DDL·REST와 OJ Platform Runtime 변경이 0건임</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">결정 기록 24개 · 사용자 확인·동결</h2>
+      <table>
+        <thead><tr><th>ID</th><th>설계 결정</th><th>근거</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS12-D01</code></td><td>학생 제출 평가는 활동지 자체 평가와 분리된 task·prompt·schema·table을 사용한다.</td><td>subject·결과 의미 혼합 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D02</code></td><td>v1 task contract를 <code>submission_score.v1</code>, operation을 <code>score</code>로 고정한다.</td><td>Manifest·worker·schema 단일 정본</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D03</code></td><td>평가 source는 exact official submission revision·P03 1.1·그 P03에 pin된 configuration·representation snapshot이다.</td><td>재현 가능한 채점</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D04</code></td><td>provider subject는 evaluation-scoped 무작위 ref만 사용하고 학생 identity를 보내지 않는다.</td><td>재시도 identity·개인정보 최소화</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D05</code></td><td>응답칸 10종을 지원하고 <code>A-DS12-PA01</code>의 response|submission scope·stable criterion·배점 불변식으로 binding을 만든다.</td><td>누락·중복·오대상·이중 합산 차단</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D06</code></td><td>v1 Gateway에는 binary를 보내지 않고 ready text representation만 사용한다.</td><td>현재 플랫폼 JSON-only 계약 준수</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D07</code></td><td>읽을 수 없는 첨부·불충분 근거는 criterion별 abstain으로 표현한다.</td><td>추측 점수 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D08</code></td><td>abstain·누락을 0점으로 바꾸지 않고 하나라도 있으면 candidate total을 null로 둔다.</td><td>학생 불이익 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D09</code></td><td>provider는 binding별 candidate만 제안하고 maximum·total·official score는 서버가 소유한다.</td><td>점수 경계 보호</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D10</code></td><td>범위 밖 점수는 clamp하지 않고 output 전체를 거부한다.</td><td>오류 은폐 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D11</code></td><td>모든 score item에 known anchor와 input substring evidence를 요구한다.</td><td>근거 없는 점수 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D12</code></td><td>confidence·abstain·safety는 검토 우선순위·차단에만 사용한다.</td><td>A-DS-04 사람 판단 원칙 유지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D13</code></td><td>AI 결과는 항상 review required이며 자동 확정·학생 공개를 제공하지 않는다.</td><td>교사 최종 판단 유지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D14</code></td><td>C29·C30은 202 enqueue만 수행하고 submission별 독립 evaluation을 만든다.</td><td>timeout·부분 실패 격리</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D15</code></td><td>동일 semantic 요청은 기존 evaluation을 반환하고 명시 C31만 새 run을 만든다.</td><td>멱등성과 재평가 의도 분리</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D16</code></td><td>재제출·configuration 변경은 새 evaluation, 같은 입력 retry는 같은 evaluation의 새 run이다.</td><td>비교 가능한 이력</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D17</code></td><td>review는 latest 포인터가 아니라 교사가 선택한 exact result를 pin한다.</td><td>재시도 race 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D18</code></td><td>raw provider response·chain-of-thought를 저장하지 않는다.</td><td>민감정보·불필요 추론 최소화</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D19</code></td><td>정답·rubric은 provider 입력에만 허용하고 학생 projection·로그·오류에서 제외한다.</td><td>채점 기준 비공개</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D20</code></td><td>기존 제출 평가 7개 table과 공통 run·attempt를 유지하고 <code>A-DS12-DBA01</code>의 첨부 추출 manifest profile 1건만 보강한다.</td><td>재현 가능한 추출 provenance, 신규 table 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D21</code></td><td>Q16~Q17·C29~C32만 사용하고 REST amendment를 만들지 않는다.</td><td>A-DS-08 외부 표면 유지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D22</code></td><td><code>AJ08</code>이 닫히기 전 제출 평가를 release-ready로 판정하지 않는다.</td><td>task 격리·prompt injection 방어</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D23</code></td><td>검토 화면은 답변·AI 제안·근거·확인 필요만 짧은 제품 문구로 보여 준다.</td><td>교사 판단 효율·직관성</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS12-D24</code></td><td>A-DS-16 승인 전 애드온 평가 Runtime·DDL·REST와 OJ Platform Runtime을 구현·수정하지 않는다.</td><td>설계 동결 전 코드 변경 차단</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="completion">완료 판정과 다음 단계</h2>
+      <table>
+        <thead><tr><th>영역</th><th>상태</th><th>판정 근거</th></tr></thead>
+        <tbody>
+          <tr><td>Task·source</td><td>초안 완료</td><td><code>submission_score.v1</code>, exact official revision·P03·configuration</td></tr>
+          <tr><td>응답·첨부</td><td>초안 완료</td><td>10종 정규화, JSON-only, ready text 또는 abstain</td></tr>
+          <tr><td>출력·점수</td><td>초안 완료</td><td>binding 전수, evidence, strict decimal, 서버 합산, 0점 변환 금지</td></tr>
+          <tr><td>재시도·검토</td><td>초안 완료</td><td>same evaluation 새 run, exact result pin, 항상 교사 검토</td></tr>
+          <tr><td>Task contract</td><td>A-DS-13 Amendment 01 반영</td><td>outer <code>student_submission_assessment.v1</code>·inner <code>submission_score.v1</code></td></tr>
+          <tr><td>P03 정합성</td><td>Amendment 01 반영</td><td><code>A-DS12-PA01</code> configuration pin·response|submission binding·배점 합계 불변식</td></tr>
+          <tr><td>DB 정합성</td><td>Amendment 05 반영</td><td><code>A-DS12-DBA01</code> 기존 attachment에 JSON profile 4개 column, 신규 table 0건</td></tr>
+          <tr><td>REST 정합성</td><td>보강 후보 0건</td><td>Q16~Q17·C29~C32 소비</td></tr>
+          <tr><td>플랫폼 API</td><td>G0 구현·G4 소비 인수</td><td><code>AJ08</code> 두 task instruction·hash·prompt order, 제출 평가 Manifest v2 연결 완료</td></tr>
+          <tr><td>결정 24개</td><td>사용자 확인·동결</td><td><code>A-DS12-D01~D24</code></td></tr>
+          <tr><td>구현</td><td>G4 IMP-01 5/5 완료·IMP-02 5/5·R01 완료</td><td><code>G4-IMP-02-S05</code> abstain SQL NULL, postflight routing drift 폐기, 저장 손상 안정 코드와 취소·late-worker 경쟁 통합 동결 완료</td></tr>
+        </tbody>
+      </table>
+      <div class="good callout"><strong>G4-IMP-01-S02 구현 증거 2026-08-23:</strong> <a href="g4-imp-01-s02-official-input-projection.html">공식 제출 평가 입력 builder</a>가 exact official revision, publication P01·P02·P03, P03-pinned 설정, 응답 10종과 redacted 첨부 표현을 결정적으로 구성한다. 내부 attachment·private file 참조는 Gateway input과 분리한다.</div>
+      <div class="good callout"><strong>G4-IMP-01-S03 구현 증거 2026-08-23:</strong> <a href="g4-imp-01-s03-single-evaluation-enqueue.html">C29 단건 요청</a>이 공식본 CAS와 evaluation·input·run·audit·outbox 원자 저장, exact·semantic replay를 통과했다.</div>
+      <div class="good callout"><strong>G4-IMP-01-S04 구현 증거 2026-08-23:</strong> <a href="g4-imp-01-s04-assignment-evaluation-enqueue.html">C30 일괄 요청</a>이 항목별 부분 성공, C29 재사용, 영속 exact replay, 191자 scoped cursor와 동시 영수증 승자 복구를 통과했다.</div>
+      <div class="good callout"><strong>G4-IMP-01-S05 구현 증거 2026-08-23:</strong> <a href="g4-imp-01-s05-idempotency-authorization-freeze.html">멱등·권한 종합 동결</a>이 C29·C30의 nonce·키·현재 사용자·Context·직접 URL·request-bound grant·actor-scoped receipt와 상태 경쟁을 통과했다.</div>
+      <div class="good callout"><strong>G4-IMP-02-S01 구현 증거 2026-08-23:</strong> <a href="g4-imp-02-s01-evaluation-queue-lease.html">제출 평가 queue·lease</a>가 단일 worker 선점, 300초 lease, exact-expiry 재선점, stale token 차단, append-only attempt와 손상 입력 rollback을 통과했다.</div>
+      <div class="good callout"><strong>G4-IMP-02-S02 실행 코어 증거 2026-08-23:</strong> <a href="g4-imp-02-s02-gateway-output-result.html">Gateway·결과 정규화</a>가 binding 전수, score·abstain, evidence anchor, 허용 플래그 5개, privacy 금지, postflight drift와 원자 후보 결과 transaction을 통과했다.</div>
+      <div class="good callout"><strong>G4-IMP-02-R01 학생 제출 동의 증거 2026-08-23:</strong> <a href="g4-imp-02-r01-submission-external-ai-consent.html">별도 exact 동의 원장</a>이 활동지 자체 평가 동의와 task·입력 범주를 분리하고 Q38·C78·C79·OJ Console·worker loader·deactivation을 통과했다.</div>
+      <div class="good callout"><strong>G4-IMP-02-S03 평가 조회 증거 2026-08-23:</strong> <a href="g4-imp-02-s03-submission-evaluation-query.html">Q16·Q17 안전 조회</a>가 현재 권한·Context·제출 범위, exact result·item·run 연결, 민감 필드 제외와 actor-scoped 서명 커서를 통과했다.</div>
+      <div class="good callout"><strong>G4-IMP-02-S04 실행 제어 증거 2026-08-23:</strong> <a href="g4-imp-02-s04-submission-evaluation-control.html">C31 재시도·C32 취소</a>가 strict expected, frozen input·prior result 불변, 새 routing run, cooperative cancellation, 영속 replay와 late-worker CAS를 통과했다.</div>
+      <div class="good callout"><strong>G4-IMP-02-S05 통합 동결 증거 2026-08-23:</strong> <a href="g4-imp-02-s05-submission-evaluation-integration-freeze.html">실행·정규화 최종 관문</a>이 S01~S04·R01, abstain SQL NULL, postflight routing discard, 저장 손상 안정 코드와 취소 경쟁을 통과했다.</div>
+      <div class="callout"><strong>동결 판정:</strong> A-DS-12와 두 교차 검증 보강을 확정해 A-DS-09·05 정본에 반영했다. 다음 상세 설계는 <a href="a-ds-13-teacher-review-feedback-release.html"><code>A-DS-13 교사 검토·피드백·학생 공개</code></a>이며, 제출 평가 task의 단일 manifest 입력 계약 제약을 먼저 해결한다.</div>
+      <p class="footer">A-DS-12 학생 제출물 AI 평가 · 사용자 확정·동결 · G4-IMP-01 5/5 완료 · G4-IMP-02-S05 통합 동결·R01 Worker 활성·IMP-02 5/5 완료 · P03 grading projector 1.1.0 · 다음 G4-IMP-03-S01 C34 append review · 공개 Addon API 변경 요구 없음</p>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D-004 데이터 저장소 재정비 | OJ Platform</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #5b6577;
+      --line: #d8dee8;
+      --surface: #ffffff;
+      --soft: #f4f7fa;
+      --nav: #172033;
+      --blue: #155da8;
+      --blue-soft: #edf5ff;
+      --green: #24734f;
+      --green-soft: #eaf6ef;
+      --amber: #915800;
+      --amber-soft: #fff5df;
+      --red: #a33c3c;
+      --red-soft: #fff0f0;
+      --shadow: 0 10px 28px rgba(23, 32, 51, 0.07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--soft);
+      color: var(--ink);
+      font-family: "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    a { color: inherit; }
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #edf1f6;
+      color: #29415f;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      overflow-wrap: anywhere;
+    }
+    .skip-link {
+      position: fixed;
+      left: 12px;
+      top: -80px;
+      z-index: 100;
+      padding: 10px 14px;
+      background: #fff;
+      color: #111;
+    }
+    .skip-link:focus { top: 12px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 24px;
+      background: var(--nav);
+      color: #fff;
+      box-shadow: 0 3px 16px rgba(17, 24, 39, 0.2);
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .topbar-status { color: #c9d4e5; font-size: 14px; text-align: right; }
+    .layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      width: min(1500px, 100%);
+      margin: 0 auto;
+    }
+    .toc {
+      position: sticky;
+      top: 58px;
+      height: calc(100vh - 58px);
+      padding: 30px 22px;
+      border-right: 1px solid var(--line);
+      background: #eef2f7;
+      overflow: auto;
+    }
+    .toc strong { color: var(--muted); font-size: 13px; }
+    .toc ul { margin: 14px 0 0; padding: 0; list-style: none; }
+    .toc a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 5px;
+      color: #344054;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .toc a:hover, .toc a:focus-visible { background: #fff; color: var(--blue); }
+    main { min-width: 0; padding: 38px clamp(20px, 4vw, 58px) 60px; }
+    .report-header, .section {
+      margin-bottom: 28px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .report-header { padding: clamp(26px, 4vw, 48px); }
+    .eyebrow { margin: 0 0 8px; color: var(--blue); font-size: 13px; font-weight: 800; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 14px; font-size: clamp(30px, 4vw, 47px); line-height: 1.2; }
+    h2 { margin-bottom: 6px; font-size: 24px; }
+    h3 { margin-bottom: 6px; font-size: 17px; }
+    .lede { max-width: 960px; margin-bottom: 18px; color: #3c4658; font-size: 17px; }
+    .report-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--muted); font-size: 13px; }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .metric {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--soft);
+    }
+    .metric strong { display: block; font-size: 28px; line-height: 1.15; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .summary-band, .notice-band, .risk-band {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--green);
+      border-radius: 5px;
+      background: var(--green-soft);
+    }
+    .notice-band { border-left-color: var(--amber); background: var(--amber-soft); }
+    .risk-band { border-left-color: var(--red); background: var(--red-soft); }
+    .section { padding: clamp(22px, 3vw, 34px); }
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-heading p { margin-bottom: 0; color: var(--muted); }
+    .badge {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      min-height: 27px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #e8edf4;
+      color: #435066;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .badge.good { background: var(--green-soft); color: var(--green); }
+    .badge.warn { background: var(--amber-soft); color: var(--amber); }
+    .badge.risk { background: var(--red-soft); color: var(--red); }
+    .topology {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .topology article, .decision, .finding, .storage-item {
+      min-width: 0;
+      padding: 17px 18px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+    }
+    .topology article { background: var(--soft); }
+    .topology .active { border-color: #9bbce0; background: var(--blue-soft); }
+    .topology span { display: block; margin-bottom: 5px; color: var(--blue); font-size: 12px; font-weight: 800; }
+    .topology p, .finding p, .decision p, .storage-item p { margin-bottom: 0; color: var(--muted); }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 7px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; font-size: 14px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #eef2f7; color: #39465a; font-size: 12px; }
+    tr:last-child td { border-bottom: 0; }
+    .table-list { line-height: 1.8; }
+    .finding-list, .decision-list, .storage-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+    .item-head h3 { min-width: 0; }
+    .decision { border-left: 4px solid var(--blue); }
+    .decision.recommended { border-left-color: var(--green); background: var(--green-soft); }
+    .decision.pending { border-left-color: var(--amber); background: var(--amber-soft); }
+    .owner-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .owner-grid .storage-item strong { display: block; margin-bottom: 5px; }
+    .evidence { margin-top: 18px; color: var(--muted); font-size: 13px; }
+    .next-step { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+    .next-step p { margin-bottom: 0; }
+    footer { padding: 18px 4px 0; color: var(--muted); font-size: 13px; text-align: center; }
+    @media (max-width: 1120px) {
+      .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .topology { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 780px) {
+      .topbar { position: static; align-items: flex-start; padding: 10px 16px; }
+      .topbar-status { display: none; }
+      .layout { display: block; width: 100%; min-width: 0; }
+      .toc { position: static; width: 100%; max-width: 100%; height: auto; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+      .toc::-webkit-scrollbar { display: none; }
+      .toc strong { display: none; }
+      .toc ul { display: flex; width: max-content; max-width: none; gap: 8px; margin: 0; }
+      .toc li { flex: 0 0 auto; }
+      .toc a { padding: 5px 9px; border: 1px solid var(--line); line-height: 20px; white-space: nowrap; }
+      main { width: 100%; min-width: 0; padding: 22px 14px 44px; overflow: hidden; }
+      .report-header, .section { width: 100%; min-width: 0; }
+      .report-meta > *, .lede, p, h1, h2, h3 { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+      .metric-grid, .owner-grid { width: 100%; max-width: 100%; grid-template-columns: minmax(0, 1fr); }
+      .metric, .storage-item { width: 100%; max-width: 100%; }
+      .section-heading, .item-head, .next-step { flex-direction: column; }
+      .table-wrap { width: 100%; max-width: 100%; }
+      h1 { font-size: 31px; }
+    }
+    @media print {
+      body { background: #fff; }
+      .topbar, .toc, .skip-link { display: none; }
+      .layout { display: block; width: auto; }
+      main { padding: 0; }
+      .report-header, .section { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="OJ Platform 문서 홈">
+      <span class="brand-mark" aria-hidden="true">OJ</span>
+      <strong>OJ Platform 재정비</strong>
+    </a>
+    <span class="topbar-status">D-004 · 재정비 설계 확정 · 전환 대기</span>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="문서 목차">
+      <strong>문서 목차</strong>
+      <ul>
+        <li><a href="#summary">조사 결론</a></li>
+        <li><a href="#topology">저장 위치</a></li>
+        <li><a href="#platform-tables">플랫폼 테이블</a></li>
+        <li><a href="#judge-tables">Judge 테이블</a></li>
+        <li><a href="#wordpress-storage">WordPress 저장소</a></li>
+        <li><a href="#findings">해결할 문제</a></li>
+        <li><a href="#recommendations">확정 목표 구조</a></li>
+        <li><a href="#confirmations">확정 사항</a></li>
+      </ul>
+    </nav>
+
+    <main id="main">
+      <header class="report-header" id="summary">
+        <p class="eyebrow">OJ Platform 재정비 기준 · D-004</p>
+        <h1>데이터 저장소 재정비</h1>
+        <p class="lede">
+          이 문서는 저장 위치를 나열하는 데 그치지 않고, 테이블 이름·기능별 소유권·설정 저장 위치·데이터 이전 절차를 재정비하기 위한 기준서다.
+          실제 변경은 운영 DB 읽기 전용 보고서와 백업·복구 시험을 승인한 뒤 실행한다.
+        </p>
+        <div class="report-meta">
+          <span>조사일: 2026-07-19</span>
+          <span>코드 기준: D-003 소스 반영·정적 검사 완료 상태</span>
+          <span>문서 인코딩: UTF-8</span>
+          <span>상태: 재정비 설계 확정 · 데이터 전환 대기</span>
+        </div>
+
+        <div class="metric-grid" aria-label="저장소 재정비 기준 수치">
+          <div class="metric"><strong>32</strong><span>플랫폼 전용 테이블</span></div>
+          <div class="metric"><strong>14</strong><span>Judge 매핑 테이블</span></div>
+          <div class="metric"><strong>16</strong><span>기능 설정 옵션</span></div>
+          <div class="metric"><strong>2</strong><span>WordPress 글 유형</span></div>
+          <div class="metric"><strong>662</strong><span>운영 PHP의 <code>oj_user_id</code> 일치 행 · 41개 파일</span></div>
+        </div>
+
+        <div class="summary-band">
+          <strong>핵심 결론:</strong>
+          플랫폼 DB 모듈과 Judge DB 모듈은 코드상 분리됐지만 데이터 구조 정리는 아직 끝나지 않았다.
+          플랫폼 테이블 31개에는 여전히 WordPress 접두어와 <code>oj_</code>가 붙고,
+          사용자 데이터는 WordPress·플랫폼 사용자 테이블·사용자 메타·Judge 사용자 사이에 중복되어 있다.
+        </div>
+      </header>
+
+      <section class="section" id="topology">
+        <div class="section-heading">
+          <div>
+            <h2>재정비 기준이 되는 실제 저장 위치</h2>
+            <p>모듈 분리는 별도 데이터베이스 생성을 뜻하지 않는다.</p>
+          </div>
+          <span class="badge good">연결 구조 확인</span>
+        </div>
+
+        <div class="topology">
+          <article class="active">
+            <span>1 · WordPress 연결</span>
+            <h3><code>$wpdb</code></h3>
+            <p>WordPress 핵심 테이블, 플랫폼 전용 테이블 32개, 옵션, 사용자 메타, 게시판·공지와 첨부파일 메타를 저장한다.</p>
+          </article>
+          <article>
+            <span>2 · Judge 연결</span>
+            <h3>같은 DB 또는 외부 DB</h3>
+            <p><code>mode=same</code>이면 WordPress 연결을 공유하고, <code>mode=external</code>이면 별도 접속 정보로 Judge DB에 연결한다.</p>
+          </article>
+          <article>
+            <span>3 · 파일 저장</span>
+            <h3>WordPress 업로드·Judge 경로</h3>
+            <p>AI 지침, Blockly 자원, 오류 로그는 업로드 경로를 사용하고 문제 테스트데이터는 설정된 Judge 데이터 경로를 사용한다.</p>
+          </article>
+        </div>
+
+        <div class="notice-band">
+          외부 Judge DB 이름이 <code>jol</code>이고 WordPress가 다른 DB를 사용한다면 <code>jol</code>에 WordPress 테이블이 보이지 않는 것이 정상이다.
+          플랫폼 전용 테이블은 항상 WordPress 연결 쪽에 설치되고 Judge DB에는 자동 설치되지 않는다.
+        </div>
+      </section>
+
+      <section class="section" id="platform-tables">
+        <div class="section-heading">
+          <div>
+            <h2>재정비 대상 플랫폼 테이블 32개</h2>
+            <p>스키마 설치는 PlatformDb가 담당하고 데이터 변경 규칙은 기능 소유 모듈이 담당해야 한다.</p>
+          </div>
+          <span class="badge warn">명명 규칙 미적용</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>소유 모듈</th><th>수</th><th>논리 테이블</th><th>현재 주요 사용</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Auth</td><td>7</td>
+                <td class="table-list"><code>users</code>, <code>user_preferences</code>, <code>agreement_document_types</code>, <code>agreement_documents</code>, <code>guardian_verifications</code>, <code>user_agreement_log</code>, <code>deleted_users</code></td>
+                <td>계정 확장, 사용자 설정, 약관, 법정대리인 확인, 삭제 보관</td>
+              </tr>
+              <tr>
+                <td>Submissions</td><td>2</td>
+                <td class="table-list"><code>submission_language_settings_log</code>, <code>submission_events</code></td>
+                <td>제출 언어 설정 이력과 재채점·삭제 사건 기록</td>
+              </tr>
+              <tr>
+                <td>Groups</td><td>3</td>
+                <td class="table-list"><code>groups</code>, <code>group_managers</code>, <code>group_memberships</code></td>
+                <td>그룹, 위임 관리자, 가입 상태</td>
+              </tr>
+              <tr>
+                <td>Classes</td><td>4</td>
+                <td class="table-list"><code>classes</code>, <code>class_enrollments</code>, <code>class_group_links</code>, <code>class_problem_links</code></td>
+                <td>수업, 수강, 그룹·문제 연결</td>
+              </tr>
+              <tr>
+                <td>Contests</td><td>4</td>
+                <td class="table-list"><code>contest_settings</code>, <code>contest_participants</code>, <code>contest_ip_logs</code>, <code>deleted_contests</code></td>
+                <td>Judge 대회의 플랫폼 확장 설정, 참가자, IP와 삭제 기록</td>
+              </tr>
+              <tr>
+                <td>AI</td><td>2</td>
+                <td class="table-list"><code>ai_assist</code>, <code>learner_level_profiles</code></td>
+                <td>제출 피드백 캐시와 학습 수준 분석</td>
+              </tr>
+              <tr>
+                <td>Problems</td><td>9</td>
+                <td class="table-list"><code>problem_metadata</code>, <code>quiz_problem_settings</code>, <code>quiz_questions</code>, <code>quiz_choices</code>, <code>quiz_attempt_summaries</code>, <code>quiz_attempt_items</code>, <code>problem_book_categories</code>, <code>problem_book_category_items</code>, <code>personal_problem_book_items</code></td>
+                <td>문제 메타데이터, 퀴즈, 문제집</td>
+              </tr>
+              <tr>
+                <td>Migration</td><td>1</td>
+                <td><code>legacy_id_map</code></td>
+                <td>이전 데이터의 비사용자 식별자 변환 보조</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="risk-band">
+          <strong>현재 물리명:</strong>
+          <code>problem_metadata</code>만 접두어가 없다. 나머지 31개는 <code>{WordPress 접두어} + oj_ + 이름</code>으로 계산된다.
+          이는 이미 확정한 “플랫폼 전용 테이블에 WordPress 접두어와 <code>oj_</code>를 사용하지 않는다”는 기준과 다르다.
+        </div>
+      </section>
+
+      <section class="section" id="judge-tables">
+        <div class="section-heading">
+          <div>
+            <h2>현재 Judge 테이블 매핑 14개</h2>
+            <p>Judge 테이블은 외부 시스템 원본이며 PlatformDb 설치 대상이 아니다. 현재 매핑과 재정비 후 런타임 계약을 구분한다.</p>
+          </div>
+          <span class="badge">외부 원본</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>구분</th><th>테이블</th><th>접근 모듈</th><th>조사 결과</th></tr></thead>
+            <tbody>
+              <tr><td>핵심 문제·제출</td><td class="table-list"><code>problem</code>, <code>solution</code>, <code>source_code</code>, <code>source_code_user</code>, <code>compileinfo</code>, <code>runtimeinfo</code></td><td>Problems, Submissions와 조회 기능</td><td>실제 런타임 사용</td></tr>
+              <tr><td>대회</td><td class="table-list"><code>contest</code>, <code>contest_problem</code></td><td>Contests, Submissions</td><td>실제 런타임 사용</td></tr>
+              <tr><td>전환 사용자</td><td><code>users</code></td><td>Auth</td><td>로그인 중 일회성 전환에서만 허용하도록 축소 필요</td></tr>
+              <tr><td>관리 도구</td><td><code>status</code></td><td>Problems 문제 번호 변경 도구</td><td>일반 화면 사용 없음</td></tr>
+              <tr><td>현재 미사용</td><td class="table-list"><code>privilege</code>, <code>team</code>, <code>course</code>, <code>group</code></td><td>없음</td><td>운영 DB 읽기 전용 조사에서 사용 없음 확인 후 런타임 매핑 제거</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="notice-band">
+          현재 14개는 플러그인 Table Map의 조사 수량이다. 채점 엔진의 필수 범위는 이 목록을 줄여 추정하지 않고, HUSTOJ 공식 <code>judge_client</code>·<code>judged</code> SQL과 설치 스키마를 기준으로 별도 고정한다.
+        </div>
+
+        <h3>재정비 목표 Judge 계약</h3>
+        <div class="table-wrap spaced">
+          <table>
+            <thead><tr><th>계약 프로필</th><th>테이블</th><th>공식 소스에서 확인한 용도</th><th>재정비 처리</th></tr></thead>
+            <tbody>
+              <tr><td>기본 MySQL 채점 · 필수 8개</td><td class="table-list"><code>problem</code>, <code>solution</code>, <code>source_code</code>, <code>compileinfo</code>, <code>runtimeinfo</code>, <code>users</code>, <code>contest</code>, <code>contest_problem</code></td><td><code>judged</code>의 작업 선점, 문제·소스 조회, 결과·오류 기록, 사용자·문제·대회 통계 갱신</td><td><code>OJ_HTTP_JUDGE=0</code>, <code>OJ_TURBO_MODE=0</code> 기본 프로필에서 8개 전체의 스키마·열·키를 검사</td></tr>
+              <tr><td>유사도 검사 · 미사용</td><td><code>sim</code></td><td><code>OJ_SIM_ENABLE</code> 사용 시 결과 저장</td><td><code>OJ_SIM_ENABLE=0</code>으로 고정하고 준비 검사·플랫폼 기능에서 제외. 기존 물리 테이블은 변경·삭제하지 않음</td></tr>
+              <tr><td>사용자 입력 실행 · 선택</td><td><code>custominput</code></td><td>사용자 지정 입력 조회 뒤 소비 행 삭제</td><td>사용자 입력 실행 기능을 켤 때 추가 검사</td></tr>
+              <tr><td>터보 모드 2 · 미사용</td><td><code>solution2</code></td><td><code>OJ_TURBO_MODE=2</code>일 때 <code>solution</code> 복사와 결과 기록에 사용하지만 공식 <code>db.sql</code>에는 생성 정의가 없음</td><td><code>OJ_TURBO_MODE=0</code>으로 고정하고 생성·검사·전환 기능을 제공하지 않음</td></tr>
+              <tr><td>채점 외 별도 보존</td><td><code>source_code_user</code></td><td><code>judged</code>와 <code>judge_client</code>는 직접 읽거나 쓰지 않지만 공식 스키마와 현재 제출 기능이 사용하는 소스 보관 테이블</td><td>사용자 요청대로 유지하되 채점 필수 수량에는 포함하지 않음</td></tr>
+              <tr><td>문제 번호 관리 도구</td><td><code>status</code></td><td>현재 플러그인의 번호 변경 사전 검사</td><td>채점 엔진 계약과 분리해 도구 실행 시에만 검사</td></tr>
+              <tr><td>플러그인 런타임 제외</td><td class="table-list"><code>privilege</code>, <code>team</code>, <code>course</code>, <code>group</code></td><td>현재 플러그인 호출 없음</td><td>JudgeDb 허용 목록에서는 제외하되 HUSTOJ 물리 테이블은 변경·삭제하지 않음</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="summary-band"><strong>지원하는 채점 의존 수량:</strong> 기본 MySQL 채점 8개와 사용자 입력 실행 선택 1개다. <code>sim</code>과 <code>solution2</code>는 사용하지 않고 설정을 각각 <code>OJ_SIM_ENABLE=0</code>, <code>OJ_TURBO_MODE=0</code>으로 고정한다. <code>source_code_user</code>와 <code>status</code>는 보존·사용하더라도 채점 프로세스 직접 의존 수량에는 넣지 않는다. <code>users</code>, <code>contest</code>, <code>contest_problem</code>은 기본 모드의 채점 후 통계 SQL이 참조하므로 기본 8개에서 제거하지 않는다.</div>
+        <div class="notice-band"><strong>공식 근거 고정:</strong> 2026-07-22 HUSTOJ <code>master</code>의 commit <code>b3502371e2f5b3abb7224df8e42f2da9d0c5a115</code>를 검토 기준으로 사용했다. <a href="https://github.com/zhblue/hustoj/blob/b3502371e2f5b3abb7224df8e42f2da9d0c5a115/trunk/core/judge_client/judge_client.cc">judge_client.cc</a>, <a href="https://github.com/zhblue/hustoj/blob/b3502371e2f5b3abb7224df8e42f2da9d0c5a115/trunk/core/judged/judged.cc">judged.cc</a>, <a href="https://github.com/zhblue/hustoj/blob/b3502371e2f5b3abb7224df8e42f2da9d0c5a115/trunk/install/db.sql">공식 db.sql</a>, <a href="https://github.com/zhblue/hustoj/blob/b3502371e2f5b3abb7224df8e42f2da9d0c5a115/trunk/install/judge.conf">기본 judge.conf</a>를 함께 대조했다.</div>
+      </section>
+
+      <section class="section" id="wordpress-storage">
+        <div class="section-heading">
+          <div>
+            <h2>재정비 대상 비테이블 저장소</h2>
+            <p>옵션, 메타와 파일도 데이터 소유권에 포함한다.</p>
+          </div>
+          <span class="badge good">저장 방식 분류</span>
+        </div>
+
+        <div class="owner-grid">
+          <article class="storage-item">
+            <strong>기능 설정 옵션 16개</strong>
+            <p>사이트·홈·DB·가입·메일·제출·AI·게시판·Blockly·시스템·이전·공개 메뉴 설정이다. 현재 기본값과 정규화가 모두 <code>Settings_Repository</code>에 모여 있다.</p>
+          </article>
+          <article class="storage-item">
+            <strong>운영 상태 옵션</strong>
+            <p>기능 플래그, 경로 서명, 모듈별 활성 스키마 맵과 버전, 역할 버전, 설치 상태, DB 상태, 이전 상태, 암호화 비밀값과 오류 상태를 WordPress 옵션에 저장한다. 스키마 맵은 사용자 식별자 매핑이 아니라 각 소유 모듈의 Repository가 사용할 물리 스키마 버전만 기록한다.</p>
+          </article>
+          <article class="storage-item">
+            <strong>WordPress 사용자·메타</strong>
+            <p><code>wp_users.ID</code>와 함께 <code>oj_user_id</code>, 소속, 닉네임, 생년월일, 제출·정답 수가 사용자 메타에도 중복 저장된다.</p>
+          </article>
+          <article class="storage-item">
+            <strong>글·댓글·미디어</strong>
+            <p><code>oj_board_post</code>와 <code>oj_notice</code> 글 유형, 글·댓글 메타, WordPress 미디어 첨부를 Board가 소유한다.</p>
+          </article>
+          <article class="storage-item">
+            <strong>AI·Blockly 파일</strong>
+            <p>AI 지침과 변경 기록은 <code>uploads/oj-platform</code>, Blockly 자원은 <code>uploads/oj-platform/blockly</code>에 저장된다.</p>
+          </article>
+          <article class="storage-item">
+            <strong>문제 테스트데이터·오류 로그</strong>
+            <p>테스트데이터는 설정된 Judge 경로를 사용하고 오류 로그는 업로드 경로의 <code>oj-platform-fatal.log</code>에 기록될 수 있다.</p>
+          </article>
+        </div>
+
+        <div class="summary-band">
+          테이블의 접두어 제거 원칙은 플랫폼 전용 물리 테이블에 적용한다.
+          WordPress 옵션·메타·글 유형과 capability·액션·훅은 전역 이름 충돌을 막기 위해 기존 <code>oj_platform_</code> 또는 <code>oj_</code> 네임스페이스를 유지한다. 플러그인 슬러그·PHP 네임스페이스와 관리자 경로 <code>/oj-console</code>도 유지한다.
+        </div>
+      </section>
+
+      <section class="section" id="findings">
+        <div class="section-heading">
+          <div>
+            <h2>저장소 재정비 선결 과제</h2>
+            <p>코드에서 확인된 사실을 위험도 순으로 정리했다.</p>
+          </div>
+          <span class="badge risk">8개</span>
+        </div>
+
+        <ol class="finding-list">
+          <li class="finding">
+            <div class="item-head"><h3>D4-F01 · 플랫폼 테이블 명명 불일치</h3><span class="badge risk">높음</span></div>
+            <p>31개 테이블이 아직 WordPress 접두어와 <code>oj_</code>를 사용한다. 단순 매핑 변경은 새 빈 테이블을 만들 수 있으므로 데이터 복사·검증·전환 절차가 먼저 필요하다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>D4-F02 · 사용자 단일 ID 전환 미구현</h3><span class="badge risk">높음</span></div>
+            <p><code>oj_user_id</code>는 테스트를 제외한 운영 PHP 41개 파일의 662개 행에서 확인되고 플랫폼 스키마에는 해당 열이 8개 남아 있다. 테스트 계약 파일 1개·1개 행은 운영 참조 수에서 제외한다. 같은 행의 중복 출현을 포함한 단순 문자열 출현 수가 아니라 일치 행 수를 기준선으로 사용한다. <code>wp_user_id</code>와 문자열 로그인 ID가 함께 사용되어 WordPress ID 단일화는 아직 적용되지 않았다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>D4-F03 · 사용자 원본 중복</h3><span class="badge risk">높음</span></div>
+            <p>현재 <code>oj_users</code>가 로그인 ID, 이메일, 비밀번호, 닉네임까지 보관하고 같은 값 일부를 WordPress 사용자 메타에도 복제한다. 목표 구조인 <code>user_profiles</code>와 다르다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>D4-F04 · 스키마 설치 책임 과밀</h3><span class="badge warn">중간</span></div>
+            <p>하나의 설치기가 32개 테이블 생성과 기존 열·테이블 이전을 모두 실행한다. 기능 소유자, 테이블별 버전과 선택 기능 상태가 스키마 계약에 기록되지 않는다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>D4-F05 · 이전 실패 판정과 복구 부족</h3><span class="badge risk">높음</span></div>
+            <p>일부 이전이 실패해도 전체 상태를 성공으로 기록하고 스키마 버전을 올릴 수 있다. 여러 저장소를 바꾸는 문제 번호 변경과 사용자 삭제도 전체 작업을 되돌리는 복구 지점이 없다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>D4-F06 · 설정 데이터 소유권 집중</h3><span class="badge warn">중간</span></div>
+            <p>기능별 화면과 저장 처리는 분리됐지만 16개 옵션의 기본값·정규화는 Settings에 집중되어 있다. 기능 변경 때 소유 모듈과 중앙 저장소를 함께 수정해야 한다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>D4-F07 · 소유 모듈을 우회한 직접 조회</h3><span class="badge warn">중간</span></div>
+            <p>Ranking·Submissions·Contests가 사용자 테이블을 직접 읽고 LearningDashboard가 문제 메타데이터를 직접 읽는다. 읽기 계약이 없어 스키마 변경 영향이 여러 모듈로 퍼진다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>D4-F08 · 민감 파일의 공개 업로드 경로 사용</h3><span class="badge risk">높음</span></div>
+            <p>AI 지침·변경 이력과 오류 로그가 웹에서 공개될 수 있는 업로드 루트 아래에 있다. Apache용 차단 파일만으로는 모든 서버 구성을 보호할 수 없다.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section" id="recommendations">
+        <div class="section-heading">
+          <div>
+            <h2>저장소 재정비 목표 구조</h2>
+            <p>확정된 원칙을 실제 저장 구조로 옮기는 기준이다.</p>
+          </div>
+          <span class="badge good">확정</span>
+        </div>
+
+        <ol class="decision-list">
+          <li class="decision recommended">
+            <h3>D4-R01 · 플랫폼 물리 테이블 이름 단일화</h3>
+            <p>WordPress 접두어와 <code>oj_</code>를 모두 제거한다. 논리명과 물리명을 같게 하되 예약어 충돌이 있는 <code>groups</code>는 <code>learning_groups</code>, 중복 사용자 원본인 <code>users</code>는 <code>user_profiles</code>로 바꾼다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>D4-R02 · 스키마 등록과 데이터 소유 분리</h3>
+            <p>각 기능 모듈이 테이블 정의·버전·보존 정책과 정책 승인 버전을 등록하고 PlatformDb는 설치 순서, 상태 검사와 이전 실행만 조정한다. 개인정보에 영향을 주는 물리 명세는 목적·근거·기간·익명화·삭제·복구·책임자 정책표 승인 뒤 확정한다. JudgeDb는 외부 테이블을 만들거나 삭제하지 않는다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>D4-R03 · <code>wp_users.ID</code> 단일 사용자 키 적용</h3>
+            <p><code>user_id</code>는 로그인 아이디가 아니라 숫자 <code>wp_users.ID</code>를 뜻하며 <code>user_profiles.user_id</code>도 이를 기본키로 사용한다. 로그인 아이디·이메일·비밀번호·표시 이름·별명은 WordPress가 소유하고 <code>user_profiles</code>는 소속·생년·OJ 플랫폼 이용 상태 같은 전용 확장 정보만 소유한다. Judge 로그인 ID·비밀번호·이메일은 플랫폼 테이블과 사용자 메타에 남기지 않고 WordPress 계정이 없는 로그인 전환 절차에서만 일회성으로 읽는다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>D4-R04 · 기능별 설정 계약</h3>
+            <p>공통 옵션 저장기는 단순 읽기·쓰기만 제공한다. 기본값·검증·정규화·변경 권한은 Auth·Submissions·Board·Blockly 등 각 기능 소유 모듈이 담당한다. AI 관련 설정은 Problems의 문제 메타데이터·문제 초안·테스트케이스 정책, AI Feedback의 제출 피드백 정책, Settings의 연결 프로필과 작업별 배정 정책으로 구분한다. 연결과 배정은 서로 다른 WordPress 옵션과 revision을 사용하고 플랫폼 테이블은 추가하지 않는다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>D4-R05 · 소유 모듈의 읽기 서비스 사용</h3>
+            <p>사용자 프로필과 문제 메타데이터는 소유 모듈의 읽기 계약으로 제공한다. 문제 주제 검색은 D-008 목표 구조의 <code>problem_topic_links</code>와 WordPress 비공개 분류 <code>oj_problem_topic</code>를 읽는 Problems 소유 사전 서비스를 통해 제공하고 JSON 문자열 직접 검색을 금지한다. 새 표준 주제는 최고 관리자 전용 Policy를 통과한 명시적 생성 명령으로만 추가한다. 이전 도구처럼 여러 저장소를 바꾸는 기능만 명시적인 조정 서비스와 감사 기록을 사용한다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>D4-R06 · 기능 OFF와 데이터 보존 분리</h3>
+            <p>기능을 끄면 읽기·쓰기는 차단하지만 테이블과 데이터는 유지한다. 비활성 기능의 테이블 누락은 전체 시스템 오류가 아니라 해당 기능 상태로 표시하고 삭제는 별도 백업·확인 작업에서만 허용한다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>D4-R07 · 비공개 파일 저장소 도입</h3>
+            <p>AI 지침·변경 이력과 오류 로그는 공개 URL이 없는 서버 경로로 옮긴다. Blockly 자원과 게시판 첨부처럼 브라우저 제공이 필요한 파일만 WordPress 업로드에 둔다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>D4-R08 · 추가·복사·검증·전환 순서 준수</h3>
+            <p>새 테이블 생성, 사전 복사, 해당 소유 모듈의 쓰기 동결·최종 차이 복사, 건수·키·고아 참조 검증, 모듈별 읽기·쓰기 원자 전환, 7일 관찰, 이전 구조 제거 순서로 진행한다. 다른 모듈은 자기 활성 스키마를 계속 사용하며 실패한 단계에서는 해당 모듈 버전을 올리지 않는다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>D4-R09 · 서비스 담당 범위 데이터 분리</h3>
+            <p>수업은 <code>classes.owner_user_id</code>와 <code>class_instructors</code>, 대회는 <code>contest_settings.owner_user_id</code>와 <code>contest_managers</code>, 문제는 <code>problem_ownerships</code>와 <code>problem_collaborators</code>가 소유·담당 관계를 저장한다. 모든 사용자 참조는 숫자 <code>wp_users.ID</code>를 사용하고 AI 메타데이터·Judge 문제·대회 원본에 담당 관계를 섞지 않는다. 기존 문제와 대회의 담당자는 수정자나 Judge 로그인 문자열만으로 자동 확정하지 않고 후보 보고서와 관리자 승인을 거쳐 배정한다.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section" id="confirmations">
+        <div class="section-heading">
+          <div>
+            <h2>저장소 재정비 확정 결과</h2>
+            <p>세 항목과 D4-R01~D4-R09를 모두 권장안대로 확정했다.</p>
+          </div>
+          <span class="badge good">확정</span>
+        </div>
+
+        <ol class="decision-list">
+          <li class="decision recommended">
+            <h3>1 · 그룹 테이블 이름</h3>
+            <p><code>groups</code>는 DB 예약어 충돌 가능성이 있으므로 물리명을 <code>learning_groups</code>로 사용한다. 다른 그룹 관련 테이블은 <code>group_managers</code>, <code>group_memberships</code>를 유지한다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>2 · Judge 사용자 참조의 1차 저장 형식</h3>
+            <p><strong>최신 확정:</strong> Judge DB는 처음부터 변경하지 않는 HUSTOJ 채점 엔진 경계다. 기본 채점 8개와 활성화한 <code>custominput</code> 선택 프로필의 이름·열·타입·키를 공식 스키마 그대로 유지하고 PlatformDb 설치·이전·정리 대상에 넣지 않는다. <code>sim</code>과 <code>solution2</code>는 사용하지 않으며 관련 설정을 각각 0으로 고정한다. 채점기가 직접 사용하지 않는 <code>source_code_user</code>도 사용자 요청과 제출 호환 계약에 따라 유지한다. 플랫폼 Controller·Service·권한·URL·플랫폼 테이블은 숫자 <code>wp_users.ID</code>를 사용하고, JudgeDb 제출 어댑터가 저장·조회 직전에 해당 WordPress 계정의 변경 불가 <code>user_login</code>을 사용해 기존 <code>solution.user_id</code> 문자열 계약을 지킨다. 별도 Judge ID 매핑 테이블, 보조 열, 이중 쓰기와 최종 타입 교체는 만들지 않는다.</p>
+          </li>
+          <li class="decision recommended">
+            <h3>3 · 현재 DB 검증 자료</h3>
+            <p>확인 가능한 SQL 파일은 2026-04-05의 <code>contest</code>·<code>contest_problem</code> 구조만 포함해 현재 테이블과 데이터 건수를 검증할 수 없다. 실제 이전 전에는 현재 운영 DB의 구조와 테이블별 건수 자료가 필요하다.</p>
+          </li>
+        </ol>
+
+        <div class="summary-band next-step">
+          <div>
+            <strong>후속 기록:</strong>
+            <p>세 확인 사항과 D4-R01~D4-R09를 승인했고 D-005와 D-006에서 구현 순서와 차단 조건을 확정했다. 이 문서 확정 시점의 목표 플랫폼 테이블은 담당 범위 테이블 3개를 포함한 40개였으며, 후속 C-27에서 제출 문맥·대회 문제 배점 2개를 승인해 현재 목표는 42개이고, 실제 이름 변경과 사용자 ID 전환은 운영 DB 기준 보고서와 백업·복구 시험 후에만 실행한다.</p>
+          </div>
+          <span class="badge good">기준선 확정</span>
+        </div>
+
+        <p class="evidence">
+          주요 코드 근거: <code>Platform_Table_Map.php</code>, <code>Platform_Schema_Installer.php</code>, <code>Judge_Table_Map.php</code>, <code>Connection_Manager.php</code>, <code>Settings_Repository.php</code>와 각 기능 Repository.
+        </p>
+      </section>
+
+      <footer>D-004 · 데이터 저장소 재정비 · 설계 확정 · 전환 대기 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

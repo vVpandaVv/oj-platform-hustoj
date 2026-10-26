@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "edu-games/ai-classifier-lab",
+  "title": "AI Classifier Lab",
+  "category": "widgets",
+  "icon": "networking",
+  "description": "Choose a classifier boundary and predict a new data point.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

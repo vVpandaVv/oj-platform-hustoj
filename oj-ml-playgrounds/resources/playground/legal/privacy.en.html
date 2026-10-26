@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy and Storage Notice | OJ ML Playgrounds</title>
+    <style>
+        :root { --ink:#1f2937; --soft:#4b5563; --faint:#6b7280; --surface:#fff; --canvas:#f8fafc; --line:#e2e8f0; --brand:#4f46e5; --warn:#fff8e6; }
+        @media (prefers-color-scheme: dark) { :root { --ink:#e5e7eb; --soft:#cbd5e1; --faint:#94a3b8; --surface:#111827; --canvas:#0b1120; --line:#334155; --brand:#a5b4fc; --warn:#332b18; } }
+        * { box-sizing:border-box; }
+        body { margin:0; padding:2.5rem 1.25rem 5rem; background:var(--canvas); color:var(--ink); font-family:-apple-system,"Segoe UI",sans-serif; font-size:1rem; line-height:1.75; overflow-wrap:break-word; }
+        main { max-width:50rem; margin:0 auto; background:var(--surface); border:1px solid var(--line); border-radius:1rem; padding:2.5rem 2rem; }
+        h1 { font-size:1.75rem; line-height:1.4; margin:0 0 .5rem; }
+        h2 { font-size:1.125rem; margin:2.5rem 0 .75rem; padding-top:1.5rem; border-top:1px solid var(--line); }
+        h2:first-of-type { border-top:0; padding-top:0; }
+        p,li,td { color:var(--soft); }
+        p { margin:.75rem 0; }
+        ul { padding-left:1.25rem; }
+        strong,th { color:var(--ink); }
+        a { color:var(--brand); }
+        .lead { color:var(--faint); margin-bottom:1.5rem; }
+        .notice { background:var(--warn); border:1px solid var(--line); border-radius:.75rem; padding:1rem 1.25rem; margin:1.5rem 0; }
+        table { width:100%; border-collapse:collapse; margin:1rem 0; }
+        th,td { border:1px solid var(--line); padding:.65rem .75rem; text-align:left; vertical-align:top; }
+        th { background:var(--canvas); }
+        footer { max-width:50rem; margin:1.5rem auto 0; color:var(--faint); }
+        footer a { margin-right:1rem; }
+        @media print { body { background:#fff; color:#000; padding:0; } main { border:0; padding:0; max-width:none; } footer { display:none; } }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Privacy and Storage Notice</h1>
+    <p class="lead">OJ ML Playgrounds integrated deployment notice v1.0 · Effective 31 August 2026</p>
+
+    <div class="notice">
+        <p><strong>Institutional review is required.</strong> This default notice explains the plugin's technical behavior. The school or institution operating this WordPress/OJ site is the data controller and must publish its name, contact, legal basis, retention periods, processors, and rights procedure under its own policy.</p>
+        <p>Projects and training normally run and save in this computer's browser. <strong>When you use direct OJ submission or select a file for submission, the project file and assessment information are transmitted to and retained by the institution's server.</strong></p>
+    </div>
+
+    <h2 id="article-1">Article 1 (Information, purposes, and storage locations)</h2>
+    <table>
+        <tr><th>Location</th><th>Information</th><th>Purpose</th></tr>
+        <tr><td>Browser</td><td>Project document and name, imported datasets and images, trained models, embeddings, portfolio attachments, and any student number or name optionally entered in the project</td><td>Run the lab, autosave, restore, and export work</td></tr>
+        <tr><td>WordPress/OJ server</td><td>Login account identifier, class and roster context snapshot, assignment, attempt and progress state, submitted MLPX original, SHA-256 hash, format facts and findings, score, feedback, reviewer, audit, access, error, and correlation records</td><td>Accept submissions, verify ownership and integrity, assess work, publish results, audit activity, and resolve incidents</td></tr>
+    </table>
+    <p>Training computation runs on the student's device. The plugin does not automatically upload a project. It transmits the project when the user submits directly to OJ or selects a file for upload. Normal login, assignment lookup, and attempt-creation requests communicate with the server as part of using the service.</p>
+
+    <h2 id="article-2">Article 2 (Legal basis and third-party disclosure)</h2>
+    <p>The institution determines the applicable basis, such as educational operations, contract, consent, or legal obligation, and any third-party disclosure. The plugin does not independently sell submissions or provide them for advertising. Access by teachers and reviewers follows OJ permissions and institutional policy.</p>
+
+    <h2 id="article-3">Article 3 (Processors and external services)</h2>
+    <p>If providers operate WordPress hosting, databases, backups, or security monitoring, the institution must disclose those processors and storage locations. Image labs download the MobileNet model from Google Storage, and choosing a demonstration dataset may connect to luminousky.com. The app does not upload the student's imported images or dataset to those services, but each provider may log network information such as IP address, browser details, and request time.</p>
+
+    <h2 id="article-4">Article 4 (Retention and deletion)</h2>
+    <ul>
+        <li><strong>Local work:</strong> may remain in the current OJ account's IndexedDB until the user presses the delete button or clears this site's data.</li>
+        <li><strong>Server submissions, assessments, and audit records:</strong> must be deleted or anonymized after the academic, records-management, and dispute period set by the institution.</li>
+        <li><strong>Backups:</strong> are removed when the institution's backup rotation expires.</li>
+    </ul>
+    <p>“Delete my local lab data from this device” removes only the current account's encrypted local vault. It does not remove an existing server submission or a downloaded <code>.mlpx</code> file. Ask the institution to handle server records and delete downloaded files yourself.</p>
+
+    <h2 id="article-5">Article 5 (Your rights and how to exercise them)</h2>
+    <p>Users or guardians may request access, correction, deletion, restriction, or review of server records where applicable law and institutional policy allow. Contact the institution for account and submission records; use the lab's delete button for browser data. The institution's official privacy policy controls procedures and lawful exceptions.</p>
+
+    <h2 id="article-6">Article 6 (Security measures and limitations)</h2>
+    <ul>
+        <li>The browser vault is separated by an opaque site-and-OJ-user scope, and project documents, datasets, models, and attachments are encrypted with AES-GCM.</li>
+        <li>The encryption key is provided only to the currently authenticated user through an authenticated REST response and is not placed in the URL, HTML attributes, or IndexedDB.</li>
+        <li>The wrapper rechecks the login session on focus, page restoration, and a recurring interval. If it changes or cannot be verified, the previous iframe is locked and removed.</li>
+        <li>The server applies role permissions, submission ownership checks, hashes, and audit records. The institution is responsible for HTTPS, updates, encrypted backups, and administrator-account protection.</li>
+    </ul>
+    <p><strong>Limitations:</strong> this is not a complete boundary against a forced browser shutdown, malicious extensions, administrator access, or developer-tool attacks. Sensitive classes should also use a separate OS/browser profile for each student or accounts that automatically reset after class.</p>
+
+    <h2 id="article-7">Article 7 (Cookies, local storage, and automatic logs)</h2>
+    <p>WordPress/OJ uses authentication cookies and nonces to maintain login and prevent request forgery. The plugin adds no advertising or behavioral analytics. The server and hosting layers may log IP address, user agent, request time, path, and correlation ID for security and incident response. The institution must disclose the actual fields and periods.</p>
+
+    <h2 id="article-8">Article 8 (Children and student protection)</h2>
+    <p>The institution must establish any age, guardian-consent, or educational-purpose procedure required by its law and school policy. Students should not place a real name, student number, or sensitive information in a project or dataset unless instructed. The institution should apply data minimization and appropriate guardian notices.</p>
+
+    <h2 id="article-9">Article 9 (Controller and contact)</h2>
+    <table>
+        <tr><th>Item</th><th>Information the institution must publish</th></tr>
+        <tr><td>Data controller</td><td>[School or institution name and address]</td></tr>
+        <tr><td>Privacy officer/team</td><td>[Name or role and department]</td></tr>
+        <tr><td>Contact</td><td>[Telephone, email, request URL]</td></tr>
+        <tr><td>Retention</td><td>[Separate periods for submissions, assessments, audit logs, and backups]</td></tr>
+    </table>
+    <p>For a self-hosted installation, the school or institution is the controller. The authors of the original ML Playgrounds project and its source repository are not controllers of student records stored on the institution's server. Administrators can link the institution's public policy with the <code>oj_ml_playgrounds_privacy_url</code> filter.</p>
+
+    <h2 id="article-10">Article 10 (Complaints and remedies)</h2>
+    <p>Contact the institution first. Users may also contact the privacy regulator or dispute-resolution body with jurisdiction over the user and institution. In Korea, contacts include the Personal Information Dispute Mediation Committee (1833-6972), the Privacy Infringement Report Center (118), the Prosecutors' Office (1301), and the National Police Agency (182).</p>
+
+    <h2 id="article-11">Article 11 (Changes and priority)</h2>
+    <p>If stored fields, transfer timing, external services, or retention change, the institution must update this notice and its effective date before the change applies. If this default notice differs from the institution's lawfully published official privacy policy, the official policy controls. Any statement that differs from the software's actual behavior must be corrected before deployment.</p>
+</main>
+<footer><a href="./">Legal documents</a><a href="../">Back to the app</a></footer>
+</body>
+</html>

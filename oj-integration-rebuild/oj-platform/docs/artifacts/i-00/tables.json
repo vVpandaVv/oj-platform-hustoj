@@ -1,0 +1,805 @@
+{
+    "platform": [
+        {
+            "logical": "users",
+            "physical_template": "{$wpdb->prefix}oj_users",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "user_id": "varchar(100) NOT NULL",
+                "email": "varchar(191) NOT NULL DEFAULT ''",
+                "password": "varchar(255) NOT NULL DEFAULT ''",
+                "nick": "varchar(191) NOT NULL DEFAULT ''",
+                "school": "varchar(191) NOT NULL DEFAULT ''",
+                "birth_date": "varchar(20) NOT NULL DEFAULT ''",
+                "status": "varchar(20) NOT NULL DEFAULT 'active'",
+                "submit": "int(11) unsigned NOT NULL DEFAULT 0",
+                "solved": "int(11) unsigned NOT NULL DEFAULT 0",
+                "legacy_source": "varchar(50) NOT NULL DEFAULT ''",
+                "legacy_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "migrated_at": "datetime DEFAULT NULL",
+                "last_login_at": "datetime DEFAULT NULL",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "UNIQUE KEY user_id (user_id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY email (email)",
+                "KEY status (status)",
+                "KEY legacy_user_id (legacy_user_id)"
+            ]
+        },
+        {
+            "logical": "user_preferences",
+            "physical_template": "{$wpdb->prefix}oj_user_preferences",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "wp_user_id": "bigint(20) unsigned NOT NULL",
+                "oj_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "nickname_public": "tinyint(1) NOT NULL DEFAULT 0",
+                "email_public": "tinyint(1) NOT NULL DEFAULT 0",
+                "school_public": "tinyint(1) NOT NULL DEFAULT 0",
+                "default_language": "int(11) unsigned NOT NULL DEFAULT 0",
+                "editor_theme": "varchar(100) NOT NULL DEFAULT ''",
+                "code_template": "longtext NULL",
+                "first_login_agreed_at": "datetime DEFAULT NULL",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "UNIQUE KEY wp_user_id (wp_user_id)",
+                "KEY oj_user_id (oj_user_id)"
+            ]
+        },
+        {
+            "logical": "agreement_document_types",
+            "physical_template": "{$wpdb->prefix}oj_agreement_document_types",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "slug": "varchar(100) NOT NULL",
+                "label": "varchar(191) NOT NULL",
+                "required": "tinyint(1) NOT NULL DEFAULT 0",
+                "enabled": "tinyint(1) NOT NULL DEFAULT 1",
+                "sort_order": "int(11) NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "UNIQUE KEY slug (slug)",
+                "KEY enabled (enabled)"
+            ]
+        },
+        {
+            "logical": "agreement_documents",
+            "physical_template": "{$wpdb->prefix}oj_agreement_documents",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "type_id": "bigint(20) unsigned NOT NULL",
+                "version": "varchar(50) NOT NULL",
+                "title": "varchar(191) NOT NULL",
+                "content": "longtext NOT NULL",
+                "required": "tinyint(1) NOT NULL DEFAULT 0",
+                "active": "tinyint(1) NOT NULL DEFAULT 0",
+                "published_at": "datetime DEFAULT NULL",
+                "created_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY type_id (type_id)",
+                "KEY active (active)",
+                "KEY version (version)"
+            ]
+        },
+        {
+            "logical": "guardian_verifications",
+            "physical_template": "{$wpdb->prefix}oj_guardian_verifications",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "wp_user_id": "bigint(20) unsigned NOT NULL",
+                "child_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "child_email": "varchar(191) NOT NULL DEFAULT ''",
+                "guardian_name": "varchar(191) NOT NULL DEFAULT ''",
+                "guardian_email": "varchar(191) NOT NULL DEFAULT ''",
+                "token_hash": "varchar(191) NOT NULL DEFAULT ''",
+                "code_hash": "varchar(191) NOT NULL DEFAULT ''",
+                "status": "varchar(30) NOT NULL DEFAULT 'pending'",
+                "expires_at": "datetime DEFAULT NULL",
+                "verified_at": "datetime DEFAULT NULL",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY child_user_id (child_user_id)",
+                "KEY child_email (child_email)",
+                "KEY token_hash (token_hash)",
+                "KEY status (status)",
+                "KEY expires_at (expires_at)"
+            ]
+        },
+        {
+            "logical": "user_agreement_log",
+            "physical_template": "{$wpdb->prefix}oj_user_agreement_log",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "wp_user_id": "bigint(20) unsigned NOT NULL",
+                "document_id": "bigint(20) unsigned NOT NULL",
+                "document_version": "varchar(50) NOT NULL DEFAULT ''",
+                "ip_address": "varchar(45) NOT NULL DEFAULT ''",
+                "user_agent": "text NULL",
+                "agreed_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY document_id (document_id)",
+                "KEY agreed_at (agreed_at)"
+            ]
+        },
+        {
+            "logical": "submission_language_settings_log",
+            "physical_template": "{$wpdb->prefix}oj_submission_language_settings_log",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "language_mask": "int(11) unsigned NOT NULL DEFAULT 0",
+                "created_by": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY created_by (created_by)",
+                "KEY created_at (created_at)"
+            ]
+        },
+        {
+            "logical": "submission_events",
+            "physical_template": "{$wpdb->prefix}oj_submission_events",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "submission_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "event_type": "varchar(50) NOT NULL",
+                "actor_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "oj_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "message": "text NULL",
+                "metadata": "longtext NULL",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY submission_id (submission_id)",
+                "KEY event_type (event_type)",
+                "KEY actor_wp_user_id (actor_wp_user_id)",
+                "KEY oj_user_id (oj_user_id)",
+                "KEY created_at (created_at)"
+            ]
+        },
+        {
+            "logical": "deleted_users",
+            "physical_template": "{$wpdb->prefix}oj_deleted_users",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "oj_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "snapshot": "longtext NULL",
+                "deleted_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "deleted_at": "datetime NOT NULL",
+                "reason": "text NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY oj_user_id (oj_user_id)",
+                "KEY deleted_at (deleted_at)"
+            ]
+        },
+        {
+            "logical": "groups",
+            "physical_template": "{$wpdb->prefix}oj_groups",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "name": "varchar(191) NOT NULL",
+                "slug": "varchar(191) NOT NULL DEFAULT ''",
+                "description": "longtext NULL",
+                "visibility": "varchar(20) NOT NULL DEFAULT 'public'",
+                "approval_mode": "varchar(20) NOT NULL DEFAULT 'manual'",
+                "enabled": "tinyint(1) NOT NULL DEFAULT 1",
+                "evaluation_mode": "varchar(20) NOT NULL DEFAULT 'default'",
+                "join_code": "varchar(64) NOT NULL DEFAULT ''",
+                "created_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL",
+                "deleted_at": "datetime DEFAULT NULL",
+                "deleted_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY slug (slug)",
+                "KEY created_by_wp_user_id (created_by_wp_user_id)",
+                "KEY enabled (enabled)",
+                "KEY deleted_at (deleted_at)"
+            ]
+        },
+        {
+            "logical": "group_managers",
+            "physical_template": "{$wpdb->prefix}oj_group_managers",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "group_id": "bigint(20) unsigned NOT NULL",
+                "wp_user_id": "bigint(20) unsigned NOT NULL",
+                "granted_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "granted_at": "datetime NOT NULL",
+                "revoked_at": "datetime DEFAULT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY group_id (group_id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY revoked_at (revoked_at)"
+            ]
+        },
+        {
+            "logical": "group_memberships",
+            "physical_template": "{$wpdb->prefix}oj_group_memberships",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "group_id": "bigint(20) unsigned NOT NULL",
+                "wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "oj_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "status": "varchar(20) NOT NULL DEFAULT 'pending'",
+                "requested_at": "datetime DEFAULT NULL",
+                "approved_at": "datetime DEFAULT NULL",
+                "rejected_at": "datetime DEFAULT NULL",
+                "left_at": "datetime DEFAULT NULL",
+                "approved_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "rejected_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY group_id (group_id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY oj_user_id (oj_user_id)",
+                "KEY status (status)"
+            ]
+        },
+        {
+            "logical": "classes",
+            "physical_template": "{$wpdb->prefix}oj_classes",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "name": "varchar(191) NOT NULL",
+                "slug": "varchar(191) NOT NULL DEFAULT ''",
+                "description": "longtext NULL",
+                "visibility": "varchar(20) NOT NULL DEFAULT 'private'",
+                "enabled": "tinyint(1) NOT NULL DEFAULT 1",
+                "start_at": "datetime DEFAULT NULL",
+                "end_at": "datetime DEFAULT NULL",
+                "password_hash": "varchar(255) NOT NULL DEFAULT ''",
+                "created_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL",
+                "deleted_at": "datetime DEFAULT NULL",
+                "deleted_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY slug (slug)",
+                "KEY created_by_wp_user_id (created_by_wp_user_id)",
+                "KEY enabled (enabled)",
+                "KEY deleted_at (deleted_at)"
+            ]
+        },
+        {
+            "logical": "class_enrollments",
+            "physical_template": "{$wpdb->prefix}oj_class_enrollments",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "class_id": "bigint(20) unsigned NOT NULL",
+                "wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "oj_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "status": "varchar(20) NOT NULL DEFAULT 'enrolled'",
+                "enrolled_at": "datetime NOT NULL",
+                "left_at": "datetime DEFAULT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY class_id (class_id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY oj_user_id (oj_user_id)",
+                "KEY status (status)"
+            ]
+        },
+        {
+            "logical": "class_group_links",
+            "physical_template": "{$wpdb->prefix}oj_class_group_links",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "class_id": "bigint(20) unsigned NOT NULL",
+                "group_id": "bigint(20) unsigned NOT NULL",
+                "created_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "UNIQUE KEY class_group (class_id, group_id)",
+                "KEY group_id (group_id)"
+            ]
+        },
+        {
+            "logical": "class_problem_links",
+            "physical_template": "{$wpdb->prefix}oj_class_problem_links",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "class_id": "bigint(20) unsigned NOT NULL",
+                "problem_id": "bigint(20) unsigned NOT NULL",
+                "sort_order": "int(11) NOT NULL DEFAULT 0",
+                "created_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "UNIQUE KEY class_problem (class_id, problem_id)",
+                "KEY problem_id (problem_id)",
+                "KEY sort_order (sort_order)"
+            ]
+        },
+        {
+            "logical": "contest_settings",
+            "physical_template": "{$wpdb->prefix}oj_contest_settings",
+            "unprefixed": false,
+            "columns": {
+                "contest_id": "bigint(20) unsigned NOT NULL",
+                "visibility": "varchar(20) NOT NULL DEFAULT 'public'",
+                "group_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "freeze_minutes": "int(11) unsigned NOT NULL DEFAULT 0",
+                "allow_ai_feedback": "tinyint(1) NOT NULL DEFAULT 0",
+                "show_wrong_answer_detail": "tinyint(1) NOT NULL DEFAULT 0",
+                "ip_lock_enabled": "tinyint(1) NOT NULL DEFAULT 0",
+                "metadata": "longtext NULL",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (contest_id)",
+                "KEY group_id (group_id)",
+                "KEY visibility (visibility)"
+            ]
+        },
+        {
+            "logical": "contest_participants",
+            "physical_template": "{$wpdb->prefix}oj_contest_participants",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "contest_id": "bigint(20) unsigned NOT NULL",
+                "wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "oj_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "allowed_ip": "varchar(45) NOT NULL DEFAULT ''",
+                "last_seen_at": "datetime DEFAULT NULL",
+                "last_submit_at": "datetime DEFAULT NULL",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY contest_id (contest_id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY oj_user_id (oj_user_id)"
+            ]
+        },
+        {
+            "logical": "contest_ip_logs",
+            "physical_template": "{$wpdb->prefix}oj_contest_ip_logs",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "contest_id": "bigint(20) unsigned NOT NULL",
+                "wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "oj_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "ip_address": "varchar(45) NOT NULL DEFAULT ''",
+                "action": "varchar(50) NOT NULL DEFAULT ''",
+                "metadata": "longtext NULL",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY contest_id (contest_id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY oj_user_id (oj_user_id)",
+                "KEY created_at (created_at)"
+            ]
+        },
+        {
+            "logical": "deleted_contests",
+            "physical_template": "{$wpdb->prefix}oj_deleted_contests",
+            "unprefixed": false,
+            "columns": {
+                "contest_id": "bigint(20) unsigned NOT NULL",
+                "title": "varchar(191) NOT NULL DEFAULT ''",
+                "snapshot": "longtext NULL",
+                "deleted_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "deleted_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (contest_id)",
+                "KEY deleted_at (deleted_at)"
+            ]
+        },
+        {
+            "logical": "ai_assist",
+            "physical_template": "{$wpdb->prefix}oj_ai_assist",
+            "unprefixed": false,
+            "columns": {
+                "submission_id": "bigint(20) unsigned NOT NULL",
+                "content": "longtext NOT NULL",
+                "model": "varchar(191) NOT NULL DEFAULT ''",
+                "prompt_file": "varchar(191) NOT NULL DEFAULT ''",
+                "result_code": "int(11) NOT NULL DEFAULT 0",
+                "metadata": "longtext NULL",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (submission_id)",
+                "KEY result_code (result_code)",
+                "KEY updated_at (updated_at)"
+            ]
+        },
+        {
+            "logical": "student_level_profiles",
+            "physical_template": "{$wpdb->prefix}oj_student_level_profiles",
+            "unprefixed": false,
+            "columns": {
+                "user_id": "varchar(100) NOT NULL",
+                "cs_score": "decimal(5,2) NOT NULL DEFAULT 0.00",
+                "level": "varchar(20) NOT NULL DEFAULT 'beginner'",
+                "difficulty_score": "decimal(5,2) NOT NULL DEFAULT 0.00",
+                "diversity_score": "decimal(5,2) NOT NULL DEFAULT 0.00",
+                "challenge_score": "decimal(5,2) NOT NULL DEFAULT 0.00",
+                "stability_score": "decimal(5,2) NOT NULL DEFAULT 0.00",
+                "accepted_rate": "decimal(5,2) NOT NULL DEFAULT 0.00",
+                "recovery_rate": "decimal(5,2) NOT NULL DEFAULT 0.00",
+                "retry_success_rate": "decimal(5,2) NOT NULL DEFAULT 0.00",
+                "avg_time_to_accept_minutes": "decimal(10,2) NOT NULL DEFAULT 0.00",
+                "solved_count": "int(11) unsigned NOT NULL DEFAULT 0",
+                "attempted_count": "int(11) unsigned NOT NULL DEFAULT 0",
+                "submission_count": "int(11) unsigned NOT NULL DEFAULT 0",
+                "last_submission_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "feedback_direction": "longtext NULL",
+                "metrics": "longtext NULL",
+                "analyzed_at": "datetime NOT NULL",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (user_id)",
+                "KEY level (level)",
+                "KEY cs_score (cs_score)",
+                "KEY last_submission_id (last_submission_id)",
+                "KEY updated_at (updated_at)"
+            ]
+        },
+        {
+            "logical": "problem_metadata",
+            "physical_template": "problem_metadata",
+            "unprefixed": true,
+            "columns": {
+                "problem_id": "bigint(20) unsigned NOT NULL",
+                "metadata_mode": "varchar(20) NOT NULL DEFAULT 'auto'",
+                "difficulty_score": "tinyint(3) unsigned NOT NULL DEFAULT 3",
+                "difficulty_level": "varchar(20) NOT NULL DEFAULT 'intermediate'",
+                "difficulty_source": "varchar(30) NOT NULL DEFAULT 'statistics'",
+                "difficulty_confidence": "varchar(20) NOT NULL DEFAULT 'low'",
+                "target_levels": "longtext NULL",
+                "topics": "longtext NULL",
+                "prerequisites": "longtext NULL",
+                "learning_objectives": "longtext NULL",
+                "problem_type": "varchar(50) NOT NULL DEFAULT 'implementation'",
+                "estimated_minutes": "int(11) unsigned NOT NULL DEFAULT 30",
+                "implementation_complexity": "tinyint(3) unsigned NOT NULL DEFAULT 2",
+                "reasoning_complexity": "tinyint(3) unsigned NOT NULL DEFAULT 2",
+                "common_error_tags": "longtext NULL",
+                "recommendation_links": "longtext NULL",
+                "feedback_policy": "longtext NULL",
+                "stats_snapshot": "longtext NULL",
+                "ai_snapshot": "longtext NULL",
+                "admin_notes": "text NULL",
+                "updated_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "analyzed_at": "datetime DEFAULT NULL",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (problem_id)",
+                "KEY metadata_mode (metadata_mode)",
+                "KEY difficulty_level (difficulty_level)",
+                "KEY difficulty_score (difficulty_score)",
+                "KEY difficulty_source (difficulty_source)",
+                "KEY difficulty_confidence (difficulty_confidence)",
+                "KEY updated_at (updated_at)"
+            ]
+        },
+        {
+            "logical": "quiz_problem_settings",
+            "physical_template": "{$wpdb->prefix}oj_quiz_problem_settings",
+            "unprefixed": false,
+            "columns": {
+                "problem_id": "bigint(20) unsigned NOT NULL",
+                "enabled": "tinyint(1) NOT NULL DEFAULT 0",
+                "config": "longtext NULL",
+                "updated_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (problem_id)",
+                "KEY enabled (enabled)"
+            ]
+        },
+        {
+            "logical": "quiz_questions",
+            "physical_template": "{$wpdb->prefix}oj_quiz_questions",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "problem_id": "bigint(20) unsigned NOT NULL",
+                "question_title": "varchar(255) NOT NULL DEFAULT ''",
+                "question_text": "longtext NOT NULL",
+                "question_type": "varchar(30) NOT NULL DEFAULT 'single'",
+                "answer_value": "longtext NULL",
+                "points": "decimal(10,2) NOT NULL DEFAULT 0.00",
+                "sort_order": "int(11) NOT NULL DEFAULT 0",
+                "enabled": "tinyint(1) NOT NULL DEFAULT 1",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY problem_id (problem_id)",
+                "KEY enabled (enabled)",
+                "KEY sort_order (sort_order)"
+            ]
+        },
+        {
+            "logical": "quiz_choices",
+            "physical_template": "{$wpdb->prefix}oj_quiz_choices",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "question_id": "bigint(20) unsigned NOT NULL",
+                "choice_label": "varchar(40) NOT NULL DEFAULT ''",
+                "choice_text": "longtext NOT NULL",
+                "is_correct": "tinyint(1) NOT NULL DEFAULT 0",
+                "sort_order": "int(11) NOT NULL DEFAULT 0",
+                "enabled": "tinyint(1) NOT NULL DEFAULT 1",
+                "updated_at": "datetime DEFAULT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY question_id (question_id)",
+                "KEY is_correct (is_correct)",
+                "KEY sort_order (sort_order)"
+            ]
+        },
+        {
+            "logical": "quiz_attempt_summaries",
+            "physical_template": "{$wpdb->prefix}oj_quiz_attempt_summaries",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "problem_id": "bigint(20) unsigned NOT NULL",
+                "wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "oj_user_id": "varchar(100) NOT NULL DEFAULT ''",
+                "score": "decimal(10,2) NOT NULL DEFAULT 0.00",
+                "max_score": "decimal(10,2) NOT NULL DEFAULT 0.00",
+                "status": "varchar(30) NOT NULL DEFAULT 'started'",
+                "started_at": "datetime NOT NULL",
+                "submitted_at": "datetime DEFAULT NULL",
+                "graded_at": "datetime DEFAULT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY problem_id (problem_id)",
+                "KEY wp_user_id (wp_user_id)",
+                "KEY oj_user_id (oj_user_id)",
+                "KEY status (status)"
+            ]
+        },
+        {
+            "logical": "quiz_attempt_items",
+            "physical_template": "{$wpdb->prefix}oj_quiz_attempt_items",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "attempt_id": "bigint(20) unsigned NOT NULL",
+                "question_id": "bigint(20) unsigned NOT NULL",
+                "choice_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "answer_text": "longtext NULL",
+                "is_correct": "tinyint(1) NOT NULL DEFAULT 0",
+                "points_awarded": "decimal(10,2) NOT NULL DEFAULT 0.00",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY attempt_id (attempt_id)",
+                "KEY question_id (question_id)",
+                "KEY choice_id (choice_id)"
+            ]
+        },
+        {
+            "logical": "problem_book_categories",
+            "physical_template": "{$wpdb->prefix}oj_problem_book_categories",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "parent_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "name": "varchar(191) NOT NULL",
+                "slug": "varchar(191) NOT NULL DEFAULT ''",
+                "description": "longtext NULL",
+                "visibility": "varchar(20) NOT NULL DEFAULT 'public'",
+                "sort_order": "int(11) NOT NULL DEFAULT 0",
+                "created_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL",
+                "deleted_at": "datetime DEFAULT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "KEY parent_id (parent_id)",
+                "KEY slug (slug)",
+                "KEY visibility (visibility)",
+                "KEY deleted_at (deleted_at)"
+            ]
+        },
+        {
+            "logical": "problem_book_category_items",
+            "physical_template": "{$wpdb->prefix}oj_problem_book_category_items",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "category_id": "bigint(20) unsigned NOT NULL",
+                "problem_id": "bigint(20) unsigned NOT NULL",
+                "sort_order": "int(11) NOT NULL DEFAULT 0",
+                "created_by_wp_user_id": "bigint(20) unsigned NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "UNIQUE KEY category_problem (category_id, problem_id)",
+                "KEY problem_id (problem_id)",
+                "KEY sort_order (sort_order)"
+            ]
+        },
+        {
+            "logical": "personal_problem_book_items",
+            "physical_template": "{$wpdb->prefix}oj_personal_problem_book_items",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "wp_user_id": "bigint(20) unsigned NOT NULL",
+                "problem_id": "bigint(20) unsigned NOT NULL",
+                "note": "text NULL",
+                "sort_order": "int(11) NOT NULL DEFAULT 0",
+                "created_at": "datetime NOT NULL",
+                "updated_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "UNIQUE KEY user_problem (wp_user_id, problem_id)",
+                "KEY problem_id (problem_id)",
+                "KEY sort_order (sort_order)"
+            ]
+        },
+        {
+            "logical": "legacy_id_map",
+            "physical_template": "{$wpdb->prefix}oj_legacy_id_map",
+            "unprefixed": false,
+            "columns": {
+                "id": "bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+                "entity_type": "varchar(50) NOT NULL",
+                "legacy_id": "varchar(100) NOT NULL",
+                "new_id": "varchar(100) NOT NULL",
+                "legacy_source": "varchar(100) NOT NULL DEFAULT ''",
+                "metadata": "longtext NULL",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": [
+                "PRIMARY KEY  (id)",
+                "UNIQUE KEY entity_legacy (entity_type, legacy_id)",
+                "KEY new_id (new_id)",
+                "KEY legacy_source (legacy_source)"
+            ]
+        }
+    ],
+    "judge": [
+        {
+            "logical": "problem",
+            "physical_template": "{$judge_table_prefix}problem",
+            "required_by_current_code": true
+        },
+        {
+            "logical": "users",
+            "physical_template": "{$judge_table_prefix}users",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "solution",
+            "physical_template": "{$judge_table_prefix}solution",
+            "required_by_current_code": true
+        },
+        {
+            "logical": "source_code",
+            "physical_template": "{$judge_table_prefix}source_code",
+            "required_by_current_code": true
+        },
+        {
+            "logical": "source_code_user",
+            "physical_template": "{$judge_table_prefix}source_code_user",
+            "required_by_current_code": true
+        },
+        {
+            "logical": "compileinfo",
+            "physical_template": "{$judge_table_prefix}compileinfo",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "runtimeinfo",
+            "physical_template": "{$judge_table_prefix}runtimeinfo",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "contest",
+            "physical_template": "{$judge_table_prefix}contest",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "contest_problem",
+            "physical_template": "{$judge_table_prefix}contest_problem",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "status",
+            "physical_template": "{$judge_table_prefix}status",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "privilege",
+            "physical_template": "{$judge_table_prefix}privilege",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "team",
+            "physical_template": "{$judge_table_prefix}team",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "course",
+            "physical_template": "{$judge_table_prefix}course",
+            "required_by_current_code": false
+        },
+        {
+            "logical": "group",
+            "physical_template": "{$judge_table_prefix}group",
+            "required_by_current_code": false
+        }
+    ]
+}

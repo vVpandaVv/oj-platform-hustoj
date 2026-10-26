@@ -1,0 +1,326 @@
+/*
+ * 읽기자료 학생 화면(목록, 주제, 레슨). 머리말·빈 상태·경로·알림은 플랫폼
+ * 공용 부품(ojp-*)을 쓰고, 이 파일은 배치와 --ojp-* 토큰만 담는다.
+ * 레슨 본문(Plate)의 기본 모양은 편집기 빌드 산출물 assets/editor/public.css에
+ * 있고, 여기서는 그 변수만 토큰에 연결한다.
+ */
+
+.rcis-library,
+.rcis-reading {
+  word-break: keep-all;
+}
+
+/* 목록: 주제 카드 */
+.rcis-topic-index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--ojp-space-4, 16px);
+}
+
+.rcis-topic-index-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ojp-space-1, 4px);
+  padding: var(--ojp-space-5, 24px);
+  border-radius: var(--ojp-radius-lg, 16px);
+  background: var(--ojp-color-surface, #fff);
+  box-shadow: var(--ojp-shadow-1, 0 1px 2px rgb(0 0 0 / 5%));
+  color: var(--ojp-color-ink, #1d1d1f);
+  text-decoration: none;
+  transition: box-shadow var(--ojp-duration, 200ms) var(--ojp-ease, ease), transform 120ms ease;
+}
+
+/* The shell paints every link in the primary colour; cards keep body ink. */
+.ojp-app .rcis-topic-index-card {
+  color: var(--ojp-color-ink, #1d1d1f);
+  text-decoration: none;
+}
+
+.rcis-topic-index-card:hover {
+  box-shadow: var(--ojp-shadow, 0 6px 24px rgb(0 0 0 / 8%));
+}
+
+.rcis-topic-index-card:active {
+  transform: scale(0.99);
+}
+
+.rcis-topic-index-card:focus-visible {
+  outline: 3px solid var(--ojp-color-focus, rgb(8 125 120 / 45%));
+  outline-offset: 2px;
+}
+
+.rcis-topic-index-card__label {
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-subhead, 13px);
+  font-weight: 600;
+}
+
+.rcis-topic-index-card__title {
+  margin: 0;
+  font-size: var(--ojp-text-title3, 18px);
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.rcis-topic-index-card__meta {
+  margin: 0;
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-footnote, 12px);
+}
+
+.rcis-topic-index-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ojp-space-1, 4px);
+  margin-top: auto;
+  padding-top: var(--ojp-space-3, 12px);
+  color: var(--ojp-color-primary, #087d78);
+  font-size: var(--ojp-text-callout, 14px);
+  font-weight: 600;
+}
+
+.rcis-topic-index-card__cta svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 주제: 장 펼침 목록 */
+.rcis-chapter-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ojp-space-3, 12px);
+}
+
+.rcis-chapter-accordion__item {
+  overflow: hidden;
+  border-radius: var(--ojp-radius-md, 12px);
+  background: var(--ojp-color-surface, #fff);
+  box-shadow: var(--ojp-shadow-1, 0 1px 2px rgb(0 0 0 / 5%));
+}
+
+.rcis-chapter-accordion__item > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--ojp-space-3, 12px);
+  min-height: 44px;
+  padding: var(--ojp-space-4, 16px);
+  color: var(--ojp-color-ink, #1d1d1f);
+  cursor: pointer;
+  list-style: none;
+}
+
+.rcis-chapter-accordion__item > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Chevron drawn with borders so it follows the text colour in both schemes. */
+.rcis-chapter-accordion__item > summary::after {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-right: 2px solid var(--ojp-color-tertiary, #8e8e93);
+  border-bottom: 2px solid var(--ojp-color-tertiary, #8e8e93);
+  content: "";
+  transform: rotate(-45deg);
+  transition: transform var(--ojp-duration, 200ms) var(--ojp-ease, ease);
+}
+
+.rcis-chapter-accordion__item[open] > summary::after {
+  transform: rotate(45deg);
+}
+
+.rcis-chapter-accordion__item > summary:focus-visible {
+  outline: 3px solid var(--ojp-color-focus, rgb(8 125 120 / 45%));
+  outline-offset: -3px;
+}
+
+.rcis-chapter-label {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 var(--ojp-space-2, 8px);
+  border-radius: var(--ojp-radius-pill, 999px);
+  background: var(--ojp-color-accent-bg, #e7f3f2);
+  color: var(--ojp-color-primary, #087d78);
+  font-size: var(--ojp-text-subhead, 13px);
+  font-weight: 700;
+}
+
+.rcis-chapter-accordion__title {
+  font-size: var(--ojp-text-body, 15px);
+  font-weight: 600;
+}
+
+.rcis-chapter-accordion__meta {
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-footnote, 12px);
+}
+
+.rcis-chapter-accordion__body {
+  padding: 0 var(--ojp-space-4, 16px) var(--ojp-space-4, 16px);
+  border-top: 1px solid var(--ojp-color-separator, rgb(60 60 67 / 12%));
+}
+
+.rcis-section-outline {
+  padding-top: var(--ojp-space-4, 16px);
+}
+
+.rcis-section-outline__title {
+  margin: 0 0 var(--ojp-space-2, 8px);
+  color: var(--ojp-color-ink-2, #3a3a3c);
+  font-size: var(--ojp-text-subhead, 13px);
+  font-weight: 600;
+}
+
+.rcis-section-outline__lessons {
+  margin: 0;
+  padding-left: var(--ojp-space-5, 24px);
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-body, 15px);
+}
+
+.rcis-section-outline__lessons li {
+  margin-bottom: var(--ojp-space-1, 4px);
+  line-height: 1.6;
+}
+
+/* 레슨 */
+.rcis-reading.rcis-story {
+  max-width: 896px;
+  margin: 0 auto;
+  padding-bottom: var(--ojp-space-7, 40px);
+}
+
+.rcis-breadcrumb {
+  flex-wrap: wrap;
+}
+
+.rcis-breadcrumb__sep {
+  color: var(--ojp-color-tertiary, #8e8e93);
+}
+
+.rcis-reading > .ojp-notice {
+  margin-bottom: var(--ojp-space-4, 16px);
+}
+
+/*
+ * Plate 본문: public.css가 정한 변수를 토큰에 연결하고, 학생 읽기 화면은
+ * 본문을 17px로 키운다(D-010 3장). 고정 색이 있는 공개 블록은 뒤에 로드하는
+ * reader-theme.css에서 플랫폼 색상 토큰에 연결한다.
+ */
+.rcis-reading .contents-editor-content-surface {
+  --contents-editor-content-ink: var(--ojp-color-ink, #1d1d1f);
+  --contents-editor-content-muted: var(--ojp-color-muted, #6e6e73);
+  --contents-editor-content-line: var(--ojp-color-line, #d2d2d7);
+  --contents-editor-content-soft: var(--ojp-color-subtle, #f5f5f7);
+  --contents-editor-content-accent: var(--ojp-color-primary, #087d78);
+  font-family: var(--ojp-font-sans, system-ui, sans-serif);
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.contents-editor-plate-image-source {
+  display: block;
+  margin-top: var(--ojp-space-1, 4px);
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-footnote, 12px);
+}
+
+.contents-editor-plate-image-source a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.contents-editor-plate-image-sources {
+  margin-top: var(--ojp-space-7, 40px);
+  padding-top: var(--ojp-space-5, 24px);
+  border-top: 1px solid var(--ojp-color-separator, rgb(60 60 67 / 12%));
+}
+
+.contents-editor-plate-image-sources h2 {
+  margin-bottom: var(--ojp-space-3, 12px);
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-callout, 14px);
+  font-weight: 600;
+}
+
+.contents-editor-plate-image-sources ol {
+  padding-left: var(--ojp-space-5, 24px);
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-footnote, 12px);
+  line-height: 1.7;
+}
+
+.contents-editor-plate-image-sources li {
+  margin-bottom: var(--ojp-space-1, 4px);
+}
+
+/* 다이어그램: 넓은 그림은 가로로 스크롤한다(reader-diagrams.js가 감싼다). */
+.contents-editor-public-visualization .rcis-diagram-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.contents-editor-public-visualization .rcis-diagram-scroll .contents-editor-public-visualization__player {
+  grid-template-columns: minmax(0, 1fr);
+  overflow: visible;
+}
+
+.contents-editor-public-visualization .rcis-diagram-scroll .rcis-readable-diagram {
+  block-size: auto;
+  height: auto;
+  margin-inline: auto;
+  max-inline-size: none;
+  max-width: none;
+  min-block-size: 0;
+  min-height: 0;
+  touch-action: auto;
+}
+
+.rcis-diagram-scroll:focus-visible {
+  outline: 3px solid var(--ojp-color-focus, rgb(8 125 120 / 45%));
+  outline-offset: 2px;
+}
+
+/* 같은 묶음의 다른 레슨 */
+.rcis-section-siblings {
+  margin-top: var(--ojp-space-7, 40px);
+  padding: var(--ojp-space-4, 16px) var(--ojp-space-5, 24px);
+  border-radius: var(--ojp-radius-md, 12px);
+  background: var(--ojp-color-fill-2, rgb(120 120 128 / 8%));
+}
+
+.rcis-section-siblings__title {
+  margin: 0 0 var(--ojp-space-2, 8px);
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-subhead, 13px);
+  font-weight: 600;
+}
+
+.rcis-section-siblings__list {
+  margin: 0;
+  padding-left: var(--ojp-space-5, 24px);
+  font-size: var(--ojp-text-body, 15px);
+}
+
+.rcis-section-siblings__list li {
+  margin-bottom: var(--ojp-space-1, 4px);
+  line-height: 1.6;
+}
+
+.rcis-section-siblings__current {
+  color: var(--ojp-color-ink, #1d1d1f);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rcis-topic-index-card,
+  .rcis-chapter-accordion__item > summary::after {
+    transition: none;
+  }
+}

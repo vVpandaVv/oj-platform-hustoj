@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-12 사용자 대회·평가 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds12-prototype.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <svg class="icon-symbols" aria-hidden="true">
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM20 4h-7v16h7a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  </svg>
+
+  <div class="prototype-bar"><div class="prototype-inner"><div class="prototype-title"><strong>DS-12 사용자 대회·평가 시안</strong><span>일곱 직접 화면을 비교합니다.</span></div>
+    <div class="screen-switcher" role="tablist" aria-label="대회 화면 선택">
+      <button type="button" role="tab" data-screen-target="contest-list" aria-selected="true">목록</button><button type="button" role="tab" data-screen-target="contest-detail" aria-selected="false">상세</button><button type="button" role="tab" data-screen-target="contest-submissions" aria-selected="false">제출</button><button type="button" role="tab" data-screen-target="contest-ranking" aria-selected="false">순위</button><button type="button" role="tab" data-screen-target="contest-statistics" aria-selected="false">통계</button><button type="button" role="tab" data-screen-target="contest-ip-check" aria-selected="false">IP 확인</button><button type="button" role="tab" data-screen-target="contest-ip-change" aria-selected="false">IP 변경</button>
+    </div>
+  </div></div>
+
+  <header class="app-header"><div class="app-header-inner"><a class="brand" href="development-ds-12-learning-spaces.html"><span class="brand-mark">OJ</span><span>OJ Platform</span></a><nav class="primary-nav" aria-label="주 메뉴"><a href="#home">홈</a><a href="#problems">문제</a><a href="#submissions">제출</a><a href="#learning" aria-current="page">학습</a><a href="#community">커뮤니티</a></nav><a class="account-button header-utility" href="#profile" aria-label="내 정보" title="내 정보"><svg><use href="#i-user"/></svg></a></div></header>
+
+  <div class="workspace"><main class="page" id="main">
+    <nav class="learning-nav" aria-label="학습 메뉴"><a href="development-ds-12-user-classes-ui.html">수업</a><a href="development-ds-12-user-contests-ui.html" aria-current="page">대회·평가</a><a href="development-ds-12-user-groups-ui.html">그룹</a></nav>
+
+    <section class="screen" data-screen="contest-list">
+      <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">학습 · 대회·평가</p><h1>대회·평가</h1><p>참가 가능한 평가와 내 참가 현황을 확인합니다.</p></div></header><p class="route-caption">/contests</p>
+      <div class="filter-bar compact"><label class="field"><span>검색</span><input type="search" placeholder="대회 또는 평가 이름"></label><label class="field"><span>단계</span><select><option>전체</option><option>준비</option><option>진행</option><option>종료</option></select></label><div class="filter-actions"><button class="button primary" type="button">검색</button></div></div>
+      <div class="space-list">
+        <div class="space-row"><div class="space-main"><strong>여름 알고리즘 평가</strong><span>오늘 13:00~17:00 · 5문제</span></div><div class="space-meta"><strong>남은 시간 1:18:24</strong><span>3 / 5 제출</span></div><span class="badge wait">진행 중</span><button class="button primary" type="button" data-open-screen="contest-detail">계속하기</button></div>
+        <div class="space-row"><div class="space-main"><strong>두 번째 진단 평가</strong><span>8월 24일 09:00 시작 · 8문제</span></div><div class="space-meta"><strong>참가 승인</strong><span>IP 확인 필요</span></div><span class="badge info">준비</span><button class="button" type="button" data-open-screen="contest-ip-check">접속 확인</button></div>
+        <div class="space-row"><div class="space-main"><strong>자료구조 기초 경진</strong><span>7월 18일 종료 · 결과 공개</span></div><div class="space-meta"><strong>총점 420</strong><span>12위</span></div><span class="badge good">종료</span><button class="button" type="button" data-open-screen="contest-ranking">결과 보기</button></div>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="contest-detail" hidden>
+      <div class="breadcrumb"><span>대회·평가</span><span>/</span><span>여름 알고리즘 평가</span></div>
+      <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">진행 중 · 참가 승인</p><h1>여름 알고리즘 평가</h1><p>제한 시간 안에 문제를 풀고 제출 결과를 확인하세요.</p></div><div class="heading-actions"><button class="button" type="button" data-open-screen="contest-ranking">실시간 순위</button><button class="button" type="button" data-open-screen="contest-submissions">내 제출</button><button class="button" type="button" data-open-screen="contest-ip-check">IP 확인</button></div></header><p class="route-caption">/contests/{contest_id}</p>
+      <div class="phase-strip"><div class="phase-step">준비</div><div class="phase-step current">진행</div><div class="phase-step">종료</div><div class="phase-step">보관</div></div>
+      <div class="mode-banner"><div><strong>남은 시간 1시간 18분</strong><span>일반 점수형 · 부분 점수 미사용 · 종료 시각 17:00 · 정답 기본 90% + 시간 10% · 오답 1회 -5점 · Blockly 표준</span></div><span class="badge good">순위 실시간 공개</span></div>
+      <div class="problem-list">
+        <div class="problem-row"><span class="problem-order">A</span><div class="problem-main"><strong>두 수의 거리</strong><span>100점 · 난이도 1</span></div><span class="badge good">맞았습니다</span><button class="button" type="button">문제 보기</button></div>
+        <div class="problem-row"><span class="problem-order">B</span><div class="problem-main"><strong>문자열 압축</strong><span>100점 · 난이도 2</span></div><span class="badge good">맞았습니다</span><button class="button" type="button">문제 보기</button></div>
+        <div class="problem-row"><span class="problem-order">C</span><div class="problem-main"><strong>구간 합 구하기</strong><span>100점 · 난이도 3</span></div><span class="badge wait">틀렸습니다</span><button class="button primary" type="button">다시 풀기</button></div>
+        <div class="problem-row"><span class="problem-order">D</span><div class="problem-main"><strong>최단 경로</strong><span>100점 · 난이도 4</span></div><span class="badge">미제출</span><button class="button" type="button">문제 보기</button></div>
+        <div class="problem-row"><span class="problem-order">E</span><div class="problem-main"><strong>트리 순회</strong><span>100점 · 난이도 4</span></div><span class="badge">미제출</span><button class="button" type="button">문제 보기</button></div>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="contest-submissions" hidden>
+      <header class="page-heading"><div class="page-heading-main"><h1>내 대회 제출</h1><p>이 대회에서 제출한 본인의 결과만 표시합니다.</p></div><button class="button" type="button" data-open-screen="contest-detail">대회로</button></header><p class="route-caption">/contests/{contest_id}/submissions</p>
+      <div class="scope-note">제출 상세·코드·오류 정보는 현재 대회와 그룹의 DS-11 가시성 정책을 다시 검사합니다.</div>
+      <div class="table-wrap"><table><thead><tr><th>문제</th><th>언어</th><th>결과</th><th>점수</th><th>제출 시각</th><th></th></tr></thead><tbody>
+        <tr><td>C · 구간 합 구하기</td><td>Python 3</td><td><span class="badge wait">틀렸습니다</span></td><td>0</td><td>15:41</td><td><button class="button" type="button">상세</button></td></tr>
+        <tr><td>B · 문자열 압축</td><td>Blockly</td><td><span class="badge good">맞았습니다</span></td><td>100</td><td>15:18</td><td><button class="button" type="button">상세</button></td></tr>
+        <tr><td>A · 두 수의 거리</td><td>Python 3</td><td><span class="badge good">맞았습니다</span></td><td>100</td><td>14:32</td><td><button class="button" type="button">상세</button></td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="screen" data-screen="contest-ranking" hidden>
+      <header class="page-heading"><div class="page-heading-main"><h1>실시간 대회 순위</h1><p>공개 정책에 따라 문제별 점수·감점과 총점·순위를 실시간으로 표시합니다.</p></div><button class="button" type="button" data-open-screen="contest-statistics">통계 보기</button></header><p class="route-caption">/contests/{contest_id}/ranking</p>
+      <div class="visibility-summary"><div><strong>일반 점수형 순위와 전체 풀이 현황이 실시간 공개되었습니다.</strong><span>화면을 갱신할 때 최신 유효 제출로 다시 집계합니다.</span></div><span class="badge good">일반 점수형</span></div>
+      <div data-sort-matrix>
+        <div class="matrix-toolbar">
+          <div class="matrix-legend"><span>셀 위: 시간·감점 반영 최종 점수</span><span>셀 가운데: 실제 첫 정답 풀이 시간</span><span>셀 아래: 정확성 + 시간 - 오답 감점</span></div>
+          <label class="field matrix-sort"><span>정렬</span><select data-sort-select><option value="rank-asc">순위 순</option><option value="score-desc">총점 높은 순</option><option value="score-asc">총점 낮은 순</option><option value="name-asc">이름 순</option></select></label>
+        </div>
+        <p class="sr-only" aria-live="polite" data-sort-status></p>
+        <div class="matrix-wrap"><table><thead><tr><th class="matrix-rank">순위</th><th class="matrix-person">참가자</th><th class="matrix-problem"><strong>A · 두 수의 거리</strong><span>100점</span></th><th class="matrix-problem"><strong>B · 문자열 압축</strong><span>100점</span></th><th class="matrix-problem"><strong>C · 구간 합</strong><span>100점</span></th><th class="matrix-problem"><strong>D · 최단 경로</strong><span>100점</span></th><th class="matrix-problem"><strong>E · 트리 순회</strong><span>100점</span></th><th>해결</th><th>총점</th><th>점수 완성</th></tr></thead><tbody>
+          <tr data-name="박서연" data-rank="1" data-score="467"><td class="matrix-rank"><strong>1</strong></td><td class="matrix-person"><strong>박서연</strong><span>최근 제출 15:39</span></td><td class="matrix-cell solved"><strong>99점</strong><span>풀이 00:12:00</span><span>정확성 90 + 시간 9 - 오답 0</span></td><td class="matrix-cell solved"><strong>98점</strong><span>풀이 00:25:00</span><span>정확성 90 + 시간 8 - 오답 0</span></td><td class="matrix-cell solved"><strong>88점</strong><span>풀이 00:48:00</span><span>정확성 90 + 시간 8 - 오답 10</span></td><td class="matrix-cell solved"><strong>92점</strong><span>풀이 01:10:00</span><span>정확성 90 + 시간 7 - 오답 5</span></td><td class="matrix-cell solved"><strong>90점</strong><span>풀이 01:42:10</span><span>정확성 90 + 시간 5 - 오답 5</span></td><td>5 / 5</td><td class="matrix-total"><strong>467점</strong><span>정확성 450 + 시간 37 - 오답 20</span></td><td>01:42:10</td></tr>
+          <tr class="selected-row" data-name="김하늘" data-rank="2" data-score="354"><td class="matrix-rank"><strong>2</strong></td><td class="matrix-person"><strong>김하늘 (나)</strong><span>최근 제출 15:41</span></td><td class="matrix-cell solved"><strong>99점</strong><span>풀이 00:18:00</span><span>정확성 90 + 시간 9 - 오답 0</span></td><td class="matrix-cell solved"><strong>87점</strong><span>풀이 00:52:00</span><span>정확성 90 + 시간 7 - 오답 10</span></td><td class="matrix-cell solved"><strong>85점</strong><span>풀이 01:44:00</span><span>정확성 90 + 시간 5 - 오답 10</span></td><td class="matrix-cell solved"><strong>83점</strong><span>풀이 02:31:08</span><span>정확성 90 + 시간 3 - 오답 10</span></td><td class="matrix-cell trying"><strong>0점</strong><span>정답 없음</span><span>오답 3회 · 감점 미적용</span></td><td>4 / 5</td><td class="matrix-total"><strong>354점</strong><span>정확성 360 + 시간 24 - 오답 30</span></td><td>02:31:08</td></tr>
+          <tr data-name="최민준" data-rank="3" data-score="352"><td class="matrix-rank"><strong>3</strong></td><td class="matrix-person"><strong>최민준</strong><span>최근 제출 15:48</span></td><td class="matrix-cell solved"><strong>98점</strong><span>풀이 00:30:00</span><span>정확성 90 + 시간 8 - 오답 0</span></td><td class="matrix-cell solved"><strong>87점</strong><span>풀이 01:10:00</span><span>정확성 90 + 시간 7 - 오답 10</span></td><td class="matrix-cell solved"><strong>84점</strong><span>풀이 02:05:00</span><span>정확성 90 + 시간 4 - 오답 10</span></td><td class="matrix-cell solved"><strong>83점</strong><span>풀이 02:45:30</span><span>정확성 90 + 시간 3 - 오답 10</span></td><td class="matrix-cell empty"><strong>0점</strong><span>미제출</span></td><td>4 / 5</td><td class="matrix-total"><strong>352점</strong><span>정확성 360 + 시간 22 - 오답 30</span></td><td>02:45:30</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="scope-note"><strong>현재 부분 점수:</strong> 사용하지 않습니다. 사용하도록 설정된 일반 점수형 대회에서는 최고 통과율에 정답 기본 점수를 곱해 정확성 점수를 계산하고, 완전 정답일 때만 시간 점수를 더합니다.</div>
+      <div class="scope-note"><strong>시간 점수:</strong> 각 문제 배점의 10%를 시간 점수로 사용합니다. 김하늘과 최민준은 해결 수와 오답 감점이 같지만 김하늘의 문제별 실제 풀이 시간이 더 짧아 시간 점수 24점, 최민준은 22점을 받아 총점이 354점과 352점으로 달라집니다.</div>
+      <div class="scope-note"><strong>동점:</strong> 시간까지 반영한 총점이 같으면 해결 문제 수, 현재 총점을 완성한 시각 순으로 정하며 모든 값이 같으면 공동 순위입니다.</div>
+      <div class="scope-note"><strong>비공개로 설정된 대회:</strong> 참여자에게 이 화면을 표시하지 않고 본인의 제출 결과와 점수만 제공합니다. 관리자는 공개 여부와 관계없이 담당 대회의 전체 현황을 확인합니다.</div>
+      <div class="scope-note"><strong>채점 방식별 표시:</strong> ICPC 대회는 해결 수와 벌점, OI 대회는 문제별 최고 통과율 점수와 벌점을 표시하며 일반 점수형에서만 정확성·시간·오답 감점 내역을 표시합니다.</div>
+    </section>
+
+    <section class="screen" data-screen="contest-statistics" hidden>
+      <header class="page-heading"><div class="page-heading-main"><h1>대회 통계</h1><p>개인정보 없이 문제별 집계만 표시합니다.</p></div><button class="button" type="button" data-open-screen="contest-ranking">순위 보기</button></header><p class="route-caption">/contests/{contest_id}/statistics</p>
+      <div class="metric-grid"><div class="metric"><span>참가자</span><strong>26</strong><small>승인 참가자</small></div><div class="metric"><span>제출</span><strong>184</strong><small>전체 시도</small></div><div class="metric"><span>평균 해결</span><strong>3.2</strong><small>5문제 기준</small></div><div class="metric"><span>평균 점수</span><strong>318</strong><small>500점 만점</small></div></div>
+      <div class="table-wrap"><table><thead><tr><th>문제</th><th>시도</th><th>정답</th><th>정답률</th><th>평균 시도</th></tr></thead><tbody><tr><td>A · 두 수의 거리</td><td>26</td><td>25</td><td>96%</td><td>1.2회</td></tr><tr><td>B · 문자열 압축</td><td>25</td><td>22</td><td>88%</td><td>1.8회</td></tr><tr><td>C · 구간 합 구하기</td><td>24</td><td>17</td><td>71%</td><td>2.9회</td></tr></tbody></table></div>
+    </section>
+
+    <section class="screen" data-screen="contest-ip-check" hidden>
+      <header class="page-heading"><div class="page-heading-main"><h1>접속 IP 확인</h1><p>평가 시작 전에 현재 접속 환경을 확인합니다.</p></div></header><p class="route-caption">/contests/{contest_id}/ip-check</p>
+      <div class="settings-layout"><section><div class="form-section"><h2>현재 접속 정보</h2><dl class="definition-list"><div class="definition-row"><dt>현재 IP</dt><dd><strong>203.0.113.24</strong></dd></div><div class="definition-row"><dt>등록 IP</dt><dd><strong>203.0.113.24</strong></dd></div><div class="definition-row"><dt>상태</dt><dd><span class="badge good">접속 가능</span></dd></div><div class="definition-row"><dt>최근 확인</dt><dd>오늘 12:48</dd></div></dl></div><div class="notice"><div><strong>현재 환경에서 평가에 참가할 수 있습니다.</strong><br>네트워크가 바뀌면 평가 화면에서 다시 확인합니다.</div></div></section><aside class="side-summary"><h2>확인 안내</h2><ul><li>IP는 평가 접속 검증에만 사용합니다.</li><li>공용 네트워크 변경 시 변경 요청이 필요할 수 있습니다.</li><li>원시 접속 기록은 학습자 화면에 표시하지 않습니다.</li></ul><button class="button" type="button" data-open-screen="contest-ip-change">IP 변경 요청</button></aside></div>
+    </section>
+
+    <section class="screen" data-screen="contest-ip-change" hidden>
+      <header class="page-heading"><div class="page-heading-main"><h1>접속 IP 변경</h1><p>네트워크가 변경된 이유를 입력해 감독자 확인을 요청합니다.</p></div><button class="button" type="button" data-open-screen="contest-ip-check">확인 화면으로</button></header><p class="route-caption">/contests/{contest_id}/ip-change</p>
+      <div class="settings-layout"><form><div class="form-section"><h2>변경 정보</h2><div class="field-grid"><label class="field"><span>기존 IP</span><input value="203.0.113.24" readonly></label><label class="field"><span>현재 IP</span><input value="198.51.100.17" readonly></label><label class="field wide"><span>변경 사유</span><textarea rows="5">접속 장소 이동으로 네트워크가 변경되었습니다.</textarea></label></div></div><div class="heading-actions"><button class="button primary" type="button" data-toast="감독자에게 IP 변경 요청을 보냈습니다.">변경 요청</button><button class="button" type="button" data-open-screen="contest-ip-check">취소</button></div></form><aside class="side-summary"><h2>처리 기준</h2><ul><li>진행 중에는 감독자가 현재 참가 상태와 IP를 확인합니다.</li><li>요청 전후 IP와 처리 시각은 감사 기록으로 남습니다.</li><li>승인 전에는 새 IP로 제출할 수 없습니다.</li></ul></aside></div>
+    </section>
+  </main></div>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴"><a href="#home"><svg><use href="#i-home"/></svg><span>홈</span></a><a href="#problems"><svg><use href="#i-book"/></svg><span>문제</span></a><a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a><a href="#learning" aria-current="page"><svg><use href="#i-learn"/></svg><span>학습</span></a><a href="#more"><svg><use href="#i-more"/></svg><span>더보기</span></a></nav>
+  <div class="toast" role="status" aria-live="polite"></div><script src="assets/oj-ui-prototype.js"></script><script src="assets/ds12-prototype.js"></script>
+</body>
+</html>

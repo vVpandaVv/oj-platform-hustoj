@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>활동지</title>
+  <link rel="stylesheet" href="../../resources/css/student-assignments.css">
+  <link rel="stylesheet" href="../../resources/assets/katex/katex.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #f6f7f8; font-family: Arial, "Noto Sans KR", sans-serif; }
+    body { padding: 24px; }
+    .oj-ai-student-page { padding: 0 20px 32px; background: #fff; }
+    @media (max-width: 700px) { body { padding: 0; } .oj-ai-student-page { padding: 0 16px 28px; } }
+  </style>
+</head>
+<body>
+  <section class="oj-ai-student-page" data-oj-ai-route="addon.oj_ai_dashboard.public.worksheets">
+    <header class="oj-ai-student-page__header"><h1>활동지</h1></header>
+    <div id="oj-ai-student-assignment-app" data-mode="list" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-g3-student" data-autosave-delay="20">
+      <p class="oj-ai-student-page__status" role="status">불러오는 중...</p>
+    </div>
+  </section>
+  <script>
+    const assignmentId = '01040G2081040G2081040G2081';
+    const publicationHash = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+    const publicationId = '16040G2081040G2081040G2081';
+    const worksheetPdfJobId = '1A040G2081040G2081040G2081';
+    const worksheetPdfArtifactId = '1B040G2081040G2081040G2081';
+    const submissionPdfJobId = '1C040G2081040G2081040G2081';
+    const submissionPdfArtifactId = '1D040G2081040G2081040G2081';
+    const scheduleHash = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    const root = document.getElementById('oj-ai-student-assignment-app');
+    try {
+      for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+        const key = localStorage.key(index);
+        if (key?.startsWith('oj_ai_submission_recovery_v1:')) localStorage.removeItem(key);
+      }
+      sessionStorage.removeItem('oj_ai_submission_recovery_session_v1');
+    } catch (error) {}
+    const fixtureParams = new URLSearchParams(location.search);
+    const fixtureSubmissionState = fixtureParams.get('submission_state') || '';
+    if (fixtureParams.get('mode') === 'detail') {
+      root.dataset.mode = 'detail';
+      root.dataset.assignmentId = assignmentId;
+    }
+    const context = { type: 'class', id: 'class-21', label: '2학년 1반', revision: 'member-r2', subject: '수학', teacher: '김선생' };
+    const schedule = { opens_at_utc: null, due_at_utc: '2026-08-22 11:00:00', closes_at_utc: '2026-08-22 12:00:00' };
+    const assignments = [
+      { id: assignmentId, title: '분수 비교 활동지', state: 'open', availability: 'open', lock_version: 0, schedule_version: 1, schedule_hash: scheduleHash, worksheet_publication_id: publicationId, publication_hash: publicationHash, context, schedule, submission: { id: '11040G2081040G2081040G2081', state: 'draft', lock_version: 1, current_revision_id: '12040G2081040G2081040G2081', official_revision_id: null, started_at_utc: '2026-08-22 09:00:00', submitted_at_utc: null, closed_at_utc: null }, actions: ['assignment.export_pdf', 'assignment.continue'] },
+      { id: '02040G2081040G2081040G2082', title: '도형 관찰 기록', state: 'scheduled', availability: 'upcoming', lock_version: 0, schedule_version: 1, schedule_hash: scheduleHash, worksheet_publication_id: publicationId, publication_hash: publicationHash, context, schedule: { opens_at_utc: '2026-08-23 09:00:00', due_at_utc: '2026-08-23 11:00:00', closes_at_utc: '2026-08-23 12:00:00' }, submission: null, actions: [] },
+      { id: '03040G2081040G2081040G2083', title: '자료 해석 활동', state: 'closed', availability: 'closed', lock_version: 2, schedule_version: 2, schedule_hash: scheduleHash, worksheet_publication_id: publicationId, publication_hash: publicationHash, context, schedule: { opens_at_utc: '2026-08-20 09:00:00', due_at_utc: '2026-08-20 11:00:00', closes_at_utc: '2026-08-20 12:00:00' }, submission: { id: '13040G2081040G2081040G2081', state: 'submitted', lock_version: 2, current_revision_id: '14040G2081040G2081040G2081', official_revision_id: '14040G2081040G2081040G2081', started_at_utc: '2026-08-20 09:10:00', submitted_at_utc: '2026-08-20 10:30:00', closed_at_utc: '2026-08-20 12:00:00' }, actions: ['assignment.export_pdf'] },
+    ];
+    assignments.push(
+      { ...assignments[2], id: '04040G2081040G2081040G2084', title: '공개된 마감 활동', result: { release_id: '00000000000000000000000091' } },
+      { ...assignments[2], id: '05040G2081040G2081040G2085', title: '공개된 진행 활동', state: 'open', availability: 'open', result: { release_id: '00000000000000000000000092' } },
+    );
+    let detail = {
+      id: assignmentId,
+      title: '분수 비교 활동지',
+      state: 'open',
+      availability: 'open',
+      lock_version: 0,
+      schedule_version: 1,
+      schedule_hash: scheduleHash,
+      publication_hash: publicationHash,
+      worksheet_publication_id: publicationId,
+      context,
+      schedule,
+      submission: null,
+      actions: ['assignment.export_pdf', 'assignment.start'],
+      student_document: { payload: { nodes: [
+        { type: 'h1', children: [{ text: '분수의 크기를 비교해 봅시다' }] },
+        { type: 'p', children: [{ text: '각 응답칸에 생각을 기록하세요.' }] },
+        ...['short','long','single','multiple','check','number','table','image','file','drawing'].map((id) => ({ type: 'oj_ai_response', response_id: `response-${id}`, children: [{ text: '' }] })),
+      ] } },
+      response_schema: { payload: { items: [
+        { response_id: 'response-short', kind: 'short_text', label: '한 줄 답', required: true, position: 0, constraints: { max_chars: 80 } },
+        { response_id: 'response-long', kind: 'long_text', label: '풀이 과정', required: true, position: 1, constraints: { max_chars: 1000 } },
+        { response_id: 'response-single', kind: 'single_choice', label: '하나 선택', required: true, position: 2, constraints: { options: [
+          { option_id: 'option-a', value: 'a', label: '첫 번째' }, { option_id: 'option-b', value: 'b', label: '두 번째' },
+        ] } },
+        { response_id: 'response-multiple', kind: 'multiple_choice', label: '여러 개 선택', required: false, position: 3, constraints: { options: [
+          { option_id: 'option-c', value: 'c', label: '관찰' }, { option_id: 'option-d', value: 'd', label: '계산' },
+        ] } },
+        { response_id: 'response-check', kind: 'checkbox', label: '확인', required: false, position: 4, constraints: {} },
+        { response_id: 'response-number', kind: 'number', label: '숫자', required: false, position: 5, constraints: { min: '0', max: '100', decimal_places: 2 } },
+        { response_id: 'response-table', kind: 'table', label: '표 기록', required: false, position: 6, constraints: {
+          rows: [{ row_id: 'row-1', label: '첫째 줄' }, { row_id: 'row-2', label: '둘째 줄' }],
+          columns: [{ column_id: 'column-text', label: '내용', cell_type: 'short_text' }, { column_id: 'column-number', label: '수', cell_type: 'number' }],
+        } },
+        { response_id: 'response-image', kind: 'image_upload', label: '사진', required: false, position: 7, constraints: { mime_types: ['image/png','image/jpeg'], max_files: 2 } },
+        { response_id: 'response-file', kind: 'file_upload', label: '파일', required: false, position: 8, constraints: { mime_types: ['application/pdf'], max_files: 1 } },
+        { response_id: 'response-drawing', kind: 'drawing', label: '그림', required: false, position: 9, constraints: { aspect_ratio: '2.25', max_strokes: 500 } },
+      ] } },
+    };
+    if (fixtureParams.get('question_sections') === '1') {
+      const quote = { type: 'blockquote', children: [{ type: 'p', children: [{ text: '인용 자료는 그대로 유지합니다.' }] }] };
+      detail.student_document.payload.nodes = [
+        quote,
+        { type: 'callout', tone: 'notice', icon: 'idea', children: [{ type: 'p', children: [{ text: '응답 없는 안내 상자' }] }] },
+        { type: 'callout', tone: 'notice', icon: 'idea', children: [
+          { type: 'h2', children: [{ text: '자료를 근거로 자신의 생각을 설명하세요.' }] },
+          quote,
+          { type: 'column', children: detail.student_document.payload.nodes.slice(2) },
+        ] },
+      ];
+    }
+    if (fixtureParams.get('rich_document') === '1') {
+      detail.student_document.payload.nodes.unshift(
+        { type: 'p', children: [{ type: 'a', url: 'https://example.test/source', children: [{ text: 'Source reference' }] }] },
+        { type: 'table', children: [{ type: 'tr', children: [{ type: 'th', children: [{ text: 'Measure' }] }, { type: 'td', children: [{ text: '5 cm' }] }] }] },
+        { type: 'equation', tex: 'x^2 + y^2 = z^2', display: true, children: [{ text: '' }] },
+        { type: 'img', asset_id: '00000000000000000000000801', alt: 'Growth comparison', children: [{ text: '' }] },
+        { type: 'audio', asset_id: '00000000000000000000000802', transcript: 'Audio source transcript', children: [{ text: '' }] },
+        { type: 'video', asset_id: '00000000000000000000000803', transcript: 'Video source transcript', children: [{ text: '' }] },
+        { type: 'file', asset_id: '00000000000000000000000804', label: 'Source document', children: [{ text: '' }] },
+      );
+    }
+    if (fixtureParams.get('table_widths') === '1') {
+      detail.student_document.payload.nodes.unshift({ type: 'table', ...(fixtureParams.has('table_percent') ? { width_percent: Number(fixtureParams.get('table_percent')), column_ratios: [3000, 7000] } : { column_widths: [180, 420] }), children: [
+        { type: 'tr', children: ['항목', '관찰 내용'].map(text => ({ type: 'td', children: [{ type: 'p', children: [{ text }] }] })) },
+        { type: 'tr', children: ['첫 번째', '근거를 자세히 기록합니다.'].map(text => ({ type: 'td', children: [{ type: 'p', children: [{ text }] }] })) },
+      ] });
+    }
+    const envelope = (data) => ({ data, meta: { correlation_id: 'g3-student-fixture' }, links: {}, actions: [] });
+    window.__studentRequests = [];
+    window.__studentAutosaveRequests = [];
+    window.__studentSubmitRequests = [];
+    window.__studentSubmissionReads = 0;
+    window.__studentAutosaveMode = 'success';
+    window.__studentAutosaveRelease = null;
+    const submissionId = '15040G2081040G2081040G2081';
+    window.__studentPdfRequests = [];
+    window.__studentPdfDownloads = [];
+    window.__studentSubmissionPdfRequests = [];
+    window.__studentSubmissionPdfDownloads = [];
+    let revisionSequence = 0;
+    let submissionDetail = {
+      id: submissionId,
+      assignment_id: assignmentId,
+      state: 'draft',
+      lock_version: 0,
+      availability: 'open',
+      current_revision: null,
+      official_revision: null,
+      official_attempt_no: 0,
+      receipt: null,
+      control_receipt: null,
+      resubmission: { max_attempts: 2, remaining_attempts: 2, reopen_until_utc: '2026-08-22 12:00:00' },
+      attachments: [],
+      started_at_utc: '2026-08-22 10:05:00',
+      submitted_at_utc: null,
+      closed_at_utc: null,
+      source: { worksheet_publication_id: publicationId, publication_hash: publicationHash },
+      schedule: { version: 1, hash: scheduleHash, due_at_utc: schedule.due_at_utc, closes_at_utc: schedule.closes_at_utc },
+      save_token: 'c'.repeat(64),
+      actions: ['submission.autosave', 'submission.submit'],
+    };
+    if (['reopened', 'locked'].includes(fixtureSubmissionState)) {
+      const official = {
+        id: '17040G2081040G2081040G2082', revision_no: 1, base_revision_no: null, state: 'saved',
+        response_schema_version: '1.0.0', response: { answers: { 'response-short': '처음 제출한 답' }, publication_hash: publicationHash, publication_id: submissionDetail.source.worksheet_publication_id, response_schema_version: '1.0.0' },
+        content_hash: '4'.repeat(64), attachment_set_hash: '5'.repeat(64), created_at_utc: '2026-08-22 10:20:00',
+      };
+      const current = fixtureSubmissionState === 'reopened' ? {
+        ...official, id: '18040G2081040G2081040G2083', revision_no: 2, base_revision_no: 1, state: 'reopened_fork', created_at_utc: '2026-08-22 10:30:00', content_hash: '6'.repeat(64),
+      } : official;
+      submissionDetail = {
+        ...submissionDetail,
+        state: fixtureSubmissionState,
+        lock_version: 2,
+        current_revision: current,
+        official_revision: official,
+        official_attempt_no: 1,
+        receipt: { id: '19040G2081040G2081040G2084', receipt_no: 1, action: 'submit', attempt_no: 1, timeliness: 'on_time', received_at_utc: '2026-08-22 10:20:00' },
+        control_receipt: { action: fixtureSubmissionState === 'reopened' ? 'reopen' : 'lock', reason: fixtureSubmissionState === 'reopened' ? '답안을 보완해 다시 제출하세요.' : '검토를 위해 제출을 잠갔습니다.', received_at_utc: '2026-08-22 10:30:00' },
+        resubmission: { max_attempts: 2, remaining_attempts: 1, reopen_until_utc: '2026-08-22 12:00:00' },
+        submitted_at_utc: '2026-08-22 10:20:00',
+        closed_at_utc: fixtureSubmissionState === 'locked' ? '2026-08-22 10:30:00' : null,
+        actions: fixtureSubmissionState === 'reopened' ? ['submission.autosave', 'submission.submit', 'submission.export_pdf'] : ['submission.export_pdf'],
+      };
+      detail = {
+        ...detail,
+        submission: { id: submissionId, state: fixtureSubmissionState, lock_version: 2, current_revision_id: current.id, official_revision_id: official.id, official_attempt_no: 1, started_at_utc: submissionDetail.started_at_utc, submitted_at_utc: submissionDetail.submitted_at_utc, closed_at_utc: submissionDetail.closed_at_utc },
+        actions: fixtureSubmissionState === 'reopened' ? ['assignment.export_pdf', 'assignment.continue'] : ['assignment.export_pdf'],
+      };
+    }
+    const revisionId = () => String(200 + revisionSequence).padStart(26, '0');
+    const saveToken = () => ['d','e','f','1','2','3'][Math.min(revisionSequence, 5)].repeat(64);
+    const commitAutosave = (body, serverAnswers = body.payload.answers) => {
+      revisionSequence += 1;
+      const id = revisionId();
+      const revision = {
+        id,
+        revision_no: revisionSequence,
+        base_revision_no: revisionSequence === 1 ? null : revisionSequence - 1,
+        state: 'saved',
+        response_hash: '1'.repeat(64),
+        content_hash: '2'.repeat(64),
+        attachment_set_hash: '3'.repeat(64),
+        created_at_utc: `2026-08-22 10:${String(10 + revisionSequence).padStart(2, '0')}:00`,
+      };
+      submissionDetail = {
+        ...submissionDetail,
+        lock_version: revisionSequence,
+        current_revision: {
+          ...revision,
+          response_schema_version: '1.0.0',
+          response: {
+            answers: JSON.parse(JSON.stringify(serverAnswers)),
+            publication_hash: publicationHash,
+            publication_id: submissionDetail.source.worksheet_publication_id,
+            response_schema_version: '1.0.0',
+          },
+        },
+        save_token: saveToken(),
+      };
+      detail = { ...detail, submission: { id: submissionId, state: 'draft', lock_version: revisionSequence, current_revision_id: id, official_revision_id: null, started_at_utc: submissionDetail.started_at_utc }, actions: ['assignment.export_pdf', 'assignment.continue'] };
+      return { revision, submission: { id: submissionId, assignment_id: assignmentId, state: 'draft', lock_version: revisionSequence, current_revision_id: id, official_revision_id: null, save_token: submissionDetail.save_token, actions: ['submission.autosave'] } };
+    };
+    window.__studentAttachmentRequests = [];
+    window.__studentAttachmentMode = 'success';
+    const attachmentReceipts = new Map();
+    const attachmentFiles = new Map();
+    const scans = new Map();
+    let rejectDrawingPreview = fixtureParams.get('drawing_preview_reject_once') === '1';
+    window.__studentAttachmentRemovals = [];
+    if (fixtureParams.get('drawing_orphans') === '1') {
+      submissionDetail.attachments.push(...[780, 781].map((id) => ({
+        id: String(id).padStart(26, '0'), response_id: 'response-drawing', name: 'drawing.json',
+        mime_type: 'application/json', byte_size: 100, state: 'ready', revision_scope: ['staged'],
+      })));
+    }
+    if (fixtureParams.get('drawing_rejected') === '1') {
+      submissionDetail.attachments.push({
+        id: '00000000000000000000000782', response_id: 'response-drawing', name: 'rejected.json',
+        mime_type: 'application/json', byte_size: 100, state: 'rejected', revision_scope: ['staged'],
+      });
+    }
+    window.fetch = async (url, options = {}) => {
+      const value = String(url);
+      const method = options.method || 'GET';
+      if (value.includes('/assets/') && value.endsWith('/content')) {
+        const png = Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j6i8AAAAASUVORK5CYII='), c => c.charCodeAt(0));
+        const type = value.includes('00000000000000000000000802') ? 'audio/wav' : value.includes('00000000000000000000000803') ? 'video/mp4' : value.includes('00000000000000000000000804') ? 'application/pdf' : 'image/png';
+        return {ok: true, status: 200, headers: new Headers({'X-OJ-AI-File-Type': type}), async blob() {return new Blob([png], {type: 'application/octet-stream'});}};
+      }
+      if (value.includes('/attachments/') && value.endsWith('/content')) {
+        if (window.__studentHoldAttachmentContent) await new Promise((resolve) => { window.__studentReleaseAttachmentContent = resolve; });
+        const id = value.split('/attachments/')[1].split('/')[0];
+        const file = attachmentFiles.get(id);
+        return {ok: Boolean(file), status: file ? 200 : 404, async json() {return JSON.parse(await file.text());}};
+      }
+      if (value.endsWith(`/me/submissions/${submissionId}/attachments`) && method === 'POST') {
+        const body = options.body;
+        const fields = Object.fromEntries([...body.entries()].filter(([key]) => key !== 'file'));
+        const upload = body.get('file');
+        window.__studentAttachmentRequests.push({ fields, name: upload.name, bytes: upload.size, headers: options.headers, document: fields.role === 'document' ? await upload.text() : null });
+        const token = fields.command_id;
+        if (fields.role === 'preview' && rejectDrawingPreview) {
+          rejectDrawingPreview = false;
+          return {ok: false, status: 413, async json() { return {code: 'attachment_limit_exceeded', message: 'Attachment quota exceeded'}; }};
+        }
+        if (!attachmentReceipts.has(token)) {
+          if (fields.response_id === 'response-drawing' && submissionDetail.attachments.filter((row) => row.response_id === fields.response_id && row.revision_scope.includes('staged') && ['staged', 'scanning', 'ready'].includes(row.state)).length >= 2) {
+            return {ok: false, status: 413, async json() { return {code: 'attachment_limit_exceeded', message: 'Attachment quota exceeded'}; }};
+          }
+          const id = String(700 + attachmentReceipts.size).padStart(26, '0');
+          const row = { id, response_id: fields.response_id, name: upload.name, mime_type: upload.type,
+            byte_size: upload.size, state: 'scanning', revision_scope: ['staged'] };
+          attachmentReceipts.set(token, row); scans.set(id, 0);
+          attachmentFiles.set(id, upload);
+          submissionDetail.attachments.push(row);
+        }
+        if (window.__studentAttachmentMode === 'network-after-commit') {
+          window.__studentAttachmentMode = 'success'; throw new TypeError('lost upload response');
+        }
+        return { ok: true, status: 201, async json() { return envelope({ attachment: attachmentReceipts.get(token) }); } };
+      }
+      if (value.includes('/attachments/') && value.endsWith('/commands/remove') && method === 'POST') {
+        const id = value.split('/attachments/')[1].split('/')[0];
+        window.__studentAttachmentRemovals.push(id);
+        submissionDetail.attachments = submissionDetail.attachments.filter((row) => row.id !== id);
+        return { ok: true, status: 200, async json() { return envelope({ attachment: { id, state: 'removed' } }); } };
+      }
+      if (value.includes('/me/assignments?') && method === 'GET') return { ok: true, status: 200, async json() { return envelope({ items: assignments }); } };
+      if (value.endsWith(`/me/assignments/${assignmentId}`) && method === 'GET') return { ok: true, status: 200, async json() { return envelope({ assignment: detail }); } };
+      if (value.endsWith(`/me/submissions/${submissionId}`) && method === 'GET') {
+        window.__studentSubmissionReads += 1;
+        submissionDetail.attachments.forEach((row) => {
+          if (row.state !== 'scanning') return;
+          scans.set(row.id, (scans.get(row.id) || 0) + 1);
+          if (scans.get(row.id) > 1) row.state = window.__studentAttachmentMode === 'reject' ? 'rejected' : 'ready';
+        });
+        return { ok: true, status: 200, async json() { return envelope({ submission: submissionDetail }); } };
+      }
+      if (value.endsWith(`/me/assignments/${assignmentId}/commands/start`) && method === 'POST') {
+        const body = JSON.parse(options.body || '{}');
+        window.__studentRequests.push({ body, headers: { ...(options.headers || {}) } });
+        detail = { ...detail, submission: { id: submissionId, state: 'draft', lock_version: 0, current_revision_id: null, official_revision_id: null, started_at_utc: '2026-08-22 10:05:00' }, actions: ['assignment.export_pdf', 'assignment.continue'] };
+        return { ok: true, status: 201, async json() { return envelope({ submission: detail.submission }); } };
+      }
+      if (value.endsWith(`/me/assignments/${assignmentId}/commands/export-pdf`) && method === 'POST') {
+        const body = JSON.parse(options.body || '{}');
+        window.__studentPdfRequests.push({ body, headers: { ...(options.headers || {}) } });
+        return { ok: true, status: 202, async json() { return envelope({ export_job: {
+          id: worksheetPdfJobId, state: 'queued', artifact_kind: 'worksheet_pdf', source_type: 'worksheet_publication',
+          source_id: publicationId, source_hash: publicationHash, assignment_id: assignmentId,
+        } }); } };
+      }
+      if (value.endsWith(`/export-jobs/${worksheetPdfJobId}`) && method === 'GET') {
+        return { ok: true, status: 200, async json() { return envelope({ export_job: {
+          job_id: worksheetPdfJobId, state: 'ready', artifact_kind: 'worksheet_pdf', source_type: 'worksheet_publication',
+          source_id: publicationId, source_hash: publicationHash, artifact_id: worksheetPdfArtifactId,
+        } }); } };
+      }
+      if (value.endsWith(`/artifacts/${worksheetPdfArtifactId}/download`) && method === 'GET') {
+        window.__studentPdfDownloads.push({ headers: { ...(options.headers || {}) } });
+        return {
+          ok: true, status: 200,
+          async blob() { return new Blob(['%PDF-1.7 fixture'], { type: 'application/pdf' }); },
+          async json() { return {}; },
+        };
+      }
+      if (value.endsWith(`/me/submissions/${submissionId}/commands/export-pdf`) && method === 'POST') {
+        const body = JSON.parse(options.body || '{}');
+        window.__studentSubmissionPdfRequests.push({ body, headers: { ...(options.headers || {}) } });
+        return { ok: true, status: 202, async json() { return envelope({ export_job: {
+          id: submissionPdfJobId, state: 'queued', artifact_kind: 'submission_pdf', source_type: 'submission_revision',
+          source_id: submissionDetail.official_revision.id, source_hash: submissionDetail.official_revision.content_hash, submission_id: submissionId,
+        } }); } };
+      }
+      if (value.endsWith(`/export-jobs/${submissionPdfJobId}`) && method === 'GET') {
+        return { ok: true, status: 200, async json() { return envelope({ export_job: {
+          job_id: submissionPdfJobId, state: 'ready', artifact_kind: 'submission_pdf', source_type: 'submission_revision',
+          source_id: submissionDetail.official_revision.id, source_hash: submissionDetail.official_revision.content_hash, artifact_id: submissionPdfArtifactId,
+        } }); } };
+      }
+      if (value.endsWith(`/artifacts/${submissionPdfArtifactId}/download`) && method === 'GET') {
+        window.__studentSubmissionPdfDownloads.push({ headers: { ...(options.headers || {}) } });
+        return {
+          ok: true, status: 200,
+          async blob() { return new Blob(['%PDF-1.7 submission fixture'], { type: 'application/pdf' }); },
+          async json() { return {}; },
+        };
+      }
+      if (value.endsWith(`/me/submissions/${submissionId}/commands/autosave`) && method === 'POST') {
+        const body = JSON.parse(options.body || '{}');
+        window.__studentAutosaveRequests.push({ body, headers: { ...(options.headers || {}) } });
+        if (window.__studentAutosaveMode === 'offline') throw new TypeError('fixture offline');
+        if (window.__studentAutosaveMode === 'delayed') {
+          await new Promise((resolve) => { window.__studentAutosaveRelease = resolve; });
+          window.__studentAutosaveRelease = null;
+          window.__studentAutosaveMode = 'success';
+        }
+        if (window.__studentAutosaveMode === 'conflict') {
+          const serverAnswers = { ...submissionDetail.current_revision?.response?.answers, 'response-short': '서버에서 저장한 답' };
+          commitAutosave(body, serverAnswers);
+          window.__studentAutosaveMode = 'conflict-returned';
+          return { ok: false, status: 409, async json() { return { code: 'submission_revision_conflict', message: '내용이 바뀌었습니다. 새로고침해 주세요.', data: { status: 409, correlation_id: 'g3-conflict' } }; } };
+        }
+        const result = commitAutosave(body);
+        submissionDetail.attachments.forEach((row) => {
+          const selected = Object.values(body.payload.answers).some((answer) => Array.isArray(answer) && answer.includes(row.id));
+          if (selected) { row.state = 'bound'; row.revision_scope = ['current']; }
+          else if (row.state === 'bound') row.revision_scope = [];
+        });
+        return { ok: true, status: 201, async json() { return envelope(result); } };
+      }
+      if (value.endsWith(`/me/submissions/${submissionId}/commands/submit`) && method === 'POST') {
+        const body = JSON.parse(options.body || '{}');
+        window.__studentSubmitRequests.push({ body, headers: { ...(options.headers || {}) } });
+        const receipt = { id: '1E040G2081040G2081040G2081', receipt_no: 1, action: 'submit', attempt_no: 1, timeliness: 'on_time', received_at_utc: '2026-08-22 10:40:00' };
+        submissionDetail = {
+          ...submissionDetail,
+          state: 'submitted',
+          lock_version: Number(submissionDetail.lock_version || 0) + 1,
+          official_revision: submissionDetail.current_revision,
+          official_attempt_no: 1,
+          receipt,
+          submitted_at_utc: receipt.received_at_utc,
+          actions: ['submission.export_pdf'],
+        };
+        detail = {
+          ...detail,
+          submission: {
+            id: submissionId,
+            state: 'submitted',
+            lock_version: submissionDetail.lock_version,
+            current_revision_id: submissionDetail.current_revision?.id || null,
+            official_revision_id: submissionDetail.official_revision?.id || null,
+            official_attempt_no: 1,
+            started_at_utc: submissionDetail.started_at_utc,
+            submitted_at_utc: submissionDetail.submitted_at_utc,
+          },
+          actions: ['assignment.export_pdf'],
+        };
+        const submission = {
+          id: submissionId, assignment_id: assignmentId, state: submissionDetail.state,
+          lock_version: submissionDetail.lock_version,
+          current_revision_id: submissionDetail.current_revision.id,
+          official_revision_id: submissionDetail.official_revision.id,
+          official_attempt_no: submissionDetail.official_attempt_no,
+          submitted_at_utc: submissionDetail.submitted_at_utc, actions: [],
+        };
+        return { ok: true, status: 201, async json() { return envelope({ receipt, submission }); } };
+      }
+      return { ok: false, status: 404, async json() { return { message: 'fixture route missing' }; } };
+    };
+  </script>
+  <script src="../../resources/assets/katex/katex.min.js"></script>
+  <script src="../../resources/js/student-assignments.js"></script>
+  <script src="../../resources/js/student-submission-autosave.js"></script>
+</body>
+</html>

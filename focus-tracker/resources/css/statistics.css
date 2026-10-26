@@ -1,0 +1,107 @@
+.ftk-statistics {
+    margin-top: var(--ojp-space-6, 32px);
+    padding: var(--ojp-space-5, 24px);
+    border: 1px solid var(--ojp-color-line);
+    border-radius: var(--ojp-radius-md, 12px);
+    background: var(--ojp-color-surface);
+    color: var(--ojp-color-ink);
+    min-width: 0;
+}
+
+.ftk-statistics .ftk-statistics-toolbar,
+.ftk-statistics .ftk-statistics-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--ojp-space-2, 8px);
+}
+
+.ftk-statistics .ftk-statistics-field {
+    display: grid;
+    gap: var(--ojp-space-1, 4px);
+    min-width: 0;
+    font-size: var(--ojp-text-subhead, 13px);
+}
+
+.ftk-statistics .ftk-statistics-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--ojp-space-3, 12px);
+}
+
+.ftk-statistics .ftk-statistics-checks,
+.ftk-statistics .ftk-statistics-comparison {
+    overflow-wrap: anywhere;
+}
+
+.ftk-statistics .ftk-statistics-chart {
+    margin: var(--ojp-space-5, 24px) 0;
+}
+
+.ftk-statistics .ftk-statistics-chart svg {
+    display: block;
+    width: 100%;
+    min-width: 560px;
+    height: auto;
+}
+
+.ftk-statistics .ftk-statistics-chart {
+    overflow-x: auto;
+}
+
+.ftk-statistics .ftk-statistics-chart figcaption {
+    margin-bottom: var(--ojp-space-2, 8px);
+    font-size: var(--ojp-text-footnote, 12px);
+    color: var(--ojp-color-muted);
+}
+
+.ftk-statistics .ftk-stat-axis,
+.ftk-statistics .ftk-stat-gap {
+    fill: var(--ojp-color-muted);
+    font-size: 13px;
+}
+
+.ftk-statistics .ftk-stat-grid {
+    stroke: var(--ojp-color-line);
+    stroke-width: 1;
+}
+
+.ftk-statistics .ftk-stat-bar {
+    fill: var(--ojp-color-primary);
+    opacity: 0.4;
+}
+
+.ftk-statistics .ftk-stat-line {
+    fill: none;
+    stroke: var(--ojp-color-info);
+    stroke-width: 2.5;
+}
+
+.ftk-statistics .ftk-stat-point {
+    fill: var(--ojp-color-info);
+}
+
+.ftk-statistics .ftk-statistics-table summary {
+    cursor: pointer;
+    padding: var(--ojp-space-2, 8px) 0;
+}
+
+.ftk-statistics .ftk-statistics-table caption {
+    text-align: start;
+    padding: var(--ojp-space-2, 8px) 0;
+}
+
+@media (max-width: 540px) {
+    .ftk-statistics {
+        padding: var(--ojp-space-3, 12px);
+    }
+
+    .ftk-statistics .ftk-statistics-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ftk-statistics .ftk-statistics-toolbar .ojp-input {
+        max-width: 100%;
+        min-width: 0;
+    }
+}

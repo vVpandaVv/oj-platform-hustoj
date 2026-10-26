@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-12 학습 공간 상세 설계 | OJ Platform</title>
+  <style>
+    :root {
+      --ink:#1c2933;
+      --muted:#60717d;
+      --line:#d7e0e5;
+      --soft:#f4f7f8;
+      --panel:#ffffff;
+      --nav:#17384b;
+      --blue:#276d8c;
+      --green:#2f7656;
+      --amber:#966b18;
+      --red:#a14343;
+      --violet:#6d5a91;
+      --shadow:0 8px 24px rgba(22,50,66,.08);
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      color:var(--ink);
+      background:#edf2f4;
+      font-family:"Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif;
+      line-height:1.65;
+      letter-spacing:0;
+    }
+    a { color:var(--blue); }
+    code, pre { font-family:Consolas,"Malgun Gothic",monospace; }
+    code {
+      padding:2px 5px;
+      border:1px solid #d8e2e7;
+      border-radius:4px;
+      color:#174b64;
+      background:#f7fafb;
+      overflow-wrap:anywhere;
+    }
+    .topbar {
+      position:sticky;
+      top:0;
+      z-index:10;
+      min-height:58px;
+      color:#fff;
+      background:var(--nav);
+      border-bottom:1px solid rgba(255,255,255,.14);
+    }
+    .topbar-inner {
+      width:min(1440px,100%);
+      min-height:58px;
+      margin:0 auto;
+      padding:0 24px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .brand { color:#fff; text-decoration:none; }
+    .layout {
+      width:min(1440px,100%);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:240px minmax(0,1fr);
+      align-items:start;
+    }
+    nav {
+      position:sticky;
+      top:58px;
+      height:calc(100vh - 58px);
+      padding:24px 18px;
+      overflow:auto;
+      background:#fff;
+      border-right:1px solid var(--line);
+    }
+    nav strong { display:block; margin-bottom:10px; }
+    nav ul { margin:0; padding:0; list-style:none; }
+    nav a {
+      display:block;
+      padding:8px 10px;
+      border-radius:6px;
+      color:#304652;
+      text-decoration:none;
+    }
+    nav a:hover, nav a:focus-visible { background:#eaf2f5; }
+    main {
+      min-width:0;
+      padding:28px;
+    }
+    .report-header, .section {
+      margin-bottom:22px;
+      padding:26px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:8px;
+      box-shadow:var(--shadow);
+    }
+    .eyebrow {
+      margin:0 0 6px;
+      color:var(--blue);
+      font-size:13px;
+      font-weight:700;
+    }
+    h1 { margin:0; font-size:32px; line-height:1.25; }
+    h2 { margin:0; font-size:23px; }
+    h3 { margin:22px 0 10px; font-size:18px; }
+    p { margin:8px 0; }
+    .lede { max-width:920px; color:#455b68; }
+    .meta, .metrics {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:16px;
+    }
+    .meta span, .badge {
+      padding:5px 9px;
+      border-radius:999px;
+      background:#eaf1f4;
+      color:#405663;
+      font-size:12px;
+      font-weight:700;
+    }
+    .badge.good { color:#205c41; background:#e2f1e9; }
+    .badge.wait { color:#80580e; background:#fff1cf; }
+    .badge.info { color:#205d78; background:#e4f1f6; }
+    .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .metric {
+      min-width:0;
+      padding:14px;
+      border-left:4px solid var(--blue);
+      background:var(--soft);
+    }
+    .metric strong { display:block; font-size:23px; }
+    .metric span { color:var(--muted); font-size:13px; }
+    .section-heading {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:16px;
+    }
+    .section-heading p { color:var(--muted); }
+    .callout, .warning, .summary {
+      margin-top:16px;
+      padding:14px 16px;
+      border-left:4px solid var(--blue);
+      background:#edf6f9;
+    }
+    .warning { border-color:var(--amber); background:#fff8e8; }
+    .summary { border-color:var(--green); background:#edf7f1; }
+    .table-wrap {
+      overflow-x:auto;
+      border:1px solid var(--line);
+    }
+    table {
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
+    }
+    th, td {
+      padding:11px 12px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+      vertical-align:top;
+      font-size:14px;
+    }
+    th {
+      color:#344b58;
+      background:#eef3f5;
+      white-space:nowrap;
+    }
+    tr:last-child td { border-bottom:0; }
+    .flow {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      margin:14px 0 18px;
+    }
+    .flow article {
+      padding:14px;
+      border:1px solid var(--line);
+      border-top:4px solid var(--blue);
+      background:#fff;
+    }
+    .flow article:nth-child(2) { border-top-color:var(--violet); }
+    .flow article:nth-child(3) { border-top-color:var(--green); }
+    .flow span { display:block; color:var(--muted); font-size:12px; }
+    .flow strong { display:block; margin-top:3px; }
+    .rules, .checks { margin:12px 0 0; padding-left:22px; }
+    .rules li, .checks li { margin:8px 0; }
+    .tree {
+      margin:0;
+      padding:16px;
+      overflow:auto;
+      color:#dcecf3;
+      background:#17384b;
+      border-radius:6px;
+      line-height:1.55;
+    }
+    .gate {
+      display:grid;
+      grid-template-columns:160px minmax(0,1fr) 150px;
+      border:1px solid var(--line);
+      border-bottom:0;
+    }
+    .gate:last-of-type { border-bottom:1px solid var(--line); }
+    .gate div { padding:11px 12px; }
+    .gate div + div { border-left:1px solid var(--line); }
+    footer {
+      padding:20px 0 8px;
+      color:var(--muted);
+      text-align:center;
+      font-size:13px;
+    }
+    @media (max-width:960px) {
+      .layout { grid-template-columns:1fr; }
+      nav { position:static; height:auto; border-right:0; border-bottom:1px solid var(--line); }
+      nav ul { display:flex; gap:4px; overflow-x:auto; }
+      nav a { white-space:nowrap; }
+      main { padding:18px; }
+      .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .flow { grid-template-columns:1fr; }
+    }
+    @media (max-width:620px) {
+      .topbar-inner { padding:0 14px; }
+      .topbar-inner > span { display:none; }
+      main { padding:12px; }
+      .report-header, .section { padding:18px; }
+      h1 { font-size:27px; }
+      h2 { font-size:21px; }
+      .metrics { grid-template-columns:1fr 1fr; }
+      .section-heading { display:block; }
+      .section-heading .badge { display:inline-block; margin-top:8px; }
+      .gate { grid-template-columns:1fr; }
+      .gate div + div { border-left:0; border-top:1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="development-sequence.html"><strong>OJ Platform 개발 설계</strong></a>
+      <span>DS-12 · 학습 공간 상세 설계</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="문서 목차">
+      <strong>목차</strong>
+      <ul>
+        <li><a href="#scope">범위와 기준</a></li>
+        <li><a href="#pages">페이지 소유</a></li>
+        <li><a href="#ui">시각 시안</a></li>
+        <li><a href="#classes">수업</a></li>
+        <li><a href="#contests">대회</a></li>
+        <li><a href="#groups">그룹</a></li>
+        <li><a href="#integration">모듈 연결</a></li>
+        <li><a href="#data">데이터 계약</a></li>
+        <li><a href="#structure">코드 구조</a></li>
+        <li><a href="#verification">검증 관문</a></li>
+        <li><a href="#approval">확정 항목</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header" id="scope">
+        <p class="eyebrow">DS-12 · 메뉴 기반 상세 설계</p>
+        <h1>학습 공간 상세 설계</h1>
+        <p class="lede">서비스의 상시 학습은 수업, 시간 제한 평가는 대회, 여러 수업에서 재사용하는 사용자 묶음은 그룹으로 구분한다. 일반 사용자에게는 <strong>학습</strong>, 관리자에게는 <strong>학습 공간</strong> 1차 메뉴 아래 수업 → 대회·평가 → 그룹 순서로 표시한다. 데이터와 권한은 기능별로 소유하며 수업과 대회는 그룹 기능 없이도 완전하게 동작해야 한다.</p>
+        <div class="meta">
+          <span>작성일: 2026-07-23</span>
+          <span>기능 확정일: 2026-07-23</span>
+          <span>시안 작성일: 2026-07-24</span>
+          <span>상태: 사용자 확정 · 기능·UI 설계 동결</span>
+          <span>선행 설계: DS-00~DS-11 확정</span>
+          <span>실행: I-00 뒤 I-05</span>
+          <span>근거: D-002·D-005·D-007·D-008·DS-02·DS-04·DS-05·DS-07·DS-09·DS-10·DS-11</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>47개</strong><span>직접 사용자·관리자 GET 경로</span></div>
+          <div class="metric"><strong>14개</strong><span>학습 공간 플랫폼 테이블</span></div>
+          <div class="metric"><strong>17개</strong><span>확정 기능 컨트롤러</span></div>
+          <div class="metric"><strong>0개</strong><span>추가 경로·추가 액션</span></div>
+        </div>
+        <div class="callout"><strong>시안 확정:</strong> DS12-Q01~Q08과 메뉴 순서, 사용자·관리자, 수업·대회·평가·그룹을 나눈 <a href="#ui">시안 7종</a>을 사용자 확정으로 동결했다. 직접 화면 47개와 관리자 허브 상태를 기준으로 I-00 보호 환경을 통과한 뒤 I-05에서 수업 → 대회·평가 → 그룹 순서로 구현한다.</div>
+        <div class="warning"><strong>범위 경계:</strong> 문제 원본과 문제 은행은 DS-10, 제출 생성·채점 결과·상세 정책은 DS-11, AI 피드백·개인 학습 분석·전체 랭킹은 DS-13이 소유한다. DS-12는 문제와 제출을 복제하지 않고 문맥별 접근과 보고서만 조립한다.</div>
+      </header>
+
+      <section class="section" id="pages">
+        <div class="section-heading"><div><h2>페이지와 소유 경계</h2><p>D-002에서 확정한 경로를 그대로 사용하고 새 호환 주소를 만들지 않는다.</p></div><span class="badge info">직접 47개</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>사용자 페이지</th><th>관리자 페이지</th><th>핵심 접근</th></tr></thead>
+          <tbody>
+            <tr><td>수업</td><td><code>/classes</code>, 상세, 내 제출, 내 진도 · 4개</td><td>목록, 추가, 수정, 참여자, 제출, 진도, 보관 확인, 보관 목록·제출·진도 · 10개</td><td>학습자는 본인 정보, 소유자·공동 강사는 담당 수업 전체</td></tr>
+            <tr><td>대회</td><td><code>/contests</code>, 상세, 제출, 순위, 통계, IP 확인·변경 · 7개</td><td>목록, 추가, 수정, 보관 확인, 제출, 순위, 통계, IP 확인, 삭제된 대회 제출 · 9개</td><td>참가 관계·대회 단계·역할별 담당 범위</td></tr>
+            <tr><td>그룹</td><td><code>/groups</code>, 상세, 구성원, 제출, 순위 · 5개</td><td>목록, 추가, 수정, 구성원, 가입 승인, 운영자, 일괄 등록, 보관 확인, 제출, 순위, 보관 목록·제출 · 12개</td><td>활성 구성원 또는 소유자·위임 운영자 범위</td></tr>
+            <tr><td>학습 공간 허브</td><td>별도 사용자 허브를 추가하지 않고 주 메뉴에서 접근 가능한 수업·대회·그룹만 표시</td><td><code>console.learning.index</code> 1개는 AdminConsole이 경로를 소유하고 세 모듈의 요약 Provider를 조립</td><td>접근 가능한 하위 기능이 하나 이상일 때만 메뉴 표시</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>공통 진입:</strong> DS-09 계약에 따라 위 사용자·관리자 페이지는 모두 로그인해야 접근할 수 있다. 비로그인 요청은 로그인 화면으로 이동하고 로그인 뒤 원래 허용 페이지로 한 번만 돌아온다.</div>
+        <div class="summary"><strong>제출 화면 9개:</strong> 수업·대회·그룹의 사용자 제출 3개, 관리자 제출 3개, 보관·삭제 문맥 제출 3개는 DS-12가 페이지를 소유한다. 데이터 조회와 상세 가시성 판정은 DS-11의 <code>Submission_Context_Query</code>와 <code>Submission_Access_Policy</code>를 사용한다.</div>
+        <div class="callout"><strong>액션 수량 유지:</strong> 새 액션을 추가하지 않는다. 기존 <code>oj_class_join</code>·<code>oj_class_delete</code>는 <code>oj_class_membership_command</code>·<code>oj_class_lifecycle_command</code>로, <code>oj_contest_join</code>·<code>oj_contest_delete</code>는 <code>oj_contest_participation_command</code>·<code>oj_contest_lifecycle_command</code>로 일대일 교체한다. 각 명령은 등록된 <code>operation</code> 허용 목록과 작업별 nonce·권한·현재 상태를 검사하며 서로 다른 기능을 받는 범용 액션으로 확장하지 않는다.</div>
+      </section>
+
+      <section class="section" id="ui">
+        <div class="section-heading"><div><h2>시각 시안</h2><p>한 문서가 비대해지지 않도록 기능과 사용자 영역을 기준으로 나누었다.</p></div><span class="badge good">사용자 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>시안</th><th>화면·상태</th><th>핵심 검토</th></tr></thead>
+          <tbody>
+            <tr><td>사용자 · 수업</td><td><a href="development-ds-12-user-classes-ui.html"><strong>수업 시안</strong></a></td><td>목록·상세·내 제출·내 진도 · 4개</td><td>직접 참여, 공개 예정 문제, 본인 진도와 공개된 전체 풀이 행렬·최초 해결자</td></tr>
+            <tr><td>사용자 · 대회·평가</td><td><a href="development-ds-12-user-contests-ui.html"><strong>대회·평가 시안</strong></a></td><td>목록·상세·제출·순위·통계·IP 확인·변경 · 7개</td><td>준비·진행·종료 단계, 공개된 문제별 점수·감점·총점·순위, 접속 IP 요청</td></tr>
+            <tr><td>사용자 · 그룹</td><td><a href="development-ds-12-user-groups-ui.html"><strong>그룹 시안</strong></a></td><td>목록·상세·구성원·제출·순위 · 5개</td><td>재사용 구성원, 수행 모드의 결과 전용 제출 목록</td></tr>
+            <tr><td>관리자 · 허브</td><td><a href="development-ds-12-admin-learning-hub-ui.html"><strong>학습 공간 허브 시안</strong></a></td><td>전역 관리자·담당 강사·Groups OFF·부분 실패 · 4개 상태</td><td>역할별 하위 기능, Groups OFF 독립성, Provider 실패 격리</td></tr>
+            <tr><td>관리자 · 수업</td><td><a href="development-ds-12-admin-classes-ui.html"><strong>수업 관리 시안</strong></a></td><td>목록·추가·수정·참여자·제출·진도·보관 관련 · 10개</td><td>공동 강사, 원자 저장, 참여자×문제 풀이 행렬, 최초 해결자, 공개 설정, 읽기 전용 보관 보고서</td></tr>
+            <tr><td>관리자 · 대회·평가</td><td><a href="development-ds-12-admin-contests-ui.html"><strong>대회·평가 관리 시안</strong></a></td><td>목록·추가·수정·보관·제출·순위·통계·IP·삭제 대회 제출 · 9개</td><td>문제 구성, 진행 잠금, 참가자×문제 점수·감점 행렬, 총점·순위 정렬, 공개 설정</td></tr>
+            <tr><td>관리자 · 그룹</td><td><a href="development-ds-12-admin-groups-ui.html"><strong>그룹 관리 시안</strong></a></td><td>목록·추가·수정·구성원·승인·운영자·일괄 등록·보관·보고서 · 12개</td><td>위임 운영 권한, 이메일 비의존 단건·선택 일괄 초기화, 수행 모드, 소유자 전용 운영자 변경</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>수량 일치:</strong> 사용자 16개와 관리자 기능 화면 31개로 직접 화면 47개를 모두 시각화했다. <code>console.learning.index</code>는 AdminConsole 소유 허브이므로 직접 기능 화면 수에 더하지 않고 역할·기능·Provider 상태 4개로 별도 검토한다.</div>
+        <div class="warning"><strong>검토 범위:</strong> 시안의 버튼과 폼은 화면 배치·문구·권한·상태 전환을 검토하기 위한 예시다. 실제 참여·승인·보관·비밀번호 초기화·IP 변경 명령과 운영 DB 쓰기는 구현하지 않았다.</div>
+      </section>
+
+      <section class="section" id="classes">
+        <div class="section-heading"><div><h2>수업 설계</h2><p>수업은 일정·접근·담당자·문제·직접 참여자와 학습 진도를 소유한다.</p></div><span class="badge good">구현 1순위</span></div>
+        <div class="flow">
+          <article><span>1 · 준비</span><strong>기본 정보·담당자·접근 설정</strong></article>
+          <article><span>2 · 운영</span><strong>참여자·문제·풀이·진도</strong></article>
+          <article><span>3 · 종료</span><strong>보고서·보관·복원</strong></article>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>기능</th><th>권장 동작</th><th>권한</th><th>저장·조회</th></tr></thead>
+          <tbody>
+            <tr><td>개설·편집</td><td>추가 화면에서 이름, 설명, 시작·종료, 접근 방식, 전체 풀이 현황 공개, Blockly 프로필, 공동 강사, 그룹과 문제 구성을 한 번에 저장한다. 수정 화면은 생성 이후 변경에 사용</td><td>생성 권한 또는 전역 관리자. 개설자를 소유자로 기록</td><td><code>classes</code>와 수업 관계 4개 테이블</td></tr>
+            <tr><td>수업 복사</td><td>목록·수정 화면에서 기존 추가 화면의 <code>copy_from</code>으로 초안을 연다. 이름·설명·Blockly·문제 순서와 숨김 여부·현재 연결 가능한 그룹을 가져온다. 주소는 새로 입력하고 비공개·운영 중지를 기본으로 확인 후 저장한다. 참여자·학습 기록·공동 강사·비밀번호·수업 및 문제 공개 기간은 복사하지 않는다.</td><td>원본 관리 권한과 수업 생성 권한 모두 필요. 저장 시 그룹·문제 사용 권한 재검증</td><td>GET은 저장하지 않으며 기존 <code>oj_class_save</code>와 원자 저장을 사용. 새 ID와 저장자의 소유권 생성, 문제 원본·제출은 복제하지 않음</td></tr>
+            <tr><td>접근 방식</td><td><code>public</code>, <code>password</code>, <code>private</code>, <code>group_only</code> 네 가지. 기본은 <code>private</code></td><td>소유자만 변경, 공동 강사는 조회</td><td><code>classes.visibility</code>, 비밀번호 해시, <code>class_group_links</code></td></tr>
+            <tr><td>공동 강사</td><td>사용자 검색으로 추가·해제하고 해제는 다음 요청부터 즉시 반영</td><td>소유자만 담당자 변경. 공동 강사는 구성원·문제·보고서 운영</td><td><code>class_instructors</code></td></tr>
+            <tr><td>참여자</td><td>신청, 초대, 직접 등록, 승인, 거절, 나가기, 제외, 재등록을 같은 사용자 행의 상태 전환으로 처리</td><td>본인 신청·나가기, 소유자·공동 강사 승인·직접 등록·제외</td><td><code>class_enrollments</code></td></tr>
+            <tr><td>문제 구성</td><td>제목·난이도·주제로 검색해 선택하고 순서, 공개 기간, 공개 여부를 조정</td><td>소유자·공동 강사</td><td><code>class_problem_links</code>, Problems 읽기 Provider</td></tr>
+            <tr><td>그룹 연결</td><td>활성 그룹을 검색해 참여 대상에 추가한다. 그룹은 참여 후보를 제공할 뿐 수업 참여 행을 대신하지 않음</td><td>소유자·공동 강사와 그룹 조회 범위</td><td><code>class_group_links</code>, 선택적 Groups Provider</td></tr>
+            <tr><td>진도·제출</td><td>세로 참여자·가로 문제 행렬에 해결·시도·미시도와 합계를 표시하고, 문제 공개 뒤 활성 참여자의 첫 정답을 최초 해결로 표시한다. 담당자는 항상 전체를 보며 참여자는 <code>participants_live</code>일 때 행렬을 보고, <code>private</code>이면 본인 진도만 본다. 수업·문제 기간은 워드프레스 지역 시간, Judge 제출 시각은 UTC로 해석해 동일한 절대 시각으로 비교하며 시작·종료 경계를 포함한다. 내 제출과 모든 학습 현황이 같은 조회 기준을 사용하고, 참여 승인 시각은 저장된 UTC 기준을 유지한다.</td><td>담당 수업 소유자·공동 강사 또는 공개 정책을 통과한 활성 참여자</td><td><code>classes.progress_visibility</code> + 수업 관계 + DS-11 제출 조회. 시간대 보정은 조회에만 적용하며 기존 기록을 수정하거나 재제출하지 않는다.</td></tr>
+            <tr><td>보관·복원</td><td>보관하면 신규 참여와 수업 문맥 제출을 닫고 보고서는 유지. 복원은 현재 관계와 기간을 재검증</td><td>소유자 보관, 소유자 또는 전역 관리자 복원</td><td><code>classes.deleted_at</code>와 관계 유지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>수업 추가 화면:</strong> 기본 정보만 먼저 저장한 뒤 수정 화면으로 보내지 않는다. 추가 화면에서 접근 방식·전체 풀이 현황 공개·Blockly 프로필·공동 강사·그룹 연결·문제·공개 순서를 모두 구성하고 <strong>수업 만들기</strong> 한 번으로 원자 저장한다. 수정 화면은 생성 이후 변경에만 사용한다.</div>
+        <div class="callout"><strong>수업 전체 풀이 현황:</strong> 관리자 화면은 공개 설정과 관계없이 전체 행렬을 조회한다. 참여자 공개 시에는 표시 이름·문제별 상태·최초 해결자·전체 진도만 제공하고 다른 참여자의 제출 상세·코드는 제공하지 않는다. 최초 해결은 문제 공개 이후이면서 당시 활성 참여자였던 사용자의 가장 이른 정답 제출로 계산한다.</div>
+        <div class="callout"><strong>입력·행렬 사용성 보완 (2026-09-18):</strong> 연결 그룹은 공통 다중 선택기에서 최소 240px·8줄 이상으로 표시한다. 학습 현황은 참여자 이름 옆에 <strong>푼 문제 수(정답 / 전체)</strong>를 표시하며, 수업·문제 공개 기간과 참여 승인 기준을 통과한 유효 정답 문제를 중복 없이 집계한다. 문제 열은 폭을 유지하고 표 내부에서 좌우로 스크롤하며 참여자 열과 표 머리글은 고정한다. 별도 누적 스냅샷이나 카운터를 저장하지 않고 기존 제출 조회 결과로 계산한다.</div>
+        <div class="warning"><strong>원자 저장:</strong> 수업 본체, 공동 강사, 그룹 연결과 문제 연결은 하나의 Classes 업무 서비스가 검증하고 같은 PlatformDb 트랜잭션에서 모두 성공하거나 모두 되돌린다. Judge 문제 존재 확인은 쓰기 전에 완료한다.</div>
+      </section>
+
+      <section class="section" id="contests">
+        <div class="section-heading"><div><h2>대회·평가 설계</h2><p>대회는 시간 제한 평가이며 준비·진행·종료 단계에 따라 수정 가능 범위를 다르게 적용한다.</p></div><span class="badge good">구현 2순위</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>단계</th><th>허용</th><th>제한</th><th>담당 역할</th></tr></thead>
+          <tbody>
+            <tr><td>준비</td><td>일정, 문제·순서, 참가자, 공개 범위, ICPC·OI·일반 점수형 채점 방식, 선택 방식의 세부 설정, 순위·풀이 현황 공개, IP, 오답 정보·AI·순위 동결, Blockly 프로필 설정</td><td>다른 소유자의 대회 수정</td><td>소유자·공동 운영자</td></tr>
+            <tr><td>진행</td><td>참가 상태·접속 IP 확인, 허용 IP 조치, 제출 상태와 전체 점수 행렬 확인, 승인된 종료 시각 연장</td><td>문제·배점·채점 정책·시작 시각·참가 기준·순위 공개 정책의 일반 편집</td><td>소유자·공동 운영자·시험 감독자</td></tr>
+            <tr><td>종료</td><td>결과·통계 검토, 담당 범위 재채점 요청, 결과 공개, 내보내기</td><td>제출 원본 직접 변경, 감사 없는 결과 덮어쓰기</td><td>소유자·공동 운영자·결과 검토자</td></tr>
+            <tr><td>보관</td><td>최소 복구 정보와 제출·결과 조회 유지</td><td>신규 참가·제출·일반 설정 변경</td><td>소유자 또는 전역 관리자</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>대회 문제 구성:</strong> 대회 추가 화면에서 문제·대회 문제 번호·순서·배점을 구성한 뒤 준비 단계로 생성한다. 같은 수정 경로에서 준비 단계까지는 문제를 추가·삭제·정렬하고 배점을 바꿀 수 있지만, 시작과 동시에 문제·순서·배점을 잠가 진행 중 일반 편집을 허용하지 않는다.</div>
+        <div class="callout"><strong>대회 전체 풀이 현황:</strong> 참가자를 행, 문제를 열로 두고 선택한 채점 방식에 맞는 값을 표시한다. ICPC는 해결·오답·벌점, OI는 최고 통과율 점수·완전 해결·벌점, 일반 점수형은 실제 첫 정답 풀이 시간·정확성·시간 점수·오답 감점을 보여준다. 순위·총점 또는 벌점·이름 정렬을 지원하며, 관리자는 항상 담당 범위를 보고 참여자는 <code>live</code>일 때 실시간, <code>final</code>일 때 종료 뒤, <code>private</code>이면 조회하지 못한다.</div>
+        <h3>채점과 순위</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>채점 방식</th><th>문제 결과</th><th>순위</th><th>고정 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>ICPC <code>icpc_v1</code></td><td>맞았습니다 여부와 정답 전 오답 수</td><td>해결 수 내림차순 → 벌점 오름차순</td><td>벌점은 첫 정답 경과 초 + 감점 대상 오답당 1,200초이며 미해결 문제의 오답은 총 벌점에 넣지 않는다.</td></tr>
+            <tr><td>OI <code>oi_v1</code></td><td>문제별 최고 <code>pass_rate × 배점</code></td><td>총점 내림차순 → 완전 해결 수 내림차순 → 벌점 오름차순</td><td>정답 여부와 관계없이 최고 부분 점수를 인정하고, 벌점은 동점 비교에만 사용한다.</td></tr>
+            <tr><td>일반 점수형 <code>standard_score_v1</code></td><td>정확성 점수 + 시간 점수 - 정답 전 오답 감점</td><td>총점 내림차순 → 해결 수 내림차순 → 점수 완성 시각 오름차순</td><td>부분 점수, 시간 점수 비율과 오답 1회 감점은 준비 단계에서 설정한다.</td></tr>
+          </tbody>
+        </table></div>
+        <h3>일반 점수형 세부 규칙</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>확정 규칙</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td>정답 기본 점수</td><td><code>배점 - 최대 시간 점수</code></td><td>기본 시간 비율 10%이면 100점 문제의 정답 기본 점수는 90점이다. 시간 비율은 준비 단계에서 1~30%로 설정하고 시작 뒤 잠근다.</td></tr>
+            <tr><td>부분 점수</td><td><code>none</code> 또는 <code>pass_rate_correctness_base_v1</code></td><td>사용하지 않으면 완전 정답일 때만 정답 기본 점수를 부여한다. 사용하면 현재까지의 최고 <code>clamp(pass_rate, 0, 1) × 정답 기본 점수</code>를 정확성 점수로 사용한다.</td></tr>
+            <tr><td>시간 점수</td><td><code>floor(최대 시간 점수 × (대회 시간 - clamp(실제 풀이 시간, 0, 대회 시간)) / 대회 시간)</code></td><td>완전 정답일 때만 부여한다. 실제 풀이 시간은 대회 시작부터 해당 문제의 첫 정답 제출까지의 경과 초이며 늦게 풀수록 선형으로 감소한다.</td></tr>
+            <tr><td>문제 점수</td><td><code>max(0, 적용 정확성 점수 + 완전 정답 시간 점수 - 정답 전 오답 감점)</code></td><td>부분 점수를 사용하면 미해결 문제도 최고 통과율에 따른 점수를 가질 수 있다. 최종 점수는 원래 문제 배점을 넘지 않으며 감점 대상 제출이 추가되거나 재채점되면 다시 계산한다.</td></tr>
+            <tr><td>감점 대상</td><td>틀렸습니다, 시간 초과, 메모리 초과, 런타임 오류, 출력 초과</td><td>컴파일 오류, 시스템 오류, 채점 대기, 첫 정답 이후 제출은 감점하지 않는다. 기본 감점은 오답 1회당 5점이며 준비 단계에서 0 이상으로 설정한다.</td></tr>
+            <tr><td>순위 1차</td><td>시간 반영 총점 내림차순</td><td>모든 문제의 정확성·시간·오답 감점을 반영한 최종 점수를 합산한다. 빠른 풀이가 이 단계에서 점수 차이로 드러난다.</td></tr>
+            <tr><td>순위 2차</td><td>해결 문제 수 내림차순</td><td>총점이 같으면 더 많은 문제를 해결한 참가자가 앞선다.</td></tr>
+            <tr><td>순위 3차</td><td>점수 완성 시각 오름차순</td><td>시간 점수까지 같은 경우 현재 총점을 먼저 달성한 참가자가 앞선다. 대회 시작부터 해당 점수를 완성한 마지막 첫 정답까지의 경과 초를 비교한다.</td></tr>
+            <tr><td>완전 동점</td><td>공동 순위</td><td>총점·해결 수·점수 완성 시각이 모두 같으면 같은 순위를 부여하고 표시 순서만 이름순으로 안정화한다.</td></tr>
+            <tr><td>재채점</td><td>현재 유효 결과로 전체 재계산</td><td>Judge 결과가 바뀌면 오답 수, 문제 점수, 점수 완성 시각과 순위를 같은 정책 버전으로 다시 계산한다.</td></tr>
+          </tbody>
+        </table></div>
+        <h3>담당자 범위</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>역할</th><th>허용</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td>대회 소유자</td><td>전체 설정, 담당자, 참가자, 문제, 결과 공개, 보관</td><td>감사 없는 진행 중 핵심 조건 변경</td></tr>
+            <tr><td>공동 운영자</td><td>대회 편집, 참가자·문제·IP, 제출·순위·통계·내보내기</td><td>소유권 이전, 담당자 변경, 영구 삭제</td></tr>
+            <tr><td>시험 감독자</td><td>진행 중 참가 상태, IP와 제출 상태 확인·조치</td><td>문제·일정·배점·결과 공개 변경</td></tr>
+            <tr><td>결과 검토자</td><td>종료 대회의 결과·통계와 승인된 내보내기</td><td>설정·참가자·IP 변경</td></tr>
+          </tbody>
+        </table></div>
+        <ul class="rules">
+          <li>대회 본문·기간·문제 순서는 Judge <code>contest</code>·<code>contest_problem</code>을 기준 원본으로 유지한다.</li>
+          <li>소유자·역할·공개·그룹·제출 결과 공개·순위 현황 공개·채점 방식·순위 동결·Blockly 프로필은 <code>contest_settings</code>와 <code>contest_managers</code>가 소유한다.</li>
+          <li>직접 참가자는 <code>contest_participants</code>에 저장해 Groups OFF에서도 참가·제출·순위·통계가 정상 동작한다.</li>
+          <li>문제별 <code>result</code>·<code>pass_rate</code>·<code>in_date</code>·<code>solution_id</code>를 읽어 선택한 정책의 점수·벌점·순위와 통계를 계산하며 참가자별 결과 스냅샷을 새로 저장하지 않는다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="groups">
+        <div class="section-heading"><div><h2>그룹 설계</h2><p>그룹은 재사용 가능한 구성원·운영자 묶음이며 수업·대회 콘텐츠를 소유하지 않는다.</p></div><span class="badge good">구현 3순위</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>기능</th><th>권장 동작</th><th>권한</th><th>저장·연결</th></tr></thead>
+          <tbody>
+            <tr><td>생성·설정</td><td>이름, 설명, 공개 범위, 승인 방식, 가입 코드, Blockly 프로필을 설정</td><td>그룹 생성 권한. 생성자를 소유자로 기록</td><td><code>learning_groups</code></td></tr>
+            <tr><td>위임 운영자</td><td>사용자 검색으로 추가·해제하고 해제는 다음 요청부터 즉시 적용</td><td>소유자만 운영자 변경</td><td><code>group_managers</code></td></tr>
+            <tr><td>가입·승인</td><td>신청, 자동 승인, 수동 승인·거절, 나가기, 제외를 명시적 상태로 관리</td><td>본인 또는 소유자·활성 위임 운영자</td><td><code>group_memberships</code></td></tr>
+            <tr><td>일괄 등록</td><td>Auth의 사용자 CSV Jobs를 <code>group_id</code> 문맥으로 호출하고 항목별 생성·연결 결과를 확인</td><td>소유자·활성 위임 운영자</td><td>Auth Jobs + <code>group_memberships</code></td></tr>
+            <tr><td>구성원 이름 관리</td><td><code>/oj-console/groups/{group_id}/members</code>에서 표시 이름·관리용 이름을 별도 열로 표시. 관리용 이름을 여러 행에서 편집하고 최대 100명을 한 번에 저장. 두 이름과 로그인 아이디로 검색·정렬. 성공 행만 저장 완료로 처리하며 실패한 입력은 유지</td><td>전역 그룹 관리자·소유자·활성 위임 운영자. 같은 그룹의 승인된 일반 구성원만 수정. 소유자·운영자·전역 관리자·그룹 밖 사용자는 제외</td><td>Groups 범위 검사 → Auth <code>ManagedUserNameUpdater</code> → WordPress <code>usermeta.nickname</code>만 수정. 학생의 표시 이름·로그인·이메일·역할은 변경하지 않음</td></tr>
+            <tr><td>비밀번호 초기화</td><td>구성원 목록의 행 또는 선택 항목에서 승인된 일반 구성원 최대 100명에게 무작위 임시 비밀번호를 한 번 제공하고 다음 로그인에서 변경</td><td>소유자·활성 위임 운영자. 운영자·계정 관리자·본인은 대상 제외</td><td>Auth 안전 초기화 Handler</td></tr>
+            <tr><td>일반·수행 모드</td><td>수행 모드에서도 풀이·제출·채점·결과 목록은 유지하고 제출 결과 상세·코드·오류·AI 피드백만 제한</td><td>소유자·활성 위임 운영자</td><td><code>evaluation_mode</code>와 Groups 제출 정책 Provider</td></tr>
+            <tr><td>제출·순위</td><td>현재 활성 구성원의 제출을 기간별로 조회한다. 제출이 그룹 안에서 생성됐다고 표시하지 않음</td><td>학습자는 허용된 목록, 운영자는 담당 그룹 전체</td><td>구성원 범위 + DS-11 제출 조회</td></tr>
+            <tr><td>보관·복원</td><td>가입과 관리 작업을 닫고 관계·보고서를 유지한 뒤 현재 소유·관계를 재검증해 복원</td><td>소유자 또는 전역 관리자</td><td>그룹 3개 테이블 관계 유지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>이름 저장 범위:</strong> 관리용 이름은 그룹별 별칭이 아니라 계정에 저장하는 학생 이름이다. 수정하면 같은 사용자가 속한 다른 그룹 관리 화면에도 반영된다. 일반 사용자 그룹 화면에는 표시 이름만 제공하며 관리용 이름은 전송하지 않는다. 기존 이름이 바뀐 경우 덮어쓰지 않고 충돌을 알린다. 일괄 저장 Action은 <code>oj_group_save_member_names</code>이며 nonce·활성 로그인·현재 그룹 관리 범위를 서버에서 검증한다. 애드온 공개 API와 DB 스키마는 변경하지 않는다.</div>
+        <div class="warning"><strong>수행 모드 우회 방지:</strong> 활성 수행 모드 그룹의 일반 구성원은 그룹 안팎에서 생성한 본인의 모든 제출에 <code>result_only</code>가 적용된다. 화면 링크, 직접 URL, AJAX·파일 응답과 AI Jobs가 같은 DS-11 정책을 사용하며 여러 그룹 중 하나라도 수행 모드이면 제한을 유지한다.</div>
+      </section>
+
+      <section class="section" id="integration">
+        <div class="section-heading"><div><h2>모듈 연결과 기능 OFF</h2><p>공통 메뉴 아래에 묶되 직접 클래스 참조와 역의존은 만들지 않는다.</p></div><span class="badge good">선택 모듈 독립</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>제공자</th><th>소비자</th><th>계약</th><th>OFF 동작</th></tr></thead>
+          <tbody>
+            <tr><td>Problems</td><td>Classes·Contests</td><td>문제 존재·표시 정보·접근 가능 범위 읽기</td><td>Problems는 필수 선행이며 문제를 복제하지 않음</td></tr>
+            <tr><td>Submissions</td><td>Classes·Contests·Groups</td><td>문맥별 목록·집계 Query와 상세 가시성 Policy</td><td>DS-12 모듈은 Judge SQL을 직접 작성하지 않음</td></tr>
+            <tr><td>Groups</td><td>Classes·Contests</td><td>활성 그룹과 구성원 범위를 제공하는 선택 Provider</td><td>Provider 미등록. 직접 참여 수업·대회는 정상 동작</td></tr>
+            <tr><td>Classes·Contests·Groups</td><td>AdminConsole·사용자 홈</td><td>접근 가능한 공간 요약과 다음 행동</td><td>꺼진 기능 Provider만 사라지고 셸은 정상 동작</td></tr>
+            <tr><td>Groups</td><td>Submissions</td><td>수행 모드 제출 가시성 Provider</td><td>Provider 미등록으로 DS-11 일반 정책 사용</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>Blockly 프로필 우선순위:</strong> 제한 순서는 입문 &lt; 표준 &lt; 확장이다. 전역 기본보다 넓은 프로필은 저장하지 못한다. 수업·대회 프로필은 해당 문맥 제출에 적용하고 그룹 프로필은 활성 구성원의 블록 제출 전체에 적용하며, 여러 문맥이 겹치면 가장 제한적인 하나를 사용한다. 이 설정은 코드 모드의 허용 언어를 변경하지 않는다.</div>
+        <ol class="rules">
+          <li>Groups 비활성 요청 전에 <code>group_only</code> 수업, 그룹 제한 대회와 활성 <code>class_group_links</code>를 검사한다.</li>
+          <li>제한 항목이 있으면 비활성화를 중단하고 대상 목록을 보여 준다. 자동 공개 전환이나 관계 삭제는 하지 않는다.</li>
+          <li>관리자가 대상을 <code>private</code> 또는 <code>public</code>으로 명시 변경한 뒤 다시 비활성화한다.</li>
+          <li>기능 OFF 동안 그룹 관계 행은 보존하고 읽기·쓰기·메뉴·경로·Jobs 등록에서 사용하지 않는다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="data">
+        <div class="section-heading"><div><h2>데이터 계약</h2><p>D-008의 14개 학습 공간 테이블을 유지하며 핵심 상태를 구조화한다.</p></div><span class="badge good">정합화 완료</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>소유</th><th>테이블</th><th>DS-12 상세화</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td>Classes · 5개</td><td><code>classes</code>, <code>class_instructors</code>, <code>class_enrollments</code>, <code>class_group_links</code>, <code>class_problem_links</code></td><td>접근 방식, 전체 풀이 현황 공개, Blockly 프로필, 강사·참여 상태와 행위자 시각, 문제 공개 여부·기간·순서</td><td>그룹 구성원을 수업 참여자로 간주하거나 제출 원본·진도 스냅샷 저장</td></tr>
+            <tr><td>Contests · 6개</td><td><code>contest_settings</code>, <code>contest_problem_settings</code>, <code>contest_managers</code>, <code>contest_participants</code>, <code>contest_ip_logs</code>, <code>deleted_contests</code></td><td>역할, 참가 상태, 결과·순위 공개, ICPC·OI·일반 점수형 채점 정책, 일반 점수형의 부분 점수·정확성·시간 비율과 오답 감점, 순위 동결, Blockly 프로필</td><td>Judge 대회·문제·제출·순위 스냅샷 복제</td></tr>
+            <tr><td>Groups · 3개</td><td><code>learning_groups</code>, <code>group_managers</code>, <code>group_memberships</code></td><td>승인 방식, 가입 코드 해시, Blockly 프로필, 일반·수행 모드, 구성원·운영자 상태와 변경 시각</td><td>수업·대회·문제 소유 또는 영구 비밀번호 저장</td></tr>
+            <tr><td>Judge</td><td><code>contest</code>, <code>contest_problem</code>, <code>solution</code>과 채점 관련 테이블</td><td>대회 원본·문제 관계·제출 결과를 기존 물리 구조로 읽고 쓴다.</td><td>테이블명·열 의미 변경, 플랫폼 FK 추가</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>사용자 키:</strong> 모든 소유자·담당자·참여자·구성원·변경 실행자는 숫자 <code>wp_users.ID</code>를 <code>user_id</code>로 사용한다. Judge 경계에서만 DS-05 어댑터가 <code>user_login</code>을 사용하며 Judge ID 매핑은 만들지 않는다.</div>
+        <div class="summary"><strong>D-008 동기화 완료:</strong> 대회별 문제 기본 점수를 <code>contest_problem_settings</code>에 정규화해 학습 공간 테이블을 14개로 확정하고, 접근 방식, Blockly 프로필, 참여·담당 상태, 행위자 시각, 문제 공개 기간과 대회 운영 정책 열·허용값·인덱스를 상세화했다. 핵심 상태를 범용 <code>metadata</code>에 숨기지 않는다.</div>
+      </section>
+
+      <section class="section" id="structure">
+        <div class="section-heading"><div><h2>목표 코드 구조</h2><p>기존 6개 대형 컨트롤러를 확정된 17개 역할별 컨트롤러로 분리한다.</p></div><span class="badge good">17개 유지</span></div>
+        <pre class="tree">modules/
+|-- Classes/
+|   |-- Http/
+|   |   |-- Console_Class_Management_Controller.php
+|   |   |-- Console_Class_Member_Controller.php
+|   |   |-- Console_Class_Report_Controller.php
+|   |   |-- Public_Class_Catalog_Controller.php
+|   |   `-- Public_Class_Report_Controller.php
+|   |-- Application/        [설정·참여·문제·보고서 Service]
+|   |-- Domain/             [정책·상태 전환]
+|   |-- Infrastructure/     [5개 테이블 Repository]
+|   `-- Integration/        [Problems·Submissions·Groups 인터페이스]
+|-- Contests/
+|   |-- Http/
+|   |   |-- Console_Contest_Management_Controller.php
+|   |   |-- Console_Contest_Report_Controller.php
+|   |   |-- Console_Contest_Access_Controller.php
+|   |   |-- Public_Contest_Catalog_Controller.php
+|   |   |-- Public_Contest_Report_Controller.php
+|   |   `-- Public_Contest_Access_Controller.php
+|   |-- Application/        [평가 단계·참가·IP·결과 Service]
+|   |-- Domain/             [역할·수정 잠금·공개 정책]
+|   |-- Infrastructure/     [5개 플랫폼 Repository + Judge Adapter]
+|   `-- Integration/        [Problems·Submissions·Groups 인터페이스]
+`-- Groups/
+    |-- Http/
+    |   |-- Console_Group_Management_Controller.php
+    |   |-- Console_Group_Membership_Controller.php
+    |   |-- Console_Group_Report_Controller.php
+    |   |-- Public_Group_Catalog_Controller.php
+    |   |-- Public_Group_Membership_Controller.php
+    |   `-- Public_Group_Report_Controller.php
+    |-- Application/        [가입·운영자·일괄 등록·모드 Service]
+    |-- Domain/             [구성원·수행 모드 정책]
+    |-- Infrastructure/     [3개 테이블 Repository]
+    `-- Integration/        [Auth·Submissions Provider]</pre>
+        <div class="summary"><strong>의존 방향:</strong> Controller → Application Service → Domain Policy·Repository Interface 순서다. 세 모듈은 서로의 Repository나 구체 클래스를 직접 사용하지 않고 조립 단계에서 선택 Provider를 등록한다. AdminConsole은 학습 공간 허브 경로만 소유한다.</div>
+      </section>
+
+      <section class="section" id="verification">
+        <div class="section-heading"><div><h2>구현·검증 관문</h2><p>I-00 보호 환경 뒤 I-05에서 통과해야 할 완료 기준이다.</p></div><span class="badge wait">I-05 시작 대기</span></div>
+        <div class="gate"><div><strong>수업</strong></div><div>접근 방식, 직접 참여, 공동 강사, 참여자×문제 행렬, 최초 해결 계산, 실시간 공개·비공개, 미시도자 0%, 보관·복원</div><div>통합·E2E</div></div>
+        <div class="gate"><div><strong>대회</strong></div><div>단계별 수정 잠금, 역할별 허용, 직접 참가, IP, ICPC·OI·일반 점수형 정책별 점수·벌점·동점 순서, 일반 점수형 부분 점수 ON/OFF, 참가자×문제 행렬, 공개 정책</div><div>정책·Judge 통합</div></div>
+        <div class="gate"><div><strong>그룹</strong></div><div>가입·승인·운영자·일괄 등록·단건/선택 일괄 비밀번호 초기화·일반/수행 모드·보관·복원</div><div>권한·Jobs·E2E</div></div>
+        <div class="gate"><div><strong>독립성</strong></div><div>Groups OFF에서 수업·대회의 조회·직접 참여·제출·진도·순위·보고서가 정상이며 그룹 제한 대상은 비활성화를 차단</div><div>ON/OFF 조합</div></div>
+        <div class="gate"><div><strong>개인정보</strong></div><div>학습자는 본인 제출·진도만 보고 담당자는 대상 범위만 조회하며 검색·페이지 수·CSV에도 같은 범위 적용</div><div>행 범위 검사</div></div>
+        <div class="gate"><div><strong>성능</strong></div><div>참여자·제출·문제·담당자 목록 N+1 없음, 목록 행별 Polling 없음, 보고서는 페이지 단위 집계</div><div>쿼리 수 검사</div></div>
+        <div class="gate"><div><strong>UI/UX</strong></div><div>내부 ID 없이 검색·선택·순서 변경이 가능하고 기술 용어를 숨긴 한글 화면이 세 기준 뷰포트에서 겹치지 않음</div><div>브라우저 승인</div></div>
+        <div class="gate"><div><strong>일관성</strong></div><div>직접 경로 47개·테이블 14개·컨트롤러 17개·추가 액션 0개, UTF-8 한글 원문과 호환 경로 0개 유지</div><div>정적·계약 검사</div></div>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading"><div><h2>DS-12 확정 항목</h2><p>아래 8개 결정과 메뉴 순서를 2026-07-23 사용자 확인으로 동결했다.</p></div><span class="badge good">8건 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>결정</th><th>주제</th><th>권장안</th><th>영향</th></tr></thead>
+          <tbody>
+            <tr><td>DS12-Q01</td><td>범위·순서</td><td>직접 경로 47개와 허브 Provider를 유지하고 수업 → 대회 → 그룹 순서로 설계·구현. 수업·대회의 기존 참여·삭제 액션 4개는 참여·수명주기 명령 4개로 일대일 교체</td><td>GET 152개·고유 액션 128개·호환 경로 0개 유지</td></tr>
+            <tr><td>DS12-Q02</td><td>수업 운영</td><td>추가 화면에서 기본 정보·공동 강사·그룹·문제를 한 번에 구성하고 원자 저장한다. 네 접근 방식, 직접 참여 상태 전환과 미시도자 포함 진도를 적용</td><td>Groups 없이 수업 완전 운영</td></tr>
+            <tr><td>DS12-Q03</td><td>대회·평가</td><td>추가·준비 단계에서 문제·순서·배점을 구성하고 시작 시 잠근다. 준비·진행·종료·보관 단계와 소유자·운영자·감독자·검토자별 수정·조회 범위를 적용</td><td>진행 중 평가 조건 보호</td></tr>
+            <tr><td>DS12-Q04</td><td>그룹 운영</td><td>재사용 구성원 묶음, 위임 운영자, CSV 일괄 등록, 이메일 비의존 단건·선택 일괄 초기화, 수행 모드 정책 유지</td><td>수업 권한 자동 획득 금지</td></tr>
+            <tr><td>DS12-Q05</td><td>기능 독립성</td><td>선택 Provider와 비활성 사전 검사로 Groups OFF 독립성 보장, 자동 공개·관계 삭제 금지</td><td>수업·대회 직접 참여 보존</td></tr>
+            <tr><td>DS12-Q06</td><td>제출·보고서</td><td>DS-11 Query·Policy로 행렬을 실시간 계산한다. ICPC는 해결 수·벌점, OI는 최고 통과율 점수·완전 해결 수·벌점, 일반 점수형은 선택에 따라 최고 <code>pass_rate × 정답 기본 점수</code>와 시간·오답 감점·점수 완성 시각을 사용한다.</td><td>중복 Judge SQL·스냅샷·이중 감점·시간 불투명성 방지</td></tr>
+            <tr><td>DS12-Q07</td><td>데이터</td><td>14개 테이블을 사용하고 <code>contest_settings</code>에는 버전 고정된 채점·순위 정책과 일반 점수형의 <code>partial_score_policy</code>를, <code>contest_problem_settings</code>에는 문제별 기본 점수를 저장해 결과 재현성을 보장한다.</td><td>D-008 열·허용값·인덱스 동기화 완료</td></tr>
+            <tr><td>DS12-Q08</td><td>구조·검증</td><td>확정 컨트롤러 17개와 Service·Policy·Repository·Provider 경계 및 세 기능 ON/OFF·반응형 검증 적용</td><td>목표 컨트롤러 66개 유지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>현재 상태:</strong> DS12-Q01~Q08, 일반 사용자 <strong>학습</strong>·관리자 <strong>학습 공간</strong> 메뉴의 수업 → 대회·평가 → 그룹 순서와 시안 7종을 사용자 확정으로 동결했다. R-11 구현은 이 계약을 따르며 서버 설치 전 자동 검증을 통과한 뒤 외부 통합 환경에서 인수한다.</div>
+      </section>
+
+      <footer>OJ Platform 재정비 · DS-12 학습 공간 상세 설계 · 기능·UI 설계 사용자 확정 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "edu-games/missing-values",
+  "title": "Missing Values",
+  "category": "widgets",
+  "icon": "editor-table",
+  "description": "Choose a missing-value treatment method and fill the blanks.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

@@ -1,0 +1,287 @@
+<?php
+/**
+ * C30 enqueue assignment submission evaluations command.
+ *
+ * @package OJAI\Dashboard
+ */
+
+declare(strict_types=1);
+
+namespace OJAI\Dashboard\Submission\Assessment\Application;
+
+use InvalidArgumentException;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Canonical_Json;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Public_Id;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * C30 enqueue assignment submission evaluations command.
+ */
+final class Enqueue_Assignment_Evaluations_Command {
+	public const MAXIMUM_LIMIT  = 100;
+	public const MAXIMUM_CURSOR = 191;
+
+	/**
+	 * Request digest.
+	 *
+	 * @var string
+	 */
+	private string $request_digest;
+
+	/**
+	 * Initialize enqueue assignment evaluations command dependencies and state.
+	 *
+	 * @param int            $actor_user_id Authenticated actor from the access context.
+	 * @param string         $assignment_id Distribution public identifier.
+	 * @param string         $command_id Command identifier used for idempotency.
+	 * @param string         $expected_state Expected state.
+	 * @param int            $expected_schedule_version Expected schedule version.
+	 * @param string         $source_cutoff_utc Source cutoff utc.
+	 * @param string         $item_cursor Item cursor.
+	 * @param int            $limit Maximum number of entries requested.
+	 * @param string         $idempotency_fingerprint Fingerprint scoped to the actor and command.
+	 * @param string         $correlation_id Request correlation identifier for diagnostics.
+	 * @param string         $authorized_context_type Authorized context type.
+	 * @param string         $authorized_context_id Authorized context id.
+	 * @param string         $authorized_context_revision Authorized context revision.
+	 * @param string         $authorized_revision Authorized revision.
+	 * @param string         $authorized_state Authorized state.
+	 * @param string         $actor_relation Actor relation.
+	 * @param Canonical_Json $canonical Canonical JSON encoder used for stable digests.
+	 * @throws \Throwable Propagates validation or dependency failures.
+	 */
+	public function __construct(
+		private int $actor_user_id,
+		private string $assignment_id,
+		private string $command_id,
+		private string $expected_state,
+		private int $expected_schedule_version,
+		private string $source_cutoff_utc,
+		private string $item_cursor,
+		private int $limit,
+		private string $idempotency_fingerprint,
+		private string $correlation_id,
+		private string $authorized_context_type,
+		private string $authorized_context_id,
+		private string $authorized_context_revision,
+		private string $authorized_revision,
+		private string $authorized_state,
+		private string $actor_relation,
+		Canonical_Json $canonical
+	) {
+		if ( $actor_user_id < 1 ) {
+			throw new InvalidArgumentException( 'EnqueueAssignmentEvaluations requires an authenticated actor.' );
+		}
+		new Public_Id( $assignment_id );
+		$this->safe_token( $command_id, 'command_id', 8, 128 );
+		$this->safe_token( $correlation_id, 'correlation_id', 1, 100 );
+		$this->safe_token( $authorized_context_type, 'context_type', 1, 32 );
+		$this->safe_token( $authorized_context_id, 'context_id', 1, 191, true );
+		$this->safe_token( $authorized_context_revision, 'context_revision', 1, 191, true );
+		$this->safe_token( $authorized_revision, 'authorized_revision', 1, 191 );
+		if (
+			! in_array( $expected_state, array( 'open', 'closed' ), true )
+			|| $expected_schedule_version < 1
+			|| 1 !== preg_match( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/D', $source_cutoff_utc )
+			|| strlen( $item_cursor ) > self::MAXIMUM_CURSOR
+			|| ( '' !== $item_cursor && 1 !== preg_match( '/^[A-Za-z0-9_-]+\.[a-f0-9]{32}$/D', $item_cursor ) )
+			|| $limit < 1 || $limit > self::MAXIMUM_LIMIT
+			|| 1 !== preg_match( '/^[a-f0-9]{64}$/D', $idempotency_fingerprint )
+			|| ! in_array( $authorized_context_type, array( 'class', 'group' ), true )
+			|| ! in_array( $authorized_state, array( 'open', 'closed' ), true )
+			|| 'context_staff' !== $actor_relation
+		) {
+			throw new InvalidArgumentException( 'EnqueueAssignmentEvaluations command evidence is invalid.' );
+		}
+
+		$this->request_digest = hash(
+			'sha256',
+			$canonical->encode(
+				array(
+					'assignment_id' => $assignment_id,
+					'command_id'    => $command_id,
+					'expected'      => array(
+						'expected_schedule_version' => $expected_schedule_version,
+						'expected_state'            => $expected_state,
+					),
+					'payload'       => array(
+						'item_cursor'       => $item_cursor,
+						'limit'             => $limit,
+						'source_cutoff_utc' => $source_cutoff_utc,
+					),
+				)
+			)
+		);
+	}
+
+	/**
+	 * Actor user id.
+	 *
+	 * @return int
+	 */
+	public function actor_user_id(): int {
+		return $this->actor_user_id;
+	}
+	/**
+	 * Assignment id.
+	 *
+	 * @return string
+	 */
+	public function assignment_id(): string {
+		return $this->assignment_id;
+	}
+	/**
+	 * Command id.
+	 *
+	 * @return string
+	 */
+	public function command_id(): string {
+		return $this->command_id;
+	}
+	/**
+	 * Expected state.
+	 *
+	 * @return string
+	 */
+	public function expected_state(): string {
+		return $this->expected_state;
+	}
+	/**
+	 * Expected schedule version.
+	 *
+	 * @return int
+	 */
+	public function expected_schedule_version(): int {
+		return $this->expected_schedule_version;
+	}
+	/**
+	 * Source cutoff utc.
+	 *
+	 * @return string
+	 */
+	public function source_cutoff_utc(): string {
+		return $this->source_cutoff_utc;
+	}
+	/**
+	 * Item cursor.
+	 *
+	 * @return string
+	 */
+	public function item_cursor(): string {
+		return $this->item_cursor;
+	}
+	/**
+	 * Limit.
+	 *
+	 * @return int
+	 */
+	public function limit(): int {
+		return $this->limit;
+	}
+	/**
+	 * Idempotency fingerprint.
+	 *
+	 * @return string
+	 */
+	public function idempotency_fingerprint(): string {
+		return $this->idempotency_fingerprint;
+	}
+	/**
+	 * Correlation id.
+	 *
+	 * @return string
+	 */
+	public function correlation_id(): string {
+		return $this->correlation_id;
+	}
+	/**
+	 * Authorized context type.
+	 *
+	 * @return string
+	 */
+	public function authorized_context_type(): string {
+		return $this->authorized_context_type;
+	}
+	/**
+	 * Authorized context id.
+	 *
+	 * @return string
+	 */
+	public function authorized_context_id(): string {
+		return $this->authorized_context_id;
+	}
+	/**
+	 * Authorized context revision.
+	 *
+	 * @return string
+	 */
+	public function authorized_context_revision(): string {
+		return $this->authorized_context_revision;
+	}
+	/**
+	 * Authorized revision.
+	 *
+	 * @return string
+	 */
+	public function authorized_revision(): string {
+		return $this->authorized_revision;
+	}
+	/**
+	 * Authorized state.
+	 *
+	 * @return string
+	 */
+	public function authorized_state(): string {
+		return $this->authorized_state;
+	}
+	/**
+	 * Actor relation.
+	 *
+	 * @return string
+	 */
+	public function actor_relation(): string {
+		return $this->actor_relation;
+	}
+	/**
+	 * Request digest.
+	 *
+	 * @return string
+	 */
+	public function request_digest(): string {
+		return $this->request_digest;
+	}
+
+	/**
+	 * Idempotency storage key.
+	 *
+	 * @return string
+	 */
+	public function idempotency_storage_key(): string {
+		return 'command:' . hash(
+			'sha256',
+			$this->actor_user_id . '|assignment.evaluations.enqueue|' . $this->assignment_id . '|'
+				. $this->idempotency_fingerprint
+		);
+	}
+
+	/**
+	 * Safe token.
+	 *
+	 * @param string $value Value.
+	 * @param string $field Field.
+	 * @param int    $minimum Minimum.
+	 * @param int    $maximum Maximum.
+	 * @param bool   $allow_slash Allow slash.
+	 * @return void
+	 * @throws \Throwable Propagates validation or dependency failures.
+	 */
+	private function safe_token( string $value, string $field, int $minimum, int $maximum, bool $allow_slash = false ): void {
+		$pattern = $allow_slash ? '/^[A-Za-z0-9][A-Za-z0-9_.:@\/-]*$/D' : '/^[A-Za-z0-9][A-Za-z0-9_.:@-]*$/D';
+		if ( strlen( $value ) < $minimum || strlen( $value ) > $maximum || 1 !== preg_match( $pattern, $value ) ) {
+			throw new InvalidArgumentException( 'EnqueueAssignmentEvaluations ' . $field . ' is invalid.' ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception details stay in the application failure channel; presentation maps and escapes displayed errors.
+		}
+	}
+}

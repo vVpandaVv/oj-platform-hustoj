@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 평가 애드온 전체 설계 순서</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>전체 설계 순서</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html" aria-current="page">설계 순서</a>
+          <a href="evaluation-evidence-and-criterion-binding.html">평가 근거·응답 연결</a>
+          <a href="evaluation-ux-correction-report-2026-09-01.html">평가 UX 보완 보고</a>
+          <a href="implementation-roadmap.html">상세 구현 진행표</a>
+          <a href="g6-imp-01-business-scenario-acceptance.html">G6-IMP-01 업무 시나리오 인수</a>
+          <a href="g6-imp-02-security-privacy-accessibility.html">G6-IMP-02 보안·개인정보·접근성</a>
+          <a href="g6-imp-03-performance-resilience.html">G6-IMP-03 성능·복원력</a>
+          <a href="g6-imp-04-upgrade-rollback.html">G6-IMP-04 업그레이드·롤백</a>
+          <a href="g6-imp-05-boundary-final-package.html">G6-IMP-05 경계·최종 package</a>
+          <a href="release-changelog.html">릴리스 변경 기록</a>
+          <a href="g2-imp-01-corrective-revalidation.html">G2-IMP-01 보완 재검증</a>
+          <a href="g2-imp-02-s01-plate-runtime-entrypoint.html">G2-IMP-02-S01 Plate 재확인</a>
+          <a href="g2-imp-02-s02-c02-contract.html">G2-IMP-02-S02 C02 계약</a>
+          <a href="g2-imp-02-s03-document-profile.html">G2-IMP-02-S03 문서 검증</a>
+          <a href="g2-imp-02-s04-revision-projection.html">G2-IMP-02-S04 Projection</a>
+          <a href="g2-imp-02-s05-revision-transaction.html">G2-IMP-02-S05 Transaction</a>
+          <a href="g2-imp-02-s06-operation-transaction.html">G2-IMP-02-S06 Operation</a>
+          <a href="g2-imp-02-s07-rest-boundary.html">G2-IMP-02-S07 REST</a>
+          <a href="g2-imp-02-s08-workbench-plate.html">G2-IMP-02-S08 작업대</a>
+          <a href="g2-imp-02-s09-save-conflict-recovery.html">G2-IMP-02-S09 저장·복구</a>
+          <a href="g2-imp-02-s10-regression.html">G2-IMP-02-S10 회귀</a>
+          <a href="g2-imp-02-s11-visual-verification.html">G2-IMP-02-S11 화면 검증</a>
+          <a href="g2-imp-02-s12-freeze.html">G2-IMP-02-S12 동결</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="g1-addon-foundation-implementation.html">G1 기반 구현</a>
+          <a href="g1-composition-root-implementation.html">G1 Composition Root</a>
+          <a href="g1-database-foundation-implementation.html">G1 데이터베이스 기반</a>
+          <a href="g1-database-infrastructure-implementation.html">G1 DB 인프라</a>
+          <a href="g1-activation-database-integration.html">G1 활성화·DB 통합</a>
+          <a href="g1-runtime-schema-readiness.html">G1 Runtime 스키마 검산</a>
+          <a href="g1-common-access-policy.html">G1 공통 접근 정책</a>
+          <a href="g1-common-rest-envelope.html">G1 공통 REST envelope</a>
+          <a href="g1-context-list-q01.html">G1 Context 목록·Q01</a>
+          <a href="g2-worksheet-authoring-vertical-slice.html">G2 활동지 수직 흐름</a>
+          <a href="g2-imp-06-s05-ui-freeze.html">G2-IMP-06-S05 UI 동결</a>
+          <a href="g3-imp-01-assignment-create.html">G3-IMP-01 배포 생성</a>
+          <a href="g3-imp-02-assignment-lifecycle.html">G3-IMP-02 배포 상태</a>
+          <a href="g3-imp-03-student-assignment.html">G3-IMP-03 학생 활동지</a>
+          <a href="g3-imp-04-s01-response-renderer.html">G3-IMP-04-S01 응답칸 10종</a>
+          <a href="g3-imp-04-s02-own-submission-query.html">G3-IMP-04-S02 Q32 제출 조회</a>
+          <a href="g3-imp-04-s03-autosave-revision.html">G3-IMP-04-S03 C23 자동 저장</a>
+          <a href="g3-imp-04-s04-offline-conflict-recovery.html">G3-IMP-04-S04 오프라인·충돌</a>
+          <a href="g3-imp-04-s05-responsive-accessibility-freeze.html">G3-IMP-04-S05 UI 동결</a>
+          <a href="g3-imp-05-s01-private-attachment-staging.html">G3-IMP-05-S01 C24 첨부</a>
+          <a href="g3-imp-05-s02-staged-attachment-removal.html">G3-IMP-05-S02 C25 제거</a>
+          <a href="g3-imp-05-s03-attachment-scan-boundary.html">G3-IMP-05-S03 검사</a>
+          <a href="g3-imp-05-s04-expiry-cleanup-recovery.html">G3-IMP-05-S04 정리</a>
+          <a href="g3-imp-06-s01-official-submit-receipt.html">G3-IMP-06-S01 C26 제출</a>
+          <a href="g3-imp-06-s02-teacher-submission-projections.html">G3-IMP-06-S02 Q13~Q15</a>
+          <a href="g3-imp-06-s03-teacher-reopen-lock.html">G3-IMP-06-S03 C27~C28</a>
+          <a href="g3-imp-06-s04-submission-screen-audit.html">G3-IMP-06-S04 화면·감사</a>
+          <a href="g3-imp-06-s05-concurrency-freeze.html">G3-IMP-06-S05 동시성 동결</a>
+          <a href="g3-imp-07-s01-private-zip-staging.html">G3-IMP-07-S01 C19 ZIP</a>
+          <a href="g3-imp-07-s02-async-scan-preview.html">G3-IMP-07-S02 Q35 검사</a>
+          <a href="g3-imp-07-s03-explicit-mapping.html">G3-IMP-07-S03 C68 매핑</a>
+          <a href="g3-imp-07-s04-confirm-cancel.html">G3-IMP-07-S04 C20·C21</a>
+          <a href="g3-imp-07-s05-integration-freeze.html">G3-IMP-07-S05 통합 동결</a>
+          <a href="g4-imp-01-s01-score-task-instruction.html">G4-IMP-01-S01 평가 지시문</a>
+          <a href="g4-imp-01-s02-official-input-projection.html">G4-IMP-01-S02 공식 입력</a>
+          <a href="g4-imp-01-s03-single-evaluation-enqueue.html">G4-IMP-01-S03 단건 요청</a>
+          <a href="g4-imp-01-s04-assignment-evaluation-enqueue.html">G4-IMP-01-S04 일괄 요청</a>
+          <a href="g4-imp-01-s05-idempotency-authorization-freeze.html">G4-IMP-01-S05 종합 동결</a>
+          <a href="g4-imp-02-s01-evaluation-queue-lease.html">G4-IMP-02-S01 큐·임대</a>
+          <a href="g4-imp-02-s02-gateway-output-result.html">G4-IMP-02-S02 Gateway·결과</a>
+          <a href="g4-imp-02-r01-submission-external-ai-consent.html">G4-IMP-02-R01 제출 동의</a>
+          <a href="g4-imp-02-s03-submission-evaluation-query.html">G4-IMP-02-S03 평가 조회</a>
+          <a href="g4-imp-02-s04-submission-evaluation-control.html">G4-IMP-02-S04 재시도·취소</a>
+          <a href="g4-imp-02-s05-submission-evaluation-integration-freeze.html">G4-IMP-02-S05 통합 동결</a>
+          <a href="g4-imp-03-s01-submission-evaluation-review-append.html">G4-IMP-03-S01 검토 Append</a>
+          <a href="g4-imp-03-s02-official-pointer-cas.html">G4-IMP-03-S02 공식 포인터 CAS</a>
+          <a href="g4-imp-03-s03-score-evidence-review-ui.html">G4-IMP-03-S03 점수·근거 UI</a>
+          <a href="g4-imp-03-s04-stale-source-integration-freeze.html">G4-IMP-03-S04 통합 동결</a>
+          <a href="g4-imp-04-s01-feedback-draft.html">G4-IMP-04-S01 피드백 초안</a>
+          <a href="g4-imp-04-s02-feedback-review.html">G4-IMP-04-S02 피드백 검토</a>
+          <a href="g4-imp-04-s03-feedback-approval.html">G4-IMP-04-S03 피드백 승인</a>
+          <a href="g4-imp-04-s04-feedback-workbench-integration.html">G4-IMP-04-S04 작업대·동결</a>
+          <a href="g4-imp-05-s01-student-note-draft.html">G4-IMP-05-S01 특기사항 초안</a>
+          <a href="g4-imp-05-s02-student-note-query.html">G4-IMP-05-S02 특기사항 조회</a>
+          <a href="g4-imp-05-s03-student-note-review-approval.html">G4-IMP-05-S03 검토·승인</a>
+          <a href="g4-imp-05-s04-student-note-report-inclusion.html">G4-IMP-05-S04 보고서 포함</a>
+          <a href="g4-imp-05-s05-student-note-integration-freeze.html">G4-IMP-05-S05 통합 동결</a>
+          <a href="g4-imp-06-s01-student-result-release.html">G4-IMP-06-S01 C43 학생 공개</a>
+          <a href="g4-imp-06-s02-student-result-query.html">G4-IMP-06-S02 Q33 본인 조회</a>
+          <a href="g4-imp-06-s03-student-result-withdrawal.html">G4-IMP-06-S03 C44 공개 회수</a>
+          <a href="g4-imp-06-s04-student-result-correction.html">G4-IMP-06-S04 C43 정정 공개</a>
+          <a href="g4-imp-06-s05-student-result-ui-integration.html">G4-IMP-06-S05 학생 결과 화면</a>
+          <a href="g4-imp-07-s01-result-print-projection.html">G4-IMP-07-S01 결과 PDF Projection</a>
+          <a href="g4-imp-07-s02-result-pdf-job.html">G4-IMP-07-S02 결과 PDF Job</a>
+          <a href="g4-imp-07-s03-result-pdf-access-freeze.html">G4-IMP-07-S03 결과 PDF 접근 동결</a>
+          <a href="g4-imp-07-s04-result-pdf-ui-integration.html">G4-IMP-07-S04 결과 PDF 화면·시각</a>
+          <a href="g5-imp-01-s01-worksheet-report-list.html">G5-IMP-01-S01 활동지별 보고서</a>
+          <a href="g5-imp-01-s02-worksheet-report-detail.html">G5-IMP-01-S02 보고서 상세</a>
+          <a href="g5-imp-01-s03-report-filter-denominator.html">G5-IMP-01-S03 필터·분모</a>
+          <a href="g5-imp-01-s04-report-dashboard.html">G5-IMP-01-S04 보고서 대시보드</a>
+          <a href="g5-imp-02-s01-report-snapshot-create.html">G5-IMP-02-S01 보고서 스냅샷 생성</a>
+          <a href="g5-imp-02-s02-report-snapshot-query.html">G5-IMP-02-S02 보고서 스냅샷 조회</a>
+          <a href="g5-imp-02-s03-report-source-manifest.html">G5-IMP-02-S03 보고서 원본 계보</a>
+          <a href="g5-imp-02-s04-report-snapshot-integration-freeze.html">G5-IMP-02-S04 스냅샷 통합 동결</a>
+          <a href="g5-imp-03-s01-report-export-enqueue.html">G5-IMP-03-S01 CSV·PDF 작업</a>
+          <a href="g5-imp-03-s02-submission-bundle-enqueue.html">G5-IMP-03-S02 학생 결과물 ZIP 작업</a>
+          <a href="g5-imp-03-s03-report-json-package-enqueue.html">G5-IMP-03-S03 JSON 패키지 작업</a>
+          <a href="g5-imp-03-s04-report-export-job-download.html">G5-IMP-03-S04 작업·다운로드</a>
+          <a href="g5-imp-03-s05-report-export-control.html">G5-IMP-03-S05 취소·재시도</a>
+          <a href="g5-imp-03-s06-report-export-integration-freeze.html">G5-IMP-03-S06 통합 동결</a>
+          <a href="g5-imp-05-s01-bridge-schema-queue-diagnostics.html">G5-IMP-05-S01 Q28 진단</a>
+          <a href="g5-imp-05-s02-ai-routing-diagnostics.html">G5-IMP-05-S02 AI routing</a>
+          <a href="g5-imp-05-s03-storage-secret-diagnostics.html">G5-IMP-05-S03 저장소·비밀 보호</a>
+          <a href="g5-imp-05-s04-operations-ui-regression.html">G5-IMP-05-S04 운영 화면·회귀</a>
+          <a href="g5-imp-06-s01-fresh-install.html">G5-IMP-06-S01 신규 설치</a>
+          <a href="g2-imp-07-s01-print-projection.html">G2-IMP-07-S01 인쇄 Projection</a>
+          <a href="g2-imp-07-s02-pdf-job-artifact.html">G2-IMP-07-S02 PDF job·artifact</a>
+          <a href="g2-imp-07-s03-worksheet-package.html">G2-IMP-07-S03 활동지 package</a>
+          <a href="g2-imp-07-s04-integration-freeze.html">G2-IMP-07-S04 통합 동결</a>
+          <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>설계 흐름</strong>
+          <a href="#principle">진행 원칙</a>
+          <a href="#baseline">현황 조사 A-D</a>
+          <a href="#detail-design">상세 설계 A-DS</a>
+          <a href="#stage-contract">단계 문서 계약</a>
+          <a href="#gates">설계 관문</a>
+          <a href="#freeze">동결과 구현 전환</a>
+          <a href="#current">현재 위치</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="principle">
+        <p class="eyebrow">Assessment Add-on Design Sequence</p>
+        <h2>AI 평가 애드온 전체 설계 순서</h2>
+        <p><code>oj-platform</code> 재정비에서 사용한 현황 조사, 상세 설계, 교차 검증, 사용자 승인, 수직 구현의 분리를 AI 평가 애드온에 적용한다. 설계 동결과 G1 기반 구현을 마치고 G2 활동지 수직 흐름을 단계별 코드·테스트·HTML 기록과 함께 진행한다.</p>
+        <div class="meta">
+          <span class="badge">갱신일 2026-08-22</span>
+          <span class="badge good">상태 A-D-001~009 사용자 확인·동결</span>
+          <span class="badge good">A-DS-00 사용자 확인·동결</span>
+          <span class="badge good">A-DS-01 사용자 확인·동결</span>
+          <span class="badge good">A-DS-02 사용자 확인·동결</span>
+          <span class="badge good">A-DS-02 AM-01 사용자 확인·동결</span>
+          <span class="badge good">A-DS-03 사용자 확인·동결</span>
+          <span class="badge good">A-DS-04 사용자 확인·동결</span>
+          <span class="badge good">A-DS-05 사용자 확인·동결</span>
+          <span class="badge good">A-DS-06 사용자 확인·동결</span>
+          <span class="badge good">A-DS-07 사용자 확인·동결</span>
+          <span class="badge good">A-DS-08 사용자 확인·동결</span>
+          <span class="badge good">A-DS-09 사용자 확인·동결</span>
+          <span class="badge good">A-DS-10 사용자 확인·동결</span>
+          <span class="badge good">A-DS-11 사용자 확인·동결</span>
+          <span class="badge good">A-DS-12 사용자 확인·동결</span><span class="badge good">A-DS-13 사용자 확인·동결</span><span class="badge good">A-DS-14 사용자 확인·동결</span><span class="badge good">A-DS-15 사용자 확인·동결</span><span class="badge good">A-DS-16 사용자 확인·동결</span><span class="badge good">G0 C28-I06 코드 관문 통과</span><span class="badge good">검증 릴리스 증거 기록</span><span class="badge good">G1 1차 기반 계약 통과</span><span class="badge good">G1 Composition Root 계약 통과</span><span class="badge good">G1 Database Foundation 계약 통과</span><span class="badge wait">G1 전체 진행 중</span><span class="badge wait">플랫폼 asset R-02 보완 대기</span>
+          <span class="badge good">G1 DB Infrastructure 계약 통과</span>
+          <span class="badge good">G1 Activation·DB 통합 계약 통과</span>
+          <span class="badge good">G1 Runtime 스키마 검산 계약 통과</span>
+          <span class="badge good">G1 공통 접근 Policy 계약 통과</span>
+          <span class="badge">대상 oj-ai-dashboard</span>
+          <span class="badge good">G4-IMP-01-S01 완료</span>
+          <span class="badge good">G4-IMP-01-S02 완료</span>
+          <span class="badge good">G4-IMP-01-S03 완료</span>
+          <span class="badge good">G4-IMP-01-S04 완료</span>
+          <span class="badge good">G4-IMP-01-S05 완료</span>
+          <span class="badge good">IMP-01 5/5 완료</span>
+          <span class="badge good">G4-IMP-02-S01 완료</span>
+          <span class="badge good">G4-IMP-02-S02 Worker 활성</span>
+          <span class="badge good">G4-IMP-02-R01 완료</span>
+          <span class="badge good">G4-IMP-02-S03 완료</span>
+          <span class="badge good">G4-IMP-02-S04 완료</span>
+          <span class="badge good">G4-IMP-02-S05 완료</span>
+          <span class="badge good">IMP-02 5/5 완료</span>
+          <span class="badge good">G4-IMP-03-S01 완료</span>
+          <span class="badge good">G4-IMP-03-S02 완료</span>
+          <span class="badge good">G4-IMP-03-S03 완료</span>
+          <span class="badge good">G4-IMP-03-S04 완료</span>
+          <span class="badge good">IMP-03 4/4 완료</span>
+          <span class="badge good">G4-IMP-04-S01 완료</span>
+          <span class="badge good">G4-IMP-04-S02 완료</span>
+          <span class="badge good">G4-IMP-04-S03 완료</span>
+          <span class="badge good">G4-IMP-04-S04 완료</span>
+          <span class="badge good">IMP-04 4/4 완료</span>
+          <span class="badge good">G4-IMP-05-S01 완료</span>
+          <span class="badge good">G4-IMP-05-S02 완료</span>
+          <span class="badge good">G4-IMP-05-S03 완료</span>
+          <span class="badge good">G4-IMP-05-S04 완료</span>
+          <span class="badge good">G4-IMP-05-S05 완료</span>
+          <span class="badge good">IMP-05 5/5 완료</span>
+          <span class="badge good">G4-IMP-06-S01 완료</span>
+          <span class="badge good">G4-IMP-06-S02 완료</span>
+          <span class="badge good">G4-IMP-06-S04 완료</span>
+          <span class="badge good">G4-IMP-06-S05 완료</span>
+          <span class="badge good">IMP-06 5/5 완료</span>
+          <span class="badge good">G4-IMP-07-S01 완료</span>
+          <span class="badge good">G4-IMP-07-S02 완료</span>
+          <span class="badge good">G4-IMP-07-S03 완료</span>
+          <span class="badge good">G4-IMP-07-S04 완료</span>
+          <span class="badge good">IMP-07 4/4 완료</span>
+          <span class="badge good">G5-IMP-01-S01 완료</span>
+          <span class="badge good">G5-IMP-01-S02 완료</span>
+          <span class="badge good">G5-IMP-01-S03 완료</span>
+          <span class="badge good">G5-IMP-01-S04 완료</span>
+          <span class="badge good">IMP-01 4/4·G5 7/8 완료</span>
+          <span class="badge good">G5-IMP-02-S04 완료·IMP-02 4/4</span>
+          <span class="badge good">G5-IMP-03-S01 완료</span>
+          <span class="badge good">G5-IMP-03-S02 완료</span>
+          <span class="badge good">G5-IMP-03-S06 완료·IMP-03 6/6</span>
+          <span class="badge good">G5-IMP-05-S04 완료·IMP-05 4/4</span>
+          <span class="badge good">G5-IMP-06-S05 완료·IMP-06 5/5</span>
+          <span class="badge good">G5-IMP-07-S05 완료·IMP-07 5/6</span>
+          <span class="badge good">G5-IMP-07-S06 완료·IMP-07 6/6</span>
+          <span class="badge good">G5-IMP-08-S01 완료·IMP-08 1/6</span>
+          <span class="badge good">G5-IMP-08-S02 완료·IMP-08 2/6</span>
+          <span class="badge good">G5-IMP-08-S03 완료·IMP-08 3/6</span>
+          <span class="badge good">G5-IMP-08-S04 C73 execute·C74 cancel 완료·IMP-08 4/6</span>
+          <span class="badge good">G5-IMP-08-S05 Q36 상태 완료·IMP-08 5/6</span>
+          <span class="badge good">G5-IMP-08-S06 통합 동결 완료·IMP-08 6/6·G5 8/8</span>
+          <span class="badge good">G6-IMP-01 업무 시나리오 인수 완료·G6 1/5</span>
+          <span class="badge good">G6-IMP-02 보안·개인정보·접근성 인수 완료·G6 2/5</span>
+          <span class="badge good">G6-IMP-03 성능·복원력 인수 완료·G6 3/5</span>
+          <span class="badge good">G6-IMP-04 업그레이드·롤백 인수 완료·G6 4/5</span>
+          <span class="badge good">G6-IMP-05 S01~S05 완료·G6 5/5</span>
+        </div>
+      </section>
+
+      <h2>재정비 방식 적용</h2>
+      <section class="panel">
+        <p><code>oj-platform</code>의 문서 구조를 다음과 같이 애드온에 대응시킨다.</p>
+        <table>
+          <thead><tr><th>oj-platform 재정비</th><th>AI 평가 애드온</th><th>의미</th></tr></thead>
+          <tbody>
+            <tr><td><code>D-001~D-009</code></td><td><code>A-D-001~A-D-009</code></td><td>현재 코드와 데이터, 사용자 흐름, 위험을 사실로 기록하는 기준선 조사</td></tr>
+            <tr><td><code>DS-00~DS-16</code></td><td><code>A-DS-00~A-DS-16</code></td><td>화면, 권한, 서비스, AI 계약, 저장소, 운영을 구현 가능한 수준으로 확정하는 상세 설계</td></tr>
+            <tr><td>DS-16 연결·동결</td><td><code>A-DS-16</code> 연결·동결</td><td>화면에서 테이블과 외부 연결까지 추적하고 미결정 사항을 제거하는 최종 관문</td></tr>
+            <tr><td><code>I/R</code> 구현 단계</td><td><code>A-I/A-R</code> 구현 단계</td><td>사용자 승인 뒤에만 수직 기능 단위로 구현하고 검증하는 후속 단계</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>핵심 원칙:</strong> 조사 문서는 현재 사실을 기록하고, 상세 설계 문서는 목표 계약을 결정한다. 두 문서의 역할을 섞지 않으며 <code>A-DS-16</code> 승인 전에는 새 업무 기능 구현을 시작하지 않는다.</div>
+      </section>
+
+      <h2>전체 진행 흐름</h2>
+      <div class="flow">
+        <div class="step"><div><strong>현황 조사</strong><br><code>A-D-001~A-D-009</code>에서 코드, 화면, 권한, 테이블, AI 흐름과 위험을 근거와 함께 기록한다.</div></div>
+        <div class="step"><div><strong>기준선 승인</strong><br>확정 사실, 유지할 자산, 폐기할 결합, 미결정 질문을 사용자와 확인한다.</div></div>
+        <div class="step"><div><strong>전체 상세 설계</strong><br><code>A-DS-00~A-DS-16</code>에서 공통 기반부터 활동지·평가·운영·전체 교차 검증까지 목표 계약과 UI를 완성한다.</div></div>
+        <div class="step"><div><strong>교차 추적과 동결</strong><br><code>A-DS-16</code>에서 페이지, 권한, API, 서비스, AI 스키마, 테이블, connector, 테스트를 서로 추적한다.</div></div>
+        <div class="step"><div><strong>사용자 최종 승인</strong><br>위험, 보류 항목, 설치·이전·복구 방안을 승인 기록으로 남겨 설계를 동결한다.</div></div>
+        <div class="step"><div><strong>승인 후 수직 구현</strong><br>화면, 기능, 권한, 데이터, 테스트가 함께 끝나는 단위로 구현한다.</div></div>
+      </div>
+
+      <h2 id="baseline">현황 조사 단계 <code>A-D-001~A-D-009</code></h2>
+      <p>이 단계에서는 목표 코드를 설계하지 않는다. 현재 구현을 다시 읽고 확인 가능한 사실, 수량, 의존 관계와 위험을 고정한다.</p>
+      <table>
+        <thead><tr><th>단계</th><th>조사 대상</th><th>필수 산출물</th><th>완료 관문</th></tr></thead>
+        <tbody>
+          <tr><td><a href="a-d-001-boundary-dependencies.html"><code>A-D-001</code></a></td><td>애드온 경계와 의존 관계</td><td>수정 가능 경로, 금지 경로, WordPress·<code>oj-platform</code>·Judge·AI Provider 의존 지도</td><td>애드온의 플랫폼 파일 패치 금지, C-28 선행, OJ Console·PublicUI 분리 통합과 OJ 원본 읽기 전용 경계가 명시됨</td></tr>
+          <tr><td><a href="a-d-002-screen-entrypoints.html"><code>A-D-002</code></a></td><td>화면과 진입 경로</td><td>관리자 메뉴, 화면, REST, AJAX, form action, hook, shortcode 목록</td><td>모든 사용자 진입점이 담당 Controller와 권한까지 추적됨</td></tr>
+          <tr><td><a href="a-d-003-access-settings.html"><code>A-D-003</code></a></td><td>메뉴·권한·기능 설정</td><td>capability, 역할, scope, nonce, feature flag, 설정 소유권 표</td><td>교사·보조교사·학생·관리자의 허용 및 거부 경로가 빠짐없이 기록됨</td></tr>
+          <tr><td><a href="a-d-004-data-storage.html"><code>A-D-004</code></a></td><td>데이터 저장소</td><td>현재 테이블, option, transient, 파일, 인덱스, migration, 보존 기간 목록</td><td>애드온 소유 데이터와 외부 읽기 데이터가 분리되고 모든 사용자 정의 테이블이 무접두어인지 확인됨</td></tr>
+          <tr><td><a href="a-d-005-worksheet-plate.html"><code>A-D-005</code></a></td><td>활동지와 Plate 문서</td><td>에디터 node, 원문, 교사용·학생용·채점용 schema, 버전, 공개 필드와 PDF 지도</td><td>학생 비공개 정보와 활동지·학생 결과물 PDF의 현재 생성 흐름이 추적됨</td></tr>
+          <tr><td><a href="a-d-006-ai-evaluation-flow.html"><code>A-D-006</code></a></td><td>평가와 AI 실행 흐름</td><td>활동지 자체 평가, 학생 제출 평가, prompt, provider, normalizer, 결과 저장, 재시도 흐름</td><td>두 평가 종류의 현재 결합 지점과 임시 구현이 구분됨</td></tr>
+          <tr><td><a href="a-d-007-user-workflow-risks.html"><code>A-D-007</code></a></td><td>사용자 업무 흐름과 위험</td><td>교사 제작·검토·배포·채점, 학생 작성·제출·피드백 흐름과 실패·복구 시나리오</td><td>정상·빈 상태·오류·중단·재실행·수동 검토 흐름이 기록됨</td></tr>
+          <tr><td><a href="a-d-008-module-data-ownership.html"><code>A-D-008</code></a></td><td>모듈·데이터 소유권</td><td>Worksheet, Submission, Assessment, Platform, Database, Import 간 Contract와 소유권 표</td><td>모듈 간 직접 Repository·테이블 접근과 순환 의존 후보가 식별됨</td></tr>
+          <tr><td><a href="a-d-009-baseline-gap-freeze.html"><code>A-D-009</code></a></td><td>현재 상태 기준선과 격차</td><td>유지·교체·제거 후보, 자동 검사 현황, 수량 검산, 미결정 목록</td><td>현재 사실에 대한 사용자 확인을 받고 상세 설계 입력이 동결됨</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="detail-design">상세 설계 단계 <code>A-DS-00~A-DS-16</code></h2>
+      <p>각 단계는 기능 설명만 적지 않는다. UI, 권한, 입력·출력, 서비스 경계, 데이터, 실패 처리와 검증 기준을 함께 확정한다.</p>
+      <table>
+        <thead><tr><th>단계</th><th>설계 대상</th><th>핵심 산출물</th><th>선행 이유와 통과 관문</th></tr></thead>
+        <tbody>
+          <tr><td><a href="a-ds-00-scope-baseline.html"><code>A-DS-00</code></a></td><td>목적·범위·기준선</td><td>활동지 중심 도메인, 비목표, 용어, 고정 결정, 성공 지표, 금지 변경</td><td><code>A-D</code> 기준선을 승인하고 이후 단계가 플랫폼 파일 패치 금지·Console/PublicUI 명시 통합·무접두어 원칙을 바꾸지 못하게 함</td></tr>
+          <tr><td><a href="a-ds-01-ui-system.html"><code>A-DS-01</code></a></td><td>공통 사용자·관리자 UI 시스템</td><td>OJ Console <code>학습 공간 &gt; AI 활동지</code>, PublicUI <code>학습 &gt; 활동지</code>, <a href="a-ds-01-ui-prototype.html">클릭형 UI 시안</a>, 짧은 제품 문구, 공통 상태, 접근성, 반응형, Plate 기본 편집 도구와 응답칸 10종 기준</td><td>교사·학생 화면이 플랫폼의 각 shell 안에서 같은 상태 언어를 사용하도록 정보 구조와 화면 시안을 승인함</td></tr>
+          <tr><td><a href="a-ds-02-addon-lifecycle.html"><code>A-DS-02</code></a></td><td>애드온 생명주기와 플랫폼 연결</td><td><a href="a-ds-02-addon-api-profile.html">Addon API v1 소비자 프로필</a>, <a href="a-ds-02-am-01-onready-adoption.html">AM-01 적용 계획</a>, <a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-api-v1-contract.html"><code>C28-API-V1-LOCK-01</code></a>, Console/Public 기여, capability, Context, AI task, 호환·비활성화 계약</td><td>Registry 동결 전 Manifest와 애드온별 <code>onReady()</code>를 같은 builder에 원자 등록하고 애드온 설치·업데이트의 플랫폼 Runtime 변경이 0건임</td></tr>
+          <tr><td><a href="a-ds-03-access-policy.html"><code>A-DS-03</code></a></td><td>권한과 대상 범위</td><td>애드온 capability, 플랫폼 역할·사용자 배정, worksheet·assignment·submission·evaluation 객체 범위와 Jobs 실행 권한</td><td>Console/PublicUI 메뉴·직접 URL·REST·백그라운드 작업이 같은 복합 Policy로 허용·거부됨</td></tr>
+          <tr><td><a href="a-ds-04-settings-ai-connection.html"><code>A-DS-04</code></a></td><td>설정·비밀값·AI 연결</td><td>플랫폼 소유 provider profile·비밀값·모델 routing과 애드온 소유 평가 정책·루브릭·검토 기준의 경계</td><td>애드온과 브라우저에 비밀값이 노출되지 않고 플랫폼 연결 진단·작업 배정·애드온 평가 실행이 구분됨</td></tr>
+          <tr><td><a href="a-ds-05-addon-database.html"><code>A-DS-05</code></a></td><td>애드온 데이터베이스</td><td>무접두어 <code>oj_ai_*</code> 스키마, 인덱스, 상태, version, repository, 설치·업그레이드·복구 계약</td><td><code>$wpdb-&gt;prefix</code> 사용 0건, 동명 테이블 충돌 사전 차단, 모듈별 테이블 소유권 확정</td></tr>
+          <tr><td><a href="a-ds-06-platform-ledger-connector.html"><code>A-DS-06</code></a></td><td>플랫폼 원장 Connector</td><td>API 1.1의 교사·학생 학습 Context, 자기 참여, exact roster·revision과 소비자 fail-closed 계약</td><td>CG01·CG02·CG11 G0 구현 인수, 플랫폼 내부 service·table 접근 0건</td></tr>
+          <tr><td><a href="a-ds-07-ai-job-execution.html"><code>A-DS-07</code></a></td><td>AI 작업 실행·큐</td><td>플랫폼 동기 AI Gateway와 애드온 queue·worker, 멱등성, lease, retry, cancel, routing drift, output 검증과 측정 불가 비용 처리</td><td>브라우저는 enqueue만 수행하고 worker 중단·중복·권한 철회·배정 변경 뒤에도 공식 결과가 최대 한 건임</td></tr>
+          <tr><td><a href="a-ds-08-route-rest-command.html"><code>A-DS-08</code> 경로·REST·명령 계약</a></td><td>Amendment 07 구현 동결</td><td>Page 9개·조회 38개·명령 79개, 활동지 Q37·C76·C77과 학생 제출 Q38·C78·C79 분리, RC01~RC05 유지</td></tr>
+          <tr><td><a href="a-ds-09-worksheet-authoring-version.html"><code>A-DS-09</code></a></td><td>활동지 제작과 버전</td><td>Plate node 계약, response field, 교사용·학생용·채점용 schema, print projection, draft·revision·publish 흐름</td><td>학생 schema와 학생 PDF에 비공개 정보가 포함되지 않고 배포 버전이 불변 snapshot으로 고정됨</td></tr>
+          <tr><td><a href="a-ds-10-worksheet-self-evaluation.html"><code>A-DS-10</code> 활동지 자체 AI 평가</a></td><td>사용자 확인·동결·G0 인수</td><td>독립 task·6개 품질 차원·엄격한 input/output·검토 관문, AJ08 API 1.1 instruction 구현</td></tr>
+          <tr><td><a href="a-ds-11-assignment-student-submission.html"><code>A-DS-11</code> 배포·학생 작성·제출</a></td><td>사용자 확인·동결·G0 인수</td><td>CG01·CG02·CG11·RC02·RC03 기반 충족, exact roster·응답칸 10종·저장·제출·PDF 계약 유지</td></tr>
+          <tr><td><a href="a-ds-12-submission-ai-assessment.html"><code>A-DS-12</code> 학생 제출물 AI 평가</a></td><td>사용자 확인·동결·G0 인수</td><td>공식 제출본·응답칸 10종·AI 점수·근거 계약, AJ08 instruction 기반 충족·G1 선언 대기</td></tr>
+          <tr><td><a href="a-ds-13-teacher-review-feedback-release.html"><code>A-DS-13</code></a></td><td>교사 검토·확정·학생 피드백</td><td>exact AI 결과 검토, 공식 review CAS, feedback_draft, 학생 release, 정정·회수</td><td>D01~D24·CA01·DBA01·RA01 사용자 확인·동결, A-DS-02·04·05·07·08·12 정식 amendment 반영</td></tr>
+          <tr><td><a href="a-ds-14-dashboard-report-export.html"><code>A-DS-14</code> 대시보드·보고서·내보내기</a></td><td>사용자 확인·동결·G0 인수</td><td>활동지·그룹·학생 보고서, CSV·JSON·PDF·ZIP과 AJ08·CG11·RC01·RC02 기반 충족</td></tr>
+          <tr><td><a href="a-ds-15-install-upgrade-migration-operations.html"><code>A-DS-15</code> 설치·업그레이드·기존 데이터 이전·운영</a></td><td>사용자 확인·동결·G0 인수</td><td>CA01·DBA01·RA01, 보존 uninstall·2단계 purge와 dev.33 Runtime readiness 진단</td></tr>
+          <tr><td><a href="a-ds-16-cross-validation-freeze.html"><code>A-DS-16</code></a></td><td>전체 연결·교차 검증·동결</td><td>페이지↔권한↔Controller↔Use Case↔AI schema↔Repository↔Table/Connector 추적표, 위험 목록, 검증 명령, 최종 승인 기록</td><td>미결정 계약과 추적 불가 항목이 0건이고 사용자 승인 뒤 설계가 동결됨</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="stage-contract">각 단계 문서의 고정 계약</h2>
+      <section class="panel">
+        <p>모든 <code>A-D</code>와 <code>A-DS</code> 문서는 같은 순서로 작성한다. 관련 문서는 Markdown이 아닌 이 폴더의 HTML로 만든다.</p>
+        <ol>
+          <li><strong>목적과 범위:</strong> 이번 단계에서 결정할 것과 다음 단계로 넘길 것을 명시한다.</li>
+          <li><strong>확인 근거:</strong> 읽은 파일, 클래스, 화면, 테이블, 실행 결과와 수량을 기록한다.</li>
+          <li><strong>현재 상태:</strong> 유지할 동작, 결합된 책임, 위험과 누락을 사실로 구분한다.</li>
+          <li><strong>목표 계약:</strong> UI, 권한, DTO, Service, Repository, AI schema, table, connector의 책임을 정의한다.</li>
+          <li><strong>실패와 복구:</strong> 빈 상태, 오류, timeout, 부분 완료, 재시도, 취소와 수동 복구를 정의한다.</li>
+          <li><strong>보안과 공개 범위:</strong> 학생·교사·관리자별 노출 필드와 개인정보 처리 범위를 정의한다.</li>
+          <li><strong>검증 기준:</strong> 구조, 계약, 단위, 통합, 권한, E2E, 시각 검사의 통과 조건을 적는다.</li>
+          <li><strong>결정 기록:</strong> 확정, 보류, 기각 대안과 사용자 승인 일자를 남긴다.</li>
+        </ol>
+      </section>
+
+      <h2 id="gates">설계 관문</h2>
+      <table>
+        <thead><tr><th>관문</th><th>통과 조건</th><th>차단하는 문제</th></tr></thead>
+        <tbody>
+          <tr><td>본체 경계</td><td>애드온 변경 파일은 <code>oj-ai-dashboard</code>로 한정하고, 별도 플랫폼 릴리스의 공개 애드온 API만 사용</td><td>애드온 설치기의 본체 patch, 본체 migration 변경, 내부 container 접근, 외부 DB 쓰기</td></tr>
+          <tr><td>외부 API 개정</td><td>플랫폼 계약 개정 ID, 보안 사유, 소비자 영향, 대체 signature, 양쪽 HTML·fixture와 릴리스 관문을 함께 기록</td><td>삭제된 API를 활성 계약으로 유지하거나 제공자 코드와 소비자 문서가 다른 상태</td></tr>
+          <tr><td>데이터</td><td>모든 애드온 물리 테이블이 고정 <code>oj_ai_*</code> 이름이며 소유 모듈·인덱스·보존 정책이 있음</td><td><code>$wpdb-&gt;prefix</code>, 소유자 없는 테이블, 자동 레거시 삭제</td></tr>
+          <tr><td>활동지 공개</td><td>student schema 노출 검사가 정답·루브릭·배점·교사용 메모를 차단함</td><td>원본 Plate JSON의 무가공 학생 전달</td></tr>
+          <tr><td>AI 계약</td><td>활동지 평가와 제출 평가의 input, prompt, output, normalizer, 저장소가 분리되고 제출 평가는 P03-pinned 기준·추출 provenance를 고정함</td><td>현재 기본 rubric 재조회, 자유 형식 응답 직접 저장, AI 자동 게시, 근거 없는 점수</td></tr>
+          <tr><td>권한</td><td>메뉴·페이지·REST·Jobs·export가 같은 Policy와 scope 검사를 사용함</td><td>nonce만으로 권한을 대신하거나 학생이 타인 자료를 조회하는 경로</td></tr>
+          <tr><td>수직 추적</td><td>모든 주요 화면이 권한부터 데이터와 테스트까지 추적 가능함</td><td>화면 없는 내부 API, 임시 Repository, TODO Controller</td></tr>
+          <tr><td>운영</td><td>설치, 업그레이드, 실패 복구, 데이터 이전, 비활성화가 서로 구분됨</td><td>활성화 시 외부 데이터 자동 변경, 확인 없는 이전</td></tr>
+          <tr><td>사용자 승인</td><td>미결정 목록과 위험을 포함한 승인 기록이 있음</td><td>권장안을 승인된 결정으로 간주하는 것</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="freeze">설계 동결과 구현 전환</h2>
+      <section class="panel">
+        <div class="callout"><strong>상세 진행 원장:</strong> 큰 관문 아래의 실제 작업 순서와 완료 증거는 <a href="implementation-roadmap.html">상세 구현 진행표</a>에서 관리한다. 구현을 시작할 때 하위 ID 하나만 진행으로 바꾸고 검증 뒤 다음 ID로 이동한다.</div>
+        <p><code>A-DS-16</code>을 통과하면 구현 순서를 별도로 작성한다. 구현 순서는 공통 기반만 오래 만들지 않고 다음 수직 단위를 기본으로 삼는다.</p>
+        <div class="flow">
+          <div class="step"><div><strong>보호 기준선</strong><br>현재 파일·경로·테이블·권한 manifest와 복구 기준을 고정한다.</div></div>
+          <div class="step"><div><strong>애드온 공통 기반</strong><br>bootstrap, module contract, 권한, 설정, DB, connector, Jobs, REST를 실제 운영 화면까지 완성한다.</div></div>
+          <div class="step"><div><strong>활동지 제작과 자체 평가</strong><br>Plate 작성, revision, AI 진단, 교사 검토 흐름을 한 묶음으로 완성한다.</div></div>
+          <div class="step"><div><strong>배포·응답·제출물 평가</strong><br>학생 작성부터 AI 평가와 교사 확정, 학생 피드백까지 완성한다.</div></div>
+          <div class="step"><div><strong>운영·이전·최종 통합</strong><br>대시보드, 보고서, 설치·업그레이드·이전·복구와 브라우저 인수를 완료한다.</div></div>
+        </div>
+        <div class="callout"><strong>구현 완료 정의:</strong> UI, 권한, 기능 코드, 데이터, 실패 복구, 자동 테스트와 브라우저 확인 중 하나라도 빠지면 해당 구현 단계는 완료로 처리하지 않는다.</div>
+      </section>
+
+      <h2 id="current">현재 위치와 다음 단계</h2>
+      <table>
+        <thead><tr><th>항목</th><th>상태</th><th>다음 처리</th></tr></thead>
+        <tbody>
+          <tr><td>전체 설계 단계</td><td>기준 적용</td><td><code>A-D</code> 조사와 <code>A-DS</code> 상세 설계를 순서대로 진행</td></tr>
+          <tr><td><a href="a-d-001-boundary-dependencies.html"><code>A-D-001</code> 애드온 경계·의존 관계</a></td><td>사용자 확인·동결</td><td><code>A-D001-DEC-01~DEC-02</code>와 <code>A-D001-C01~C09</code> 기준선 확정</td></tr>
+          <tr><td><a href="a-d-002-screen-entrypoints.html"><code>A-D-002</code> 화면·진입 경로</a></td><td>사용자 확인·기준선 확정</td><td>11개 화면, REST 73경로·85작업과 Console/PublicUI 목표 소유권 확정</td></tr>
+          <tr><td><a href="a-d-003-access-settings.html"><code>A-D-003</code> 메뉴·권한·기능 설정</a></td><td>사용자 확인·기준선 확정</td><td>16개 capability, 3개 역할, REST scope·nonce와 C28-D09~D11 보완 확정</td></tr>
+          <tr><td><a href="a-d-004-data-storage.html"><code>A-D-004</code> 데이터 저장 구조</a></td><td>사용자 확인·기준선 확정</td><td>여섯 목표 저장 결정을 승인하고 35 table, 586 column, 86 index, JSON 27, FK 0 기준선 동결</td></tr>
+          <tr><td><a href="a-d-005-worksheet-plate.html"><code>A-D-005</code> 활동지와 Plate 문서</a></td><td>사용자 확인·기준선 확정</td><td>여덟 목표 결정과 활동지·학생 결과물 PDF 계약 사용자 확인·동결</td></tr>
+          <tr><td><a href="a-d-006-ai-evaluation-flow.html"><code>A-D-006</code> 평가와 AI 실행 흐름</a></td><td>사용자 확인·기준선 확정</td><td>실제 provider 0개, 활동지 자체 평가 0개와 열 목표 결정을 사용자 확인으로 동결</td></tr>
+          <tr><td><a href="a-d-007-user-workflow-risks.html"><code>A-D-007</code> 사용자 업무 흐름과 위험</a></td><td>사용자 확인·기준선 확정</td><td>교사·학생·운영자 흐름, 18개 실패·복구 시나리오와 열 목표 결정을 사용자 확인으로 동결</td></tr>
+          <tr><td><a href="a-d-008-module-data-ownership.html"><code>A-D-008</code> 모듈·데이터 소유권</a></td><td>사용자 확인·기준선 확정</td><td>12개 모듈, 32개 Repository, 35개 table과 열두 목표 소유권 결정을 사용자 확인으로 동결</td></tr>
+          <tr><td><a href="a-d-009-baseline-gap-freeze.html"><code>A-D-009</code> 현재 상태 기준선과 격차</a></td><td>사용자 확인·기준선 동결</td><td>131개 격차와 열두 최종 현황 결정을 2026-08-10 확정하고 상세 설계 입력 동결</td></tr>
+          <tr><td><a href="a-ds-00-scope-baseline.html"><code>A-DS-00</code> 목적·범위·기준선</a></td><td>사용자 확인·동결</td><td>제품·두 shell·수직 흐름·소유권·평가 주제·용어·성공 기준·16개 결정을 2026-08-10 확정</td></tr>
+          <tr><td><a href="a-ds-01-ui-system.html"><code>A-DS-01</code> 공통 사용자·관리자 UI 시스템</a></td><td>사용자 확인·2026-08-28 보완</td><td>교사 6개·학생 3개 화면군과 클릭형 시안, Console 직접 업무 5개, Plate 기본 편집 도구·응답칸 10종, 반응형·접근성, 활동지 중심 보고서를 확정</td></tr>
+          <tr><td><a href="a-ds-02-addon-lifecycle.html"><code>A-DS-02</code> 애드온 생명주기와 플랫폼 연결</a></td><td>기준 결정·<a href="a-ds-02-am-01-onready-adoption.html">AM-01 사용자 확인·동결</a></td><td>2026-08-10의 19개 기준 결정은 이력으로 보존하고, D03·D10의 삭제된 전역 Runtime 전달 방식을 2026-08-12 동결한 애드온별 <code>onReady()</code> 직접 dispatch 계약으로 대체한다.</td></tr>
+          <tr><td><a href="a-ds-03-access-policy.html"><code>A-DS-03</code> 권한·역할·객체 범위 정책</a></td><td>사용자 확인·동결</td><td>15개 capability, 플랫폼 역할·사용자 명시 배정, class·group Context와 객체·Jobs·PDF 복합 Policy를 2026-08-12 동결</td></tr>
+          <tr><td><a href="a-ds-04-settings-ai-connection.html"><code>A-DS-04</code> 설정·비밀값·AI 연결</a></td><td>사용자 확인·동결</td><td>2026-08-12 D01~D18 확정, 플랫폼 AI 연결과 애드온 평가 설정·revision 경계 동결</td></tr>
+          <tr><td><a href="a-ds-05-addon-database.html"><code>A-DS-05</code> 애드온 데이터베이스</a></td><td>사용자 확인·동결</td><td>Amendment 01~09 반영, 45개 무접두어 table·10 owner·두 평가·특기사항 storage와 schema 1.0.1 전진 migration·복구 계약 동결</td></tr>
+          <tr><td><a href="a-ds-06-platform-ledger-connector.html"><code>A-DS-06</code> 플랫폼 원장 Connector</a></td><td>사용자 확인·동결</td><td>2026-08-13 D01~D24 확정, 공개 Context API 전용 연결·학생 참여 공백·legacy Connector 퇴출 계약 동결</td></tr>
+          <tr><td><a href="a-ds-07-ai-job-execution.html"><code>A-DS-07</code> AI 작업 실행·큐</a></td><td>사용자 확인·동결</td><td>2026-08-13 D01~D24 확정, 동기 Gateway와 애드온 queue, 멱등·lease·retry·cancel·routing drift·결과 검증 계약 동결</td></tr>
+          <tr><td><a href="a-ds-08-route-rest-command.html"><code>A-DS-08</code> 경로·REST·명령 계약</a></td><td>G4 R01 구현 동결</td><td>Amendment 01~07 반영 뒤 Page 9개·조회 38개·명령 79개, RC01~RC05 공개 플랫폼 계약 유지</td></tr>
+          <tr><td><a href="a-ds-09-worksheet-authoring-version.html"><code>A-DS-09</code> 활동지 제작과 버전</a></td><td>사용자 확인·동결</td><td>2026-08-13 D01~D24·RA01~RA04·DBA01~DBA03 확정, Plate profile·node 16종·응답칸 10종·projection 5종과 불변 revision·발행 계약 동결</td></tr>
+          <tr><td><a href="a-ds-10-worksheet-self-evaluation.html"><code>A-DS-10</code> 활동지 자체 AI 평가</a></td><td>사용자 확인·동결·G0 인수</td><td>2026-08-13 D01~D24·DBA01 확정, 독립 task·6개 품질 차원·엄격한 input/output·근거별 검토와 승인 관문 동결, AJ08은 G0 API 1.1 구현 인수</td></tr>
+          <tr><td><a href="a-ds-11-assignment-student-submission.html"><code>A-DS-11</code> 배포·학생 작성·제출</a></td><td>사용자 확인·동결·G0 인수</td><td>2026-08-13 D01~D24·DBA01~DBA02·RA01~RA03 확정, A-DS-05 Amendment 04·A-DS-08 Amendment 02 반영, CG01·CG02·CG11·RC02·RC03 G0 구현 인수</td></tr>
+          <tr><td><a href="a-ds-12-submission-ai-assessment.html"><code>A-DS-12</code> 학생 제출물 AI 평가</a></td><td>사용자 확인·동결·G0 인수</td><td>2026-08-13 D01~D24·PA01·DBA01 확정, A-DS-09 Projection Amendment 01·A-DS-05 Amendment 05 반영, AJ08 G0 API 1.1 구현 인수</td></tr>
+          <tr><td><a href="a-ds-13-teacher-review-feedback-release.html"><code>A-DS-13</code> 교사 검토·피드백·학생 공개</a></td><td>사용자 확인·동결</td><td>2026-08-13 D01~D24·CA01·DBA01·RA01 확정, 공통 outer·operation별 inner 계약과 DB Amendment 06·REST Amendment 03 반영</td></tr>
+          <tr><td><a href="a-ds-14-dashboard-report-export.html"><code>A-DS-14</code> 대시보드·보고서·내보내기</a></td><td>사용자 확인·동결</td><td>2026-08-14 D01~D24·CA01·DBA01·RA01·PA01 확정, 특기사항 inner·보고서 source manifest·C69·PDF adapter 정본 반영</td></tr>
+          <tr><td><a href="a-ds-15-install-upgrade-migration-operations.html"><code>A-DS-15</code> 설치·업그레이드·기존 데이터 이전·운영</a></td><td>사용자 확인·동결</td><td>2026-08-14 D01~D24·<code>A-DS15-CA01</code>·<code>A-DS15-DBA01</code>·<code>A-DS15-RA01</code> 확정, 신규 설치·forward repair·legacy package·보존 uninstall·2단계 purge와 dev.33 Runtime readiness 인수</td></tr>
+          <tr><td><a href="a-ds-16-cross-validation-freeze.html"><code>A-DS-16</code> 전체 연결·교차 검증·동결</a></td><td>2026-08-28 메뉴 보완 반영</td><td>Page 9·Menu 6·Asset 5·GET 40·POST 79·capability 15·table 45·owner 10·AI task 2 전수 추적</td></tr>
+          <tr><td><a href="platform-api-implementation-audit.html"><code>API-AUD-2026-08-14-R6</code> 플랫폼 API 구현 재검증</a></td><td>G0 코드 관문 통과</td><td>API 1.1·공개 symbol 37개·계약 fixture 6종·91파일 fingerprint, 플랫폼 blocker 0건·소비자 보강 5건</td></tr>
+          <tr><td><a href="g0-c28-i06-release-gate.html"><code>G0-REL-C28-I06</code> 릴리스 관문</a></td><td>검증 ZIP 통과·clean build 대기</td><td>47개 회귀, source/package fingerprint, upgrade·rollback, production <code>source_dirty=false</code> 조건 기록</td></tr>
+          <tr><td><a href="g1-addon-foundation-implementation.html"><code>G1-IMP-01</code> 애드온 기반 구현</a></td><td>계약 통과·Console 직접 메뉴 보완</td><td>Manifest·onReady Bridge·활성화 사전 검사·15 capability·9 Page·6 menu·5 asset·2 AI task 계약 통과</td></tr>
+          <tr><td><a href="g1-composition-root-implementation.html"><code>G1-IMP-02</code> Composition Root</a></td><td>계약 통과</td><td>단일 concrete 조립·typed readiness Port·중복 부팅 방지·legacy Runtime 미부팅</td></tr>
+          <tr><td><a href="g1-database-foundation-implementation.html"><code>G1-IMP-03</code> Database foundation</a></td><td>계약 통과</td><td>45개 literal table·10 owner·충돌 preflight·1.0.0 기준선과 1.0.1 전진을 합친 3개 immutable migration</td></tr>
+          <tr><td><a href="g1-database-infrastructure-implementation.html"><code>G1-IMP-04</code> Database infrastructure</a></td><td>계약 통과</td><td>exact metadata·named lock·ledger·순차 DDL·postcondition·부분 실패·승인 repair fixture</td></tr>
+          <tr><td><a href="g1-activation-database-integration.html"><code>G1-IMP-05</code> Activation·Database 통합</a></td><td>계약 통과</td><td>preflight 뒤 runner 조립·안전 오류·schema 성공 뒤 version 기록·재활성화 멱등 fixture</td></tr>
+          <tr><td><a href="g1-runtime-schema-readiness.html"><code>G1-IMP-06</code> Runtime 스키마 검산</a></td><td>계약 통과</td><td>accepted <code>onReady()</code>에서 owner·45 table metadata·state·migration ledger를 SELECT-only로 확인한 뒤 Bridge 연결</td></tr>
+          <tr><td><a href="g1-common-access-policy.html"><code>G1-IMP-07</code> 공통 접근 Policy</a></td><td>계약 통과</td><td>Runtime·actor·15 capability·class/group Context·객체/state와 Page·REST·Job·Artifact 동일 판정</td></tr>
+          <tr><td><a href="g1-common-rest-envelope.html"><code>G1-IMP-08</code> 공통 REST envelope</a></td><td>계약 통과·경로 미개방</td><td>서버 actor·<code>wp_rest</code>·공통 Policy·오류 11개·correlation·POST 멱등키, 미완성 route 0개</td></tr>
+          <tr><td><a href="g1-context-list-q01.html"><code>G1-IMP-09</code> Context 목록 adapter·Q01</a></td><td>계약 통과·활성 REST 경로 1개</td><td><code>G1-REST-GAP-01 해결</code>, Q01 512자 opaque cursor profile, 공개 <code>listTeachingContexts()</code> 중립 projection</td></tr>
+          <tr><td><a href="g2-worksheet-authoring-vertical-slice.html"><code>G2-IMP-01</code> 활동지 제작 수직 흐름</a></td><td>계약·보완 재검증 통과</td><td>C01·Q04~Q07, owner Policy, canonical Plate revision, 원자 저장·멱등·서명 cursor와 NFC·DB 오류 음수 계약</td></tr>
+          <tr><td><a href="g2-imp-01-corrective-revalidation.html"><code>G2-IMP-01-R01~R05</code> 보완</a></td><td>완료</td><td>임시 산출물, 인코딩, 회귀 집계, 릴리스 allowlist와 플랫폼 API 1.1 재검증</td></tr>
+          <tr><td><a href="g2-imp-02-s01-plate-runtime-entrypoint.html"><code>G2-IMP-02-S01</code> Plate Runtime·진입점 재확인</a></td><td>완료</td><td>Plate 53.1.2 build 재현, legacy wp-admin·OJ Console·새 REST 차이와 재사용·교체 경계 고정</td></tr>
+          <tr><td><a href="g2-imp-02-s02-c02-contract.html"><code>G2-IMP-02-S02</code> C02 저장 계약</a></td><td>완료</td><td><code>expected_revision_id</code>, canonical digest, 멱등 key scope, 200·201·409 receipt DTO와 fixture 고정</td></tr>
+          <tr><td><a href="g2-imp-02-s03-document-profile.html"><code>G2-IMP-02-S03</code> 활동지 문서 검증</a></td><td>완료</td><td>node 16 family·구조 6종·응답 10종·mark 4종·hard limit와 stable ID 치환 고정</td></tr>
+          <tr><td><a href="g2-imp-02-s04-revision-projection.html"><code>G2-IMP-02-S04</code> 리비전 Projection</a></td><td>완료</td><td>질문 index·private grading·성취기준 snapshot·asset binding과 결정적 manifest 고정</td></tr>
+          <tr><td><a href="g2-imp-02-s05-revision-transaction.html"><code>G2-IMP-02-S05</code> 불변 Revision Transaction</a></td><td>완료</td><td>원자 append·root CAS·도메인 동일 내용 dedupe·stale 409·rollback 고정</td></tr>
+          <tr><td><a href="g2-imp-02-s06-operation-transaction.html"><code>G2-IMP-02-S06</code> Operation Transaction</a></td><td>완료</td><td>staged asset·audit·outbox·exact 멱등 replay와 전체 rollback 고정</td></tr>
+          <tr><td><a href="g2-imp-02-s07-rest-boundary.html"><code>G2-IMP-02-S07</code> C02 REST Boundary</a></td><td>완료</td><td>owner·capability·wp_rest nonce·Idempotency-Key·200/201 replay·safe 409 고정</td></tr>
+          <tr><td><a href="g2-imp-02-s08-workbench-plate.html"><code>G2-IMP-02-S08</code> Plate 교사 작업대</a></td><td>완료</td><td>Q04·Q05·Q07·C01·C02와 응답칸 10종 canonical adapter 연결</td></tr>
+          <tr><td><a href="g2-imp-02-s09-save-conflict-recovery.html"><code>G2-IMP-02-S09</code> 저장·충돌·복구</a></td><td>완료</td><td>저장 상태·safe 409·local recovery와 false dirty 방지</td></tr>
+          <tr><td><a href="g2-imp-02-s10-regression.html"><code>G2-IMP-02-S10</code> 전체 회귀</a></td><td>완료</td><td>G1·G2·구조·권한·REST·PHP·JS 자동 검사 통과</td></tr>
+          <tr><td><a href="g2-imp-02-s11-visual-verification.html"><code>G2-IMP-02-S11</code> 화면 검증</a></td><td>완료</td><td>실제 Plate bundle desktop·mobile overlap·overflow·오류 0건</td></tr>
+          <tr><td><a href="g2-imp-02-s12-freeze.html"><code>G2-IMP-02-S12</code> 구현 동결</a></td><td>완료</td><td>12/12 증거·로드맵·API 감사 동기화</td></tr>
+          <tr><td><a href="g2-imp-03-s05-workbench-integration.html"><code>G2-IMP-03-S01~S05</code> 자산·가져오기·복제</a></td><td>완료</td><td>private staging·조회·폐기, .ojws import, 원자 복제와 작업대 통합</td></tr>
+          <tr><td><a href="g2-imp-04-s01-validation.html"><code>G2-IMP-04-S01</code> C05 활동지 검증</a></td><td>완료</td><td>exact revision hash·validation receipt·asset readiness와 mutation 0</td></tr>
+          <tr><td><a href="g2-imp-04-s02-preview.html"><code>G2-IMP-04-S02</code> Q08 학생·인쇄 미리보기</a></td><td>완료</td><td>P01·P02·P05 allowlist projection과 두 blank profile</td></tr>
+          <tr><td><a href="g2-imp-04-s03-projection-safety.html"><code>G2-IMP-04-S03</code> Projection 안전 검사</a></td><td>완료</td><td>renderer parity·private field·asset URL 0건과 C05 ready 관문</td></tr>
+          <tr><td><a href="g2-imp-04-s04-ui-e2e-freeze.html"><code>G2-IMP-04-S04</code> UI·E2E 동결</a></td><td>완료</td><td>짧은 validation·student/print UI, 안전 렌더러와 desktop/mobile 회귀</td></tr>
+          <tr><td><a href="g2-imp-05-s01-task-instruction.html"><code>G2-IMP-05-S01</code> Task instruction</a></td><td>완료</td><td>task identity·6차원·불변 byte/hash·AJ08 제공자/소비자 계약</td></tr>
+          <tr><td><a href="g2-imp-05-s02-p04-input.html"><code>G2-IMP-05-S02</code> P04 평가 입력</a></td><td>완료</td><td>exact revision·최소 정보·설정 snapshot·결정적 byte/hash·900 KiB 관문</td></tr>
+          <tr><td><a href="g2-imp-05-s03-c10-enqueue.html"><code>G2-IMP-05-S03</code> C10 평가 enqueue</a></td><td>완료</td><td>권한·exact source·P04·routing preflight와 5-owner 원자 저장·멱등 receipt</td></tr>
+          <tr><td><a href="g2-imp-05-s04-worker-normalizer.html"><code>G2-IMP-05-S04</code> worker·normalizer</a></td><td>완료</td><td>lease·동의·Gateway·strict output·postflight와 result/finding 원자 확정</td></tr>
+          <tr><td><a href="g2-imp-05-s05-query-projections.html"><code>G2-IMP-05-S05</code> Q09·Q10 조회</a></td><td>완료</td><td>owner SQL·signed cursor·safe projection·저장 hash와 run/result/review 연결 검산</td></tr>
+          <tr><td><a href="g2-imp-05-s06-retry-cancel.html"><code>G2-IMP-05-S06</code> C11·C12 재시도·취소</a></td><td>완료</td><td>frozen 입력 새 run·원자 취소·영속 멱등·lease 무효화와 늦은 worker 결과 차단</td></tr>
+          <tr><td><a href="g2-imp-05-s07-review.html"><code>G2-IMP-05-S07</code> C33 교사 검토</a></td><td>완료</td><td>finding별 누적 판단·append-only review·완료 blocker·descendant revision 검증</td></tr>
+          <tr><td><a href="g2-imp-05-s08-evaluation-workbench.html"><code>G2-IMP-05-S08</code> 평가 작업대</a></td><td>완료</td><td>Q09·Q10·C10~C12·C33 수직 연결, 동의 안내와 desktop·mobile 검증</td></tr>
+          <tr><td><a href="g2-imp-05-s09-integration-freeze.html"><code>G2-IMP-05-S09</code> 통합 동결</a></td><td>완료</td><td>저장 손상 503, 동의·routing·worker·CAS와 desktop·mobile 수직 회귀</td></tr>
+          <tr><td><a href="g2-imp-05-r01-external-ai-consent.html"><code>G2-IMP-05-R01</code> 외부 AI 동의 설정</a></td><td>완료</td><td>Q37·C76·C77, literal 원장·감사, worker exact routing과 OJ Console 설정 UI</td></tr>
+          <tr><td><a href="g2-imp-06-s01-approval-policy.html"><code>G2-IMP-06-S01</code> 승인 정책 관문</a></td><td>완료</td><td>exact validation·평가 정책·Q10 review를 evidence hash와 결정적 승인 판정으로 결속</td></tr>
+          <tr><td><a href="g2-imp-06-s02-approval-command.html"><code>G2-IMP-06-S02</code> C06 명시 승인</a></td><td>완료</td><td>교사 권한·exact evidence CAS·멱등·transaction·audit·outbox로 draft revision을 원자 승인</td></tr>
+          <tr><td><a href="g2-imp-06-s03-publication.html"><code>G2-IMP-06-S03</code> C07 불변 발행</a></td><td>완료</td><td>approved exact revision과 P01·P02·P03·P05를 결정적 publication hash·audit·outbox로 원자 고정</td></tr>
+          <tr><td><a href="g2-imp-06-s04-lifecycle.html"><code>G2-IMP-06-S04</code> C08·C09 보관·복원</a></td><td>완료</td><td>root-only 상태 전이·state/revision/lock CAS·감사·멱등과 과거 원본 보존</td></tr>
+          <tr><td><a href="g2-imp-06-s05-ui-freeze.html"><code>G2-IMP-06-S05</code> 승인·발행 작업대 UI 동결</a></td><td>완료</td><td>C05 readiness·C06~C09 exact 명령·읽기 전용 상태와 desktop·mobile 수직 회귀</td></tr>
+          <tr><td><a href="g2-imp-07-s01-print-projection.html"><code>G2-IMP-07-S01</code> 활동지 인쇄 Projection</a></td><td>완료</td><td>revision·publication exact source, P05 불변성·canonical 손상·private field 안전 경계 고정</td></tr>
+          <tr><td><a href="g2-imp-07-s02-pdf-job-artifact.html"><code>G2-IMP-07-S02</code> 활동지 PDF job·artifact</a></td><td>완료</td><td>C48·Q23·Q24, canonical snapshot·Dompdf·private artifact·현재 owner 재인가와 DB Amendment 09</td></tr>
+          <tr><td><a href="g2-imp-07-s03-worksheet-package.html"><code>G2-IMP-07-S03</code> 활동지 package</a></td><td>완료</td><td>C66 deterministic <code>.ojws</code>, 기존 importer 호환, shared Q23·Q24 private artifact·현재 owner 재인가</td></tr>
+          <tr><td><a href="g2-imp-07-s04-integration-freeze.html"><code>G2-IMP-07-S04</code> PDF·package 통합 동결</a></td><td>완료</td><td>공개·교사용 경계, Q23·Q24, 권한·동시성·만료, desktop·mobile UI와 실제 한글 A4 PDF 검증</td></tr>
+          <tr><td><a href="implementation-roadmap.html"><code>상세 구현 진행표</code></a></td><td>G0~G6 하위 단계 기록</td><td>G6-IMP-05 S01~S05 통과, G6 5/5 완료</td></tr>
+          <tr><td><a href="g5-imp-04-assessment-configuration.html"><code>G5-IMP-04 평가 설정</code></a></td><td>안전 seed·Q25~Q27·C55~C60·네 탭 UI</td><td>활동지 자체 평가와 학생 제출 평가 설정을 각각 운영 가능</td></tr>
+          <tr><td><a href="g3-imp-01-assignment-create.html"><code>G3-IMP-01 배포 생성</code></a></td><td>완료</td><td>Q11·Q12·C13, CG11 exact roster·원자 snapshot·4단계 Console UI</td></tr>
+          <tr><td><a href="g3-imp-02-assignment-lifecycle.html"><code>G3-IMP-02 배포 일정·상태</code></a></td><td>완료</td><td>C14~C18, lock·schedule CAS, 감사·outbox와 목록·상세 UI</td></tr>
+          <tr><td><a href="g3-imp-03-student-assignment.html"><code>G3-IMP-03 학생 할 일·시작</code></a></td><td>완료</td><td>CG02 현재 membership, Q30·Q31 self projection, C22 원자 시작과 PublicUI</td></tr>
+          <tr><td><a href="g3-imp-04-s01-response-renderer.html"><code>G3-IMP-04-S01 응답칸 10종</code></a></td><td>완료</td><td>canonical P02 10종 control, P01 위치 결합과 desktop·mobile 회귀</td></tr>
+          <tr><td><a href="g3-imp-04-s02-own-submission-query.html"><code>G3-IMP-04-S02 Q32 본인 제출 조회</code></a></td><td>완료</td><td>현재 actor·CG02·submission Object Scope, current·official revision 분리와 private projection 차단</td></tr>
+          <tr><td><a href="g3-imp-04-s03-autosave-revision.html"><code>G3-IMP-04-S03 C23 불변 자동 저장</code></a></td><td>완료</td><td>응답 10종, save token·CAS, 첨부 결합, 불변 revision, audit·outbox와 멱등 저장</td></tr>
+          <tr><td><a href="g3-imp-04-s04-offline-conflict-recovery.html"><code>G3-IMP-04-S04 오프라인·충돌 복구</code></a></td><td>완료</td><td>12시간 로컬 draft, exact operation 재시도, 문항별 비교·선택과 최신 revision rebase</td></tr>
+          <tr><td><a href="g3-imp-04-s05-responsive-accessibility-freeze.html"><code>G3-IMP-04-S05 반응형·접근성 동결</code></a></td><td>완료</td><td>roving tab keyboard, 응답 이름, live region과 desktop·mobile geometry 회귀</td></tr>
+          <tr><td><a href="g3-imp-05-s01-private-attachment-staging.html"><code>G3-IMP-05-S01 C24 private attachment staging</code></a></td><td>완료</td><td>본인 Context 재검사, P02 byte 검증, private quarantine, scanning attachment, 멱등·보상과 literal table 경계</td></tr>
+          <tr><td><a href="g3-imp-05-s02-staged-attachment-removal.html"><code>G3-IMP-05-S02 C25 staged attachment 제거</code></a></td><td>완료</td><td>본인·미결합 항목만 removed, private metadata purged, audit·outbox와 cleanup replay</td></tr>
+          <tr><td><a href="g3-imp-05-s03-attachment-scan-boundary.html"><code>G3-IMP-05-S03 type·size·malware 경계</code></a></td><td>완료</td><td>300초 reclaim lease, local ClamAV·bounded content 검사와 ready·rejected 원자 전이</td></tr>
+          <tr><td><a href="g3-imp-05-s04-expiry-cleanup-recovery.html"><code>G3-IMP-05-S04 만료·cleanup·복구</code></a></td><td>완료</td><td>24시간 만료, 고아 private file, legal hold lock과 300초 idempotent purge 재시도</td></tr>
+          <tr><td><a href="g3-imp-06-s01-official-submit-receipt.html"><code>G3-IMP-06-S01 C26 공식 제출</code></a></td><td>완료</td><td>exact official revision, 불변 receipt, 완전성·clean 첨부와 durable replay</td></tr>
+          <tr><td><a href="g3-imp-06-s02-teacher-submission-projections.html"><code>G3-IMP-06-S02 Q13~Q15 교사용 제출 조회</code></a></td><td>완료</td><td>target 전원·not_started, exact revision·receipt·첨부, 평가·공개 pointer 상태와 Context Object Policy</td></tr>
+          <tr><td><a href="g3-imp-06-s03-teacher-reopen-lock.html"><code>G3-IMP-06-S03 C27~C28 교사 재개방·잠금</code></a></td><td>완료</td><td>official 보존, reopened fork, reason receipt, lock current reset과 durable replay</td></tr>
+          <tr><td><a href="g3-imp-06-s04-submission-screen-audit.html"><code>G3-IMP-06-S04 제출 화면·감사</code></a></td><td>완료</td><td>학생 재제출·잠금 상태와 교사 대상·공식 답안·revision·receipt 작업대를 desktop·mobile로 연결</td></tr>
+          <tr><td><a href="g3-imp-06-s05-concurrency-freeze.html"><code>G3-IMP-06-S05 동시성 동결</code></a></td><td>완료</td><td>C23·C26·C27·C28 단일 승자, stale 패자 무기록, durable replay와 schedule·publication drift 차단</td></tr>
+          <tr><td><a href="g3-imp-07-s01-private-zip-staging.html"><code>G3-IMP-07-S01 C19 ZIP staging</code></a></td><td>완료</td><td>원본 ZIP을 해제 전 검사하고 private quarantine·ZIP root·audit·outbox에만 기록</td></tr>
+          <tr><td><a href="g3-imp-07-s02-async-scan-preview.html"><code>G3-IMP-07-S02 Q35 비동기 검사</code></a></td><td>완료</td><td>5분 lease, 제한 해제, source·item malware·MIME·magic, 부분 실패, 비확정 제안과 private field 비노출</td></tr>
+          <tr><td><a href="g3-imp-07-s03-explicit-mapping.html"><code>G3-IMP-07-S03 C68 명시 매핑</code></a></td><td>완료</td><td><code>expected_mapping_version</code> CAS로 item별 exact target·learner·response를 원자 확정하고 제출 revision 생성은 차단</td></tr>
+          <tr><td><a href="g3-imp-07-s04-confirm-cancel.html"><code>G3-IMP-07-S04 C20 확인·C21 취소</code></a></td><td>완료</td><td>항목별 proxy submit·기존 official 비덮어쓰기·부분 성공·durable replay와 24시간 지연 정리</td></tr>
+          <tr><td><a href="g3-imp-07-s05-integration-freeze.html"><code>G3-IMP-07-S05 ZIP 통합 동결</code></a></td><td>완료</td><td>zip bomb·경로·malware·mapping race·부분 성공·legal hold·300초 purge 재시도 전체 회귀</td></tr>
+          <tr><td><a href="g3-imp-08-s01-teacher-submission-pdf.html"><code>G3-IMP-08-S01</code></a></td><td>완료</td><td>C49 교사용 공식 제출 PDF·Context-aware Q23·Q24·실제 한글 PDF 동결</td></tr>
+          <tr><td><a href="g3-imp-08-s02-learner-worksheet-pdf.html"><code>G3-IMP-08-S02</code></a></td><td>완료</td><td>C51 본인 Context·불변 발행본·private 다운로드·학생 UI 동결</td></tr>
+          <tr><td><a href="g3-imp-08-s03-learner-submission-pdf.html"><code>G3-IMP-08-S03</code></a></td><td>완료</td><td>C67 본인 current official·snapshot 1.1·self Q23·Q24·학생 UI 동결</td></tr>
+          <tr><td><a href="g3-imp-08-s04-pdf-integration-freeze.html"><code>G3-IMP-08-S04</code></a></td><td>완료</td><td>C49·C51·C67 exact 권한 프로필·실제 한글 PDF·만료·철회·CAS·교사/학생 반응형 UI 동결</td></tr>
+          <tr><td><a href="g4-imp-01-s01-score-task-instruction.html"><code>G4-IMP-01-S01</code></a></td><td>완료</td><td>제출 평가 instruction v2·불변 byte/hash·v1 이력·score/feedback/special note 격리·AJ08 통과</td></tr>
+          <tr><td><a href="g4-imp-01-s02-official-input-projection.html"><code>G4-IMP-01-S02</code></a></td><td>완료</td><td>exact official 제출본·P03 pin·응답 10종·첨부 표현·private 참조 분리·결정적 hash</td></tr>
+          <tr><td><a href="g4-imp-01-s03-single-evaluation-enqueue.html"><code>G4-IMP-01-S03</code></a></td><td>완료</td><td>strict C29·공식본 CAS·원자 root/input/run/audit/outbox·exact/semantic replay·public routing</td></tr>
+          <tr><td><a href="g4-imp-01-s04-assignment-evaluation-enqueue.html"><code>G4-IMP-01-S04</code></a></td><td>완료</td><td>C30 항목별 부분 성공·C29 재사용·영속 exact replay·191자 scoped cursor·race recovery</td></tr>
+          <tr><td><a href="g4-imp-01-s05-idempotency-authorization-freeze.html"><code>G4-IMP-01-S05</code></a></td><td>완료</td><td>request-bound grant·actor-scoped receipt·Context/URL drift·상태 경쟁·교차 교사 semantic replay</td></tr>
+          <tr><td><a href="g4-imp-02-s01-evaluation-queue-lease.html"><code>G4-IMP-02-S01</code></a></td><td>완료</td><td>단일 선점·300초 lease·exact-expiry 회수·stale token 차단·append-only attempt·손상 rollback</td></tr>
+          <tr><td><a href="g4-imp-02-s02-gateway-output-result.html"><code>G4-IMP-02-S02</code></a></td><td>코어 완료·worker 활성</td><td>공개 Gateway 1회·현재 권한/source/routing/동의 이중 재검사·strict output·후보 결과 transaction</td></tr>
+          <tr><td><a href="g4-imp-02-r01-submission-external-ai-consent.html"><code>G4-IMP-02-R01</code></a></td><td>완료</td><td>학생 제출 전용 원장·Q38·C78·C79·OJ Console·명시적 worker loader·deactivation</td></tr>
+          <tr><td><a href="g4-imp-02-s03-submission-evaluation-query.html"><code>G4-IMP-02-S03</code></a></td><td>완료</td><td>Q16 작업 목록·Q17 exact 상세, safe projection·any-of 권한·128-bit scope signed cursor·schema 1.0.2</td></tr>
+          <tr><td><a href="g4-imp-02-s04-submission-evaluation-control.html"><code>G4-IMP-02-S04</code></a></td><td>완료</td><td>C31 same evaluation 새 run·C32 협력 취소·이전 결과 보존·lease 무효화·늦은 worker 결과 차단</td></tr>
+          <tr><td><a href="g4-imp-02-s05-submission-evaluation-integration-freeze.html"><code>G4-IMP-02-S05</code></a></td><td>완료</td><td>abstain SQL NULL·postflight drift 폐기·저장 손상 안정 코드·취소 경쟁·S01~S04·R01 통합 회귀</td></tr>
+          <tr><td><a href="g4-imp-03-s01-submission-evaluation-review-append.html"><code>G4-IMP-03-S01</code></a></td><td>완료</td><td>exact result·전수 binding·server total·safety 조치와 불변 review·audit·outbox, REST 비활성</td></tr>
+          <tr><td><a href="g4-imp-03-s02-official-pointer-cas.html"><code>G4-IMP-03-S02</code></a></td><td>완료</td><td>공식 review pointer·불변 stale release·두 root CAS와 C34 REST 활성화</td></tr>
+          <tr><td><a href="g4-imp-03-s03-score-evidence-review-ui.html"><code>G4-IMP-03-S03</code></a></td><td>완료</td><td>통합 평가 탭·Q16·Q17·C34, 수용·조정·반려, 안전 DOM과 desktop·mobile 복구</td></tr>
+          <tr><td><a href="g4-imp-03-s04-stale-source-integration-freeze.html"><code>G4-IMP-03-S04</code></a></td><td>완료</td><td>result·pointer·release·두 root CAS, 409 재조회·403 권한 회수·durable replay·이력 불변성 통합 동결</td></tr>
+          <tr><td><a href="g4-imp-04-s01-feedback-draft.html"><code>G4-IMP-04-S01</code></a></td><td>완료</td><td>C35 exact official review, 학생용 안전 입력, strict 출력, 불변 <code>ai_draft</code> 저장</td></tr>
+          <tr><td><a href="g4-imp-04-s02-feedback-review.html"><code>G4-IMP-04-S02</code></a></td><td>완료</td><td>C36 직접 작성·AI 초안 수정·기각, exact source·CAS·durable replay, 불변 <code>teacher_draft|rejected</code> 저장</td></tr>
+          <tr><td><a href="g4-imp-04-s03-feedback-approval.html"><code>G4-IMP-04-S03</code></a></td><td>완료</td><td>C37 빈 payload·exact teacher draft·저장 profile 재검증·provenance·불변 <code>approved</code> 저장</td></tr>
+          <tr><td><a href="g4-imp-04-s04-feedback-workbench-integration.html"><code>G4-IMP-04-S04</code></a></td><td>완료</td><td>Q17·C35~C37 피드백 화면, 409·403 복구, desktop·mobile, 승인·공개 분리와 불변 이력 동결</td></tr>
+          <tr><td><a href="g4-imp-05-s01-student-note-draft.html"><code>G4-IMP-05-S01</code></a></td><td>완료</td><td>C38 exact official review·비식별 evidence·strict output·worker 이중 재검사·불변 <code>ai_draft</code>·보고서 기본 제외</td></tr>
+          <tr><td><a href="g4-imp-05-s02-student-note-query.html"><code>G4-IMP-05-S02</code></a></td><td>완료</td><td>Q18 signed cursor 목록, Q19 revision·근거·provenance·audit·exact precondition, 학생 route 0건</td></tr>
+          <tr><td><a href="g4-imp-05-s03-student-note-review-approval.html"><code>G4-IMP-05-S03</code></a></td><td>완료</td><td>C39 직접 작성·AI 편집·반려와 C40 exact 교사 초안 승인, strict DTO·CAS·durable replay·append-only 저장</td></tr>
+          <tr><td><a href="g4-imp-05-s04-student-note-report-inclusion.html"><code>G4-IMP-05-S04</code></a></td><td>완료</td><td>C41·C42 exact approved revision의 명시 opt-in·opt-out, 원 승인 정보 보존과 append-only 이력</td></tr>
+          <tr><td><a href="g4-imp-05-s05-student-note-integration-freeze.html"><code>G4-IMP-05-S05</code></a></td><td>완료</td><td>C38~C42·Q18~Q19 provenance, Console 전용 권한, 학생 비노출, 보고서 기본 제외, 단일 승자와 durable replay 통합 동결</td></tr>
+          <tr><td><a href="g4-imp-06-s01-student-result-release.html"><code>G4-IMP-06-S01</code></a></td><td>완료</td><td>C43 exact official review·approved feedback, 학생 안전 allowlist, 원자 release·pointer·audit·body-free outbox와 durable replay</td></tr>
+          <tr><td><a href="g4-imp-06-s02-student-result-query.html"><code>G4-IMP-06-S02</code></a></td><td>완료</td><td>Q33 본인 current release·exact Context·pointer·projection hash 검증과 stale·withdrawn 본문 억제</td></tr>
+          <tr><td><a href="g4-imp-06-s03-student-result-withdrawal.html"><code>G4-IMP-06-S03</code></a></td><td>완료</td><td>C44 불변 withdrawn revision·exact-copy projection·pointer CAS·학생 즉시 비노출</td></tr>
+          <tr><td><a href="g4-imp-06-s04-student-result-correction.html"><code>G4-IMP-06-S04</code></a></td><td>완료</td><td>C43 corrected revision·previous chain·공식 source/current pointer 경쟁 차단</td></tr>
+          <tr><td><a href="g4-imp-06-s05-student-result-ui-integration.html"><code>G4-IMP-06-S05</code></a></td><td>완료</td><td>전용 Public Page·Q33 allowlist·정정/업데이트/회수 상태·desktop/mobile·권한 회수 즉시 본문 제거</td></tr>
+          <tr><td><a href="g4-imp-07-s01-result-print-projection.html"><code>G4-IMP-07-S01</code></a></td><td>완료</td><td>Q33 current release 재사용·exact ID/hash·<code>result_print.v1</code>·released/corrected 허용·stale/withdrawn 차단</td></tr>
+          <tr><td><a href="g4-imp-07-s02-result-pdf-job.html"><code>G4-IMP-07-S02</code></a></td><td>완료</td><td>C52 strict enqueue·불변 snapshot·300초 lease·allowlist HTML·private PDF·생성 전후 current release 재인가</td></tr>
+          <tr><td><a href="g4-imp-07-s03-result-pdf-access-freeze.html"><code>G4-IMP-07-S03</code></a></td><td>완료</td><td><code>result_pdf</code>·<code>self_release</code> PublicUI, Q23·Q24 current/expiry/MIME/hash/bytes와 전송 직전 재인가</td></tr>
+          <tr><td><a href="g4-imp-07-s04-result-pdf-ui-integration.html"><code>G4-IMP-07-S04</code></a></td><td>완료</td><td>PDF 만들기·준비·다운로드·만료·정정·회수와 한글 A4 desktop·mobile 통합 검증</td></tr>
+          <tr><td><a href="g5-imp-01-s01-worksheet-report-list.html"><code>G5-IMP-01-S01</code></a></td><td>완료</td><td>Q20 owner DTO·exact Context·signed cursor·분자/분모·작은 집단 억제·세 재현 hash</td></tr>
+          <tr><td><a href="g5-imp-01-s02-worksheet-report-detail.html"><code>G5-IMP-01-S02</code></a></td><td>완료</td><td>Q21 배포·학생 2단계 projection·Q20 공통 지표·교사 권한·exact source·학생 식별정보 최소화</td></tr>
+          <tr><td><a href="g5-imp-01-s03-report-filter-denominator.html"><code>G5-IMP-01-S03</code></a></td><td>완료</td><td>site timezone 기간·배포 상태·제출 단계 canonical filter, 동일 population 분모·제외 사유·filter-bound cursor</td></tr>
+          <tr><td><a href="g5-imp-01-s04-report-dashboard.html"><code>G5-IMP-01-S04</code></a></td><td>완료</td><td>단일 Console 메뉴·4개 로컬 업무, Q20→Q21 탐색, 필터·스크롤 복원, 권한 회수, desktop·mobile 검증</td></tr>
+          <tr><td><a href="g5-imp-02-s01-report-snapshot-create.html"><code>G5-IMP-02-S01</code></a></td><td>완료</td><td>C45 canonical request·두 번 전체 source 수집·불변 literal snapshot transaction·durable replay·rollback</td></tr>
+          <tr><td><a href="g5-imp-02-s02-report-snapshot-query.html"><code>G5-IMP-02-S02</code></a></td><td>완료</td><td>Q22 저장 profile·identity 재검산·현재 Context·모든 활동지 source 재인가·안전 projection</td></tr>
+          <tr><td><a href="g5-imp-02-s03-report-source-manifest.html"><code>G5-IMP-02-S03</code></a></td><td>완료</td><td>원본 계보 canonical bytes·manifest hash·snapshot identity 연결, Q22 공통 현재 재인가와 내부 전용 전달</td></tr>
+          <tr><td><a href="g5-imp-02-s04-report-snapshot-integration-freeze.html"><code>G5-IMP-02-S04</code></a></td><td>완료</td><td>실제 C45→Q22·manifest 불변성, 생성 중 stale, 저장 손상, 현재 권한 철회, durable replay·동시 승자 통합 동결</td></tr>
+          <tr><td><a href="g5-imp-03-s01-report-export-enqueue.html"><code>G5-IMP-03-S01</code></a></td><td>완료</td><td>C46·C47 strict command, exact report projection, 현재 권한, durable replay·conflict, report FK와 원자 job 등록</td></tr>
+          <tr><td><a href="g5-imp-03-s02-submission-bundle-enqueue.html"><code>G5-IMP-03-S02</code></a></td><td>완료</td><td>C50 strict command, exact assignment·schedule·roster·official revision, 안전 archive path, 500 files·500 MiB, 원자 job 등록</td></tr>
+          <tr><td><a href="g5-imp-03-s03-report-json-package-enqueue.html"><code>G5-IMP-03-S03</code></a></td><td>완료</td><td>C69 strict command, exact report projection·canonical source manifest linkage, JSON package profile, report FK와 원자 job 등록</td></tr>
+          <tr><td><a href="g5-imp-03-s04-report-export-job-download.html"><code>G5-IMP-03-S04</code></a></td><td>완료</td><td>실제 4종 bytes, worker lease, 생성 전후 권한·source 재검사, private CAS, Q23·Q24·만료·무결성</td></tr>
+          <tr><td><a href="g5-imp-03-s05-report-export-control.html"><code>G5-IMP-03-S05</code></a></td><td>완료</td><td>C53 queued-only 취소, C54 retryable failed append, 원본 실패 이력 보존, 의미 중복 재사용과 원자 영수증</td></tr>
+          <tr><td><a href="g5-imp-03-s06-report-export-integration-freeze.html"><code>G5-IMP-03-S06</code></a></td><td>완료</td><td>S01~S05 산출물·작업 제어·네 private stream의 현재 권한·metadata·checksum·TOCTOU 통합 동결</td></tr>
+          <tr><td><a href="g5-imp-05-s01-bridge-schema-queue-diagnostics.html"><code>G5-IMP-05-S01</code></a></td><td>완료</td><td>Q28 Bridge·schema·네 AI worker queue 안전 projection, Console 공통 권한, AI execute·write 0회</td></tr>
+          <tr><td><a href="g5-imp-05-s02-ai-routing-diagnostics.html"><code>G5-IMP-05-S02</code></a></td><td>완료</td><td>두 task의 canRoute·snapshot을 Q28에 additive 연결, provider·model·원본 오류·AI execute 비노출</td></tr>
+          <tr><td><a href="g5-imp-05-s03-storage-secret-diagnostics.html"><code>G5-IMP-05-S03</code></a></td><td>완료</td><td>private 경로·네 scan/cleanup 작업·지연·메타데이터 일관성을 Q28에 추가, 경로·파일 식별자·비밀값 비노출</td></tr>
+          <tr><td><a href="g5-imp-05-s04-operations-ui-regression.html"><code>G5-IMP-05-S04</code></a></td><td>완료</td><td>기존 설정 Page의 시스템 상태 탭, 짧은 5-check 문구, desktop·mobile·권한 회수 전체 회귀</td></tr>
+          <tr><td><a href="g5-imp-06-s01-fresh-install.html"><code>G5-IMP-06-S01</code></a></td><td>완료</td><td>DDL 이전 사전 검사, 45 literal table·10 owner·원장·pending, 설정 seed·version 순서와 SELECT-only onReady</td></tr>
+          <tr><td><a href="g5-imp-06-s02-sequential-upgrade.html"><code>G5-IMP-06-S02</code></a></td><td>완료</td><td>exact 1.0.0·1.0.1 source의 최소 순차 delta, target no-op과 미지원 원본 DDL 0건 차단</td></tr>
+          <tr><td><a href="g5-imp-06-s03-failure-restart.html"><code>G5-IMP-06-S03</code></a></td><td>완료</td><td>checkpoint 봉투 무결성, maintenance 동결, CREATE·ALTER 결정적 재시작과 중복 DDL 차단</td></tr>
+          <tr><td><a href="g5-imp-06-s04-forward-repair.html"><code>G5-IMP-06-S04</code></a></td><td>완료</td><td>C75 strict 명령·24시간 백업 근거·durable replay·forward runner·audit/outbox·복구 UI</td></tr>
+          <tr><td><a href="g5-imp-06-s05-data-preservation.html"><code>G5-IMP-06-S05</code></a></td><td>완료</td><td>신규 설치 격리·순차 upgrade·drift 차단·부분 실패·C75 전후 업무 row·설정·private bytes·기존 영수증 보존</td></tr>
+          <tr><td><a href="g5-imp-07-s01-legacy-migration-preview.html"><code>G5-IMP-07-S01</code></a></td><td>완료</td><td>C61 exact 0.1.2 source·row·blob fingerprint, 결정적 계획, 30분 서명 token, mutation 0</td></tr>
+          <tr><td><a href="g5-imp-07-s02-legacy-migration-approval.html"><code>G5-IMP-07-S02</code></a></td><td>완료</td><td>C70 token·site·key·source·plan 재검산, approved run·audit·outbox 원자 기록, replay·rollback</td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html"><code>G5-IMP-07-S03-D3-D2</code></a></td><td>완료</td><td>actual dependency mapping manifest, C70 조건부 decision, plan·request digest 결속, C62 Context·roster·membership 재검산. <code>check:legacy-migration-mapping-g5</code></td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d3-result"><code>G5-IMP-07-S03-D3-D3</code></a></td><td>완료</td><td>exact receipt, canonical 4-profile, retired immutable publication, replay·일반 C12 차단. <code>check:legacy-migration-publication-g5</code></td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d4-result"><code>G5-IMP-07-S03-D3-D4</code></a></td><td>완료</td><td>plan <code>@1.2.0</code>, 배정별 exact learner target, closed·withdrawn 역사 root와 caller-owned rollback. <code>check:legacy-migration-assignment-g5</code></td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d5-result"><code>G5-IMP-07-S03-D3-D5</code></a></td><td>완료</td><td>10종 response, submission root·불변 revision·조건부 official/control receipt, attachment manifest와 caller-owned rollback. <code>check:legacy-migration-submission-g5</code></td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d6-result"><code>G5-IMP-07-S03-D3-D6</code></a></td><td>완료</td><td>현재 score 계약, response anchor, evaluation·result·review·feedback·release·note와 terminal run 복원. <code>check:legacy-migration-evaluation-g5</code></td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d7-result"><code>G5-IMP-07-S03-D3-D7</code></a></td><td>완료</td><td>ZIP·attachment private storage 복원, 현재 안전 검사와 실패 보상</td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d8-result"><code>G5-IMP-07-S03-D3-D8</code></a></td><td>완료·D3-D 8/8</td><td>35-table owner matrix·production batch graph·250건·rollback·retry·stale·중복 통합 회귀</td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html#s03-e-result"><code>G5-IMP-07-S03-E</code></a></td><td>완료</td><td>C62 strict REST·Composition Root·exact run worker hook, 최초·재전송 202. <code>check:legacy-migration-runtime-g5</code></td></tr>
+          <tr><td><a href="g5-imp-07-s03-d3-d-owner-migration.html#s03-f-result"><code>G5-IMP-07-S03-F</code></a></td><td>완료</td><td>사이트 단일 실행·source drift·mapping·SQL rollback·durable checkpoint retry 통합 검증. <code>check:legacy-migration-recovery-g5</code></td></tr>
+          <tr><td><code>G5-IMP-07-S03-G</code></td><td>완료·IMP-07 3/6</td><td>전용 gate·전체 회귀·HTML 증거·플랫폼 API 재감사 동기화</td></tr>
+          <tr><td><a href="g5-imp-07-s04-migration-run-query.html"><code>G5-IMP-07-S04</code></a></td><td>완료·IMP-07 4/6</td><td>Q29 단일 snapshot 조회·canonical checkpoint·safe projection. <code>check:legacy-migration-run-query-g5</code></td></tr>
+          <tr><td><a href="g5-imp-07-s05-legacy-migration-rollback.html"><code>G5-IMP-07-S05</code></a></td><td>완료·IMP-07 5/6</td><td>C63 미변경 target 역순 삭제·private purge tombstone·원장 보존·durable replay. <code>check:legacy-migration-rollback-g5</code></td></tr>
+          <tr><td><a href="g5-imp-07-s06-legacy-migration-integration-freeze.html"><code>G5-IMP-07-S06</code></a></td><td>완료·IMP-07 6/6</td><td>1,800초 만료·재preview, source 재검사, C62/C63 경쟁·purge 재시도·보존 통합 동결. <code>check:legacy-migration-integration-g5</code></td></tr>
+          <tr><td><a href="g5-imp-08-s01-uninstall-preservation.html"><code>G5-IMP-08-S01</code></a></td><td>완료·IMP-08 1/6</td><td>명시 purge 승인 없는 제거에서 45 table·option·private file·platform assignment 보존. <code>check:uninstall-preservation-g5</code></td></tr>
+          <tr><td><a href="g5-imp-08-s02-purge-preview.html"><code>G5-IMP-08-S02</code></a></td><td>완료·IMP-08 2/6</td><td>C71 단일 읽기 스냅샷, 45 table·10 owner·private byte·legal hold·미완료 job, 30분 token과 mutation 0. <code>check:purge-preview-g5</code></td></tr>
+          <tr><td><a href="g5-imp-08-s03-purge-approval.html"><code>G5-IMP-08-S03</code></a></td><td>C72 approve 완료·IMP-08 3/6</td><td>C72 token·현재 preview·24시간 backup·<code>영구 삭제</code>·legal hold 0 재검증, approved job·audit·outbox 원자 기록과 삭제 0. <code>check:purge-approval-g5</code></td></tr>
+          <tr><td><a href="g5-imp-08-s04-purge-execution-cancel.html"><code>G5-IMP-08-S04</code></a></td><td>C73 execute·C74 cancel 완료·IMP-08 4/6</td><td>maintenance, 5원장 보존, private byte 우선, 40-table 역순, 250행·20초 checkpoint와 안전 취소. <code>check:purge-execution-g5</code></td></tr>
+          <tr><td><a href="g5-imp-08-s05-purge-job-query.html"><code>G5-IMP-08-S05</code></a></td><td>Q36 상태 완료·IMP-08 5/6</td><td>단일 SELECT, 승인 만료, 현재 legal hold, canonical preview·checkpoint와 안전 projection. <code>check:purge-job-query-g5</code></td></tr>
+          <tr><td><a href="g5-imp-08-s06-purge-integration-freeze.html"><code>G5-IMP-08-S06</code></a></td><td>통합 동결 완료·IMP-08 6/6·G5 8/8</td><td>S01~S05, 정확한 만료·24시간 backup·legal hold·5원장·private byte 우선·최종 0건. <code>check:purge-integration-g5</code></td></tr>
+          <tr><td><a href="g6-imp-01-business-scenario-acceptance.html"><code>G6-IMP-01</code></a></td><td>업무 시나리오 최종 인수 완료·G6 1/5</td><td>A-DS16-S01~S12를 기존 22개 관문과 전체 회귀에 연결. <code>check:business-scenarios-g6</code></td></tr>
+          <tr><td><a href="g6-imp-02-security-privacy-accessibility.html"><code>G6-IMP-02</code></a></td><td>보안·개인정보·접근성 최종 인수 완료·G6 2/5</td><td>기존 관문 33개·브라우저 12종과 설정 탭 키보드 보완을 검산. <code>check:security-privacy-accessibility-g6</code></td></tr>
+          <tr><td><a href="g6-imp-03-performance-resilience.html"><code>G6-IMP-03</code></a></td><td>성능·복원력 최종 인수 완료·G6 3/5</td><td>5,000명 roster, queue·lease·retry, 문서·첨부·보고서·export, checkpoint·재시작을 28 existing gates로 검산. <code>check:performance-resilience-g6</code></td></tr>
+          <tr><td><a href="g6-imp-04-upgrade-rollback.html"><code>G6-IMP-04</code></a></td><td>업그레이드·롤백 최종 인수 완료·G6 4/5</td><td>clean install, 지원 upgrade, 미래 schema mutation 0, 재활성화와 SHA-256 증거를 13 existing gates로 검산. <code>check:upgrade-rollback-g6</code></td></tr>
+          <tr><td><a href="g6-imp-05-boundary-final-package.html"><code>G6-IMP-05</code></a></td><td>경계·최종 package S01~S05 통과·G6 5/5</td><td>플랫폼 내부 의존·API 파일 변경 0건, 네 fingerprint와 HTML changelog, <code>source_dirty=false</code> clean ZIP·manifest·checksum 검증</td></tr>
+        </tbody>
+      </table>
+        <div class="callout"><strong>이전 관문 표식:</strong> S03-G 완료 당시 <code>G5-IMP-07-S03 완료·IMP-07 3/6</code>이었다. S05 완료 당시 <code>G5 6/8</code>, <code>S05 완료·IMP-07 5/6</code>, 다음 <code>G5-IMP-07-S06</code> source 변화·token 만료로 기록했다.</div>
+      <p class="footer">G6-IMP-05의 S01~S05에서 플랫폼 경계, API·schema·route fingerprint, HTML changelog와 <code>source_dirty=false</code> clean production ZIP을 검증했다. 새 단계를 추가하지 않고 G6 5/5를 완료했다. Platform API change: 0</p>
+    </main>
+  </div>
+</body>
+</html>

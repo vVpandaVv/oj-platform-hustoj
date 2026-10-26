@@ -1,0 +1,209 @@
+/* The public lesson keeps normal page scrolling while its outline stays nearby. */
+.rcis-reader {
+  width: 100%;
+  min-width: 0;
+  color: var(--ojp-color-ink, #1d1d1f);
+}
+
+.rcis-reader .rcis-reader__toolbar {
+  position: sticky;
+  top: var(--ojp-header-height, 64px);
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  min-height: 60px;
+  padding-block: 8px;
+  margin-bottom: var(--ojp-space-3, 12px);
+  background: var(--ojp-color-bg-grouped, #f5f5f7);
+}
+
+.rcis-reader [data-rcis-outline-toggle] {
+  min-height: 44px;
+  padding: var(--ojp-space-2, 8px) var(--ojp-space-4, 16px);
+  border: 1px solid var(--ojp-color-line-strong, #c7c7cc);
+  border-radius: var(--ojp-radius, 8px);
+  background: var(--ojp-color-surface, #fff);
+  color: var(--ojp-color-ink, #1d1d1f);
+  font: inherit;
+  font-size: var(--ojp-text-callout, 14px);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rcis-reader [data-rcis-outline-toggle]:hover {
+  background: var(--ojp-color-subtle, #f5f5f7);
+}
+
+.rcis-reader .rcis-reader__layout {
+  min-width: 0;
+}
+
+.rcis-reader .rcis-reader__outline {
+  box-sizing: border-box;
+  min-width: 0;
+  max-height: min(50dvh, 520px);
+  margin-bottom: var(--ojp-space-4, 16px);
+  padding: var(--ojp-space-4, 16px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--ojp-color-line, #e3e3e8);
+  border-radius: var(--ojp-radius-md, 12px);
+  background: var(--ojp-color-surface, #fff);
+}
+
+.rcis-reader .rcis-reading.rcis-reader__content {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+
+.rcis-reader[data-outline-open="false"] .rcis-reader__content .contents-editor-content-surface {
+  --contents-editor-content-max: 100%;
+}
+
+.rcis-reader .rcis-reader__resize {
+  display: none;
+}
+
+.rcis-reader .rcis-reader__outline-heading {
+  margin: 0 0 var(--ojp-space-2, 8px);
+  color: var(--ojp-color-ink, #1d1d1f);
+  font-size: var(--ojp-text-title3, 18px);
+  line-height: 1.4;
+}
+
+.rcis-reader .rcis-reader__topic {
+  display: block;
+  margin-bottom: var(--ojp-space-4, 16px);
+  color: var(--ojp-color-primary, #087d78);
+  font-size: var(--ojp-text-callout, 14px);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.rcis-reader .rcis-reader__chapters {
+  display: grid;
+  gap: var(--ojp-space-3, 12px);
+}
+
+.rcis-reader .rcis-reader__chapter {
+  min-width: 0;
+  border-top: 1px solid var(--ojp-color-line, #e3e3e8);
+  padding-top: var(--ojp-space-3, 12px);
+}
+
+.rcis-reader .rcis-reader__chapter-title {
+  color: var(--ojp-color-ink, #1d1d1f);
+  font-size: var(--ojp-text-body, 15px);
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.rcis-reader .rcis-reader__chapter-title::marker {
+  color: var(--ojp-color-primary, #087d78);
+}
+
+.rcis-reader .rcis-reader__section {
+  margin-top: var(--ojp-space-3, 12px);
+}
+
+.rcis-reader .rcis-reader__section-title {
+  margin: 0 0 var(--ojp-space-1, 4px);
+  color: var(--ojp-color-muted, #6e6e73);
+  font-size: var(--ojp-text-subhead, 13px);
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.rcis-reader .rcis-reader__lessons {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rcis-reader .rcis-reader__lessons > li {
+  margin: 0;
+}
+
+.rcis-reader .rcis-reader__lesson {
+  display: block;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: var(--ojp-space-2, 8px);
+  border-radius: var(--ojp-radius-xs, 6px);
+  color: var(--ojp-color-ink-2, #3a3a3c);
+  font-size: var(--ojp-text-callout, 14px);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.rcis-reader .rcis-reader__lesson:hover,
+.rcis-reader .rcis-reader__lesson[aria-current="page"] {
+  background: var(--ojp-color-accent-bg, #e7f3f2);
+  color: var(--ojp-color-primary-hover, #066a66);
+}
+
+.rcis-reader .rcis-reader__lesson[aria-current="page"] {
+  font-weight: 700;
+}
+
+.rcis-reader [data-rcis-outline-toggle]:focus-visible,
+.rcis-reader .rcis-reader__outline :focus-visible,
+.rcis-reader .rcis-reader__resize:focus-visible {
+  outline: 3px solid var(--ojp-color-focus, rgb(8 125 120 / 45%));
+  outline-offset: 2px;
+}
+
+@media (min-width: 1024px) {
+  .rcis-reader .rcis-reader__layout {
+    display: grid;
+    grid-template-columns: var(--rcis-reader-outline-width, 280px) 12px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .rcis-reader[data-outline-open="false"] .rcis-reader__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rcis-reader .rcis-reader__outline,
+  .rcis-reader .rcis-reader__resize {
+    position: sticky;
+    top: calc(var(--ojp-header-height, 64px) + 76px);
+    max-height: calc(100dvh - var(--ojp-header-height, 64px) - 92px);
+    margin-bottom: 0;
+  }
+
+  .rcis-reader .rcis-reader__resize {
+    display: block;
+    width: 12px;
+    height: calc(100dvh - var(--ojp-header-height, 64px) - 92px);
+    min-height: 44px;
+    border-radius: var(--ojp-radius-xs, 6px);
+    cursor: col-resize;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .rcis-reader .rcis-reader__resize::before {
+    position: absolute;
+    inset: 8px 5px;
+    border-radius: var(--ojp-radius-pill, 999px);
+    background: var(--ojp-color-line-strong, #c7c7cc);
+    content: "";
+  }
+
+  .rcis-reader .rcis-reader__resize:hover::before,
+  .rcis-reader .rcis-reader__resize[data-resizing="true"]::before {
+    background: var(--ojp-color-primary, #087d78);
+  }
+}
+
+/* Explicitly honour native hidden after the desktop display rules. */
+.rcis-reader [hidden] {
+  display: none;
+}

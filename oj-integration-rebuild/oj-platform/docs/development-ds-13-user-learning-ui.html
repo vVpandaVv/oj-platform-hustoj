@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-13 사용자 학습 지원 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds11-prototype.css">
+  <link rel="stylesheet" href="assets/ds13-prototype.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM20 4h-7v16h7a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7V3h-4M4 17v4h4"/><path d="M5.5 9a7 7 0 0 1 11.8-3L20 7M4 17l2.7 1a7 7 0 0 0 11.8-3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-13 사용자 학습 지원 시안</strong><span>기존 경로와 제출 상세 삽입 영역</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="사용자 학습 지원 화면 선택">
+        <button type="button" role="tab" data-screen-target="learning-dashboard" aria-selected="true">내 학습</button>
+        <button type="button" role="tab" data-screen-target="public-ranking" aria-selected="false">전체 랭킹</button>
+        <button type="button" role="tab" data-screen-target="submission-feedback" aria-selected="false">AI 풀이 도움</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-13-learning-support.html"><span class="brand-mark">OJ</span><span>OJ Platform</span></a>
+      <nav class="primary-nav" aria-label="주 메뉴">
+        <a href="#home">홈</a>
+        <a href="#problems">문제</a>
+        <a href="#submissions">제출</a>
+        <a href="#learning">학습</a>
+        <a href="#community">커뮤니티</a>
+      </nav>
+      <a class="account-button" href="#profile" aria-label="내 정보" title="내 정보" aria-current="page"><svg><use href="#i-user"/></svg></a>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="page" id="main">
+      <nav class="learning-subnav" aria-label="내 정보 학습 메뉴">
+        <a href="#learning-dashboard" data-sidebar-for="learning-dashboard submission-feedback" aria-current="page">내 학습</a>
+        <a href="#public-ranking" data-sidebar-for="public-ranking">전체 랭킹</a>
+      </nav>
+
+      <section class="screen" id="learning-dashboard" data-screen="learning-dashboard">
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">내 정보 · 학습</p>
+            <h1>내 학습</h1>
+            <p>내 풀이 기록을 바탕으로 지금 이어서 할 학습과 문제를 확인합니다.</p>
+          </div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="public-ranking">전체 랭킹</button></div>
+        </header>
+        <p class="route-caption">/dashboard</p>
+
+        <section class="level-summary" aria-labelledby="level-summary-title">
+          <div class="level-primary">
+            <span id="level-summary-title">현재 학습 수준</span>
+            <strong>중급</strong>
+            <small>성적이나 평가 결과가 아닌 AI 풀이 도움 조절 기준입니다.</small>
+          </div>
+          <div class="level-evidence">
+            <div><span>학습 점수</span><strong>58.4 / 100</strong></div>
+            <div><span>증명 난이도</span><strong>3단계</strong></div>
+            <div><span>분석 상태</span><strong>신뢰 자료 충족</strong></div>
+          </div>
+        </section>
+
+        <div class="metric-grid">
+          <div class="metric"><span>해결한 문제</span><strong>34</strong><small>서로 다른 문제</small></div>
+          <div class="metric"><span>시도한 문제</span><strong>47</strong><small>누적 유효 제출</small></div>
+          <div class="metric"><span>최근 30일 해결</span><strong>9</strong><small>지난달보다 2개 증가</small></div>
+          <div class="metric"><span>오답 뒤 해결</span><strong>12</strong><small>다시 풀어 해결</small></div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div>
+            <section class="content-section">
+              <div class="section-heading">
+                <div><h2>이어서 하기</h2><p>최근에 시도했지만 아직 해결하지 못한 문제입니다.</p></div>
+              </div>
+              <div class="continue-list">
+                <div class="continue-row">
+                  <div><strong>1024 · 구간 합 구하기</strong><span>난이도 3 · 누적 합 · 최근 제출 오늘 10:18</span></div>
+                  <button class="button primary" type="button" data-toast="문제 1024를 엽니다.">이어서 풀기</button>
+                </div>
+                <div class="continue-row">
+                  <div><strong>1038 · 두 포인터 합</strong><span>난이도 3 · 두 포인터 · 최근 제출 7월 22일</span></div>
+                  <button class="button" type="button" data-toast="문제 1038을 엽니다.">다시 도전</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="content-section">
+              <div class="section-heading">
+                <div><h2>난이도별 학습 흐름</h2><p>접근 가능한 공개 문제의 시도와 해결을 집계합니다.</p></div>
+                <span class="badge info">최근 90일</span>
+              </div>
+              <div class="learning-chart" aria-label="난이도별 시도와 해결 비율">
+                <div class="chart-row"><strong>난이도 1</strong><div class="chart-track"><div class="chart-fill" style="width:92%"></div></div><span class="chart-value">11 / 12 해결</span></div>
+                <div class="chart-row"><strong>난이도 2</strong><div class="chart-track"><div class="chart-fill" style="width:78%"></div></div><span class="chart-value">14 / 18 해결</span></div>
+                <div class="chart-row"><strong>난이도 3</strong><div class="chart-track"><div class="chart-fill blue" style="width:56%"></div></div><span class="chart-value">9 / 16 해결</span></div>
+                <div class="chart-row"><strong>난이도 4</strong><div class="chart-track"><div class="chart-fill amber" style="width:20%"></div></div><span class="chart-value">1 / 5 해결</span></div>
+                <div class="chart-row"><strong>난이도 5</strong><div class="chart-track"><div class="chart-fill amber" style="width:0"></div></div><span class="chart-value">0 / 0</span></div>
+              </div>
+            </section>
+          </div>
+
+          <aside>
+            <section class="content-section">
+              <div class="section-heading"><div><h2>주제별 학습</h2><p>해결한 고유 주제를 기준으로 표시합니다.</p></div></div>
+              <div class="learning-chart">
+                <div class="chart-row"><strong>구현</strong><div class="chart-track"><div class="chart-fill" style="width:84%"></div></div><span class="chart-value">16문제</span></div>
+                <div class="chart-row"><strong>자료구조</strong><div class="chart-track"><div class="chart-fill blue" style="width:61%"></div></div><span class="chart-value">11문제</span></div>
+                <div class="chart-row"><strong>그래프</strong><div class="chart-track"><div class="chart-fill amber" style="width:33%"></div></div><span class="chart-value">4문제</span></div>
+                <div class="chart-row"><strong>문자열</strong><div class="chart-track"><div class="chart-fill amber" style="width:24%"></div></div><span class="chart-value">3문제</span></div>
+              </div>
+            </section>
+
+            <section class="content-section">
+              <div class="section-heading"><div><h2>최근 제출</h2><p>상세 접근은 제출 정책을 따릅니다.</p></div></div>
+              <div class="continue-list">
+                <div class="continue-row"><div><strong>구간 합 구하기</strong><span>틀렸습니다 · 오늘 10:18</span></div><button class="icon-button" type="button" data-open-screen="submission-feedback" aria-label="제출 상세 보기" title="제출 상세 보기"><svg><use href="#i-arrow"/></svg></button></div>
+                <div class="continue-row"><div><strong>그래프 탐색</strong><span>맞았습니다 · 어제 16:04</span></div><button class="icon-button" type="button" data-toast="제출 상세를 엽니다." aria-label="제출 상세 보기" title="제출 상세 보기"><svg><use href="#i-arrow"/></svg></button></div>
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="content-section">
+          <div class="section-heading">
+            <div><h2>추천 문제</h2><p>오늘의 고정 추천 2개와 바뀌는 추천 4개를 이유와 함께 표시합니다.</p></div>
+            <button class="icon-button" type="button" data-refresh-recommendations aria-label="오늘의 다른 추천 보기" title="오늘의 다른 추천 보기"><svg><use href="#i-refresh"/></svg></button>
+          </div>
+          <div class="recommendation-grid">
+            <article class="recommendation fixed">
+              <div class="recommendation-head"><span class="badge good">오늘 고정</span><span class="difficulty">난이도 3</span></div>
+              <h3>1024 · 구간 합 구하기</h3>
+              <p>최근 미해결 문제라서 먼저 이어서 풀기를 권합니다.</p>
+              <button class="button primary" type="button">이어서 풀기</button>
+            </article>
+            <article class="recommendation fixed">
+              <div class="recommendation-head"><span class="badge good">오늘 고정</span><span class="difficulty">난이도 3</span></div>
+              <h3>1044 · 큐로 순서 처리</h3>
+              <p>자료구조 학습 범위를 한 단계 넓힐 수 있습니다.</p>
+              <button class="button" type="button">문제 보기</button>
+            </article>
+            <article class="recommendation rotating" data-rotating-recommendation>
+              <div class="recommendation-head"><span class="badge info">교체 추천</span><span>난이도 2</span></div>
+              <h3><span data-problem-number>1042</span> · <span data-problem-title>문자열 압축</span></h3>
+              <p data-problem-reason>최근 덜 다룬 문자열 주제</p>
+              <button class="button" type="button">문제 보기</button>
+            </article>
+            <article class="recommendation rotating" data-rotating-recommendation>
+              <div class="recommendation-head"><span class="badge info">교체 추천</span><span>난이도 3</span></div>
+              <h3><span data-problem-number>1057</span> · <span data-problem-title>최단 경로 입문</span></h3>
+              <p data-problem-reason>그래프에서 다음 단계 도전</p>
+              <button class="button" type="button">문제 보기</button>
+            </article>
+            <article class="recommendation rotating" data-rotating-recommendation>
+              <div class="recommendation-head"><span class="badge info">교체 추천</span><span>난이도 3</span></div>
+              <h3><span data-problem-number>1038</span> · <span data-problem-title>두 포인터 합</span></h3>
+              <p data-problem-reason>최근 미해결 문제와 비슷한 유형</p>
+              <button class="button" type="button">문제 보기</button>
+            </article>
+            <article class="recommendation rotating" data-rotating-recommendation>
+              <div class="recommendation-head"><span class="badge info">교체 추천</span><span>난이도 2</span></div>
+              <h3><span data-problem-number>1061</span> · <span data-problem-title>괄호 검사</span></h3>
+              <p data-problem-reason>자료구조 주제 보완</p>
+              <button class="button" type="button">문제 보기</button>
+            </article>
+          </div>
+          <p class="recommendation-status" data-recommendation-status aria-live="polite">추천은 새 유효 제출이나 문제 정보 변경 시 바로 다시 계산됩니다.</p>
+        </section>
+      </section>
+
+      <section class="screen" id="public-ranking" data-screen="public-ranking" hidden>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">내 정보 · 학습</p>
+            <h1>전체 랭킹</h1>
+            <p>공개된 상시 문제를 해결한 수를 서비스 사용자끼리 참고합니다.</p>
+          </div>
+          <button class="button" type="button" data-open-screen="learning-dashboard">내 학습</button>
+        </header>
+        <p class="route-caption">/ranking</p>
+
+        <div class="ranking-intro">
+          <div><strong>수업·대회·평가 점수에는 사용하지 않습니다.</strong><span>재시도 횟수와 풀이 속도에는 벌점이 없으며 같은 해결 수는 공동 순위입니다.</span></div>
+          <div class="ranking-position"><span>내 현재 순위</span><strong>12위</strong></div>
+        </div>
+
+        <div class="filter-bar compact">
+          <label class="field"><span class="field-label">표시 이름</span><input class="input" type="search" placeholder="이름 검색"></label>
+          <label class="field"><span class="field-label">기간</span><select class="select"><option>전체 기간</option><option>최근 30일</option></select></label>
+          <label class="field"><span class="field-label">페이지</span><select class="select"><option>1~50위</option><option>51~100위</option></select></label>
+          <div class="filter-actions"><button class="button primary" type="button">조회</button></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th class="rank-number">순위</th><th>사용자</th><th>해결한 문제</th><th>정답률 (정답/제출)</th><th>최근 해결</th><th>공개 프로필</th></tr></thead>
+            <tbody>
+              <tr><td class="rank-number">1</td><td><strong>박서연</strong></td><td>86</td><td>90.2% (110/122)</td><td>오늘 10:32</td><td><button class="button ghost" type="button">보기</button></td></tr>
+              <tr><td class="rank-number">2</td><td><strong>이도윤</strong></td><td>79</td><td>88.7% (94/106)</td><td>오늘 09:14</td><td><button class="button ghost" type="button">보기</button></td></tr>
+              <tr><td class="rank-number">2</td><td><strong>최유진</strong></td><td>79</td><td>72.0% (90/125)</td><td>어제 18:40</td><td><button class="button ghost" type="button">보기</button></td></tr>
+              <tr><td class="rank-number">4</td><td><strong>정민서</strong></td><td>71</td><td>84.0% (84/100)</td><td>어제 16:22</td><td><button class="button ghost" type="button">보기</button></td></tr>
+              <tr class="current-user"><td class="rank-number">12</td><td><strong>김하늘 (나)</strong></td><td>34</td><td>75.0% (45/60)</td><td>어제 16:04</td><td><button class="button ghost" type="button">내 프로필</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="privacy-row">
+          <div><strong>내 랭킹 공개</strong><span data-ranking-status aria-live="polite">전체 랭킹에 표시 이름으로 참여합니다.</span></div>
+          <label class="field"><span class="field-label">공개 범위</span><select class="select" data-ranking-visibility><option value="members">로그인 사용자에게 공개</option><option value="hidden">랭킹에서 숨김</option></select></label>
+        </div>
+      </section>
+
+      <section class="screen" id="submission-feedback" data-screen="submission-feedback" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>#58396</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">제출 상세 · 전체 접근</p>
+            <h1>구간 합 구하기 제출 결과</h1>
+            <p>Python 3 · 틀렸습니다 · 오늘 10:18</p>
+          </div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="learning-dashboard">내 학습</button><button class="button" type="button">다시 제출</button></div>
+        </header>
+        <p class="route-caption">/submissions/{submission_id}</p>
+
+        <div class="result-hero">
+          <div class="result-primary error"><span>채점 완료</span><strong>틀렸습니다</strong></div>
+          <div class="result-stat"><span>실행 시간</span><strong>88ms</strong></div>
+          <div class="result-stat"><span>메모리</span><strong>13.8MB</strong></div>
+          <div class="result-stat"><span>언어</span><strong>Python 3</strong></div>
+        </div>
+
+        <div class="feedback-layout">
+          <section class="feedback-panel">
+            <div class="section-heading">
+              <div><h2>AI 풀이 도움</h2><p>현재 학습 수준에 맞춰 정답 대신 다음 확인 단계를 안내합니다.</p></div>
+              <button class="button primary" type="button" data-feedback-action>피드백 생성</button>
+            </div>
+            <div class="feedback-status">
+              <div><strong>피드백 상태</strong><span data-feedback-detail>아직 생성하지 않았습니다. 버튼을 눌렀을 때만 요청합니다.</span></div>
+              <span class="badge" data-feedback-state>생성 전</span>
+            </div>
+            <div data-feedback-panel hidden>
+              <div class="feedback-block">
+                <h3>결과 이해</h3>
+                <p>구간의 양 끝 인덱스를 누적 합 배열 위치와 연결하는 과정에서 한 칸 차이가 생겼을 가능성이 큽니다.</p>
+              </div>
+              <div class="feedback-block">
+                <h3>단계별 힌트</h3>
+                <ol>
+                  <li>예제의 첫 번째 구간을 선택하고 <code>prefix[right]</code> 값을 확인합니다.</li>
+                  <li>구간 왼쪽 바로 앞까지의 합이 어느 위치에 저장되는지 추적합니다.</li>
+                  <li><code>left</code>가 1일 때 배열 범위를 벗어나지 않는지 확인합니다.</li>
+                </ol>
+              </div>
+              <div class="feedback-block">
+                <h3>다시 확인할 점</h3>
+                <p>입력의 문제 번호는 1부터 시작하지만 Python 리스트의 위치는 0부터 시작합니다. 두 기준을 어디에서 맞추고 있나요?</p>
+              </div>
+            </div>
+          </section>
+
+          <aside class="feedback-side">
+            <h2>생성 기준</h2>
+            <dl>
+              <div><dt>분석 상태</dt><dd>신뢰 자료 충족</dd></div>
+              <div><dt>학습 수준</dt><dd>중급</dd></div>
+              <div><dt>답변 방식</dt><dd>실행 흐름 추적</dd></div>
+              <div><dt>개인정보</dt><dd>전송하지 않음</dd></div>
+            </dl>
+            <div class="notice warning"><div><strong>수행 모드</strong><br>수행 모드에서는 이 상세 페이지와 AI 풀이 도움을 함께 열 수 없습니다.</div></div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴">
+    <a href="#home"><svg><use href="#i-home"/></svg><span>홈</span></a>
+    <a href="#problems"><svg><use href="#i-book"/></svg><span>문제</span></a>
+    <a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a>
+    <a href="#learning"><svg><use href="#i-learn"/></svg><span>학습</span></a>
+    <a href="#more" aria-current="page"><svg><use href="#i-more"/></svg><span>더보기</span></a>
+  </nav>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds13-prototype.js"></script>
+</body>
+</html>

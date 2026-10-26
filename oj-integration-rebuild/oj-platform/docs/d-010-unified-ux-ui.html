@@ -1,0 +1,755 @@
+<title>OJ 통합 UX/UI 설계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: Apple developer-docs style — sticky source-list TOC on the left, one reading column on the right; the page itself is a live sample of the proposed token set. */
+:root{
+  --bg:#f5f5f7; --surface:#ffffff; --surface-2:#fbfbfd; --elevated:#ffffff;
+  --label:#1d1d1f; --label-2:#6e6e73; --label-3:#8e8e93;
+  --sep:rgba(60,60,67,.14); --sep-strong:rgba(60,60,67,.26); --fill:rgba(118,118,128,.12); --fill-2:rgba(118,118,128,.08);
+  --accent:#0a7c76; --accent-hover:#086a65; --accent-tint:rgba(10,124,118,.10); --on-accent:#ffffff;
+  --red:#d70015; --red-tint:rgba(215,0,21,.09); --orange:#b25000; --orange-tint:rgba(178,80,0,.10);
+  --green:#1f7a37; --green-tint:rgba(31,122,55,.10); --blue:#0066cc; --blue-tint:rgba(0,102,204,.09);
+  --material:rgba(255,255,255,.72);
+  --shadow-1:0 1px 2px rgba(0,0,0,.05),0 0 0 .5px rgba(0,0,0,.04);
+  --shadow-2:0 6px 24px rgba(0,0,0,.08),0 0 0 .5px rgba(0,0,0,.05);
+  --shadow-3:0 24px 60px rgba(0,0,0,.18),0 0 0 .5px rgba(0,0,0,.06);
+  --font:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+  --mono:"SF Mono",ui-monospace,"JetBrains Mono",Consolas,monospace;
+  --r-xs:6px; --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:22px;
+  --ease:cubic-bezier(.25,.1,.25,1); --spring:cubic-bezier(.32,.72,0,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#000000; --surface:#1c1c1e; --surface-2:#232325; --elevated:#2c2c2e;
+  --label:#f5f5f7; --label-2:#a1a1a6; --label-3:#8e8e93;
+  --sep:rgba(84,84,88,.55); --sep-strong:rgba(120,120,128,.6); --fill:rgba(118,118,128,.24); --fill-2:rgba(118,118,128,.16);
+  --accent:#3cc4bb; --accent-hover:#5ad0c8; --accent-tint:rgba(60,196,187,.16); --on-accent:#00201e;
+  --red:#ff453a; --red-tint:rgba(255,69,58,.16); --orange:#ff9f0a; --orange-tint:rgba(255,159,10,.16);
+  --green:#30d158; --green-tint:rgba(48,209,88,.15); --blue:#0a84ff; --blue-tint:rgba(10,132,255,.16);
+  --material:rgba(28,28,30,.72);
+  --shadow-1:0 0 0 .5px rgba(255,255,255,.08); --shadow-2:0 8px 28px rgba(0,0,0,.5),0 0 0 .5px rgba(255,255,255,.08); --shadow-3:0 24px 60px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.1);
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#1c1c1e; --surface-2:#232325; --elevated:#2c2c2e;
+  --label:#f5f5f7; --label-2:#a1a1a6; --label-3:#8e8e93;
+  --sep:rgba(84,84,88,.55); --sep-strong:rgba(120,120,128,.6); --fill:rgba(118,118,128,.24); --fill-2:rgba(118,118,128,.16);
+  --accent:#3cc4bb; --accent-hover:#5ad0c8; --accent-tint:rgba(60,196,187,.16); --on-accent:#00201e;
+  --red:#ff453a; --red-tint:rgba(255,69,58,.16); --orange:#ff9f0a; --orange-tint:rgba(255,159,10,.16);
+  --green:#30d158; --green-tint:rgba(48,209,88,.15); --blue:#0a84ff; --blue-tint:rgba(10,132,255,.16);
+  --material:rgba(28,28,30,.72);
+  --shadow-1:0 0 0 .5px rgba(255,255,255,.08); --shadow-2:0 8px 28px rgba(0,0,0,.5),0 0 0 .5px rgba(255,255,255,.08); --shadow-3:0 24px 60px rgba(0,0,0,.6),0 0 0 .5px rgba(255,255,255,.1);
+  color-scheme:dark;}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--label);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+:focus-visible{outline:3px solid var(--accent-tint);outline-offset:2px;box-shadow:0 0 0 1.5px var(--accent);border-radius:6px}
+code,.mono{font-family:var(--mono);font-size:.86em}
+code{background:var(--fill-2);padding:.1em .38em;border-radius:5px}
+h1,h2,h3,h4{text-wrap:balance;margin:0;letter-spacing:-.022em}
+p{margin:0}
+
+.frame{display:grid;grid-template-columns:232px minmax(0,1fr);gap:40px;max-width:1240px;margin:0 auto;padding-inline:24px;padding-block:32px 96px}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;max-height:calc(100vh - 48px);overflow:auto;padding:12px 8px;border-radius:var(--r-lg);background:var(--material);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);box-shadow:var(--shadow-1)}
+.toc .sec{font-size:11px;font-weight:600;color:var(--label-3);letter-spacing:.04em;padding:14px 10px 4px}
+.toc .sec:first-child{padding-top:4px}
+.toc a{display:flex;align-items:center;gap:8px;height:30px;padding:0 10px;border-radius:7px;color:var(--label);font-size:13px}
+.toc a:hover{background:var(--fill-2);text-decoration:none}
+.toc a .n{font-family:var(--mono);font-size:11px;color:var(--label-3);width:16px}
+main{min-width:0;display:flex;flex-direction:column;gap:64px}
+
+.hero{display:flex;flex-direction:column;gap:14px;padding-top:8px}
+.eyebrow{font-size:13px;font-weight:600;color:var(--accent)}
+.hero h1{font-size:clamp(30px,4.4vw,44px);font-weight:700;line-height:1.12;letter-spacing:-.03em}
+.hero .lede{font-size:18px;color:var(--label-2);max-width:62ch;line-height:1.55}
+.meta{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--label-2)}
+.chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:999px;background:var(--fill-2);font-size:12px;color:var(--label-2);white-space:nowrap}
+.chip.accent{background:var(--accent-tint);color:var(--accent)}
+.chip.red{background:var(--red-tint);color:var(--red)} .chip.orange{background:var(--orange-tint);color:var(--orange)} .chip.green{background:var(--green-tint);color:var(--green)} .chip.blue{background:var(--blue-tint);color:var(--blue)}
+
+section{display:flex;flex-direction:column;gap:20px;scroll-margin-top:24px}
+.sh{display:flex;flex-direction:column;gap:6px}
+.sh .num{font-family:var(--mono);font-size:12px;color:var(--label-3)}
+.sh h2{font-size:28px;font-weight:700;line-height:1.2}
+.sh p{color:var(--label-2);max-width:68ch}
+h3{font-size:19px;font-weight:600;margin-top:8px}
+.prose{display:flex;flex-direction:column;gap:12px;max-width:72ch}
+.prose ul,.prose ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.muted{color:var(--label-2)}
+
+/* grouped inset list (iOS Settings) */
+.group{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow-1);overflow:hidden}
+.group-title{font-size:13px;color:var(--label-2);padding:0 16px 6px;font-weight:500}
+.group-foot{font-size:12px;color:var(--label-3);padding:6px 16px 0}
+.row{display:flex;align-items:center;gap:12px;min-height:44px;padding:10px 16px;position:relative}
+.row+.row::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:.5px solid var(--sep)}
+.row .lbl{flex:1;min-width:0}
+.row .val{color:var(--label-2);font-size:14px}
+.row .chev{color:var(--label-3)}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--surface);border-radius:var(--r-md);padding:16px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;gap:4px}
+.stat .k{font-size:12px;color:var(--label-2)}
+.stat .v{font-size:26px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:14px;font-weight:500;color:var(--label-3);margin-left:4px}
+.stat .d{font-size:12px;color:var(--label-3)}
+
+.tbl-wrap{overflow-x:auto;background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow-1)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{font-size:12px;font-weight:600;color:var(--label-2);text-align:left;padding:10px 14px;background:var(--surface-2);border-bottom:.5px solid var(--sep);white-space:nowrap}
+td{padding:10px 14px;border-bottom:.5px solid var(--sep);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.nowrap{white-space:nowrap}
+.sw{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-1px;margin-right:6px;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.15)}
+
+.callout{display:flex;gap:12px;padding:14px 16px;border-radius:var(--r-md);background:var(--accent-tint);color:var(--label)}
+.callout.warn{background:var(--orange-tint)} .callout.risk{background:var(--red-tint)}
+.callout b{color:var(--accent)} .callout.warn b{color:var(--orange)} .callout.risk b{color:var(--red)}
+
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{background:var(--surface);border-radius:var(--r-md);padding:18px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;gap:8px;min-width:0}
+.card h4{font-size:15px;font-weight:600}
+.card p{font-size:13.5px;color:var(--label-2)}
+
+/* tokens */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.swatch{background:var(--surface);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-1)}
+.swatch .c{height:56px}
+.swatch .t{padding:8px 10px;font-size:12px;display:flex;flex-direction:column}
+.swatch .t span{color:var(--label-3);font-family:var(--mono);font-size:11px}
+.typescale .row{align-items:baseline}
+.typescale .row .spec{width:150px;flex:none;font-family:var(--mono);font-size:11px;color:var(--label-3)}
+.radii{display:flex;flex-wrap:wrap;gap:12px}
+.radii div{width:76px;height:56px;background:var(--accent-tint);border:1px solid var(--accent);display:grid;place-items:center;font-size:11px;font-family:var(--mono);color:var(--accent)}
+
+/* component samples */
+.demo{background:var(--bg);border-radius:var(--r-lg);box-shadow:inset 0 0 0 .5px var(--sep-strong);padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.demo-label{font-size:11px;font-weight:600;color:var(--label-3);letter-spacing:.04em}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:inherit;font-size:14px;font-weight:500;height:36px;padding:0 16px;border-radius:999px;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s var(--ease),transform .12s var(--ease)}
+.btn:active{transform:scale(.97)}
+.btn.filled{background:var(--accent);color:var(--on-accent)} .btn.filled:hover{background:var(--accent-hover)}
+.btn.tinted{background:var(--accent-tint);color:var(--accent)}
+.btn.gray{background:var(--fill);color:var(--label)}
+.btn.plain{background:transparent;color:var(--accent);padding:0 8px}
+.btn.destructive{background:var(--red-tint);color:var(--red)}
+.btn.sm{height:28px;padding:0 12px;font-size:13px}
+.btn.lg{height:44px;padding:0 22px;font-size:15px}
+
+.seg{display:inline-flex;padding:2px;border-radius:9px;background:var(--fill);gap:2px;max-width:100%;overflow-x:auto}
+.seg button{font:inherit;font-size:13px;font-weight:500;border:0;background:transparent;color:var(--label);height:28px;padding:0 14px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected="true"]{background:var(--elevated);box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.04)}
+
+/* app shell mock */
+.shell{display:grid;grid-template-columns:220px minmax(0,1fr);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-2);background:var(--surface);min-height:520px}
+.side{background:var(--surface-2);border-right:.5px solid var(--sep);padding:12px 8px;display:flex;flex-direction:column;gap:1px;font-size:13px}
+.side .brand{display:flex;align-items:center;gap:8px;font-weight:600;padding:4px 8px 12px}
+.side .brand i{width:22px;height:22px;border-radius:6px;background:var(--accent);display:inline-block}
+.side .hd{font-size:11px;color:var(--label-3);font-weight:600;padding:12px 10px 4px}
+.side a{display:flex;align-items:center;gap:8px;height:30px;padding:0 10px;border-radius:7px;color:var(--label)}
+.side a:hover{background:var(--fill-2);text-decoration:none}
+.side a .ic{width:16px;height:16px;border-radius:4px;background:var(--accent);opacity:.85;flex:none}
+.side a.cur{background:var(--accent-tint);color:var(--accent);font-weight:600}
+.side a.sub{padding-left:34px;height:28px;color:var(--label-2)}
+.side a.sub.cur{color:var(--accent);background:var(--accent-tint)}
+.side .count{margin-left:auto;font-size:11px;color:var(--label-3);font-variant-numeric:tabular-nums}
+.side .divider{border-top:.5px solid var(--sep);margin:8px 10px}
+.content{display:flex;flex-direction:column;min-width:0}
+.toolbar{display:flex;align-items:center;gap:8px;height:48px;padding:0 20px;border-bottom:.5px solid var(--sep);background:var(--material);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);font-size:13px;color:var(--label-2)}
+.toolbar .crumb b{color:var(--label);font-weight:500}
+.toolbar .search{margin-left:auto;display:flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:8px;background:var(--fill);color:var(--label-3);font-size:12px;min-width:0}
+.toolbar kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border-radius:4px;background:var(--surface);box-shadow:var(--shadow-1)}
+.page{padding:24px 28px;display:flex;flex-direction:column;gap:18px}
+.ph{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.ph .t{flex:1;min-width:200px;display:flex;flex-direction:column;gap:4px}
+.ph h1{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.15}
+.ph .sub{color:var(--label-2);font-size:14px}
+.list{background:var(--surface);border-radius:var(--r-md);box-shadow:inset 0 0 0 .5px var(--sep-strong);overflow:hidden}
+.li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:10px 14px;min-height:48px;font-size:13.5px;position:relative}
+.li+.li::before{content:"";position:absolute;top:0;left:14px;right:0;border-top:.5px solid var(--sep)}
+.li .s{color:var(--label-3);font-size:12px}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap}
+.badge.green{background:var(--green-tint);color:var(--green)} .badge.gray{background:var(--fill);color:var(--label-2)} .badge.orange{background:var(--orange-tint);color:var(--orange)}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:18px 12px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12.5px;text-align:center;color:var(--label)}
+.tile .sq{width:60px;height:60px;border-radius:14px;display:grid;place-items:center;box-shadow:var(--shadow-1)}
+.tile .sq svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+.empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:32px 16px}
+.empty .ico{width:44px;height:44px;border-radius:50%;background:var(--fill);display:grid;place-items:center}
+.empty .ico svg{width:22px;height:22px;stroke:var(--label-3);fill:none;stroke-width:1.8}
+.empty h4{font-size:16px;font-weight:600}
+.empty p{font-size:13px;color:var(--label-2);max-width:36ch}
+
+.toast{align-self:center;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:var(--elevated);box-shadow:var(--shadow-2);font-size:13.5px}
+.toast i{width:18px;height:18px;border-radius:50%;background:var(--green);display:inline-block}
+
+.sheet-scrim{position:fixed;inset:0;background:rgba(0,0,0,.32);display:grid;place-items:center;padding:16px;z-index:50;animation:fade .2s var(--ease)}
+.sheet{width:min(420px,100%);background:var(--elevated);border-radius:var(--r-xl);box-shadow:var(--shadow-3);padding:22px;display:flex;flex-direction:column;gap:12px;animation:rise .32s var(--spring)}
+.sheet h4{font-size:17px;font-weight:600}
+.sheet p{font-size:14px;color:var(--label-2)}
+.sheet .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+@keyframes fade{from{opacity:0}} @keyframes rise{from{transform:translateY(16px) scale(.98);opacity:0}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* IA trees */
+.trees{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tree{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow-1);padding:14px 14px 16px;font-size:13px;min-width:0}
+.tree h4{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tree ul{list-style:none;margin:0;padding:0}
+.tree>ul>li{padding:6px 0;border-top:.5px solid var(--sep)}
+.tree>ul>li:first-child{border-top:0}
+.tree .root{font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tree .root .cnt{font-family:var(--mono);font-size:11px;color:var(--label-3);font-weight:400}
+.tree .kids{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.tree .k{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:6px;background:var(--fill-2);font-size:12px;color:var(--label)}
+.tree .k.add{background:var(--accent-tint);color:var(--accent)}
+.tree .k.act{background:var(--orange-tint);color:var(--orange)}
+.tree .k.del{text-decoration:line-through;color:var(--label-3)}
+.tree .k.sec{background:transparent;color:var(--label-3);font-size:11px;font-weight:600;padding:0 2px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--label-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+
+.levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.lv{background:var(--surface);border-radius:var(--r-md);padding:14px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;gap:6px;min-width:0}
+.lv .tag{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.lv h4{font-size:15px;font-weight:600}
+.lv p{font-size:12.5px;color:var(--label-2)}
+
+pre{margin:0;background:var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow-1);padding:16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--label)}
+pre .c{color:var(--label-3)} pre .k{color:var(--accent)}
+
+.phase{display:grid;grid-template-columns:64px minmax(0,1fr);gap:16px;padding:16px 0;border-top:.5px solid var(--sep)}
+.phase:first-child{border-top:0}
+.phase .p{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:500}
+.phase h4{font-size:15px;font-weight:600;margin-bottom:6px}
+.phase ul{margin:0;padding-left:1.1em;font-size:13.5px;color:var(--label-2);display:flex;flex-direction:column;gap:4px}
+
+@media (max-width:980px){
+  .frame{grid-template-columns:minmax(0,1fr);gap:24px;padding-inline:16px}
+  .toc{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px;padding:8px}
+  .toc .sec{display:none} .toc a{height:28px;font-size:12px;background:var(--fill-2)}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .levels{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  .grid2,.grid3,.trees{grid-template-columns:minmax(0,1fr)}
+  .shell{grid-template-columns:minmax(0,1fr)} .side{display:none}
+  .page{padding:18px 16px} .ph h1{font-size:26px}
+  .typescale .row .spec{width:96px}
+  .levels{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+
+<div class="frame">
+<nav class="toc" aria-label="목차">
+  <div class="sec">개요</div>
+  <a href="#summary"><span class="n">00</span>요약</a>
+  <a href="#diagnosis"><span class="n">01</span>현황 진단</a>
+  <div class="sec">디자인 시스템</div>
+  <a href="#principles"><span class="n">02</span>디자인 원칙</a>
+  <a href="#tokens"><span class="n">03</span>토큰</a>
+  <a href="#components"><span class="n">04</span>컴포넌트</a>
+  <a href="#templates"><span class="n">05</span>화면 유형</a>
+  <div class="sec">메뉴 구조</div>
+  <a href="#ia-verdict"><span class="n">06</span>1·2차 메뉴 판단</a>
+  <a href="#console-ia"><span class="n">07</span>oj-console 재구성</a>
+  <a href="#mapping"><span class="n">08</span>항목 이동표</a>
+  <a href="#public-ia"><span class="n">09</span>학생 메뉴</a>
+  <a href="#beyond"><span class="n">10</span>2차로 안 되는 것</a>
+  <div class="sec">실행</div>
+  <a href="#words"><span class="n">11</span>용어·문구</a>
+  <a href="#defects"><span class="n">12</span>즉시 고칠 결함</a>
+  <a href="#roadmap"><span class="n">13</span>적용 순서</a>
+  <a href="#decisions"><span class="n">14</span>결정 필요</a>
+</nav>
+
+<main>
+<header class="hero" id="summary">
+  <span class="eyebrow">D-010 · OJ Platform + 애드온 8종</span>
+  <h1>하나의 플랫폼처럼 보이고, 하나처럼 움직이게</h1>
+  <p class="lede">OJ Platform과 애드온 8개는 지금 기본 색 9가지, 토큰 접두사 15개 이상, 확인 대화상자 4가지 방식으로 따로 움직입니다. 이 문서는 애플 HIG 감성으로 디자인 시스템 하나를 세우고, oj-console 메뉴를 1차 8개·2차 38개로 다시 묶으며, 2차 메뉴로 담을 수 없는 화면은 표준 3차 내비게이션으로 처리하는 설계안입니다.</p>
+  <div class="meta"><span class="chip">작성 2026-10-12</span><span class="chip">근거: config/menus.php, 각 애드온 등록 코드·CSS</span><span class="chip accent">상태: P0~P3 적용(플랫폼 2.2.0, 애드온 9종) · P4 남음</span></div>
+  <div class="stats" style="margin-top:12px">
+    <div class="stat"><span class="k">콘솔 1차 메뉴</span><span class="v">10<small>→ 8</small></span><span class="d">대회·평가, 쪽지 통합</span></div>
+    <div class="stat"><span class="k">콘솔 2차 메뉴 (애드온 포함)</span><span class="v">74<small>→ 38</small></span><span class="d">추가·삭제됨 항목을 화면 안으로</span></div>
+    <div class="stat"><span class="k">기본(primary) 색</span><span class="v">9<small>→ 1</small></span><span class="d">플랫폼 청록 하나로</span></div>
+    <div class="stat"><span class="k">확인 대화상자 방식</span><span class="v">4<small>→ 1</small></span><span class="d">confirm·alert·두 번 클릭·dialog</span></div>
+  </div>
+</header>
+
+<!-- 01 -->
+<section id="diagnosis">
+  <div class="sh"><span class="num">01</span><h2>현황 진단</h2><p>9개 플러그인 모두 Addon API v1로 같은 셸 안에 들어오지만, 플랫폼 컴포넌트 클래스(<code>ojp-*</code>)를 쓰는 애드온은 하나도 없습니다. 각자 자기 디자인 시스템을 들고 와서 셸 안에 끼워 넣는 구조입니다.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>플러그인</th><th>기본 색</th><th>글꼴</th><th>모서리</th><th>제목 패턴</th><th>피드백·확인</th><th>숨은 3차 내비</th></tr></thead>
+    <tbody>
+      <tr><td class="nowrap"><b>oj-platform</b></td><td class="nowrap"><span class="sw" style="background:#087d78"></span>#087d78</td><td>Noto Sans KR</td><td>6px</td><td>ojp-page-header (페이지마다 직접 작성)</td><td>ojp-notice, window.confirm</td><td>ojp-tabs (수업·그룹·대회)</td></tr>
+      <tr><td class="nowrap"><b>edu-games</b></td><td class="nowrap"><span class="sw" style="background:#1d6fd8"></span>#1d6fd8 + 초록 3종</td><td>Inter, system-ui</td><td>3·4·6·8px</td><td>h1 없음, h2부터 시작</td><td>상태 문구, confirm</td><td>게임별 모드 탭, select, details</td></tr>
+      <tr><td class="nowrap"><b>learning-materials</b></td><td class="nowrap"><span class="sw" style="background:#087d78"></span>#087d78</td><td>상속</td><td>8·10·12px</td><td>lmt-page-header (플랫폼 복제)</td><td>오류만 표시, 성공 알림 없음</td><td>없음</td></tr>
+      <tr><td class="nowrap"><b>teaching-tools</b></td><td class="nowrap"><span class="sw" style="background:#1971c2"></span>#1971c2</td><td>상속</td><td>6·10·16px</td><td>이모지 타일 + 사용법 알약</td><td>alert, confirm, 자체 모달</td><td>허브 카드로만 가는 도구 8개</td></tr>
+      <tr><td class="nowrap"><b>readcontents-library</b></td><td class="nowrap"><span class="sw" style="background:#0f172a"></span>#0f172a / <span class="sw" style="background:#0d6efd"></span>#0d6efd</td><td>ui-sans / Noto / Inter</td><td>0.25rem–2rem</td><td>React SPA 헤더, 공개 화면은 그라데이션 히어로</td><td>sonner 토스트</td><td>편집기 SPA 전체</td></tr>
+      <tr><td class="nowrap"><b>oj-ai-dashboard</b></td><td class="nowrap"><span class="sw" style="background:#2459a7"></span>#2459a7 + 청록 6종</td><td>Arial, system-ui</td><td>4–12px</td><td>영역별 __header</td><td>native dialog, 레거시 모달</td><td>내비 4겹, 7단계 스테퍼</td></tr>
+      <tr><td class="nowrap"><b>oj-code-arena</b></td><td class="nowrap"><span class="sw" style="background:#2f6fe0"></span>#2f6fe0 / <span class="sw" style="background:#ffb547"></span>#ffb547 (학생)</td><td>Pretendard (학생)</td><td>7–14px</td><td>h1 + &lt;small&gt;</td><td>두 번 클릭(빨갛게 무장)</td><td>data-view 상태 전환</td></tr>
+      <tr><td class="nowrap"><b>oj-code-lab</b></td><td class="nowrap"><span class="sw" style="background:#2563eb"></span>#2563eb</td><td>상속</td><td>6·8·22px</td><td>이모지 배너</td><td>window.confirm</td><td>없음</td></tr>
+      <tr><td class="nowrap"><b>oj-ml-playgrounds</b></td><td class="nowrap"><span class="sw" style="background:#087d78"></span>플랫폼 / <span class="sw" style="background:#4f46e5"></span>#4f46e5 (SPA)</td><td>상속 / Pretendard</td><td>0.4–0.875rem</td><td>상태 문구만</td><td>native dialog</td><td>버튼형 작업 내비 (메뉴명과 다름)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2">
+    <div class="card"><h4>시각 언어가 갈라진 원인</h4><p>플랫폼에 애드온용 UI 키트 문서가 없습니다. 토큰은 있지만 글자 크기·모서리 단계가 없고, 페이지 헤더·시트·토스트를 만드는 공용 API도 없습니다. 그래서 각 애드온이 자기 토큰을 새로 만들었습니다.</p></div>
+    <div class="card"><h4>메뉴가 무거워진 원인</h4><p>메뉴 항목 하나가 화면 하나라는 규칙만 있습니다. "추가", "삭제된 ○○" 같은 동작과 보관함이 모두 2차 메뉴가 됐고, 애드온은 하위 화면을 표현할 방법이 없어 2차 메뉴를 2~3개씩 씁니다(이름 앞에 "코드 아레나 …"를 반복).</p></div>
+    <div class="card"><h4>셸로 새는 CSS</h4><p>edu-games의 전역 <code>button{}</code> 규칙이 콘솔 버튼 전체를 파랗게 바꾸고, teaching-tools는 <code>:root</code>에 변수와 OS 다크 모드를 주입합니다. readcontents는 Tailwind preflight를 그대로 실어 옵니다.</p></div>
+    <div class="card"><h4>잘못된 토큰 이름</h4><p>oj-ml-playgrounds는 존재하지 않는 <code>--ojp-color-border/-text/-text-muted</code>를, oj-ai-dashboard는 정의된 적 없는 <code>--oj-console-*</code>를 참조합니다. 그래서 늘 fallback 색으로 그려집니다.</p></div>
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="principles">
+  <div class="sh"><span class="num">02</span><h2>디자인 원칙: 애플 감성을 이 서비스에 옮기면</h2><p>애플 감성은 파란색이나 둥근 모서리 자체보다, 내용이 먼저 보이고 장치는 물러나는 태도에서 나옵니다. 교사가 수업 중에 쓰고 학생이 태블릿으로 들어오는 이 서비스에 맞게 다섯 가지로 정리했습니다.</p></div>
+  <div class="grid3">
+    <div class="card"><h4>1. 내용이 주인공 (Deference)</h4><p>배경은 옅은 회색, 표면은 흰색, 색은 강조색 하나만 씁니다. 상태 색(성공·주의·위험)은 의미가 있을 때만 씁니다. 이모지·그라데이션 배너는 화면 장식에 쓰지 않습니다.</p></div>
+    <div class="card"><h4>2. 위계는 글자로 (Clarity)</h4><p>큰 제목 32px·700으로 "지금 어디인지"를 한눈에 알립니다. 굵기와 회색 단계로 위계를 만들고, 선과 상자는 최소로 줄입니다.</p></div>
+    <div class="card"><h4>3. 깊이는 재질로 (Depth)</h4><p>상단 바와 사이드바는 반투명 블러 재질, 시트는 그림자로 띄웁니다. 테두리 대신 0.5px 구분선과 아주 옅은 그림자를 씁니다.</p></div>
+    <div class="card"><h4>4. 같은 일은 같은 모양</h4><p>저장하면 토스트, 되돌릴 수 없으면 시트, 하위 화면 전환은 세그먼트 컨트롤. 9개 플러그인 어디서든 같은 동작은 같은 부품으로 처리합니다.</p></div>
+    <div class="card"><h4>5. 손가락과 키보드 모두</h4><p>모바일 터치 영역은 44px, 데스크톱 컨트롤은 36px입니다. ⌘K(Ctrl+K)로 모든 화면을 찾고, 포커스 링은 항상 보이게 합니다.</p></div>
+    <div class="card"><h4>예외: 몰입형 화면</h4><p>게임 플레이, 전광판, 노트북, 편집기는 자기 아트워크를 가져도 됩니다. 다만 상단 바·버튼·시트·토스트는 공용 부품을 쓰고, 색은 다크 토큰 안에서 고릅니다.</p></div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="tokens">
+  <div class="sh"><span class="num">03</span><h2>디자인 토큰 v2</h2><p>모든 토큰은 플랫폼 <code>oj-ui-system.css</code>의 <code>--ojp-*</code> 하나에만 정의합니다. 애드온은 값을 새로 만들지 않고 이 이름만 참조합니다. 이 페이지도 아래 토큰으로 그려졌습니다. 라이트/다크를 바꿔 보면 그대로 확인할 수 있습니다.</p></div>
+  <h3>색상: 의미 단위 (라이트 / 다크)</h3>
+  <div class="swatches">
+    <div class="swatch"><div class="c" style="background:var(--accent)"></div><div class="t">--ojp-color-primary<span>#087D78 / #3CC4BB</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--label)"></div><div class="t">--ojp-label<span>#1D1D1F / #F5F5F7</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--label-2)"></div><div class="t">--ojp-label-secondary<span>#6E6E73 / #A1A1A6</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--bg);box-shadow:inset 0 -.5px 0 var(--sep)"></div><div class="t">--ojp-bg-grouped<span>#F5F5F7 / #000000</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--surface);box-shadow:inset 0 -.5px 0 var(--sep)"></div><div class="t">--ojp-surface<span>#FFFFFF / #1C1C1E</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--fill)"></div><div class="t">--ojp-fill<span>128 gray 12% / 24%</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--green)"></div><div class="t">--ojp-success<span>#1F7A37 / #30D158</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--orange)"></div><div class="t">--ojp-warning<span>#B25000 / #FF9F0A</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--red)"></div><div class="t">--ojp-danger<span>#D70015 / #FF453A</span></div></div>
+    <div class="swatch"><div class="c" style="background:var(--blue)"></div><div class="t">--ojp-info<span>#0066CC / #0A84FF</span></div></div>
+  </div>
+  <div class="callout"><b>강조색</b><span>플랫폼 청록 #087D78을 그대로 씁니다(흰 배경 대비 5:1 이상). 2026-10-13 확정.</span></div>
+
+  <h3>글자 크기 단계</h3>
+  <div class="group typescale">
+    <div class="row"><span class="spec">largeTitle 32/700</span><span style="font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.2">수업</span></div>
+    <div class="row"><span class="spec">title1 26/700</span><span style="font-size:26px;font-weight:700;letter-spacing:-.025em">2학년 3반 파이썬</span></div>
+    <div class="row"><span class="spec">title2 21/600</span><span style="font-size:21px;font-weight:600;letter-spacing:-.02em">제출 현황</span></div>
+    <div class="row"><span class="spec">title3 18/600</span><span style="font-size:18px;font-weight:600">이번 주 과제</span></div>
+    <div class="row"><span class="spec">headline 15/600</span><span style="font-size:15px;font-weight:600">A+B 문제 · 정답 28명</span></div>
+    <div class="row"><span class="spec">body 15/400</span><span style="font-size:15px">학생이 제출한 코드를 다시 채점합니다.</span></div>
+    <div class="row"><span class="spec">callout 14/400</span><span style="font-size:14px">마감 2026-10-20 18:00</span></div>
+    <div class="row"><span class="spec">footnote 12/400</span><span style="font-size:12px;color:var(--label-2)">마지막 저장 3분 전</span></div>
+    <div class="row"><span class="spec">caption 11/600</span><span style="font-size:11px;font-weight:600;color:var(--label-3);letter-spacing:.04em">수업 운영</span></div>
+  </div>
+  <p class="muted" style="font-size:13px">글꼴: <code>-apple-system, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Malgun Gothic"</code>. Mac·iPad에서는 시스템 글꼴, Windows 교실 PC에서는 플랫폼에 번들한 Pretendard(OFL)가 잡히게 합니다. 학생 읽기 화면(읽기자료 본문)은 body를 17px로 키웁니다.</p>
+
+  <div class="grid2">
+    <div class="card"><h4>모서리</h4><div class="radii"><div style="border-radius:6px">xs 6</div><div style="border-radius:8px">sm 8</div><div style="border-radius:12px">md 12</div><div style="border-radius:16px">lg 16</div><div style="border-radius:22px">xl 22</div><div style="border-radius:999px">pill</div></div><p>컨트롤 8, 버튼은 pill, 카드와 그룹 목록 12, 패널 16, 시트 22를 씁니다. 지금 쓰이는 3px부터 2rem까지의 값은 이 여섯 단계로 정리합니다.</p></div>
+    <div class="card"><h4>간격·크기·움직임</h4><p><b>간격</b> 4의 배수: 4 8 12 16 20 24 32 40 56<br><b>컨트롤 높이</b> 28(소) · 36(기본) · 44(대·터치)<br><b>목록 행</b> 44–48 · <b>사이드바 항목</b> 30<br><b>그림자</b> e1 경계, e2 떠 있는 카드, e3 시트<br><b>재질</b> 반투명 72% + blur 20px (상단 바, 사이드바, 탭 바)<br><b>움직임</b> 200ms 기본, 시트 320ms 스프링, reduced-motion이면 끔</p></div>
+  </div>
+  <pre><span class="c">/* 기존 이름은 v2에서 별칭으로 유지해 깨지지 않게 한다 */</span>
+<span class="k">--ojp-color-primary</span>: var(--ojp-accent);      <span class="k">--ojp-color-ink</span>: var(--ojp-label);
+<span class="k">--ojp-color-muted</span>: var(--ojp-label-secondary); <span class="k">--ojp-color-line</span>: var(--ojp-separator);
+<span class="c">/* 애드온이 잘못 쓰던 이름도 한시적으로 받아 준다 (다음 메이저에서 제거) */</span>
+<span class="k">--ojp-color-text</span>: var(--ojp-label);  <span class="k">--ojp-color-border</span>: var(--ojp-separator);  <span class="k">--ojp-color-text-muted</span>: var(--ojp-label-secondary);</pre>
+</section>
+
+<!-- 04 -->
+<section id="components">
+  <div class="sh"><span class="num">04</span><h2>공용 컴포넌트</h2><p>플랫폼이 PHP 헬퍼와 JS(<code>OJP.sheet()</code>, <code>OJP.toast()</code>)로 제공하고, 애드온은 클래스를 다시 만들지 않습니다. 아래 견본은 실제로 동작합니다.</p></div>
+
+  <div class="shell" aria-label="콘솔 셸 견본">
+    <aside class="side">
+      <div class="brand"><i></i>OJ 콘솔</div>
+      <a href="#console-ia"><span class="ic"></span>홈</a>
+      <div class="hd">수업 운영</div>
+      <a class="cur" href="#console-ia"><span class="ic"></span>수업</a>
+      <a class="sub cur" href="#console-ia">수업</a>
+      <a class="sub" href="#console-ia">그룹</a>
+      <a class="sub" href="#console-ia">대회·평가</a>
+      <a class="sub" href="#console-ia">활동지 평가</a>
+      <a href="#console-ia"><span class="ic"></span>문제</a>
+      <a href="#console-ia"><span class="ic"></span>제출<span class="count">12</span></a>
+      <a href="#console-ia"><span class="ic"></span>학습 활동</a>
+      <a href="#console-ia"><span class="ic"></span>커뮤니티</a>
+      <div class="divider"></div>
+      <a href="#console-ia"><span class="ic"></span>사용자</a>
+      <a href="#console-ia"><span class="ic"></span>운영</a>
+    </aside>
+    <div class="content">
+      <div class="toolbar"><span class="crumb">수업 › 수업 › <b>2학년 3반 파이썬</b></span><span class="search">찾기 <kbd>⌘K</kbd></span></div>
+      <div class="page">
+        <div class="ph">
+          <div class="t"><span class="sub">수업 · 2026 2학기</span><h1>2학년 3반 파이썬</h1></div>
+          <button class="btn gray sm" type="button">수업 링크 복사</button>
+          <button class="btn filled sm" type="button">문제 추가</button>
+        </div>
+        <div class="seg" role="tablist" aria-label="수업 하위 화면" id="segDemo">
+          <button role="tab" aria-selected="true" type="button">수업 문제</button>
+          <button role="tab" aria-selected="false" type="button">참여자</button>
+          <button role="tab" aria-selected="false" type="button">제출 현황</button>
+          <button role="tab" aria-selected="false" type="button">학습 현황</button>
+          <button role="tab" aria-selected="false" type="button">설정</button>
+        </div>
+        <div class="list" id="segPanel">
+          <div class="li"><div>A+B<div class="s">입출력 · 난이도 1</div></div><span class="badge green">공개</span><span class="s">정답 28 / 31</span></div>
+          <div class="li"><div>최댓값 찾기<div class="s">반복문 · 난이도 2</div></div><span class="badge green">공개</span><span class="s">정답 19 / 31</span></div>
+          <div class="li"><div>구구단 표 만들기<div class="s">중첩 반복 · 난이도 2</div></div><span class="badge orange">마감 임박</span><span class="s">정답 9 / 31</span></div>
+          <div class="li"><div>문자열 뒤집기<div class="s">문자열 · 난이도 3</div></div><span class="badge gray">초안</span><span class="s">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="muted" style="font-size:13px">사이드바 섹션 머리말("수업 운영")은 누를 수 없는 묶음 표시입니다. 3차 화면은 사이드바가 아니라 큰 제목 아래 세그먼트 컨트롤로 보여 주고, 상단 바에는 경로와 ⌘K 찾기를 둡니다. 예시 데이터입니다.</p>
+
+  <div class="grid2">
+    <div class="demo">
+      <span class="demo-label">버튼 · 한 화면에 filled는 하나</span>
+      <div class="btns"><button class="btn filled" type="button">저장</button><button class="btn tinted" type="button">미리 보기</button><button class="btn gray" type="button">취소</button><button class="btn plain" type="button">자세히</button><button class="btn destructive" type="button" id="openSheet">삭제…</button></div>
+      <div class="btns"><button class="btn filled sm" type="button">작게</button><button class="btn filled lg" type="button">크게 · 터치 44</button></div>
+    </div>
+    <div class="demo">
+      <span class="demo-label">설정 화면 · 그룹형 목록</span>
+      <div><div class="group-title">채점</div>
+      <div class="group">
+        <div class="row"><span class="lbl">제출 후 결과 바로 공개</span><span class="chip green">켜짐</span></div>
+        <div class="row"><span class="lbl">재채점 대기열</span><span class="val">기본</span><span class="chev">›</span></div>
+        <div class="row"><span class="lbl">시간 제한 배수</span><span class="val">1.5×</span><span class="chev">›</span></div>
+      </div>
+      <div class="group-foot">바꾼 값은 다음 제출부터 적용됩니다.</div></div>
+    </div>
+    <div class="demo">
+      <span class="demo-label">빈 상태 · 아이콘 + 한 문장 + 한 가지 행동</span>
+      <div class="empty"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span><h4>아직 학습자료가 없습니다</h4><p>PDF나 PPT를 올리면 선택한 그룹의 학생에게 보입니다.</p><button class="btn filled sm" type="button">자료 올리기</button></div>
+    </div>
+    <div class="demo">
+      <span class="demo-label">완료 알림 · 토스트 (2.4초 후 사라짐)</span>
+      <div class="toast" role="status"><i></i>공개 설정을 저장했습니다</div>
+      <p style="font-size:13px;color:var(--label-2)">저장·복사·보내기처럼 되돌릴 필요 없는 결과는 토스트로 알립니다. 계속 남아야 하는 상태(서버 미연결, 권한 없음)는 화면 위쪽 인라인 알림으로 둡니다.</p>
+    </div>
+  </div>
+
+  <div class="demo">
+    <span class="demo-label">허브 · 앱 아이콘 타일 (교실 도구, 교육 게임) · 이모지 대신 아이콘 + 색 사각형</span>
+    <div class="tiles">
+      <div class="tile"><span class="sq" style="background:#0a7c76"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg></span>타이머</div>
+      <div class="tile"><span class="sq" style="background:#5856d6"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg></span>자리 배치</div>
+      <div class="tile"><span class="sq" style="background:#ff9500"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="15" r="1"/><circle cx="15" cy="9" r="1"/><circle cx="9" cy="15" r="1"/></svg></span>뽑기</div>
+      <div class="tile"><span class="sq" style="background:#34c759"><svg viewBox="0 0 24 24"><path d="M7 3v18M17 3v18M7 8h10M7 16h10"/></svg></span>사다리</div>
+      <div class="tile"><span class="sq" style="background:#007aff"><svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg></span>판서</div>
+      <div class="tile"><span class="sq" style="background:#ff2d55"><svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></span>퀴즈·투표</div>
+      <div class="tile"><span class="sq" style="background:#af52de"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M15 19c0-2 1.5-3.5 4-3.5"/></svg></span>조 짜기</div>
+      <div class="tile"><span class="sq" style="background:#ff3b30"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>타임어택</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="templates">
+  <div class="sh"><span class="num">05</span><h2>화면 유형 6가지</h2><p>D-009의 화면 유형을 이어받고 "허브"와 "몰입형"을 더했습니다. 모든 화면은 이 중 하나로 선언하고, 셸이 머리말·경로·폭을 맞춰 그립니다.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>유형</th><th>구성</th><th>쓰는 곳</th></tr></thead>
+    <tbody>
+      <tr><td class="nowrap"><b>목록</b></td><td>큰 제목 + [추가] 버튼 · 검색·필터 바 · 세그먼트(전체/보관됨) · 표(모바일은 목록 셀 + ›)</td><td>사용자, 문제, 수업, 제출, 학습자료, 문제은행</td></tr>
+      <tr><td class="nowrap"><b>객체 상세</b></td><td>경로 + 제목 + 상태 배지 · 3차 세그먼트 · 본문</td><td>수업·그룹·대회 상세, 활동지 평가 프로젝트</td></tr>
+      <tr><td class="nowrap"><b>편집</b></td><td>제목 + 그룹형 폼 · 하단 고정 [취소][저장] · 나갈 때 변경 확인 시트</td><td>문제 편집, 자료 등록, ML 과제 작성</td></tr>
+      <tr><td class="nowrap"><b>설정</b></td><td>그룹형 목록(iOS 설정), 스위치·값 › 형태, 그룹마다 설명 각주</td><td>운영 전체, 제출 설정, 애드온 설정</td></tr>
+      <tr><td class="nowrap"><b>허브</b></td><td>큰 제목 + 앱 타일 격자 + "최근 사용"</td><td>교실 도구, 교육 게임, 학생 학습 활동 첫 화면</td></tr>
+      <tr><td class="nowrap"><b>몰입형</b></td><td>사이드바 접힘 · 얇은 상단 바 [‹ 돌아가기 · 제목 · 행동] · 전체 폭</td><td>읽기자료 편집기, 코드 실습실, ML 실습, 아레나 전광판·경기, 판서, 게임 플레이</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 06 -->
+<section id="ia-verdict">
+  <div class="sh"><span class="num">06</span><h2>1·2차 메뉴 판단</h2><p>현재 구조를 메뉴 그룹 단위로 점검한 결과입니다. 애드온을 모두 켜면 2차 항목은 74개(코어 55 + 애드온 19)가 됩니다.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>1차 그룹</th><th>2차 수</th><th>판단</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td>대시보드</td><td>0</td><td><span class="chip green">유지</span></td><td>"홈"으로 이름만 바꿉니다.</td></tr>
+      <tr><td>사용자</td><td>7</td><td><span class="chip orange">축소</span></td><td>추가·일괄 등록은 동작이고 삭제된 사용자는 목록 필터입니다. 실제 목적지는 3개입니다.</td></tr>
+      <tr><td>문제</td><td>8</td><td><span class="chip orange">축소</span></td><td>문제 추가는 동작입니다. 번호 변경과 XML은 "문제 도구" 하나로 묶습니다.</td></tr>
+      <tr><td>제출</td><td>8</td><td><span class="chip orange">축소</span></td><td>AI 3개, 기록 2개, 설정 2개가 각각 같은 일입니다. 세그먼트로 묶으면 4개입니다.</td></tr>
+      <tr><td>수업</td><td>6 + 애드온 4</td><td><span class="chip orange">재편</span></td><td>추가·보관 항목을 빼고 대회·평가를 흡수합니다. 수업 단위 애드온(학습자료, 활동지, 교실 도구, 집중도)이 들어옵니다.</td></tr>
+      <tr><td>대회·평가</td><td>3</td><td><span class="chip red">통합</span></td><td>목적지가 대회 목록 하나뿐이라 1차로 둘 이유가 없습니다. 수업으로 옮깁니다.</td></tr>
+      <tr><td>학습지원</td><td>0 + 애드온 14</td><td><span class="chip red">재설계</span></td><td>코어 항목이 없고 애드온이 이름 접두사를 반복합니다. 애드온당 1개로 제한하고 "학습 활동"으로 이름을 바꿉니다.</td></tr>
+      <tr><td>커뮤니티</td><td>7</td><td><span class="chip orange">축소</span></td><td>작성·삭제됨 항목을 화면 안으로 옮기고 쪽지를 흡수합니다.</td></tr>
+      <tr><td>쪽지</td><td>3</td><td><span class="chip red">통합</span></td><td>1차와 2차(쪽지함)가 같은 주소이고 아이콘도 없습니다. 커뮤니티로 옮깁니다.</td></tr>
+      <tr><td>운영</td><td>13 + 애드온 1</td><td><span class="chip orange">섹션화</span></td><td>성격이 다른 13개가 평평하게 놓여 있습니다. 섹션 머리말 4개 아래 9개로 묶고, 애드온 설정은 한 곳으로 모읍니다.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>결론</b><span>플랫폼 코어는 동작과 보관함을 화면 안으로 옮기면 2차 메뉴로 충분히 표현됩니다. 2차 메뉴만으로 안 되는 것은 세 가지입니다. ① 애드온 내부 화면, ② 수업·그룹·대회 같은 객체의 하위 화면, ③ 편집기·게임 같은 몰입형 화면입니다. 이 셋은 사이드바를 3단으로 늘리지 않고, 셸이 그리는 표준 3차 내비게이션으로 처리합니다(10장).</span></div>
+</section>
+
+<!-- 07 -->
+<section id="console-ia">
+  <div class="sh"><span class="num">07</span><h2>oj-console 재구성안</h2><p>교사가 자주 쓰는 순서대로 위에 두고, 관리자 영역(사용자·운영)은 구분선 아래로 내립니다. 1차 키는 그대로 두어 애드온 anchor와 권한 규칙이 깨지지 않게 하고, 표시 이름과 하위 항목만 바꿉니다.</p></div>
+  <div class="legend"><span><i style="background:var(--fill)"></i>코어 항목</span><span><i style="background:var(--accent-tint)"></i>애드온 항목(애드온당 1개)</span><span><i style="background:var(--orange-tint)"></i>3차 세그먼트로 들어간 항목</span></div>
+  <div class="trees">
+    <div class="tree"><h4>현재 · 1차 10 / 2차 74</h4><ul>
+      <li><div class="root">대시보드</div></li>
+      <li><div class="root">사용자 <span class="cnt">7</span></div><div class="kids"><span class="k">사용자 목록</span><span class="k">사용자 추가</span><span class="k">사용자 일괄 등록</span><span class="k">삭제된 사용자</span><span class="k">역할</span><span class="k">약관</span><span class="k">가입 설정</span></div></li>
+      <li><div class="root">문제 <span class="cnt">8</span></div><div class="kids"><span class="k">문제 목록</span><span class="k">문제 추가</span><span class="k">주제 관리</span><span class="k">퀴즈 관리</span><span class="k">문제 은행</span><span class="k">문제집</span><span class="k">문제 번호 변경</span><span class="k">문제 XML 관리</span></div></li>
+      <li><div class="root">제출 <span class="cnt">8</span></div><div class="kids"><span class="k">제출 목록</span><span class="k">제출 삭제 기록</span><span class="k">제출 처리 기록</span><span class="k">제출 설정</span><span class="k">AI 피드백</span><span class="k">AI 답변 지침</span><span class="k">학습 수준 분석</span><span class="k">블록 코딩</span></div></li>
+      <li><div class="root">수업 <span class="cnt">10</span></div><div class="kids"><span class="k">수업 목록</span><span class="k">수업 추가</span><span class="k">보관된 수업</span><span class="k">그룹 목록</span><span class="k">그룹 추가</span><span class="k">보관된 그룹</span><span class="k add">평가 관리</span><span class="k add">기준 자료</span><span class="k add">운영 설정</span><span class="k add">학습자료</span></div></li>
+      <li><div class="root">대회·평가 <span class="cnt">3</span></div><div class="kids"><span class="k">대회 목록</span><span class="k">대회 추가</span><span class="k">삭제된 대회 제출</span></div></li>
+      <li><div class="root">학습지원 <span class="cnt">14</span></div><div class="kids"><span class="k add">읽기자료 관리</span><span class="k add">ML 실습 과제</span><span class="k add">ML 실습 결과</span><span class="k add">ML 실습 설정</span><span class="k add">교육 게임</span><span class="k add">AI 모델 훈련소 성적</span><span class="k add">학급 게임 기록</span><span class="k add">코드 아레나</span><span class="k add">코드 아레나 문제은행</span><span class="k add">코드 아레나 기록</span><span class="k add">학습지원도구</span><span class="k add">집중도 평가</span><span class="k add">코드 실습실</span><span class="k add">코드 실습실 — 추천 데이터</span></div></li>
+      <li><div class="root">커뮤니티 <span class="cnt">7</span></div><div class="kids"><span class="k">게시판</span><span class="k">게시글 작성</span><span class="k">삭제된 게시글</span><span class="k">공지사항</span><span class="k">공지 작성</span><span class="k">삭제된 공지</span><span class="k">커뮤니티 설정</span></div></li>
+      <li><div class="root">쪽지 <span class="cnt">3</span></div><div class="kids"><span class="k">쪽지함</span><span class="k">신고 내역</span><span class="k">쪽지 설정</span></div></li>
+      <li><div class="root">운영 <span class="cnt">14</span></div><div class="kids"><span class="k">기능 관리</span><span class="k">사이트</span><span class="k">사용자 메뉴</span><span class="k">홈</span><span class="k">저지 데이터베이스</span><span class="k">테스트 환경</span><span class="k">메일 발송</span><span class="k">AI 연결 프로필</span><span class="k">작업별 AI 배정</span><span class="k">AI 사용량</span><span class="k">운영 설정</span><span class="k">시스템 상태</span><span class="k">데이터 이전</span><span class="k add">코드 실습실 — Kaggle 설정</span></div></li>
+    </ul></div>
+    <div class="tree"><h4>제안 · 1차 8 / 2차 38</h4><ul>
+      <li><div class="root">홈</div><div class="kids"><span class="k sec">할 일 · 최근 작업 · 운영 알림</span></div></li>
+      <li><div class="root">수업 <span class="cnt">7</span></div><div class="kids"><span class="k sec">수업 운영</span><span class="k">수업</span><span class="k">그룹</span><span class="k">대회·평가</span><span class="k sec">수업 도구</span><span class="k add">활동지 평가</span><span class="k add">학습자료</span><span class="k add">교실 도구</span><span class="k add">집중도 평가</span></div></li>
+      <li><div class="root">문제 <span class="cnt">6</span></div><div class="kids"><span class="k">문제</span><span class="k">퀴즈</span><span class="k">문항 은행</span><span class="k">문제집</span><span class="k">문제 도구</span><span class="k">주제 사전</span></div></li>
+      <li><div class="root">제출 <span class="cnt">4</span></div><div class="kids"><span class="k">제출</span><span class="k">AI 피드백</span><span class="k">처리 기록</span><span class="k">제출 설정</span></div></li>
+      <li><div class="root">학습 활동 <span class="cnt">5</span></div><div class="kids"><span class="k add">교육 게임</span><span class="k add">코드 아레나</span><span class="k add">코드 실습실</span><span class="k add">ML 실습</span><span class="k add">읽기자료</span></div></li>
+      <li><div class="root">커뮤니티 <span class="cnt">4</span></div><div class="kids"><span class="k">게시판</span><span class="k">공지사항</span><span class="k">쪽지</span><span class="k">커뮤니티 설정</span></div></li>
+      <li><div class="root" style="color:var(--label-3)">— 관리자 영역 —</div></li>
+      <li><div class="root">사용자 <span class="cnt">3</span></div><div class="kids"><span class="k">사용자</span><span class="k">역할과 권한</span><span class="k">가입과 약관</span></div></li>
+      <li><div class="root">운영 <span class="cnt">9</span></div><div class="kids"><span class="k sec">일반</span><span class="k">사이트</span><span class="k">기능</span><span class="k sec">연결</span><span class="k">채점 환경</span><span class="k">메일</span><span class="k">AI</span><span class="k sec">확장</span><span class="k">애드온 설정</span><span class="k sec">시스템</span><span class="k">시스템 상태</span><span class="k">시스템 설정</span><span class="k">데이터 이전</span></div></li>
+    </ul></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h4>그룹을 나눈 기준</h4><p><b>수업</b>은 특정 반·그룹에 묶인 일, <b>학습 활동</b>은 반과 상관없이 학생이 스스로 하는 콘텐츠·실습입니다. 같은 애드온이라도 학생 메뉴와 교사 메뉴에서 같은 그룹에 놓아, 교사가 "학생은 어디서 보나"를 바로 알 수 있게 합니다.</p></div>
+    <div class="card"><h4>설정을 두는 자리</h4><p>교사가 바꾸는 도메인 정책(커뮤니티 설정, 제출 설정)은 그 그룹의 마지막 항목에 둡니다. 서버·키·외부 연결처럼 운영자가 바꾸는 값은 모두 <b>운영</b>에 둡니다. 애드온 설정(Kaggle 키, 아레나 게임 서버, ML 서버, 활동지 평가 정책)은 <b>운영 › 애드온 설정</b> 한 화면에 애드온별로 모읍니다.</p></div>
+  </div>
+<div class="callout"><b>2.2.0 구현 메모</b><span>묶음은 <code>config/console-local-nav.php</code>로 정의합니다. 사이드바에는 대표 항목 하나만 보이고, 나머지 화면은 머리말 아래 세그먼트로, 추가 화면은 버튼으로 보입니다. 각 화면은 원래 권한 검사를 그대로 거칩니다. 애드온 설정은 2026-10-13 결정에 따라 <b>각 애드온 메뉴의 마지막 세그먼트 "설정"</b>에 둡니다(예: 코드 아레나 › 설정). wp-admin 설정 화면은 모두 없앴고, 사이트 관리자와 "&lt;애드온&gt; 설정" 권한을 받은 교사가 설정할 수 있습니다. 상세 규칙은 <code>_notes/settings-console-brief.md</code>.</span></div>
+</section>
+
+<!-- 08 -->
+<section id="mapping">
+  <div class="sh"><span class="num">08</span><h2>항목 이동표</h2><p>현재 메뉴 항목이 어디로 가는지 하나도 빠짐없이 적었습니다. 주소(route)는 바꾸지 않습니다. 메뉴 표시와 화면 안 내비게이션만 바뀝니다.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>현재 위치</th><th>새 위치</th><th>방식</th></tr></thead>
+    <tbody>
+      <tr><td>사용자 › 사용자 목록 / 사용자 추가 / 사용자 일괄 등록</td><td>사용자 › 사용자</td><td>헤더 버튼 [추가 ▾] → 한 명 추가 · 일괄 등록</td></tr>
+      <tr><td>사용자 › 삭제된 사용자</td><td>사용자 › 사용자</td><td>세그먼트 필터 [전체 | 가입 대기 | 삭제됨]</td></tr>
+      <tr><td>사용자 › 역할</td><td>사용자 › 역할과 권한</td><td>이름 변경</td></tr>
+      <tr><td>사용자 › 약관 / 가입 설정</td><td>사용자 › 가입과 약관</td><td>세그먼트 [가입 설정 | 약관]</td></tr>
+      <tr><td>문제 › 문제 목록 / 문제 추가</td><td>문제 › 문제</td><td>헤더 버튼 [문제 추가]</td></tr>
+      <tr><td>문제 › 주제 관리</td><td>문제 › 주제 사전</td><td>이름 변경, 최고 관리자 전용 유지</td></tr>
+      <tr><td>문제 › 퀴즈 관리 / 문제 은행</td><td>문제 › 퀴즈 / 문항 은행</td><td>이름 변경 (코드 아레나 "문제은행"과 구분)</td></tr>
+      <tr><td>문제 › 문제 번호 변경 / 문제 XML 관리</td><td>문제 › 문제 도구</td><td>세그먼트 [번호 변경 | XML 가져오기·내보내기]</td></tr>
+      <tr><td>제출 › 제출 목록</td><td>제출 › 제출</td><td>재채점은 목록 선택 동작</td></tr>
+      <tr><td>제출 › 제출 처리 기록 / 제출 삭제 기록</td><td>제출 › 처리 기록</td><td>세그먼트 [처리 기록 | 삭제 기록]</td></tr>
+      <tr><td>제출 › AI 피드백 / AI 답변 지침 / 학습 수준 분석</td><td>제출 › AI 피드백</td><td>세그먼트 [피드백 | 답변 지침 | 학습 수준]</td></tr>
+      <tr><td>제출 › 제출 설정 / 블록 코딩</td><td>제출 › 제출 설정</td><td>세그먼트 [일반 | 블록 코딩]</td></tr>
+      <tr><td>수업 › 수업 목록 / 수업 추가 / 보관된 수업</td><td>수업 › 수업</td><td>[수업 추가] 버튼, [진행 중 | 보관됨] 필터</td></tr>
+      <tr><td>수업 › 그룹 목록 / 그룹 추가 / 보관된 그룹</td><td>수업 › 그룹</td><td>같은 방식</td></tr>
+      <tr><td>대회·평가 › 대회 목록 / 대회 추가 / 삭제된 대회 제출</td><td>수업 › 대회·평가</td><td>[대회 추가] 버튼, 대회 상세의 [제출 현황] 안에 삭제됨 필터</td></tr>
+      <tr><td>커뮤니티 › 게시판 / 게시글 작성 / 삭제된 게시글</td><td>커뮤니티 › 게시판</td><td>[글쓰기] 버튼, [게시 중 | 휴지통] 필터</td></tr>
+      <tr><td>커뮤니티 › 공지사항 / 공지 작성 / 삭제된 공지</td><td>커뮤니티 › 공지사항</td><td>같은 방식</td></tr>
+      <tr><td>쪽지 › 쪽지함 / 신고 내역</td><td>커뮤니티 › 쪽지</td><td>세그먼트 [쪽지함 | 신고]</td></tr>
+      <tr><td>커뮤니티 › 커뮤니티 설정, 쪽지 › 쪽지 설정</td><td>커뮤니티 › 커뮤니티 설정</td><td>그룹형 설정 [게시판·공지] [쪽지]</td></tr>
+      <tr><td>운영 › 사이트 / 사용자 메뉴 / 홈</td><td>운영 › 사이트</td><td>세그먼트 [기본 정보 | 홈 화면 | 학생 메뉴]</td></tr>
+      <tr><td>운영 › 기능 관리</td><td>운영 › 기능</td><td>이름 변경</td></tr>
+      <tr><td>운영 › 저지 데이터베이스 / 테스트 환경</td><td>운영 › 채점 환경</td><td>세그먼트 [저지 DB | 테스트 데이터]</td></tr>
+      <tr><td>운영 › 메일 발송</td><td>운영 › 메일</td><td>이름 변경</td></tr>
+      <tr><td>운영 › AI 연결 프로필 / 작업별 AI 배정 / AI 사용량</td><td>운영 › AI</td><td>세그먼트 [연결 | 작업 배정 | 사용량]</td></tr>
+      <tr><td>운영 › 운영 설정</td><td>운영 › 시스템 설정</td><td>이름 변경 ("운영 설정"이 세 곳에서 다른 뜻으로 쓰이던 충돌 해소)</td></tr>
+      <tr><td>운영 › 시스템 상태 / 데이터 이전</td><td>그대로</td><td>시스템 섹션</td></tr>
+      <tr><td colspan="3" style="background:var(--surface-2);font-weight:600;font-size:12px;color:var(--label-2)">애드온</td></tr>
+      <tr><td>수업 › 평가 관리 / 기준 자료 <span class="muted">(oj-ai-dashboard)</span></td><td>수업 › 활동지 평가</td><td>로컬 내비 [평가 프로젝트 | 활동지 보관함 | 평가 기준 | 보고서]</td></tr>
+      <tr><td>수업 › 운영 설정 <span class="muted">(oj-ai-dashboard)</span></td><td>운영 › 애드온 설정 › 활동지 평가</td><td>이동</td></tr>
+      <tr><td>수업 › 학습자료</td><td>수업 › 학습자료</td><td>유지</td></tr>
+      <tr><td>학습지원 › 학습지원도구</td><td>수업 › 교실 도구</td><td>허브 + 도구 8개(경로·뒤로 가기 자동)</td></tr>
+      <tr><td>학습지원 › 집중도 평가 <span class="muted">(focus-tracker)</span></td><td>수업 › 집중도 평가</td><td>학생 메뉴가 수업 아래 있어 맞춤</td></tr>
+      <tr><td>학습지원 › 교육 게임 / AI 모델 훈련소 성적 / 학급 게임 기록</td><td>학습 활동 › 교육 게임</td><td>로컬 내비 [게임 공개 | 팀 | 게임 기록 | 훈련소 성적]</td></tr>
+      <tr><td>학습지원 › 코드 아레나 / 문제은행 / 기록</td><td>학습 활동 › 코드 아레나</td><td>로컬 내비 [수업 게임 | 문제은행 | 경기 기록]</td></tr>
+      <tr><td>wp-admin 설정 › 코드 아레나</td><td>운영 › 애드온 설정 › 코드 아레나</td><td>콘솔로 이동, wp-admin 메뉴 제거</td></tr>
+      <tr><td>학습지원 › 코드 실습실 / 코드 실습실 — 추천 데이터</td><td>학습 활동 › 코드 실습실</td><td>로컬 내비 [학생 노트북 | 추천 데이터]</td></tr>
+      <tr><td>운영 › 코드 실습실 — Kaggle 설정</td><td>운영 › 애드온 설정 › 코드 실습실</td><td>이동</td></tr>
+      <tr><td>학습지원 › ML 실습 과제 / ML 실습 결과</td><td>학습 활동 › ML 실습</td><td>로컬 내비 [과제 | 제출·평가]</td></tr>
+      <tr><td>학습지원 › ML 실습 설정, wp-admin 도구 › ML 실습 운영</td><td>운영 › 애드온 설정 › ML 실습</td><td>서버 상태는 운영 › 시스템 상태에 건강 점검으로 합류</td></tr>
+      <tr><td>학습지원 › 읽기자료 관리</td><td>학습 활동 › 읽기자료</td><td>몰입형 편집기</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 09 -->
+<section id="public-ia">
+  <div class="sh"><span class="num">09</span><h2>학생 화면 메뉴</h2><p>교사 콘솔과 같은 그룹 이름을 씁니다. 상단은 반투명 글로벌 바, 모바일은 하단 탭 바 5칸입니다.</p></div>
+  <div class="trees">
+    <div class="tree"><h4>상단 메뉴</h4><ul>
+      <li><div class="root">홈</div></li>
+      <li><div class="root">문제</div><div class="kids"><span class="k">문제 목록</span><span class="k">퀴즈</span><span class="k">문제집</span></div></li>
+      <li><div class="root">제출</div></li>
+      <li><div class="root">수업</div><div class="kids"><span class="k">내 수업</span><span class="k">그룹</span><span class="k">대회·평가</span><span class="k add">활동지</span><span class="k add">학습자료</span><span class="k add">내 집중도</span><span class="k add">수업 참여</span></div></li>
+      <li><div class="root">학습 활동</div><div class="kids"><span class="k add">교육 게임</span><span class="k add">코드 아레나</span><span class="k add">코드 실습실</span><span class="k add">ML 실습</span><span class="k add">읽기자료</span><span class="k add">연구 활동</span></div></li>
+      <li><div class="root">커뮤니티</div><div class="kids"><span class="k">게시판</span><span class="k">공지사항</span><span class="k">쪽지</span></div></li>
+      <li><div class="root">내 정보 <span class="cnt">(계정 메뉴)</span></div><div class="kids"><span class="k">내 학습</span><span class="k">전체 랭킹</span><span class="k">프로필</span><span class="k">계정 설정</span><span class="k">동의 현황</span></div></li>
+    </ul></div>
+    <div class="card"><h4>바뀌는 점</h4>
+      <div class="prose" style="font-size:13.5px;color:var(--label-2)"><ul>
+        <li>대회·평가를 수업 아래로 옮겨 1차를 6개로 줄입니다(콘솔과 같은 구조).</li>
+        <li>"수업 › 수업"처럼 1차와 2차 이름이 같던 것을 "내 수업"으로 바꿉니다.</li>
+        <li>코드 실습실을 문제에서 학습 활동으로 옮깁니다. 지금은 이 애드온만 문제 아래 있습니다.</li>
+        <li>게임 순위는 교육 게임 안의 세그먼트 [게임 | 순위]로 넣습니다.</li>
+        <li>읽기자료는 기본으로 켭니다(지금은 기본 꺼짐).</li>
+        <li>쪽지는 주소만 있고 메뉴가 없었습니다. 커뮤니티에 넣습니다.</li>
+        <li><b>모바일 탭 바:</b> 홈 · 문제 · 수업 · 학습 활동 · 더보기. 지금은 없어진 키 <code>learning</code>을 찾아서 3칸만 나옵니다. 관리자가 저장한 <code>mobilePosition</code> 값으로 그리도록 고칩니다.</li>
+        <li>수업 화면 머리말에 [코드로 참여] 버튼을 두어, 교실 도구 참여 진입점을 메뉴 밖에서도 찾게 합니다.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="beyond">
+  <div class="sh"><span class="num">10</span><h2>2차 메뉴로 표현할 수 없는 것: 개선 방안</h2><p>사이드바는 2단으로 고정합니다. 대신 위계를 네 층으로 나누어, 층마다 담당 부품을 하나씩 정합니다.</p></div>
+  <div class="levels">
+    <div class="lv"><span class="tag">L1 · 사이드바</span><h4>1차 그룹</h4><p>아이콘 + 이름. 8개 이하. 관리자 영역은 구분선 아래.</p></div>
+    <div class="lv"><span class="tag">L1.5 · 섹션 머리말</span><h4>2차 묶음 표시</h4><p>누를 수 없는 회색 소제목. 2차가 6개를 넘는 그룹에만 씁니다(수업, 운영).</p></div>
+    <div class="lv"><span class="tag">L2 · 사이드바</span><h4>2차 목적지</h4><p>목록·허브 화면만 둡니다. 동작(추가)과 보관함은 두지 않습니다. 애드온은 1개만.</p></div>
+    <div class="lv"><span class="tag">L3 · 페이지</span><h4>로컬 내비</h4><p>큰 제목 아래 세그먼트 컨트롤(5개 이하) 또는 탭 바(6개 이상). 셸이 그립니다.</p></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h4>① 표준 로컬 내비 (3차)</h4><p>애드온이 하위 화면 목록을 매니페스트에 선언하면 셸이 세그먼트를 그리고, 사이드바에서는 부모 항목을 계속 강조합니다. oj-ai-dashboard의 4겹 내비, ML의 작업 내비, 아레나의 h1+small 패턴이 모두 이 하나로 바뀝니다. 수업·그룹·대회 상세의 <code>ojp-tabs</code>도 같은 부품으로 맞춥니다.</p></div>
+    <div class="card"><h4>② 경로 표시 + 조상 강조</h4><p>상단 바에 "수업 › 수업 › 2학년 3반 › 참여자"를 자동으로 그립니다. 지금 <code>ConsoleShell</code>은 메뉴 키가 정확히 같을 때만 현재 항목을 강조하므로, 하위 화면에 들어가면 사이드바에서 위치가 사라집니다. 주소 접두사로 조상을 찾도록 바꿉니다.</p></div>
+    <div class="card"><h4>③ 몰입형 레이아웃</h4><p>편집기·노트북·게임·전광판은 사이드바를 접고 얇은 상단 바 [‹ 코드 아레나 · 제목 · 행동]만 남깁니다. 읽기자료 편집기가 <code>!important</code>로 셸을 덮어쓰던 것과 ML의 <code>.oj-ml-wide-host</code> 주입을 대신합니다.</p></div>
+    <div class="card"><h4>④ ⌘K 찾기 (명령 팔레트)</h4><p>1·2차 메뉴, 로컬 내비, 최근 연 수업·문제, 자주 쓰는 동작("문제 추가", "재채점")을 한 입력창에서 찾습니다. 깊은 화면(교실 도구의 사다리, AI 사용량)도 메뉴를 늘리지 않고 바로 갈 수 있습니다.</p></div>
+    <div class="card"><h4>⑤ 허브 화면</h4><p>교실 도구 8개, 교육 게임 13개처럼 개수가 많고 대등한 화면은 메뉴로 펼치지 않습니다. 앱 타일 허브 + "최근 사용" 줄로 보여 주고, 각 도구 화면에는 경로와 뒤로 가기가 자동으로 붙습니다.</p></div>
+    <div class="card"><h4>⑥ 홈의 바로가기</h4><p>대시보드 바로가기 블록은 메뉴 이름을 그대로 쓰게 맞춥니다(지금 "운영 설정" 바로가기는 개요 화면으로 가서 같은 이름의 메뉴와 어긋납니다).</p></div>
+  </div>
+  <h3>Addon API v1.3 제안</h3>
+  <pre><span class="c">// 1) 콘솔 메뉴: icon을 실제로 쓰고, anchor를 허용 목록으로 제한, 애드온당 1개</span>
+$b-&gt;consoleMenu(<span class="k">new</span> AddonConsoleMenuDefinitionV1(
+    key: <span class="k">'main'</span>, label: <span class="k">'코드 아레나'</span>,
+    anchor: <span class="k">'learning_support'</span>,   <span class="c">// classes | problems | learning_support 만 허용</span>
+    route: <span class="k">'/'</span>, capability: Capabilities::TEACH, order: 20, icon: <span class="k">'swords'</span>,
+    section: <span class="k">'tools'</span>            <span class="c">// 선택: 그룹이 정한 섹션 키</span>
+));
+
+<span class="c">// 2) 로컬 내비(3차): 셸이 세그먼트·경로·조상 강조를 그린다</span>
+$b-&gt;consoleLocalNav(<span class="k">'main'</span>, [
+    [<span class="k">'key'</span> =&gt; <span class="k">'sessions'</span>, <span class="k">'label'</span> =&gt; <span class="k">'수업 게임'</span>, <span class="k">'route'</span> =&gt; <span class="k">'/'</span>],
+    [<span class="k">'key'</span> =&gt; <span class="k">'bank'</span>,     <span class="k">'label'</span> =&gt; <span class="k">'문제은행'</span>,  <span class="k">'route'</span> =&gt; <span class="k">'/bank'</span>],
+    [<span class="k">'key'</span> =&gt; <span class="k">'records'</span>,  <span class="k">'label'</span> =&gt; <span class="k">'경기 기록'</span>, <span class="k">'route'</span> =&gt; <span class="k">'/records'</span>],
+]);
+
+<span class="c">// 3) 설정은 메뉴가 아니라 운영 › 애드온 설정에 자동 등록</span>
+$b-&gt;consoleSettings(route: <span class="k">'/settings'</span>, capability: Capabilities::SETTINGS);
+
+<span class="c">// 4) 페이지 응답: 레이아웃과 머리말을 셸에 넘긴다</span>
+<span class="k">return</span> AddonPageResponseV1::page(
+    header: <span class="k">new</span> PageHeader(title: <span class="k">'문제은행'</span>, subtitle: <span class="k">'코드 아레나'</span>, actions: [...]),
+    body: $html, layout: <span class="k">'standard'</span>   <span class="c">// standard | wide | immersive</span>
+);</pre>
+  <p class="muted" style="font-size:13px">v1 매니페스트는 그대로 받아 주고, 메뉴가 2개 이상인 애드온은 첫 항목만 사이드바에 두고 나머지를 로컬 내비로 자동 변환합니다. 진단 화면에 "v1.3으로 옮기면 좋은 항목"을 경고로 표시합니다.</p>
+</section>
+
+<!-- 11 -->
+<section id="words">
+  <div class="sh"><span class="num">11</span><h2>용어·문구 규칙</h2><p>D-007의 화면 문구 원칙을 애드온까지 넓힙니다. 안내·오류는 합니다체, 버튼은 2~5자 동사입니다.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>뜻</th><th>표준</th><th>쓰지 않음 (현재 쓰는 곳)</th></tr></thead>
+    <tbody>
+      <tr><td>내용 바꾸기</td><td><b>편집</b></td><td>고치기(아레나), 수정(학습자료·ML)</td></tr>
+      <tr><td>파일을 내 기기로</td><td><b>다운로드</b></td><td>내려받기(아레나·실습실·ML)</td></tr>
+      <tr><td>다른 형식으로 꺼내기</td><td><b>내보내기</b> (CSV, ZIP, Word)</td><td>CSV 내려받기</td></tr>
+      <tr><td>밖에서 넣기</td><td><b>가져오기</b></td><td>불러오기(명단·데이터), 붙여넣어 추가</td></tr>
+      <tr><td>새로 만들기</td><td><b>추가</b> (목록에 항목), <b>만들기</b> (공간·세션)</td><td>등록, 생성, 실행</td></tr>
+      <tr><td>복구 가능한 제거</td><td><b>보관</b> → 보관됨</td><td>삭제된 수업(실제로는 보관)</td></tr>
+      <tr><td>복구 불가능한 제거</td><td><b>삭제</b> + 시트 확인</td><td>confirm(), 두 번 클릭</td></tr>
+      <tr><td>설정 화면 이름</td><td><b>○○ 설정</b> 하나</td><td>운영 설정 / 평가 설정 / AI 평가 설정</td></tr>
+      <tr><td>학생 묶음</td><td><b>수업</b>, <b>그룹</b></td><td>학급/모둠(실습실), 학급·그룹(게임), 반</td></tr>
+      <tr><td>읽기자료 계층</td><td><b>주제 › 장 › 레슨</b></td><td>챕터·장·섹션 혼용</td></tr>
+      <tr><td>시간 표시</td><td>사이트 시간대 (<code>SiteDateFormatter</code>)</td><td>UTC 표기(교육 게임 기록)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2">
+    <div class="card"><h4>문장 예시</h4><p>성공: "공개 설정을 저장했습니다"<br>부분 성공: "12개 중 10개를 저장했습니다. 실패한 2개를 확인해 주세요."<br>위험: "선택한 제출 8건을 삭제합니다. 되돌릴 수 없습니다." [취소] [8건 삭제]<br>권한 없음: "이 화면을 볼 권한이 없습니다. 담당 교사나 관리자에게 '교육 게임 플레이' 권한을 요청하세요."</p></div>
+    <div class="card"><h4>화면에 내보내지 않는 말</h4><p>oj-platform, WordPress 저장소, data/lessons JSON, Context, artifact, Runtime 진단 코드, MLPX format 2 같은 내부 용어는 "기술 정보" 펼침 영역에서만 씁니다. 메뉴와 제목에 영어 상표명(ReadContents Library, ML Playgrounds)을 쓰지 않습니다.</p></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section id="defects">
+  <div class="sh"><span class="num">12</span><h2>즉시 고칠 결함</h2><p>디자인 통일과 별개로, 지금도 화면을 깨거나 사용자를 잘못 안내하는 문제입니다. 버전을 올려 먼저 고치는 것을 권합니다.</p></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>심각도</th><th>위치</th><th>문제</th></tr></thead>
+    <tbody>
+      <tr><td><span class="chip red">높음</span></td><td><code>edu-games/resources/css/console-manage.css</code></td><td>범위 없는 <code>button{}</code> 규칙이 콘솔 셸의 모든 버튼을 파란색·굵은 글씨로 바꿉니다.</td></tr>
+      <tr><td><span class="chip red">높음</span></td><td><code>PublicShell.php</code> 모바일 탭 바</td><td>없어진 키 <code>learning</code>을 찾아서 5칸 격자에 3칸만 나옵니다.</td></tr>
+      <tr><td><span class="chip red">높음</span></td><td>teaching-tools <code>console.css</code></td><td><code>:root</code>에 변수와 OS 다크 모드를 넣어 밝은 콘솔 안에서 도구 영역만 어둡게 바뀝니다.</td></tr>
+      <tr><td><span class="chip orange">중간</span></td><td>oj-ai-dashboard 플러그인 화면 알림</td><td>존재하지 않는 메뉴 "수업 › AI 활동지"로 안내합니다(실제는 "평가 관리").</td></tr>
+      <tr><td><span class="chip orange">중간</span></td><td>oj-ml-playgrounds <code>addon.css</code>, oj-ai-dashboard CSS</td><td>정의되지 않은 토큰 이름(<code>--ojp-color-text</code> 등, <code>--oj-console-*</code>)을 참조합니다.</td></tr>
+      <tr><td><span class="chip orange">중간</span></td><td><code>ConsoleShell.php</code></td><td>메뉴 키가 정확히 같을 때만 현재 항목을 강조해, 상세 화면에서 사이드바 위치가 사라집니다. 쪽지 1차 메뉴 아이콘이 없어 화살표가 나옵니다.</td></tr>
+      <tr><td><span class="chip orange">중간</span></td><td>메뉴 순서 값</td><td>oj-ai-dashboard 40–42가 코어 <code>classes.groups_deleted</code>(40)와, 학생 메뉴 40이 교육 게임·읽기자료·ML·활동지 사이에서 겹칩니다.</td></tr>
+      <tr><td><span class="chip">낮음</span></td><td>edu-games 순위 페이지 안내 문구</td><td>"학습 › 게임 순위"라고 안내하지만 실제 그룹은 "학습지원"입니다.</td></tr>
+      <tr><td><span class="chip">낮음</span></td><td><code>console.learning.index</code></td><td>어떤 메뉴도 가리키지 않는 옛 "학습 공간" 허브 주소가 남아 있습니다.</td></tr>
+      <tr><td><span class="chip">낮음</span></td><td>learning-materials</td><td>저장·삭제 후 성공 알림이 없습니다. <code>.lmt-notice</code>가 콘솔에서는 오류, 학생 화면에서는 주의로 뜻이 다릅니다.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 13 -->
+<section id="roadmap">
+  <div class="sh"><span class="num">13</span><h2>적용 순서</h2><p>플랫폼 기반을 먼저 깔고, 애드온은 작은 것부터 옮깁니다. 애드온마다 버전을 올리고 <code>_release-kit/guides/&lt;플러그인&gt;.md</code>의 메뉴 경로를 같은 작업에서 고칩니다.</p></div>
+  <div class="card">
+    <div class="phase"><span class="p">P0</span><div><h4>결함 수정 (1주)</h4><ul><li>12장 높음·중간 항목. 각 애드온 패치 버전.</li></ul></div></div>
+    <div class="phase"><span class="p">P1</span><div><h4>플랫폼 기반: 토큰 v2와 셸 (2–3주)</h4><ul><li><code>oj-ui-system.css</code>를 tokens / shell / components 파일로 나누고 v2 토큰 + 다크 모드 추가, 옛 이름은 별칭으로 유지.</li><li>사이드바 섹션 머리말, 조상 강조, 상단 바 경로, ⌘K 찾기, 몰입형 레이아웃.</li><li>PHP <code>PageHeader</code>·<code>Button</code>·<code>EmptyState</code> 헬퍼, JS <code>OJP.sheet()</code>·<code>OJP.toast()</code>. 플랫폼 안의 <code>window.confirm</code>을 시트로 교체. 배지 두 체계를 <code>ojp-badge</code> 하나로.</li><li>애드온 UI 키트 문서 <code>docs/addon-ui-kit.md</code>와 Addon API v1.3(로컬 내비, 설정 등록, 레이아웃).</li></ul></div></div>
+    <div class="phase"><span class="p">P2</span><div><h4>메뉴 재구성 (1주)</h4><ul><li><code>config/menus.php</code>를 7장대로 바꾸고 세그먼트 화면을 연결. 주소는 그대로 둡니다.</li><li><code>tests/Unit/console-menus.php</code> 갱신, 학생 메뉴 기본값과 모바일 탭 바 수정.</li><li><code>_release-kit/guides/</code>의 메뉴 경로 표기, D-007 문서 갱신.</li></ul></div></div>
+    <div class="phase"><span class="p">P3</span><div><h4>애드온 이전 (작은 것부터)</h4><ul><li><b>learning-materials</b>: <code>lmt-*</code>를 <code>ojp-*</code>로 바꾸기만 하면 됩니다. 기준 사례로 삼습니다.</li><li><b>teaching-tools</b>: 허브를 앱 타일로, 이모지를 아이콘으로, 모달을 시트로, <code>:root</code> 변수 제거.</li><li><b>oj-code-lab</b>, <b>edu-games 콘솔</b>: 로컬 내비로 메뉴 통합, 헤더·표·버튼 교체.</li><li><b>oj-code-arena 콘솔</b>: 로컬 내비, wp-admin 설정을 콘솔로. 학생 게임 화면은 몰입형 다크 테마로 유지하되 토큰에 맞춤.</li><li><b>oj-ml-playgrounds</b>: 래퍼를 플랫폼 부품으로, SPA는 <code>--color-brand</code> 등을 플랫폼 토큰에 연결.</li><li><b>readcontents-library</b>: 편집기는 몰입형으로 두고 shadcn 토큰을 플랫폼 토큰에 연결, 학생 화면의 Bootstrap 계열 스타일 교체.</li><li><b>oj-ai-dashboard</b>: 가장 큰 작업. 내비 4겹을 로컬 내비 하나로 줄이고, CSS 19개의 토큰 접두사를 하나로 정리.</li></ul></div></div>
+    <div class="phase"><span class="p">P4</span><div><h4>규칙이 지켜지게 (계속)</h4><ul><li><code>release.cmd check</code>에 애드온 CSS 점검 추가: 범위 없는 요소 선택자, <code>:root</code> 변수 정의, <code>window.confirm</code>/<code>alert</code>, 토큰 밖 hex 개수 경고.</li></ul></div></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section id="decisions">
+  <div class="sh"><span class="num">14</span><h2>결정 사항</h2><p>2026-10-13에 아래 권장안이 모두 확정됐습니다.</p></div>
+  <div class="group">
+    <div class="row"><span class="lbl"><b>강조색</b> · 청록 #0A7C76 유지(권장) 또는 애플 파랑 #0071E3</span><span class="chip green">확정: 청록</span></div>
+    <div class="row"><span class="lbl"><b>본문 글꼴</b> · Pretendard를 플랫폼에 번들(권장, 약 2MB woff2 subset) 또는 Noto Sans KR 유지</span><span class="chip green">확정: 번들</span></div>
+    <div class="row"><span class="lbl"><b>다크 모드</b> · 콘솔·학생 화면 모두 지원(권장) 또는 라이트만</span><span class="chip green">확정: 둘 다</span></div>
+    <div class="row"><span class="lbl"><b>대회·평가</b> · 수업 아래로 통합(권장) 또는 1차 유지</span><span class="chip green">확정: 통합</span></div>
+    <div class="row"><span class="lbl"><b>학습지원 → 학습 활동</b> 이름 변경</span><span class="chip green">확정: 변경</span></div>
+    <div class="row"><span class="lbl"><b>코드 아레나 학생 화면 말투</b> · 해요체 유지(게임 화면 한정) 또는 합니다체 통일</span><span class="chip">선택</span></div>
+  </div>
+</section>
+</main>
+</div>
+
+<div class="sheet-scrim" id="sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <h4 id="sheetTitle">제출 8건을 삭제할까요?</h4>
+    <p>선택한 제출 8건과 채점 결과가 삭제됩니다. 삭제 기록은 남지만 되돌릴 수 없습니다.</p>
+    <div class="acts"><button class="btn gray" type="button" id="sheetCancel">취소</button><button class="btn filled" type="button" id="sheetOk" style="background:var(--red);color:#fff">8건 삭제</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var seg=document.getElementById('segDemo');
+  var panel=document.getElementById('segPanel');
+  var views={
+    '수업 문제':panel.innerHTML,
+    '참여자':'<div class="li"><div>김하늘<div class="s">20231203</div></div><span class="badge green">참여 중</span><span class="s">최근 제출 오늘</span></div><div class="li"><div>이도윤<div class="s">20231207</div></div><span class="badge green">참여 중</span><span class="s">최근 제출 어제</span></div><div class="li"><div>박서준<div class="s">20231211</div></div><span class="badge gray">초대됨</span><span class="s">—</span></div>',
+    '제출 현황':'<div class="li"><div>A+B<div class="s">제출 31 · 정답률 90%</div></div><span class="badge green">양호</span><span class="s">평균 2.1회</span></div><div class="li"><div>구구단 표 만들기<div class="s">제출 14 · 정답률 29%</div></div><span class="badge orange">도움 필요</span><span class="s">평균 4.8회</span></div>',
+    '학습 현황':'<div class="li"><div>반 평균 진도<div class="s">공개 문제 4개 기준</div></div><span class="badge green">63%</span><span class="s">지난주보다 +12%p</span></div>',
+    '설정':'<div class="li"><div>수업 공개<div class="s">학생 목록에 보입니다</div></div><span class="badge green">켜짐</span><span class="s">›</span></div><div class="li"><div>제출 마감 후 코드 공개<div class="s">마감 뒤 다른 학생 코드 열람</div></div><span class="badge gray">꺼짐</span><span class="s">›</span></div>'
+  };
+  seg.addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    seg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false');});
+    panel.innerHTML=views[b.textContent]||'';
+  });
+  var sheet=document.getElementById('sheet');
+  var close=function(){sheet.hidden=true;};
+  document.getElementById('openSheet').addEventListener('click',function(){sheet.hidden=false;document.getElementById('sheetCancel').focus();});
+  document.getElementById('sheetCancel').addEventListener('click',close);
+  document.getElementById('sheetOk').addEventListener('click',close);
+  sheet.addEventListener('click',function(e){if(e.target===sheet)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!sheet.hidden)close();});
+})();
+</script>

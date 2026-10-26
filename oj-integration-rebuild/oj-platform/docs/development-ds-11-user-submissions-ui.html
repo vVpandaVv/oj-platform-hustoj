@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-11 사용자 제출 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds11-prototype.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg class="icon-symbols" aria-hidden="true" width="0" height="0">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4M20 4h-7v16h7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></symbol>
+    <symbol id="i-blocks" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><path d="M17 13v8M13 17h8"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7V3h-4M4 17v4h4"/><path d="M5.5 9a7 7 0 0 1 11.8-3L20 7M4 17l2.7 1a7 7 0 0 0 11.8-3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-11 사용자 제출 시안</strong><span>직접 경로 5개 · 문제 제출 상태 2종</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="사용자 제출 화면 선택">
+        <button type="button" role="tab" data-screen-target="submit-start" aria-selected="true">풀이 시작</button>
+        <button type="button" role="tab" data-screen-target="submit-problem" aria-selected="false">전체 코드·블록</button>
+        <button type="button" role="tab" data-screen-target="submissions-list" aria-selected="false">내 제출</button>
+        <button type="button" role="tab" data-screen-target="submission-detail" aria-selected="false">결과 상세</button>
+        <button type="button" role="tab" data-screen-target="problem-submissions" aria-selected="false">문제별 제출</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-11-submissions-blockly.html" aria-label="DS-11 설계 문서로 이동"><span class="brand-mark">OJ</span><span>OJ Platform</span></a>
+      <nav class="primary-nav" aria-label="주 메뉴">
+        <a href="development-ds-09-user-home-shell-ui.html">홈</a>
+        <a href="development-ds-10-user-problems-ui.html">문제</a>
+        <a href="#submissions-list" aria-current="page">제출</a>
+        <a href="development-ds-12-user-classes-ui.html">학습</a>
+        <a href="development-ds-14-community.html">커뮤니티</a>
+      </nav>
+      <button class="account-button" type="button" aria-label="내 계정" title="내 계정"><svg><use href="#i-user"/></svg></button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="page" id="main">
+      <section class="screen" id="submit-start" data-screen="submit-start">
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>풀이 시작</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">문제 선택</p><h1>풀이 시작</h1><p>문제 번호를 입력하거나 최근 문제에서 선택합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="submissions-list">내 제출</button></div>
+        </header>
+        <p class="route-caption">/submit</p>
+
+        <div class="form-section">
+          <div class="section-heading"><div><h2>문제 번호</h2><p>접근할 수 있고 현재 제출이 허용된 문제만 열립니다.</p></div></div>
+          <div class="filter-bar compact">
+            <div class="field">
+              <label for="submit-problem-id">문제 번호 또는 제목</label>
+              <div class="input-wrap"><svg><use href="#i-search"/></svg><input class="input" id="submit-problem-id" value="1024" placeholder="예: 1024 또는 구간 합"></div>
+            </div>
+            <div class="filter-actions"><button class="button primary" type="button" data-open-screen="submit-problem-completion">문제 열기</button></div>
+          </div>
+        </div>
+
+        <div class="section-heading"><div><h2>최근 본 문제</h2><p>최근 학습한 문제 4개</p></div><button class="button ghost" type="button">문제 목록</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>문제</th><th>난이도</th><th>내 상태</th><th>최근 활동</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><strong>1024 · 구간 합 구하기</strong><br><small>누적 합 · 코드 빈칸 완성</small></td><td>3 · 보통</td><td><span class="badge wait">도전 중</span></td><td>오늘 10:18</td><td><button class="button" type="button" data-open-screen="submit-problem-completion">풀이</button></td></tr>
+              <tr><td><strong>1031 · 그래프 탐색</strong><br><small>너비 우선 탐색</small></td><td>4 · 어려움</td><td><span class="badge good">해결</span></td><td>어제 16:04</td><td><button class="button" type="button" data-open-screen="submit-problem">다시 풀기</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="screen" id="submit-problem" data-screen="submit-problem" data-submission-problem-id="1031" data-submission-problem-title="그래프 탐색" hidden>
+        <div class="breadcrumb"><span>문제</span><span>/</span><span>1031</span><span>/</span><span>제출</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">문제 1031</p><h1>그래프 탐색</h1><p>코드를 직접 작성하거나 블록으로 구성해 제출합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button">문제 보기</button><button class="button" type="button" data-toast="그래프 탐색 문제의 내 제출 목록을 엽니다.">이 문제의 제출</button></div>
+        </header>
+        <p class="route-caption">/submit/{problem_id}</p>
+
+        <div class="problem-context">
+          <div><strong>제출 조건</strong><span>시간 2초 · 메모리 256MB · 난이도 4 · 너비 우선 탐색</span></div>
+          <span class="badge info">제출 가능</span>
+        </div>
+
+        <section class="submission-policy" aria-labelledby="submission-policy-heading">
+          <div class="submission-policy-layout">
+            <div>
+              <span class="policy-label">문제별 제출 코드 규칙</span>
+              <h2 id="submission-policy-heading">금지 코드를 확인한 뒤 채점용 코드를 자동 구성합니다</h2>
+              <p>작성 코드에 아래 조각이 포함되면 제출할 수 없습니다. 검사를 통과하면 앞·뒤 코드는 편집기 밖에서 서버가 붙입니다.</p>
+              <div class="policy-patterns" aria-label="제출 금지 코드">
+                <code data-forbidden-code>eval(</code>
+                <code data-forbidden-code>exec(</code>
+                <code data-forbidden-code>open(</code>
+              </div>
+            </div>
+            <details class="policy-wrapper">
+              <summary>자동 결합 코드 보기</summary>
+              <div class="policy-wrapper-grid">
+                <div><strong>앞 코드</strong><pre><code data-code-prefix>from sys import stdin
+input = stdin.readline</code></pre></div>
+                <div><strong>뒤 코드</strong><pre><code data-code-suffix># 제출 코드 끝</code></pre></div>
+              </div>
+            </details>
+          </div>
+          <p class="policy-error" id="submission-policy-error" data-policy-error role="alert" hidden></p>
+        </section>
+
+        <div class="submission-compose" data-submission-compose>
+          <div class="compose-panel">
+            <div class="mode-switch" aria-label="제출 방식">
+              <button type="button" data-submit-mode="code" aria-pressed="true"><svg><use href="#i-code"/></svg>코드</button>
+              <button type="button" data-submit-mode="blockly" aria-pressed="false"><svg><use href="#i-blocks"/></svg>블록</button>
+            </div>
+
+            <div data-submit-panel="code">
+              <div class="editor-toolbar">
+                <label class="field"><span>언어</span><select aria-label="제출 언어"><option>Python 3</option></select></label>
+                <span class="draft-status">이 탭에 10:24 자동 저장</span>
+              </div>
+              <textarea class="source-editor ace-editor" data-editor-engine="ace" data-theme="chrome" spellcheck="false" aria-label="소스 코드" aria-describedby="submission-policy-error">from collections import deque
+
+n, m, start = map(int, input().split())
+graph = [[] for _ in range(n + 1)]
+for _ in range(m):
+    a, b = map(int, input().split())
+    graph[a].append(b)
+    graph[b].append(a)
+
+queue = deque([start])
+visited = {start}
+while queue:
+    node = queue.popleft()
+    print(node, end=" ")
+    for next_node in graph[node]:
+        if next_node not in visited:
+            visited.add(next_node)
+            queue.append(next_node)</textarea>
+              <div class="compose-actions">
+                <p>소스 361B · 제출 간격 조건 충족</p>
+                <button class="button primary" type="button" data-submit-code>코드 제출</button>
+              </div>
+            </div>
+
+            <div data-submit-panel="blockly" hidden>
+              <iframe class="blockly-embed" data-blockly-frame data-blockly-src="assets/ds11-blockly-editor-frame.html?embed=1&amp;problem_id=1031#prototype" src="about:blank" title="Blockly Python 3 제출 편집기"></iframe>
+            </div>
+          </div>
+
+          <aside class="submission-rules">
+            <h2>제출 조건</h2>
+            <dl>
+              <dt>코드 언어</dt><dd>Python 3</dd>
+              <dt>블록 프로필</dt><dd>표준</dd>
+              <dt>소스 크기</dt><dd>최대 64KB</dd>
+              <dt>제출 간격</dt><dd>10초</dd>
+              <dt>입력 방식</dt><dd>표준 입력</dd>
+            </dl>
+            <div class="notice warning"><div><strong>공용 PC 보호</strong><br>초안은 현재 탭에만 저장되며 제출 완료나 로그아웃 때 제거됩니다.</div></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="submit-problem-completion" data-screen="submit-problem-completion" data-submission-problem-id="1024" data-submission-problem-title="구간 합 구하기" hidden>
+        <div class="breadcrumb"><span>문제</span><span>/</span><span>1024</span><span>/</span><span>제출</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">문제 1024</p><h1>구간 합 구하기</h1><p>형광색으로 표시된 빈칸을 클릭해 코드를 완성합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button">문제 보기</button><button class="button" type="button" data-open-screen="problem-submissions">이 문제의 제출</button></div>
+        </header>
+        <p class="route-caption">/submit/{problem_id}</p>
+
+        <div class="problem-context">
+          <div><strong>제출 조건</strong><span>시간 1초 · 메모리 256MB · 난이도 3 · 누적 합</span></div>
+          <span class="badge wait">코드 빈칸 완성 전용</span>
+        </div>
+
+        <section class="submission-policy" aria-labelledby="completion-submission-policy-heading">
+          <div class="submission-policy-layout">
+            <div>
+              <span class="policy-label">문제별 제출 코드 규칙</span>
+              <h2 id="completion-submission-policy-heading">빈칸만 작성하고 고정 코드는 그대로 사용합니다</h2>
+              <p>빈칸 밖의 코드는 수정할 수 없습니다. 서버가 현재 템플릿으로 코드를 다시 완성하고 학생 입력 영역의 금지 코드를 검사합니다.</p>
+              <div class="policy-patterns" aria-label="제출 금지 코드">
+                <code data-forbidden-code>eval(</code>
+                <code data-forbidden-code>exec(</code>
+                <code data-forbidden-code>open(</code>
+              </div>
+            </div>
+            <details class="policy-wrapper">
+              <summary>자동 결합 코드 보기</summary>
+              <div class="policy-wrapper-grid">
+                <div><strong>앞 코드</strong><pre><code data-code-prefix>from sys import stdin
+input = stdin.readline</code></pre></div>
+                <div><strong>뒤 코드</strong><pre><code data-code-suffix># 제출 코드 끝</code></pre></div>
+              </div>
+            </details>
+          </div>
+          <p class="policy-error" id="completion-submission-policy-error" data-policy-error role="alert" hidden></p>
+        </section>
+
+        <div class="submission-compose" data-completion-compose>
+          <div class="compose-panel">
+            <div class="editor-toolbar">
+              <div><strong>코드 빈칸 완성</strong><span class="draft-status">답안은 이 탭에만 임시 저장</span></div>
+              <span class="badge info">Python 3</span>
+            </div>
+            <div class="code-completion-shell" data-code-completion data-code-completion-example="prefix-sum-v1" data-code-completion-mode="student">
+              <div class="code-completion-toolbar"><strong>고정 코드 + 학생 입력 영역</strong><span data-code-completion-progress></span></div>
+              <div class="code-completion-canvas" data-code-completion-canvas aria-label="코드 빈칸 완성 편집기"></div>
+              <div class="code-completion-legend"><span><i class="code-completion-swatch"></i>입력 필요</span><span><i class="code-completion-swatch filled"></i>입력 완료</span><span>Tab으로 다음 빈칸 이동</span></div>
+            </div>
+            <div class="compose-actions">
+              <p>빈칸 2개 · 템플릿 밖 코드 수정 불가</p>
+              <button class="button primary" type="button" data-submit-completion>완성 코드 제출</button>
+            </div>
+          </div>
+
+          <aside class="submission-rules">
+            <h2>제출 조건</h2>
+            <dl>
+              <dt>작성 방식</dt><dd>코드 빈칸 완성</dd>
+              <dt>코드 언어</dt><dd>Python 3</dd>
+              <dt>빈칸</dt><dd>필수 2개</dd>
+              <dt>소스 크기</dt><dd>최대 64KB</dd>
+              <dt>제출 간격</dt><dd>10초</dd>
+            </dl>
+            <div class="notice warning"><div><strong>제출 시 서버 재구성</strong><br>브라우저가 보낸 완성 코드를 신뢰하지 않고 빈칸 답안과 최신 템플릿으로 다시 만듭니다.</div></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="submissions-list" data-screen="submissions-list" hidden>
+        <div class="breadcrumb"><span>제출</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">내 학습 기록</p><h1>내 제출</h1><p>내가 제출한 결과만 문제·결과·언어별로 확인합니다.</p></div>
+          <div class="heading-actions"><button class="button primary" type="button" data-open-screen="submit-start">새 제출</button></div>
+        </header>
+        <p class="route-caption">/submissions</p>
+
+        <div class="filter-bar compact">
+          <label class="field"><span class="field-label">문제</span><input type="search" placeholder="번호 또는 제목"></label>
+          <label class="field"><span class="field-label">결과</span><select><option>전체 결과</option><option>맞았습니다</option><option>틀렸습니다</option><option>채점 중</option><option>컴파일 오류</option></select></label>
+          <label class="field"><span class="field-label">언어</span><select><option>전체 언어</option><option>Python 3</option><option>C++17</option><option>Blockly</option></select></label>
+          <div class="filter-actions"><button class="button primary" type="button">조회</button></div>
+        </div>
+
+        <div class="scope-banner">
+          <div><strong>본인 제출만 표시</strong><span>다른 사용자의 제출과 코드는 이 화면에서 조회하지 않습니다.</span></div>
+          <span>총 28건</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>제출 번호</th><th>문제</th><th>결과</th><th>언어·방식</th><th>시간</th><th>메모리</th><th>제출 시각</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>#58421</td><td><strong>1024 · 구간 합</strong></td><td><span class="badge wait">채점 중</span></td><td>Python 3<br><small>빈칸 완성</small></td><td>-</td><td>-</td><td>오늘 10:26</td><td><button class="button" type="button" data-open-screen="submission-detail">결과 보기</button></td></tr>
+              <tr><td>#58396</td><td><strong>1031 · 그래프 탐색</strong></td><td><span class="badge danger">틀렸습니다</span></td><td>Blockly</td><td>88ms</td><td>13.8MB</td><td>오늘 10:18</td><td><button class="button" type="button" data-open-screen="submission-detail">상세</button></td></tr>
+              <tr><td>#58102</td><td><strong>1031 · 그래프 탐색</strong></td><td><span class="badge good">맞았습니다</span></td><td>C++17</td><td>64ms</td><td>5.6MB</td><td>어제 16:04</td><td><button class="button" type="button" data-open-screen="submission-detail">상세</button></td></tr>
+              <tr><td>#57887</td><td><strong>1014 · 조건 수 찾기</strong></td><td><span class="badge danger">컴파일 오류</span></td><td>Python 3</td><td>-</td><td>-</td><td>07-22 14:11</td><td><button class="button" type="button" data-open-screen="submission-detail">상세</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="screen" id="submission-detail" data-screen="submission-detail" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>#58421</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">접근 범위 · 전체</p><h1>제출 결과</h1><p><span data-submission-detail-title>구간 합 구하기</span> · Python 3 · 오늘 10:26</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="submissions-list">목록</button><button class="button" type="button" data-open-screen="submit-problem-completion" data-submission-retry>다시 제출</button></div>
+        </header>
+        <p class="route-caption">/submissions/{submission_id}</p>
+
+        <div class="result-hero">
+          <div class="result-primary waiting" data-poll-primary><span>Judge 대기열</span><strong>채점 중</strong></div>
+          <div class="result-stat"><span>실행 시간</span><strong data-poll-value="128ms">-</strong></div>
+          <div class="result-stat"><span>메모리</span><strong data-poll-value="14.2MB">-</strong></div>
+          <div class="result-stat"><span>언어</span><strong>Python 3</strong></div>
+        </div>
+        <div class="poll-banner">
+          <div><strong>이 제출만 자동 갱신 중</strong><span data-poll-copy>2초 뒤 결과를 다시 확인합니다. 목록의 다른 행은 갱신하지 않습니다.</span></div>
+          <button class="button" type="button" data-poll-demo><svg><use href="#i-refresh"/></svg>지금 확인</button>
+        </div>
+
+        <div class="detail-grid">
+          <div>
+            <section class="detail-section">
+              <div class="section-heading"><div><h2>작성한 코드</h2><p>앞·뒤 코드가 붙기 전의 원본이며 가시성 정책이 <span class="inline-code">full</span>인 경우에만 읽습니다.</p></div><button class="button" type="button" data-toast="코드를 클립보드에 복사합니다.">코드 복사</button></div>
+              <pre class="source-view" data-submission-detail-source>n, m = map(int, input().split())
+numbers = list(map(int, input().split()))
+prefix = [0]
+for number in numbers:
+    prefix.append(prefix[-1] + number)</pre>
+            </section>
+            <section class="detail-section">
+              <h2>오류 정보</h2>
+              <p>채점이 끝나면 컴파일·런타임 오류가 있을 때만 이 영역에 표시합니다.</p>
+            </section>
+            <section class="detail-section">
+              <div class="section-heading"><div><h2>AI 학습 피드백</h2><p>채점 완료 뒤 DS-13의 수준별 피드백으로 연결합니다.</p></div><a class="button" href="development-ds-13-user-learning-ui.html#submission-feedback">피드백 확인</a></div>
+            </section>
+          </div>
+          <aside class="submission-rules">
+            <h2>제출 정보</h2>
+            <dl class="metadata-list">
+              <div><dt>제출 번호</dt><dd>#58421</dd></div>
+              <div><dt>문제</dt><dd data-submission-detail-problem>1024</dd></div>
+              <div><dt>제출 방식</dt><dd data-submission-detail-mode>코드 빈칸 완성</dd></div>
+              <div><dt>제출 시각</dt><dd>오늘 10:26:14</dd></div>
+              <div><dt>상세 권한</dt><dd>전체</dd></div>
+            </dl>
+            <div class="notice warning"><div><strong>수행모드에서는</strong><br>이 상세 주소와 코드·오류·AI 피드백이 열리지 않고 목록 결과만 확인할 수 있습니다.</div></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="problem-submissions" data-screen="problem-submissions" hidden>
+        <div class="breadcrumb"><span>문제</span><span>/</span><span>1024</span><span>/</span><span>내 제출</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">문제별 기록</p><h1>구간 합 구하기 제출</h1><p>이 문제에 제출한 내 결과를 시간순으로 확인합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button">문제 보기</button><button class="button primary" type="button" data-open-screen="submit-problem-completion">다시 제출</button></div>
+        </header>
+        <p class="route-caption">/problems/{problem_id}/submissions</p>
+
+        <div class="metric-grid">
+          <div class="metric"><span>제출</span><strong>6</strong><small>본인 기록</small></div>
+          <div class="metric"><span>맞은 제출</span><strong>1</strong><small>최초 통과 10:32</small></div>
+          <div class="metric"><span>최고 시간</span><strong>118ms</strong><small>Python 3</small></div>
+          <div class="metric"><span>최근 결과</span><strong>맞았습니다</strong><small>오늘 10:32</small></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>제출 번호</th><th>결과</th><th>언어·방식</th><th>시간</th><th>메모리</th><th>제출 시각</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>#58427</td><td><span class="badge good">맞았습니다</span></td><td>Python 3<br><small>빈칸 완성</small></td><td>118ms</td><td>14.2MB</td><td>오늘 10:32</td><td><button class="button" type="button" data-open-screen="submission-detail">상세</button></td></tr>
+              <tr><td>#58421</td><td><span class="badge wait">채점 중</span></td><td>Python 3<br><small>빈칸 완성</small></td><td>-</td><td>-</td><td>오늘 10:26</td><td><button class="button" type="button" data-open-screen="submission-detail">결과</button></td></tr>
+              <tr><td>#58396</td><td><span class="badge danger">틀렸습니다</span></td><td>Python 3<br><small>빈칸 완성</small></td><td>88ms</td><td>13.8MB</td><td>오늘 10:18</td><td><button class="button" type="button" data-open-screen="submission-detail">상세</button></td></tr>
+              <tr><td>#58380</td><td><span class="badge danger">시간 초과</span></td><td>Python 3<br><small>빈칸 완성</small></td><td>2,000ms</td><td>14.0MB</td><td>오늘 10:05</td><td><button class="button" type="button" data-open-screen="submission-detail">상세</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="notice"><svg><use href="#i-check"/></svg><div><strong>본인 기록만 표시</strong><br>문제별 전체 통계와 공개 순위는 문제 화면에서 별도로 확인합니다.</div></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/oj-code-completion-prototype.js"></script>
+  <script src="assets/ds11-blockly-contract.js"></script>
+  <script src="assets/ds11-prototype.js"></script>
+</body>
+</html>

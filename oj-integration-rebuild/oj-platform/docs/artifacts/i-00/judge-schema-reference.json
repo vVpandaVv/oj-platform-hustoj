@@ -1,0 +1,471 @@
+{
+    "available": true,
+    "source": "jol.sql",
+    "bytes": 23488,
+    "sha256": "c5f9b82a9d07461a1335d11c409c4f12d3049267b78cd010e95da7edda596784",
+    "tables": [
+        {
+            "name": "ai_assist",
+            "columns": {
+                "solution_id": "int(11) NOT NULL",
+                "content": "text DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "balloon",
+            "columns": {
+                "balloon_id": "int(11) NOT NULL",
+                "user_id": "char(48) NOT NULL",
+                "sid": "int(11) NOT NULL",
+                "cid": "int(11) NOT NULL",
+                "pid": "int(11) NOT NULL",
+                "status": "smallint(6) NOT NULL DEFAULT 0"
+            },
+            "indexes": []
+        },
+        {
+            "name": "category",
+            "columns": {
+                "category_id": "int(11) NOT NULL",
+                "category_name": "varchar(200) NOT NULL",
+                "description": "text NOT NULL",
+                "created_by": "varchar(48) NOT NULL",
+                "defunct": "char(1) NOT NULL DEFAULT 'N'"
+            },
+            "indexes": []
+        },
+        {
+            "name": "category_problem",
+            "columns": {
+                "problem_id": "int(11) NOT NULL",
+                "category_id": "int(11) NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "classes",
+            "columns": {
+                "class_id": "int(11) NOT NULL",
+                "class_name": "varchar(200) NOT NULL",
+                "description": "text DEFAULT NULL",
+                "group_id": "int(11) DEFAULT NULL",
+                "user_id": "varchar(48) NOT NULL",
+                "defunt": "char(1) NOT NULL DEFAULT 'N'",
+                "start_time": "datetime DEFAULT NULL",
+                "end_time": "datetime DEFAULT NULL",
+                "private": "tinyint(4) NOT NULL DEFAULT 0",
+                "create_time": "datetime NOT NULL",
+                "langmask": "int(11) NOT NULL DEFAULT 0"
+            },
+            "indexes": []
+        },
+        {
+            "name": "class_problem",
+            "columns": {
+                "class_id": "int(11) NOT NULL",
+                "problem_id": "int(11) NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "compileinfo",
+            "columns": {
+                "solution_id": "int(11) NOT NULL DEFAULT 0",
+                "error": "text DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "contest",
+            "columns": {
+                "contest_id": "int(11) NOT NULL",
+                "title": "varchar(255) DEFAULT NULL",
+                "start_time": "datetime DEFAULT NULL",
+                "end_time": "datetime DEFAULT NULL",
+                "defunct": "char(1) NOT NULL DEFAULT 'N'",
+                "description": "text DEFAULT NULL",
+                "private": "tinyint(4) NOT NULL DEFAULT 0",
+                "langmask": "int(11) NOT NULL DEFAULT 0",
+                "password": "char(16) NOT NULL DEFAULT ''",
+                "contest_type": "smallint(5) UNSIGNED NOT NULL DEFAULT 0",
+                "subnet": "varchar(255) NOT NULL DEFAULT ''",
+                "user_id": "varchar(48) NOT NULL DEFAULT 'admin'"
+            },
+            "indexes": []
+        },
+        {
+            "name": "contest_problem",
+            "columns": {
+                "problem_id": "int(11) NOT NULL DEFAULT 0",
+                "contest_id": "int(11) DEFAULT NULL",
+                "title": "char(200) NOT NULL DEFAULT ''",
+                "num": "int(11) NOT NULL DEFAULT 0",
+                "c_accepted": "int(11) NOT NULL DEFAULT 0",
+                "c_submit": "int(11) NOT NULL DEFAULT 0"
+            },
+            "indexes": []
+        },
+        {
+            "name": "custominput",
+            "columns": {
+                "solution_id": "int(11) NOT NULL DEFAULT 0",
+                "input_text": "text DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "del_user",
+            "columns": {
+                "del_id": "varchar(48) NOT NULL",
+                "user_id": "varchar(48) NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "groups",
+            "columns": {
+                "group_id": "int(11) NOT NULL",
+                "group_name": "varchar(200) NOT NULL",
+                "description": "text NOT NULL",
+                "defunt": "char(1) NOT NULL",
+                "evalmode": "char(1) NOT NULL DEFAULT 'N'"
+            },
+            "indexes": []
+        },
+        {
+            "name": "group_members",
+            "columns": {
+                "groupid": "int(11) NOT NULL",
+                "user_id": "varchar(48) NOT NULL",
+                "role": "char(30) NOT NULL DEFAULT 'user'",
+                "joined": "datetime NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "loginlog",
+            "columns": {
+                "log_id": "int(11) NOT NULL",
+                "user_id": "varchar(48) NOT NULL DEFAULT ''",
+                "password": "varchar(40) DEFAULT NULL",
+                "ip": "varchar(46) DEFAULT NULL",
+                "time": "datetime DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "mail",
+            "columns": {
+                "mail_id": "int(11) NOT NULL",
+                "to_user": "varchar(48) NOT NULL DEFAULT ''",
+                "from_user": "varchar(48) NOT NULL DEFAULT ''",
+                "title": "varchar(200) NOT NULL DEFAULT ''",
+                "content": "text DEFAULT NULL",
+                "new_mail": "tinyint(1) NOT NULL DEFAULT 1",
+                "reply": "tinyint(4) DEFAULT 0",
+                "in_date": "datetime DEFAULT NULL",
+                "defunct": "char(1) NOT NULL DEFAULT 'N'"
+            },
+            "indexes": []
+        },
+        {
+            "name": "matches",
+            "columns": {
+                "match_id": "int(11) NOT NULL",
+                "user1_id": "varchar(48) NOT NULL",
+                "user2_id": "varchar(48) NOT NULL",
+                "user1_score": "int(11) NOT NULL DEFAULT 0",
+                "user2_score": "int(11) NOT NULL DEFAULT 0",
+                "status": "enum('waiting','active','completed','canelled') NOT NULL DEFAULT 'waiting'",
+                "start_time": "datetime NOT NULL DEFAULT current_timestamp()",
+                "end_time": "datetime NOT NULL DEFAULT current_timestamp()",
+                "winner_id": "varchar(48) NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "news",
+            "columns": {
+                "news_id": "int(11) NOT NULL",
+                "user_id": "varchar(48) NOT NULL DEFAULT ''",
+                "title": "varchar(200) NOT NULL DEFAULT ''",
+                "content": "mediumtext NOT NULL",
+                "time": "datetime NOT NULL DEFAULT '2016-05-13 19:24:00'",
+                "importance": "tinyint(4) NOT NULL DEFAULT 0",
+                "menu": "int(11) NOT NULL DEFAULT 0",
+                "defunct": "char(1) NOT NULL DEFAULT 'N'"
+            },
+            "indexes": []
+        },
+        {
+            "name": "online",
+            "columns": {
+                "hash": "varchar(32) NOT NULL",
+                "ip": "varchar(46) NOT NULL DEFAULT ''",
+                "ua": "varchar(255) NOT NULL DEFAULT ''",
+                "refer": "varchar(4096) DEFAULT NULL",
+                "lastmove": "int(10) NOT NULL",
+                "firsttime": "int(10) DEFAULT NULL",
+                "uri": "varchar(255) DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "openai_task_queue",
+            "columns": {
+                "id": "bigint(20) UNSIGNED NOT NULL",
+                "user_id": "varchar(40) NOT NULL DEFAULT ''",
+                "task_type": "varchar(24) NOT NULL DEFAULT ''",
+                "solution_id": "bigint(20) DEFAULT 0",
+                "problem_id": "bigint(20) NOT NULL DEFAULT 0",
+                "request_body": "mediumtext NOT NULL",
+                "status": "tinyint(4) NOT NULL DEFAULT 0",
+                "response_body": "mediumtext DEFAULT NULL",
+                "error_message": "text DEFAULT NULL",
+                "create_date": "datetime NOT NULL",
+                "update_date": "datetime NOT NULL"
+            },
+            "indexes": [
+                "处理, 1:处理中, 2:已完成, 3:失败'"
+            ]
+        },
+        {
+            "name": "printer",
+            "columns": {
+                "printer_id": "int(11) NOT NULL",
+                "user_id": "char(48) NOT NULL",
+                "in_date": "datetime NOT NULL DEFAULT '2018-03-13 19:38:00'",
+                "status": "smallint(6) NOT NULL DEFAULT 0",
+                "worktime": "timestamp NULL DEFAULT current_timestamp()",
+                "printer": "char(16) NOT NULL DEFAULT 'LOCAL'",
+                "content": "text NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "privilege",
+            "columns": {
+                "user_id": "char(48) NOT NULL DEFAULT ''",
+                "rightstr": "char(30) NOT NULL DEFAULT ''",
+                "valuestr": "char(11) NOT NULL DEFAULT 'true'",
+                "defunct": "char(1) NOT NULL DEFAULT 'N'"
+            },
+            "indexes": []
+        },
+        {
+            "name": "problem",
+            "columns": {
+                "problem_id": "int(11) NOT NULL",
+                "title": "varchar(200) NOT NULL DEFAULT ''",
+                "description": "mediumtext DEFAULT NULL",
+                "input": "mediumtext DEFAULT NULL",
+                "output": "mediumtext DEFAULT NULL",
+                "sample_input": "text DEFAULT NULL",
+                "sample_output": "text DEFAULT NULL",
+                "spj": "char(1) NOT NULL DEFAULT '0'",
+                "hint": "mediumtext DEFAULT NULL",
+                "source": "varchar(100) DEFAULT NULL",
+                "in_date": "datetime DEFAULT NULL",
+                "time_limit": "decimal(10,3) NOT NULL DEFAULT 0.000",
+                "memory_limit": "int(11) NOT NULL DEFAULT 0",
+                "defunct": "char(1) NOT NULL DEFAULT 'N'",
+                "accepted": "int(11) DEFAULT 0",
+                "submit": "int(11) DEFAULT 0",
+                "solved": "int(11) DEFAULT 0",
+                "remote_oj": "varchar(16) DEFAULT NULL",
+                "remote_id": "varchar(32) DEFAULT NULL",
+                "front": "text DEFAULT NULL",
+                "body": "text DEFAULT NULL",
+                "rear": "text DEFAULT NULL",
+                "bann": "varchar(100) DEFAULT NULL",
+                "credits": "text DEFAULT NULL",
+                "langmask": "int(11) NOT NULL DEFAULT 4194303"
+            },
+            "indexes": []
+        },
+        {
+            "name": "reply",
+            "columns": {
+                "rid": "int(11) NOT NULL",
+                "author_id": "varchar(48) NOT NULL",
+                "time": "datetime NOT NULL DEFAULT '2016-05-13 19:24:00'",
+                "content": "text NOT NULL",
+                "topic_id": "int(11) NOT NULL",
+                "status": "int(2) NOT NULL DEFAULT 0",
+                "ip": "varchar(46) NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "runtimeinfo",
+            "columns": {
+                "solution_id": "int(11) NOT NULL DEFAULT 0",
+                "error": "text DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "sample_code",
+            "columns": {
+                "sample_id": "int(11) NOT NULL",
+                "problem_id": "int(11) NOT NULL",
+                "sample_code": "text NOT NULL",
+                "language": "int(11) NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "share_code",
+            "columns": {
+                "share_id": "int(11) NOT NULL",
+                "user_id": "varchar(48) DEFAULT NULL",
+                "title": "varchar(32) DEFAULT NULL",
+                "share_code": "text DEFAULT NULL",
+                "language": "varchar(32) DEFAULT NULL",
+                "share_time": "datetime DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "sim",
+            "columns": {
+                "s_id": "int(11) NOT NULL",
+                "sim_s_id": "int(11) DEFAULT NULL",
+                "sim": "int(11) DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "solution",
+            "columns": {
+                "solution_id": "int(11) UNSIGNED NOT NULL",
+                "problem_id": "int(11) NOT NULL DEFAULT 0",
+                "user_id": "char(48) NOT NULL",
+                "nick": "char(20) NOT NULL DEFAULT ''",
+                "time": "int(11) NOT NULL DEFAULT 0",
+                "memory": "int(11) NOT NULL DEFAULT 0",
+                "in_date": "datetime NOT NULL DEFAULT '2016-05-13 19:24:00'",
+                "result": "smallint(6) NOT NULL DEFAULT 0",
+                "language": "int(10) UNSIGNED NOT NULL DEFAULT 0",
+                "ip": "char(46) NOT NULL",
+                "contest_id": "int(11) DEFAULT 0",
+                "valid": "tinyint(4) NOT NULL DEFAULT 1",
+                "num": "tinyint(4) NOT NULL DEFAULT -1",
+                "code_length": "int(11) NOT NULL DEFAULT 0",
+                "judgetime": "timestamp NULL DEFAULT current_timestamp()",
+                "pass_rate": "decimal(4,3) UNSIGNED NOT NULL DEFAULT 0.000",
+                "first_time": "tinyint(1) NOT NULL DEFAULT 0",
+                "lint_error": "int(10) UNSIGNED NOT NULL DEFAULT 0",
+                "judger": "char(16) NOT NULL DEFAULT 'LOCAL'",
+                "remote_oj": "char(16) NOT NULL DEFAULT ''",
+                "remote_id": "char(32) NOT NULL DEFAULT ''",
+                "class_id": "int(11) DEFAULT NULL",
+                "group_id": "varchar(50) DEFAULT NULL",
+                "ai_level": "varchar(8) DEFAULT NULL",
+                "ai_score": "tinyint(3) UNSIGNED DEFAULT NULL",
+                "ai_reason": "varchar(255) DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "solution_ai_answer",
+            "columns": {
+                "solution_id": "int(11) NOT NULL DEFAULT 0",
+                "answer": "mediumtext DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "solution_check",
+            "columns": {
+                "solution_id": "int(11) NOT NULL",
+                "status": "varchar(20) DEFAULT NULL",
+                "score": "int(11) DEFAULT NULL",
+                "details": "longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`details`))"
+            },
+            "indexes": []
+        },
+        {
+            "name": "source_code",
+            "columns": {
+                "solution_id": "int(11) NOT NULL",
+                "source": "text NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "source_code_user",
+            "columns": {
+                "solution_id": "int(11) NOT NULL",
+                "source": "text NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "topic",
+            "columns": {
+                "tid": "int(11) NOT NULL",
+                "title": "varbinary(60) NOT NULL",
+                "status": "int(2) NOT NULL DEFAULT 0",
+                "top_level": "int(2) NOT NULL DEFAULT 0",
+                "cid": "int(11) DEFAULT NULL",
+                "pid": "int(11) NOT NULL",
+                "author_id": "varchar(48) NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "users",
+            "columns": {
+                "user_id": "varchar(48) NOT NULL DEFAULT ''",
+                "email": "varchar(100) DEFAULT NULL",
+                "submit": "int(11) DEFAULT 0",
+                "solved": "int(11) DEFAULT 0",
+                "defunct": "char(1) NOT NULL DEFAULT 'N'",
+                "ip": "varchar(46) NOT NULL DEFAULT ''",
+                "accesstime": "datetime DEFAULT NULL",
+                "volume": "int(11) NOT NULL DEFAULT 1",
+                "language": "int(11) NOT NULL DEFAULT 1",
+                "password": "varchar(32) DEFAULT NULL",
+                "reg_time": "datetime DEFAULT NULL",
+                "expiry_date": "date NOT NULL DEFAULT '2099-01-01'",
+                "nick": "varchar(20) NOT NULL DEFAULT ''",
+                "school": "varchar(20) NOT NULL DEFAULT ''",
+                "group_name": "varchar(16) NOT NULL DEFAULT ''",
+                "activecode": "varchar(16) NOT NULL DEFAULT ''",
+                "starred": "int(11) NOT NULL DEFAULT 0",
+                "mylanguage": "int(11) DEFAULT NULL",
+                "mytemplate": "text DEFAULT NULL",
+                "mytheme": "varchar(30) DEFAULT NULL",
+                "reset_token": "varchar(70) DEFAULT NULL",
+                "reset_expiry": "int(11) DEFAULT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "user_agreement_log",
+            "columns": {
+                "id": "int(11) NOT NULL",
+                "user_id": "varchar(50) NOT NULL",
+                "agreement_type": "varchar(50) NOT NULL",
+                "version": "varchar(10) NOT NULL",
+                "agreed": "tinyint(1) NOT NULL",
+                "ip_address": "varchar(50) NOT NULL",
+                "user_agent": "text NOT NULL",
+                "parent_name": "varchar(50) DEFAULT NULL",
+                "parent_email": "varchar(50) DEFAULT NULL",
+                "created_at": "datetime NOT NULL"
+            },
+            "indexes": []
+        },
+        {
+            "name": "user_problem",
+            "columns": {
+                "user_id": "varchar(48) NOT NULL",
+                "problem_id": "int(11) NOT NULL"
+            },
+            "indexes": []
+        }
+    ]
+}

@@ -1,0 +1,383 @@
+.htt-whiteboard-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.htt-whiteboard-join {
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--htt-border);
+    flex: 0 0 auto;
+}
+
+.htt-whiteboard-join > summary {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.htt-whiteboard-join > summary span {
+    float: right;
+    margin-left: 12px;
+    color: var(--htt-muted);
+    font-weight: 400;
+}
+
+.htt-whiteboard-join .htt-join-collapse,
+.htt-whiteboard-join[open] .htt-join-expand {
+    display: none;
+}
+
+.htt-whiteboard-join[open] .htt-join-collapse {
+    display: inline;
+}
+
+.htt-whiteboard-colors {
+    display: inline-flex;
+    gap: 6px;
+}
+
+.htt-whiteboard-color {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+.htt-whiteboard-color.is-active {
+    border-color: var(--htt-fg);
+}
+
+.htt-whiteboard-tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 36px;
+}
+
+.htt-whiteboard-tool.is-active {
+    background: var(--htt-fg);
+    color: var(--htt-bg);
+}
+
+.htt-whiteboard-pages {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.htt-whiteboard-pages select,
+.htt-whiteboard-setup select { max-width: 100%; }
+
+.htt-whiteboard-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.htt-whiteboard-upload input {
+    max-width: 160px;
+}
+
+.htt-whiteboard-material-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(130px, 180px) 100px;
+    gap: 10px;
+}
+
+.htt-whiteboard-material-fields label {
+    min-width: 0;
+}
+
+.htt-whiteboard-material-help {
+    margin: 8px 0 0;
+    color: var(--htt-muted);
+    font-size: 0.85rem;
+}
+
+/*
+ * The drawing surface itself stays literal white in both themes — it's
+ * meant to look like paper/whiteboard, and every preset pen color plus the
+ * eraser's destination-out compositing assumes a light, opaque backdrop.
+ */
+.htt-whiteboard-canvas,
+.htt-join-whiteboard canvas {
+    width: 100%;
+    aspect-ratio: 5 / 3;
+    border: 1px solid var(--htt-border);
+    border-radius: 6px;
+    background: var(--htt-whiteboard-paper, #ffffff);
+    touch-action: none;
+    display: block;
+}
+
+.htt-whiteboard-canvas {
+    position: relative;
+    z-index: 2;
+    cursor: crosshair;
+}
+
+.htt-whiteboard-canvas-wrap {
+    touch-action: none;
+    overscroll-behavior: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.htt-whiteboard-canvas-wrap canvas {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+}
+
+.htt-join .htt-join-whiteboard {
+    display: flex;
+    flex-direction: column;
+    height: max(240px, calc(100dvh - 180px));
+    min-height: 0;
+}
+
+.htt-whiteboard-view-controls {
+    display: grid;
+    grid-template-columns: 106px 40px minmax(50px, 160px) 46px 40px 40px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.htt-whiteboard-material-error:not([hidden]) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    color: var(--ojp-text, #212529);
+    background: var(--ojp-surface-muted, #f1f3f5);
+    font-size: 13px;
+}
+.htt-whiteboard-material-error span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.htt-whiteboard-material-error .htt-icon-button { flex: 0 0 36px; }
+
+.htt-whiteboard-view-controls select {
+    width: 106px;
+    min-width: 0;
+    min-height: 40px;
+    padding: 6px 8px;
+    border: 1px solid var(--htt-border);
+    border-radius: 4px;
+    background: var(--htt-bg);
+    color: var(--htt-fg);
+    font: inherit;
+    font-size: 13px;
+}
+.htt-whiteboard-view-controls input[type="range"] { width: 100%; min-width: 0; margin: 0; }
+.htt-whiteboard-view-controls output { text-align: center; font-size: 13px; margin: 0; }
+.htt-whiteboard-view-controls .htt-icon-button { width: 40px; height: 40px; padding: 8px; box-sizing: border-box; }
+
+@media (max-width: 640px) {
+    .htt-whiteboard-view-controls { grid-template-columns: 90px 40px minmax(20px, 1fr) 42px 40px 40px; gap: 4px; }
+    .htt-whiteboard-view-controls select { width: 90px; }
+}
+
+.htt-whiteboard-viewport {
+    flex: 1 1 0;
+    min-height: 100px;
+    overflow: auto;
+    position: relative;
+    border: 1px solid var(--htt-border);
+    border-radius: 4px;
+    background: var(--ojp-color-fill, #f2f2f4);
+    touch-action: pan-x pan-y;
+    overscroll-behavior: contain;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+}
+
+.htt-whiteboard-viewport.is-panning { cursor: grabbing; }
+.htt-whiteboard-view-stage { position: relative; }
+.htt-whiteboard-viewport .htt-join-whiteboard-surface {
+    position: absolute;
+    max-width: none;
+    margin: 0;
+    pointer-events: none;
+}
+.htt-whiteboard-viewport canvas { border: 0; border-radius: 0; }
+
+.htt-whiteboard-canvas-wrap,
+.htt-join-whiteboard-surface,
+.htt-join-whiteboard {
+    position: relative;
+}
+
+.htt-whiteboard-material-frame {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 3;
+    transform: translateY(-50%);
+    border: 1px solid var(--htt-border);
+    border-radius: 6px;
+    background: var(--ojp-color-surface, #fff);
+    pointer-events: none;
+}
+
+.htt-join-whiteboard .htt-whiteboard-material-frame {
+    position: absolute;
+    z-index: 1;
+}
+
+.htt-pdf-dialog {
+    width: min(960px, calc(100vw - 32px));
+    max-height: calc(100dvh - 32px);
+    box-sizing: border-box;
+    overflow: auto;
+    border: 1px solid var(--htt-border);
+    border-radius: 8px;
+    padding: 20px;
+    background: var(--htt-card-bg);
+    color: var(--htt-fg);
+}
+
+.htt-pdf-dialog::backdrop {
+    background: color-mix(in srgb, CanvasText 50%, transparent);
+}
+
+.htt-pdf-heading,
+.htt-pdf-controls,
+.htt-pdf-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.htt-pdf-heading {
+    justify-content: space-between;
+}
+
+.htt-pdf-heading h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.htt-pdf-controls {
+    margin-top: 16px;
+    align-items: end;
+}
+
+.htt-pdf-controls label {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.htt-pdf-controls label:first-child {
+    flex: 1 1 260px;
+}
+
+.htt-pdf-controls select {
+    max-width: 100%;
+}
+
+.htt-pdf-controls input {
+    width: 76px;
+}
+
+.htt-pdf-preview {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 3;
+    background: var(--htt-whiteboard-paper, white);
+    border: 1px solid var(--htt-border);
+}
+
+.htt-pdf-actions {
+    margin-top: 16px;
+    justify-content: flex-end;
+}
+
+.htt-whiteboard-canvas-wrap.has-material .htt-whiteboard-canvas,
+.htt-join-whiteboard.has-material canvas {
+    background: transparent;
+}
+
+.htt-join-whiteboard canvas {
+    position: relative;
+    z-index: 2;
+}
+
+.htt-whiteboard-canvas-preview {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    background: transparent;
+    border-color: transparent;
+    pointer-events: none;
+}
+
+@media (max-width: 640px) {
+    .htt-whiteboard-material-fields {
+        grid-template-columns: 1fr;
+    }
+}
+
+.htt-whiteboard-connection {
+    font-size: 13px;
+    color: var(--htt-muted);
+    margin: 0 0 8px;
+}
+
+.htt-whiteboard-expanded {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: var(--htt-bg);
+    overflow: auto;
+}
+
+.htt-whiteboard-expanded > :not(.htt-whiteboard-board) {
+    display: none;
+}
+
+.htt-whiteboard-board.is-expanded,
+.htt-whiteboard-board:fullscreen {
+    background: var(--htt-bg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+.htt-whiteboard-board.is-expanded .htt-whiteboard-canvas-wrap,
+.htt-whiteboard-board:fullscreen .htt-whiteboard-canvas-wrap {
+    flex: 0 0 auto;
+    margin: auto;
+    max-width: 100%;
+}
+
+.htt-whiteboard-board.is-expanded .htt-whiteboard-canvas,
+.htt-whiteboard-board.is-expanded .htt-whiteboard-canvas-preview,
+.htt-whiteboard-board:fullscreen .htt-whiteboard-canvas,
+.htt-whiteboard-board:fullscreen .htt-whiteboard-canvas-preview {
+    width: 100%;
+    height: auto;
+}

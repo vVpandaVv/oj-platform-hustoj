@@ -1,0 +1,2006 @@
+<?php
+/**
+ * Add-on composition root.
+ *
+ * @package OJAI\Dashboard
+ */
+
+namespace OJAI\Dashboard\Core;
+
+use OJAI\Dashboard\Assessment\Configuration\Application\Manage_Assessment_Configuration;
+use OJAI\Dashboard\Assessment\Configuration\Domain\Assessment_Configuration_Profile;
+use OJAI\Dashboard\Assessment\Configuration\Infrastructure\WordPress_Assessment_Configuration_Repository;
+use OJAI\Dashboard\Assessment\Configuration\Presentation\Assessment_Configuration_Rest_Controller;
+use OJAI\Dashboard\Assessment\Configuration\Presentation\Assessment_Configuration_Rest_Module;
+use OJAI\Dashboard\Context\Infrastructure\Platform_Teaching_Context_Query;
+use OJAI\Dashboard\Context\Presentation\Context_Rest_Controller;
+use OJAI\Dashboard\Context\Presentation\Context_Rest_Module;
+use OJAI\Dashboard\Curriculum\Catalog\Application\Manage_Curriculum_Catalog;
+use OJAI\Dashboard\Curriculum\Catalog\Domain\Curriculum_Catalog_Profile;
+use OJAI\Dashboard\Curriculum\Catalog\Infrastructure\WordPress_Curriculum_Catalog_Repository;
+use OJAI\Dashboard\Curriculum\Catalog\Presentation\Curriculum_Catalog_Rest_Controller;
+use OJAI\Dashboard\Curriculum\Catalog\Presentation\Curriculum_Catalog_Rest_Module;
+use OJAI\Dashboard\Curriculum\Infrastructure\WordPress_Achievement_Standard_Snapshot_Reader;
+use OJAI\Dashboard\Database\Foundation\Infrastructure\WordPress_Schema_Runtime_Readiness;
+use OJAI\Dashboard\Database\Foundation\Schema_Catalog;
+use OJAI\Dashboard\Operations\Diagnostics\Application\Read_Storage_Operations_Detail;
+use OJAI\Dashboard\Operations\Diagnostics\Application\Read_System_Diagnostics;
+use OJAI\Dashboard\Operations\Diagnostics\Application\Resume_Storage_Jobs;
+use OJAI\Dashboard\Operations\Diagnostics\Infrastructure\Addon_Runtime_Bridge_Diagnostics;
+use OJAI\Dashboard\Operations\Diagnostics\Infrastructure\Addon_Runtime_Ai_Routing_Diagnostics;
+use OJAI\Dashboard\Operations\Diagnostics\Infrastructure\WordPress_Evaluation_Queue_Diagnostics;
+use OJAI\Dashboard\Operations\Diagnostics\Infrastructure\WordPress_Private_Storage_Diagnostics;
+use OJAI\Dashboard\Operations\Diagnostics\Infrastructure\WordPress_Storage_Backlog_Diagnostics;
+use OJAI\Dashboard\Operations\Diagnostics\Infrastructure\WordPress_Storage_Worker_Heartbeat;
+use OJAI\Dashboard\Operations\Diagnostics\Presentation\Operations_Diagnostics_Rest_Controller;
+use OJAI\Dashboard\Operations\Diagnostics\Presentation\Storage_Jobs_Rest_Controller;
+use OJAI\Dashboard\Operations\Diagnostics\Presentation\Storage_Jobs_Rest_Module;
+use OJAI\Dashboard\Operations\Diagnostics\Presentation\Storage_Operations_Detail_Rest_Controller;
+use OJAI\Dashboard\Operations\Diagnostics\Presentation\Storage_Operations_Detail_Rest_Module;
+use OJAI\Dashboard\Operations\LegacyMigration\Application\Approve_Legacy_Migration;
+use OJAI\Dashboard\Operations\LegacyMigration\Application\Read_Legacy_Migration_Run;
+use OJAI\Dashboard\Operations\LegacyMigration\Application\Rollback_Legacy_Migration;
+use OJAI\Dashboard\Operations\LegacyMigration\Application\Execute_Legacy_Migration;
+use OJAI\Dashboard\Operations\LegacyMigration\Application\Preview_Legacy_Migration;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\Legacy_Migration_Worker_Module;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\Platform_Legacy_Mapping_Decision_Validator;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\Signed_Legacy_Preview_Token;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\WordPress_Legacy_Migration_Approval_Repository;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\WordPress_Legacy_Migration_Batch_Factory;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\WordPress_Legacy_Migration_Execution_Repository;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\WordPress_Legacy_Migration_Rollback_Repository;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\WordPress_Legacy_Migration_Run_Query;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\WordPress_Legacy_Migration_Queue_Wakeup;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\WordPress_Legacy_Migration_Site;
+use OJAI\Dashboard\Operations\LegacyMigration\Infrastructure\WordPress_Prefixed_Legacy_Source_Inspector;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Approval_Rest_Controller;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Approval_Rest_Module;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Execution_Rest_Controller;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Execution_Rest_Module;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Rollback_Rest_Controller;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Rollback_Rest_Module;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Run_Query_Rest_Controller;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Run_Query_Rest_Module;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Preview_Rest_Controller;
+use OJAI\Dashboard\Operations\LegacyMigration\Presentation\Legacy_Migration_Preview_Rest_Module;
+use OJAI\Dashboard\Operations\Purge\Application\Approve_Purge;
+use OJAI\Dashboard\Operations\Purge\Application\Cancel_Purge;
+use OJAI\Dashboard\Operations\Purge\Application\Execute_Purge;
+use OJAI\Dashboard\Operations\Purge\Application\Process_Purge_Batch;
+use OJAI\Dashboard\Operations\Purge\Application\Purge_Preview_Builder;
+use OJAI\Dashboard\Operations\Purge\Application\Preview_Purge;
+use OJAI\Dashboard\Operations\Purge\Application\Read_Purge_Job;
+use OJAI\Dashboard\Operations\Purge\Domain\Purge_Target_Catalog;
+use OJAI\Dashboard\Operations\Purge\Infrastructure\Purge_Worker_Module;
+use OJAI\Dashboard\Operations\Purge\Infrastructure\Signed_Purge_Preview_Token;
+use OJAI\Dashboard\Operations\Purge\Infrastructure\WordPress_Purge_Approval_Repository;
+use OJAI\Dashboard\Operations\Purge\Infrastructure\WordPress_Purge_Inventory;
+use OJAI\Dashboard\Operations\Purge\Infrastructure\WordPress_Purge_Job_Query;
+use OJAI\Dashboard\Operations\Purge\Infrastructure\WordPress_Purge_Operation_Repository;
+use OJAI\Dashboard\Operations\Purge\Infrastructure\WordPress_Purge_Queue_Wakeup;
+use OJAI\Dashboard\Operations\Purge\Infrastructure\WordPress_Purge_Site;
+use OJAI\Dashboard\Operations\Purge\Presentation\Purge_Approval_Rest_Controller;
+use OJAI\Dashboard\Operations\Purge\Presentation\Purge_Approval_Rest_Module;
+use OJAI\Dashboard\Operations\Purge\Presentation\Purge_Control_Rest_Controller;
+use OJAI\Dashboard\Operations\Purge\Presentation\Purge_Control_Rest_Module;
+use OJAI\Dashboard\Operations\Purge\Presentation\Purge_Job_Query_Rest_Controller;
+use OJAI\Dashboard\Operations\Purge\Presentation\Purge_Job_Query_Rest_Module;
+use OJAI\Dashboard\Operations\Purge\Presentation\Purge_Preview_Rest_Controller;
+use OJAI\Dashboard\Operations\Purge\Presentation\Purge_Preview_Rest_Module;
+use OJAI\Dashboard\Operations\Diagnostics\Presentation\Operations_Diagnostics_Rest_Module;
+use OJAI\Dashboard\Operations\SchemaRepair\Application\Repair_Addon_Schema;
+use OJAI\Dashboard\Operations\SchemaRepair\Infrastructure\WordPress_Schema_Repair_Receipt;
+use OJAI\Dashboard\Operations\SchemaRepair\Infrastructure\WordPress_Schema_Repair_State;
+use OJAI\Dashboard\Operations\SchemaRepair\Infrastructure\WordPress_Schema_Repairer;
+use OJAI\Dashboard\Operations\SchemaRepair\Presentation\Schema_Repair_Rest_Controller;
+use OJAI\Dashboard\Operations\SchemaRepair\Presentation\Schema_Repair_Rest_Module;
+use OJAI\Dashboard\Platform\Addon_Integration;
+use OJAI\Dashboard\Platform\Addon_Manifest;
+use OJAI\Dashboard\Platform\Addon_Module;
+use OJAI\Dashboard\Platform\Addon_Recovery_Runtime_Readiness;
+use OJAI\Dashboard\Platform\Addon_Runtime_Bridge;
+use OJAI\Dashboard\Platform\Addon_Runtime_Readiness_Gate;
+use OJAI\Dashboard\Platform\External_Ai_Consent_Settings_Page_Handler;
+use OJAI\Dashboard\Platform\Storage_Operations_Detail_Page_Handler;
+use OJAI\Dashboard\Platform\Student_Assignment_Page_Handler;
+use OJAI\Dashboard\Platform\Student_Result_Page_Handler;
+use OJAI\Dashboard\Reporting\Export\Application\Cancel_Export_Job;
+use OJAI\Dashboard\Reporting\Export\Application\Run_Next_Export_Cleanup;
+use OJAI\Dashboard\Reporting\Export\Infrastructure\WordPress_Export_Cleanup_Repository;
+use OJAI\Dashboard\Reporting\Export\Infrastructure\Export_Cleanup_Worker_Module;
+use OJAI\Dashboard\Reporting\Export\Application\Read_Export_Artifact;
+use OJAI\Dashboard\Reporting\Export\Application\Read_Export_Job;
+use OJAI\Dashboard\Reporting\Export\Application\Retry_Export_Job;
+use OJAI\Dashboard\Reporting\Export\Infrastructure\WordPress_Export_Control_Queue_Wakeup;
+use OJAI\Dashboard\Reporting\Export\Infrastructure\WordPress_Export_Control_Repository;
+use OJAI\Dashboard\Reporting\Export\Infrastructure\WordPress_Export_Query;
+use OJAI\Dashboard\Reporting\Export\Infrastructure\WordPress_Export_Work_Repository;
+use OJAI\Dashboard\Reporting\Export\Presentation\Export_Control_Rest_Controller;
+use OJAI\Dashboard\Reporting\Export\Presentation\Export_Control_Rest_Module;
+use OJAI\Dashboard\Reporting\Export\Presentation\Export_Rest_Controller;
+use OJAI\Dashboard\Reporting\Export\Presentation\Export_Rest_Module;
+use OJAI\Dashboard\Reporting\Report\Application\Create_Report_Snapshot;
+use OJAI\Dashboard\Reporting\Report\Application\Read_Report_Snapshot;
+use OJAI\Dashboard\Reporting\Report\Application\Read_Student_Report_Detail;
+use OJAI\Dashboard\Reporting\Report\Application\Read_Student_Roster_Reports;
+use OJAI\Dashboard\Reporting\Report\Application\Read_Worksheet_Report_Detail;
+use OJAI\Dashboard\Reporting\Report\Application\Read_Worksheet_Reports;
+use OJAI\Dashboard\Reporting\Report\Domain\Report_Snapshot_Profile;
+use OJAI\Dashboard\Reporting\Report\Domain\Student_Report_Detail_Projector;
+use OJAI\Dashboard\Reporting\Report\Domain\Student_Roster_Report_Projector;
+use OJAI\Dashboard\Reporting\Report\Domain\Worksheet_Report_Detail_Projector;
+use OJAI\Dashboard\Reporting\Report\Domain\Worksheet_Report_Projector;
+use OJAI\Dashboard\Reporting\Report\Infrastructure\Report_Snapshot_Object_Authorization;
+use OJAI\Dashboard\Reporting\Report\Infrastructure\WordPress_Report_Snapshot_Query;
+use OJAI\Dashboard\Reporting\Report\Infrastructure\WordPress_Report_Snapshot_Repository;
+use OJAI\Dashboard\Reporting\Report\Presentation\Report_Snapshot_Query_Rest_Controller;
+use OJAI\Dashboard\Reporting\Report\Presentation\Report_Snapshot_Query_Rest_Module;
+use OJAI\Dashboard\Reporting\Report\Presentation\Report_Snapshot_Rest_Controller;
+use OJAI\Dashboard\Reporting\Report\Presentation\Report_Snapshot_Rest_Module;
+use OJAI\Dashboard\Reporting\Report\Presentation\Student_Report_Detail_Rest_Controller;
+use OJAI\Dashboard\Reporting\Report\Presentation\Student_Report_Detail_Rest_Module;
+use OJAI\Dashboard\Reporting\Report\Presentation\Student_Roster_Rest_Controller;
+use OJAI\Dashboard\Reporting\Report\Presentation\Student_Roster_Rest_Module;
+use OJAI\Dashboard\Reporting\Report\Presentation\Worksheet_Report_Detail_Rest_Controller;
+use OJAI\Dashboard\Reporting\Report\Presentation\Worksheet_Report_Detail_Rest_Module;
+use OJAI\Dashboard\Reporting\Report\Presentation\Worksheet_Report_Rest_Controller;
+use OJAI\Dashboard\Reporting\Report\Presentation\Worksheet_Report_Rest_Module;
+use OJAI\Dashboard\Reporting\ResultPdf\Application\Build_Result_Print_Projection;
+use OJAI\Dashboard\Reporting\ReportExport\Application\Enqueue_Report_Export;
+use OJAI\Dashboard\Reporting\ReportExport\Application\Run_Next_Report_Export;
+use OJAI\Dashboard\Reporting\ReportExport\Domain\Report_Print_Html_Serializer;
+use OJAI\Dashboard\Reporting\ReportExport\Infrastructure\Report_Export_Artifact_Writer;
+use OJAI\Dashboard\Reporting\ReportExport\Infrastructure\Report_Export_Worker_Module;
+use OJAI\Dashboard\Reporting\ReportExport\Infrastructure\WordPress_Report_Export_Queue_Wakeup;
+use OJAI\Dashboard\Reporting\ReportExport\Infrastructure\WordPress_Report_Export_Repository;
+use OJAI\Dashboard\Reporting\ReportExport\Presentation\Report_Export_Rest_Controller;
+use OJAI\Dashboard\Reporting\ReportExport\Presentation\Report_Export_Rest_Module;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Application\Enqueue_Submission_Bundle;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Application\Run_Next_Submission_Bundle;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Infrastructure\Deterministic_Submission_Bundle_Writer;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Infrastructure\Submission_Bundle_Worker_Module;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Infrastructure\WordPress_Submission_Bundle_Attachment_Reader;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Infrastructure\WordPress_Submission_Bundle_Queue_Wakeup;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Infrastructure\WordPress_Submission_Bundle_Repository;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Presentation\Submission_Bundle_Rest_Controller;
+use OJAI\Dashboard\Reporting\SubmissionBundle\Presentation\Submission_Bundle_Rest_Module;
+use OJAI\Dashboard\Reporting\ResultPdf\Application\Enqueue_Own_Result_Pdf;
+use OJAI\Dashboard\Reporting\ResultPdf\Application\Run_Next_Result_Pdf;
+use OJAI\Dashboard\Reporting\ResultPdf\Domain\Result_Print_Html_Serializer;
+use OJAI\Dashboard\Reporting\ResultPdf\Infrastructure\Q33_Own_Result_Pdf_Source_Query;
+use OJAI\Dashboard\Reporting\ResultPdf\Infrastructure\Result_Pdf_Worker_Module;
+use OJAI\Dashboard\Reporting\ResultPdf\Infrastructure\WordPress_Result_Pdf_Queue_Wakeup;
+use OJAI\Dashboard\Reporting\ResultPdf\Infrastructure\WordPress_Result_Pdf_Repository;
+use OJAI\Dashboard\Reporting\ResultPdf\Presentation\Result_Pdf_Rest_Controller;
+use OJAI\Dashboard\Reporting\ResultPdf\Presentation\Result_Pdf_Rest_Module;
+use OJAI\Dashboard\Reporting\WorksheetPackage\Application\Build_Worksheet_Package_Source;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Application\Build_Submission_Print_Projection;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Application\Enqueue_Own_Submission_Pdf;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Application\Enqueue_Submission_Pdf;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Application\Run_Next_Submission_Pdf;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Domain\Submission_Print_Html_Serializer;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Infrastructure\Submission_Pdf_Worker_Module;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Infrastructure\WordPress_Submission_Pdf_Queue_Wakeup;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Infrastructure\WordPress_Submission_Pdf_Repository;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Presentation\Submission_Pdf_Rest_Controller;
+use OJAI\Dashboard\Reporting\SubmissionPdf\Presentation\Submission_Pdf_Rest_Module;
+
+use OJAI\Dashboard\Reporting\WorksheetPackage\Application\Enqueue_Worksheet_Package;
+use OJAI\Dashboard\Reporting\WorksheetPackage\Application\Run_Next_Worksheet_Package;
+use OJAI\Dashboard\Reporting\WorksheetPackage\Infrastructure\Deterministic_Zip_Worksheet_Package_Writer;
+use OJAI\Dashboard\Reporting\WorksheetPackage\Infrastructure\WordPress_Worksheet_Package_Queue_Wakeup;
+use OJAI\Dashboard\Reporting\WorksheetPackage\Infrastructure\WordPress_Worksheet_Package_Repository;
+use OJAI\Dashboard\Reporting\WorksheetPackage\Infrastructure\Worksheet_Package_Worker_Module;
+use OJAI\Dashboard\Reporting\WorksheetPackage\Presentation\Worksheet_Package_Rest_Controller;
+use OJAI\Dashboard\Reporting\WorksheetPackage\Presentation\Worksheet_Package_Rest_Module;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Application\Enqueue_Worksheet_Pdf;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Application\Enqueue_Own_Worksheet_Pdf;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Application\Run_Next_Worksheet_Pdf;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Domain\Worksheet_Print_Html_Serializer;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Infrastructure\Dompdf_Html_To_Pdf_Renderer;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Infrastructure\WordPress_Worksheet_Pdf_Queue_Wakeup;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Infrastructure\WordPress_Worksheet_Pdf_Repository;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Infrastructure\Worksheet_Pdf_Worker_Module;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Presentation\Worksheet_Pdf_Rest_Controller;
+use OJAI\Dashboard\Reporting\WorksheetPdf\Presentation\Worksheet_Pdf_Rest_Module;
+use OJAI\Dashboard\Rest\Correlation_Id_Factory;
+use OJAI\Dashboard\Rest\Infrastructure\WordPress_Current_Actor;
+use OJAI\Dashboard\Rest\Infrastructure\WordPress_Rest_Nonce_Verifier;
+use OJAI\Dashboard\Rest\Infrastructure\WordPress_Rest_Request_Adapter;
+use OJAI\Dashboard\Rest\Rest_Envelope_Factory;
+use OJAI\Dashboard\Rest\Rest_Permission_Handoff;
+use OJAI\Dashboard\Rest\Rest_Request_Authorizer;
+use OJAI\Dashboard\Security\Policy\Access_Policy;
+use OJAI\Dashboard\Security\Policy\Purge_Recovery_Access_Policy;
+use OJAI\Dashboard\Security\Policy\Schema_Recovery_Access_Policy;
+use OJAI\Dashboard\Security\Policy\Infrastructure\Platform_Context_Authorization;
+use OJAI\Dashboard\Security\Policy\Infrastructure\Unavailable_Object_Authorization;
+use OJAI\Dashboard\Security\Policy\Infrastructure\WordPress_Actor_Authorization;
+use OJAI\Dashboard\Security\Policy\Infrastructure\Evaluation_Object_Authorization_Router;
+use OJAI\Dashboard\Security\Policy\Infrastructure\Object_Authorization_Router;
+use OJAI\Dashboard\Security\Policy\Object_Scope;
+use OJAI\Dashboard\Storage\Application\Discard_Staged_Worksheet_Asset;
+use OJAI\Dashboard\Storage\Application\Clone_Worksheet_Asset;
+use OJAI\Dashboard\Storage\Application\Read_Worksheet_Asset_Content;
+use OJAI\Dashboard\Storage\Application\Stage_Worksheet_Asset;
+use OJAI\Dashboard\Storage\Domain\Worksheet_Asset_Upload_Profile;
+use OJAI\Dashboard\Storage\Infrastructure\Local_Private_File_Store;
+use OJAI\Dashboard\Storage\Infrastructure\WordPress_Generated_Private_File_Metadata;
+use OJAI\Dashboard\Storage\Infrastructure\WordPress_Private_File_Staging_Repository;
+use OJAI\Dashboard\Storage\Infrastructure\WordPress_Worksheet_Package_Private_File_Metadata;
+use OJAI\Dashboard\Storage\Infrastructure\WordPress_Worksheet_Asset_Repository;
+use OJAI\Dashboard\Storage\Infrastructure\Worksheet_Asset_Readiness_Checker;
+use OJAI\Dashboard\Storage\Presentation\Worksheet_Asset_Access_Rest_Controller;
+use OJAI\Dashboard\Storage\Presentation\Worksheet_Asset_Access_Rest_Module;
+use OJAI\Dashboard\Storage\Presentation\Worksheet_Asset_Rest_Controller;
+use OJAI\Dashboard\Storage\Presentation\Worksheet_Asset_Rest_Module;
+use OJAI\Dashboard\Submission\Assignment\Application\Change_Assignment;
+use OJAI\Dashboard\Submission\Assignment\Application\Create_Assignment;
+use OJAI\Dashboard\Submission\Assignment\Application\Add_Assignment_Targets;
+use OJAI\Dashboard\Submission\Assignment\Application\Read_Assignments;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\Assignment_Object_Authorization;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\Platform_Assignment_Roster;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Assignment_Lifecycle_Repository;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Assignment_Report_Detail_Source_Query;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Assignment_Repository;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Assignment_Progress_Report_Source_Query;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Student_Report_Detail_Source_Query;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Student_Roster_Report_Source_Query;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Submission_Bundle_Source_Query;
+use OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Learner_Display_Snapshot;
+use OJAI\Dashboard\Submission\Assignment\Presentation\Assignment_Lifecycle_Rest_Controller;
+use OJAI\Dashboard\Submission\Assignment\Presentation\Assignment_Lifecycle_Rest_Module;
+use OJAI\Dashboard\Submission\Assignment\Presentation\Assignment_Rest_Controller;
+use OJAI\Dashboard\Submission\Assignment\Presentation\Assignment_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Application\Cancel_Submission_Evaluation;
+use OJAI\Dashboard\Submission\Assessment\Application\Approve_Submission_Feedback;
+use OJAI\Dashboard\Submission\Assessment\Application\Approve_Student_Note;
+use OJAI\Dashboard\Submission\Assessment\Application\Withdraw_Submission_Feedback_Approval;
+use OJAI\Dashboard\Submission\Assessment\Application\Withdraw_Student_Note_Approval;
+use OJAI\Dashboard\Submission\Assessment\Application\Change_Student_Note_Report_Inclusion;
+use OJAI\Dashboard\Submission\Assessment\Application\Enqueue_Assignment_Evaluations;
+use OJAI\Dashboard\Submission\Assessment\Application\Enqueue_Submission_Evaluation;
+use OJAI\Dashboard\Submission\Assessment\Application\Generate_Submission_Feedback;
+use OJAI\Dashboard\Submission\Assessment\Application\Generate_Student_Note_Draft;
+use OJAI\Dashboard\Submission\Assessment\Application\Manage_Submission_External_Ai_Consent;
+use OJAI\Dashboard\Submission\Assessment\Application\Read_Own_Submission_Result;
+use OJAI\Dashboard\Submission\Assessment\Application\Read_Submission_Evaluations;
+use OJAI\Dashboard\Submission\Assessment\Application\Read_Student_Notes;
+use OJAI\Dashboard\Submission\Assessment\Application\Release_Submission_Result;
+use OJAI\Dashboard\Submission\Assessment\Application\Withdraw_Submission_Result;
+use OJAI\Dashboard\Submission\Assessment\Application\Review_Student_Note;
+use OJAI\Dashboard\Submission\Assessment\Application\Review_Submission_Feedback;
+use OJAI\Dashboard\Submission\Assessment\Application\Review_Submission_Evaluation;
+use OJAI\Dashboard\Submission\Assessment\Application\Retry_Submission_Evaluation;
+use OJAI\Dashboard\Submission\Assessment\Application\Run_Next_Submission_Evaluation;
+use OJAI\Dashboard\Submission\Assessment\Application\Run_Next_Submission_Feedback;
+use OJAI\Dashboard\Submission\Assessment\Application\Run_Next_Student_Note_Draft;
+use OJAI\Dashboard\Submission\Assessment\Domain\Submission_Evaluation_Output_Normalizer;
+use OJAI\Dashboard\Submission\Assessment\Domain\Submission_Feedback_Input_Builder;
+use OJAI\Dashboard\Submission\Assessment\Domain\Submission_Feedback_Output_Normalizer;
+use OJAI\Dashboard\Submission\Assessment\Domain\Submission_Result_Projection_Builder;
+use OJAI\Dashboard\Submission\Assessment\Domain\Submission_Score_Input_Builder;
+use OJAI\Dashboard\Submission\Assessment\Domain\Student_Note_Input_Builder;
+use OJAI\Dashboard\Submission\Assessment\Domain\Student_Note_Output_Normalizer;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Platform_Submission_Evaluation_Execution;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Platform_Submission_Evaluation_Routing;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Platform_Submission_Feedback_Execution;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Platform_Student_Note_Execution;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Submission_Evaluation_Object_Authorization;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Submission_Result_Object_Authorization;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Student_Note_Object_Authorization;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Submission_Evaluation_Worker_Module;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Submission_Feedback_Worker_Module;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Student_Note_Worker_Module;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Assignment_Evaluation_Batch_Receipt;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Assignment_Evaluation_Batch_Source;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Control_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Execution_Consent;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Query;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\Official_Assessment_Report_Detail_Source_Query;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Official_Assessment_Report_Source_Query;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Official_Assessment_Score_Lookup_Query;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Queue_Wakeup;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Review_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Source;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Work_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Feedback_Execution_Consent;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Feedback_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Feedback_Review_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Result_Release_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Result_Withdrawal_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Result_Query;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Student_Note_Execution_Consent;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Student_Note_Query;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Student_Note_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Student_Note_Review_Repository;
+use OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_External_Ai_Consent_Repository;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Assignment_Evaluation_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Assignment_Evaluation_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Control_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Control_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Query_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Application\Read_Submission_Evaluation_Roster;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Query_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Review_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Review_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Feedback_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Feedback_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Feedback_Approval_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Feedback_Approval_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Feedback_Approval_Withdrawal_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Feedback_Approval_Withdrawal_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Feedback_Review_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Feedback_Review_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Result_Release_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Result_Release_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Result_Withdrawal_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Result_Withdrawal_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Result_Query_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Result_Query_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Approval_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Approval_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Approval_Withdrawal_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Approval_Withdrawal_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Report_Inclusion_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Report_Inclusion_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Query_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Query_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Review_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Student_Note_Review_Rest_Module;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_External_Ai_Consent_Rest_Controller;
+use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_External_Ai_Consent_Rest_Module;
+use OJAI\Dashboard\Submission\Student\Application\Autosave_Own_Submission;
+use OJAI\Dashboard\Submission\Student\Application\Read_Own_Submission;
+use OJAI\Dashboard\Submission\Student\Application\Read_Student_Assignments;
+use OJAI\Dashboard\Submission\Student\Application\Remove_Own_Staged_Attachment;
+use OJAI\Dashboard\Submission\Student\Application\Run_Auto_Submit_Due;
+use OJAI\Dashboard\Submission\Student\Application\Run_Next_Submission_Attachment_Cleanup;
+use OJAI\Dashboard\Submission\Student\Application\Run_Next_Submission_Attachment_Scan;
+use OJAI\Dashboard\Submission\Student\Application\Stage_Own_Attachment;
+use OJAI\Dashboard\Submission\Student\Application\Start_Own_Submission;
+use OJAI\Dashboard\Submission\Student\Application\Submit_Own_Submission;
+use OJAI\Dashboard\Submission\Student\Domain\Submission_Attachment_Content_Inspector;
+use OJAI\Dashboard\Submission\Student\Domain\Submission_Attachment_Upload_Profile;
+use OJAI\Dashboard\Submission\Student\Infrastructure\Clamav_Instream_Submission_Attachment_Scanner;
+use OJAI\Dashboard\Submission\Student\Domain\Submission_Revision_Integrity;
+use OJAI\Dashboard\Submission\Student\Domain\Submission_Response_Validator;
+use OJAI\Dashboard\Submission\Student\Infrastructure\Platform_Learning_Context_Query;
+use OJAI\Dashboard\Submission\Student\Infrastructure\Auto_Submit_Due_Worker_Module;
+use OJAI\Dashboard\Submission\Student\Infrastructure\Submission_Attachment_Cleanup_Worker_Module;
+use OJAI\Dashboard\Submission\Student\Infrastructure\Submission_Attachment_Scan_Worker_Module;
+use OJAI\Dashboard\Submission\Student\Infrastructure\Submission_Object_Authorization;
+use OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Student_Assignment_Repository;
+use OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Auto_Submit_Assignment_Repository;
+use OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Own_Submission_Pdf_Source_Query;
+use OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Own_Worksheet_Pdf_Source_Query;
+use OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Student_Attachment_Cleanup_Repository;
+use OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Student_Attachment_Scan_Repository;
+use OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Student_Attachment_Repository;
+use OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Student_Submission_Commit_Repository;
+use OJAI\Dashboard\Submission\Student\Presentation\Student_Assignment_Rest_Controller;
+use OJAI\Dashboard\Submission\Student\Presentation\Student_Assignment_Rest_Module;
+use OJAI\Dashboard\Submission\Teacher\Application\Control_Teacher_Submission;
+use OJAI\Dashboard\Submission\Teacher\Application\Read_Teacher_Submissions;
+use OJAI\Dashboard\Submission\Teacher\Application\Read_Teacher_Attachment;
+use OJAI\Dashboard\Submission\Teacher\Infrastructure\WordPress_Teacher_Attachment_Query;
+use OJAI\Dashboard\Submission\Teacher\Infrastructure\WordPress_Teacher_Submission_Control_Repository;
+use OJAI\Dashboard\Submission\Teacher\Infrastructure\WordPress_Teacher_Submission_Query;
+use OJAI\Dashboard\Submission\Teacher\Presentation\Teacher_Submission_Rest_Controller;
+use OJAI\Dashboard\Submission\Teacher\Presentation\Teacher_Submission_Rest_Module;
+use OJAI\Dashboard\Submission\ZipImport\Application\Cancel_Submission_Zip;
+use OJAI\Dashboard\Submission\ZipImport\Application\Confirm_Submission_Zip;
+use OJAI\Dashboard\Submission\ZipImport\Application\Map_Submission_Zip_Items;
+use OJAI\Dashboard\Submission\ZipImport\Application\Read_Submission_Zip_Preview;
+use OJAI\Dashboard\Submission\ZipImport\Application\Run_Next_Submission_Zip_Cleanup;
+use OJAI\Dashboard\Submission\ZipImport\Application\Run_Next_Submission_Zip_Scan;
+use OJAI\Dashboard\Submission\ZipImport\Application\Stage_Submission_Zip;
+use OJAI\Dashboard\Submission\ZipImport\Domain\Submission_Zip_Entry_Reader;
+use OJAI\Dashboard\Submission\ZipImport\Domain\Submission_Zip_Item_Content_Inspector;
+use OJAI\Dashboard\Submission\ZipImport\Domain\Submission_Zip_Suggestion_Matcher;
+use OJAI\Dashboard\Submission\ZipImport\Domain\Submission_Zip_Upload_Profile;
+use OJAI\Dashboard\Submission\ZipImport\Infrastructure\Submission_Zip_Cleanup_Worker_Module;
+use OJAI\Dashboard\Submission\ZipImport\Infrastructure\WordPress_Submission_Zip_Cleanup_Repository;
+use OJAI\Dashboard\Submission\ZipImport\Infrastructure\WordPress_Submission_Zip_Repository;
+use OJAI\Dashboard\Submission\ZipImport\Infrastructure\WordPress_Submission_Zip_Finalization_Repository;
+use OJAI\Dashboard\Submission\ZipImport\Infrastructure\WordPress_Submission_Zip_Mapping_Repository;
+use OJAI\Dashboard\Submission\ZipImport\Infrastructure\Submission_Zip_Scan_Worker_Module;
+use OJAI\Dashboard\Submission\ZipImport\Infrastructure\WordPress_Submission_Zip_Preview_Query;
+use OJAI\Dashboard\Submission\ZipImport\Infrastructure\WordPress_Submission_Zip_Scan_Repository;
+use OJAI\Dashboard\Submission\ZipImport\Presentation\Submission_Zip_Rest_Controller;
+use OJAI\Dashboard\Submission\ZipImport\Presentation\Submission_Zip_Rest_Module;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\Worksheet_Asset_Target_Reader;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Approve_Worksheet_Revision;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Build_Worksheet_Print_Projection;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Change_Worksheet_Lifecycle;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Publish_Worksheet_Revision;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Duplicate_Worksheet;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Validate_Worksheet_Revision;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Create_Worksheet;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Import_Worksheet_Template;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Read_Worksheet_Preview;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Read_Worksheets;
+use OJAI\Dashboard\Worksheet\Authoring\Application\Save_Worksheet_Draft;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Canonical_Json;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Initial_Document_Factory;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Public_Id_Generator;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Document_Canonicalizer;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Document_Id_Rewriter;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Preview_Projector;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Approval_Policy_Gate;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Publication_Projector;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Projection_Safety_Inspector;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Revision_Projector;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Template_Id_Rewriter;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\Signed_Cursor_Codec;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Asset_Source_Reader;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Approval_Evidence;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Approval_Repository;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Lifecycle_Repository;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Publication_Configuration;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Publication_Repository;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Print_Source_Query;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Repository;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\WordPress_Worksheet_Report_Source_Query;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\Worksheet_Object_Authorization;
+use OJAI\Dashboard\Worksheet\Authoring\Infrastructure\Zip_Worksheet_Template_Package_Reader;
+use OJAI\Dashboard\Worksheet\Authoring\Presentation\Worksheet_Rest_Controller;
+use OJAI\Dashboard\Worksheet\Authoring\Presentation\Worksheet_Rest_Module;
+use OJAI\Dashboard\Worksheet\Authoring\Presentation\Worksheet_Template_Import_Rest_Controller;
+use OJAI\Dashboard\Worksheet\Authoring\Presentation\Worksheet_Template_Import_Rest_Module;
+use OJAI\Dashboard\Worksheet\Evaluation\Application\Manage_External_Ai_Consent;
+use OJAI\Dashboard\Worksheet\Evaluation\Application\Cancel_Worksheet_Evaluation;
+use OJAI\Dashboard\Worksheet\Evaluation\Application\Enqueue_Worksheet_Evaluation;
+use OJAI\Dashboard\Worksheet\Evaluation\Application\Read_Worksheet_Evaluations;
+use OJAI\Dashboard\Worksheet\Evaluation\Application\Review_Worksheet_Evaluation;
+use OJAI\Dashboard\Worksheet\Evaluation\Application\Retry_Worksheet_Evaluation;
+use OJAI\Dashboard\Worksheet\Evaluation\Application\Run_Next_Worksheet_Evaluation;
+use OJAI\Dashboard\Worksheet\Evaluation\Domain\Worksheet_Evaluation_Input_Builder;
+use OJAI\Dashboard\Worksheet\Evaluation\Domain\Worksheet_Evaluation_Output_Normalizer;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\Platform_Worksheet_Evaluation_Execution;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\Platform_Worksheet_Evaluation_Routing;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_External_Ai_Consent_Repository;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Configuration;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Control_Repository;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Review_Repository;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Execution_Consent;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Queue_Wakeup;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Evaluation_Queue_Dispatcher;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Query;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Repository;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Source;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\WordPress_Worksheet_Evaluation_Work_Repository;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\Worksheet_Evaluation_Object_Authorization;
+use OJAI\Dashboard\Worksheet\Evaluation\Infrastructure\Worksheet_Evaluation_Worker_Module;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\External_Ai_Consent_Rest_Controller;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\External_Ai_Consent_Rest_Module;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\Worksheet_Evaluation_Control_Rest_Controller;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\Worksheet_Evaluation_Control_Rest_Module;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\Worksheet_Evaluation_Review_Rest_Controller;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\Worksheet_Evaluation_Review_Rest_Module;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\Worksheet_Evaluation_Query_Rest_Controller;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\Worksheet_Evaluation_Query_Rest_Module;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\Worksheet_Evaluation_Rest_Controller;
+use OJAI\Dashboard\Worksheet\Evaluation\Presentation\Worksheet_Evaluation_Rest_Module;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Creates concrete Runtime objects in one place and boots them once.
+ */
+final class Composition_Root {
+	/**
+	 * Ordered module registry.
+	 *
+	 * @var Module_Manager
+	 */
+	private $modules;
+
+	/**
+	 * Whether the root has registered its modules.
+	 *
+	 * @var bool
+	 */
+	private $booted = false;
+
+	/**
+	 * Build the G1 Runtime graph.
+	 */
+	public function __construct() {
+		$runtime                         = new Addon_Runtime_Bridge();
+		$canonical                       = new Canonical_Json();
+		$ids                             = new Public_Id_Generator();
+		$project_profile                 = new \OJAI\Dashboard\Assessment\Project\Domain\Project_Configuration( $canonical, $ids );
+		$projects                        = new \OJAI\Dashboard\Assessment\Project\Infrastructure\WordPress_Project_Repository( $canonical, $ids, $project_profile );
+		$private_files                   = new Local_Private_File_Store();
+		$cursors                         = new Signed_Cursor_Codec( $canonical );
+		$worksheets                      = new WordPress_Worksheet_Repository(
+			null,
+			$canonical,
+			$cursors,
+			null,
+			$projects
+		);
+		$assignments                     = new WordPress_Assignment_Repository( null, $canonical, $cursors );
+		$assignment_lifecycle            = new WordPress_Assignment_Lifecycle_Repository( null, $canonical );
+		$student_assignments             = new WordPress_Student_Assignment_Repository( null, $canonical, $cursors );
+		$teacher_submissions             = new WordPress_Teacher_Submission_Query( null, $canonical, $cursors );
+		$learning_contexts               = new Platform_Learning_Context_Query( $runtime );
+		$evaluation_queries              = new WordPress_Worksheet_Evaluation_Query( $canonical, $cursors );
+		$submission_evaluation_queries   = new WordPress_Submission_Evaluation_Query( $canonical, $cursors );
+		$submission_result_queries       = new WordPress_Submission_Result_Query( $canonical );
+		$read_own_result                 = new Read_Own_Submission_Result( $submission_result_queries, $learning_contexts );
+		$student_note_outputs            = new Student_Note_Output_Normalizer( $canonical );
+		$student_note_queries            = new WordPress_Student_Note_Query( $canonical, $student_note_outputs, $cursors );
+		$worksheet_objects               = new Worksheet_Object_Authorization( $worksheets );
+		$report_snapshot_queries         = new WordPress_Report_Snapshot_Query( $canonical );
+		$objects                         = new Object_Authorization_Router(
+			array(
+				Object_Scope::TYPE_WORKSHEET          => $worksheet_objects,
+				Object_Scope::TYPE_WORKSHEET_REVISION => $worksheet_objects,
+				Object_Scope::TYPE_ASSIGNMENT         => new Assignment_Object_Authorization( $assignments, $student_assignments ),
+				Object_Scope::TYPE_SUBMISSION         => new Submission_Object_Authorization( $student_assignments, $teacher_submissions ),
+				Object_Scope::TYPE_STUDENT_NOTE       => new Student_Note_Object_Authorization( $student_note_queries ),
+				Object_Scope::TYPE_RELEASE            => new Submission_Result_Object_Authorization( $submission_result_queries ),
+				Object_Scope::TYPE_REPORT             => new Report_Snapshot_Object_Authorization( $report_snapshot_queries ),
+				Object_Scope::TYPE_EVALUATION         => new Evaluation_Object_Authorization_Router(
+					new Worksheet_Evaluation_Object_Authorization( $evaluation_queries ),
+					new Submission_Evaluation_Object_Authorization( $submission_evaluation_queries )
+				),
+			),
+			new Unavailable_Object_Authorization()
+		);
+		$actors                          = new WordPress_Actor_Authorization();
+		$contexts                        = new Platform_Context_Authorization( $runtime );
+		$policy                          = new Access_Policy(
+			$runtime,
+			$actors,
+			$contexts,
+			$objects
+		);
+		$recovery_runtime                = new Addon_Recovery_Runtime_Readiness();
+		$recovery_policy                 = new Schema_Recovery_Access_Policy(
+			$policy,
+			$recovery_runtime
+		);
+		$purge_recovery_policy           = new Purge_Recovery_Access_Policy(
+			$policy,
+			$recovery_runtime
+		);
+		$schema_readiness                = new WordPress_Schema_Runtime_Readiness();
+		$schema_repair_state             = new WordPress_Schema_Repair_State( $canonical );
+		$readiness                       = new Addon_Runtime_Readiness_Gate(
+			$runtime,
+			$schema_readiness
+		);
+		$student_page_handler            = new Student_Assignment_Page_Handler( $policy, $student_assignments );
+		$student_result_page_handler     = new Student_Result_Page_Handler( $policy, $submission_result_queries );
+		$integration                     = new Addon_Integration(
+			$runtime,
+			$readiness,
+			$policy,
+			array(
+				Addon_Manifest::CONSOLE_PROJECTS       => new \OJAI\Dashboard\Platform\Assessment_Project_Page_Handler( $policy, $projects ),
+				Addon_Manifest::CONSOLE_SETTINGS       => new External_Ai_Consent_Settings_Page_Handler(
+					$policy,
+					Addon_Manifest::CONSOLE_SETTINGS,
+					$recovery_policy,
+					$schema_repair_state
+				),
+				Addon_Manifest::CONSOLE_CRITERIA       => new External_Ai_Consent_Settings_Page_Handler(
+					$policy,
+					Addon_Manifest::CONSOLE_CRITERIA,
+					$recovery_policy,
+					$schema_repair_state
+				),
+				Addon_Manifest::CONSOLE_STORAGE_DETAIL => new Storage_Operations_Detail_Page_Handler(
+					$policy,
+					Addon_Manifest::CONSOLE_STORAGE_DETAIL
+				),
+				Addon_Manifest::PUBLIC_WORKSHEETS      => $student_page_handler,
+				Addon_Manifest::PUBLIC_ASSIGNMENT      => $student_page_handler,
+				Addon_Manifest::PUBLIC_RESULT          => $student_result_page_handler,
+			)
+		);
+		$correlations                    = new Correlation_Id_Factory();
+		$envelopes                       = new Rest_Envelope_Factory();
+		$current_actor                   = new WordPress_Current_Actor();
+		$permissions                     = new Rest_Permission_Handoff(
+			new WordPress_Rest_Request_Adapter( $current_actor ),
+			new Rest_Request_Authorizer(
+				$policy,
+				new WordPress_Rest_Nonce_Verifier(),
+				$correlations
+			),
+			$envelopes,
+			$correlations
+		);
+		$recovery_permissions            = new Rest_Permission_Handoff(
+			new WordPress_Rest_Request_Adapter( $current_actor ),
+			new Rest_Request_Authorizer(
+				$recovery_policy,
+				new WordPress_Rest_Nonce_Verifier(),
+				$correlations
+			),
+			$envelopes,
+			$correlations
+		);
+		$purge_recovery_permissions      = new Rest_Permission_Handoff(
+			new WordPress_Rest_Request_Adapter( $current_actor ),
+			new Rest_Request_Authorizer(
+				$purge_recovery_policy,
+				new WordPress_Rest_Nonce_Verifier(),
+				$correlations
+			),
+			$envelopes,
+			$correlations
+		);
+		$operations_diagnostics_rest     = new Operations_Diagnostics_Rest_Controller(
+			$permissions,
+			new Read_System_Diagnostics(
+				new Addon_Runtime_Bridge_Diagnostics( $runtime ),
+				$schema_readiness,
+				new WordPress_Evaluation_Queue_Diagnostics(),
+				null,
+				new Addon_Runtime_Ai_Routing_Diagnostics( $runtime ),
+				new WordPress_Private_Storage_Diagnostics(),
+				$schema_repair_state
+			),
+			$envelopes,
+			$correlations
+		);
+		$legacy_source_inspector         = new WordPress_Prefixed_Legacy_Source_Inspector( $canonical );
+		$legacy_preview_tokens           = new Signed_Legacy_Preview_Token( $canonical );
+		$legacy_migration_site           = new WordPress_Legacy_Migration_Site();
+		$legacy_migration_queue          = new WordPress_Legacy_Migration_Queue_Wakeup();
+		$legacy_mapping_validator        = new Platform_Legacy_Mapping_Decision_Validator(
+			new Platform_Assignment_Roster( $runtime )
+		);
+		$legacy_migration_preview_rest   = new Legacy_Migration_Preview_Rest_Controller(
+			$permissions,
+			new Preview_Legacy_Migration(
+				$legacy_source_inspector,
+				$legacy_preview_tokens,
+				$legacy_migration_site,
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$legacy_migration_approval_rest  = new Legacy_Migration_Approval_Rest_Controller(
+			$permissions,
+			new Approve_Legacy_Migration(
+				$legacy_source_inspector,
+				$legacy_preview_tokens,
+				$legacy_migration_site,
+				new WordPress_Legacy_Migration_Approval_Repository( $canonical ),
+				$ids,
+				$canonical,
+				null,
+				$legacy_mapping_validator
+			),
+			$envelopes,
+			$correlations,
+			$canonical
+		);
+		$legacy_migration_execution_rest = new Legacy_Migration_Execution_Rest_Controller(
+			$permissions,
+			new Execute_Legacy_Migration(
+				$legacy_source_inspector,
+				$legacy_migration_site,
+				new WordPress_Legacy_Migration_Execution_Repository( $canonical ),
+				$legacy_migration_queue,
+				$ids,
+				$canonical,
+				null,
+				$legacy_mapping_validator
+			),
+			$envelopes,
+			$correlations,
+			$canonical
+		);
+		$legacy_migration_rollback_rest  = new Legacy_Migration_Rollback_Rest_Controller(
+			$permissions,
+			new Rollback_Legacy_Migration(
+				new WordPress_Legacy_Migration_Rollback_Repository( $canonical, $private_files ),
+				$legacy_migration_site,
+				$ids
+			),
+			$envelopes,
+			$correlations,
+			$canonical
+		);
+		$legacy_migration_query_rest     = new Legacy_Migration_Run_Query_Rest_Controller(
+			$permissions,
+			new Read_Legacy_Migration_Run( new WordPress_Legacy_Migration_Run_Query(), $canonical ),
+			$envelopes,
+			$correlations
+		);
+		$purge_catalog                   = new Schema_Catalog();
+		$purge_targets                   = new Purge_Target_Catalog( $purge_catalog );
+		$purge_inventory                 = new WordPress_Purge_Inventory( $purge_catalog );
+		$purge_query_rest                = new Purge_Job_Query_Rest_Controller(
+			$purge_recovery_permissions,
+			new Read_Purge_Job( new WordPress_Purge_Job_Query(), $canonical, $purge_catalog ),
+			$envelopes,
+			$correlations
+		);
+		$purge_preview_builder           = new Purge_Preview_Builder( $purge_inventory, $purge_catalog, $canonical );
+		$purge_tokens                    = new Signed_Purge_Preview_Token( $canonical );
+		$purge_site                      = new WordPress_Purge_Site();
+		$purge_queue                     = new WordPress_Purge_Queue_Wakeup();
+		$purge_operations                = new WordPress_Purge_Operation_Repository(
+			$canonical,
+			$purge_targets,
+			$private_files,
+			$ids
+		);
+		$purge_preview_rest              = new Purge_Preview_Rest_Controller(
+			$purge_recovery_permissions,
+			new Preview_Purge(
+				$purge_inventory,
+				$purge_tokens,
+				$purge_site,
+				$purge_catalog,
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$purge_approval_rest             = new Purge_Approval_Rest_Controller(
+			$purge_recovery_permissions,
+			new Approve_Purge(
+				$purge_preview_builder,
+				$purge_tokens,
+				$purge_site,
+				new WordPress_Purge_Approval_Repository( $canonical ),
+				$ids,
+				$canonical
+			),
+			$envelopes,
+			$correlations,
+			$canonical
+		);
+		$purge_control_rest              = new Purge_Control_Rest_Controller(
+			$purge_recovery_permissions,
+			new Execute_Purge(
+				$purge_preview_builder,
+				$purge_site,
+				$purge_operations,
+				$purge_queue,
+				$purge_targets,
+				$ids,
+				$canonical
+			),
+			new Cancel_Purge( $purge_operations, $purge_site, $ids ),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$purge_worker                    = new Purge_Worker_Module(
+			new Process_Purge_Batch(
+				$purge_operations,
+				$purge_site,
+				$purge_queue
+			)
+		);
+		$schema_repair_rest              = new Schema_Repair_Rest_Controller(
+			$recovery_permissions,
+			new Repair_Addon_Schema(
+				$schema_repair_state,
+				new WordPress_Schema_Repair_Receipt( $canonical, $ids ),
+				new WordPress_Schema_Repairer(),
+				$schema_readiness,
+				new Schema_Catalog()
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$report_rest                     = new Worksheet_Report_Rest_Controller(
+			$permissions,
+			new Read_Worksheet_Reports(
+				new WordPress_Assignment_Progress_Report_Source_Query( null, $canonical, $cursors ),
+				new WordPress_Worksheet_Report_Source_Query( null, $canonical ),
+				new WordPress_Official_Assessment_Report_Source_Query( null, $canonical ),
+				new Worksheet_Report_Projector( $canonical ),
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$report_detail_rest              = new Worksheet_Report_Detail_Rest_Controller(
+			$permissions,
+			new Read_Worksheet_Report_Detail(
+				new WordPress_Assignment_Report_Detail_Source_Query( null, $canonical, $cursors ),
+				new WordPress_Worksheet_Report_Source_Query( null, $canonical ),
+				new Official_Assessment_Report_Detail_Source_Query( new WordPress_Official_Assessment_Report_Source_Query( null, $canonical ), $canonical ),
+				new Worksheet_Report_Detail_Projector( $canonical ),
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$student_score_lookup            = new WordPress_Official_Assessment_Score_Lookup_Query( null );
+		$student_roster_rest             = new Student_Roster_Rest_Controller(
+			$permissions,
+			new Read_Student_Roster_Reports(
+				new WordPress_Student_Roster_Report_Source_Query( null, $canonical, $cursors ),
+				$student_score_lookup,
+				new Student_Roster_Report_Projector( $canonical ),
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$student_report_detail_rest      = new Student_Report_Detail_Rest_Controller(
+			$permissions,
+			new Read_Student_Report_Detail(
+				new WordPress_Student_Report_Detail_Source_Query( null, $canonical, $cursors ),
+				new WordPress_Worksheet_Report_Source_Query( null, $canonical ),
+				$student_score_lookup,
+				new Student_Report_Detail_Projector( $canonical ),
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$report_snapshot_rest            = new Report_Snapshot_Rest_Controller(
+			$permissions,
+			new Create_Report_Snapshot(
+				new WordPress_Assignment_Progress_Report_Source_Query( null, $canonical, $cursors ),
+				new WordPress_Worksheet_Report_Source_Query( null, $canonical ),
+				new WordPress_Official_Assessment_Report_Source_Query( null, $canonical ),
+				new Worksheet_Report_Projector( $canonical ),
+				new WordPress_Report_Snapshot_Repository( $canonical ),
+				new Report_Snapshot_Profile( $canonical ),
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$report_snapshot_reader          = new Read_Report_Snapshot(
+			$report_snapshot_queries,
+			$objects,
+			new Report_Snapshot_Profile( $canonical ),
+			$canonical,
+			new \OJAI\Dashboard\Submission\Assignment\Infrastructure\WordPress_Report_Publication_Access( $contexts )
+		);
+		$report_snapshot_query_rest      = new Report_Snapshot_Query_Rest_Controller(
+			$permissions,
+			$report_snapshot_reader,
+			$envelopes,
+			$correlations
+		);
+		$report_export_repository        = new WordPress_Report_Export_Repository( $canonical );
+		$report_export_rest              = new Report_Export_Rest_Controller(
+			$permissions,
+			$report_snapshot_reader,
+			new Enqueue_Report_Export(
+				$report_snapshot_reader,
+				$report_export_repository,
+				new WordPress_Report_Export_Queue_Wakeup(),
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_bundle_repository    = new WordPress_Submission_Bundle_Repository( $canonical );
+		$submission_bundle_source        = new WordPress_Submission_Bundle_Source_Query( null, $canonical );
+		$submission_bundle_rest          = new Submission_Bundle_Rest_Controller(
+			$permissions,
+			new Enqueue_Submission_Bundle(
+				$submission_bundle_source,
+				$submission_bundle_repository,
+				new WordPress_Submission_Bundle_Queue_Wakeup(),
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$context_rest                    = new Context_Rest_Controller(
+			$permissions,
+			new Platform_Teaching_Context_Query( $runtime ),
+			$envelopes,
+			$correlations
+		);
+		$curriculum_catalog_profile      = new Curriculum_Catalog_Profile( $canonical );
+		$curriculum_catalog_rest         = new Curriculum_Catalog_Rest_Controller(
+			$permissions,
+			new Manage_Curriculum_Catalog(
+				new WordPress_Curriculum_Catalog_Repository(
+					$canonical,
+					$ids,
+					$curriculum_catalog_profile
+				),
+				$curriculum_catalog_profile,
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$configuration_profile           = new Assessment_Configuration_Profile( $canonical );
+		$configuration_repository        = new WordPress_Assessment_Configuration_Repository(
+			$canonical,
+			$ids,
+			$configuration_profile
+		);
+		$configuration_rest              = new Assessment_Configuration_Rest_Controller(
+			$permissions,
+			new Manage_Assessment_Configuration(
+				$configuration_repository,
+				$configuration_profile,
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$assignment_rest                 = new Assignment_Rest_Controller(
+			$permissions,
+			new Read_Assignments( $assignments ),
+			new Create_Assignment(
+				$assignments,
+				new Platform_Assignment_Roster( $runtime ),
+				new WordPress_Learner_Display_Snapshot(),
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations,
+			new Add_Assignment_Targets( $assignments, new Platform_Assignment_Roster( $runtime ), new WordPress_Learner_Display_Snapshot(), $ids, $canonical )
+		);
+		$assignment_lifecycle_rest       = new Assignment_Lifecycle_Rest_Controller(
+			$permissions,
+			new Change_Assignment( $assignment_lifecycle, $ids ),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$read_teacher_submissions        = new Read_Teacher_Submissions( $teacher_submissions );
+		$teacher_learner_labels          = new \OJAI\Dashboard\Submission\Teacher\Infrastructure\WordPress_Teacher_Learner_Labels();
+		$teacher_attachment_reader       = new Read_Teacher_Attachment( $read_teacher_submissions, new WordPress_Teacher_Attachment_Query(), $private_files );
+		$teacher_submission_rest         = new Teacher_Submission_Rest_Controller(
+			$permissions,
+			$read_teacher_submissions,
+			new Control_Teacher_Submission(
+				new WordPress_Teacher_Submission_Control_Repository( null, $canonical ),
+				$ids
+			),
+			$canonical,
+			$envelopes,
+			$correlations,
+			$teacher_attachment_reader,
+			$current_actor,
+			new WordPress_Rest_Nonce_Verifier(),
+			$teacher_learner_labels
+		);
+
+		$this->modules                          = new Module_Manager();
+		$asset_targets                          = new Worksheet_Asset_Target_Reader( $worksheets );
+		$asset_repository                       = new WordPress_Worksheet_Asset_Repository();
+		$legacy_migration_worker                = new Legacy_Migration_Worker_Module(
+			WordPress_Legacy_Migration_Batch_Factory::create( $canonical, $private_files )
+		);
+		$export_work_repository                 = new WordPress_Export_Work_Repository( $canonical );
+		$report_export_worker                   = new Report_Export_Worker_Module(
+			new Run_Next_Report_Export(
+				$export_work_repository,
+				$report_snapshot_reader,
+				new Report_Export_Artifact_Writer(
+					$canonical,
+					new Dompdf_Html_To_Pdf_Renderer(),
+					new Report_Print_Html_Serializer()
+				),
+				$private_files,
+				$policy,
+				$ids,
+				$canonical
+			)
+		);
+		$student_attachments                    = new WordPress_Student_Attachment_Repository( null, $canonical );
+		$student_file_metadata                  = new WordPress_Private_File_Staging_Repository();
+		$submission_zip_profile                 = new Submission_Zip_Upload_Profile();
+		$submission_zip_reader                  = new Submission_Zip_Entry_Reader( $submission_zip_profile );
+		$submission_zip_scan_repository         = new WordPress_Submission_Zip_Scan_Repository( null, $canonical );
+		$submission_zip_preview_query           = new WordPress_Submission_Zip_Preview_Query( null, $canonical );
+		$submission_zip_finalization_repository = new WordPress_Submission_Zip_Finalization_Repository( null, $canonical );
+		$submission_zip_rest                    = new Submission_Zip_Rest_Controller(
+			$permissions,
+			new Read_Submission_Zip_Preview( $submission_zip_preview_query ),
+			new Map_Submission_Zip_Items( new WordPress_Submission_Zip_Mapping_Repository( null, $canonical ), $ids ),
+			new Confirm_Submission_Zip( $submission_zip_finalization_repository, $ids ),
+			new Cancel_Submission_Zip( $submission_zip_finalization_repository, $ids ),
+			new Stage_Submission_Zip(
+				$assignments,
+				new WordPress_Submission_Zip_Repository( null, $canonical ),
+				$student_file_metadata,
+				$private_files,
+				$submission_zip_profile,
+				$ids,
+				$canonical
+			),
+			$envelopes,
+			$correlations,
+			$canonical
+		);
+		$submission_zip_scan_run                = new Run_Next_Submission_Zip_Scan(
+			$submission_zip_scan_repository,
+			$private_files,
+			$private_files,
+			$student_file_metadata,
+			new Clamav_Instream_Submission_Attachment_Scanner(),
+			$submission_zip_reader,
+			new Submission_Zip_Item_Content_Inspector( $submission_zip_reader ),
+			new Submission_Zip_Suggestion_Matcher(),
+			$ids
+		);
+		$storage_worker_heartbeat               = new WordPress_Storage_Worker_Heartbeat();
+		$submission_zip_scan_worker             = new Submission_Zip_Scan_Worker_Module( $submission_zip_scan_run, $storage_worker_heartbeat );
+		$submission_zip_cleanup_run             = new Run_Next_Submission_Zip_Cleanup(
+			new WordPress_Submission_Zip_Cleanup_Repository( null, $canonical ),
+			$private_files,
+			$ids
+		);
+		$submission_zip_cleanup_worker          = new Submission_Zip_Cleanup_Worker_Module( $submission_zip_cleanup_run, $storage_worker_heartbeat );
+
+		$attachment_scan_run            = new Run_Next_Submission_Attachment_Scan(
+			new WordPress_Student_Attachment_Scan_Repository( null, $canonical ),
+			$private_files,
+			new Clamav_Instream_Submission_Attachment_Scanner(),
+			new Submission_Attachment_Content_Inspector(),
+			$ids
+		);
+		$attachment_scan_worker         = new Submission_Attachment_Scan_Worker_Module( $attachment_scan_run, $storage_worker_heartbeat );
+		$attachment_cleanup_run         = new Run_Next_Submission_Attachment_Cleanup(
+			new WordPress_Student_Attachment_Cleanup_Repository( null, $canonical ),
+			$private_files,
+			$ids
+		);
+		$attachment_cleanup_worker      = new Submission_Attachment_Cleanup_Worker_Module( $attachment_cleanup_run, $storage_worker_heartbeat );
+		$export_cleanup_run             = new Run_Next_Export_Cleanup( new WordPress_Export_Cleanup_Repository( null, $canonical ), $private_files, $ids );
+		$export_cleanup_worker          = new Export_Cleanup_Worker_Module( $export_cleanup_run, $storage_worker_heartbeat );
+		$storage_jobs_rest              = new Storage_Jobs_Rest_Controller(
+			$permissions,
+			new Resume_Storage_Jobs(
+				$attachment_scan_run,
+				$attachment_cleanup_run,
+				$submission_zip_scan_run,
+				$submission_zip_cleanup_run,
+				$export_cleanup_run
+			),
+			$envelopes,
+			$correlations
+		);
+		$storage_operations_detail_rest = new Storage_Operations_Detail_Rest_Controller(
+			$permissions,
+			new Read_Storage_Operations_Detail(
+				new WordPress_Private_Storage_Diagnostics(),
+				$storage_worker_heartbeat,
+				null,
+				new WordPress_Storage_Backlog_Diagnostics()
+			),
+			$envelopes,
+			$correlations
+		);
+		$student_submission_commits     = new WordPress_Student_Submission_Commit_Repository( null, $canonical );
+		$auto_submit_worker             = new Auto_Submit_Due_Worker_Module(
+			new Run_Auto_Submit_Due(
+				new WordPress_Auto_Submit_Assignment_Repository( null, $canonical ),
+				$student_submission_commits,
+				$ids
+			)
+		);
+		$preview_projector              = new Worksheet_Preview_Projector( $canonical );
+		$projection_safety              = new Worksheet_Projection_Safety_Inspector( $canonical );
+		$print_projection               = new Build_Worksheet_Print_Projection(
+			new WordPress_Worksheet_Print_Source_Query( $worksheets, $canonical ),
+			new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+			$preview_projector,
+			$projection_safety,
+			$canonical
+		);
+		$submission_print_projection    = new Build_Submission_Print_Projection(
+			$teacher_submissions,
+			$print_projection,
+			new Submission_Response_Validator( $canonical ),
+			$canonical
+		);
+		$submission_bundle_worker       = new Submission_Bundle_Worker_Module(
+			new Run_Next_Submission_Bundle(
+				$export_work_repository,
+				$submission_bundle_source,
+				new Deterministic_Submission_Bundle_Writer(
+					$submission_print_projection,
+					new Submission_Print_Html_Serializer( $canonical, $teacher_attachment_reader ),
+					new Dompdf_Html_To_Pdf_Renderer(),
+					new WordPress_Submission_Bundle_Attachment_Reader( $private_files ),
+					$canonical
+				),
+				$private_files,
+				$policy,
+				$ids,
+				$canonical
+			)
+		);
+		$own_submission_pdf_sources     = new WordPress_Own_Submission_Pdf_Source_Query( $teacher_submissions );
+		$submission_pdf_repository      = new WordPress_Submission_Pdf_Repository(
+			$canonical,
+			new WordPress_Generated_Private_File_Metadata()
+		);
+		$submission_pdf_queue           = new WordPress_Submission_Pdf_Queue_Wakeup();
+		$submission_pdf_rest            = new Submission_Pdf_Rest_Controller(
+			$permissions,
+			new Enqueue_Submission_Pdf(
+				$submission_print_projection,
+				$submission_pdf_repository,
+				$submission_pdf_queue,
+				$ids,
+				$canonical
+			),
+			$teacher_submissions,
+			$canonical,
+			$envelopes,
+			$correlations,
+			$submission_print_projection,
+			new Submission_Print_Html_Serializer( $canonical, $teacher_attachment_reader )
+		);
+		$submission_pdf_worker          = new Submission_Pdf_Worker_Module(
+			new Run_Next_Submission_Pdf(
+				$submission_pdf_repository,
+				$submission_print_projection,
+				new Submission_Print_Html_Serializer( $canonical, $teacher_attachment_reader ),
+				new Dompdf_Html_To_Pdf_Renderer(),
+				$private_files,
+				$policy,
+				$ids,
+				$canonical,
+				null,
+				null,
+				$own_submission_pdf_sources
+			)
+		);
+		$result_pdf_sources             = new Q33_Own_Result_Pdf_Source_Query( $read_own_result, $canonical );
+		$result_print_projection        = new Build_Result_Print_Projection( $result_pdf_sources, $canonical );
+		$result_pdf_repository          = new WordPress_Result_Pdf_Repository( $canonical, new WordPress_Generated_Private_File_Metadata() );
+		$result_pdf_queue               = new WordPress_Result_Pdf_Queue_Wakeup();
+		$result_pdf_rest                = new Result_Pdf_Rest_Controller(
+			$permissions,
+			$current_actor,
+			$submission_result_queries,
+			new Enqueue_Own_Result_Pdf( $result_print_projection, $result_pdf_repository, $result_pdf_queue, $ids, $canonical ),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$result_pdf_worker              = new Result_Pdf_Worker_Module(
+			new Run_Next_Result_Pdf(
+				$result_pdf_repository,
+				$result_print_projection,
+				new Result_Print_Html_Serializer( $canonical ),
+				new Dompdf_Html_To_Pdf_Renderer(),
+				$private_files,
+				$policy,
+				$ids,
+				$canonical
+			)
+		);
+
+		$submission_evaluation_sources                = new WordPress_Submission_Evaluation_Source(
+			$teacher_submissions,
+			$canonical,
+			new Submission_Response_Validator( $canonical ),
+			$configuration_profile,
+			$private_files,
+			null,
+			$projects
+		);
+		$submission_evaluation_routing                = new Platform_Submission_Evaluation_Routing( $runtime );
+		$evaluation_dispatcher                        = WordPress_Evaluation_Queue_Dispatcher::from_globals();
+		$submission_evaluation_queue                  = new WordPress_Submission_Evaluation_Queue_Wakeup( $evaluation_dispatcher );
+		$enqueue_submission_evaluation                = new Enqueue_Submission_Evaluation(
+			$submission_evaluation_sources,
+			$submission_evaluation_routing,
+			new WordPress_Submission_Evaluation_Repository( $canonical ),
+			$submission_evaluation_queue,
+			new Submission_Score_Input_Builder(
+				$canonical,
+				new Submission_Revision_Integrity( $canonical ),
+				new Submission_Response_Validator( $canonical )
+			),
+			$ids,
+			$canonical
+		);
+		$submission_evaluation_rest                   = new Submission_Evaluation_Rest_Controller(
+			$permissions,
+			$enqueue_submission_evaluation,
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_evaluation_controls               = new WordPress_Submission_Evaluation_Control_Repository( $canonical );
+		$retry_submission_evaluation                  = new Retry_Submission_Evaluation(
+			$submission_evaluation_controls,
+			$submission_evaluation_routing,
+			$submission_evaluation_queue,
+			$ids,
+			$canonical
+		);
+		$submission_evaluation_control_rest           = new Submission_Evaluation_Control_Rest_Controller(
+			$permissions,
+			$retry_submission_evaluation,
+			new Cancel_Submission_Evaluation( $submission_evaluation_controls, $ids ),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_evaluation_review_rest            = new Submission_Evaluation_Review_Rest_Controller(
+			$permissions,
+			new Review_Submission_Evaluation(
+				new WordPress_Submission_Evaluation_Review_Repository( $canonical ),
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_evaluation_query_rest             = new Submission_Evaluation_Query_Rest_Controller(
+			$permissions,
+			new Read_Submission_Evaluations( $submission_evaluation_queries ),
+			$read_teacher_submissions,
+			$envelopes,
+			$correlations,
+			new Read_Submission_Evaluation_Roster( $read_teacher_submissions, new Platform_Assignment_Roster( $runtime ), new WordPress_Learner_Display_Snapshot() ),
+			$teacher_learner_labels
+		);
+		$submission_external_ai_consent_repository    = new WordPress_Submission_External_Ai_Consent_Repository( $canonical, $ids );
+		$submission_external_ai_consent               = new Manage_Submission_External_Ai_Consent(
+			$submission_external_ai_consent_repository,
+			$submission_evaluation_routing,
+			$canonical
+		);
+		$submission_external_ai_consent_rest          = new Submission_External_Ai_Consent_Rest_Controller(
+			$permissions,
+			$submission_external_ai_consent,
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_feedback_inputs                   = new Submission_Feedback_Input_Builder( $canonical );
+		$submission_feedback_repository               = new WordPress_Submission_Feedback_Repository( $canonical );
+		$submission_feedback_outputs                  = new Submission_Feedback_Output_Normalizer( $canonical );
+		$submission_feedback_revision_repository      = new WordPress_Submission_Feedback_Review_Repository( $canonical );
+		$submission_feedback_rest                     = new Submission_Feedback_Rest_Controller(
+			$permissions,
+			new Generate_Submission_Feedback(
+				$submission_feedback_repository,
+				$submission_evaluation_routing,
+				$submission_evaluation_queue,
+				$submission_feedback_inputs,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_feedback_review_rest              = new Submission_Feedback_Review_Rest_Controller(
+			$permissions,
+			new Review_Submission_Feedback(
+				$submission_feedback_repository,
+				$submission_feedback_revision_repository,
+				$submission_feedback_inputs,
+				$submission_feedback_outputs,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_feedback_approval_rest            = new Submission_Feedback_Approval_Rest_Controller(
+			$permissions,
+			new Approve_Submission_Feedback(
+				$submission_feedback_repository,
+				$submission_feedback_revision_repository,
+				$submission_feedback_inputs,
+				$submission_feedback_outputs,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_feedback_approval_withdrawal_rest = new Submission_Feedback_Approval_Withdrawal_Rest_Controller(
+			$permissions,
+			new Withdraw_Submission_Feedback_Approval(
+				$submission_feedback_revision_repository,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_result_release_repository         = new WordPress_Submission_Result_Release_Repository( $canonical );
+		$submission_result_release_rest               = new Submission_Result_Release_Rest_Controller(
+			$permissions,
+			new Release_Submission_Result(
+				$submission_feedback_repository,
+				$submission_result_release_repository,
+				new Submission_Result_Projection_Builder( $submission_feedback_inputs, $submission_feedback_outputs, $canonical ),
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_result_withdrawal_repository      = new WordPress_Submission_Result_Withdrawal_Repository( $canonical );
+		$submission_result_withdrawal_rest            = new Submission_Result_Withdrawal_Rest_Controller(
+			$permissions,
+			new Withdraw_Submission_Result( $submission_result_withdrawal_repository, $ids, $canonical ),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$submission_result_query_rest                 = new Submission_Result_Query_Rest_Controller(
+			$permissions,
+			$current_actor,
+			$submission_result_queries,
+			$read_own_result,
+			$envelopes,
+			$correlations
+		);
+		$submission_feedback_worker                   = new Submission_Feedback_Worker_Module(
+			new Run_Next_Submission_Feedback(
+				$submission_feedback_repository,
+				$submission_feedback_repository,
+				new Platform_Submission_Feedback_Execution( $runtime ),
+				new WordPress_Submission_Feedback_Execution_Consent(
+					$canonical,
+					static fn () => $submission_external_ai_consent_repository->current_record()
+				),
+				$policy,
+				$submission_feedback_inputs,
+				$submission_feedback_outputs,
+				$ids
+			),
+			$evaluation_dispatcher
+		);
+		$student_note_inputs                          = new Student_Note_Input_Builder( $canonical );
+		$student_note_repository                      = new WordPress_Student_Note_Repository( $canonical );
+		$student_note_revision_repository             = new WordPress_Student_Note_Review_Repository( $canonical, $student_note_outputs );
+		$student_note_rest                            = new Student_Note_Rest_Controller(
+			$permissions,
+			new Generate_Student_Note_Draft(
+				$student_note_repository,
+				$submission_evaluation_routing,
+				$submission_evaluation_queue,
+				$student_note_inputs,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$student_note_query_rest                      = new Student_Note_Query_Rest_Controller(
+			$permissions,
+			new Read_Student_Notes( $student_note_queries ),
+			$envelopes,
+			$correlations
+		);
+		$student_note_review_rest                     = new Student_Note_Review_Rest_Controller(
+			$permissions,
+			new Review_Student_Note(
+				$student_note_repository,
+				$student_note_revision_repository,
+				$student_note_inputs,
+				$student_note_outputs,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$student_note_approval_rest                   = new Student_Note_Approval_Rest_Controller(
+			$permissions,
+			new Approve_Student_Note(
+				$student_note_repository,
+				$student_note_revision_repository,
+				$student_note_outputs,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$student_note_approval_withdrawal_rest        = new Student_Note_Approval_Withdrawal_Rest_Controller(
+			$permissions,
+			new Withdraw_Student_Note_Approval(
+				$student_note_revision_repository,
+				$student_note_outputs,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$student_note_report_inclusion_rest           = new Student_Note_Report_Inclusion_Rest_Controller(
+			$permissions,
+			new Change_Student_Note_Report_Inclusion(
+				$student_note_repository,
+				$student_note_revision_repository,
+				$student_note_outputs,
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$student_note_worker                          = new Student_Note_Worker_Module(
+			new Run_Next_Student_Note_Draft(
+				$student_note_repository,
+				$student_note_repository,
+				new Platform_Student_Note_Execution( $runtime ),
+				new WordPress_Student_Note_Execution_Consent(
+					$canonical,
+					static fn () => $submission_external_ai_consent_repository->current_record()
+				),
+				$policy,
+				$student_note_inputs,
+				$student_note_outputs,
+				$ids
+			),
+			$evaluation_dispatcher
+		);
+		$submission_evaluation_worker                 = new Submission_Evaluation_Worker_Module(
+			new Run_Next_Submission_Evaluation(
+				new WordPress_Submission_Evaluation_Work_Repository( $canonical ),
+				new Platform_Submission_Evaluation_Execution( $runtime ),
+				new WordPress_Submission_Evaluation_Execution_Consent(
+					$canonical,
+					static fn () => $submission_external_ai_consent_repository->current_record()
+				),
+				$submission_evaluation_sources,
+				$policy,
+				new Submission_Evaluation_Output_Normalizer( $canonical ),
+				$ids
+			),
+			$evaluation_dispatcher
+		);
+		$assignment_evaluation_rest                   = new Assignment_Evaluation_Rest_Controller(
+			$permissions,
+			new Enqueue_Assignment_Evaluations(
+				new WordPress_Assignment_Evaluation_Batch_Source( $cursors ),
+				$enqueue_submission_evaluation,
+				new WordPress_Assignment_Evaluation_Batch_Receipt( $canonical ),
+				$ids,
+				$canonical,
+				null,
+				$retry_submission_evaluation,
+				$submission_evaluation_controls
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$pdf_repository                               = new WordPress_Worksheet_Pdf_Repository(
+			$canonical,
+			new WordPress_Generated_Private_File_Metadata()
+		);
+		$pdf_queue                                    = new WordPress_Worksheet_Pdf_Queue_Wakeup();
+		$own_worksheet_pdf_sources                    = new WordPress_Own_Worksheet_Pdf_Source_Query();
+		$enqueue_own_worksheet_pdf                    = new Enqueue_Own_Worksheet_Pdf(
+			$own_worksheet_pdf_sources,
+			$print_projection,
+			$pdf_repository,
+			$pdf_queue,
+			$ids,
+			$canonical
+		);
+		$enqueue_own_submission_pdf                   = new Enqueue_Own_Submission_Pdf(
+			$own_submission_pdf_sources,
+			$submission_print_projection,
+			$submission_pdf_repository,
+			$submission_pdf_queue,
+			$ids,
+			$canonical
+		);
+		$student_assignment_rest                      = new Student_Assignment_Rest_Controller(
+			$permissions,
+			$current_actor,
+			$student_assignments,
+			new Read_Student_Assignments( $student_assignments, $learning_contexts ),
+			new Read_Own_Submission( $student_assignments, $learning_contexts ),
+			new Start_Own_Submission( $student_assignments, $learning_contexts, $ids ),
+			new Autosave_Own_Submission( $student_assignments, $learning_contexts, $ids ),
+			new Submit_Own_Submission(
+				$student_assignments,
+				$learning_contexts,
+				$student_submission_commits,
+				$ids
+			),
+			new Stage_Own_Attachment(
+				$student_assignments,
+				$learning_contexts,
+				$student_attachments,
+				$student_file_metadata,
+				$private_files,
+				new Submission_Attachment_Upload_Profile(),
+				$ids
+			),
+			new Remove_Own_Staged_Attachment(
+				$student_assignments,
+				$learning_contexts,
+				$student_attachments,
+				$private_files,
+				$ids
+			),
+			$canonical,
+			$enqueue_own_worksheet_pdf,
+			$enqueue_own_submission_pdf,
+			$envelopes,
+			$correlations,
+			new \OJAI\Dashboard\Submission\Student\Application\Read_Student_File_Content(
+				new Read_Student_Assignments( $student_assignments, $learning_contexts ),
+				new Read_Own_Submission( $student_assignments, $learning_contexts ),
+				new \OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Student_File_Query(),
+				$private_files
+			),
+			new \OJAI\Dashboard\Rest\Infrastructure\WordPress_Rest_Nonce_Verifier()
+		);
+		$pdf_rest                                     = new Worksheet_Pdf_Rest_Controller(
+			$permissions,
+			new Enqueue_Worksheet_Pdf( $print_projection, $pdf_repository, $pdf_queue, $ids, $canonical ),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$export_query                                 = new WordPress_Export_Query( null, $canonical );
+		$export_rest                                  = new Export_Rest_Controller(
+			$permissions,
+			$current_actor,
+			$export_query,
+			new Read_Export_Job( $export_query, $policy ),
+			new Read_Export_Artifact( $export_query, $private_files, $policy ),
+			$envelopes,
+			$correlations
+		);
+		$export_control_repository                    = new WordPress_Export_Control_Repository( $canonical );
+		$export_control_rest                          = new Export_Control_Rest_Controller(
+			$permissions,
+			$current_actor,
+			$export_query,
+			new Cancel_Export_Job( $export_control_repository, $ids ),
+			new Retry_Export_Job( $export_control_repository, new WordPress_Export_Control_Queue_Wakeup(), $ids ),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$package_sources                              = new Build_Worksheet_Package_Source(
+			$worksheets,
+			new Read_Worksheet_Asset_Content(
+				$asset_repository,
+				new WordPress_Worksheet_Asset_Source_Reader( $worksheets ),
+				$asset_targets,
+				$private_files
+			),
+			new Worksheet_Document_Id_Rewriter(),
+			$canonical
+		);
+		$package_repository                           = new WordPress_Worksheet_Package_Repository(
+			$canonical,
+			new WordPress_Worksheet_Package_Private_File_Metadata()
+		);
+		$package_queue                                = new WordPress_Worksheet_Package_Queue_Wakeup();
+		$package_rest                                 = new Worksheet_Package_Rest_Controller(
+			$permissions,
+			new Enqueue_Worksheet_Package( $package_sources, $package_repository, $package_queue, $ids, $canonical ),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$package_worker                               = new Worksheet_Package_Worker_Module(
+			new Run_Next_Worksheet_Package(
+				$package_repository,
+				$package_sources,
+				new Deterministic_Zip_Worksheet_Package_Writer( $canonical ),
+				$private_files,
+				$policy,
+				$ids,
+				$canonical
+			)
+		);
+		$pdf_worker                                   = new Worksheet_Pdf_Worker_Module(
+			new Run_Next_Worksheet_Pdf(
+				$pdf_repository,
+				$print_projection,
+				new Worksheet_Print_Html_Serializer(),
+				new Dompdf_Html_To_Pdf_Renderer(),
+				$private_files,
+				$policy,
+				$ids,
+				$canonical,
+				null,
+				null,
+				$own_worksheet_pdf_sources
+			)
+		);
+		$asset_readiness                              = new Worksheet_Asset_Readiness_Checker( $asset_repository );
+		$worksheet_validator                          = new Validate_Worksheet_Revision(
+			$worksheets,
+			new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+			new Worksheet_Document_Id_Rewriter(),
+			$asset_readiness,
+			$canonical,
+			null,
+			$preview_projector,
+			$projection_safety
+		);
+		$evaluation_configuration                     = new WordPress_Worksheet_Evaluation_Configuration( $canonical, null, $projects );
+		$approve_worksheet_revision                   = new Approve_Worksheet_Revision(
+			$worksheets,
+			new WordPress_Worksheet_Approval_Repository( $canonical ),
+			$worksheet_validator,
+			new WordPress_Worksheet_Approval_Evidence(
+				$evaluation_configuration,
+				$evaluation_queries,
+				$canonical
+			),
+			new Worksheet_Approval_Policy_Gate( $canonical ),
+			new Worksheet_Document_Id_Rewriter(),
+			$ids,
+			$canonical
+		);
+		$publish_worksheet_revision                   = new Publish_Worksheet_Revision(
+			$worksheets,
+			new WordPress_Worksheet_Publication_Repository( $canonical ),
+			new WordPress_Worksheet_Publication_Configuration( $canonical, null, $projects ),
+			$worksheet_validator,
+			new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+			new Worksheet_Publication_Projector(
+				$canonical,
+				$preview_projector,
+				$projection_safety
+			),
+			new Worksheet_Document_Id_Rewriter(),
+			$ids,
+			$canonical
+		);
+		$change_worksheet_lifecycle                   = new Change_Worksheet_Lifecycle(
+			new WordPress_Worksheet_Lifecycle_Repository( $canonical ),
+			$ids
+		);
+		$worksheet_rest                               = new Worksheet_Rest_Controller(
+			$permissions,
+			new Create_Worksheet(
+				$worksheets,
+				$ids,
+				new Initial_Document_Factory( $ids, $canonical )
+			),
+			new Read_Worksheets( $worksheets ),
+			$canonical,
+			$envelopes,
+			$correlations,
+			new Save_Worksheet_Draft(
+				$worksheets,
+				new WordPress_Achievement_Standard_Snapshot_Reader(),
+				new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+				new Worksheet_Revision_Projector( $canonical, $ids ),
+				$ids,
+				$canonical,
+				null,
+				$projects
+			),
+			$duplicate_worksheet                      = new Duplicate_Worksheet(
+				$worksheets,
+				new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+				new Worksheet_Revision_Projector( $canonical, $ids ),
+				new Worksheet_Document_Id_Rewriter(),
+				new Clone_Worksheet_Asset(
+					new Read_Worksheet_Asset_Content(
+						$asset_repository,
+						new WordPress_Worksheet_Asset_Source_Reader( $worksheets ),
+						$asset_targets,
+						$private_files
+					),
+					$asset_repository,
+					$private_files,
+					new Worksheet_Asset_Upload_Profile(),
+					$ids
+				),
+				$asset_repository,
+				$private_files,
+				$ids,
+				$canonical
+			),
+			$worksheet_validator,
+			new Read_Worksheet_Preview(
+				$worksheets,
+				new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+				$preview_projector
+			),
+			$approve_worksheet_revision,
+			$publish_worksheet_revision,
+			$change_worksheet_lifecycle
+		);
+		$asset_rest                     = new Worksheet_Asset_Rest_Controller(
+			$permissions,
+			new Stage_Worksheet_Asset(
+				$asset_targets,
+				$asset_repository,
+				$private_files,
+				new Worksheet_Asset_Upload_Profile(),
+				$ids
+			),
+			$envelopes,
+			$correlations
+		);
+		$asset_access_rest              = new Worksheet_Asset_Access_Rest_Controller(
+			$permissions,
+			new Read_Worksheet_Asset_Content(
+				$asset_repository,
+				new WordPress_Worksheet_Asset_Source_Reader( $worksheets ),
+				$asset_targets,
+				$private_files
+			),
+			new Discard_Staged_Worksheet_Asset( $asset_targets, $asset_repository, $private_files ),
+			$envelopes,
+			$correlations
+		);
+		$template_import_rest           = new Worksheet_Template_Import_Rest_Controller(
+			$permissions,
+			new Import_Worksheet_Template(
+				new Read_Worksheets( $worksheets ),
+				new Zip_Worksheet_Template_Package_Reader(
+					$canonical,
+					new Worksheet_Asset_Upload_Profile()
+				),
+				new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+				new Worksheet_Revision_Projector( $canonical, $ids ),
+				new Worksheet_Template_Id_Rewriter(),
+				new Stage_Worksheet_Asset(
+					$asset_targets,
+					$asset_repository,
+					$private_files,
+					new Worksheet_Asset_Upload_Profile(),
+					$ids
+				),
+				new Save_Worksheet_Draft(
+					$worksheets,
+					new WordPress_Achievement_Standard_Snapshot_Reader(),
+					new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+					new Worksheet_Revision_Projector( $canonical, $ids ),
+					$ids,
+					$canonical,
+					null,
+					$projects
+				),
+				$asset_repository,
+				$asset_repository,
+				$private_files,
+				$canonical
+			),
+			$envelopes,
+			$correlations
+		);
+		$evaluation_sources             = new WordPress_Worksheet_Evaluation_Source(
+			$worksheets,
+			new Worksheet_Document_Canonicalizer( $canonical, $ids ),
+			new Worksheet_Revision_Projector( $canonical, $ids ),
+			$asset_repository,
+			$canonical
+		);
+		$evaluation_routing             = new Platform_Worksheet_Evaluation_Routing( $runtime );
+		$external_ai_consent_repository = new WordPress_External_Ai_Consent_Repository( $canonical, $ids );
+		$external_ai_consent            = new Manage_External_Ai_Consent(
+			$external_ai_consent_repository,
+			$evaluation_routing,
+			$canonical
+		);
+		$evaluation_queue               = new WordPress_Worksheet_Evaluation_Queue_Wakeup( $evaluation_dispatcher );
+		$evaluation_rest                = new Worksheet_Evaluation_Rest_Controller(
+			$permissions,
+			new Enqueue_Worksheet_Evaluation(
+				$evaluation_sources,
+				$evaluation_configuration,
+				$evaluation_routing,
+				new WordPress_Worksheet_Evaluation_Repository( $canonical ),
+				$evaluation_queue,
+				new Worksheet_Evaluation_Input_Builder( $canonical ),
+				$ids,
+				$canonical,
+				null,
+				$projects
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$evaluation_controls            = new WordPress_Worksheet_Evaluation_Control_Repository( $canonical );
+		$evaluation_control_rest        = new Worksheet_Evaluation_Control_Rest_Controller(
+			$permissions,
+			new Retry_Worksheet_Evaluation(
+				$evaluation_controls,
+				$evaluation_configuration,
+				$evaluation_routing,
+				$evaluation_queue,
+				$ids,
+				$canonical
+			),
+			new Cancel_Worksheet_Evaluation(
+				$evaluation_controls,
+				$ids
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$evaluation_review_rest         = new Worksheet_Evaluation_Review_Rest_Controller(
+			$permissions,
+			new Review_Worksheet_Evaluation(
+				new WordPress_Worksheet_Evaluation_Review_Repository( $canonical ),
+				$ids,
+				$canonical
+			),
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$evaluation_query_rest          = new Worksheet_Evaluation_Query_Rest_Controller(
+			$permissions,
+			new Read_Worksheet_Evaluations( $evaluation_queries ),
+			$envelopes,
+			$correlations
+		);
+		$external_ai_consent_rest       = new External_Ai_Consent_Rest_Controller(
+			$permissions,
+			$external_ai_consent,
+			$canonical,
+			$envelopes,
+			$correlations
+		);
+		$evaluation_worker              = new Worksheet_Evaluation_Worker_Module(
+			new Run_Next_Worksheet_Evaluation(
+				new WordPress_Worksheet_Evaluation_Work_Repository( $canonical ),
+				new Platform_Worksheet_Evaluation_Execution( $runtime ),
+				new WordPress_Worksheet_Evaluation_Execution_Consent( $canonical, static fn () => $external_ai_consent_repository->current_record() ),
+				$evaluation_sources,
+				$policy,
+				new Worksheet_Evaluation_Output_Normalizer( $canonical ),
+				$ids
+			),
+			$evaluation_dispatcher
+		);
+		$this->modules->add( new Addon_Module( $integration ) );
+		$this->modules->add( new Context_Rest_Module( $context_rest ) );
+		$this->modules->add( new Curriculum_Catalog_Rest_Module( $curriculum_catalog_rest ) );
+		$this->modules->add( new Operations_Diagnostics_Rest_Module( $operations_diagnostics_rest ) );
+		$this->modules->add( new Storage_Jobs_Rest_Module( $storage_jobs_rest ) );
+		$this->modules->add( new Storage_Operations_Detail_Rest_Module( $storage_operations_detail_rest ) );
+		$this->modules->add( new Legacy_Migration_Preview_Rest_Module( $legacy_migration_preview_rest ) );
+		$this->modules->add( new Legacy_Migration_Approval_Rest_Module( $legacy_migration_approval_rest ) );
+		$this->modules->add( new Legacy_Migration_Execution_Rest_Module( $legacy_migration_execution_rest ) );
+		$this->modules->add( new Legacy_Migration_Rollback_Rest_Module( $legacy_migration_rollback_rest ) );
+		$this->modules->add( new Legacy_Migration_Run_Query_Rest_Module( $legacy_migration_query_rest ) );
+		$this->modules->add( new Purge_Job_Query_Rest_Module( $purge_query_rest ) );
+		$this->modules->add( new Purge_Preview_Rest_Module( $purge_preview_rest ) );
+		$this->modules->add( new Purge_Approval_Rest_Module( $purge_approval_rest ) );
+		$this->modules->add( new Purge_Control_Rest_Module( $purge_control_rest ) );
+		$this->modules->add( new Schema_Repair_Rest_Module( $schema_repair_rest ) );
+		$this->modules->add( new Worksheet_Report_Rest_Module( $report_rest ) );
+		$this->modules->add( new Worksheet_Report_Detail_Rest_Module( $report_detail_rest ) );
+		$this->modules->add( new Student_Roster_Rest_Module( $student_roster_rest ) );
+		$this->modules->add( new Student_Report_Detail_Rest_Module( $student_report_detail_rest ) );
+		$this->modules->add( new Report_Snapshot_Rest_Module( $report_snapshot_rest ) );
+		$this->modules->add( new Report_Snapshot_Query_Rest_Module( $report_snapshot_query_rest ) );
+		$this->modules->add( new Assessment_Configuration_Rest_Module( $configuration_rest ) );
+		$this->modules->add( new Report_Export_Rest_Module( $report_export_rest ) );
+		$this->modules->add( new Submission_Bundle_Rest_Module( $submission_bundle_rest ) );
+		$this->modules->add( new Assignment_Rest_Module( $assignment_rest ) );
+		$this->modules->add( new Assignment_Lifecycle_Rest_Module( $assignment_lifecycle_rest ) );
+		$this->modules->add( new Worksheet_Rest_Module( $worksheet_rest ) );
+		$this->modules->add(
+			new \OJAI\Dashboard\Assessment\Project\Presentation\Project_Rest_Controller(
+				$permissions,
+				$projects,
+				new Create_Worksheet( $worksheets, $ids, new Initial_Document_Factory( $ids, $canonical ) ),
+				$canonical,
+				$envelopes,
+				$correlations,
+				$duplicate_worksheet
+			)
+		);
+		$this->modules->add( new Worksheet_Pdf_Rest_Module( $pdf_rest ) );
+		$this->modules->add( new Worksheet_Package_Rest_Module( $package_rest ) );
+		$this->modules->add( new Submission_Pdf_Rest_Module( $submission_pdf_rest ) );
+		$this->modules->add( new Export_Rest_Module( $export_rest ) );
+		$this->modules->add( new Export_Control_Rest_Module( $export_control_rest ) );
+		$this->modules->add( new Submission_Evaluation_Rest_Module( $submission_evaluation_rest ) );
+		$this->modules->add( new Result_Pdf_Rest_Module( $result_pdf_rest ) );
+		$this->modules->add( new Submission_Evaluation_Control_Rest_Module( $submission_evaluation_control_rest ) );
+		$this->modules->add( new Submission_Evaluation_Review_Rest_Module( $submission_evaluation_review_rest ) );
+		$this->modules->add( new Submission_Evaluation_Query_Rest_Module( $submission_evaluation_query_rest ) );
+		$this->modules->add( new Submission_Feedback_Rest_Module( $submission_feedback_rest ) );
+		$this->modules->add( new Submission_Feedback_Review_Rest_Module( $submission_feedback_review_rest ) );
+		$this->modules->add( new Submission_Feedback_Approval_Rest_Module( $submission_feedback_approval_rest ) );
+		$this->modules->add( new Submission_Feedback_Approval_Withdrawal_Rest_Module( $submission_feedback_approval_withdrawal_rest ) );
+		$this->modules->add( new Submission_Result_Release_Rest_Module( $submission_result_release_rest ) );
+		$this->modules->add( new Submission_Result_Withdrawal_Rest_Module( $submission_result_withdrawal_rest ) );
+		$this->modules->add( new Submission_Result_Query_Rest_Module( $submission_result_query_rest ) );
+		$this->modules->add( new Student_Note_Query_Rest_Module( $student_note_query_rest ) );
+		$this->modules->add( new Student_Note_Rest_Module( $student_note_rest ) );
+		$this->modules->add( new Student_Note_Review_Rest_Module( $student_note_review_rest ) );
+		$this->modules->add( new Student_Note_Approval_Rest_Module( $student_note_approval_rest ) );
+		$this->modules->add( new Student_Note_Approval_Withdrawal_Rest_Module( $student_note_approval_withdrawal_rest ) );
+		$this->modules->add( new Student_Note_Report_Inclusion_Rest_Module( $student_note_report_inclusion_rest ) );
+		$this->modules->add( new Submission_External_Ai_Consent_Rest_Module( $submission_external_ai_consent_rest ) );
+		$this->modules->add( new Assignment_Evaluation_Rest_Module( $assignment_evaluation_rest ) );
+		$this->modules->add( new Worksheet_Evaluation_Rest_Module( $evaluation_rest ) );
+		$this->modules->add( new Worksheet_Evaluation_Control_Rest_Module( $evaluation_control_rest ) );
+		$this->modules->add( new Worksheet_Evaluation_Query_Rest_Module( $evaluation_query_rest ) );
+		$this->modules->add( new External_Ai_Consent_Rest_Module( $external_ai_consent_rest ) );
+		$this->modules->add( new Student_Assignment_Rest_Module( $student_assignment_rest ) );
+		$this->modules->add( new Teacher_Submission_Rest_Module( $teacher_submission_rest ) );
+		$this->modules->add( new Submission_Zip_Rest_Module( $submission_zip_rest ) );
+		$this->modules->add( $submission_zip_scan_worker );
+		$this->modules->add( $legacy_migration_worker );
+		$this->modules->add( $purge_worker );
+		$this->modules->add( $attachment_scan_worker );
+		$this->modules->add( $attachment_cleanup_worker );
+		$this->modules->add( $auto_submit_worker );
+		$this->modules->add( $submission_zip_cleanup_worker );
+		$this->modules->add( $export_cleanup_worker );
+		$this->modules->add( $evaluation_worker );
+		$this->modules->add( $evaluation_dispatcher );
+		$this->modules->add( new \OJAI\Dashboard\ExternalAssessment\Assessment_Module( $runtime, $private_files ) );
+		$this->modules->add( $submission_evaluation_worker );
+		$this->modules->add( $submission_feedback_worker );
+		$this->modules->add( $student_note_worker );
+		$this->modules->add( $report_export_worker );
+		$this->modules->add( $submission_bundle_worker );
+		$this->modules->add( $submission_pdf_worker );
+		$this->modules->add( $pdf_worker );
+		$this->modules->add( $package_worker );
+		$this->modules->add( $result_pdf_worker );
+		$this->modules->add( new Worksheet_Evaluation_Review_Rest_Module( $evaluation_review_rest ) );
+		$this->modules->add( new Worksheet_Asset_Rest_Module( $asset_rest ) );
+		$this->modules->add( new Worksheet_Asset_Access_Rest_Module( $asset_access_rest ) );
+		$this->modules->add( new Worksheet_Template_Import_Rest_Module( $template_import_rest ) );
+	}
+
+	/**
+	 * Register every active module exactly once.
+	 *
+	 * @return void
+	 */
+	public function boot() {
+		if ( $this->booted ) {
+			return;
+		}
+
+		$this->booted = true;
+		$this->modules->register();
+	}
+}

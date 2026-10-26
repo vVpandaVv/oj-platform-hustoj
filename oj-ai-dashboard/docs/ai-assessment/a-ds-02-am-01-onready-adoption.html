@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-02 AM-01 onReady 적용 계획</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-02 AM-01 적용 계획</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html" aria-current="page">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">결론</a>
+          <a href="#verified">재확인 결과</a>
+          <a href="#reason">변경 이유</a>
+          <a href="#contract">현행 계약</a>
+          <a href="#behavior">동작 차이</a>
+          <a href="#impact">애드온 영향</a>
+          <a href="#security">보상 정책</a>
+          <a href="#sequence">적용 순서</a>
+          <a href="#gates">구현 관문</a>
+          <a href="#acceptance">수용 기준</a>
+          <a href="#decisions">결정 제안</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">A-DS-02 · Amendment AM-01 · Consumer Adoption</p>
+        <h2><code>onReady()</code> 적용 계획</h2>
+        <p>OJ Platform의 보안 개정 AM-01을 AI 평가 애드온 소비자 계약에 반영한다. 전역 <code>oj_platform_loaded</code>와 조회형 <code>AddonRuntimeGatewayV1::forAddon()</code>을 폐기하고, Manifest builder 안에서 등록한 애드온 전용 <code>onReady()</code> callback으로만 Runtime Context를 받는다.</p>
+        <div class="meta">
+          <span class="badge">재확인일 2026-08-12</span>
+          <span class="badge good">사용자 확정 2026-08-12</span>
+          <span class="badge good">플랫폼 C28-I01~I05 구현 확인</span>
+          <span class="badge good">플랫폼 계약 테스트 4종 통과</span>
+          <span class="badge good">상태 사용자 확인·동결</span>
+          <span class="badge good">C28-I06 G0 구현 완료</span>
+          <span class="badge good">검증 릴리스 증거 기록</span><span class="badge wait">clean package·G1 인수 대기</span>
+          <span class="badge">애드온 Runtime 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 결론</h2>
+      <section class="panel">
+        <p><code>oj_platform_register_addons</code> action 하나만 구독하고, 그 callback의 <code>$gateway-&gt;register('oj-ai-dashboard', ...)</code> builder 안에서 Manifest 기여와 <code>$addon-&gt;onReady(...)</code>를 함께 선언한다. 승인된 Manifest만 자기 전용 <code>AddonRuntimeContextV1</code>을 받으며 공개 호출 보장은 최대 한 번이다.</p>
+        <div class="callout"><strong>현재 적용 시점:</strong> 이 문서의 AM-01 소비자 보정은 그대로 유효하며 플랫폼은 <code>2.0.0-dev.33</code>·Addon API <code>1.1.0</code>으로 준비됐다. 검증 G0 릴리스 증거는 기록했다. 제공자 문서 commit과 clean production package 뒤 애드온의 <code>Admin_Module</code> 구형 연결을 G1에서 <code>onReady()</code> 기반 Bridge로 교체하며, 설치 과정에서 플랫폼 파일을 수정하지 않는다.</div>
+      </section>
+
+      <h2 id="verified">플랫폼 API 재확인 결과</h2>
+      <table>
+        <thead><tr><th>항목</th><th>확인 결과</th><th>소비자 판정</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼 구현</td><td><code>C28-I01~I05</code> 완료, AM-01과 namespace ledger 반영</td><td>설계·fixture는 현행 API로 즉시 동기화</td></tr>
+          <tr><td>제품 버전</td><td><code>2.0.0-dev.28</code> 내부 준비값</td><td>정식 최솟값으로 고정하지 않음</td></tr>
+          <tr><td>AM-01 당시 Addon API</td><td><code>OJ_PLATFORM_ADDON_API_VERSION=1.0.0</code></td><td>보안 전환 이력이며 onReady 방식은 현재도 유지</td></tr>
+          <tr><td>현재 Addon API</td><td><code>OJ_PLATFORM_ADDON_API_VERSION=1.1.0</code></td><td>G1 소비자 범위 <code>&gt;=1.1.0 &lt;2.0.0</code></td></tr>
+          <tr><td>현재 제품 기준</td><td><code>2.0.0-dev.33</code>, C28-I06 코드 완료</td><td>검증 증거와 <code>source_dirty=false</code> clean manifest 전 production package 차단</td></tr>
+          <tr><td>등록 action</td><td><code>oj_platform_register_addons(AddonRegistrationGatewayV1)</code></td><td>유일한 WordPress 연결점</td></tr>
+          <tr><td>Runtime 전달</td><td><code>AddonManifestBuilderV1::onReady(callable)</code></td><td>애드온별 직접 callback, 정확히 0회 또는 1회 등록</td></tr>
+          <tr><td>삭제 표면</td><td><code>oj_platform_loaded</code>, <code>AddonRuntimeGatewayV1</code>, <code>forAddon()</code></td><td>새 코드·fixture·활성 계약에서 참조 0건</td></tr>
+          <tr><td>Namespace</td><td>최초 승인 addon ID에 영구 귀속</td><td><code>oj-ai-dashboard</code> + <code>oj_ai_dashboard</code> 조합 불변</td></tr>
+        </tbody>
+      </table>
+      <p>제공자 정본은 플랫폼의 <a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-api-v1-contract.html#amendments">계약 개정 기록 AM-01</a>이고, 실제 전환 절차는 <a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-onready-migration.html">onReady 전환 안내서</a>를 따른다.</p>
+
+      <h2 id="reason">변경 이유와 경계</h2>
+      <section class="panel">
+        <p>이전 전역 Gateway는 모든 애드온 callback에 같은 객체를 전달하고 호출자가 임의 addon ID를 <code>forAddon()</code>에 넣을 수 있었다. 따라서 한 애드온이 다른 애드온의 Context·AI Task Gateway를 받는 impersonation 경로가 API 자체에 존재했다.</p>
+        <div class="risk callout"><strong>보안 결론:</strong> 구형 훅을 호환 fallback으로 남기지 않는다. 새 플랫폼에서 호출되지 않는 죽은 코드일 뿐 아니라, 다시 제공하면 격리 결함을 재도입한다. 전환은 병행 지원이 아니라 완전 교체다.</div>
+        <p>AM-01 당시에는 Console Page 6개, Public Page 3개, Menu 2개, Asset Bundle 4개, AI Task 2개와 A-DS-03 capability 집합을 변경하지 않았다. 이후 G5-IMP-05-S04에서 설정 전용 bundle을 분리해 현재 Asset Bundle은 5개가 됐고, 2026-08-28에는 이미 확정된 다섯 Console Page를 기존 Menu DTO로 직접 노출해 현재 Menu는 Console 5개·Public 1개다. <code>AddonRuntimeContextV1</code> 계약과 플랫폼 API는 바뀌지 않았다.</p>
+      </section>
+
+      <h2 id="contract">현행 소비자 계약</h2>
+      <pre><code>use CodingPanda\OjPlatform\AddonApi\V1\AddonManifestBuilderV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRegistrationGatewayV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeContextV1;
+
+add_action('oj_platform_register_addons', static function (
+    AddonRegistrationGatewayV1 $gateway
+): void {
+    $gateway-&gt;register('oj-ai-dashboard', static function (
+        AddonManifestBuilderV1 $addon
+    ): void {
+        $addon-&gt;manifest(/* A-DS-02 고정 manifest */);
+        // capability(), consolePage(), publicPage(), menu(), assetBundle(), aiTask()
+
+        $addon-&gt;onReady(static function (AddonRuntimeContextV1 $runtime): void {
+            if ($runtime-&gt;snapshot()-&gt;status() !== 'accepted') {
+                return;
+            }
+
+            Addon_Runtime_Bridge::connect($runtime);
+        });
+    });
+}, 10, 1);</code></pre>
+      <table>
+        <thead><tr><th>규칙</th><th>고정 내용</th></tr></thead>
+        <tbody>
+          <tr><td>등록 위치</td><td>플러그인 root 파일 로드 중 <code>oj_platform_register_addons</code> callback 등록</td></tr>
+          <tr><td><code>onReady()</code> 위치</td><td>같은 addon ID의 <code>register()</code> builder 내부</td></tr>
+          <tr><td>등록 횟수</td><td>AI 평가 애드온은 Runtime이 필수이므로 정확히 1회. 중복 등록은 후보 전체 거부</td></tr>
+          <tr><td>전달 객체</td><td>플랫폼이 만든 이 애드온 전용 <code>AddonRuntimeContextV1</code></td></tr>
+          <tr><td>허용 메서드</td><td><code>snapshot()</code>, <code>contexts()</code>, <code>aiTasks()</code></td></tr>
+          <tr><td>Bridge 전이</td><td><code>unavailable</code>에서 시작하고 세 의존 연결이 모두 끝난 뒤에만 <code>ready</code></td></tr>
+          <tr><td>callback 예외</td><td>플랫폼은 다른 애드온과 core 부팅을 계속한다. 이 애드온 Bridge는 <code>unavailable</code>을 유지</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="behavior">관찰 가능한 동작 차이</h2>
+      <table>
+        <thead><tr><th>상황</th><th>AM-01 동작</th><th>애드온 처리</th></tr></thead>
+        <tbody>
+          <tr><td>Manifest 승인</td><td><code>onReady</code>를 자기 Context와 최대 한 번 호출</td><td>callback 진입 시 Context·AI adapter를 한 번 연결</td></tr>
+          <tr><td>Manifest 거부·비호환·비활성</td><td><code>onReady</code> 미호출</td><td>업무 Route가 없으므로 자체 화면 진단을 시도하지 않음</td></tr>
+          <tr><td><code>onReady</code> 미등록</td><td>기여는 승인될 수 있으나 Runtime Context는 전달되지 않음</td><td>AI 평가 애드온에서는 계약 오류로 정적 검사</td></tr>
+          <tr><td><code>onReady</code> 중복</td><td><code>LogicException</code>, Manifest 후보 거부</td><td>builder당 정확히 한 번만 등록</td></tr>
+          <tr><td>callback 예외</td><td>플랫폼이 예외를 격리하고 부팅과 합성 기여를 유지하며 같은 부팅에서 재호출하지 않음</td><td>부분 연결 상태를 폐기하고 모든 handler에서 Bridge ready를 검사해 읽기·쓰기·평가를 fail closed</td></tr>
+          <tr><td>다른 addon Context 요청</td><td>조회 API 자체가 없음</td><td>addon ID를 Runtime 호출 인자로 저장하지 않음</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>거부 진단 소유권:</strong> 거부된 애드온에는 Runtime Context가 오지 않으므로 실패 사유는 OJ Platform 운영자용 애드온 상태 화면에서 확인한다. 애드온이 내부 Registry나 플랫폼 DB를 조회해 자기 거부 사유를 복원하지 않는다.</div>
+
+      <h2 id="impact">애드온 변경 영향 지도</h2>
+      <table>
+        <thead><tr><th>대상</th><th>현재</th><th>A-DS-16 승인 뒤 목표</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj-ai-dashboard.php</code></td><td>기존 Plugin boot 진입</td><td>플랫폼 class를 생성하지 않는 등록 callback을 가장 이른 로드 시점에 선언</td></tr>
+          <tr><td><code>src/Platform/Addon_Integration.php</code></td><td>없음</td><td>Manifest 고정 기여와 단일 <code>onReady()</code>를 소유하는 adapter 신설</td></tr>
+          <tr><td><code>src/Platform/Addon_Runtime_Bridge.php</code></td><td>없음</td><td><code>AddonRuntimeContextV1</code>만 보관하고 원자적 ready 전이를 제공</td></tr>
+          <tr><td><code>src/Admin/Admin_Module.php</code></td><td>구형 <code>oj_platform_loaded</code>에서 Container 수신</td><td>해당 hook과 <code>register_oj_console()</code> 제거</td></tr>
+          <tr><td><code>src/Platform/Oj_Console_Connector.php</code></td><td>문자열 Registry service 직접 조회</td><td>Manifest Page·Menu 기여로 대체 후 퇴출</td></tr>
+          <tr><td><code>src/Platform/Platform_Module.php</code></td><td>독립 메뉴·연결 fallback 보유</td><td>진단 query만 남기고 shell 등록 fallback 제거</td></tr>
+          <tr><td>Context·AI application port</td><td>현재 connector/filter와 혼재</td><td>Bridge가 받은 <code>contexts()</code>·<code>aiTasks()</code> adapter만 주입</td></tr>
+          <tr><td>테이블·migration</td><td>고정 <code>oj_ai_*</code></td><td>AM-01 때문에 바뀌는 DDL 0건</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>경계 fingerprint 재검사:</strong> 문서 보정 시작 전 애드온 Runtime은 370파일 <code>3bae6a3e1aaf2996e925a1e8b657c03c0bebbf0c794ffdf930813b38415807fe</code>, 플랫폼 Runtime은 1210파일 <code>f51ad3dee1e9d78cda158cde7ce8b0d7cfc1be186575909fcfc397b5baaa460d</code>였다. 종료 시 애드온은 같은 370파일·같은 hash를 유지했다. 플랫폼은 병행 중인 Problems 화면·UI·단위 테스트 6파일 변경으로 같은 1210파일의 hash가 <code>5568f329c70d2d22a9d9699949ffd813a2a13cb04930b3f8af5ad2b1401e86b7</code>로 이동했다. 이 외부 변경은 되돌리거나 AM-01 작업에 포함하지 않았으며, 이동 뒤에도 Addon API 계약 테스트 4종과 Kernel 구조 검사를 다시 통과했다.</div>
+
+      <h2 id="security">남은 플랫폼 공백과 보상 정책</h2>
+      <table>
+        <thead><tr><th>플랫폼 공백</th><th>현재 위험 판정</th><th>애드온 적용 규칙</th><th>해제 관문</th></tr></thead>
+        <tbody>
+          <tr><td>class·group revision에 담당 교사·관리자 명단 변경 미포함</td><td>현재 인가는 매번 재검사되어 직접 우회는 없음</td><td>snapshot revision을 권한 증명으로 쓰지 않고 화면·REST·Job start·commit·다운로드마다 현재 Context를 재인가</td><td>C28-I06 인수 E2E</td></tr>
+          <tr><td><code>AddonContextAccessRequestV1::operation()</code> 미강제</td><td>과도하게 엄격한 안전 실패, 확인된 우회 없음</td><td>작업별 A-DS-03 capability와 애드온 객체 Policy를 최종 권한으로 유지하고 operation 단독 허용 금지</td><td>operation별 양수·음수 matrix</td></tr>
+          <tr><td>I05 fixture가 실제 AI routing stack을 우회</td><td>프로덕션 결함은 미확인, 회귀 검사 공백</td><td><code>AiTaskRoutingService</code>·<code>StoredAiTaskRouter</code>를 사용하는 실제 소비자 통합 검사를 I06 필수 증거로 추가</td><td>primary·fallback·stale·비밀 비노출 E2E</td></tr>
+          <tr><td>namespace 재사용</td><td>ledger로 수정 완료</td><td>addon ID <code>oj-ai-dashboard</code>와 namespace <code>oj_ai_dashboard</code> 변경 금지, <code>addon_namespace_reserved</code>를 운영 진단으로 처리</td><td>재부팅·다른 addon 충돌 fixture</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="sequence">적용 순서</h2>
+      <div class="flow">
+        <div class="step"><div><strong>1 · 소비자 계약 동기화</strong><br>A-DS-02·03과 HTML 허브, 조사 문서의 목표 계약, 자동 검증을 AM-01로 보정한다. Runtime 변경은 0건이다.</div></div>
+        <div class="step"><div><strong>2 · A-DS-03~16 계속 설계</strong><br>현행 <code>onReady()</code> Context를 권한·Context·AI·경로·작업 계약의 입력으로 사용한다.</div></div>
+        <div class="step"><div><strong>3 · A-DS-16 최종 동결</strong><br>고정 기여 17개, capability 15개, adapter·테스트·퇴출 파일을 양방향 추적하고 사용자 승인을 받는다.</div></div>
+        <div class="step"><div><strong>4 · G1 소비자 인수</strong><br><code>2.0.0-dev.33</code>·API <code>1.1.0</code> 기준으로 실제 Route·Menu·Context·AI instruction·routing과 플랫폼 hash 불변을 검증한다.</div></div>
+        <div class="step"><div><strong>5 · 애드온 Runtime 교체</strong><br>단일 Manifest builder와 단일 <code>onReady()</code> Bridge를 구현하고 구형 Container·Registry·메뉴 fallback을 제거한다.</div></div>
+        <div class="step"><div><strong>6 · 릴리스 판정</strong><br>양쪽 전체 검사와 브라우저 인수를 통과하고 태그된 플랫폼 릴리스만 production 의존값으로 채택한다.</div></div>
+      </div>
+
+      <h2 id="gates">구현·릴리스 관문</h2>
+      <table>
+        <thead><tr><th>관문</th><th>통과 조건</th><th>차단 조건</th></tr></thead>
+        <tbody>
+          <tr><td>API 표면</td><td><code>onReady()</code> 1건, <code>AddonRuntimeContextV1</code> 직접 전달</td><td>삭제된 전역 훅·Gateway·<code>forAddon()</code> 참조</td></tr>
+          <tr><td>원자 연결</td><td>Context·AI adapter 준비가 모두 성공한 뒤 Bridge <code>ready</code></td><td>부분 연결 뒤 command 허용</td></tr>
+          <tr><td>거부 상태</td><td>callback 미호출에서도 업무·AI·로컬 우회 0건</td><td>거부 사유를 내부 Registry에서 조회</td></tr>
+          <tr><td>기여 Catalog</td><td>Page 9·Menu 6·현재 Asset 5·AI Task 2와 capability 15개 일치. AM-01 당시 Menu 2·Asset 4였고 현재는 기존 DTO 안에서 Console 직접 메뉴와 설정 bundle을 보완</td><td>AM-01 Runtime 계약 또는 기여 key·path 임의 변경</td></tr>
+          <tr><td>namespace</td><td><code>oj-ai-dashboard</code>/<code>oj_ai_dashboard</code> 고정</td><td>새 ID로 기존 namespace·routing 상속 시도</td></tr>
+          <tr><td>권한</td><td>capability + 현재 Context + 객체 + state 재검사</td><td>snapshot revision 또는 operation 하나만으로 허용</td></tr>
+          <tr><td>AI routing</td><td>실제 저장 routing stack에서 task 2종 성공·실패 검증</td><td>fake router 결과만으로 I06 승인</td></tr>
+          <tr><td>플랫폼 무수정</td><td>애드온 설치·업데이트 전후 platform source·config·migration hash 동일</td><td>애드온 package가 플랫폼 파일·DB·option을 patch</td></tr>
+          <tr><td>릴리스 값</td><td>tag와 package로 확정된 최솟값을 양쪽 HTML·fixture·package에 동시 반영</td><td><code>2.0.0-dev.28</code> 또는 placeholder를 production 확정값으로 간주</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="acceptance">AM-01 소비자 수용 기준</h2>
+      <table>
+        <thead><tr><th>ID</th><th>검증</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS02-AM01-A01</code></td><td>플랫폼 공개 builder에 <code>onReady(callable): void</code>가 있고 삭제된 Runtime Gateway interface는 존재하지 않음</td></tr>
+          <tr><td><code>A-DS02-AM01-A02</code></td><td>애드온 구현의 WordPress 플랫폼 action은 <code>oj_platform_register_addons</code> 1종뿐임</td></tr>
+          <tr><td><code>A-DS02-AM01-A03</code></td><td>Manifest builder 하나에서 <code>onReady()</code>를 정확히 한 번 등록</td></tr>
+          <tr><td><code>A-DS02-AM01-A04</code></td><td>승인된 애드온 callback이 다른 addon context를 받지 않고 정상 callback 진입은 최대 한 번임</td></tr>
+          <tr><td><code>A-DS02-AM01-A05</code></td><td>거부·비호환·비활성 Manifest의 callback 호출 0건과 업무 우회 0건</td></tr>
+          <tr><td><code>A-DS02-AM01-A06</code></td><td>callback 예외가 core·다른 애드온을 중단하지 않고 이 애드온 Bridge만 unavailable 유지</td></tr>
+          <tr><td><code>A-DS02-AM01-A07</code></td><td>고정 기여 17개와 capability 15개가 AM-01 전후 동일</td></tr>
+          <tr><td><code>A-DS02-AM01-A08</code></td><td>namespace 소유 충돌은 <code>addon_namespace_reserved</code>로 거부되고 기존 routing을 상속하지 않음</td></tr>
+          <tr><td><code>A-DS02-AM01-A09</code></td><td>Context revision·operation의 현재 공백에서도 모든 민감 작업이 A-DS-03 복합 Policy를 재검사</td></tr>
+          <tr><td><code>A-DS02-AM01-A10</code></td><td>두 AI task가 실제 routing stack의 primary·fallback·stale·failure fixture를 통과</td></tr>
+          <tr><td><code>A-DS02-AM01-A11</code></td><td><code>&gt;=2.0.0-dev.33 &lt;3.0.0</code>·<code>&gt;=1.1.0 &lt;2.0.0</code> 범위와 검증 증거·clean manifest가 없는 production package 생성이 차단됨</td></tr>
+          <tr><td><code>A-DS02-AM01-A12</code></td><td>애드온 설치·업데이트 전후 플랫폼 source·config·migration hash가 동일함</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">사용자 확정 결정 기록</h2>
+      <table>
+        <thead><tr><th>ID</th><th>확정 결정</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS02-AM01-D01</code></td><td>A-DS-02의 Runtime 전달 계약을 단일 <code>onReady()</code> callback으로 개정한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D02</code></td><td>삭제된 전역 훅·Runtime Gateway·<code>forAddon()</code>은 호환 fallback 없이 제거한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D03</code></td><td>Manifest 미승인 상태의 진단은 플랫폼 운영자용 애드온 상태 화면이 소유한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D04</code></td><td>addon ID와 namespace는 <code>oj-ai-dashboard</code>/<code>oj_ai_dashboard</code>로 영구 고정한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D05</code></td><td>Runtime Bridge는 전체 연결 성공 뒤에만 ready가 되는 원자 상태 전이를 사용한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D06</code></td><td>고정 기여 17개와 A-DS-03 capability 15개는 AM-01 때문에 변경하지 않는다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D07</code></td><td>revision과 operation 공백은 현재 Context 재인가와 애드온 복합 Policy로 보상한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D08</code></td><td>실제 AI routing stack 검사를 C28-I06 소비자 인수의 필수 조건으로 추가한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D09</code></td><td>A-DS-16 승인과 C28-I06 인수 전에는 애드온 PHP Runtime을 교체하지 않는다. 현재 조건은 충족되어 G1 전환이 가능하다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS02-AM01-D10</code></td><td>정식 태그 전 <code>2.0.0-dev.28</code>은 내부 검증값으로만 쓰고 production 최솟값으로 고정하지 않는다.</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+      <div class="good callout"><strong>사용자 확정 2026-08-12:</strong> <code>A-DS02-AM01-D01~D10</code>을 모두 동결했고 <a href="a-ds-03-access-policy.html"><code>A-DS03-D01~D16</code></a>도 같은 날 동결했다. 현행 <code>onReady()</code> 계약과 플랫폼 공백 보상 정책은 후속 상세 설계의 선행 입력이며, 현재 사용자 결정 대상은 <a href="a-ds-04-settings-ai-connection.html"><code>A-DS04-D01~D18</code></a>이다.</div>
+
+      <p class="footer">A-DS-02 AM-01 onReady 적용 계획 · 2026-08-12 사용자 확인·동결 · HTML 정본 · Runtime 변경 0건</p>
+    </main>
+  </div>
+</body>
+</html>

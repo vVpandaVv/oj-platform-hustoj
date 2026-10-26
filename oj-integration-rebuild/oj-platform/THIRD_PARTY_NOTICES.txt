@@ -1,0 +1,79 @@
+OJ Platform - Third-party software notices
+
+OJ Platform's own code is licensed under GPL-3.0-or-later.
+Copyright (c) 2026 codingpanda. See LICENSE.txt for the complete GNU GPL v3.
+You may redistribute and modify the platform's own code under version 3 or,
+at your option, any later version. No warranty is provided.
+Third-party components retain their original licenses listed below. This
+notice does not relicense those components or user submissions/documents.
+
+Bundled components and complete notice locations:
+
+Jodit 4.18.1 - MIT
+Copyright (c) 2013-2026 https://xdsoft.net
+resources/features/richtext/vendor/LICENSE.txt
+https://github.com/xdan/jodit/tree/4.18.1
+
+DOMPurify 3.4.17 - Apache-2.0 OR MPL-2.0
+This distribution exercises the Apache-2.0 alternative. The upstream combined
+license file and original copyright headers are retained unchanged.
+resources/features/richtext/vendor/DOMPurify-LICENSE.txt
+https://github.com/cure53/DOMPurify/tree/3.4.17
+
+Ace 1.44.0 - BSD-3-Clause
+resources/features/ace/vendor/LICENSE.txt
+resources/features/ace/vendor/THIRD_PARTY_NOTICES.txt
+https://github.com/ajaxorg/ace-builds/tree/v1.44.0
+The Python-mode Unicode range spelling was adjusted locally; see its notice.
+
+Blockly 12.5.1 - Apache-2.0
+resources/features/blockly/vendor/LICENSE.txt
+resources/features/blockly/vendor/THIRD_PARTY_NOTICES.txt
+https://github.com/RaspberryPiFoundation/blockly/tree/6f7d50552ee658299de16c139673c2d126ac9b16
+
+MathJax 3.2.2 - Apache-2.0
+resources/features/mathjax/vendor/LICENSE.txt
+resources/features/mathjax/vendor/THIRD_PARTY_NOTICES.txt
+https://github.com/mathjax/MathJax/tree/3.2.2
+
+Lucide / Feather selected and reconstructed SVG icons - ISC / MIT
+Copyright (c) 2020, Lucide Contributors
+Copyright (c) 2013-present Cole Bemis (Feather-derived icons)
+resources/ui/icons/LICENSE.txt
+https://github.com/lucide-icons/lucide
+
+Pretendard 1.3.9 bundled font - SIL Open Font License 1.1
+Copyright (c) 2021, Kil Hyung-jin
+Reserved Font Name: Pretendard
+resources/ui/fonts/pretendard/LICENSE.txt
+https://github.com/orioncactus/pretendard
+
+Babel / regenerator-runtime helper (inside DOMPurify bundle) - MIT
+resources/legal/Babel-helpers-LICENSE.txt
+Copyright (c) 2014-present Sebastian McKenzie and other contributors
+Copyright (c) 2014-present, Facebook, Inc. (regenerator helpers)
+
+Dracula theme (inside Ace 1.44.0 bundle) - MIT
+Copyright (c) 2017 Zeno Rocha <hi@zenorocha.com>
+resources/legal/Dracula-LICENSE.txt
+
+LodePNG 20261001 (inside image SPJ source) - Zlib
+Copyright (c) 2005-2026 Lode Vandevenne
+resources/legal/LodePNG-LICENSE.txt
+resources/features/image-spj/spj.cpp (decoder source and original notice)
+
+Separately installed / integrated software (not shipped in the plugin ZIP):
+
+WordPress - GPL version 2 or, at your option, any later version.
+Preserve the installed WordPress license.txt and copyright notices.
+https://wordpress.org/about/license/
+
+HUSTOJ - upstream repository includes GNU GPL version 2 license text.
+The exact applicable version and notices must also be checked in the installed
+judge engine and any modified files. The plugin ZIP does not contain the HUSTOJ
+judge_client executable or the WordPress core. Integration does not replace the
+license obligations for any copied or modified engine code.
+https://github.com/zhblue/hustoj/blob/master/LICENSE
+
+Public inventory and license texts: /open-source-licenses
+Third-party licenses do not license user submissions or policy document content.

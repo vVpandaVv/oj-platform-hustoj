@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>D-001 모듈·의존 관계 재정비 | OJ Platform</title>
+  <style>
+    :root {
+      --page: #f3f5f4;
+      --surface: #ffffff;
+      --surface-soft: #f7faf9;
+      --ink: #18211f;
+      --muted: #5f6e69;
+      --line: #d7dfdc;
+      --line-strong: #b9c6c1;
+      --primary: #0f766e;
+      --primary-strong: #0b5f59;
+      --primary-soft: #e6f4f1;
+      --required: #176b87;
+      --required-soft: #e8f3f7;
+      --optional: #59636f;
+      --optional-soft: #eef1f3;
+      --warning: #9a6700;
+      --warning-soft: #fff4d6;
+      --danger: #a33a32;
+      --danger-soft: #fcebea;
+      --nav: #162433;
+      --radius: 8px;
+      --shadow: 0 8px 24px rgba(24, 33, 31, 0.07);
+      --font: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: var(--primary-strong);
+    }
+
+    .skip-link {
+      position: fixed;
+      top: -60px;
+      left: 16px;
+      z-index: 100;
+      padding: 10px 14px;
+      border-radius: 4px;
+      background: var(--ink);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .skip-link:focus {
+      top: 12px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      min-height: 58px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 24px;
+      border-bottom: 1px solid #26394b;
+      background: var(--nav);
+      color: #fff;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 6px;
+      border: 1px solid #6f879b;
+      background: transparent;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .brand-copy {
+      display: grid;
+      min-width: 0;
+      line-height: 1.2;
+    }
+
+    .brand-copy strong {
+      font-size: 14px;
+    }
+
+    .brand-copy span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .topbar-status {
+      color: #d6e1ea;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 32px;
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 28px 32px 64px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 86px;
+      align-self: start;
+    }
+
+    .toc-title {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .toc-list {
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc-list a {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      padding: 7px 10px;
+      border-left: 3px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .toc-list a:hover,
+    .toc-list a:focus-visible {
+      border-left-color: var(--primary);
+      background: var(--surface);
+      color: var(--ink);
+      outline: none;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .report-header {
+      padding: 4px 0 24px;
+      border-bottom: 1px solid var(--line-strong);
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      max-width: 820px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .report-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--ink);
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .summary-band {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .summary-band strong {
+      color: var(--primary-strong);
+    }
+
+    .section {
+      padding: 34px 0 2px;
+      scroll-margin-top: 82px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 14px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    .section-heading p {
+      max-width: 680px;
+      margin: 5px 0 0;
+      color: var(--muted);
+    }
+
+    .decision-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .decision {
+      min-width: 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .decision-number {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      margin-bottom: 12px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .decision h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .decision p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .dependency-flow {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .flow-label {
+      padding-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .flow-modules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .module-chip {
+      display: inline-flex;
+      min-height: 34px;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface-soft);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .module-chip.required {
+      border-color: #b7d5e0;
+      background: var(--required-soft);
+      color: #124d62;
+    }
+
+    .module-chip.optional {
+      background: var(--optional-soft);
+      color: #3d4650;
+    }
+
+    .flow-note {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+    }
+
+    .segmented button {
+      min-height: 34px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .segmented button[aria-pressed="true"] {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .search {
+      width: min(320px, 100%);
+    }
+
+    .search label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .search input {
+      width: 100%;
+      min-height: 40px;
+      padding: 8px 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .search input:focus,
+    .segmented button:focus-visible {
+      outline: 3px solid rgba(15, 118, 110, 0.22);
+      outline-offset: 1px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--surface-soft);
+      color: #35413d;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: #fbfdfc;
+    }
+
+    code {
+      color: #174e49;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.94em;
+    }
+
+    .badge {
+      display: inline-flex;
+      min-height: 24px;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge.required {
+      background: var(--required-soft);
+      color: var(--required);
+    }
+
+    .badge.optional {
+      background: var(--optional-soft);
+      color: var(--optional);
+    }
+
+    .badge.priority {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .badge.review {
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .empty-result {
+      display: none;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .finding-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .finding {
+      display: grid;
+      grid-template-columns: 44px minmax(180px, 0.8fr) minmax(260px, 1.5fr) minmax(180px, 0.8fr);
+      gap: 14px;
+      align-items: start;
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .finding-index {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border-radius: 5px;
+      background: var(--warning-soft);
+      color: var(--warning);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .finding h3 {
+      margin: 2px 0 0;
+      font-size: 14px;
+    }
+
+    .finding p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .next-step {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      padding: 20px;
+      border: 1px solid #add7d1;
+      border-radius: var(--radius);
+      background: var(--primary-soft);
+    }
+
+    .next-step h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .next-step p {
+      margin: 6px 0 0;
+      color: #3e625d;
+    }
+
+    .next-status {
+      min-width: 112px;
+      padding: 10px 12px;
+      border: 1px solid #8fc5bd;
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--primary-strong);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 1000px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 20px;
+      }
+
+      .toc {
+        position: static;
+        overflow-x: auto;
+      }
+
+      .toc-title {
+        display: none;
+      }
+
+      .toc-list {
+        display: flex;
+        width: max-content;
+      }
+
+      .toc-list a {
+        min-height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+      }
+
+      .metric-grid,
+      .decision-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .finding {
+        grid-template-columns: 36px minmax(180px, 0.8fr) minmax(260px, 1.5fr);
+      }
+
+      .finding p:last-child {
+        grid-column: 2 / -1;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        padding: 0 14px;
+      }
+
+      .brand-copy span {
+        display: none;
+      }
+
+      .topbar-status {
+        display: none;
+      }
+
+      .layout {
+        padding: 16px 14px 44px;
+      }
+
+      h1 {
+        font-size: 29px;
+      }
+
+      .metric-grid,
+      .decision-list {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .metric {
+        padding: 13px;
+      }
+
+      .metric strong {
+        font-size: 24px;
+      }
+
+      .flow-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .segmented,
+      .search {
+        width: 100%;
+      }
+
+      .segmented button {
+        flex: 1;
+      }
+
+      .finding {
+        grid-template-columns: 36px minmax(0, 1fr);
+      }
+
+      .finding p,
+      .finding p:last-child {
+        grid-column: 2;
+      }
+
+      .next-step {
+        grid-template-columns: 1fr;
+      }
+
+      .next-status {
+        justify-self: start;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .topbar,
+      .toc,
+      .toolbar {
+        display: none;
+      }
+
+      .layout {
+        display: block;
+        width: 100%;
+        padding: 0;
+      }
+
+      .section {
+        break-inside: avoid;
+      }
+
+      .metric,
+      .decision,
+      .dependency-flow,
+      .table-wrap,
+      .finding,
+      .next-step {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="OJ Platform 문서 홈">
+      <span class="brand-mark" aria-hidden="true">OJ</span>
+      <strong>OJ Platform 재정비</strong>
+    </a>
+    <span class="topbar-status">D-001 · 재정비 결정 확정</span>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="문서 목차">
+      <p class="toc-title">문서 목차</p>
+      <ul class="toc-list">
+        <li><a href="#overview">한눈에 보기</a></li>
+        <li><a href="#decisions">확정 결정</a></li>
+        <li><a href="#flow">적재 흐름</a></li>
+        <li><a href="#modules">모듈 목록</a></li>
+        <li><a href="#findings">핵심 발견</a></li>
+        <li><a href="#next">후속 기록</a></li>
+      </ul>
+    </nav>
+
+    <main id="main">
+      <header class="report-header" id="overview">
+        <p class="eyebrow">OJ Platform 재정비 기준 · D-001</p>
+        <h1>모듈·의존 관계 재정비</h1>
+        <p class="lede">
+          이 문서는 모듈 목록을 조사하는 데 그치지 않고, OJ Platform 재정비에서 유지·분리·제거할 책임과
+          필수·선택 의존 계약을 확정하기 위한 기준서입니다.
+        </p>
+        <div class="report-meta">
+          <span>기준일 2026-07-15</span>
+          <span>근거 <code>config/modules.php</code>, <code>modules/*/Module.php</code></span>
+          <span>상태 재정비 결정 확정</span>
+        </div>
+
+        <div class="metric-grid" aria-label="핵심 수치">
+          <div class="metric"><strong>19</strong><span>현재 활성 선언 모듈</span></div>
+          <div class="metric"><strong>20</strong><span>전환기 목표 모듈</span></div>
+          <div class="metric"><strong>9</strong><span>목표 필수 기반 모듈</span></div>
+          <div class="metric"><strong>10 + 1</strong><span>선택 기능 + 임시 전환 모듈</span></div>
+        </div>
+
+        <div class="summary-band">
+          <strong>핵심 결론:</strong>
+          현재 코드는 초기 18개에 PlatformDb를 추가한 19개를 선언합니다. 재정비 목표는 CF-5와 D-008에서 확정한 필수 <code>jobs</code>를 더해 전환기 20개로 조립합니다.
+          사용자 선택 기능 10개는 개별 비활성화가 가능한 구조를 보존하고, <code>migration</code>은 전환 완료까지 잠근 뒤 제거하므로 정상 운영은 다시 19개입니다.
+        </div>
+      </header>
+
+      <section class="section" id="decisions" aria-labelledby="decisions-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="decisions-title">재정비 확정 결정</h2>
+            <p>D-001 검토 과정에서 사용자 확인을 받은 세 가지 기준입니다.</p>
+          </div>
+        </div>
+        <ol class="decision-list">
+          <li class="decision">
+            <span class="decision-number">1</span>
+            <h3>초기 18개 모듈 전체 조사</h3>
+            <p>지금 제거 대상을 고르지 않고 모든 모듈의 화면과 데이터를 조사한 뒤 유지·통합·제거를 결정합니다.</p>
+          </li>
+          <li class="decision">
+            <span class="decision-number">2</span>
+            <h3>선택 모듈 독립성 유지</h3>
+            <p>선택 기능은 개별적으로 끌 수 있어야 하며, 숨겨진 전이 의존을 명시적인 계약으로 정리합니다.</p>
+          </li>
+          <li class="decision">
+            <span class="decision-number">3</span>
+            <h3>이전 도구는 전환 완료까지 유지</h3>
+            <p><code>migration</code>은 재정비 중 필요한 운영 도구로 유지하고, D-008의 확정 계약에 따라 이전 검증과 7일 관찰 및 별도 제거 승인이 끝나면 제거합니다.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section" id="flow" aria-labelledby="flow-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="flow-title">재정비 기준이 되는 현재 적재 흐름</h2>
+            <p>숫자는 <code>config/modules.php</code>의 우선순위입니다. 같은 단계 안에서도 왼쪽에서 오른쪽 순서를 의미하지는 않습니다.</p>
+          </div>
+        </div>
+
+        <div class="dependency-flow">
+          <div class="flow-row">
+            <span class="flow-label">권한 기반 · 5</span>
+            <div class="flow-modules">
+              <span class="module-chip required">permission</span>
+            </div>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label">설정 기반 · 10</span>
+            <div class="flow-modules">
+              <span class="module-chip required">settings</span>
+            </div>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label">연결 기반 · 15–20</span>
+            <div class="flow-modules">
+              <span class="module-chip required">platform_db</span>
+              <span class="module-chip required">judge_db</span>
+              <span class="module-chip required">access_router</span>
+            </div>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label">사용자 기반 · 25–30</span>
+            <div class="flow-modules">
+              <span class="module-chip required">auth</span>
+              <span class="module-chip required">public_ui</span>
+            </div>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label">사용자 선택 기능 · 35–44</span>
+            <div class="flow-modules">
+              <span class="module-chip optional">problems</span>
+              <span class="module-chip optional">ranking</span>
+              <span class="module-chip optional">submissions</span>
+              <span class="module-chip optional">blockly</span>
+              <span class="module-chip optional">ai_feedback</span>
+              <span class="module-chip optional">learning_dashboard</span>
+              <span class="module-chip optional">groups</span>
+              <span class="module-chip optional">board</span>
+              <span class="module-chip optional">contests</span>
+              <span class="module-chip optional">classes</span>
+            </div>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label">전환 잠금 · 45</span>
+            <div class="flow-modules">
+              <span class="module-chip optional">migration</span>
+            </div>
+          </div>
+          <div class="flow-row">
+            <span class="flow-label">관리 화면 · 46</span>
+            <div class="flow-modules">
+              <span class="module-chip required">admin_console</span>
+            </div>
+          </div>
+        </div>
+        <p class="flow-note">
+          위 그림은 현재 코드의 필수 기반 8개와 선택 기능 10개, 잠금 전환 1개를 나타냅니다. 목표 조립에서는 <code>jobs</code>를 아홉 번째 필수 기반으로 추가하며, 선택 기능은 Handler만 등록하고 Jobs Core가 선택 기능을 역참조하지 않습니다. <code>migration</code>은 사용자가 끌 수 없는 전환 잠금 모듈입니다.
+        </p>
+      </section>
+
+      <section class="section" id="modules" aria-labelledby="modules-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="modules-title">현재 19개와 목표 Jobs 모듈</h2>
+            <p>현재 선언 19개에 목표 필수 Jobs를 더한 전환기 20개를 필수 기반·사용자 선택·전환 잠금 기준으로 확인합니다.</p>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="segmented" role="group" aria-label="모듈 유형 필터">
+            <button type="button" data-filter="all" aria-pressed="true">전체</button>
+            <button type="button" data-filter="required" aria-pressed="false">필수</button>
+            <button type="button" data-filter="optional" aria-pressed="false">선택</button>
+            <button type="button" data-filter="locked" aria-pressed="false">전환 잠금</button>
+          </div>
+          <div class="search">
+            <label for="module-search">모듈 검색</label>
+            <input id="module-search" type="search" placeholder="이름, 역할 또는 의존 모듈" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">순서</th>
+                <th scope="col">모듈</th>
+                <th scope="col">구분</th>
+                <th scope="col">현재 책임</th>
+                <th scope="col">직접 선행 모듈</th>
+                <th scope="col">검토 메모</th>
+              </tr>
+            </thead>
+            <tbody id="module-rows">
+              <tr data-type="required"><td>5</td><td><code>permission</code></td><td><span class="badge required">필수</span></td><td>권한 정의와 역할별 권한 설치</td><td>없음</td><td>전체 기능의 권한 기반</td></tr>
+              <tr data-type="required"><td>10</td><td><code>settings</code></td><td><span class="badge required">필수</span></td><td>공통 설정 저장소와 공통 설정 화면</td><td><code>permission</code></td><td><span class="badge priority">경계 분리</span> 문제·AI 저장소 역방향 참조 제거</td></tr>
+              <tr data-type="required"><td>15</td><td><code>platform_db</code></td><td><span class="badge required">필수</span></td><td>기존 플랫폼 테이블 매핑·스키마·버전 관리</td><td><code>settings</code></td><td><span class="badge priority">분리 완료</span> DB·테이블명·데이터 변경 없음</td></tr>
+              <tr data-type="required"><td>16</td><td><code>judge_db</code></td><td><span class="badge required">필수</span></td><td>저지 DB 연결과 저지 테이블 매핑</td><td><code>settings</code></td><td><span class="badge priority">경계 분리</span> 플랫폼 스키마 책임 제거</td></tr>
+              <tr data-type="required"><td>20</td><td><code>access_router</code></td><td><span class="badge required">필수</span></td><td>경로, URL, rewrite와 요청 분배</td><td><code>permission</code>, <code>settings</code></td><td>모든 화면의 진입 기반</td></tr>
+              <tr data-type="required"><td>25</td><td><code>auth</code></td><td><span class="badge required">필수</span></td><td>로그인, 가입, 계정과 사용자 연결</td><td><code>permission</code>, <code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code></td><td>사용자 원본·확장 데이터 경계가 넓음</td></tr>
+              <tr data-type="required"><td>30</td><td><code>public_ui</code></td><td><span class="badge required">필수</span></td><td>공개 화면 틀, 홈과 공개 메뉴</td><td><code>access_router</code>, <code>auth</code></td><td>설정 저장소를 전이 의존으로 사용</td></tr>
+              <tr data-type="required"><td>목표</td><td><code>jobs</code></td><td><span class="badge required">필수·신규</span></td><td>작업·항목·사건·단계, 상태 전이·재시도·취소와 기능 Handler 실행</td><td>Core: <code>platform_db</code>, <code>settings</code><br>HTTP: <code>permission</code>, <code>access_router</code>, <code>admin_console</code></td><td><span class="badge priority">목표 추가</span> 선택 기능을 역참조하지 않는 공통 작업 기반</td></tr>
+              <tr data-type="optional"><td>35</td><td><code>problems</code></td><td><span class="badge optional">선택</span></td><td>문제, 메타데이터, 퀴즈와 문제집</td><td><code>permission</code>, <code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code>, <code>auth</code></td><td><span class="badge priority">책임 집중</span> 핵심 기능과 운영 도구 혼합</td></tr>
+              <tr data-type="optional"><td>36</td><td><code>ranking</code></td><td><span class="badge optional">선택</span></td><td>전체 랭킹 조회와 집계</td><td><code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code>, <code>auth</code></td><td>변경보다 조회·집계 중심</td></tr>
+              <tr data-type="optional"><td>37</td><td><code>submissions</code></td><td><span class="badge optional">선택</span></td><td>제출, 결과, 재채점과 사건 기록</td><td><code>permission</code>, <code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code>, <code>auth</code>, <code>problems</code></td><td>문제와 사용자를 연결하는 핵심 실행 영역</td></tr>
+              <tr data-type="optional"><td>38</td><td><code>blockly</code></td><td><span class="badge optional">선택</span></td><td>Blockly 편집기와 제출 자원</td><td><code>permission</code>, <code>settings</code>, <code>access_router</code>, <code>problems</code>, <code>submissions</code></td><td><span class="badge priority">계약 명시</span> 사용자 선택 시에만 본체 적재</td></tr>
+              <tr data-type="optional"><td>39</td><td><code>ai_feedback</code></td><td><span class="badge optional">선택</span></td><td>AI 피드백, 프롬프트와 학습자 수준</td><td><code>permission</code>, <code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code>, <code>auth</code>, <code>problems</code>, <code>submissions</code></td><td><span class="badge priority">기능 소유</span> 피드백 설정 화면·검증·저장 담당</td></tr>
+              <tr data-type="optional"><td>40</td><td><code>learning_dashboard</code></td><td><span class="badge optional">선택</span></td><td>개인 학습 현황과 집계</td><td><code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code>, <code>auth</code>, <code>problems</code>, <code>submissions</code> / 선택: <code>ai_feedback</code></td><td><span class="badge priority">계약 명시</span> 생성자 의존만 사용</td></tr>
+              <tr data-type="optional"><td>41</td><td><code>groups</code></td><td><span class="badge optional">선택</span></td><td>그룹, 구성원, 관리자와 권한 범위</td><td><code>permission</code>, <code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code>, <code>auth</code>, <code>submissions</code></td><td>권한 서비스에 그룹 규칙 등록</td></tr>
+              <tr data-type="optional"><td>42</td><td><code>board</code></td><td><span class="badge optional">선택</span></td><td>게시판, 공지, 댓글과 첨부파일</td><td><code>permission</code>, <code>settings</code>, <code>access_router</code>, <code>auth</code></td><td>WordPress 글·댓글 저장 구조 사용</td></tr>
+              <tr data-type="optional"><td>43</td><td><code>contests</code></td><td><span class="badge optional">선택</span></td><td>대회, 참가, 랭킹, 통계와 IP</td><td><code>permission</code>, <code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code>, <code>auth</code>, <code>problems</code>, <code>submissions</code> / 선택: <code>groups</code></td><td><span class="badge priority">선택 계약</span> 그룹 OFF에서도 정상 적재</td></tr>
+              <tr data-type="optional"><td>44</td><td><code>classes</code></td><td><span class="badge optional">선택</span></td><td>수업, 참여자, 연결과 진행률</td><td><code>permission</code>, <code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code>, <code>auth</code>, <code>problems</code>, <code>submissions</code> / 선택: <code>groups</code></td><td><span class="badge priority">선택 계약</span> 그룹 OFF에서도 정상 적재</td></tr>
+              <tr data-type="locked"><td>45</td><td><code>migration</code></td><td><span class="badge priority">잠금·임시</span></td><td>기존 데이터 조사·검증과 이전 도구</td><td><code>permission</code>, <code>settings</code>, <code>platform_db</code>, <code>judge_db</code>, <code>access_router</code></td><td>전환 중에는 비활성화할 수 없고 D-008 완료 관문 통과 후 제거</td></tr>
+              <tr data-type="required"><td>46</td><td><code>admin_console</code></td><td><span class="badge required">필수</span></td><td>관리 화면 틀, 메뉴와 시스템 상태</td><td><code>access_router</code>, <code>permission</code>, <code>settings</code></td><td><span class="badge priority">단일 소유</span> 경로 권한을 기준으로 메뉴를 동적 필터링</td></tr>
+            </tbody>
+          </table>
+          <p class="empty-result" id="empty-result">조건에 맞는 모듈이 없습니다.</p>
+        </div>
+      </section>
+
+      <section class="section" id="findings" aria-labelledby="findings-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="findings-title">재정비 선결 과제 8가지</h2>
+            <p>8개 문제 모두 소스 반영·정적 검사를 마쳤고 사용자 확인까지 완료했습니다.</p>
+          </div>
+        </div>
+
+        <ol class="finding-list">
+          <li class="finding">
+            <span class="finding-index">01</span>
+            <h3>설정 모듈의 역방향 참조</h3>
+            <p>문제별 제출 방식은 문제 편집 화면이, AI 피드백 설정은 <code>ai_feedback</code>이 소유합니다.</p>
+            <p>소스 반영·정적 검사·사용자 확인 완료</p>
+          </li>
+          <li class="finding">
+            <span class="finding-index">02</span>
+            <h3>문제와 AI 책임 중첩</h3>
+            <p>공통 AI 호출을 인프라로 옮기고 문제 메타데이터와 제출 피드백이 이를 독립적으로 사용합니다.</p>
+            <p>소스 반영·정적 검사·사용자 확인 완료</p>
+          </li>
+          <li class="finding">
+            <span class="finding-index">03</span>
+            <h3>Blockly의 숨은 전이 의존</h3>
+            <p>문제·권한의 직접 의존을 선언하고 제출 화면에서 필요할 때만 Blockly 본체를 적재합니다.</p>
+            <p>소스 반영·정적 검사·사용자 확인 완료</p>
+          </li>
+          <li class="finding">
+            <span class="finding-index">04</span>
+            <h3>대회·수업의 선택적 그룹 의존</h3>
+            <p>대회·수업은 그룹을 선택 의존으로 선언하며 그룹 OFF에서도 정상 적재됩니다.</p>
+            <p>소스 반영·정적 검사·사용자 확인 완료</p>
+          </li>
+          <li class="finding">
+            <span class="finding-index">05</span>
+            <h3>AI의 전이 인증 의존</h3>
+            <p>AI가 실제 사용하는 인증과 권한 모듈을 직접 선행 조건으로 선언합니다.</p>
+            <p>소스 반영·정적 검사·사용자 확인 완료</p>
+          </li>
+          <li class="finding">
+            <span class="finding-index">06</span>
+            <h3>학습 현황의 의존 관계 불투명</h3>
+            <p>학습 현황 서비스와 렌더러가 필요한 의존을 생성자로 직접 받습니다.</p>
+            <p>소스 반영·정적 검사·사용자 확인 완료</p>
+          </li>
+          <li class="finding">
+            <span class="finding-index">07</span>
+            <h3>DB 모듈의 이중 책임</h3>
+            <p><code>platform_db</code>가 플랫폼 스키마를, <code>judge_db</code>가 저지 연결과 저지 테이블을 소유합니다.</p>
+            <p>모듈 책임만 분리했으며 DB·테이블명·데이터는 변경하지 않음</p>
+          </li>
+          <li class="finding">
+            <span class="finding-index">08</span>
+            <h3>관리자 메뉴 소유권 분산</h3>
+            <p><code>AdminConsole</code>만 메뉴를 등록하며 경로 권한을 메뉴에 반영하고 두 권한 검사를 모두 통과한 항목만 표시합니다.</p>
+            <p>소스 반영·정적 검사·사용자 확인 완료</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section" id="next" aria-labelledby="next-title">
+        <div class="next-step">
+          <div>
+            <h2 id="next-title"><a href="d-002-route-inventory.html">다음 재정비 기준: D-002 화면·접근 경로</a></h2>
+            <p>R-01부터 R-08까지 소스 반영·정적 검사·사용자 확인을 마쳤고, 다음 재정비 범위인 화면·접근 경로와 F-01~F-08 검토도 완료했습니다.</p>
+          </div>
+          <span class="next-status">D-002 완료</span>
+        </div>
+      </section>
+
+      <footer>
+        D-001 · 모듈·의존 관계 재정비 · 결정 확정 · UTF-8 HTML
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
+    const searchInput = document.getElementById("module-search");
+    const moduleRows = Array.from(document.querySelectorAll("#module-rows tr"));
+    const emptyResult = document.getElementById("empty-result");
+    let activeFilter = "all";
+
+    function applyModuleFilter() {
+      const query = searchInput.value.trim().toLocaleLowerCase("ko");
+      let visibleCount = 0;
+
+      moduleRows.forEach((row) => {
+        const typeMatches = activeFilter === "all" || row.dataset.type === activeFilter;
+        const textMatches = query === "" || row.textContent.toLocaleLowerCase("ko").includes(query);
+        const visible = typeMatches && textMatches;
+        row.hidden = !visible;
+        if (visible) {
+          visibleCount += 1;
+        }
+      });
+
+      emptyResult.style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        filterButtons.forEach((item) => {
+          item.setAttribute("aria-pressed", item === button ? "true" : "false");
+        });
+        applyModuleFilter();
+      });
+    });
+
+    searchInput.addEventListener("input", applyModuleFilter);
+  </script>
+</body>
+</html>

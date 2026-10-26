@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-09 활동지 제작과 버전</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-09 활동지 제작·버전</p>
+      <nav><div class="nav-group"><strong>문서</strong>
+        <a href="index.html">허브</a>
+        <a href="design-procedure.html">전체 설계 순서</a>
+        <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+        <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+        <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+        <a href="a-d-004-data-storage.html">A-D-004 데이터·저장</a>
+        <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+        <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+        <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+        <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+        <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+        <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+        <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+        <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+        <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+        <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+        <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+        <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+        <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+        <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+        <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+        <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html" aria-current="page">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+        <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+        <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+        <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+        <a href="redesign.html">재설계 기준</a>
+        <a href="code-consistency.html">코드 일관성</a>
+        <a href="g2-imp-02-s03-document-profile.html">G2-IMP-02-S03 문서 검증</a>
+        <a href="g2-imp-02-s04-revision-projection.html">G2-IMP-02-S04 Projection</a>
+        <a href="g2-imp-02-s05-revision-transaction.html">G2-IMP-02-S05 Transaction</a>
+        <a href="g2-imp-02-s06-operation-transaction.html">G2-IMP-02-S06 Operation</a>
+        <a href="g2-imp-02-s07-rest-boundary.html">G2-IMP-02-S07 REST</a>
+      </div><div class="nav-group"><strong>섹션</strong>
+        <a href="#result">결론</a>
+        <a href="#scope">범위·기준선</a>
+        <a href="#editor-profile">Plate 프로필</a>
+        <a href="#teacher-document">교사용 정본</a>
+        <a href="#nodes">Node·mark</a>
+        <a href="#responses">응답칸 10종</a>
+        <a href="#identity">ID·정규화</a>
+        <a href="#limits">한도</a>
+        <a href="#lifecycle">저장·승인·발행</a>
+        <a href="#projections">Projection 5종</a>
+        <a href="#assets">자산·파일</a>
+        <a href="#package">Package·호환</a>
+        <a href="#pdf">PDF 입력</a>
+        <a href="#duplicate">활동지 복제</a>
+        <a href="#route-amendments">REST 보강안</a>
+        <a href="#database-amendments">DB 보강안</a>
+        <a href="#services">모듈 경계</a>
+        <a href="#errors">오류·복구</a>
+        <a href="#acceptance">수용 기준</a>
+        <a href="#decisions">결정 기록</a>
+        <a href="#completion">완료 판정</a>
+      </div></nav>
+    </aside>
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">Detailed Design 10 / 17</p>
+        <h2>활동지 제작과 버전</h2>
+        <p>Plate 교사용 문서를 활동지 콘텐츠의 단일 정본으로 삼고, 학생 화면·응답 schema·채점·활동지 자체 평가·인쇄를 검증된 projection으로 만든다. 저장할 때마다 새 revision을 남기며 발행본은 이후 편집이나 배포와 분리된 불변 snapshot이다.</p>
+        <div class="meta"><span class="badge">작성일 2026-08-13</span><span class="badge good">상태 사용자 확인·동결</span><span class="badge good">확정일 2026-08-13</span><span class="badge good">A-DS-08 Amendment 01 반영</span><span class="badge good">A-DS-05 Amendment 02 반영</span><span class="badge good">A-DS-12 Projection Amendment 01 반영</span><span class="badge">Plate 53.1.2 기준선</span><span class="badge">콘텐츠 node 16종</span><span class="badge">응답칸 10종</span><span class="badge">Projection 5종</span><span class="badge">업무 Runtime 변경 0건</span></div>
+      </section>
+
+      <h2 id="scope">목적·범위·고정 입력</h2>
+      <section class="panel">
+        <p>이 단계는 활동지를 어떤 구조로 만들고, 저장·승인·발행하며, 학생과 AI와 PDF에 어떤 형태로 전달하는지를 정한다. 활동지 자체 평가의 prompt·결과와 검토 규칙은 A-DS-10, 학생 작성·제출과 첨부는 A-DS-11, PDF renderer와 보고서는 A-DS-14에서 이어서 상세화한다.</p>
+        <table>
+          <thead><tr><th>입력</th><th>고정해서 소비하는 내용</th><th>이 단계의 처리</th></tr></thead>
+          <tbody>
+            <tr><td><a href="a-ds-00-scope-baseline.html">A-DS-00</a></td><td>Plate 교사용 원본, 학생·채점·인쇄 projection, 승인 뒤 불변 발행본</td><td>schema·revision·projection으로 물리화</td></tr>
+            <tr><td><a href="a-ds-01-ui-system.html">A-DS-01</a></td><td>Plate 기본 도구, 콘텐츠 삽입, 응답칸 10종, 짧은 제품 문구</td><td>허용 node·command·상태로 제한</td></tr>
+            <tr><td><a href="a-ds-03-access-policy.html">A-DS-03</a></td><td>활동지 조회·관리·평가·내보내기 capability와 객체 범위</td><td>모든 query·command에서 같은 Policy 사용</td></tr>
+            <tr><td><a href="a-ds-05-addon-database.html">A-DS-05</a></td><td>45개 고정 <code>oj_ai_*</code> table, immutable revision·publication, private file</td><td>기존 table 안에서 저장하며 신규 table을 요구하지 않음</td></tr>
+            <tr><td><a href="a-ds-07-ai-job-execution.html">A-DS-07</a></td><td>AI는 저장된 정확한 revision과 canonical input만 평가</td><td>평가 input projection과 source hash 고정</td></tr>
+            <tr><td><a href="a-ds-08-route-rest-command.html">A-DS-08</a></td><td>활동지 조회·저장·검증·승인·발행·평가·PDF 명령</td><td>자산과 package에 필요한 RA01~RA04를 A-DS-08 Amendment 01로 동결·반영</td></tr>
+          </tbody>
+        </table>
+        <div class="warning callout"><strong>구현 중단선:</strong> 이 문서는 사용자 확인으로 동결한 상세 설계 정본이다. <code>A-DS09-D01~D24</code>, <code>A-DS09-RA01~RA04</code>, <code>A-DS09-DBA01~DBA03</code>은 관련 HTML 정본에 반영했지만 <code>A-DS-16</code> 최종 승인 전에는 Plate bundle, PHP schema, REST Controller, DDL 또는 OJ Platform Runtime을 구현·수정하지 않는다.</div>
+      </section>
+
+      <h2 id="baseline">현재 구현 기준선과 교체 지점</h2>
+      <table>
+        <thead><tr><th>ID</th><th>실제 기준선</th><th>목표 계약</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-B01</code></td><td><code>platejs@53.1.2</code>와 whole-editor 계열 package가 설치됨</td><td><code>worksheet_plate@1</code>이 검증된 정확한 package·plugin 목록만 고정</td><td>선별 재구성</td></tr>
+          <tr><td><code>A-DS09-B02</code></td><td><code>version: 1</code>, <code>plate_value</code>, 빈 <code>document_html</code>·<code>blocks</code>를 함께 저장</td><td><code>oj_ai.worksheet_document@1.0.0</code> 하나만 정본으로 저장</td><td>교체</td></tr>
+          <tr><td><code>A-DS09-B03</code></td><td><code>hws_response</code>와 초 단위·위치 기반 ID를 사용</td><td><code>oj_ai_response</code>와 서버 발급 <code>PublicIdV1</code> 사용</td><td>upcaster 뒤 교체</td></tr>
+          <tr><td><code>A-DS09-B04</code></td><td>브라우저 TypeScript는 응답칸 10종을 알지만 grading·제약·stable option ID가 없음</td><td>교사용 응답 node와 학생·채점 projection이 같은 response ID를 공유</td><td>확장</td></tr>
+          <tr><td><code>A-DS09-B05</code></td><td>unknown node는 paragraph로, 외부 업로드 실패는 object URL로 남을 수 있음</td><td>unknown node·property·URL을 거부하고 private asset ID만 저장</td><td>교체</td></tr>
+          <tr><td><code>A-DS09-B06</code></td><td>학생 renderer와 PDF renderer가 Plate tree를 동일하게 표현하지 못함</td><td>학생·인쇄 renderer parity가 발행 관문</td><td>교체</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="editor-profile">WorksheetEditorProfile</h2>
+      <p><code>worksheet_plate@1</code>은 Plate 전체 예제가 아니라 활동지에 필요한 plugin·command·node·mark·한도를 고정하는 애드온 소유 프로필이다. Plate package를 올리거나 허용 node를 바꾸면 같은 프로필을 덮지 않고 새 버전을 만든다.</p>
+      <table>
+        <thead><tr><th>명령군</th><th>교사에게 제공</th><th>프로필 규칙</th></tr></thead>
+        <tbody>
+          <tr><td>이력</td><td>실행 취소, 다시 실행</td><td>브라우저 편집 buffer에만 적용하며 저장된 revision을 되감지 않음</td></tr>
+          <tr><td>글</td><td>본문, 제목 1~3, 굵게, 기울임, 밑줄, 취소선, 정렬</td><td>font·색상·임의 CSS·raw HTML command는 제외</td></tr>
+          <tr><td>구조</td><td>글머리 목록, 번호 목록, 링크, 표, 2단, 구분선</td><td>중첩 깊이와 표 크기는 profile 한도를 적용</td></tr>
+          <tr><td>콘텐츠</td><td>미디어, 파일, 수식, 코드, 강조 상자, 그림, 쪽 나누기</td><td>학생 renderer와 인쇄 renderer가 모두 지원하는 node만 삽입</td></tr>
+          <tr><td>응답</td><td>단답형, 서술형, 단일 선택, 복수 선택, 확인 체크, 숫자, 표 입력, 이미지 첨부, 파일 첨부, 그림 응답</td><td>삽입 즉시 임시 ID를 만들고 최초 저장 응답의 서버 ID로 교체</td></tr>
+          <tr><td>제외</td><td>AI 자동 작성, 외부 협업, mention, emoji, 외부 embed, 범용 Docx·HTML export, raw source 쓰기</td><td>AI는 별도 평가 task로만 실행하고 package·PDF는 애드온 command만 사용</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>제품 화면 문구:</strong> toolbar와 inspector에는 기능 이름만 표시한다. 저장 상태는 <code>저장 중</code>, <code>저장됨</code>, <code>충돌</code>, <code>점검 필요</code>, <code>발행 가능</code>을 사용하고 schema·projection·hash 설명은 진단 화면에만 둔다.</div>
+      <div class="good callout" id="worksheet-response-id-0110"><strong>0.1.10 다중 문항 ID 보완:</strong> 브라우저 임시 응답 ID는 <code>Date.now().toString(36)</code>의 밀리초 값과 <code>Math.random().toString(36).slice(2, 8)</code> entropy를 결합한다. 빠른 연속 추가에서도 서로 다른 ID를 만들며 최초 저장 시 서버가 canonical public ID로 교체하는 기존 계약은 유지한다.</div>
+
+      <h2 id="teacher-document">교사용 canonical document</h2>
+      <p><code>teacher_document</code>는 활동지 콘텐츠의 단일 정본이다. HTML, 학생 schema, 채점 schema, 질문 index를 브라우저가 함께 보내 정본처럼 저장하지 않는다. 질문 index와 achievement link는 서버가 같은 revision transaction에서 검증·생성한다.</p>
+      <pre><code>{
+  "schema_id": "oj_ai.worksheet_document",
+  "schema_version": "1.0.0",
+  "editor_profile": "worksheet_plate@1",
+  "document_id": "01J...PUBLIC_ID",
+  "locale": "ko-KR",
+  "title": "우리 지역의 기후 변화",
+  "nodes": [
+    {"type":"h1","node_id":"01J...","children":[{"text":"활동 목표"}]},
+    {"type":"oj_ai_response","node_id":"01J...","response_id":"01J...","kind":"long_text","label":"관찰한 변화를 설명하세요","required":true,"grading":{"max_points":"10.0","rubric_criterion_ids":["01J..."]},"children":[{"text":""}]}
+  ],
+  "settings": {
+    "student_navigation": "document",
+    "print_profile": "worksheet_a4@1"
+  }
+}</code></pre>
+      <table>
+        <thead><tr><th>영역</th><th>허용</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>Root</td><td><code>schema_id</code>, <code>schema_version</code>, <code>editor_profile</code>, <code>document_id</code>, <code>locale</code>, <code>title</code>, <code>nodes</code>, <code>settings</code></td><td>actor·권한·owner·state·DB PK·공개 URL</td></tr>
+          <tr><td>콘텐츠</td><td>허용 node와 property, UTF-8 text, stable ID</td><td>raw HTML·CSS·script·event handler·unknown property</td></tr>
+          <tr><td>응답</td><td>응답 정의와 교사용 <code>grading</code></td><td>학생 답안·AI 평가 결과·배포 상태</td></tr>
+          <tr><td>연계</td><td>save command의 별도 achievement link DTO</td><td>표시명만으로 교육과정 관계를 추정하거나 문서 JSON과 link table을 이중 정본화</td></tr>
+          <tr><td>파생값</td><td>서버가 생성한 validation hash와 질문 index</td><td><code>document_html</code>, <code>blocks</code>, <code>response_fields</code>를 클라이언트 정본으로 저장</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="nodes">콘텐츠 node 16종·구조 node·mark</h2>
+      <p>아래 16개는 교사가 삽입하거나 변환할 수 있는 콘텐츠 node family다. Plate 내부 type 이름은 adapter가 canonical type으로 변환하며, profile에 없는 node는 조용히 본문으로 바꾸지 않는다.</p>
+      <table>
+        <thead><tr><th>ID</th><th>콘텐츠</th><th>Canonical type</th><th>주요 property·제약</th><th>학생·인쇄 표현</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-N01</code></td><td>본문</td><td><code>p</code></td><td><code>node_id</code>, <code>align</code>, text children</td><td>문단</td></tr>
+          <tr><td><code>A-DS09-N02</code></td><td>제목</td><td><code>h1|h2|h3</code></td><td>문서 안의 <code>h1</code>은 1개, 단계 건너뛰기는 warning</td><td>제목 계층</td></tr>
+          <tr><td><code>A-DS09-N03</code></td><td>인용</td><td><code>blockquote</code></td><td>block children, 3단 이내</td><td>인용 영역</td></tr>
+          <tr><td><code>A-DS09-N04</code></td><td>글머리 목록</td><td><code>ul</code></td><td><code>li</code>만 직접 child</td><td>글머리 목록</td></tr>
+          <tr><td><code>A-DS09-N05</code></td><td>번호 목록</td><td><code>ol</code></td><td><code>li</code>만 직접 child, 시작 번호 선택 가능</td><td>번호 목록</td></tr>
+          <tr><td><code>A-DS09-N06</code></td><td>목록 항목</td><td><code>li</code></td><td>목록 안에서만 허용, 중첩 4단 이내</td><td>목록 항목</td></tr>
+          <tr><td><code>A-DS09-N07</code></td><td>링크</td><td><code>a</code></td><td><code>https</code> URL, label, 새 창 강제 없음</td><td>안전한 링크</td></tr>
+          <tr><td><code>A-DS09-N08</code></td><td>표</td><td><code>table</code></td><td>header 선택, 행·열 stable ID, 병합 cell 제외</td><td>반응형 표·반복 header</td></tr>
+          <tr><td><code>A-DS09-N09</code></td><td>미디어</td><td><code>img|audio|video</code></td><td><code>asset_id</code>, media kind, alt 또는 transcript, caption, image width·video poster</td><td>이미지는 본문, audio·video는 control과 대체 text; 인쇄는 poster·caption·파일 label</td></tr>
+          <tr><td><code>A-DS09-N10</code></td><td>파일</td><td><code>file</code></td><td><code>asset_id</code>, label, 설명</td><td>인가 다운로드·인쇄 목록</td></tr>
+          <tr><td><code>A-DS09-N11</code></td><td>수식</td><td><code>equation</code></td><td>TeX text, display 또는 inline, macro 금지</td><td>검증된 수식</td></tr>
+          <tr><td><code>A-DS09-N12</code></td><td>코드</td><td><code>code_block</code></td><td>plain text, language allowlist, 실행 없음</td><td>고정 폭 code block</td></tr>
+          <tr><td><code>A-DS09-N13</code></td><td>강조 상자</td><td><code>callout</code></td><td><code>tone=info|notice|warning</code>, 아이콘 enum</td><td>의미가 유지되는 상자</td></tr>
+          <tr><td><code>A-DS09-N14</code></td><td>2단</td><td><code>column_group</code></td><td>정확히 2개 column, 모바일·인쇄는 읽기 순서로 적층 가능</td><td>2열 또는 순차 적층</td></tr>
+          <tr><td><code>A-DS09-N15</code></td><td>구분선·쪽 나누기</td><td><code>hr|page_break</code></td><td>장식 style property 없음, 쪽 나누기는 인쇄 읽기 순서를 바꾸지 않음</td><td>수평 구분 또는 명시 쪽 나눔</td></tr>
+          <tr><td><code>A-DS09-N16</code></td><td>그림</td><td><code>oj_ai_drawing</code></td><td><code>asset_id</code>, alt, canvas aspect ratio, 원본 stroke schema version</td><td>검증된 정적 preview</td></tr>
+        </tbody>
+      </table>
+      <div class="grid">
+        <section class="panel"><h3>구조 node</h3><p><code>tr</code>, <code>td</code>, <code>th</code>, <code>column</code>, <code>code_line</code>, <code>caption</code>은 부모가 정한 위치에서만 허용한다. toolbar에서 직접 삽입하지 않는다.</p></section>
+        <section class="panel"><h3>응답 node</h3><p><code>oj_ai_response</code>는 콘텐츠 16종과 별도인 도메인 node다. legacy <code>hws_response</code>, <code>ojai_response</code>, <code>worksheet_response</code>, <code>response_field</code>는 import upcaster 입력에서만 허용한다.</p></section>
+        <section class="panel"><h3>Text mark</h3><p><code>bold</code>, <code>italic</code>, <code>underline</code>, <code>strikethrough</code> 네 boolean mark만 허용한다. 색상·font·크기·임의 style mark는 제외한다.</p></section>
+      </div>
+
+      <h2 id="responses">응답칸 10종 계약</h2>
+      <p>모든 응답 node는 <code>response_id</code>, <code>kind</code>, <code>label</code>, <code>required</code>, optional <code>help_text</code>, <code>constraints</code>, 교사용 <code>grading</code>을 갖는다. 학생 답안과 채점 결과는 위치나 label이 아니라 <code>response_id</code>로 연결한다.</p>
+      <table>
+        <thead><tr><th>ID</th><th>제품 이름</th><th><code>kind</code></th><th>추가 계약</th><th>학생 값</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-R01</code></td><td>단답형</td><td><code>short_text</code></td><td><code>min_chars</code>, <code>max_chars</code>, trim 정책</td><td>UTF-8 string</td></tr>
+          <tr><td><code>A-DS09-R02</code></td><td>서술형</td><td><code>long_text</code></td><td><code>min_chars</code>, <code>max_chars</code>, 줄바꿈 허용</td><td>LF로 정규화한 UTF-8 string</td></tr>
+          <tr><td><code>A-DS09-R03</code></td><td>단일 선택</td><td><code>single_choice</code></td><td>2개 이상 option, 각 <code>option_id</code>·value·label</td><td><code>option_id</code> 1개</td></tr>
+          <tr><td><code>A-DS09-R04</code></td><td>복수 선택</td><td><code>multiple_choice</code></td><td><code>min_selected</code>, <code>max_selected</code>, stable option ID</td><td>중복 없는 option ID 배열</td></tr>
+          <tr><td><code>A-DS09-R05</code></td><td>확인 체크</td><td><code>checkbox</code></td><td>동의·확인 문장, required이면 <code>true</code>만 유효</td><td>boolean</td></tr>
+          <tr><td><code>A-DS09-R06</code></td><td>숫자</td><td><code>number</code></td><td><code>min</code>, <code>max</code>, <code>step</code>, unit, 소수 자릿수</td><td>정규화 decimal string</td></tr>
+          <tr><td><code>A-DS09-R07</code></td><td>표 입력</td><td><code>table</code></td><td>stable row·column ID, fixed 또는 bounded dynamic row, cell type 제한</td><td>row ID별 cell map</td></tr>
+          <tr><td><code>A-DS09-R08</code></td><td>이미지 첨부</td><td><code>image_upload</code></td><td>JPEG·PNG·WebP, 개수·byte·alt 정책</td><td>ready private file ID 배열</td></tr>
+          <tr><td><code>A-DS09-R09</code></td><td>파일 첨부</td><td><code>file_upload</code></td><td>MIME allowlist, 개수·byte, 원본 이름은 표시용</td><td>ready private file ID 배열</td></tr>
+          <tr><td><code>A-DS09-R10</code></td><td>그림 응답</td><td><code>drawing</code></td><td>stroke schema와 PNG preview, canvas 비율·stroke 수 한도</td><td>drawing revision·preview file ID</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>교사용 <code>grading</code></th><th>규칙</th><th>학생 projection</th></tr></thead>
+        <tbody>
+          <tr><td><code>grading_enabled</code>, <code>max_points</code></td><td>점수 사용 여부와 0 이상의 decimal string</td><td>제외</td></tr>
+          <tr><td><code>correct_answer</code>, <code>example_answer</code></td><td>응답 kind별 schema 검증, 사용하지 않으면 <code>null</code></td><td>제외</td></tr>
+          <tr><td><code>rubric_criterion_ids</code></td><td>동결된 rubric revision의 stable ID만 참조</td><td>제외</td></tr>
+          <tr><td><code>teacher_note</code></td><td>교사용 plain text, 평가 input 포함 여부를 별도 allowlist로 결정</td><td>제외</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="identity">Stable ID·정규화·hash</h2>
+      <ol>
+        <li>문서, block node, response, option, 표 row·column, asset은 A-DS-08의 26자 <code>PublicIdV1</code>을 사용한다. 내부 auto increment PK를 JSON이나 URL에 넣지 않는다.</li>
+        <li>브라우저가 새 항목을 만들 때는 <code>tmp_</code> prefix의 session-local UUID를 사용한다. 최초 저장 명령에서 서버가 stable ID를 발급하고 <code>temporary_id_map</code>을 응답한다.</li>
+        <li>이동·문구 수정·다음 revision에서는 ID를 유지한다. 복제·붙여넣기·다른 활동지로 가져오기는 새 ID를 발급해 기존 학생 답안과 연결되지 않게 한다.</li>
+        <li>서버는 Unicode NFC, 허용 property, 정렬된 object key, 배열의 의미 순서, decimal string을 사용해 canonical JSON을 만들고 UTF-8 byte에 SHA-256을 계산한다.</li>
+        <li>빈 optional 값은 schema에 따라 <code>null</code> 또는 property 부재 중 하나만 사용한다. 빈 문자열·0·빈 배열을 “없음”과 혼용하지 않는다.</li>
+        <li>unknown node·property·mark, 중복 ID, 끊어진 asset·rubric reference는 저장 전 오류다. default paragraph나 첫 option으로 조용히 바꾸지 않는다.</li>
+      </ol>
+
+      <h2 id="limits">Worksheet profile 한도</h2>
+      <p>다음 값은 <code>worksheet_plate@1</code>의 hard limit다. 사이트 운영 정책은 더 낮출 수 있지만 같은 profile에서 높일 수 없다.</p>
+      <table>
+        <thead><tr><th>ID</th><th>대상</th><th>Hard limit</th><th>적용 경계</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-L01</code></td><td>Canonical document</td><td>UTF-8 JSON 2 MiB</td><td>HTTP parse 전·Application·Repository</td></tr>
+          <tr><td><code>A-DS09-L02</code></td><td>전체 node</td><td>5,000개</td><td>upcast 후 canonical tree</td></tr>
+          <tr><td><code>A-DS09-L03</code></td><td>Tree 깊이</td><td>32단</td><td>구조 node 포함</td></tr>
+          <tr><td><code>A-DS09-L04</code></td><td>전체 text</td><td>500,000자, text leaf당 32,768자</td><td>NFC 정규화 뒤</td></tr>
+          <tr><td><code>A-DS09-L05</code></td><td>응답칸</td><td>200개</td><td>response ID 전수</td></tr>
+          <tr><td><code>A-DS09-L06</code></td><td>선택지</td><td>응답당 100개, label 500자</td><td>단일·복수 선택</td></tr>
+          <tr><td><code>A-DS09-L07</code></td><td>콘텐츠 표</td><td>100행·20열·2,000 cell</td><td>병합 cell 없음</td></tr>
+          <tr><td><code>A-DS09-L08</code></td><td>응답 표</td><td>100행·30열·3,000 cell</td><td>동적 row도 상한 고정</td></tr>
+          <tr><td><code>A-DS09-L09</code></td><td>본문 자산</td><td>revision당 100개</td><td>중복 asset reference는 1개로 계산</td></tr>
+          <tr><td><code>A-DS09-L10</code></td><td>Link URL</td><td>2,048자, <code>https</code>만 허용</td><td>parse·scheme·host 검증</td></tr>
+          <tr><td><code>A-DS09-L11</code></td><td>제목·label</td><td>제목 255자, 응답 label 1,000자</td><td>trim 뒤 빈 값 금지</td></tr>
+          <tr><td><code>A-DS09-L12</code></td><td>본문 file</td><td>개별 20 MiB, revision 합계 200 MiB</td><td>업로드 stream·저장 전·package</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="lifecycle">Draft·revision·승인·발행</h2>
+      <pre><code>브라우저 편집 buffer
+  → C02 save-draft(expected current revision, idempotency key)
+  → 새 immutable draft revision + 질문 index + achievement links + asset owner receipt
+  → C05 validate(exact revision)
+  → C10 활동지 자체 평가(exact saved revision)
+  → 교사 판단·필수 blocker 해소
+  → C06 approve(exact draft revision, content hash 불변)
+  → C07 publish(exact approved revision)
+  → immutable publication + student/response/grading/print snapshot
+  → 배포는 publication public ID + hash 고정</code></pre>
+      <table>
+        <thead><tr><th>단계</th><th>서버 동작</th><th>불변성·충돌 규칙</th><th>제품 상태</th></tr></thead>
+        <tbody>
+          <tr><td>새 활동지</td><td><code>A-DS08-C01</code>이 root와 최초 빈 draft revision 생성</td><td>서버가 document·node ID 발급</td><td>저장됨</td></tr>
+          <tr><td>편집</td><td>브라우저 buffer만 변경. 자동 저장은 마지막 입력 5초 뒤, 최근 성공 저장 후 최소 30초가 지났을 때 <code>C02</code> 사용</td><td>서버 revision을 직접 patch하지 않고 탭이 숨겨지면 local recovery copy만 갱신</td><td>저장 중</td></tr>
+          <tr><td>저장</td><td>canonical validation 뒤 content hash가 현재 revision과 다를 때만 새 <code>revision_no</code> append</td><td>같은 hash는 도메인 변경 없이 기존 revision과 새 key의 outbox receipt 1건을 반환, 같은 key 재전송은 추가 쓰기 0건, <code>expected_revision_id</code> 불일치는 409</td><td>저장됨 또는 충돌</td></tr>
+          <tr><td>검증</td><td>node·응답·grading·asset·projection·renderer 관문 계산</td><td>검증 결과는 source revision ID·hash에 묶임</td><td>점검 필요 또는 발행 가능</td></tr>
+          <tr><td>승인</td><td>draft의 content hash를 다시 확인하고 state·승인 metadata만 전이</td><td><code>teacher_document</code>와 질문·link 내용 수정 금지</td><td>발행 가능</td></tr>
+          <tr><td>승인 뒤 수정</td><td>승인 revision을 source로 새 draft revision 생성</td><td>기존 승인본·평가 이력 유지</td><td>저장됨</td></tr>
+          <tr><td>발행</td><td>한 transaction에서 publication과 파생 snapshot·hash 생성</td><td>projection 하나라도 실패하면 publication 0개</td><td>발행됨</td></tr>
+          <tr><td>발행 뒤 수정</td><td>새 draft→승인→새 publication 순서</td><td>기존 배포는 이전 publication에서 이동하지 않음</td><td>새 버전 있음</td></tr>
+          <tr><td>보관·철회</td><td>root 또는 publication 상태만 전이</td><td>과거 revision·배포·제출·PDF source 삭제 금지</td><td>보관됨</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>충돌 복구:</strong> 409 응답은 현재 revision ID·hash와 로컬 기준 ID만 반환한다. UI는 <code>내 사본 저장</code>, <code>서버본 보기</code>, <code>변경 비교</code>를 제공하며 어느 한쪽을 자동 덮어쓰지 않는다.</div>
+      <div class="good callout" id="c02-s02-contract"><strong>G2-IMP-02-S02 C02 wire 계약:</strong> <code>expected.expected_state=draft|active</code>와 <code>expected.expected_revision_id</code>를 요구한다. payload는 <code>teacher_document</code>, <code>achievement_links</code>, <code>staged_asset_receipt_ids</code>로 고정하고, 새 revision은 201, 같은 현재 hash는 200, 멱등 재생은 최초 status를 보존한다. 상세 필드와 안전한 409 context는 <a href="g2-imp-02-s02-c02-contract.html">C02 계약 기록</a>을 따른다.</div>
+
+      <h2 id="projections">Versioned projection 5종</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Schema</th><th>Source·생성 시점</th><th>포함</th><th>제외</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-P01</code></td><td><code>oj_ai.student_document@1.0.0</code></td><td>승인 revision, 발행 transaction</td><td>학생용 node·공개 안내·asset reference·response anchor</td><td>정답·배점·rubric·교사 메모·내부 상태</td></tr>
+          <tr><td><code>A-DS09-P02</code></td><td><code>oj_ai.student_response_schema@1.0.0</code></td><td>승인 revision, 발행 transaction</td><td>response ID·kind·label·필수·입력 제약·공개 option</td><td>correct answer·grading rule·teacher note</td></tr>
+          <tr><td><code>A-DS09-P03</code></td><td><code>oj_ai.grading_schema@1.1.0</code></td><td>승인 revision, 발행 transaction</td><td>student_submission policy·rubric·review revision ID·hash, <code>binding_key</code>, <code>scope=response|submission</code>, nullable response ID, stable criterion ID, maximum points, position, 정답·예시</td><td>학생 identity·학생 답안·provider secret</td></tr>
+          <tr><td><code>A-DS09-P04</code></td><td><code>oj_ai.worksheet_evaluation_input@1.0.0</code></td><td>저장 revision, <code>A-DS08-C10</code></td><td>공개 내용·응답 설계·배점 구조·교육과정 link·profile·source hash</td><td>teacher note·actor·권한·endpoint·secret·raw HTML</td></tr>
+          <tr><td><code>A-DS09-P05</code></td><td><code>oj_ai.worksheet_print@1.0.0</code></td><td>revision 또는 publication, PDF enqueue 전</td><td>페이지 구조·font token·node·안전 asset·빈 응답 영역·source hash</td><td>CSS string·공개 URL·raw JSON·학생 비공개 정보</td></tr>
+        </tbody>
+      </table>
+      <p>발행 transaction은 P01·P02·P03·P05를 <code>oj_ai_worksheet_publications</code>의 기존 네 JSON column에 저장한다. 각 column은 <code>schema_id</code>, <code>schema_version</code>, <code>projector_version</code>, <code>source_hash</code>, <code>payload_hash</code>, <code>payload</code>를 가진 envelope다. <code>publication_hash</code>는 source revision hash와 네 payload hash의 결정적 manifest에서 계산하며 배정 생성 시 같은 값을 <code>oj_ai_assignments.publication_hash</code>에 고정한다. Projection마다 별도 column을 추가하지 않으며, source 검산에 필요한 <code>projection_manifest_version</code>·<code>publication_hash</code> 두 column을 아래 <code>DBA02</code>로 동결했다. P04는 활동지 자체 평가 input table에 별도 보존하고, 학생 화면은 P01·P02만 읽으며 P03·P04·교사용 원문을 조회하지 않는다.</p>
+      <div class="callout"><strong>Allowlist 원칙:</strong> 학생 document는 teacher JSON에서 금지 key를 삭제해 만들지 않는다. 허용 node와 property를 새 tree에 복사한 뒤 모든 깊이에서 forbidden key 0건, asset scope, response ID 집합 일치를 검사한다.</div>
+
+
+      <h2 id="projection-amendment">A-DS-09 Projection Amendment 01 · 사용자 확인·동결</h2>
+      <p>2026-08-13 <code>A-DS12-PA01</code> 승인으로 P03을 <code>oj_ai.grading_schema@1.1.0</code>으로 올렸다. 과거 <code>oj_ai.grading_schema@1.0.0</code> payload는 제자리 수정하지 않으며, 학생 제출 AI 평가는 1.1.0을 가진 새 publication만 사용한다.</p>
+      <table>
+        <thead><tr><th>불변식</th><th>동결 규칙</th><th>실패 처리</th></tr></thead>
+        <tbody>
+          <tr><td>설정 pin</td><td><code>student_submission</code> policy·rubric·review revision public ID와 content hash를 P03에 고정</td><td>현재 기본 설정 재조회 금지</td></tr>
+          <tr><td>Binding identity</td><td><code>binding_key</code>는 source revision hash·rubric hash·scope·response ID 또는 null·criterion ID의 canonical tuple SHA-256이며 publication 안에서 유일함</td><td>unknown·duplicate·missing이면 발행 거부</td></tr>
+          <tr><td>Response scope</td><td><code>scope=response</code>는 P01·P02의 stable response ID 하나를 참조</td><td>삭제·고아 response 참조 금지</td></tr>
+          <tr><td>Submission scope</td><td><code>scope=submission</code>은 response ID가 null이며 결과물 전체 criterion에만 사용</td><td>응답·전체 범위 이중 소속 금지</td></tr>
+          <tr><td>Criterion·배점</td><td>pin된 rubric의 점수 criterion이 전체 binding에 정확히 한 번 나타나고 binding 최대점수 합이 rubric 총점과 일치</td><td>누락·중복·합계 불일치면 발행 거부</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>저장 표면 유지:</strong> P03은 기존 <code>grading_schema</code> JSON profile envelope에 저장하므로 새 table·column은 없다. Projection 수 5개와 publication hash 계산 방식도 유지한다.</div>
+      <div class="good callout"><strong>G4-IMP-01-S02 호환 보정:</strong> P03 schema는 <code>oj_ai.grading_schema@1.1.0</code>을 유지하고 grading projector만 <code>1.1.0</code>으로 분리했다. 과거 grading projector <code>1.0.0</code> P03은 수정하지 않으며 제출 평가를 위해 새 publication을 생성한다.</div>
+
+      <h2 id="assets">본문 자산·private file</h2>
+      <p>본문 file의 Storage owner는 <code>owner_type=worksheet</code>, <code>owner_public_id=worksheet public ID</code>, <code>purpose=worksheet_asset</code>로 고정한다. 불변 revision과 publication JSON이 <code>asset_id</code>를 참조하며 file owner를 revision마다 옮기거나 복제하지 않는다. 아직 저장되지 않은 업로드는 같은 worksheet 범위의 <code>quarantined</code> 상태이고, 저장 receipt가 성공한 뒤에만 <code>ready</code>로 승격한다.</p>
+      <table>
+        <thead><tr><th>단계</th><th>계약</th><th>차단 조건</th></tr></thead>
+        <tbody>
+          <tr><td>업로드</td><td>stream을 <code>oj_ai_private_files</code>의 <code>quarantined</code> 상태로 등록하고 MIME·byte·SHA-256·scan 상태 기록. profile은 image JPEG·PNG·WebP, audio MP3·Ogg·WAV, video MP4·WebM, file PDF·TXT·CSV·DOCX·XLSX·PPTX만 허용</td><td>HTML·SVG·script·archive·실행 파일, 확장자만 신뢰, 전체 파일 memory 적재, 외부 업로드 서비스 호출</td></tr>
+          <tr><td>삽입</td><td>node에는 26자 <code>asset_id</code>와 표시용 alt·label만 저장</td><td><code>data:</code>, <code>blob:</code>, <code>file:</code>, 절대 경로, 영구 공개 URL</td></tr>
+          <tr><td>저장</td><td><code>C02</code>가 staged asset을 exact worksheet root에 귀속하고 새 revision reference·receipt를 기록</td><td>다른 사용자·다른 worksheet asset, hash 불일치</td></tr>
+          <tr><td>미리보기</td><td>인가 query가 <code>source_type=revision|publication|staged</code>과 <code>source_id</code>를 요구한다. exact revision·publication reference 또는 현재 actor의 staged receipt를 검증한 asset만 binary stream으로 제공</td><td>worksheet root 접근만으로 draft·publication·타인 staged 자산을 함께 허용하거나 URL 자체를 권한 증명으로 사용</td></tr>
+          <tr><td>발행</td><td>모든 참조 asset이 <code>ready</code>이고 student scope에서 제공 가능한지 확인</td><td>quarantined·rejected·missing·purged asset</td></tr>
+          <tr><td>인쇄</td><td>renderer가 private storage에서 hash를 재검산해 image·drawing만 본문에 조판</td><td>browser가 외부 URL을 다시 가져오게 함</td></tr>
+          <tr><td>제거</td><td>새 revision에서 reference를 제거한다. <code>RA03</code>은 아직 revision에 포함되지 않은 quarantined upload만 폐기하고 ready 자산은 retention·purge 절차로만 정리</td><td>과거 revision·publication이 참조하는 ready file 삭제</td></tr>
+        </tbody>
+      </table>
+      <p>응답용 이미지·파일·그림은 A-DS-11의 submission attachment 정책을 사용한다. 이 절의 본문 자산과 학생 제출 첨부를 같은 owner 또는 같은 REST 명령으로 혼합하지 않는다.</p>
+
+      <h2 id="package">활동지 package·upcaster·가져오기</h2>
+      <p>A-D-005의 “JSON 활동지 package”는 JSON document가 정본이라는 뜻이다. Binary asset을 안전하게 함께 옮기기 위해 전송 형식은 <code>application/vnd.oj.ai-worksheet+zip</code>인 <code>.ojws</code> container로 고정한다.</p>
+      <pre><code>worksheet.ojws
+├─ manifest.json
+├─ worksheet.json
+└─ assets/
+   └─ {sha256}.{safe-extension}</code></pre>
+      <table>
+        <thead><tr><th>영역</th><th>고정 계약</th></tr></thead>
+        <tbody>
+          <tr><td>Manifest</td><td><code>format=oj_ai_worksheet_package</code>, <code>format_version=1</code>, source revision public ID·hash, document schema, editor profile, asset path·MIME·byte·SHA-256, exporter version</td></tr>
+          <tr><td>C04 입력</td><td>기존 <code>POST /worksheet-revisions/{revision_id}/commands/import-template</code>가 <code>multipart/form-data</code>로 <code>package</code> .ojws 1개와 <code>command_id</code>·<code>expected_state</code>·<code>expected_revision_id</code>를 직접 받음</td></tr>
+          <tr><td>Payload</td><td><code>worksheet.json</code>은 <code>schema_id=oj_ai.worksheet_package_payload</code>, <code>schema_version=1</code>, <code>teacher_document</code>, <code>achievement_links</code>만 허용. manifest의 <code>source_revision_hash</code>는 canonical teacher document SHA-256</td></tr>
+          <tr><td>정본</td><td><code>worksheet.json</code>에 canonical teacher document와 revision-owned achievement link를 저장. P01~P05는 넣지 않고 import 뒤 다시 생성</td></tr>
+          <tr><td>비공개</td><td>정답·rubric·교사 메모가 포함되므로 package는 교사 권한의 private artifact이며 PublicUI에 제공하지 않음</td></tr>
+          <tr><td>결정성</td><td>entry 정렬, 고정 timestamp metadata, normalized path로 같은 source hash는 같은 package content hash 생성</td></tr>
+          <tr><td>안전</td><td>path traversal·absolute path·symlink·duplicate entry·암호화 entry·compression bomb·manifest 밖 파일 거부</td></tr>
+          <tr><td>가져오기</td><td>parse → byte·entry 한도 → path·entry 안전 검사 → manifest → checksum → schema upcast → ID 재발급 → asset scan → projection·leak → <code>C04</code> 단일 transaction 새 draft revision</td></tr>
+          <tr><td>호환</td><td>현재 major와 명시된 과거 version만 순차 upcast. 저장 row를 제자리 수정하지 않고 변환 결과를 새 revision으로 생성</td></tr>
+          <tr><td>오류</td><td>지원하지 않는 node·version·ZIP 환경은 safe error로 중단. 저장 실패 시 quarantined 자산을 보상 폐기하고 같은 Idempotency-Key 재시도는 다음 결정적 attempt receipt를 사용. paragraph fallback이나 일부 성공 저장 없음</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>C04 입력 계약 보완:</strong> 별도 upload route나 새 command ID를 추가하지 않는다. C04 자체를 .ojws 전용 multipart 명령으로 고정하므로 Page Route·조회·명령 개수와 OJ Platform Addon API는 변하지 않는다. 상세 근거는 <a href="g2-imp-03-s03-template-import-contract.html">G2-IMP-03-S03 계약 기록</a>에 남긴다.</div>
+      <div class="good callout"><strong>G2-IMP-07-S03 구현 증거 2026-08-22:</strong> <a href="g2-imp-07-s03-worksheet-package.html">C66 활동지 package</a>가 exact teacher document·achievement link·ready asset을 <code>oj_ai.worksheet_package_request@1</code> snapshot으로 고정하고, <code>manifest.json</code>·<code>worksheet.json</code>·<code>assets/{sha256}.{extension}</code>를 lexical order·고정 timestamp·무압축으로 생성한다. 같은 입력의 archive byte·SHA-256 일치와 기존 importer의 재입력을 실제 ZIP으로 검증했다.</div>
+      <h2 id="duplicate">C03 활동지 복제 계약</h2>
+      <table>
+        <thead><tr><th>영역</th><th>고정 계약</th></tr></thead>
+        <tbody>
+          <tr><td>원본</td><td>owner/edit 범위가 확인된 worksheet root의 current immutable revision과 그 revision에 고정된 성취기준 snapshot</td></tr>
+          <tr><td>목적지</td><td>새 worksheet root와 revision 1을 만들고 제목은 원본 제목에 <code> 복사본</code>을 붙임</td></tr>
+          <tr><td>ID</td><td>document·node·response·option·row·column·asset 등 애드온 소유 ID를 모두 재발급하고 외부 standard·rubric ID는 의미상 참조를 보존</td></tr>
+          <tr><td>자산</td><td>원본 revision이 참조하는 ready private asset을 새 저장 키·asset ID로 복사하고 목적지 worksheet가 소유</td></tr>
+          <tr><td>Provenance</td><td>목적지 revision에 source revision public ID를 기록하고 현재 플랫폼 원장은 다시 읽지 않음</td></tr>
+          <tr><td>원자성</td><td>root·revision·question·achievement link·asset promote·audit·outbox를 단일 DB transaction으로 commit</td></tr>
+          <tr><td>보상</td><td>commit 실패 시 목적지 quarantine metadata와 물리 파일을 폐기하고 부분 root는 노출하지 않음</td></tr>
+          <tr><td>멱등</td><td>같은 key·digest 재전송은 최초 receipt를 반환하고 추가 root·asset 쓰기 0건, 동시 race loser는 자신이 만든 quarantine만 폐기</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>구현 기록:</strong> exact JSON과 검증 증거는 <a href="g2-imp-03-s04-worksheet-duplicate.html">G2-IMP-03-S04 C03 활동지 복제</a>에 고정한다. 새 table·column·route·OJ Platform API 요구는 없다.</div>
+      <div class="good callout"><strong>G2-IMP-04-S01 C05 구현:</strong> <a href="g2-imp-04-s01-validation.html">활동지 검증</a>은 저장된 exact immutable revision을 서버 정본 validator로 다시 정규화하고 document hash·validation receipt·모든 참조 자산을 검사한다. 이 단계는 mutation 0이며 student/print projection과 parity 검사가 pending인 동안 <code>release_ready=false</code>다.</div>
+      <div class="good callout"><strong>G2-IMP-04-S02 P01·P02·P05 구현:</strong> <a href="g2-imp-04-s02-preview.html">Q08 preview</a>가 <code>oj_ai.student_document@1.0.0</code>, <code>oj_ai.student_response_schema@1.0.0</code>, <code>oj_ai.worksheet_print@1.0.0</code>을 allowlist로 생성한다. 정답·배점·rubric·교사 메모와 private asset URL은 복사하지 않는다.</div>
+      <div class="good callout"><strong>G2-IMP-04-S03 발행 전 검사:</strong> <a href="g2-imp-04-s03-projection-safety.html">독립 semantic manifest</a>가 heading·list·mark·table·수식·media·drawing·응답·page break의 순서와 공개 값을 대조하고 forbidden key·URL·잘못된 asset ID를 모든 깊이에서 차단한다.</div>
+      <div class="good callout"><strong>G2-IMP-04-S04 제작 화면:</strong> <a href="g2-imp-04-s04-ui-e2e-freeze.html">Plate 작업대</a>의 <code>검증</code>과 <code>미리보기</code>에서 C05·Q08을 바로 실행한다. 학생·인쇄 탭은 공개 projection만 그리며 교사용 원문·schema·진단 문구를 화면에 노출하지 않는다.</div>
+
+      <h2 id="pdf">활동지 PDF의 입력 계약</h2>
+      <p>PDF는 원본이나 가져오기 형식이 아니라 P05에서 비동기로 만든 private <code>PdfArtifact</code>다. <code>A-DS08-C48</code>은 정확한 revision ID·hash, audience, <code>worksheet_a4@1</code>을 고정해 enqueue한다.</p>
+      <table>
+        <thead><tr><th>Profile</th><th>Source</th><th>포함</th><th>제외</th></tr></thead>
+        <tbody>
+          <tr><td><code>teacher_blank</code></td><td>승인 여부와 무관한 저장 revision</td><td>교사용 본문, 문항 label, 빈 응답 영역, 선택한 경우 배점·정답 appendix</td><td>학생 identity·학생 답안·AI raw 결과</td></tr>
+          <tr><td><code>student_blank</code></td><td>published P01·P02</td><td>학생에게 공개된 본문·안내·빈 응답 영역·안전 asset</td><td>정답·배점·rubric·교사 메모</td></tr>
+        </tbody>
+      </table>
+      <p>학생이 작성한 결과물 PDF는 A-DS-11의 official submission revision과 publication snapshot을 결합해 정의하고, A-DS-14에서 같은 print token·font·asset resolver로 조판한다.</p>
+
+      <h2 id="route-amendments">A-DS-08 REST Amendment 01 · 사용자 확인·동결</h2>
+      <p>2026-08-13 사용자 승인으로 활동지 본문 자산과 portable package에 필요한 네 항목을 A-DS-08 Amendment 01로 동결했다. Page Route는 9개를 유지하고 애드온 REST 정본은 조회 34개·명령 66개가 됐다. 이 보강은 애드온 소유 REST 계약이며 OJ Platform API 추가 요구가 아니다.</p>
+      <table>
+        <thead><tr><th>ID</th><th>A-DS-08 Amendment ID</th><th>Method·path</th><th>Use Case·결과</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-RA01</code></td><td><code>A-DS08-Q34</code></td><td><code>GET /worksheet-assets/{asset_id}/content</code></td><td><code>StreamWorksheetAsset</code>, 필수 query <code>source_type=revision|publication|staged</code>·<code>source_id</code>의 exact reference 또는 receipt와 현재 Policy 재검사 뒤 binary stream</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-RA02</code></td><td><code>A-DS08-C64</code></td><td><code>POST /worksheets/{worksheet_id}/commands/stage-asset</code></td><td><code>StageWorksheetAsset</code>, private quarantine와 upload receipt</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-RA03</code></td><td><code>A-DS08-C65</code></td><td><code>POST /worksheets/{worksheet_id}/assets/{asset_id}/commands/discard</code></td><td><code>DiscardStagedWorksheetAsset</code>, 아직 저장되지 않은 quarantined file만 폐기</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-RA04</code></td><td><code>A-DS08-C66</code></td><td><code>POST /worksheet-revisions/{revision_id}/commands/export-package</code></td><td><code>EnqueueWorksheetPackage</code>, 202 export job 뒤 기존 Q23·Q24로 상태·다운로드</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>동결 효과:</strong> A-DS-08 Amendment 01로 조회는 34개, 명령은 66개가 됐다. <code>C02 save-draft</code>는 staged asset을 새 revision에 bind하고, <code>C64</code>는 명시적 <code>multipart/form-data</code> 허용 명령이다. Page Route 9개와 플랫폼 <code>RC01~RC05</code> 상태는 변하지 않는다.</div>
+
+      <h2 id="database-amendments">A-DS-05 Database Amendment 02 · 사용자 확인·동결</h2>
+      <p>A-DS-09을 A-DS-05의 실제 column 계약에 역대조하고 2026-08-13 사용자 승인으로 아래 세 column amendment를 동결했다. 신규 table 없이 기존 3개 table에 10개 column을 추가하며 table 45개와 owner 10개는 유지한다. A-DS-05 HTML 정본에는 반영했지만 target DDL 구현은 A-DS-16 최종 승인 뒤에만 시작한다.</p>
+      <table>
+        <thead><tr><th>ID</th><th>대상 table</th><th>추가 column</th><th>이유</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-DBA01</code></td><td><code>oj_ai_worksheet_revisions</code></td><td><code>document_schema_version VARCHAR(32)</code>, <code>document_hash CHAR(64)</code></td><td>canonical teacher document version·hash를 validation 결과 hash와 분리하고 평가·승인·발행 source를 고정</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-DBA02</code></td><td><code>oj_ai_worksheet_publications</code></td><td><code>projection_manifest_version VARCHAR(32)</code>, <code>publication_hash CHAR(64)</code></td><td>P01·P02·P03·P05 envelope hash manifest를 고정하고 assignment의 <code>publication_hash</code>를 원본과 검산</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-DBA03</code></td><td><code>oj_ai_export_jobs</code></td><td><code>source_type VARCHAR(64)</code>, <code>source_public_id CHAR(26)</code>, <code>source_hash CHAR(64)</code>, <code>request_contract_version VARCHAR(32)</code>, <code>JSON(request_snapshot)</code>, <code>request_hash CHAR(64)</code></td><td>worksheet PDF·package 작업이 queue 대기·retry 뒤에도 exact revision·publication·profile을 재현</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>영향:</strong> table 수는 45개, owner는 10개로 유지한다. 기존 <code>validation_hash</code>는 validator 결과 hash로 남기고 <code>document_hash</code>로 재해석하지 않는다. A-DS14는 <code>DBA03</code>을 CSV·ZIP·학생 결과물 PDF에도 공통 사용하며 필요하면 column 의미만 확장하고 중복 column을 추가하지 않는다.</div>
+
+      <h2 id="services">모듈·책임 경계</h2>
+      <table>
+        <thead><tr><th>계층·owner</th><th>구성 요소</th><th>책임</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>Presentation</td><td><code>WorksheetWorkbench</code>, <code>PlateAdapter</code>, preview renderer</td><td>편집 buffer·임시 ID·짧은 상태·command 호출</td><td>canonical 신뢰·SQL·권한 판정</td></tr>
+          <tr><td>Application</td><td><code>CreateWorksheet</code>, <code>SaveWorksheetDraft</code>, <code>ValidateWorksheetRevision</code>, <code>ApproveWorksheetRevision</code>, <code>PublishWorksheetRevision</code></td><td>Policy·expected revision·transaction·receipt·outbox 조정</td><td>Controller 안의 업무 흐름</td></tr>
+          <tr><td>Worksheet Domain</td><td><code>WorksheetEditorProfile</code>, <code>WorksheetDocumentValidator</code>, <code>WorksheetCanonicalizer</code>, <code>WorksheetProjector</code>, <code>WorksheetPublisher</code></td><td>schema·ID·한도·projection·불변성</td><td>WordPress·Plate UI·provider SDK 의존</td></tr>
+          <tr><td>Storage</td><td><code>WorksheetAssetPolicy</code>, <code>PrivateFileApplication</code></td><td>quarantine·scan·bind·인가 stream·retention</td><td>외부 공개 URL·browser object URL 영속화</td></tr>
+          <tr><td>Infrastructure</td><td><code>WorksheetRepository</code>, <code>PrivateFileRepository</code>, <code>WorksheetPackageWriter</code></td><td>A-DS-05 table·blob adapter·결정적 package</td><td>플랫폼 table·Repository 직접 접근</td></tr>
+          <tr><td>Evaluation·Reporting</td><td>P04 consumer, P05 renderer adapter</td><td>versioned DTO만 소비</td><td>teacher document 임의 재해석·domain table 직접 JOIN</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="errors">안정 오류·사용자 복구</h2>
+      <table>
+        <thead><tr><th>Code</th><th>조건</th><th>제품 문구</th><th>복구</th></tr></thead>
+        <tbody>
+          <tr><td><code>worksheet_schema_unsupported</code></td><td>지원하지 않는 schema/profile version</td><td>이 활동지는 열 수 없습니다</td><td>가져오기 점검 또는 관리자 진단</td></tr>
+          <tr><td><code>worksheet_node_not_allowed</code></td><td>profile 밖 node·mark</td><td>지원하지 않는 내용이 있습니다</td><td>문제 위치 표시·삭제 또는 변환</td></tr>
+          <tr><td><code>worksheet_property_not_allowed</code></td><td>unknown·위험 property</td><td>내용을 확인해 주세요</td><td>문제 항목 inspector 열기</td></tr>
+          <tr><td><code>worksheet_id_invalid</code></td><td>중복·누락·잘못된 ID</td><td>항목 연결을 확인해 주세요</td><td>서버 ID 재발급 가능한 새 항목만 복구</td></tr>
+          <tr><td><code>worksheet_limit_exceeded</code></td><td>byte·node·text·표·자산 상한 초과</td><td>활동지 크기를 줄여 주세요</td><td>초과 항목과 현재·최대값 표시</td></tr>
+          <tr><td><code>worksheet_asset_not_ready</code></td><td>자산 scan·bind 미완료 또는 거부</td><td>파일 점검이 끝나지 않았습니다</td><td>상태 새로고침·교체·제거</td></tr>
+          <tr><td><code>worksheet_revision_conflict</code></td><td>expected revision 불일치</td><td>다른 변경이 저장되었습니다</td><td>내 사본·서버본 비교</td></tr>
+          <tr><td><code>worksheet_projection_leak</code></td><td>학생 projection forbidden key 검출</td><td>발행할 수 없습니다</td><td>발행 중단·진단 correlation ID</td></tr>
+          <tr><td><code>worksheet_renderer_mismatch</code></td><td>학생·인쇄 renderer parity 실패</td><td>미리보기를 확인해 주세요</td><td>문제 node 표시·발행 차단</td></tr>
+          <tr><td><code>worksheet_package_invalid</code></td><td>manifest·checksum·ZIP 안전 검증 실패</td><td>가져올 수 없는 파일입니다</td><td>preview 중단·원본 다시 선택</td></tr>
+          <tr><td><code>worksheet_publish_blocked</code></td><td>검증·평가·승인·asset 관문 미충족</td><td>점검이 필요합니다</td><td>미완료 항목 목록으로 이동</td></tr>
+        </tbody>
+      </table>
+      <p>응답 envelope는 A-DS-08의 안정 code·retryable·correlation ID만 노출한다. schema path·내부 node dump·SQL·stack trace는 운영 진단에만 남긴다.</p>
+
+      <h2 id="acceptance">수용 기준</h2>
+      <table>
+        <thead><tr><th>ID</th><th>검증 기준</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-A01</code></td><td><code>worksheet_plate@1</code>이 정확한 Plate package·plugin·command·node·mark·limit를 manifest와 fixture로 고정함</td></tr>
+          <tr><td><code>A-DS09-A02</code></td><td>기본 글·목록·링크·표·image·audio·video·파일·수식·코드·강조·2단·구분선·쪽 나누기·그림이 학생·인쇄 renderer의 정해진 표현으로 손실 없이 투영됨</td></tr>
+          <tr><td><code>A-DS09-A03</code></td><td><code>A-DS09-R01~R10</code>이 편집·학생 입력·채점 schema에서 같은 response ID로 round-trip됨</td></tr>
+          <tr><td><code>A-DS09-A04</code></td><td>서버 발급 <code>PublicIdV1</code>이 이동·수정에서 유지되고 복제·가져오기에서 충돌 없이 재발급됨</td></tr>
+          <tr><td><code>A-DS09-A05</code></td><td>unknown node·property·mark와 legacy alias가 canonical 저장 경계에서 거부되며 조용한 paragraph fallback이 0건임</td></tr>
+          <tr><td><code>A-DS09-A06</code></td><td><code>A-DS09-L01~L12</code>가 HTTP·Application·Repository·package에서 같은 값으로 적용됨</td></tr>
+          <tr><td><code>A-DS09-A07</code></td><td>같은 document는 같은 canonical byte·SHA-256을 만들고 key 순서·locale·decimal 차이 fixture가 안정적임</td></tr>
+          <tr><td><code>A-DS09-A08</code></td><td>의미가 다른 연속 저장은 기존 body를 update하지 않고 revision·질문 index·link·audit·outbox를 원자 append한다. 다른 key의 같은 canonical hash는 도메인·audit·asset 변경 0건과 outbox receipt 1건, 같은 key·digest 재전송은 추가 row 0개임</td></tr>
+          <tr><td><code>A-DS09-A09</code></td><td>동시 저장은 1개만 성공하고 다른 요청은 409와 로컬 복구 경로를 제공하며 데이터 유실이 없음</td></tr>
+          <tr><td><code>A-DS09-A10</code></td><td>승인은 content hash를 바꾸지 않고 state·승인 metadata만 전이하며 승인 뒤 편집은 새 draft revision을 만듦</td></tr>
+          <tr><td><code>A-DS09-A11</code></td><td>발행은 P01·P02·P03·P05 envelope와 결정적 publication hash를 한 transaction에서 만들고 실패 시 publication row가 0개임</td></tr>
+          <tr><td><code>A-DS09-A12</code></td><td>기존 배포가 새 저장·승인·발행으로 자동 이동하지 않고 고정 publication ID·hash를 계속 사용함</td></tr>
+          <tr><td><code>A-DS09-A13</code></td><td>P01·P02의 모든 깊이에서 정답·배점·rubric·teacher note·내부 상태 forbidden key가 0건임</td></tr>
+          <tr><td><code>A-DS09-A14</code></td><td>P02의 response ID 집합과 P03의 response-scope binding이 P01 anchor와 일치하고 submission-scope binding은 response ID가 null이며 모든 rubric criterion·배점 합계가 정확히 한 번 대응함</td></tr>
+          <tr><td><code>A-DS09-A15</code></td><td>P04가 exact revision·profile·source hash를 포함하고 actor·secret·endpoint·teacher note를 포함하지 않음</td></tr>
+          <tr><td><code>A-DS09-A16</code></td><td>P05 golden fixture가 heading·list·mark·table·수식·image·drawing·응답 위치를 보존하고 raw JSON을 출력하지 않음</td></tr>
+          <tr><td><code>A-DS09-A17</code></td><td>본문 asset은 worksheet root 소유 private ID만 저장되고 exact revision·publication reference와 ready·scope·hash 검증 전에는 stream·발행·package·PDF가 차단됨</td></tr>
+          <tr><td><code>A-DS09-A18</code></td><td>활동지 bundle과 저장 JSON에 UploadThing·Faker·외부 embed·<code>blob:</code>·<code>data:</code>·영구 공개 URL이 0건임</td></tr>
+          <tr><td><code>A-DS09-A19</code></td><td><code>.ojws</code> export→import→새 ID 재발급→projection 재생성 뒤 의미상 같은 canonical document가 만들어짐</td></tr>
+          <tr><td><code>A-DS09-A20</code></td><td>path traversal·symlink·duplicate·bomb·checksum mismatch package fixture가 저장 row와 promoted file 0개로 실패함</td></tr>
+          <tr><td><code>A-DS09-A21</code></td><td>지원 과거 version은 순차 upcast로 새 revision이 되고 지원 밖 version은 source를 수정하지 않은 채 명시 오류로 중단됨</td></tr>
+          <tr><td><code>A-DS09-A22</code></td><td>RA01~RA04·DBA01~DBA03 승인 전 route 33·63과 기존 DDL을 유지하고 승인 뒤에만 34·66 계약 fixture·Controller와 A-DS-05 column 정본을 함께 개정함</td></tr>
+          <tr><td><code>A-DS09-A23</code></td><td>390×844부터 1440×900까지 toolbar·canvas·outline·inspector가 겹치지 않고 제품 화면에 긴 설계 문구가 노출되지 않음</td></tr>
+          <tr><td><code>A-DS09-A24</code></td><td>A-DS-16 승인 전 Plate·PHP·DDL·REST Runtime 변경과 OJ Platform 파일·table·migration 수정이 0건임</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">결정 기록</h2>
+      <table>
+        <thead><tr><th>ID</th><th>확정 결정</th><th>이유</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS09-D01</code></td><td>활동지 editor는 현재 설치된 Plate 53.1.2를 검증 기준선으로 삼되 <code>worksheet_plate@1</code>의 선별 plugin만 사용한다.</td><td>whole-editor 예제의 범위·network 의존 제거</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D02</code></td><td>교사용 정본 schema를 <code>oj_ai.worksheet_document@1.0.0</code>으로 고정한다.</td><td>브라우저·PHP·renderer 정본 통일</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D03</code></td><td><code>teacher_document</code>만 콘텐츠 정본이며 HTML·blocks·response index는 서버 파생값이다.</td><td>이중 쓰기와 손실 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D04</code></td><td>콘텐츠 node 16종과 별도 <code>oj_ai_response</code> node만 canonical tree에 허용한다.</td><td>학생·PDF parity 가능한 표면 고정</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D05</code></td><td>Text mark는 bold·italic·underline·strikethrough 네 종류로 제한한다.</td><td>임의 style·renderer 차이 제거</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D06</code></td><td>응답칸은 A-DS-01의 10종을 유지하고 위치·label이 아닌 stable response ID로 연결한다.</td><td>재배치·문구 수정 뒤 답안 연결 보존</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D07</code></td><td>영속 ID는 서버가 <code>PublicIdV1</code>로 발급하고 client 임시 ID를 save receipt에서 치환한다.</td><td>충돌·내부 PK 노출 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D08</code></td><td>unknown node·property·mark·legacy alias는 upcaster 밖 canonical 저장에서 거부한다.</td><td>조용한 데이터 손실 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D09</code></td><td><code>A-DS09-L01~L12</code>를 <code>worksheet_plate@1</code> hard limit로 고정한다.</td><td>DoS·DB·renderer 상한 일치</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D10</code></td><td>본문 JSON에는 worksheet root 소유 private asset ID만 저장하고 외부 media·data·blob·절대 경로를 금지한다.</td><td>재접속 손실·정보 유출 차단</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D11</code></td><td>본문 asset은 Storage owner가 quarantine·scan·bind하고 ready 전 발행을 차단한다.</td><td>악성·미완료 파일 차단</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D12</code></td><td>브라우저 buffer만 mutable이고 의미가 달라진 서버 저장은 새 immutable draft revision을 append하며 같은 hash 저장은 dedupe한다.</td><td>자동 저장 폭주 차단과 복구·감사 일관성</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D13</code></td><td>승인은 revision body를 바꾸지 않고 state·승인 metadata만 expected-state 전이한다.</td><td>A-DS-05 불변 문서 계약 유지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D14</code></td><td>승인·발행 뒤 편집은 기존 version을 바꾸지 않고 새 draft revision에서 시작한다.</td><td>기존 평가·배포 재현성</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D15</code></td><td>발행은 정확한 승인 revision에서 immutable publication과 P01·P02·P03·P05 envelope·publication hash를 원자 생성한다.</td><td>학생·채점·인쇄 snapshot 일치</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D16</code></td><td>활동지 출력 계약은 P01~P05 다섯 versioned projection으로 분리한다.</td><td>소비자별 최소 정보·schema 진화</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D17</code></td><td>학생 document와 response schema는 allowlist로 새로 만들고 forbidden-key 검사를 발행 관문으로 둔다.</td><td>교사용 비공개 정보 누출 차단</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D18</code></td><td>활동지 자체 평가는 P04와 exact source hash만 사용하며 AI가 문서를 직접 수정·승인·발행하지 않는다.</td><td>평가 대상·교사 책임 분리</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D19</code></td><td>활동지 PDF는 P05 기반 private artifact이며 원본·import 형식으로 사용하지 않는다.</td><td>재현 가능한 출력과 원본 분리</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D20</code></td><td>portable package는 JSON 정본과 private asset을 담은 결정적 <code>.ojws</code> ZIP container로 한다.</td><td>binary 자산 포함과 checksum 검증</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D21</code></td><td>가져오기·schema upgrade는 명시 upcaster로 새 revision을 만들며 저장 row를 제자리 수정하지 않는다.</td><td>호환·감사·rollback 보존</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D22</code></td><td>RA01~RA04는 A-DS-08 Amendment 01, DBA01~DBA03은 A-DS-05 Amendment 02로 승인·동결하고 관련 HTML 정본을 함께 개정한다.</td><td>자산·package REST와 정본·발행·export provenance 공백 보완</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D23</code></td><td>제품 UI에는 기능명·짧은 상태·복구 행동만 표시하고 schema·hash·설계 설명은 진단으로 분리한다.</td><td>직관적인 교사·학생 경험</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS09-D24</code></td><td>A-DS-16 승인 전 Plate·PHP·DDL·REST와 OJ Platform Runtime을 구현·수정하지 않는다.</td><td>설계 동결 전 코드 변경 차단</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="completion">완료 판정과 다음 단계</h2>
+      <table>
+        <thead><tr><th>항목</th><th>상태</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td>Plate editor profile</td><td>동결 완료</td><td>기본 도구·콘텐츠 node 16종·구조 node·mark·제외 기능</td></tr>
+          <tr><td>교사용 정본·응답칸</td><td>동결 완료</td><td>canonical envelope와 응답칸 10종·private grading</td></tr>
+          <tr><td>ID·한도·revision</td><td>동결 완료</td><td>PublicIdV1·L01~L12·append 저장·승인·발행</td></tr>
+          <tr><td>A-DS-05 적합성</td><td>승인·동결</td><td>신규 table 0개, 기존 3개 table에 column 10개를 추가한 DBA01~DBA03 정본 반영</td></tr>
+          <tr><td>학생·채점·평가·인쇄</td><td>동결 완료</td><td>P01~P05와 allowlist·hash·source 계약</td></tr>
+          <tr><td>자산·package·PDF 입력</td><td>동결 완료</td><td>private file·결정적 .ojws·P05·비동기 artifact</td></tr>
+          <tr><td>REST 보강</td><td>승인·동결</td><td>A-DS09-RA01~RA04, A-DS-08 정본 조회 34·명령 66</td></tr>
+          <tr><td>DB 보강</td><td>승인·동결</td><td>A-DS09-DBA01~DBA03, table 45개·owner 10개 유지</td></tr>
+          <tr><td>결정 24개</td><td>승인·동결</td><td>2026-08-13 <code>A-DS09-D01~D24</code> 사용자 확정</td></tr>
+          <tr><td>Runtime 구현</td><td>G2 부분 진행</td><td>C01·Q04~Q08, C02·C03·C04·C05, private asset, P01·P02·P04·P05와 projection 안전 검사 완료·OJ Platform 변경 0건</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>사용자 확정·동결:</strong> 2026-08-13 A-DS-09, A-DS-08 Amendment 01, A-DS-05 Amendment 02를 동결했고 A-DS-12 승인에 따라 Projection Amendment 01을 추가 반영했다. Runtime 구현은 A-DS-16 최종 승인 뒤에만 시작한다.</div>
+      <div class="good callout" id="g2-implementation"><strong>G2 구현 증거 2026-08-14:</strong> A-DS-16 승인 뒤 <a href="g2-worksheet-authoring-vertical-slice.html"><code>G2-IMP-01</code></a>을 시작했다. C01은 <code>teacher_document</code> 정본, <code>oj_ai.worksheet_document@1.0.0</code>, <code>worksheet_plate@1</code>, 서버 public ID, 제목 h1·빈 p와 별도 validation hash를 가진 첫 불변 draft revision을 만든다.</div>
+      <div class="good callout"><strong>G2-IMP-02-S02 구현 증거 2026-08-20:</strong> C02 outer command·receipt·revision conflict 계약을 코드 DTO와 fixture로 고정했다. route·DB append는 아직 공개하지 않았다.</div>
+      <div class="good callout"><strong>G2-IMP-02-S03 구현 증거 2026-08-20:</strong> <a href="g2-imp-02-s03-document-profile.html"><code>worksheet_plate@1</code> validator</a>가 node 16 family·구조 6종·응답 10종·mark 4종·L01~L12와 stable ID 치환, canonical byte·hash를 검증한다.</div>
+      <div class="good callout"><strong>G2-IMP-02-S04 구현 증거 2026-08-20:</strong> <a href="g2-imp-02-s04-revision-projection.html">revision projector</a>가 stable response ID 질문 index, private grading, 권위 있는 성취기준 snapshot, 본문 asset binding과 결정적 manifest를 생성한다.</div>
+      <div class="good callout"><strong>G2-IMP-02-S05 구현 증거 2026-08-20:</strong> <a href="g2-imp-02-s05-revision-transaction.html">revision transaction</a>이 새 revision·질문·성취기준 snapshot을 원자 append하고 root pointer를 CAS로 이동한다.</div>
+      <div class="good callout"><strong>G2-IMP-02-S06 구현 증거 2026-08-20:</strong> <a href="g2-imp-02-s06-operation-transaction.html">operation transaction</a>이 staged asset 승격, audit chain, outbox receipt, exact 멱등 replay와 실패 rollback을 같은 저장 경계에 연결한다.</div>
+      <div class="good callout"><strong>G2-IMP-02-S07 구현 증거 2026-08-20:</strong> <a href="g2-imp-02-s07-rest-boundary.html">C02 REST boundary</a>가 owner 편집 권한, nonce, Idempotency-Key, 200·201 replay와 safe 409를 연결한다.</div>
+      <div class="good callout"><strong>G2-IMP-03-S04 구현 증거 2026-08-21:</strong> <a href="g2-imp-03-s04-worksheet-duplicate.html">C03 원자 복제</a>가 새 소유 ID, revision snapshot, private asset 재소유, transaction 보상과 멱등 replay를 통과했다.</div>
+      <div class="good callout"><strong>G2-IMP-04-S01 구현 증거 2026-08-21:</strong> <a href="g2-imp-04-s01-validation.html">C05 exact revision 검증</a>이 canonical hash 재검산, asset readiness, 실패 폐쇄 projection과 REST 경계를 통과했다. schema·table·OJ Platform API 변경은 없다.</div>
+      <div class="good callout"><strong>G2-IMP-04-S02·S03 구현 증거 2026-08-21:</strong> <a href="g2-imp-04-s02-preview.html">P01·P02·P05 preview</a>와 <a href="g2-imp-04-s03-projection-safety.html">renderer parity·private scan</a>이 통과했고 C05는 모든 검사와 asset readiness가 passed일 때만 ready다.</div>
+      <div class="good callout"><strong>G2-IMP-04-S04 구현 증거 2026-08-21:</strong> <a href="g2-imp-04-s04-ui-e2e-freeze.html">validation·preview 작업대</a>가 C05·Q08 exact 계약, 공개 projection 전용 renderer와 desktop/mobile E2E를 통과해 IMP-04를 4/4 동결했다.</div>
+      <div class="good callout"><strong>G2-IMP-05-S02 구현 증거 2026-08-21:</strong> <a href="g2-imp-05-s02-p04-input.html">P04 평가 입력 builder</a>가 exact revision·응답 grading·교육과정·미디어를 최소 정보 canonical JSON으로 투영한다. 현재 revision link에 description snapshot이 없어 mutable 값을 재조회하지 않고 <code>description=null</code>로 보존한다.</div>
+      <div class="good callout"><strong>G2-IMP-05-S03 구현 증거 2026-08-21:</strong> <a href="g2-imp-05-s03-c10-enqueue.html">C10 평가 enqueue</a>가 exact revision·source hash와 P04를 evaluation root·input·first run에 원자 고정한다. 원문 revision은 수정하지 않는다.</div>
+      <div class="good callout"><strong>G2-IMP-05 구현 인수 2026-08-21:</strong> <a href="g2-imp-05-s09-integration-freeze.html">worker·결과·Q09·Q10·제어·교사 검토·작업대와 통합 실패 경계</a>를 9/9로 동결했고 <a href="g2-imp-05-r01-external-ai-consent.html">R01</a>에서 외부 AI 승인·철회를 추가했다.</div>
+      <div class="good callout"><strong>G2-IMP-06-S01 구현 증거 2026-08-21:</strong> <a href="g2-imp-06-s01-approval-policy.html">승인 정책 관문</a>이 exact C05 validation, 필수·선택 자체 평가와 completed review를 evidence hash로 결속한다. 이 단계는 revision을 수정하지 않는다.</div>
+      <div class="good callout"><strong>G2-IMP-06-S02 구현 증거 2026-08-21:</strong> <a href="g2-imp-06-s02-approval-command.html">C06 교사 명시 승인</a>이 exact draft·document·validation·decision을 transaction 안에서 재검산하고 revision·audit·outbox·receipt를 함께 확정한다.</div>
+      <div class="good callout"><strong>G2-IMP-06-S03 구현 증거 2026-08-21:</strong> <a href="g2-imp-06-s03-publication.html">C07 불변 발행</a>이 exact approved revision과 C06 audit를 검산하고 P01·P02·P03·P05를 결정적 manifest·publication hash로 기존 publication table에 원자 저장한다.</div>
+      <div class="good callout"><strong>G4-IMP-01-S02 보정 증거 2026-08-23:</strong> P03 grading projector 1.1.0과 5요소 <code>binding_key</code>를 기존 C07·제출 평가 입력 계약 테스트에 함께 고정했다. P01·P02·P05 projector와 table·column은 바꾸지 않았다.</div>
+      <div class="good callout"><strong>G2-IMP-06-S04 구현 증거 2026-08-21:</strong> <a href="g2-imp-06-s04-lifecycle.html">C08·C09 보관·복원</a>이 <code>draft|active → archived → draft|active</code> root 전이를 state·revision·lock CAS로 고정하고 과거 revision·publication을 보존한다.</div>
+      <div class="good callout"><strong>G2-IMP-06-S05 구현 증거 2026-08-21:</strong> <a href="g2-imp-06-s05-ui-freeze.html">승인·발행 작업대</a>가 C05 approval readiness, C06·C07 exact hash와 C08·C09 state·revision·lock을 한 화면에 연결했다. 보관 중 Plate와 모든 입력은 읽기 전용이며 복원 뒤 최신 root를 다시 적용한다.</div>
+      <div class="good callout"><strong>G2-IMP-07-S02~S03 구현 증거 2026-08-22:</strong> <a href="g2-imp-07-s02-pdf-job-artifact.html">활동지 PDF</a>와 <a href="g2-imp-07-s03-worksheet-package.html">교사용 비공개 <code>.ojws</code></a>가 exact revision, private artifact, 현재 owner 재인가와 24시간 만료를 통과했다. 학생 배포는 별도 G3 계약이며 publication 생성이나 root 복원만으로 완료되지 않는다.</div>
+      <div class="good callout"><strong>G2-IMP-07-S04 구현 증거 2026-08-22:</strong> <a href="g2-imp-07-s04-integration-freeze.html">PDF·package 통합 동결</a>에서 public PDF private field 0건, package 교사용 원본 보존, 권한·경합·만료, desktop·mobile 내보내기 UI와 실제 한글 A4 PDF를 검증했다.</div>
+      <div class="good callout"><strong>G5-IMP-07-S03-D3-D3 이전 증거 2026-08-25:</strong> legacy assignment용 P01·P02·P05는 현재 allowlist projector로 만들고, P03은 같은 <code>oj_ai.grading_schema@1.1.0</code> 구조에 <code>legacy-migration@1.0.0</code> 표식을 둔다. publication은 <code>retired</code>이고 root latest를 바꾸지 않아 일반 C12 신규 배포에 재사용되지 않으며 과거 보고·계보 복원에만 사용한다.</div>
+      <p class="footer">A-DS-09 활동지 제작과 버전 · 사용자 확인·동결 · G2 7/7 완료 · G4-IMP-01-S02 P03 binding 보정 반영 · grading projector 1.1.0</p>
+    </main>
+  </div>
+</body>
+</html>

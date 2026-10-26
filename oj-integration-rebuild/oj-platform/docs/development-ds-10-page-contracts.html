@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-10 페이지·권한·데이터 계약 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/ds10-design.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 설계</strong></a>
+      <span class="topbar-label">DS-10 문제</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="문서 목차">
+      <strong>페이지 계약</strong>
+      <ul>
+        <li><a href="#rules">공통 규칙</a></li>
+        <li><a href="#user-pages">사용자 10개</a></li>
+        <li><a href="#admin-pages">관리자 13개</a></li>
+        <li><a href="#actions">상태 변경 액션</a></li>
+        <li><a href="#counts">수량 기준</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header">
+        <p class="eyebrow">DS-10 · 상세 설계 1/4</p>
+        <h1>페이지·권한·데이터 계약</h1>
+        <p class="lede">Problems가 직접 제공하는 24개 화면의 주소, 책임, 접근 권한과 읽는 원본을 한 표에서 확인한다. 화면 동작과 저장 규칙은 연결된 기능 문서가 소유한다.</p>
+        <div class="meta">
+          <span>기능 설계 동결</span>
+          <span>사용자 10개</span>
+          <span>관리자 13개</span>
+          <span>호환 경로 0개</span>
+        </div>
+        <div class="doc-nav" aria-label="DS-10 상세 문서">
+          <a href="development-ds-10-problems.html">개요</a>
+          <a href="development-ds-10-page-contracts.html" aria-current="page">페이지 계약</a>
+          <a href="development-ds-10-problem-content.html">문제 콘텐츠</a>
+          <a href="development-ds-10-quiz-design.html">퀴즈</a>
+          <a href="development-ds-10-operations.html">관리 도구·구현</a>
+        </div>
+      </header>
+
+      <section class="section" id="rules">
+        <div class="section-heading">
+          <div><h2>공통 접근 규칙</h2><p>메뉴 노출과 주소 직접 접근은 같은 Policy 결과를 사용한다.</p></div>
+          <span class="badge good">CF-1·DS-07 유지</span>
+        </div>
+        <ol class="rule-list">
+          <li>회원가입·비밀번호 복구 등 DS-09의 명시적 비로그인 예외를 제외한 모든 Problems 화면은 로그인한 <code>active</code> 사용자만 접근한다.</li>
+          <li>사용자 화면은 문제 공개 상태, 수업·대회·평가 참여 범위와 평가 보호 정책을 추가로 검사한다.</li>
+          <li>관리자 화면은 WordPress capability와 문제별 소유자·공동 편집자·테스트데이터 담당 범위를 함께 검사한다.</li>
+          <li>메뉴, GET, POST, AJAX, Jobs 등록, Worker 실행 직전, 파일 응답과 내보내기에 같은 문제 Context를 전달한다.</li>
+          <li>권한 거부 화면은 보호 대상의 제목·본문·답안·파일 경로를 노출하지 않는다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="user-pages">
+        <div class="section-heading">
+          <div><h2>사용자 화면 10개</h2><p>목록, 상세, 분석, 퀴즈와 문제집을 독립 주소로 제공한다.</p></div>
+          <span class="badge info">로그인 필수</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>메뉴·페이지</th><th>대표 주소</th><th>접근 권한</th><th>사용 원본</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>문제 · 목록</td><td><code>/problems</code></td><td><code>active</code> 로그인 + 공개·참여 범위</td><td>Judge <code>problem</code>, <code>problem_metadata</code>, <code>problem_topic_links</code></td></tr>
+              <tr><td>문제 · 상세</td><td><code>/problems/{problem_id}</code></td><td>해당 문제 공개·참여 Policy</td><td>Judge <code>problem</code> 원문·<code>bann</code>·<code>front</code>·<code>body</code>·<code>rear</code>, 빈칸 완성 여부·개수·언어, 메타데이터·주제, Board 선택 Section ViewModel</td></tr>
+              <tr><td>문제 · 통계</td><td><code>/problems/{problem_id}/statistics</code></td><td>문제 접근 + <code>problem_statistics</code> 공개</td><td>Judge <code>solution</code> 제한 집계</td></tr>
+              <tr><td>문제 · 순위</td><td><code>/problems/{problem_id}/ranking</code></td><td>문제 접근 + 순위 공개 정책</td><td>Judge <code>solution</code> 제한 집계, <code>wp_users</code> 표시값</td></tr>
+              <tr><td>퀴즈 · 목록</td><td><code>/quizzes</code></td><td><code>active</code> 로그인 + 퀴즈 공개 범위</td><td>현재 <code>quiz_revisions</code>, 문제 요약</td></tr>
+              <tr><td>퀴즈 · 상세</td><td><code>/quizzes/{problem_id}</code></td><td>퀴즈 활성 + 문제 접근 Policy</td><td>현재 게시 버전, 응시 정책, 본인 시도 요약</td></tr>
+              <tr><td>퀴즈 · 응시</td><td><code>/quizzes/{problem_id}/attempt</code></td><td>본인 소유의 진행 시도</td><td>참조 게시 버전의 문항·선택지, <code>quiz_attempt_summaries</code></td></tr>
+              <tr><td>퀴즈 · 결과</td><td><code>/quizzes/{problem_id}/attempts/{attempt_id}</code></td><td>시도 소유자 또는 승인된 관리자</td><td>시도 요약·학습자 답안·해당 게시 버전</td></tr>
+              <tr><td>퀴즈 · 통계</td><td><code>/quizzes/{problem_id}/statistics</code></td><td>퀴즈 접근 + 집계 공개 정책</td><td>본인 시도 집계, 공개 가능한 익명 집계</td></tr>
+              <tr><td>문제집 · 목록</td><td><code>/problem-books</code></td><td><code>active</code> 로그인 + 문제집 공개 범위</td><td>문제집 범주·항목, 본인의 개인 문제집 항목</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout"><strong>제출 연결:</strong> 문제 상세의 “제출하기”는 DS-11이 소유하는 제출 화면으로 이동한다. 제출 폼과 채점 결과 상세는 DS-10 화면 수에 포함하지 않는다.</div>
+      </section>
+
+      <section class="section" id="admin-pages">
+        <div class="section-heading">
+          <div><h2>관리자 화면 13개</h2><p>일상 편집과 고위험 운영 작업을 서로 다른 화면과 권한으로 분리한다.</p></div>
+          <span class="badge info">전역 또는 담당 범위</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>관리 메뉴·페이지</th><th>대표 주소</th><th>접근 권한</th><th>사용 원본</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>문제 관리 · 목록</td><td><code>/oj-console/problems</code></td><td><code>oj_manage_problems</code> 또는 담당 문제 범위</td><td>Judge <code>problem</code>, 담당·메타데이터·주제, Jobs 상태</td></tr>
+              <tr><td>문제 관리 · 추가</td><td><code>/oj-console/problems/new</code></td><td><code>oj_create_problems</code></td><td>암호화 Form Draft, Judge <code>problem</code> 원문·<code>bann</code>·<code>front</code>·<code>body</code>·<code>rear</code>, <code>problem_metadata</code> 작성 방식·빈칸 스키마·해시 저장 명령</td></tr>
+              <tr><td>문제 관리 · 편집</td><td><code>/oj-console/problems/{problem_id}/edit</code></td><td>전역 수정 또는 소유자·공동 편집자</td><td>Judge <code>problem</code> 원문·제출 코드 정책, 빈칸 코드 작성기, 담당·메타데이터·주제</td></tr>
+              <tr><td>문제 관리 · 보관</td><td><code>/oj-console/problems/{problem_id}/delete</code></td><td>전역 보관 또는 문제 소유자</td><td>Judge <code>problem.defunct</code>, 참조 검사</td></tr>
+              <tr><td>문제 관리 · 테스트데이터</td><td><code>/oj-console/problems/{problem_id}/test-data</code></td><td><code>oj_manage_testcases</code> 또는 테스트데이터 담당자</td><td>하위 폴더 없는 문제 데이터 디렉터리의 루트 파일, 초안, Jobs 상태</td></tr>
+              <tr><td>문제 관리 · 테스트 환경</td><td><code>/oj-console/settings/test-data</code></td><td><code>oj_manage_system</code> 전역 전용</td><td>Problems 소유 설정의 테스트 데이터 루트, C/C++ 컴파일러, prlimit, bwrap 경로</td></tr>
+              <tr><td>문제 관리 · 번호 변경</td><td><code>/oj-console/problems/change-id</code></td><td><code>oj_change_problem_ids</code> 전역 전용</td><td>Judge·플랫폼 참조, 파일 경로, <code>problem_number_change</code> Job</td></tr>
+              <tr><td>문제 관리 · XML</td><td><code>/oj-console/problems/xml</code></td><td><code>oj_manage_problem_xml</code> 전역 전용</td><td>검증된 문제 원문·테스트데이터 가져오기·내보내기</td></tr>
+              <tr><td>문제 관리 · 주제</td><td><code>/oj-console/problems/topics</code></td><td>최고 관리자 전용 · capability 위임 불가</td><td>WordPress <code>oj_problem_topic</code> 분류·termmeta, 문제별 연결 수</td></tr>
+              <tr><td>퀴즈 관리 · 목록</td><td><code>/oj-console/quizzes</code></td><td><code>oj_manage_quizzes</code> + 담당 문제 범위</td><td>현재 초안·게시 버전, 응시 요약</td></tr>
+              <tr><td>퀴즈 관리 · 생성</td><td><code>/oj-console/quizzes/new</code></td><td><code>oj_manage_quizzes</code> + 대상 문제 범위</td><td>대상 문제, 새 퀴즈 초안</td></tr>
+              <tr><td>퀴즈 관리 · 편집</td><td><code>/oj-console/quizzes/{problem_id}/edit</code></td><td><code>oj_manage_quizzes</code> + 대상 문제 범위</td><td>초안, 불변 게시 버전, 재적용 Job</td></tr>
+              <tr><td>퀴즈 관리 · 통계</td><td><code>/oj-console/quizzes/{problem_id}/statistics</code></td><td>퀴즈 관리 + 결과 조회 범위</td><td>버전별 시도·문항 집계</td></tr>
+              <tr><td>문제집 관리</td><td><code>/oj-console/problem-books</code></td><td><code>oj_manage_problem_books</code></td><td>공용 범주·문제 구성·공개 범위</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warning"><strong>버튼도 별도 권한:</strong> 문제 수정 권한이 테스트데이터 수정 권한을 대신하지 않는다. 문제 상세에서 두 버튼은 각각의 Policy를 통과한 경우에만 표시한다.</div>
+      </section>
+
+      <section class="section" id="actions">
+        <div class="section-heading">
+          <div><h2>상태 변경 액션</h2><p>화면 조회와 저장 명령을 분리하고 GET 요청에서는 상태를 바꾸지 않는다.</p></div>
+          <span class="badge good">POST·AJAX·Jobs</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>명령</th><th>실행 방식</th><th>중복·권한 보호</th><th>상세 원본</th></tr></thead>
+            <tbody>
+              <tr><td>퀴즈 응시 시작</td><td><code>POST oj_quiz_start_attempt</code></td><td>문제별 nonce, 64자 멱등 키, 진행 시도 고유키</td><td><a href="development-ds-10-quiz-design.html#attempt-flow">퀴즈 응시 흐름</a></td></tr>
+              <tr><td>퀴즈 최종 제출</td><td><code>POST oj_quiz_submit_attempt</code></td><td>시도 소유자, 상태 조건, 재전송 시 같은 결과 반환</td><td><a href="development-ds-10-quiz-design.html#attempt-flow">퀴즈 응시 흐름</a></td></tr>
+              <tr><td>메타데이터·문제·테스트 AI</td><td>AJAX는 Jobs 등록만 수행</td><td>현재 권한·입력 해시를 Worker 실행 직전 재검사</td><td><a href="development-ds-10-operations.html#ai-jobs">AI Jobs</a></td></tr>
+              <tr><td>테스트데이터 파일 명령</td><td><code>POST oj_problem_test_data_action</code>의 타입이 있는 <code>operation</code>으로 루트 파일 생성·편집·이름 변경·다중 삭제·다운로드, ZIP 생성·미리보기·해제와 SPJ Job 등록. 폴더 생성·열기·이동·복사 operation은 등록하지 않는다.</td><td>문제별 nonce·현재 테스트데이터 범위·루트 경로·원본 해시·문제 잠금, 디렉터리 항목 차단, ZIP 해제 한도와 재확인</td><td><a href="development-ds-10-operations.html#test-data">테스트데이터 편집기</a></td></tr>
+              <tr><td>테스트 환경 저장</td><td><code>POST oj_save_problem_test_data_settings</code>에서 데이터 루트와 SPJ 실행 파일 묶음을 구분해 저장</td><td><code>oj_manage_system</code>, nonce, 설정 revision, 절대·실재·읽기·쓰기 경로, WordPress 경로 비중첩, 승인된 <code>/usr</code> 실행 파일 검사</td><td><a href="development-ds-10-operations.html#test-data">테스트 환경</a></td></tr>
+              <tr><td>문제 번호 변경·퀴즈 재적용</td><td><code>oj_problem_change_id</code>는 연속·임의 매핑의 영향 계획을 승인한 뒤 Job만 등록하고, 퀴즈 재적용도 검증 계획 뒤 Jobs 실행</td><td>대상 스냅샷, 일대일 매핑, 저장소 Registry, 체크포인트, 멱등 키, 원본 보존</td><td><a href="development-ds-10-operations.html#tools">고위험 도구</a></td></tr>
+              <tr><td>문제·퀴즈·문제집 저장</td><td>전용 POST 액션</td><td>대상별 nonce, capability, 담당 범위, 원본 해시</td><td>각 기능 문서</td></tr>
+              <tr><td>분야·세부 주제 추가</td><td><code>POST oj_problem_topic_create</code></td><td>위험 작업 nonce, 최고 관리자 재검사, 키·이름·별칭 중복, 분야→세부 주제의 정확히 2단계와 문제 링크 불가 분야 검사</td><td><a href="development-ds-10-problem-content.html#metadata">주제 사전 계약</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="counts">
+        <div class="section-heading">
+          <div><h2>수량과 명명 기준</h2><p>후속 설계가 추가되어도 Problems 자체 수량과 대표 주소는 바꾸지 않는다.</p></div>
+          <span class="badge good">고정</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>10</strong><span>사용자 렌더링 화면</span></div>
+          <div class="metric"><strong>13</strong><span>관리자 렌더링 화면</span></div>
+          <div class="metric"><strong>23</strong><span>Problems 직접 화면</span></div>
+          <div class="metric"><strong>0</strong><span>호환 경로</span></div>
+        </div>
+        <div class="summary"><strong>대표 주소:</strong> 사용자 퀴즈는 <code>/quizzes</code>, 관리자 퀴즈는 <code>/oj-console/quizzes</code>만 사용한다. <code>/problems/quizzes</code>와 <code>/oj-console/problems/quiz</code>는 등록하지 않는다.</div>
+        <div class="callout"><strong>전체 Registry 수량:</strong> 최고 관리자 주제 관리와 AI 작업 배정 화면을 포함한 렌더링 150개, Jobs 내보내기와 커뮤니티 보호 첨부 파일 응답 2개로 최종 목표 GET은 152개다. Problems 소유 화면은 24개이며 호환 경로는 만들지 않는다.</div>
+      </section>
+
+      <footer>OJ Platform 개발 설계 · DS-10 페이지 계약 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

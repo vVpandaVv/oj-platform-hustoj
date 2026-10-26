@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-D-001 애드온 경계와 의존 관계</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-D-001 경계와 의존 관계</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html" aria-current="page">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">조사 결과</a>
+          <a href="#scope">파일 경계</a>
+          <a href="#runtime">런타임 지도</a>
+          <a href="#modules">모듈 의존</a>
+          <a href="#platform">플랫폼 대조</a>
+          <a href="#console-integration">Console·PublicUI 통합</a>
+          <a href="#data">데이터 경계</a>
+          <a href="#contract">확정 계약</a>
+          <a href="#gaps">발견 격차</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <p class="notice">이 문서는 당시 구현의 조사 기록입니다. 아래에서 제거됨으로 표시한 구형 소스는 현재 사용되지 않아 정리했습니다. <a href="retired-runtime-removal-2026-10-20.html">제거 범위와 유지한 호환 기능</a>을 참고하세요.</p>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-D-001 · Current-State Baseline</p>
+        <h2>애드온 경계와 의존 관계</h2>
+        <p>AI 평가 애드온이 수정할 수 있는 코드, 읽을 수 있는 외부 데이터, 쓸 수 있는 저장소와 현재 런타임 의존을 실제 코드 기준으로 조사했다. 이 문서는 목표 구현이 아니라 첫 번째 현황 기준선과 변경 금지선을 기록한다.</p>
+        <div class="meta">
+          <span class="badge">조사일 2026-08-09 · dev.26 재점검 2026-08-10</span>
+          <span class="badge">상태 dev.26 재점검 완료·최종 확인 대기</span>
+          <span class="badge">기준 oj-platform 2.0.0-dev.26</span>
+          <span class="badge">본체 변경 0건</span>
+        </div>
+        <div class="callout"><strong>최초 조사 식별자:</strong> 애드온 HEAD <code>5f05492c6e69</code>·363파일 SHA-256 <code>a592fbd59240f78708fe7f6ff946736997c84aa134b22f9f77edfcf58f51bdaf</code>, 플랫폼 HEAD <code>a7a11f6f45e4</code>·1102파일 SHA-256 <code>f3b8e9238a3d011f9addbc3c041193eecb6a16a24e0b381f49ce6f40c961ffee</code>를 기준으로 조사했다. 이 값은 당시 dirty working tree의 관찰값으로 보존한다.</div>
+        <div class="callout"><strong>표준 재검산:</strong> <a href="../../scripts/fingerprint-runtime-source.mjs"><code>npm run audit:boundary</code></a>는 <code>sha256-path-nul-bytes-nul-v1</code> 알고리즘으로 entrypoint·package metadata·config·src/modules·resources를 읽고 <code>node_modules</code>·<code>vendor</code>를 제외한다. 2026-08-10 보완 종료 관찰값은 애드온 370파일 SHA-256 <code>3bae6a3e1aaf2996e925a1e8b657c03c0bebbf0c794ffdf930813b38415807fe</code>, 플랫폼 1106파일 SHA-256 <code>2d9e0c498316eddbb879e09315f19becd4236d6fbbe643b631cb8e89a74dc065</code>다. 최초 값과 범위가 달라 직접 수치 비교하지 않으며, 재검산 중 플랫폼 <code>modules</code>가 921개에서 923개로 늘어난 병행 변경을 감지했다.</div>
+      </section>
+
+      <h2>한 줄 판정</h2>
+      <section class="panel">
+        <p>애드온은 독립 WordPress 플러그인으로 배포하되 관리자·교사 기능은 OJ Console에, 학생 기능은 PublicUI에 네이티브로 통합한다. 현재 플랫폼에는 외부 애드온이 두 shell의 메뉴와 경로를 등록할 공개 계약이 없으므로, 범용·버전형 애드온 확장 API가 포함된 플랫폼 선행 버전이 필요하다.</p>
+        <div class="callout"><strong>확정 경계:</strong> 애드온 설치·업데이트·런타임은 <code>oj-platform</code> 파일을 패치하지 않는다. 플랫폼의 범용 확장 API는 별도 플랫폼 변경과 릴리스로 제공하고, 애드온은 그 공개 계약만 사용한다. 운영 데이터 쓰기는 무접두어 <code>oj_ai_*</code> 저장소로 제한한다.</div>
+      </section>
+
+      <h2>조사 근거</h2>
+      <table>
+        <thead><tr><th>영역</th><th>확인한 기준 파일</th><th>확인 내용</th></tr></thead>
+        <tbody>
+          <tr><td>애드온 진입·부팅</td><td><a href="../../oj-ai-dashboard.php">oj-ai-dashboard.php</a>, <a href="../../src/Core/Plugin.php">Core/Plugin.php</a>, <a href="../../src/Core/Activation.php">Core/Activation.php</a></td><td>독립 플러그인 진입점, 12개 모듈 순차 등록, 활성화 시 역할과 schema 설치</td></tr>
+          <tr><td>플랫폼 연결</td><td><span title="2026-10-20 제거된 구형 소스">Platform_Detector.php (제거됨)</span>, <code>Oj_Console_Connector.php (이전)</code> → <a href="../../src/Platform/Addon_Integration.php">Addon_Integration.php</a>, <span title="2026-10-20 제거된 구형 소스">Oj_Table_Resolver.php (제거됨)</span></td><td>플랫폼 버전 상수·활성 플러그인·공개 Runtime 연결 감지, 콘솔 container 연결, 읽기 전용 OJ 데이터 접근</td></tr>
+          <tr><td>애드온 저장소</td><td><a href="../../src/Database/Table_Names.php">Table_Names.php</a>, <span title="2026-10-20 제거된 구형 소스">Migrator.php (제거됨)</span>, <a href="../../src/Database/Schema.php">Schema.php</a></td><td>35개 고정 <code>oj_ai_*</code> 테이블과 2개 migration</td></tr>
+          <tr><td>AI 실행</td><td><span title="2026-10-20 제거된 구형 소스">Ai_Scoring_Service.php (제거됨)</span>, <code>Admin_Settings_Service.php (이전)</code> → <a href="../../src/Platform/External_Ai_Consent_Settings_Page_Handler.php">External_Ai_Consent_Settings_Page_Handler.php</a></td><td>실제 Provider transport 없이 request 값·수동 점수·WordPress filter·보수적 fallback 순서 사용</td></tr>
+          <tr><td>Plate 편집기</td><td><a href="../../resources/plate/whole-editor/src/registry/components/editor/editor-kit.tsx">editor-kit.tsx</a>, <a href="../../resources/plate/whole-editor/src/registry/components/editor/plugins/ai-kit.tsx">ai-kit.tsx</a>, <a href="../../resources/plate/whole-editor/package.json">Plate package.json</a></td><td>AIKit이 실제 EditorKit에 포함되고 <code>/api/ai/command</code> 및 UploadThing 코드가 소스에 존재</td></tr>
+          <tr><td>재정비 플랫폼</td><td><a href="../../../oj-integration-rebuild/oj-platform/oj-platform.php">oj-platform.php</a>, <a href="../../../oj-integration-rebuild/oj-platform/src/Kernel/Boot/Kernel.php">Kernel.php</a>, <a href="../../../oj-integration-rebuild/oj-platform/config/platform-tables.php">platform-tables.php</a></td><td>2.0.0-dev.26 부팅, 내부 Registry 동결, PublicUI <code>public_menu</code> 설정, 42개 무접두어 플랫폼 테이블</td></tr>
+          <tr><td>Judge 연결</td><td><a href="../../../oj-integration-rebuild/oj-platform/modules/JudgeDb/Infrastructure/Mysqli/MysqliJudgeConnector.php">MysqliJudgeConnector.php</a>, <a href="../../../oj-integration-rebuild/oj-platform/config/judge.php">judge.php</a></td><td>Judge DB는 WordPress <code>$wpdb</code>와 다른 별도 mysqli read/write credential을 사용할 수 있음</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="scope">파일 수정 경계</h2>
+      <table>
+        <thead><tr><th>구분</th><th>경로</th><th>허용 범위</th></tr></thead>
+        <tbody>
+          <tr><td>쓰기 허용</td><td><code>oj-ai-dashboard/</code></td><td>애드온 PHP, JavaScript·TypeScript, CSS, template, test, script, HTML 문서와 애드온 빌드 산출물</td></tr>
+          <tr><td>읽기 전용 참조</td><td><code>oj-integration-rebuild/oj-platform/</code> 실행 코드·config·schema</td><td>버전, 공개 상수, 데이터 schema, 화면·권한·운영 계약 조사만 허용. 애드온 설치·업데이트·런타임에서는 수정하지 않음</td></tr>
+          <tr><td>별도 플랫폼 설계</td><td><code>oj-platform/docs/development-c-28-addon-extension-api.html</code>과 연결 HTML</td><td>플랫폼 제공자 작업으로 범용 API를 설계·승인·문서화한다. AI 애드온 제품 코드 작업과 변경 집합을 분리함</td></tr>
+          <tr><td>읽기 전용 참조</td><td><code>hustoj-platform/</code>, <code>hustoj-ai-assessment/</code> 및 다른 플러그인</td><td>레거시 동작과 변환 규칙 조사만 허용하며 코드 복사·직접 호출·수정은 금지</td></tr>
+          <tr><td>쓰기 금지</td><td><code>oj-platform</code> 본체의 PHP, config, migration, table schema, asset, test</td><td>애드온 요구를 위해 본체를 patch하거나 호환 분기를 추가하지 않음</td></tr>
+          <tr><td>운영 실행 금지</td><td>운영 WordPress·Platform DB·Judge DB</td><td>설계 단계에서 설치, DDL, 데이터 이전, 역할 변경, AI 호출을 실행하지 않음</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="runtime">런타임 의존 지도</h2>
+      <pre><code>교사·학생 브라우저
+  |-- OJ Console 관리 화면 + PublicUI 학생 화면 + 애드온 REST
+  |-- Plate 편집기
+  v
+oj-ai-dashboard
+  |-- WordPress API: 인증, capability, REST, option, cron, upload, $wpdb
+  |-- 애드온 Repository ----------------------> oj_ai_* 테이블 [읽기·쓰기]
+  |-- Platform Context Gateway 후보 ----------> 사용자·학급·그룹 원장 [읽기·권한 판정]
+  |                                          `-> Judge DB [읽기만]
+  `-- Platform AI Task Gateway 후보 ----------> 연결 프로필·모델 routing·외부/로컬 AI
+
+oj-platform
+  |-- 설치 선행 조건, 사용자·학급·그룹 원장, AI 연결·작업 routing 소유
+  `-- 애드온 코드·테이블·migration에는 의존하지 않음</code></pre>
+      <section class="panel">
+        <p><strong>의존 방향:</strong> 플랫폼은 특정 AI 평가 애드온을 알지 않고 범용 애드온 등록 계약만 소유한다. 애드온은 이 공개 계약에 의존해 OJ Console과 PublicUI 메뉴·경로를 별도 선언한다. 플랫폼이 비활성화되거나 확장 API 버전이 맞지 않으면 별도 관리자 메뉴로 폴백하지 않고 활성화 또는 부팅을 중단한다.</p>
+      </section>
+
+      <h2 id="modules">현재 애드온 내부 모듈 의존</h2>
+      <section class="panel">
+        <p>Core는 다음 12개 모듈을 고정 순서로 생성하고 각 모듈의 <code>register()</code>를 호출한다.</p>
+        <pre><code>Security → Admin → Environment → Platform → Academic → Curriculum
+→ Worksheet → Submission → Assessment → Dashboard → Import → Compatibility</code></pre>
+        <p>namespace import를 기준으로 다음 5개 양방향 의존이 확인됐다.</p>
+        <table>
+          <thead><tr><th>양방향 의존</th><th>현재 원인</th><th>후속 처리</th></tr></thead>
+          <tbody>
+            <tr><td>Academic ↔ Admin</td><td>Admin이 학사 서비스를 조립하고 Academic 화면이 Admin shell을 사용</td><td><code>A-D-008</code> 소유권 조사</td></tr>
+            <tr><td>Admin ↔ Dashboard</td><td>Admin이 대시보드를 조립하고 Dashboard 화면이 Admin shell을 사용</td><td><code>A-D-008</code> 소유권 조사</td></tr>
+            <tr><td>Admin ↔ Environment</td><td>Admin이 환경 서비스를 사용하고 Environment 화면이 Admin shell을 사용</td><td><code>A-D-008</code> 소유권 조사</td></tr>
+            <tr><td>Admin ↔ Platform</td><td>Admin이 Connector를 만들고 Platform이 Admin URL·page를 직접 참조</td><td><code>A-DS-02</code> 플랫폼 adapter 설계</td></tr>
+            <tr><td>Admin ↔ Worksheet</td><td>Admin이 활동지 화면을 조립하고 Worksheet 화면이 Admin shell을 사용</td><td><code>A-D-008</code> 소유권 조사</td></tr>
+          </tbody>
+        </table>
+        <p><code>Dashboard_Service</code>, <code>Report_Content_Builder</code>, <code>Worksheet_Assignment_Service</code>도 Repository 밖에서 <code>$wpdb</code>를 보관한다. 이 항목은 현재 사실로 기록하고 <code>A-D-008</code>에서 정확한 데이터 소유권을 다시 추적한다.</p>
+      </section>
+
+      <h2>외부 시스템 의존</h2>
+      <table>
+        <thead><tr><th>대상</th><th>현재 의존</th><th>쓰기 여부</th><th>경계 판정</th></tr></thead>
+        <tbody>
+          <tr><td>WordPress</td><td>플러그인 생명주기, 인증, 역할·capability, REST, option, cron, upload, <code>$wpdb</code></td><td>허용</td><td>애드온 실행 기반. 애드온 이름으로 소유권을 구분해야 함</td></tr>
+          <tr><td>oj-platform</td><td><code>OJ_PLATFORM_VERSION</code>, 활성 plugin 감지, 현재는 존재하지 않는 <code>oj_platform_loaded</code> 이벤트 기대</td><td>애드온에서 수정 금지</td><td>현재 버전에는 외부 Console/PublicUI 메뉴·경로 등록 계약이 없다. <a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html">C-28 범용 API</a>를 별도 플랫폼 릴리스로 선행 제공해야 함</td></tr>
+          <tr><td>Platform DB</td><td>같은 WordPress DB의 무접두어 학습 테이블</td><td>금지</td><td>목표에서는 직접 조회하지 않고 범용 공개 context·query gateway로 사용자·학급·그룹 원장을 읽음</td></tr>
+          <tr><td>Judge DB</td><td><code>users</code>, <code>problem</code>, <code>solution</code>, <code>source_code</code></td><td>금지</td><td>별도 DB 연결을 전제로 한 read-only Gateway가 필요</td></tr>
+          <tr><td>AI Provider</td><td>애드온 설정값은 있으나 실제 transport는 없고 WordPress filter로 위임</td><td>외부 호출 미구현</td><td>연결 프로필·비밀값·모델 routing은 플랫폼이 소유하고 애드온은 공개 AI task gateway와 구조화 응답 검증을 사용</td></tr>
+          <tr><td>Plate 생태계</td><td>runtime package 90개, React·Plate·AI SDK·UploadThing·외부 미디어 구성요소</td><td>브라우저 네트워크 후보 존재</td><td>활동지 기능에 필요한 package와 네트워크 경로만 허용하도록 축소 필요</td></tr>
+          <tr><td>WordPress uploads</td><td>학생 첨부, ZIP 제출, 보고서·export 파일</td><td>허용</td><td>애드온 전용 하위 경로, 접근 제어, 보존·삭제 계약 필요</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="platform">재정비 oj-platform 대조 결과</h2>
+      <table>
+        <thead><tr><th>현재 애드온 기대</th><th>oj-platform 2.0.0-dev.26 사실</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_platform_loaded</code>에서 container 수신</td><td>진입점과 Kernel에서 해당 action을 발행하지 않음</td><td>연결되지 않음</td></tr>
+          <tr><td>container의 <code>route_registry</code>, <code>console_menu_registry</code> 문자열 서비스 사용</td><td>Composition Root는 class key로 Registry를 조립하고 Kernel 부팅 중 validate 후 freeze</td><td>보장되지 않은 내부 결합</td></tr>
+          <tr><td>Console Route 등록만으로 학생 메뉴도 자동 생성</td><td><code>PublicMenuSettingsService</code>는 별도 <code>public_menu</code> 설정과 core Route Registry만 읽으며 Console 메뉴를 참조하지 않음</td><td>Console/Public Route·Menu를 manifest에서 별도 선언하고 PublicUI 합성 계약을 추가해야 함</td></tr>
+          <tr><td><code>CodingPanda\OjPlatform\Core\Plugin</code> class 감지</td><td>재정비 진입점은 <code>Kernel\Bootstrap</code> 사용</td><td>class signal 노후화, 상수 signal만 동작</td></tr>
+          <tr><td>OJ 테이블 후보를 <code>''</code>, <code>$wpdb-&gt;prefix</code>, <code>$wpdb-&gt;base_prefix</code>로 자동 탐색</td><td>플랫폼 업무 테이블은 무접두어 고정이며 Judge DB는 별도 mysqli 연결 가능</td><td>자동 후보 탐색 금지 필요</td></tr>
+          <tr><td>그룹 테이블 <code>group</code>, 멤버 키 <code>group_post_id</code></td><td>플랫폼 테이블은 <code>learning_groups</code>, <code>group_memberships.group_id</code></td><td>schema 불일치</td></tr>
+          <tr><td>플랫폼이 없어도 standalone 모드로 전체 기능 활성화</td><td>사용자 목표는 oj-platform 설치 이후 적용하는 애드온</td><td>활성화·런타임 선행 조건 재설계 필요</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>AM-01 재확인 2026-08-12:</strong> OJ Console 관리 기능과 PublicUI 학생 기능은 모두 필수 설치 계약이다. 등록은 Registry 동결 전 <code>oj_platform_register_addons(AddonRegistrationGatewayV1)</code>에서 수행하고 Runtime 준비 callback은 같은 Manifest builder의 <code>onReady(AddonRuntimeContextV1)</code>로 선언한다. 전역 Runtime action과 조회형 Gateway는 제거됐으며 container와 내부 Registry는 공개하지 않는다. <a href="a-ds-02-am-01-onready-adoption.html">소비자 적용 계획</a>을 따른다.</div>
+
+      <h2 id="console-integration">확정된 Console·PublicUI 통합 경계</h2>
+      <div class="callout"><strong>사용자 결정 A-D001-DEC-01:</strong> AI 평가 애드온의 관리자·교사 기능은 별도 WordPress 관리자 메뉴가 아니라 OJ Console 내부 메뉴와 경로로 제공한다.</div>
+      <div class="callout"><strong>사용자 결정 A-D001-DEC-02:</strong> 학생 기능은 PublicUI에 별도 선언하며, 호환 애드온 활성화 시 <code>학습 &gt; 활동지</code>를 기본 등록한다. Console 메뉴를 사용자 메뉴로 복제하거나 모든 사용자에게 무조건 노출하지 않는다.</div>
+      <table>
+        <thead><tr><th>구분</th><th>소유자</th><th>확정 규칙</th></tr></thead>
+        <tbody>
+          <tr><td>등록 창구</td><td><code>oj-platform</code></td><td>모든 플러그인이 로드된 뒤, core 계약 등록과 Registry 동결 사이에 <code>oj_platform_register_addons</code> 등록 단계를 한 번 제공</td></tr>
+          <tr><td>Runtime 창구</td><td><code>oj-platform</code></td><td>Registry 동결과 Adapter 연결 뒤 accepted 애드온이 builder에 등록한 <code>onReady()</code>를 해당 애드온 전용 <code>AddonRuntimeContextV1</code>과 함께 최대 한 번 직접 호출</td></tr>
+          <tr><td>등록 표면</td><td>Addon API v1</td><td>Manifest, Console/Public Route·Menu, capability, handler·asset를 공개 Gateway로 원자 등록하며 container는 노출하지 않음</td></tr>
+          <tr><td>교사·관리 메뉴</td><td><code>oj-ai-dashboard</code></td><td><code>학습 공간 &gt; AI 활동지</code>를 Console 기여로 선언하고 별도 WordPress 관리자 메뉴로 폴백하지 않음</td></tr>
+          <tr><td>학생 메뉴</td><td><code>oj-ai-dashboard</code></td><td><code>학습 &gt; 활동지</code>를 PublicUI 기여로 별도 선언하고 <code>default_enabled=true</code>, learner scope와 애드온 capability를 적용</td></tr>
+          <tr><td>사용자 메뉴 관리</td><td><code>oj-platform</code></td><td>기존 <code>public_menu</code>를 수정하지 않고 별도 override로 표시·이름·부모·순서·모바일 위치를 관리</td></tr>
+          <tr><td>직접 활동지 링크</td><td>플랫폼 Route + 애드온 Policy</td><td>메뉴 숨김 여부와 별개로 로그인·capability·배정 대상·revision 공개 범위를 모두 검사</td></tr>
+          <tr><td>비호환 처리</td><td><code>oj-ai-dashboard</code></td><td>필수 플랫폼 또는 Addon API 버전이 없으면 두 shell 등록을 모두 중단하고 관리자에게 지원 버전을 안내</td></tr>
+          <tr><td>플랫폼 변경</td><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html"><code>C-28</code> 별도 플랫폼 작업</a></td><td>특정 AI 기능을 플랫폼에 넣지 않고 범용 확장 계약만 추가·검증·릴리스함</td></tr>
+          <tr><td>애드온 설치</td><td><code>oj-ai-dashboard</code></td><td>플랫폼 파일·config·migration·<code>public_menu</code> 값을 복사, 덮어쓰기, 동적 변경하지 않음</td></tr>
+        </tbody>
+      </table>
+      <h2 id="data">데이터 읽기·쓰기 경계</h2>
+      <table>
+        <thead><tr><th>저장소</th><th>현재 동작</th><th>확정 규칙</th></tr></thead>
+        <tbody>
+          <tr><td>애드온 테이블</td><td><code>Table_Names</code>에 고유한 35개 <code>oj_ai_*</code> 이름 등록, <code>$wpdb-&gt;prefix</code> 사용 0건</td><td>읽기·쓰기는 소유 Repository를 통해 허용. 신규 활동지 평가 테이블도 같은 무접두어 규칙 사용</td></tr>
+          <tr><td>WordPress option</td><td>plugin version, schema version, installed migrations, settings, assistant role 상태 저장</td><td><code>oj_ai_dashboard_*</code> 이름만 허용하고 비밀값은 일반 option에 평문 저장하지 않음</td></tr>
+          <tr><td>WordPress 역할·capability</td><td>관리자 및 <code>oj_ai_teacher</code>, <code>oj_ai_student</code>, 선택적 assistant 역할 변경</td><td>애드온 capability만 관리하며 플랫폼 역할 정의를 직접 변경하지 않음</td></tr>
+          <tr><td>애드온 cron</td><td><code>oj_ai_dashboard_auto_submit_due</code> 예약 및 비활성화 시 해제</td><td>애드온 hook namespace만 사용하고 작업 상태는 애드온이 소유</td></tr>
+          <tr><td>Platform DB</td><td>현재 일부 Connector가 <code>$wpdb</code> SELECT·SHOW 사용</td><td>정확한 테이블·컬럼 whitelist를 가진 Gateway에서 SELECT만 허용</td></tr>
+          <tr><td>Judge DB</td><td>현재 <code>$wpdb</code>에 같은 테이블이 있다고 가정</td><td>별도 read-only 연결과 timeout을 사용하며 DDL·INSERT·UPDATE·DELETE·REPLACE 금지</td></tr>
+          <tr><td>과거 <code>{당시 WordPress prefix}oj_ai_*</code> 변형</td><td>이전 버전의 <code>$wpdb-&gt;prefix</code> 결합으로 생성됐을 수 있는 읽기 전용 레거시 source이며 기본 <code>wp_oj_ai_*</code>·멀티사이트·사용자 정의 prefix 포함</td><td>감지·미리보기·사용자 확인 이전만 허용하며 자동 삭제·자동 이름 변경 금지</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="contract">A-D-001 확정 계약</h2>
+      <section class="panel">
+        <ol>
+          <li><strong>A-D001-C01:</strong> 제품 코드 수정 범위는 <code>oj-ai-dashboard</code> 하나로 제한한다.</li>
+          <li><strong>A-D001-C02:</strong> 애드온 설치·업데이트·런타임은 <code>oj-platform</code> 파일, config, migration, schema와 운영 데이터를 수정하지 않는다. 범용 확장 API는 별도 플랫폼 작업과 릴리스로만 제공한다.</li>
+          <li><strong>A-D001-C03:</strong> 애드온 물리 테이블은 WordPress prefix 없이 고정 <code>oj_ai_*</code> 이름을 사용한다.</li>
+          <li><strong>A-D001-C04:</strong> 플랫폼·Judge 원본에는 쓰지 않는다. 사용자·학급·그룹은 플랫폼 공개 gateway를 원장으로 사용하며 추측 기반 table fallback을 허용하지 않는다.</li>
+          <li><strong>A-D001-C05:</strong> 플랫폼 내부 class, Composition Root, container와 동결 Registry를 런타임 의존 계약으로 사용하지 않고 공개 Registration 계약과 애드온별 <code>AddonRuntimeContextV1</code>만 사용한다.</li>
+          <li><strong>A-D001-C06:</strong> 관리자·교사 기능은 OJ Console, 학생 기능은 PublicUI의 네이티브 메뉴·경로 통합을 필수로 한다. 두 기여를 manifest에서 별도 선언하며 별도 WordPress 관리자 메뉴나 독립 사용자 shell로 폴백하지 않는다. 필요한 범용·버전형 확장 API가 없는 플랫폼에서는 애드온 실행을 차단한다.</li>
+          <li><strong>A-D001-C07:</strong> AI 연결 프로필·자격 증명·모델 및 fallback 작업 배정은 플랫폼이 소유한다. 애드온과 Plate 브라우저는 비밀값이나 Provider를 직접 사용하지 않고 공개 AI task gateway만 호출한다.</li>
+          <li><strong>A-D001-C08:</strong> 활동지 자체 평가와 학생 제출물 평가는 별도 Use Case, AI 계약과 저장 이력을 가진다.</li>
+          <li><strong>A-D001-C09:</strong> 기존 데이터 이전은 설치·일반 실행과 분리하며 preview와 명시적 승인 없이 변경하지 않는다.</li>
+        </ol>
+      </section>
+
+      <h2>허용·금지 의존 규칙</h2>
+      <table>
+        <thead><tr><th>허용</th><th>조건부 허용</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>WordPress 공개 API와 애드온 namespace hook</td><td><code>OJ_PLATFORM_VERSION</code>을 이용한 버전 감지</td><td>oj-platform 내부 class 생성·상속·container 조회</td></tr>
+          <tr><td>애드온 Contract를 구현한 Repository·Gateway</td><td>버전이 확인된 플랫폼 공개 context·query gateway</td><td>플랫폼 내부 service·테이블 직접 접근과 플랫폼·Judge 쓰기</td></tr>
+          <tr><td>플랫폼 공개 AI task gateway를 통한 평가 실행</td><td>별도 read-only credential의 Judge DB SELECT</td><td>애드온의 AI secret 저장, Provider 직접 선택, 브라우저 secret 전달</td></tr>
+          <tr><td>애드온 전용 WordPress route·REST·cron·uploads</td><td>공개 버전 계약이 확인된 플랫폼 menu link</td><td>존재하지 않는 hook 또는 동결 Registry에 의존</td></tr>
+          <tr><td>Plate 구조화 문서와 필요한 로컬 번들</td><td>승인된 외부 media URL</td><td>UploadThing·mock API·외부 avatar 같은 암묵적 네트워크 요청</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="gaps">발견된 격차와 후속 단계</h2>
+      <table>
+        <thead><tr><th>ID</th><th>중요도</th><th>격차</th><th>영향</th><th>담당 단계</th></tr></thead>
+        <tbody>
+          <tr><td><code>AD001-G01</code></td><td><span class="badge danger">Critical</span></td><td>2026-08-10 조사 대상 플랫폼에는 Console/PublicUI 애드온 등록·메뉴 합성 API가 없고 애드온은 존재하지 않는 구형 hook을 기대함</td><td>C28-I01~I05와 AM-01은 이후 별도 플랫폼 작업으로 구현됐지만 C28-I06 정식 릴리스·소비자 인수가 선행되어야 함</td><td><code>A-DS-01</code>, <code>A-DS-02</code>, <code>A-DS-08</code></td></tr>
+          <tr><td><code>AD001-G02</code></td><td><span class="badge danger">High</span></td><td>Judge 조회가 WordPress <code>$wpdb</code>와 같은 DB라고 가정</td><td>별도 Judge DB 환경에서 사용자·문제·제출 조회 실패</td><td><code>A-DS-06</code></td></tr>
+          <tr><td><code>AD001-G03</code></td><td><span class="badge danger">High</span></td><td>그룹 table·column 계약이 재정비 플랫폼과 불일치</td><td>그룹·멤버 목록이 비거나 잘못 정규화됨</td><td><code>A-D-004</code>, <code>A-DS-06</code></td></tr>
+          <tr><td><code>AD001-G04</code></td><td><span class="badge danger">High</span></td><td>table resolver가 WordPress prefix 후보까지 자동 탐색</td><td><code>users</code> 부재 시 의도하지 않은 <code>wp_users</code> 선택 위험</td><td><code>A-DS-06</code></td></tr>
+          <tr><td><code>AD001-G05</code></td><td><span class="badge danger">High</span></td><td>애드온 최소 WP/PHP와 플랫폼 최소 요건이 다르고 standalone 모드가 기본 지원됨</td><td>지원하지 않는 설치 조합이 활성화될 수 있음</td><td><code>A-DS-02</code>, <code>A-DS-15</code></td></tr>
+          <tr><td><code>AD001-G06</code></td><td><span class="badge danger">Critical</span></td><td>AI provider·model 설정이 실제 transport에 연결되지 않음</td><td>AI라고 표시되지만 filter 또는 정답 일치 fallback으로 동작</td><td><code>A-D-006</code>, <code>A-DS-04</code>, <code>A-DS-07</code></td></tr>
+          <tr><td><code>AD001-G07</code></td><td><span class="badge danger">Critical</span></td><td>Plate EditorKit에 AIKit·UploadThing·외부 network 예제가 포함됨</td><td>WordPress REST와 다른 경로 호출 및 불필요한 의존·개인정보 전송 위험</td><td><code>A-D-005</code>, <code>A-DS-09</code></td></tr>
+          <tr><td><code>AD001-G08</code></td><td><span class="badge danger">High</span></td><td>5개 양방향 모듈 의존과 3개 Service의 직접 <code>$wpdb</code> 보관</td><td>수직 기능 변경이 Admin·Dashboard·Platform까지 확산</td><td><code>A-D-008</code>, <code>A-DS-02</code>·<code>A-DS-05</code>·<code>A-DS-16</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>후속 설계에서 확정할 항목</h2>
+      <section class="panel">
+        <ul>
+          <li>정확한 지원 버전 범위와 활성화 차단 조건은 <code>A-DS-02</code>에서 결정한다.</li>
+          <li>Platform DB와 별도 Judge DB를 읽는 credential·Gateway 방식은 <code>A-DS-06</code>에서 결정한다.</li>
+          <li>OJ Console의 <code>학습 공간 &gt; AI 활동지</code>와 PublicUI의 <code>학습 &gt; 활동지</code> 정보 구조는 <code>A-DS-01</code>, C-28 소비자 manifest와 생명주기는 <code>A-DS-02</code>, 두 shell의 경로·직접 링크는 <code>A-DS-08</code>에서 확정한다.</li>
+          <li>Plate package 축소와 브라우저 네트워크 allowlist는 <code>A-D-005</code> 조사 후 <code>A-DS-09</code>에서 결정한다.</li>
+        </ul>
+      </section>
+
+      <h2 id="completion">A-D-001 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>판정</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td>수정 가능·금지 경로 명시</td><td>충족</td><td><code>oj-ai-dashboard</code>만 쓰기 허용</td></tr>
+          <tr><td>외부 시스템 의존 지도 작성</td><td>충족</td><td>WordPress, oj-platform, Platform DB, Judge DB, AI, Plate, uploads 구분</td></tr>
+          <tr><td>외부 데이터 읽기·쓰기 경계 명시</td><td>충족</td><td>애드온 저장소만 쓰기, 플랫폼·Judge 원본은 읽기 전용</td></tr>
+          <tr><td>무접두어 테이블 확인</td><td>충족</td><td>등록 35개, 고유 35개, 잘못된 prefix 0개</td></tr>
+          <tr><td>현재 플랫폼과 호환 위험 식별</td><td>충족</td><td><code>AD001-G01~G08</code> 기록</td></tr>
+          <tr><td>이 보완의 oj-platform runtime 변경 없음</td><td>충족</td><td>C-28·DS-16·개발 순서 HTML과 격리된 <code>foundation.php</code> test stub만 보완했으며 플랫폼 runtime PHP·config·schema·asset 변경은 0건. 병행 작업의 별도 runtime 변경은 fingerprint drift로 분리 기록</td></tr>
+          <tr><td>사용자 확인</td><td>충족</td><td>다음 단계 진행 지시로 <code>A-D001-DEC-01~DEC-02</code>와 <code>A-D001-C01~C09</code> 기준선 동결</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout"><strong>현재 상태:</strong> 이 경계와 <a href="a-d-002-screen-entrypoints.html"><code>A-D-002 화면과 진입 경로</code></a> 기준선은 사용자 확인으로 동결됐다. <a href="a-d-003-access-settings.html"><code>A-D-003 메뉴·권한·기능 설정</code></a> 전수 조사를 완료해 목표 권한 결정을 기다린다.</div>
+      <p class="footer">다음 문서: <a href="a-d-003-access-settings.html">A-D-003 메뉴·권한·기능 설정</a> · 상위 문서: <a href="design-procedure.html">전체 설계 순서</a></p>
+    </main>
+  </div>
+</body>
+</html>

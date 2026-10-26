@@ -1,0 +1,67 @@
+/*
+ * 교육 게임 콘솔(게임 공개·팀, AI 모델 훈련소 성적). 버튼·표·입력·알림·배지는
+ * OJ Platform 공용 부품(ojp-*)을 쓰고, 여기에는 배치만 둔다. 색은 --ojp-* 토큰만
+ * 쓰므로 어두운 화면도 따라간다.
+ */
+.edu-games-console .eg-console-section:last-of-type {
+    border-bottom: 0;
+}
+
+.edu-games-console .ojp-section-heading {
+    margin-bottom: var(--ojp-space-4, 16px);
+}
+
+.edu-games-console .eg-console-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--ojp-space-3, 12px);
+    margin-top: var(--ojp-space-4, 16px);
+}
+
+.edu-games-console .eg-console-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ojp-space-2, 8px);
+    margin: 0;
+}
+
+.edu-games-console .eg-console-inline .ojp-input {
+    width: min(240px, 100%);
+}
+
+.edu-games-console .eg-console-team-form {
+    align-items: flex-end;
+    margin-bottom: var(--ojp-space-4, 16px);
+}
+
+.edu-games-console .eg-console-code {
+    font-family: var(--ojp-font-mono, monospace);
+    font-size: var(--ojp-text-callout, 14px);
+    letter-spacing: 0.04em;
+}
+
+.edu-games-console .eg-console-row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--ojp-space-2, 8px);
+}
+
+.edu-games-console .eg-console-notice {
+    margin-top: var(--ojp-space-6, 32px);
+}
+
+.edu-games-ai-model-lab-report .eg-report-field {
+    width: min(320px, 100%);
+}
+
+.edu-games-ai-model-lab-report .eg-report-status {
+    margin: var(--ojp-space-2, 8px) 0;
+}
+
+.edu-games-ai-model-lab-report .eg-score-table td {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}

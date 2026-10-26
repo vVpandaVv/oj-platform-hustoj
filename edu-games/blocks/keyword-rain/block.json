@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "edu-games/keyword-rain",
+  "title": "Keyword Rain",
+  "category": "widgets",
+  "icon": "editor-code",
+  "description": "Type falling programming keywords before they hit the bottom.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

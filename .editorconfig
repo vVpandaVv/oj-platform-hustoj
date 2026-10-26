@@ -1,0 +1,5 @@
+# Editors that honor EditorConfig keep the root AGENT.md encoding rule (UTF-8, no BOM).
+root = true
+
+[*]
+charset = utf-8

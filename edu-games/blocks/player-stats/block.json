@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "edu-games/player-stats",
+  "title": "Player Stats",
+  "category": "widgets",
+  "icon": "chart-line",
+  "description": "Shows individual player progress and statistics.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScriptModule": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

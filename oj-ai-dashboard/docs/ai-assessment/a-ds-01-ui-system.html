@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-01 공통 사용자·관리자 UI 시스템</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-01 공통 사용자·관리자 UI 시스템</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="criteria-first-workflow.html">2026-09-07 기준 중심 흐름 개정</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html" aria-current="page">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+          <a href="ux-ui-implementation-audit.html">UX/UI 구현 감사</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">결론</a>
+          <a href="#purpose">목적·범위</a>
+          <a href="#inputs">동결 입력</a>
+          <a href="#principles">경험 원칙</a>
+          <a href="#shells">두 셸 경계</a>
+          <a href="#information-architecture">정보 구조</a>
+          <a href="#console-screens">Console 화면</a>
+          <a href="#worksheet-workspace">Plate 작업대</a>
+          <a href="#public-screens">PublicUI 화면</a>
+          <a href="#components">공통 구성 요소</a>
+          <a href="#copy">화면 문구</a>
+          <a href="#states">상태 언어</a>
+          <a href="#actions">행동 규칙</a>
+          <a href="#responsive">반응형</a>
+          <a href="#accessibility">접근성</a>
+          <a href="#security">공개 범위</a>
+          <a href="#failure">실패·복구</a>
+          <a href="#handoff">후속 계약</a>
+          <a href="#acceptance">검증 기준</a>
+          <a href="#decisions">결정 기록</a>
+          <a href="#completion">완료 판정</a>
+          <a href="#confirm">확정된 결정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="panel"><h2>업무 순서 개정 · 2026-09-07</h2><p>활동지 진행 순서는 기준 준비 → 활동지 작성 → 활동지 검토 → 배포 → AI 평가 → 보고서 → 학생 공개로 변경되었다. 이 문서와 기존 시안의 4단계 표기는 이 개정으로 대체한다. <a href="criteria-first-workflow.html">확정 규칙·복사 규칙·실제 구현 화면·검증 결과</a>에서 현재 기준을 확인한다.</p></section>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-DS-01 · Shared Console and Public UI System</p>
+        <h2>공통 사용자·관리자 UI 시스템</h2>
+        <p>OJ Console의 교사·관리자 업무와 PublicUI의 학생 업무를 플랫폼 셸 안에 네이티브로 배치하고, 활동지 제작부터 공개 결과까지 같은 상태 언어와 행동 규칙을 사용하도록 화면 체계를 확정한다. 정확한 Route·capability·API key는 후속 단계로 넘기며 업무 runtime은 구현하지 않는다.</p>
+        <div class="meta">
+          <span class="badge">작성일 2026-08-10</span>
+          <span class="badge good">A-DS-00 사용자 확인·동결</span>
+          <span class="badge good">상태 사용자 확인·동결</span>
+          <span class="badge good">상세 설계 2/17 동결</span>
+          <span class="badge">교사 화면군 6</span>
+          <span class="badge">학생 화면군 3</span>
+          <span class="badge">업무 runtime 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 결론</h2>
+      <section class="panel">
+        <p>교사는 OJ Console의 <code>학습 공간</code>에서 <code>AI 활동지</code>, <code>활동지 배포</code>, <code>AI 평가</code>, <code>활동지 보고서</code>, <code>AI 평가 설정</code> 다섯 업무를 바로 열고, 학생은 PublicUI의 <code>학습 &gt; 활동지</code>에서 할 일·제출함·결과만 사용한다.</p>
+        <div class="callout"><strong>UI 경계:</strong> 플랫폼은 전역 탐색·사용자·breadcrumb·셸·접근 거부를 렌더링하고, 애드온은 셸 내부의 페이지 제목·로컬 탐색·업무 상태·폼·표·Plate·결과 화면만 렌더링한다. 애드온이 두 번째 관리자 셸이나 전역 헤더를 만들지 않는다.</div>
+        <p><a class="card" href="a-ds-01-ui-prototype.html"><strong>교사·학생 UI 시안 열기</strong><br>역할을 바꾸고 주요 업무를 직접 눌러 볼 수 있다.</a></p>
+      </section>
+
+      <h2 id="purpose">목적·범위·결정 권한</h2>
+      <table>
+        <thead><tr><th>이번 단계에서 확정</th><th>이번 단계에서 확정하지 않음</th><th>후속 owner</th></tr></thead>
+        <tbody>
+          <tr><td>Console·PublicUI 정보 구조와 화면군</td><td>Manifest의 정확한 key·path·handler class</td><td>A-DS-02·08</td></tr>
+          <tr><td>화면별 사용자 목적·주요 행동·필수 상태</td><td>최종 capability key와 객체 scope 식</td><td>A-DS-03</td></tr>
+          <tr><td>Plate 작업대의 레이아웃·문맥 유지 원칙</td><td>Plate node/property schema와 저장 DTO</td><td>A-DS-09</td></tr>
+          <tr><td>공통 구성 요소·상태·행동·오류 표현</td><td>REST request/response와 오류 코드</td><td>A-DS-08</td></tr>
+          <tr><td>반응형·접근성·시각 회귀 수용 기준</td><td>실제 CSS token 값과 번들 구현</td><td>A-DS-02·구현 단계</td></tr>
+          <tr><td>플랫폼 설정과 애드온 설정의 화면 분리</td><td>평가 정책·루브릭·검토 기준의 필드 값</td><td>A-DS-04·10·12·13</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>구현 차단:</strong> 이 문서의 화면 이름은 사용자 정보 구조 계약이다. A-DS-16 사용자 승인 전 현재 wp-admin·shortcode 화면을 새 경로로 옮기거나 새 업무 JavaScript·PHP·schema를 작성하지 않는다.</div>
+
+      <h2 id="inputs">동결 입력과 source 관찰</h2>
+      <table>
+        <thead><tr><th>입력</th><th>확정 사실</th><th>A-DS-01 적용</th></tr></thead>
+        <tbody>
+          <tr><td><a href="a-ds-00-scope-baseline.html"><code>A-DS-00</code></a></td><td>플랫폼 필수 애드온, 두 셸, Plate, 두 평가 주제, 교사 최종 판단, 불변 revision</td><td>제품 경계를 바꾸지 않고 사용자 화면으로 구체화</td></tr>
+          <tr><td><a href="a-d-002-screen-entrypoints.html"><code>A-D-002</code></a></td><td>현재 Console/PublicUI 등록 0, 관리 화면 11, shortcode 14, 활동지 자체 평가 화면 0</td><td>독립 shell·학생 관리 화면을 폐기하고 두 셸의 화면군으로 재배치</td></tr>
+          <tr><td><a href="a-d-003-access-settings.html"><code>A-D-003</code></a></td><td>권한·context·설정 소유권 혼합</td><td>화면 노출과 객체 행동을 분리하고 정확한 Policy는 A-DS-03에 이관</td></tr>
+          <tr><td><a href="a-d-005-worksheet-plate.html"><code>A-D-005</code></a></td><td>Plate 교사용 원본, 학생용·채점용·인쇄용 projection과 PDF 격차</td><td>제작·미리보기·자체 평가를 한 작업대에 배치</td></tr>
+          <tr><td><a href="a-d-007-user-workflow-risks.html"><code>A-D-007</code></a></td><td>교사 10단계, 학생 8단계 목표 흐름과 loading·empty·error·partial·conflict·stale·success·destructive 계약</td><td>화면군·문맥 탐색·공통 상태 구성 요소에 반영</td></tr>
+          <tr><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html"><code>C-28</code></a></td><td>Console/Public Route·Menu·Page Handler·Assets, PublicUI 기본 메뉴·직접 링크·fail-closed 계약</td><td>셸을 복제하지 않고 플랫폼 Page Response 본문 안에서만 렌더링</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>A-DS-01 시작 fingerprint:</strong> 애드온은 370파일 <code>3bae6a3e1aaf2996e925a1e8b657c03c0bebbf0c794ffdf930813b38415807fe</code>로 A-DS-00과 동일하다. 플랫폼은 1116파일을 유지한 채 <code>f3a7aeb03a741d2a2666a7148d350689f8f665f08d7315a39d1fb7f4b9dfed68</code>로 외부 변경됐다. 문서 작업 종료 재검사에서는 같은 1116파일의 hash가 <code>ec39840b22cbc5d2d49c1f602c8736850d3bb07fa7b1f364cb5bce857c42f53b</code>로 이동했고, 최종 경계 감사에서는 <code>c1c85552ff921c8b8d3105cd5657d80783463ad35c851b34b07bc0a82e23a54a</code>였고, Plate 도구 시안 감사에서는 1125파일 <code>93c9513106b70cb661c6a8393c924919e5a73ba6bd755b444743253f6b8c1060</code>로 다시 이동했다. 연속 외부 drift로 기록하며 되돌리거나 애드온 설계 입력으로 추측하지 않는다. A-DS-02에서 공개 C-28 계약과 실제 릴리스를 다시 검산한다. A-DS-01 동결·A-DS-02 시작 경계 감사에서 애드온은 370파일 <code>3bae6a3e1aaf2996e925a1e8b657c03c0bebbf0c794ffdf930813b38415807fe</code>를 유지했고 플랫폼은 외부 변경으로 1128파일 <code>0205e1913b155c7ebfcf7282eedaf10ec2f59d56de88d88f5a34c3cf97819127</code>였다. 플랫폼 drift는 기록만 했으며 수정하거나 되돌리지 않았다.</div>
+
+      <h2 id="principles">사용자 경험 원칙</h2>
+      <table>
+        <thead><tr><th>ID</th><th>원칙</th><th>화면 적용</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS01-U01</code></td><td>플랫폼 네이티브</td><td>전역 메뉴·헤더·breadcrumb를 복제하지 않고 각 플랫폼 셸의 제목·간격·오류 경계를 따른다.</td></tr>
+          <tr><td><code>A-DS01-U02</code></td><td>생명주기 중심</td><td>기능 메뉴를 흩뜨리지 않고 worksheet→assignment→submission→evaluation→release 문맥을 유지한다.</td></tr>
+          <tr><td><code>A-DS01-U03</code></td><td>현재 상태 우선</td><td>각 화면의 첫 시선에 상태, 수정 시각, 대상 revision, 차단 이유와 다음 행동을 둔다.</td></tr>
+          <tr><td><code>A-DS01-U04</code></td><td>하나의 주 행동</td><td>각 화면에는 현재 단계의 primary command 하나만 강조하고 보조·위험 명령을 분리한다.</td></tr>
+          <tr><td><code>A-DS01-U05</code></td><td>오류와 0건 분리</td><td>연결·권한·부분 실패를 빈 목록으로 숨기지 않으며 안전한 원인과 복구 행동을 보여 준다.</td></tr>
+          <tr><td><code>A-DS01-U06</code></td><td>사람의 승인 가시성</td><td>AI 완료와 교사 검토·발행·공개를 다른 상태와 다른 command로 표시한다.</td></tr>
+          <tr><td><code>A-DS01-U07</code></td><td>영수증 기반 완료</td><td>저장·제출·발행·공개·PDF 요청은 toast만이 아니라 ID·시각·revision이 남는 상태로 확인한다.</td></tr>
+          <tr><td><code>A-DS01-U08</code></td><td>설명보다 업무</td><td>마케팅 hero·기능 소개·튜토리얼 문구 대신 필터·표·작업대·상태·명령을 첫 화면에 제공한다.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="shells">OJ Console·PublicUI 셸 경계</h2>
+      <table>
+        <thead><tr><th>영역</th><th>플랫폼이 렌더링</th><th>애드온이 렌더링</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>OJ Console</td><td>전역 헤더, 사용자 메뉴, core 탐색, <code>학습 공간</code> anchor, breadcrumb, shell 접근 거부</td><td><code>AI 활동지</code> 본문, 로컬 탐색, context bar, 업무 화면, 애드온 오류·빈 상태</td><td>별도 관리자 헤더·sidebar·wp-admin fallback</td></tr>
+          <tr><td>PublicUI</td><td>전역·모바일 탐색, <code>학습</code> root, 로그인·scope 판정, breadcrumb 또는 back affordance</td><td>내 활동지 목록, 작성·제출·영수증·공개 결과 본문</td><td>Console 화면 축소 복제, 교사용 정보·명령 노출</td></tr>
+          <tr><td>직접 배정 URL</td><td>로그인·capability·Route 상태와 셸</td><td>배정 소유 범위 판정 결과에 따른 상세·작성·영수증·결과</td><td>메뉴 숨김을 접근 허용 또는 거부 근거로 사용</td></tr>
+          <tr><td>이용 불가</td><td>비호환·거부·비활성 상태의 안전한 Error Boundary</td><td>사용자용 일반 메시지와 허용된 재시도·돌아가기 행동</td><td>플랫폼 버전·class·경로·stack trace·비밀값 노출</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>메뉴 기여 보완 2026-08-28:</strong> Console에는 기존 공개 Addon API로 다섯 업무 메뉴를 각각 기여하고, PublicUI에는 <code>학습 &gt; 활동지</code> 메뉴 하나만 기여한다. Console 메뉴와 본문 로컬 탐색은 같은 GET 화면을 가리키며 각 화면 capability가 없는 메뉴는 플랫폼이 숨긴다.</div>
+
+      <h2 id="information-architecture">정보 구조와 문맥 유지</h2>
+      <pre><code>OJ Console
+└─ 학습 공간
+   ├─ AI 활동지
+   ├─ 활동지 배포
+   ├─ AI 평가
+   ├─ 활동지 보고서
+   └─ AI 평가 설정
+
+본문 로컬 탐색
+├─ 활동지 · 배포·제출 · 평가 · 보고서 · 평가 설정
+└─ 검토 대기: 알림
+
+활동지 선택 뒤
+만들기 → 배포 → 평가 → 공개
+
+PublicUI
+└─ 학습
+   └─ 활동지
+      ├─ 할 일
+      ├─ 제출함
+      └─ 결과</code></pre>
+
+            <table>
+        <thead><tr><th>탐색 층</th><th>유지하는 문맥</th><th>규칙</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼 전역 탐색</td><td>현재 사용자와 Console/PublicUI</td><td>플랫폼만 소유하며 애드온 asset이 구조·스타일을 덮어쓰지 않음</td></tr>
+          <tr><td>애드온 로컬 탐색</td><td>업무 영역과 actor</td><td>권한 없는 영역은 숨기고, 권한은 있으나 준비되지 않은 기능은 이유와 함께 비활성 표시</td></tr>
+          <tr><td>생명주기 탐색</td><td><code>worksheet_id</code>, 선택 revision, 필요한 assignment</td><td>탭 이동 때 문맥·filter·return URL을 유지하고 각 단계는 직접 연결 가능</td></tr>
+          <tr><td>Context bar</td><td>플랫폼 수업·학급·그룹·기간과 담당 범위</td><td>플랫폼 조회 결과만 표시하며 애드온 내부에서 context를 생성·편집하지 않음</td></tr>
+          <tr><td>작업 상세</td><td>batch·submission·artifact와 origin 화면</td><td>상세를 닫거나 완료하면 origin의 동일 filter·scroll·selection으로 복귀</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>숨김과 비활성 구분:</strong> 권한이 없는 메뉴·행동은 렌더링하지 않는다. 권한은 있지만 선행 상태가 부족한 행동은 숨기지 않고 비활성 상태와 구체적인 차단 이유를 제공한다. 직접 URL과 메뉴는 A-DS-03·08의 같은 Policy를 사용한다.</div>
+
+      <h2 id="console-screens">OJ Console 화면군 6개</h2>
+      <table>
+        <thead><tr><th>ID·화면</th><th>사용자 목적</th><th>주요 내용</th><th>Primary command</th><th>필수 상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS01-C01</code><br>활동지</td><td>활동지를 찾고 바로 작업을 시작</td><td>짧은 현황, 검색·상태 필터, 제목, 발행·점검 상태, 배포 수, 수정 시각</td><td>새 활동지</td><td>첫 활동지·검색 0건·부분 집계·불러오기 실패</td></tr>
+          <tr><td><code>A-DS01-C02</code><br>활동지 작업대</td><td>Plate 문서를 만들고 AI 점검 뒤 발행</td><td>outline, canvas, inspector, 저장 상태, 자체 평가 근거, 학생·인쇄 미리보기</td><td>저장, AI 점검 또는 발행 중 현재 행동 하나</td><td>dirty·saving·saved·offline·conflict·review_needed·stale</td></tr>
+          <tr><td><code>A-DS01-C03</code><br>배포·제출</td><td>발행본·대상·일정을 확인하고 제출 진행을 관리</td><td>발행본 선택 → 플랫폼 수업·그룹 선택 → 일정·제출 정책 → 사전 확인, 대상 snapshot, 제출률, 누락·충돌·재개방</td><td>새 배포 또는 선택 항목 조치</td><td>대상 0·stale roster·부분 로드·마감·제출 오류</td></tr>
+          <tr><td><code>A-DS01-C04</code><br>평가</td><td>학생 제출 확인부터 AI 평가·교사 검토·결과 공개까지 처리</td><td>제출 batch, 실행 진행률, 답안·루브릭·AI 근거, 불확실성, 조정 이유, 확정·재시도·공개 대기</td><td>검토 시작 또는 결정 저장</td><td>queued·running·partial·review_required·adjusted·failed</td></tr>
+          <tr><td><code>A-DS01-C05</code><br>보고서</td><td>활동지·수업·학생 기준으로 검증된 결과와 PDF·CSV·ZIP을 확인</td><td>활동지별(기본)·수업·그룹별·학생별 전환, 활동지 안의 배포 건 filter, 제출·평가 집계, artifact, source 시각, 만료</td><td>출력 만들기</td><td>집계 없음·generating·ready·expired·failed</td></tr>
+          <tr><td><code>A-DS01-C06</code><br>설정</td><td>평가 정책·루브릭·검토 기준을 관리</td><td>평가 정책, 기본 루브릭, 검토·공개 기준, AI 연결, 시스템 상태, 데이터 이전</td><td>현재 설정 저장</td><td>권한 없음·validation·platform incompatible·read-only 진단</td></tr>
+        </tbody>
+      </table>
+      <h2 id="workflow-contract">배포·평가·보고서 처리 계약</h2>
+      <table>
+        <thead><tr><th>업무</th><th>화면 순서</th><th>고정 규칙</th><th>완료 결과</th></tr></thead>
+        <tbody>
+          <tr><td>배포</td><td>발행본 선택 → 플랫폼 수업·그룹 선택 → 시작·마감과 제출 정책 → 최종 확인 → 예약 또는 시작</td><td>발행된 <code>PublishedWorksheetRevision</code>과 <code>AssignmentTargetSnapshot</code>을 고정한다. 명단이 stale이면 시작하지 않으며 이미 시작한 배포가 새 발행본으로 자동 이동하지 않는다.</td><td>한 활동지에 여러 배포 건을 만들 수 있고 각 건의 대상·일정·제출 상태를 독립 추적한다.</td></tr>
+          <tr><td>활동지 자체 평가</td><td>Plate 편집 → 저장 → AI 점검 → 근거별 해결·보류·기각 → 발행</td><td>편집 중인 정확한 활동지 버전만 평가하고 AI는 문서 수정·발행을 대신하지 않는다.</td><td>교사가 점검 결과를 판단한 뒤 선택한 발행본만 배포 후보가 된다.</td></tr>
+          <tr><td>학생 제출 평가</td><td>제출 확인 → AI 평가 → 교사 검토·조정 → 결과 확정 → 공개</td><td><code>OfficialSubmissionRevision</code>과 채점 기준 snapshot을 사용한다. AI 점수는 후보이며 교사 확정 전 학생에게 보이지 않는다.</td><td>확정 결과만 공개 대기로 이동하고 공개된 결과는 정정·철회 이력을 남긴다.</td></tr>
+          <tr><td>보고서</td><td>활동지별(기본)·수업·그룹별·학생별 중 기준 선택 → filter → 집계 확인 → 출력 생성</td><td>활동지별은 활동지를 먼저 고르고 전체 배포 또는 특정 배포 건으로 내려간다. 수업·그룹별은 여러 활동지를 비교하고 학생별은 담당 권한 안의 공개·확정 결과만 조회한다.</td><td>선택한 기준·filter·source snapshot을 기록한 PDF·CSV·ZIP artifact를 만든다.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>보고서 drill-down:</strong> <code>활동지 → 배포 건 → 학생 제출</code> 순서를 유지한다. 같은 활동지가 여러 수업·그룹에 배포되었을 때 전체 합계와 배포 건별 결과를 모두 볼 수 있지만 서로 다른 마감·대상을 설명 없이 한 건처럼 합치지 않는다.</div>
+
+      <div class="callout"><strong>탐색 단순화:</strong> 개요는 별도 메뉴로 만들지 않고 <code>A-DS01-C01</code> 위쪽의 짧은 현황으로 합친다. 작업함은 <code>A-DS01-C04</code>의 검토 대기 목록으로 합치고 헤더 알림은 그 필터로 바로 연결한다. 설정은 일상 업무 탭에서 빼고 권한 있는 사용자에게 톱니바퀴 아이콘으로 제공한다.</div>
+      <div class="callout"><strong>설정 소유권:</strong> <code>A-DS01-C06</code>에는 provider key·endpoint·model routing 편집기를 만들지 않는다. 플랫폼의 <code>운영 &gt; AI 연결 프로필</code>과 <code>운영 &gt; AI 작업 배정</code> 상태를 읽기 전용 요약·진단으로 보여 주고, 권한 있는 운영자에게 플랫폼 화면 링크만 제공한다.</div>
+      <div class="callout"><strong>가져오기 위치:</strong> 활동지 템플릿 가져오기는 <code>A-DS01-C01</code>의 보조 명령, 이전 설치 데이터는 <code>A-DS01-C06</code>의 데이터 이전 탭에 둔다. 학생 명단·학년·그룹 관리 화면은 만들지 않는다.</div>
+
+      <h2 id="worksheet-workspace">Plate 활동지 생명주기 작업대</h2>
+      <table>
+        <thead><tr><th>영역</th><th>Wide 화면</th><th>Compact·Narrow 화면</th><th>고정 계약</th></tr></thead>
+        <tbody>
+          <tr><td>Context header</td><td>제목, 상태, revision, 저장 시각, owner, primary command를 한 줄에 배치</td><td>제목·상태와 primary command를 두 줄로 분리</td><td>동적 상태가 높이·버튼 위치를 흔들지 않음</td></tr>
+          <tr><td>진행 탐색</td><td>만들기·배포·평가·공개 네 단계 tabs</td><td>같은 네 단계를 가로 스크롤하며 현재 단계 표시</td><td>세부 상태는 단계 안에서 보여 주고 상위 탭을 늘리지 않음</td></tr>
+          <tr><td>Outline</td><td>왼쪽 240~280px 고정 track</td><td>아이콘 버튼으로 여는 drawer</td><td>block 선택·순서·오류 수를 표시</td></tr>
+          <tr><td>Plate canvas</td><td>중앙 최소 560px, 문서 폭은 인쇄 profile과 분리</td><td>단일 열 전체 폭, toolbar는 명령군별 overflow menu</td><td>editor mount·loading 문구가 레이아웃 크기를 바꾸지 않음</td></tr>
+          <tr><td>Plate 기본 도구</td><td>실행 취소·다시 실행, 본문·제목, 굵게·기울임·밑줄·취소선, 정렬, 목록, 링크</td><td>같은 명령군을 줄바꿈·overflow menu로 보존</td><td>Plate 엔진을 사용하되 제목·목록만 남긴 단순 입력기로 축소하지 않음</td></tr>
+          <tr><td>콘텐츠 삽입</td><td>표, 미디어, 수식, 코드, 강조 상자, 2단, 구분선, 파일</td><td>삽입 menu에서 같은 항목 제공</td><td>A-DS-09·14의 학생 renderer와 PDF parity를 통과한 node만 <code>WorksheetEditorProfile</code> allowlist에 포함</td></tr>
+          <tr><td>응답 삽입</td><td><strong>응답칸 10종</strong>: 단답형·서술형·단일 선택·복수 선택·확인 체크·숫자·표 입력·이미지 첨부·파일 첨부·그림 응답</td><td>네 범주 menu와 유형별 inspector를 같은 순서로 제공</td><td>stable ID·필수·선택지·행·열·첨부 정책을 response schema에 저장</td></tr>
+          <tr><td>Inspector</td><td>오른쪽 320px 고정 track</td><td>선택 block과 함께 여는 drawer 또는 bottom sheet</td><td>label·error·response 설정을 canvas 위에 겹치지 않음</td></tr>
+          <tr><td>자체 평가 panel</td><td>evidence 목록과 canvas anchor를 split view로 연결</td><td>목록→근거 위치 이동 후 되돌아가기 제공</td><td>진단이 원문을 자동 수정하지 않고 해결·보류·기각 기록</td></tr>
+          <tr><td>미리보기</td><td>학생용·채점용·인쇄용 segmented control</td><td>한 projection씩 전환</td><td>교사용 비공개 정보 누출 경고를 발행 blocker로 표시</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>작업대 행동:</strong> 만들기 단계 안에서 편집 중에는 “저장”, 저장 뒤에는 “AI 점검”, 필요한 검토가 끝나면 “발행”만 강조한다. 배포·평가·공개는 별도 상위 단계로 이동하며, 발행 명령은 정확한 revision과 영향 배포를 확인하는 검토를 거친다.</div>
+
+      <h2 id="public-screens">PublicUI 학생 화면군 3개</h2>
+      <table>
+        <thead><tr><th>ID·화면</th><th>학생 목적</th><th>주요 내용</th><th>Primary command</th><th>공개 금지</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS01-P01</code><br>할 일</td><td>지금 작성할 활동지를 바로 찾음</td><td>마감 순 목록, 과목·교사, 진행·저장 상태, 직접 배정 진입</td><td>가장 임박한 활동지 열기</td><td>타 학생·비배정 활동지·정답·교사 메모</td></tr>
+          <tr><td><code>A-DS01-P02</code><br>작성·제출함</td><td>답변을 저장·제출하고 접수 상태를 확인</td><td>학생용 활동지, 문항 이동, 저장 상태, 마감, 첨부, 제출 확인, 영수증, 결과물 PDF</td><td>제출 또는 결과물 받기</td><td>루브릭·배점·채점용 문서·미확정 평가</td></tr>
+          <tr><td><code>A-DS01-P03</code><br>결과</td><td>교사가 공개한 점수와 피드백을 확인</td><td>공개 시각, 총점, 기준별·종합 피드백, 정정·철회 상태, 활동지·결과물 PDF</td><td>피드백 확인 또는 PDF 받기</td><td>AI raw·confidence·교사 조정 이력·타 학생 집계</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>직접 링크:</strong> 메뉴 대상은 parameter 없는 활동지 목록이며 <strong>할 일·제출함·결과</strong> 세 보기만 제공한다. 배정 URL은 assignment ID를 가진 별도 Public Route이며 로그인·capability·배정 소유 범위를 통과한 뒤 <code>A-DS01-P01~P03</code>의 맞는 상태로 바로 연결한다.</div>
+
+      <h2 id="components">공통 UI 구성 요소 계약</h2>
+      <table>
+        <thead><tr><th>구성 요소</th><th>책임</th><th>필수 내용</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td><code>AddonPageHeader</code></td><td>현재 화면 제목과 한 개 primary command</td><td>제목, 짧은 상태, 보조 명령 menu</td><td>마케팅 hero·긴 기능 설명·여러 강조 버튼</td></tr>
+          <tr><td><code>ContextBar</code></td><td>플랫폼 context와 현재 대상 표시</td><td>학년도·수업·학급·그룹·기간, 변경·새로고침, stale 표시</td><td>애드온 context 생성·편집</td></tr>
+          <tr><td><code>LocalNavigation</code></td><td>네 Console 업무 또는 학생 세 상태 이동</td><td>현재 위치, 권한 반영, 키보드 탐색</td><td>전역 플랫폼 탐색 복제·개요·작업함 추가</td></tr>
+          <tr><td><code>LifecycleNavigation</code></td><td>선택 활동지의 만들기·배포·평가·공개 이동</td><td>현재·완료·차단·주의 상태와 직접 링크</td><td>내부 상태마다 상위 탭 추가</td></tr>
+          <tr><td><code>FilterToolbar</code></td><td>검색·filter·정렬·saved view</td><td>적용 수, 초기화, URL 재현, 결과 수</td><td>filter 오류를 0건으로 표시</td></tr>
+          <tr><td><code>DataTable</code></td><td>반복 업무의 비교·선택·일괄 행동</td><td>caption, header, sort, 선택 수, row action menu, pagination</td><td>행 전체 click만 제공·hover에만 명령 표시</td></tr>
+          <tr><td><code>StatusBadge</code></td><td>사용자 상태의 짧은 식별</td><td>텍스트+색·아이콘, 일관된 label</td><td>색만으로 상태 구분·내부 enum 그대로 노출</td></tr>
+          <tr><td><code>StatePanel</code></td><td>loading·empty·error·partial·access 상태</td><td>원인, 영향, 다음 행동, correlation ID 조건부 표시</td><td>페이지 전체 blank·stack trace</td></tr>
+          <tr><td><code>SaveIndicator</code></td><td>dirty·saving·saved·offline·conflict 표시</td><td>마지막 서버 저장 시각·revision·재시도</td><td>“저장됨”을 잠깐 toast로만 표시</td></tr>
+          <tr><td><code>JobProgress</code></td><td>장기 작업의 진행·중단·부분 실패 표시</td><td>전체·완료·실패·대기, 상태 시각, cancel/retry 가능 여부</td><td>브라우저 탭을 닫으면 사라지는 진행률</td></tr>
+          <tr><td><code>EvidencePanel</code></td><td>AI 근거와 원문 위치 연결</td><td>차원·심각도·evidence anchor·불확실성·검토 결정</td><td>근거 없는 점수·provider raw 전체</td></tr>
+          <tr><td><code>ReceiptPanel</code></td><td>완료 command의 지속 증거</td><td>ID, actor, 대상, revision, 서버 시각, 다음 행동</td><td>닫으면 사라지는 성공 메시지</td></tr>
+          <tr><td><code>ConfirmDialog</code></td><td>발행·제출·공개·철회·삭제 영향 확인</td><td>정확한 대상·영향·복구·사유·primary label</td><td>일반 “확인하시겠습니까?”만 표시</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="copy">제품 화면 문구 규칙</h2>
+      <table>
+        <thead><tr><th>대상</th><th>화면 규칙</th><th>예시</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>메뉴·탭</td><td>한 업무를 나타내는 짧은 명사로 한 줄 유지</td><td>활동지, 배포·제출, 평가, 보고서</td><td>기능 설명을 메뉴명에 붙이기</td></tr>
+          <tr><td>제목·보조 문구</td><td>제목은 한 개념, 보조 문구는 한 문장만 표시</td><td>평가 / 검토할 제출 3건</td><td>설계 배경·기능 소개·사용법 문단</td></tr>
+          <tr><td>버튼</td><td>사용자가 지금 실행할 동사로 표시</td><td>새 활동지, AI 점검, 제출, PDF</td><td>Primary command, execute task 같은 설계 용어</td></tr>
+          <tr><td>상태·오류</td><td>짧은 상태 또는 한 문장과 복구 행동 하나를 제공</td><td>저장 중, 점검 필요, 다시 시도</td><td>내부 enum·stack trace·긴 장애 설명</td></tr>
+          <tr><td>기술 용어</td><td>설계 문서·로그·진단에만 기록</td><td>화면에는 사용자 언어로 변환</td><td>DTO, schema, projection, handler, runtime, manifest, revision, provider, idempotency</td></tr>
+          <tr><td>아이콘</td><td>익숙한 아이콘을 쓰고 접근 가능한 이름과 tooltip 제공</td><td>설정, 알림, 저장, 다운로드</td><td>아이콘 옆에 기능 설명 문장 반복</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>문서와 제품의 분리:</strong> 이 상세 설계 문서에는 정확한 계약을 위해 기술 용어와 긴 근거를 남길 수 있다. 교사·학생이 쓰는 실제 화면과 시안에는 그 문장을 옮기지 않고 짧은 업무 문구만 제공한다.</div>
+
+      <h2 id="states">공통 상태 언어</h2>
+      <table>
+        <thead><tr><th>UI 상태</th><th>사용자 표시</th><th>화면 행동</th><th>영속 domain 상태와 관계</th></tr></thead>
+        <tbody>
+          <tr><td><code>loading</code></td><td>대상 영역 skeleton과 읽는 대상</td><td>기존 데이터 유지, 중복 command 차단</td><td>영속하지 않음</td></tr>
+          <tr><td><code>empty</code></td><td>0건 이유·filter/context·가능한 첫 행동</td><td>권한 있는 첫 command 제공</td><td>조회 결과 0건</td></tr>
+          <tr><td><code>error</code></td><td>안전한 설명·영향·retry 가능 여부·참조 ID</td><td>영향 영역만 retry, 다른 영역 유지</td><td>필요하면 도메인 실패 사건 참조</td></tr>
+          <tr><td><code>partial</code></td><td>전체·성공·실패·대기 수와 항목별 이유</td><td>실패만 재실행·결과 내보내기</td><td>batch/item 상태에서 계산</td></tr>
+          <tr><td><code>conflict</code></td><td>내 revision·서버 revision·기준 revision 비교</td><td>복구본 저장·병합·서버본 채택</td><td>submission/worksheet revision 사건</td></tr>
+          <tr><td><code>stale</code></td><td>바뀐 source·시각·기존 작업 영향</td><td>re-preflight 후 command 재개</td><td>snapshot mismatch에서 계산</td></tr>
+          <tr><td><code>offline</code></td><td>연결 끊김·로컬 복구 범위·마감 위험</td><td>지원 데이터만 로컬 보존하고 online 재동기화</td><td>영속 domain 상태로 사용하지 않음</td></tr>
+          <tr><td><code>success</code></td><td>영수증 ID·시각·대상·revision</td><td>다음 단계·원래 목록으로 이동</td><td>서버의 확정 결과를 다시 조회</td></tr>
+          <tr><td><code>access_denied</code></td><td>권한·대상 범위 거부의 일반 메시지</td><td>허용된 이전 화면으로 이동</td><td>서버 Policy가 최종 판정</td></tr>
+          <tr><td><code>unavailable</code></td><td>애드온 비활성·비호환·route 없음의 사용자 안전 메시지</td><td>재시도 또는 플랫폼 홈</td><td>C-28 status code는 관리자 진단에만 상세 표시</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>상태 분리:</strong> <code>loading</code>·<code>offline</code> 같은 일시 UI 상태를 worksheet·submission·evaluation enum에 저장하지 않는다. 사용자 label, domain 상태, 내부 job attempt 상태는 각각 mapping하고 화면에는 필요한 수준만 표시한다.</div>
+
+      <h2 id="actions">행동·폼·아이콘 규칙</h2>
+      <table>
+        <thead><tr><th>범주</th><th>규칙</th><th>예시</th></tr></thead>
+        <tbody>
+          <tr><td>Primary command</td><td>화면당 하나, 오른쪽 상단 또는 모바일 하단의 안정 위치, 명령 결과가 바뀌면 label도 구체화</td><td>새 활동지, 저장, 자체 평가, 발행, 배포, 제출, 검토 결정 저장</td></tr>
+          <tr><td>보조 command</td><td>텍스트 또는 icon+text, primary와 같은 강조색 사용 금지</td><td>미리보기, 복제, 가져오기, PDF 요청</td></tr>
+          <tr><td>도구 command</td><td>익숙한 아이콘을 사용하고 tooltip·접근 가능한 이름 제공</td><td>undo, redo, zoom, filter, download, more</td></tr>
+          <tr><td>아이콘 체계</td><td>플랫폼 셸 icon은 플랫폼 소유, 애드온 본문은 번들된 Lucide icon을 사용하고 수동 SVG를 만들지 않음</td><td>Plus, Save, Play, Check, Download, MoreHorizontal</td></tr>
+          <tr><td>위험 command</td><td>overflow menu 또는 별도 danger 영역, 정확한 대상·영향·복구를 확인</td><td>발행 철회, 제출 재개방, 공개 철회, 삭제</td></tr>
+          <tr><td>Binary 설정</td><td>toggle·checkbox를 사용하고 저장 전후 값을 명확히 표시</td><td>재제출 허용, 자동 제출, 학생 공개</td></tr>
+          <tr><td>Option set</td><td>2~4개는 segmented control, 더 많은 값은 select/menu</td><td>미리보기 전환, 보고서 기준, 평가 subject, 상태 filter</td></tr>
+          <tr><td>수치 입력</td><td>명시 단위의 input·stepper·slider를 용도에 맞게 사용</td><td>grace 분, 재시도 횟수, 점수 조정</td></tr>
+          <tr><td>폼 오류</td><td>field 인접 오류와 상단 요약을 함께 제공하고 첫 오류로 focus 이동</td><td>마감 이전 시작, 대상 0, rubric 합계 불일치</td></tr>
+          <tr><td>완료 피드백</td><td>toast는 보조 신호이며 본문 상태·영수증·목록 행이 서버 결과로 갱신돼야 완료</td><td>저장 revision, 제출 receipt, artifact ready</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="responsive">레이아웃·반응형 계약</h2>
+      <table>
+        <thead><tr><th>구간</th><th>기준 viewport</th><th>Console</th><th>PublicUI·학생 작성</th></tr></thead>
+        <tbody>
+          <tr><td>Wide</td><td><code>1280px 이상</code></td><td>전체 폭 업무 표, Plate 3-track, 고정 inspector</td><td>최대 읽기 폭 안에서 목록·본문, 문항 navigation 병렬</td></tr>
+          <tr><td>Standard</td><td><code>960~1279px</code></td><td>Plate outline+canvas, inspector drawer, 표의 비핵심 열 숨김 가능</td><td>단일 본문과 보조 summary rail</td></tr>
+          <tr><td>Narrow</td><td><code>600~959px</code></td><td>로컬 tabs 가로 scroll, 단일 열, outline·inspector drawer</td><td>문항 단일 열, 제출 summary 별도 step</td></tr>
+          <tr><td>Compact</td><td><code>360~599px</code></td><td>기능 삭제 없이 command menu·bottom sheet 사용, 넓은 표는 명시적 가로 scroll</td><td>44px 이상 touch target, sticky save/submit status, 키보드가 필드를 가리지 않음</td></tr>
+        </tbody>
+      </table>
+      <section class="panel">
+        <ul>
+          <li>페이지·toolbar·board·tile은 grid track, min/max, aspect-ratio 등 안정된 치수를 사용해 상태·hover·loading이 레이아웃을 밀지 않는다.</li>
+          <li>글자 크기는 viewport 폭으로 scale하지 않는다. page title 24px, section title 18px, 본문 14~16px, 보조 12~13px 범위의 고정 token을 사용하고 letter spacing은 0으로 둔다.</li>
+          <li>제품 화면에는 marketing hero, 장식용 gradient·orb, 중첩 card, 둥근 텍스트 pill 남용을 사용하지 않는다. 반복 항목·modal·프레임 도구만 card로 표현하고 radius는 8px 이하로 한다.</li>
+          <li>색은 중립 surface와 primary accent 외에 성공·주의·위험·정보 semantic 색을 함께 사용하며 단일 hue 화면으로 만들지 않는다.</li>
+          <li>표의 핵심 열은 viewport별 우선순위를 갖고, 숨긴 열은 row detail에서 접근 가능해야 한다. 텍스트가 버튼·badge·표 셀을 넘거나 다른 콘텐츠와 겹치지 않아야 한다.</li>
+        </ul>
+      </section>
+
+      <h2 id="accessibility">접근성·키보드 계약</h2>
+      <table>
+        <thead><tr><th>영역</th><th>수용 기준</th><th>검증</th></tr></thead>
+        <tbody>
+          <tr><td>기준</td><td>WCAG 2.2 AA를 제품 목표로 하고 플랫폼 셸과 애드온 본문의 책임을 함께 검사</td><td>자동 axe 검사 + 수동 keyboard·screen reader 확인</td></tr>
+          <tr><td>Landmark·제목</td><td>main, nav, form, region과 h1~h3 순서가 화면 구조를 반영하고 skip link가 본문으로 이동</td><td>role/heading tree snapshot</td></tr>
+          <tr><td>Focus</td><td>모든 command가 keyboard로 도달하며 focus가 가려지지 않고 modal/drawer 닫기 뒤 origin으로 복원</td><td>Tab·Shift+Tab·Escape·Enter 시나리오</td></tr>
+          <tr><td>Plate</td><td>toolbar에 접근 이름·tooltip, block 선택·추가·이동·삭제 keyboard 경로, editor와 inspector 사이 focus 이동</td><td>Plate keyboard E2E와 screen reader 이름 확인</td></tr>
+          <tr><td>상태</td><td>저장·업로드·작업 진행은 적절한 <code>aria-live</code>, 즉시 수정이 필요한 오류는 alert와 field 연결</td><td>중복 announcement·focus 강탈 검사</td></tr>
+          <tr><td>색·대비</td><td>상태를 색만으로 전달하지 않고 텍스트·아이콘을 병행하며 text·control·focus 대비를 AA 이상으로 유지</td><td>token contrast와 forced-colors 확인</td></tr>
+          <tr><td>Touch·Zoom</td><td>학생 주요 command와 icon target은 최소 44×44px, 200% zoom과 400% reflow에서 기능·텍스트 겹침 없음</td><td>390px viewport, zoom·mobile keyboard 검사</td></tr>
+          <tr><td>Motion</td><td>진행 상태 이해에 불필요한 animation을 제거하고 reduced motion에서 전환 효과를 끔</td><td><code>prefers-reduced-motion</code> 시각 검사</td></tr>
+          <tr><td>표·차트</td><td>caption·header·sort 상태와 동일한 텍스트 요약을 제공하고 chart만으로 결과를 전달하지 않음</td><td>keyboard sort, accessible name, data table 대체</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="security">화면 공개 범위와 개인정보</h2>
+      <table>
+        <thead><tr><th>표면</th><th>허용</th><th>금지</th><th>거부 시</th></tr></thead>
+        <tbody>
+          <tr><td>Console 목록</td><td>담당 context 안의 활동지·배포·학생 상태·허용 집계</td><td>비담당 수업·학생 원문·필요 없는 개인정보</td><td>행을 숨기는 것만으로 끝내지 않고 query와 API에서 거부</td></tr>
+          <tr><td>평가 검토</td><td>검토에 필요한 학생 답안·rubric·AI 근거·조정 이력</td><td>provider secret·raw request header·타 학생 비교의 불필요한 PII</td><td>안전한 access denied와 감사 사건</td></tr>
+          <tr><td>PublicUI 작성</td><td>student projection, 본인 response·attachment·receipt</td><td>정답·예시 답안·루브릭 원문·배점·교사 메모·AI raw</td><td>메뉴·직접 URL·API 모두 동일 거부</td></tr>
+          <tr><td>PublicUI 결과</td><td>현재 공개된 <code>ReleaseRevision</code>의 점수·피드백·허용 PDF</td><td>미확정·철회된 결과, confidence, 내부 검토 이유</td><td>철회·stale 상태와 안전한 안내</td></tr>
+          <tr><td>알림</td><td>사건 유형·활동지·마감·상태와 안전한 deep link</td><td>제목의 점수·민감 답안·provider 오류 원문</td><td>권한 재검사 뒤 대상 화면 열기</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="failure">실패·복구 화면 계약</h2>
+      <table>
+        <thead><tr><th>상황</th><th>사용자 화면</th><th>허용 행동</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼 context 조회 실패</td><td>기존 선택은 stale로 표시하고 배포·평가 생성 차단</td><td>다시 불러오기·진단 열기</td><td>빈 대상 목록으로 대체해 배포 진행</td></tr>
+          <tr><td>AI route 미배정</td><td>해당 평가 command에 “연결 경로 필요”, 기존 결과는 유지</td><td>진단 보기·권한 있으면 플랫폼 작업 배정으로 이동</td><td>가짜 AI 결과·fallback filter로 성공 표시</td></tr>
+          <tr><td>Plate 저장 충돌</td><td>내·서버·기준 revision 비교와 로컬 복구본</td><td>사본 저장·병합·서버본 선택</td><td>어느 한 사본 자동 덮어쓰기</td></tr>
+          <tr><td>학생 offline</td><td>로컬 복구 범위·마감 위험·마지막 서버 저장을 sticky 상태로 표시</td><td>online 재동기화·로컬 사본 내려받기</td><td>서버 저장 전 “저장됨” 표시</td></tr>
+          <tr><td>제출 응답 유실</td><td>같은 idempotency key로 receipt 재조회</td><td>상태 확인·동일 command 재전송</td><td>새 제출을 조용히 중복 생성</td></tr>
+          <tr><td>AI·PDF 부분 실패</td><td>성공·실패·대기 수와 항목별 원인</td><td>실패만 재실행·취소·성공 artifact 받기</td><td>일부 성공을 전체 성공으로 표시</td></tr>
+          <tr><td>결과 공개 뒤 정정</td><td>이전·새 release 차이, 영향 학생 수, 통지 상태</td><td>정정 승인·재공개·철회</td><td>과거 결과를 덮어써 이력 제거</td></tr>
+          <tr><td>애드온 비호환·비활성</td><td>플랫폼 셸의 안전한 이용 불가 상태</td><td>허용된 홈·상태 재확인</td><td>독립 wp-admin·shortcode로 우회</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="handoff">후속 상세 설계로 넘기는 계약</h2>
+      <table>
+        <thead><tr><th>후속 단계</th><th>A-DS-01 고정 입력</th><th>후속 단계에서 확정할 것</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS-02</code></td><td>두 메뉴, 교사 6개·학생 3개 화면군, 플랫폼 셸 소유권, route-scoped asset</td><td>Manifest key/path/handler/asset, boot·호환·비활성 상태</td></tr>
+          <tr><td><code>A-DS-03</code></td><td>actor, 권한 없는 숨김, 선행 상태 부족 비활성, context bar</td><td>capability와 화면·command·객체 scope matrix</td></tr>
+          <tr><td><code>A-DS-04</code></td><td>설정 5개 탭과 플랫폼 AI 설정 read-only 연결</td><td>설정 field·저장·진단·secret 비노출 계약</td></tr>
+          <tr><td><code>A-DS-05</code></td><td>화면이 사용하는 revision·receipt·release·artifact 상태</td><td>table·index·state enum·Repository·보존</td></tr>
+          <tr><td><code>A-DS-06</code></td><td>ContextBar와 배정 대상·담당 범위 UI</td><td>플랫폼/Judge Gateway DTO·pagination·stale·삭제 처리</td></tr>
+          <tr><td><code>A-DS-07</code></td><td>JobProgress·평가의 검토 대기·partial/retry/cancel 화면</td><td>job state·lease·worker·비용·SLO·알림 사건</td></tr>
+          <tr><td><code>A-DS-08</code></td><td>화면 ID, deep link, origin 복귀, 메뉴·직접 URL 동일 판정</td><td>GET Route·REST·command·nonce·오류 응답</td></tr>
+          <tr><td><code>A-DS-09</code></td><td>Plate 3-track 작업대, 기본 편집 도구, 응답칸 10종과 세 projection·반응형·접근성</td><td>node schema·upcaster·renderer·저장·bundle</td></tr>
+          <tr><td><code>A-DS-10</code></td><td>자체 평가 panel·evidence anchor·해결/보류/기각·발행 blocker</td><td>평가 input/output·상태·normalizer·review command</td></tr>
+          <tr><td><code>A-DS-11</code></td><td>학생 P01~P02, save indicator, conflict·offline·receipt·PDF 상태</td><td>assignment·submission·attachment·마감·재제출 계약</td></tr>
+          <tr><td><code>A-DS-12</code></td><td>Console C04의 평가 batch·검토와 evidence·uncertainty UI</td><td>rubric snapshot·점수 계산·재평가·abstain</td></tr>
+          <tr><td><code>A-DS-13</code></td><td>검토 결정·공개·정정·철회와 PublicUI P03</td><td>official result·release revision·통지·audit</td></tr>
+          <tr><td><code>A-DS-14</code></td><td>활동지별(기본)·수업·그룹별·학생별 보고서, 활동지→배포 건 drill-down, artifact 목록과 두 PDF download surface</td><td>집계·filter snapshot·renderer·private download·만료</td></tr>
+          <tr><td><code>A-DS-15</code></td><td>설정의 데이터 이전, legacy 화면은 목표 탐색에서 제외</td><td>preview·backup·rollback·redirect·sunset</td></tr>
+          <tr><td><code>A-DS-16</code></td><td>9개 화면군·구성 요소·상태·viewport·접근성 관문</td><td>page↔policy↔API↔service↔data↔test 전체 추적</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="acceptance">UI 검증·수용 기준</h2>
+      <table>
+        <thead><tr><th>ID</th><th>수용 기준</th><th>필수 증거</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS01-A01</code></td><td>Console 메뉴 5개·PublicUI 메뉴 1개와 9개 화면군이 빠짐없이 연결</td><td>manifest fixture·화면 catalog·링크 검사</td></tr>
+          <tr><td><code>A-DS01-A02</code></td><td>교사·보조교사·학생·비담당자·관리자의 메뉴와 직접 URL 결과가 같은 Policy를 사용</td><td>역할×context×route E2E</td></tr>
+          <tr><td><code>A-DS01-A03</code></td><td>만들기→배포→평가→공개 네 단계에서 발행본·대상·제출·평가·공개 문맥과 활동지→배포 건 이동을 유지</td><td>deep link·back/forward·새로고침 E2E</td></tr>
+          <tr><td><code>A-DS01-A04</code></td><td>학생 P01~P03에 교사용·채점용·AI raw 필드가 노출되지 않음</td><td>schema leak fixture·DOM/network 검사</td></tr>
+          <tr><td><code>A-DS01-A05</code></td><td>loading·empty·error·partial·conflict·stale·offline·access·unavailable을 정상 데이터와 구분</td><td>상태별 fixture·failure injection screenshot</td></tr>
+          <tr><td><code>A-DS01-A06</code></td><td>1440×900, 1024×768, 768×1024, 390×844에서 text·control 겹침과 페이지 비의도 overflow 0건</td><td>Playwright screenshot·bounding box·scroll width 검사</td></tr>
+          <tr><td><code>A-DS01-A07</code></td><td>Plate canvas가 모든 viewport에서 비어 있지 않고 기본 편집 도구·삽입 menu·응답칸 10종·outline·inspector가 조작 가능</td><td>canvas pixel·mount·keyboard·drawer E2E</td></tr>
+          <tr><td><code>A-DS01-A08</code></td><td>keyboard만으로 탐색·편집·검토·제출·dialog 취소가 가능하고 focus가 복원</td><td>keyboard trace·focus snapshot</td></tr>
+          <tr><td><code>A-DS01-A09</code></td><td>WCAG 2.2 AA 자동 검사와 수동 screen reader·zoom·reduced motion 관문 통과</td><td>axe report·수동 체크리스트</td></tr>
+          <tr><td><code>A-DS01-A10</code></td><td>저장·제출·발행·공개·PDF 완료와 보고서 기준·filter·source가 서버 receipt와 본문 상태로 재조회됨</td><td>network interruption·reload·report snapshot E2E</td></tr>
+          <tr><td><code>A-DS01-A11</code></td><td>애드온 asset은 등록 Route에만 한 번 로드되고 플랫폼 전역 CSS·DOM을 덮어쓰지 않음</td><td>asset count·selector scope·core page 회귀</td></tr>
+          <tr><td><code>A-DS01-A12</code></td><td>비호환·비활성·handler 오류에서 플랫폼 셸은 정상이며 민감 정보가 노출되지 않음</td><td>C-28 failure fixture·DOM·로그 공개 범위 검사</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">A-DS-01 결정 기록</h2>
+      <table>
+        <thead><tr><th>ID</th><th>결정</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS01-D01</code></td><td>Console에는 <code>AI 활동지</code>, <code>활동지 배포</code>, <code>AI 평가</code>, <code>활동지 보고서</code>, <code>AI 평가 설정</code>을 기존 Addon API로 직접 기여하고 같은 다섯 업무를 본문 로컬 탐색에서도 유지한다.</td><td>사용자 보완·확정 2026-08-28</td></tr>
+          <tr><td><code>A-DS01-D02</code></td><td>PublicUI에는 <code>학습 &gt; 활동지</code> 목록 메뉴 하나와 별도 직접 배정 Route를 제공한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D03</code></td><td>Console 로컬 업무는 <code>활동지</code>, <code>배포·제출</code>, <code>평가</code>, <code>보고서</code>, <code>평가 설정</code> 다섯 항목을 짧은 문구로 표시하고 검토 대기는 알림에서 바로 연다.</td><td>사용자 보완·확정 2026-08-28</td></tr>
+          <tr><td><code>A-DS01-D04</code></td><td>선택 활동지는 만들기·배포·평가·공개 네 단계만 보이며 세부 상태는 해당 단계 안에서 처리한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D05</code></td><td>Console 6개와 PublicUI 3개의 화면군을 목표 UI inventory로 사용한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D06</code></td><td>플랫폼 context는 ContextBar에서 조회·선택만 하며 애드온 학년·학급·그룹 관리 화면을 만들지 않는다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D07</code></td><td>Plate 제작은 <code>WorksheetEditorProfile</code>의 기본 편집 도구·선별 콘텐츠 node·응답칸 10종을 사용하고 Wide 3-track과 작은 화면 drawer/bottom sheet에서 기능을 보존한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D08</code></td><td>활동지 자체 평가는 작업대 안에서 evidence와 원문을 연결하고 AI가 원문을 자동 수정하지 않는다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D09</code></td><td>학생 화면은 할 일·작성 및 제출함·결과 세 화면군으로 제한한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D10</code></td><td>설정은 평가 정책·기본 루브릭·검토·공개 기준·AI 연결·시스템 상태·데이터 이전을 소유하고 플랫폼 AI 설정을 복제하지 않는다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D11</code></td><td>권한 없는 기능은 숨기고 선행 상태가 부족한 기능은 차단 이유와 함께 비활성 표시한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D12</code></td><td>모든 화면은 loading·empty·error·partial·conflict·stale·offline·success·access·unavailable을 명시적으로 구분한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D13</code></td><td>화면당 primary command 하나를 유지하고 저장·제출·발행·공개는 지속 receipt로 확인한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D14</code></td><td>실제 제품 화면은 짧은 사용자 문구와 조용한 업무 UI로 구성하고 설계·개발 용어, marketing hero, 중첩 card, 장식 gradient·orb를 사용하지 않는다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D15</code></td><td>Wide·Standard·Narrow·Compact 네 구간과 360px 최소 폭에서 기능·텍스트·control을 보존한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D16</code></td><td>WCAG 2.2 AA, keyboard, focus, 200% zoom·400% reflow, reduced motion을 UI 수용 기준으로 사용한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D17</code></td><td>학생·알림·PublicUI에는 교사용 projection·루브릭·배점·AI raw·내부 오류를 노출하지 않는다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D18</code></td><td>정확한 Manifest·Route·capability·REST·DTO 값은 A-DS-02·03·08에서 이 화면 ID에 연결해 확정한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS01-D19</code></td><td>보고서는 활동지별을 기본 기준으로 하고 수업·그룹별·학생별로 전환한다. 활동지별 결과는 전체 배포와 개별 배포 건을 모두 제공하며 선택 기준·filter·source snapshot을 출력물에 고정한다.</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="completion">A-DS-01 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>현재 결과</th><th>증거</th></tr></thead>
+        <tbody>
+          <tr><td>A-DS-00 사용자 확정 입력</td><td>충족</td><td>제품·두 셸·소유권·평가 분리·불변 revision 유지</td></tr>
+          <tr><td>Console·PublicUI 정보 구조</td><td>충족</td><td>Console 직접 메뉴 5개, PublicUI 메뉴 1개, 활동지 단계 4개, 학생 보기 3개</td></tr>
+          <tr><td>화면 inventory와 목적</td><td>충족</td><td><code>A-DS01-C01~C06</code>과 <code>A-DS01-P01~P03</code></td></tr>
+          <tr><td>Plate 작업대 계약</td><td>충족</td><td>header·lifecycle·outline·canvas·기본 toolbar·응답칸 10종·inspector·평가·preview 반응형 표</td></tr>
+          <tr><td>공통 구성 요소·상태·행동</td><td>충족</td><td>13개 구성 요소, 10개 UI 상태, command·form·icon 규칙</td></tr>
+          <tr><td>반응형·시각 원칙</td><td>충족</td><td>4개 viewport 구간, 안정 치수·표·타이포·색·카드 원칙</td></tr>
+          <tr><td>접근성·공개 범위</td><td>충족</td><td>WCAG 2.2 AA 목표와 keyboard·focus·Plate·touch·zoom·PII 표</td></tr>
+          <tr><td>실패·복구·후속 owner</td><td>충족</td><td>8개 실패 화면과 A-DS-02~16 이관표</td></tr>
+          <tr><td>검증 수용 기준</td><td>충족</td><td><code>A-DS01-A01~A12</code> 역할·viewport·상태·브라우저 증거</td></tr>
+          <tr><td>업무 runtime·플랫폼 runtime 변경 없음</td><td>충족</td><td>HTML·검증·운영 문서만 변경하고 source fingerprint로 재확인</td></tr>
+          <tr><td>사용자 결정 확인</td><td>충족</td><td><code>A-DS01-D01~D19</code> 2026-08-10 사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="confirm">확정된 결정과 다음 단계</h2>
+      <section class="panel">
+        <ol>
+          <li>Console에서 <code>AI 활동지</code>, <code>활동지 배포</code>, <code>AI 평가</code>, <code>활동지 보고서</code>, <code>AI 평가 설정</code> 다섯 업무를 직접 열고, 선택한 활동지에서는 만들기·배포·평가·공개 네 단계를 사용한다.</li>
+          <li>PublicUI는 목록 메뉴 하나와 직접 배정 Route를 사용하고 학생 보기는 할 일·제출함·결과로 제한한다.</li>
+          <li>Console 6개·PublicUI 3개 화면군과 짧은 제품 문구·공통 상태·receipt 규칙을 목표 UI inventory로 사용한다.</li>
+          <li>Plate 작업대는 기본 편집 도구와 응답칸 10종을 제공하고 desktop 3-track과 작은 화면 drawer 방식으로 같은 기능을 유지한다.</li>
+          <li>플랫폼 context·AI 설정은 조회·진단·연결만 하고 애드온에서 관리 화면을 복제하지 않는다.</li>
+          <li>네 반응형 구간, WCAG 2.2 AA, keyboard·focus·zoom·reduced motion, 학생 정보 비노출을 필수 수용 기준으로 사용한다.</li>
+          <li>보고서는 활동지별을 기본으로 수업·그룹별·학생별을 전환하고 활동지 안에서 개별 배포 건까지 구분한다.</li>
+        </ol>
+      </section>
+      <div class="good callout"><strong>사용자 확정 2026-08-10:</strong> 위 일곱 묶음과 <code>A-DS01-D01~D19</code>을 동결하고 <a href="a-ds-02-addon-lifecycle.html"><code>A-DS-02 애드온 생명주기와 플랫폼 연결</code></a> 상세 설계를 시작했다. C-28 Runtime 구현은 여전히 애드온 Runtime 구현의 외부 prerequisite다.</div>
+      <div class="good callout"><strong>사용자 보완 2026-08-28:</strong> 설정과 평가 항목이 숨겨지지 않도록 Console 기여를 다섯 직접 메뉴로 보완했다. Page·capability·handler는 기존 정본을 그대로 사용하며 플랫폼 공개 API·플랫폼 source 변경은 0건이다.</div>
+
+      <div class="good callout"><strong>G2-IMP-03-S05 구현 증거 2026-08-21:</strong> <a href="g2-imp-03-s05-workbench-integration.html">교사 Plate 작업대</a> 상단에 파일 추가·가져오기·복제·저장만 노출하고, staging tray·짧은 상태 문구·저장 전 차단·desktop 1440×1000·mobile 390×844 겹침 0건을 검증했다.</div>
+      <div class="good callout"><strong>G2-IMP-04-S04 UI 동결 2026-08-21:</strong> <a href="g2-imp-04-s04-ui-e2e-freeze.html">검증·학생·인쇄 미리보기</a>를 같은 Plate 작업대에 연결했다. 사용자 화면에는 짧은 명령과 상태만 보이며, 720px side panel·mobile 100vw·최상위 layer·제목/버튼 비겹침을 실제 브라우저로 검증했다.</div>
+      <div class="good callout"><strong>G4-IMP-06-S05 학생 결과 UI 동결 2026-08-24:</strong> <a href="g4-imp-06-s05-student-result-ui-integration.html">학생 결과 화면</a>은 전용 Public Page와 Q33 allowlist만 사용한다. 공개·정정·업데이트·회수 상태, 권한 회수 즉시 본문 제거, 1280×900 desktop과 390×844 mobile의 겹침·overflow 0건을 검증했다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S04 시스템 상태 UI 동결 2026-08-25:</strong> <a href="g5-imp-05-s04-operations-ui-regression.html">설정의 시스템 상태 탭</a>은 애드온 실행·데이터 구조·작업 처리·파일 보관·AI 작업 배정 다섯 항목만 표시한다. 사용자에게 짧은 상태와 실제 복구 행동만 제공하고 desktop·mobile·401·403 권한 회수를 검증했다.</div>
+      <p class="footer">A-DS-00과 A-DS-01은 2026-08-10 사용자 확인으로 동결했다. G5-IMP-05-S04에서 시스템 상태 화면을 실제 구현과 동기화했으며 다음 구현은 G5-IMP-06-S01 신규 설치다.</p>
+    </main>
+  </div>
+</body>
+</html>

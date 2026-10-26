@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-08 계정·사용자 상세 설계 | OJ Platform</title>
+  <style>
+    :root { --ink:#17202a; --muted:#5e6b78; --line:#d7dee5; --surface:#fff; --soft:#f5f7f9; --navy:#15344c; --cyan:#16818b; --green:#25734f; --yellow:#a56a00; --red:#a73b3b; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:#edf1f4; font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif; line-height:1.65; }
+    a { color:#075f73; }
+    code { padding:1px 4px; border-radius:3px; background:#edf1f4; font-family:Consolas,monospace; font-size:.94em; overflow-wrap:anywhere; }
+    .topbar { color:#fff; background:var(--navy); border-bottom:4px solid var(--cyan); }
+    .topbar-inner { width:min(1180px,calc(100% - 32px)); margin:auto; padding:14px 0; display:flex; justify-content:space-between; gap:16px; align-items:center; }
+    .brand { display:flex; gap:10px; align-items:center; color:#fff; text-decoration:none; }
+    .brand-mark { width:34px; height:34px; display:grid; place-items:center; color:var(--navy); background:#fff; border-radius:5px; font-weight:900; }
+    .layout { width:min(1180px,calc(100% - 32px)); margin:24px auto 40px; display:grid; grid-template-columns:220px minmax(0,1fr); gap:20px; }
+    nav { position:sticky; top:20px; align-self:start; padding:16px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+    nav ul { margin:10px 0 0; padding:0; list-style:none; }
+    nav li + li { margin-top:6px; }
+    nav a { color:var(--ink); text-decoration:none; font-size:14px; }
+    main { min-width:0; }
+    .report-header,.section { padding:26px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+    .section { margin-top:18px; }
+    .eyebrow { margin:0 0 8px; color:var(--cyan); font-size:13px; font-weight:800; }
+    h1,h2,h3 { color:var(--navy); letter-spacing:0; }
+    h1 { margin:0; font-size:34px; line-height:1.25; }
+    h2 { margin:0; font-size:23px; }
+    h3 { margin:20px 0 8px; font-size:18px; }
+    p { margin:8px 0 0; }
+    .lede { max-width:860px; color:var(--muted); font-size:17px; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:18px; color:var(--muted); font-size:13px; }
+    .summary,.callout,.warning,.risk { margin-top:16px; padding:14px 16px; border-left:4px solid var(--cyan); background:#edf8f8; }
+    .callout { border-left-color:var(--green); background:#eef8f3; }
+    .warning { border-left-color:var(--yellow); background:#fff8e6; }
+    .risk { border-left-color:var(--red); background:#fff0f0; }
+    .section-heading { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; padding-bottom:12px; border-bottom:1px solid var(--line); }
+    .section-heading p { color:var(--muted); }
+    .badge { flex:0 0 auto; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:800; }
+    .badge.good { color:#175c40; background:#def2e8; }
+    .badge.info { color:#075e68; background:#dff4f5; }
+    .badge.wait { color:#7b5200; background:#fff0c7; }
+    .badge.risk { color:#8a2929; background:#f8dede; }
+    .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .metric { padding:14px; border:1px solid var(--line); border-top:4px solid var(--cyan); border-radius:5px; background:var(--soft); }
+    .metric strong { display:block; color:var(--navy); font-size:25px; }
+    .metric span { color:var(--muted); font-size:13px; }
+    .flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:16px; }
+    .flow article { min-width:0; padding:13px; border:1px solid var(--line); border-radius:5px; background:var(--soft); }
+    .flow span { color:var(--muted); font-size:12px; }
+    .flow strong { display:block; margin-top:3px; color:var(--navy); overflow-wrap:anywhere; }
+    .table-wrap { margin-top:16px; overflow-x:auto; border:1px solid var(--line); border-radius:5px; }
+    table { width:100%; border-collapse:collapse; background:var(--surface); font-size:14px; }
+    th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:#fff; background:var(--navy); }
+    tbody tr:nth-child(even) { background:#f8fafb; }
+    tbody tr:last-child td { border-bottom:0; }
+    .rule-list,.check-list { margin:16px 0 0; padding-left:22px; }
+    .rule-list li + li,.check-list li + li { margin-top:8px; }
+    .tree { margin-top:14px; padding:16px; overflow:auto; color:#d8e8f0; background:#102a3e; border-radius:5px; font:13px/1.65 Consolas,monospace; white-space:pre; }
+    .gate { display:grid; grid-template-columns:135px minmax(0,1fr) 180px; margin-top:10px; border:1px solid var(--line); border-radius:5px; overflow:hidden; }
+    .gate > div { padding:11px; }
+    .gate > div + div { border-left:1px solid var(--line); }
+    footer { margin-top:20px; padding:16px 4px; color:var(--muted); text-align:center; font-size:13px; }
+    @media (max-width:980px) { .layout { grid-template-columns:1fr; } nav { position:static; } .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:680px) { .topbar-inner,.layout { width:min(100% - 20px,1180px); } .topbar span:last-child { display:none; } .report-header,.section { padding:18px; } h1 { font-size:27px; } .section-heading { display:block; } .badge { display:inline-block; margin-top:10px; } .metrics,.flow { grid-template-columns:1fr; } .gate { grid-template-columns:1fr; } .gate > div + div { border-left:0; border-top:1px solid var(--line); } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 설계</strong></a>
+      <span>계정·사용자 전체 경험</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="문서 목차">
+      <strong>목차</strong>
+      <ul>
+        <li><a href="#baseline">현재 차이</a></li>
+        <li><a href="#identity">사용자 원본</a></li>
+        <li><a href="#pages">페이지·권한</a></li>
+        <li><a href="#login">로그인·전환</a></li>
+        <li><a href="#registration">가입·동의</a></li>
+        <li><a href="#profile">프로필·계정</a></li>
+        <li><a href="#console">사용자 관리</a></li>
+        <li><a href="#structure">코드 구조</a></li>
+        <li><a href="#data">데이터·보안</a></li>
+        <li><a href="#verification">완료 관문</a></li>
+        <li><a href="#approval">확인 항목</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header">
+        <p class="eyebrow">DS-08 · 메뉴 기반 상세 설계</p>
+        <h1>계정·사용자 상세 설계</h1>
+        <p class="lede">서비스 사용자가 처음 로그인하는 순간부터 가입, 기존 계정 전환, 프로필과 동의, 사용자 운영자의 생성·일괄 등록·비활성화·목록 기반 비밀번호 초기화까지 하나의 WordPress 사용자 원본과 같은 권한 계약으로 정리한다.</p>
+        <div class="meta"><span>작성일: 2026-07-23</span><span>기능 확정일: 2026-07-23</span><span>시안 작성일: 2026-07-24</span><span>최종 확정일: 2026-07-26</span><span>구현 갱신일: 2026-07-26</span><span>상태: 사용자 확정 · 기능·UI 설계 동결 · R-04 핵심 구현 완료</span><span>선행 설계: DS-00~DS-07 확정</span><span>실행: I-02/R-04</span><span>근거: D-002·D-003·D-004·D-005·D-007·D-008·DS-01~DS-07·DS-16</span></div>
+<div class="callout"><strong>전체 순서에서의 위치:</strong> 이 문서는 <a href="development-sequence.html">전체 설계·개발 순서</a>의 DS-08이다. DS08-Q01~Q08과 <a href="development-ds-08-access-policy-ui.html">비로그인·정책</a>, <a href="development-ds-08-user-account-ui.html">프로필·내 계정</a>, <a href="development-ds-08-admin-users-ui.html">관리자 사용자</a> 시안을 기준으로 별도 재구축 작업 트리의 Auth·PublicUi·계정 관리 코드를 R-04에서 구현했다. 운영 사용자 데이터 전환과 Legacy Reader 제거는 I-09 승인 전까지 수행하지 않는다.</div>
+      </header>
+
+      <section class="section" id="baseline">
+        <div class="section-heading"><div><h2>현재 코드와 목표 차이</h2><p>기존 기능을 버리는 것이 아니라 사용자 원본과 책임을 바꾼다.</p></div><span class="badge risk">구조 변경 필요</span></div>
+        <div class="metrics">
+          <div class="metric"><strong>20</strong><span>계정 대표 화면<br>공개 10 + 관리자 10</span></div>
+          <div class="metric"><strong>7</strong><span>Auth 소유 목표 테이블</span></div>
+          <div class="metric"><strong>1,552</strong><span>현재 Public Auth Controller 행</span></div>
+          <div class="metric"><strong>2,013</strong><span>현재 Console User Controller 행</span></div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>현재</th><th>문제</th><th>목표</th></tr></thead>
+          <tbody>
+            <tr><td><code>Platform_User_Repository</code></td><td>로그인·비밀번호·프로필·Judge 통계와 여러 테이블 참조 변경을 함께 처리</td><td>WordPress 사용자 API와 7개 Auth Repository로 분리</td></tr>
+            <tr><td><code>Authenticator</code></td><td>WordPress 계정이 없어도 Judge 후보를 자동 생성·연결하고 기존 WordPress 사용자도 자동 연결</td><td>WordPress 인증 우선, Judge는 사용자가 확인한 전환에서만 읽기</td></tr>
+            <tr><td><code>Public_Auth_Controller</code></td><td>로그인, 가입, 프로필, 설정, 약관, 법정대리인 동의와 HTML을 한 클래스가 소유</td><td>화면별 Controller·Application Service·Presenter 분리</td></tr>
+            <tr><td><code>Console_User_Controller</code></td><td>목록·생성·편집·역할·CSV·삭제·약관과 보조 HTML이 한 클래스에 집중</td><td>관리 업무별 Controller와 범위가 있는 Command Service로 분리</td></tr>
+            <tr><td><code>oj_user_id</code>와 중복 사용자 값</td><td>플랫폼 사용자 테이블과 메타에 로그인·이메일·비밀번호·통계를 복제</td><td>숫자 WordPress ID와 Auth 전용 확장 정보만 유지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>화면 수량:</strong> D-002의 공개 계정·정책 10개와 관리자 사용자·역할·동의 10개를 유지한다. 기존 Judge 계정 전환과 비밀번호 찾기·재설정은 <code>/login</code>의 명시적 화면 상태로 제공한다. 최고 관리자 주제 관리, AI 작업 배정 화면과 보호 첨부 파일 응답까지 반영한 전체 목표 152개 중 계정 화면 수는 바뀌지 않는다.</div>
+      </section>
+
+      <section class="section" id="identity">
+        <div class="section-heading"><div><h2>사용자 원본과 식별자</h2><p>이전 검토에서 확정한 WordPress 동작 구조를 그대로 유지한다.</p></div><span class="badge good">기준 고정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>값</th><th>의미·소유</th><th>사용 규칙</th></tr></thead>
+          <tbody>
+            <tr><td><code>user_id</code></td><td>숫자 <code>wp_users.ID</code></td><td>모든 플랫폼 테이블, 권한 Context, URL <code>{user_id}</code>와 업무 코드에서 사용</td></tr>
+            <tr><td><code>user_login</code></td><td>문자열 <code>wp_users.user_login</code></td><td>로그인과 Judge 어댑터의 <code>solution.user_id</code> 문자열에만 사용하며 정상 계정 운영 중 변경하지 않음</td></tr>
+            <tr><td>이메일·비밀번호·표시 이름·학생 이름</td><td>WordPress 사용자 API</td><td>표시 이름은 <code>users.display_name</code>, 관리용 학생 이름은 기존 <code>usermeta</code>의 <code>nickname</code> 메타 키에 저장하며 플랫폼 테이블에 복제하지 않음</td></tr>
+            <tr><td>소속·소개·생년·OJ 이용 상태</td><td><code>user_profiles</code></td><td>숫자 <code>user_id</code>당 한 행만 저장</td></tr>
+            <tr><td>공개 범위·편집기 환경</td><td><code>user_preferences</code></td><td>숫자 <code>user_id</code>당 한 행. 기본 제출 언어는 관리자 제출 설정에서 허용한 언어만 선택하며, 테마는 번들된 Ace 테마 slug를 저장하고 없으면 <code>chrome</code>을 사용</td></tr>
+            <tr><td>Judge <code>users.user_id</code></td><td>기존 문자열 로그인 후보</td><td>WordPress 계정이 없는 로그인 전환 서비스에서만 일회성으로 읽고 저장·매핑하지 않음</td></tr>
+          </tbody>
+        </table></div>
+        <ul class="rule-list">
+          <li>숫자로만 된 로그인 아이디도 문자열 <code>user_login</code>이며 숫자 <code>user_id</code>로 추정하지 않는다.</li>
+          <li>기존 WordPress 계정이 있으면 WordPress 인증만 수행하고 Judge 조회·자동 연결·전환 질문을 하지 않는다.</li>
+          <li>WordPress 인증은 성공했지만 <code>user_profiles</code>가 없으면 Judge를 조회하지 않고 <code>/user-settings?mode=profile-completion</code>에서 사용자 확인 후 새 프로필을 만든다.</li>
+          <li><code>oj_user_id</code>, Judge ID 매핑 테이블, 이중 사용자 키와 플랫폼 비밀번호 해시는 최종 코드·스키마에서 제거한다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="pages">
+        <div class="section-heading"><div><h2>페이지와 접근 권한</h2><p>메뉴 노출과 직접 주소는 DS-07의 같은 Route Policy를 사용한다.</p></div><span class="badge info">대표 경로 20개</span></div>
+        <h3>사용자·정책 화면</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>경로</th><th>화면</th><th>접근</th><th>주요 데이터</th></tr></thead>
+          <tbody>
+            <tr><td><code>/login</code></td><td>서비스 시작 엔트리·로그인·계정 복구·전환 확인</td><td>비로그인, 로그인 사용자는 <code>/</code> 메인 홈으로 이동</td><td>WordPress 인증, 전환 시에만 Judge <code>users</code></td></tr>
+            <tr><td><code>/register</code></td><td>회원가입</td><td>비로그인 + 가입 기능 ON, 자동·수동 승인 방식 적용</td><td>WordPress 사용자, 프로필·환경설정·동의·법정대리인 확인</td></tr>
+            <tr><td><code>/users/{user_id}</code></td><td>사용자 프로필</td><td>로그인 필수, 공개 항목 또는 본인</td><td>WordPress 사용자, 프로필·환경설정, 읽기 Provider 집계</td></tr>
+            <tr><td><code>/user-settings</code></td><td>내 계정 설정</td><td>로그인한 본인</td><td>WordPress 사용자, 프로필·환경설정</td></tr>
+            <tr><td><code>/user-agreements</code></td><td>내 동의 현황</td><td>로그인한 본인</td><td>문서·동의 사건</td></tr>
+            <tr><td><code>/guardian-consent/{token}</code></td><td>법정대리인 동의</td><td>유효한 일회성 토큰</td><td>법정대리인 확인·현재 동의 문서</td></tr>
+            <tr><td><code>/terms</code>, <code>/privacy</code></td><td>이용약관·개인정보 처리방침</td><td>모든 사용자</td><td>현재·이전 게시 문서</td></tr>
+            <tr><td><code>/copyright</code>, <code>/email-collection-refusal</code></td><td>저작권·이메일 수집 거부</td><td>모든 사용자</td><td>현재·이전 게시 문서</td></tr>
+          </tbody>
+        </table></div>
+        <h3>관리자 화면</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>경로</th><th>화면</th><th>권한</th><th>범위</th></tr></thead>
+          <tbody>
+            <tr><td><code>/oj-console/users</code></td><td>사용자 목록·가입 승인 대기</td><td><code>oj_manage_users</code> 또는 <code>oj_approve_user_registrations</code></td><td>승인 전용 권한자는 <code>pending</code> 계정의 최소 정보만 조회</td></tr>
+            <tr><td><code>/oj-console/users/new</code></td><td>사용자 추가</td><td><code>oj_create_users</code></td><td>새 WordPress 계정, 역할은 별도 제한</td></tr>
+            <tr><td><code>/oj-console/users/{user_id}</code></td><td>사용자 상세</td><td><code>oj_manage_users</code></td><td>계정·프로필·역할·동의·이용 상태 요약</td></tr>
+            <tr><td><code>/oj-console/users/{user_id}/edit</code></td><td>사용자 수정</td><td><code>oj_edit_users</code></td><td>허용된 계정·프로필 항목</td></tr>
+            <tr><td><code>/oj-console/users/{user_id}/roles</code></td><td>사용자 역할</td><td><code>oj_manage_roles</code></td><td>DS-02의 역할·권한 계약</td></tr>
+            <tr><td><code>/oj-console/users/bulk-import</code></td><td>사용자 일괄 등록</td><td><code>oj_create_users</code></td><td>플랫폼 전체, Jobs 항목별 실행</td></tr>
+            <tr><td><code>/oj-console/users/deleted</code></td><td>삭제·익명화 기록</td><td><code>oj_view_deleted_users</code></td><td>최소 스냅샷, 영구 처리 별도 권한</td></tr>
+            <tr><td><code>/oj-console/roles</code></td><td>역할과 권한</td><td><code>oj_manage_roles</code></td><td>DS-02 Permission 소유 화면</td></tr>
+            <tr><td><code>/oj-console/agreements</code></td><td>동의 문서</td><td><code>oj_manage_agreements</code></td><td>문서 유형·버전·게시 상태</td></tr>
+            <tr><td><code>/oj-console/users/registration</code></td><td>가입 설정</td><td><code>oj_manage_registration_settings</code></td><td>가입·필수 동의·법정대리인 기준·기본 역할</td></tr>
+          </tbody>
+        </table></div>
+        <h3>시각 시안</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>시안 문서</th><th>대표 경로·상태</th><th>화면 수</th></tr></thead>
+          <tbody>
+            <tr><td><a href="development-ds-08-access-policy-ui.html">로그인·가입·정책 화면</a></td><td><code>/login</code>, <code>/register</code>, 법정대리인 동의, 정책 4개와 로그인 복구·기존 Judge 계정 전환 상태</td><td>대표 경로 7개 + 로그인 상태 2개</td></tr>
+            <tr><td><a href="development-ds-08-user-account-ui.html">프로필·내 계정 화면</a></td><td><code>/users/{user_id}</code>, <code>/user-settings</code>, <code>/user-agreements</code></td><td>대표 경로 3개</td></tr>
+            <tr><td><a href="development-ds-08-admin-users-ui.html">관리자 사용자 화면</a></td><td>사용자·역할·동의·가입 설정의 관리자 대표 경로 전체</td><td>대표 경로 10개</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>시안 분할:</strong> 20개 대표 경로를 한 문서에 길게 쌓지 않고 접근 상태와 업무 소유권에 따라 세 문서로 나눴다. 각 문서는 상단 시안 탭으로 한 화면만 표시하며 DS-01과 DS-10에서 사용한 같은 헤더·표·폼·상태 체계를 사용한다.</div>
+      </section>
+
+      <section class="section" id="login">
+        <div class="section-heading"><div><h2>로그인과 기존 Judge 계정 전환</h2><p>계정을 찾았다는 이유만으로 만들거나 연결하지 않는다.</p></div><span class="badge good">사용자 확인 필수</span></div>
+        <div class="flow">
+          <article><span>1 · WordPress 확인</span><strong>정확한 <code>user_login</code> 계정 조회</strong><p>존재하면 WordPress 인증만 수행한다.</p></article>
+          <article><span>2 · 전환 후보 확인</span><strong>WordPress 계정이 없을 때만 Judge 조회</strong><p>같은 문자열 한 행과 기존 비밀번호를 확인한다.</p></article>
+          <article><span>3 · 사용자 선택</span><strong>옮길 항목과 충돌을 표시</strong><p>동의 전에는 계정·프로필·세션을 만들지 않는다.</p></article>
+          <article><span>4 · 최종 재검증</span><strong>아이디·비밀번호 다시 입력</strong><p>원본 변경, 중복 계정, 토큰 만료·재사용을 차단한다.</p></article>
+          <article><span>5 · 단계별 전환</span><strong>WordPress 계정과 숫자 ID 적용</strong><p>실패하면 만든 데이터를 보상하고 재개 상태만 남긴다.</p></article>
+          <article><span>6 · 로그인 완료</span><strong>검증 완료 뒤 세션 생성</strong><p>임시 확인 정보를 지우고 홈으로 이동한다.</p></article>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>상태</th><th>저장 허용</th><th>저장 금지</th><th>종료</th></tr></thead>
+          <tbody>
+            <tr><td>후보 확인</td><td>만료·nonce·표시 정보 해시·무작위 <code>jti</code>가 든 서명 토큰</td><td>Judge ID·로그인 아이디·비밀번호·해시·이메일</td><td>10분 만료 또는 취소</td></tr>
+            <tr><td>최종 요청 선점</td><td><code>jti</code> 해시·세션 해시·만료 시각만 든 원자적 WordPress option</td><td>Judge 원본 값과 비밀번호</td><td>한 요청만 성공, 완료·만료 뒤 삭제</td></tr>
+            <tr><td>계정 생성 뒤 재개</td><td>숫자 WordPress <code>user_id</code>·단계·상태</td><td>영구 Judge 매핑과 별도 로그인 ID</td><td>모든 참조·고아·로그인 검증 완료</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>기존 WordPress 계정:</strong> 로그인 중 Judge를 조회하거나 같은 이메일로 자동 병합하지 않는다. 기존 연결 정리는 DS-15의 관리자 승인형 Migration 보고서에서만 수행한다.</div>
+        <div class="callout"><strong>본인 복구와 관리자 초기화 구분:</strong> 사용자가 직접 요청하는 <code>/login?mode=forgot</code>와 <code>mode=reset</code>은 WordPress 이메일·재설정 키를 사용한다. 이메일을 사용할 수 없는 서비스 계정은 전역 사용자 목록 또는 그룹 구성원 목록의 관리자 초기화로 무작위 임시 비밀번호를 한 번 발급받으며 새 GET 경로를 추가하지 않는다.</div>
+      </section>
+
+      <section class="section" id="registration">
+        <div class="section-heading"><div><h2>가입·약관·법정대리인 동의</h2><p>가입은 WordPress 계정을 먼저 만들고 Auth 확장 데이터를 연결한다.</p></div><span class="badge info">명시적 동의</span></div>
+        <div class="callout"><strong>비로그인 예외:</strong> <code>/login</code>, 가입 기능이 켜진 <code>/register</code>, 비밀번호 복구·재설정 화면 상태, 유효한 법정대리인 동의, 이용약관·개인정보·저작권·이메일 수집 거부 문서만 로그인 전에 접근할 수 있다. 그 밖의 모든 OJ HTML 페이지는 <code>active</code> 플랫폼 사용자를 요구한다.</div>
+        <ol class="rule-list">
+          <li>가입 OFF이면 <code>/register</code>는 404로 처리하고 로그인 화면의 가입 동작도 숨긴다.</li>
+          <li>로그인 아이디·이메일·비밀번호·표시 이름은 WordPress 규칙으로 검증하고, 소속·생년은 Auth 프로필 규칙으로 검증한다.</li>
+          <li>현재 활성 필수 문서의 정확한 <code>document_id</code>와 <code>version</code>에 동의해야 하며 체크박스만 저장하지 않는다.</li>
+          <li>설정한 기준 나이 미만이면 계정 생성 전에 법정대리인 요청을 완료한다. 토큰 원문과 확인 코드는 저장하지 않고 해시와 만료를 저장한다. 전용 동의서의 ID·버전·내용 SHA-256, 동의 시각·확인 방법과 법정대리인이 확인한 관계를 요청에 연결한다.</li>
+          <li>WordPress 계정 생성 뒤 <code>user_profiles</code>, 기본 <code>user_preferences</code>, 동의 사건 연결이 실패하면 로그인 세션을 만들지 않고 보상·재개 절차로 이동한다.</li>
+          <li>가입 기본 역할은 허용 목록에서 하나만 선택한다. 역할이 사라졌거나 위험 권한을 포함하면 저장·가입을 차단한다.</li>
+          <li>자동 승인은 모든 필수 동의와 법정대리인 확인이 끝난 가입만 <code>active</code>로 만들고 세션을 생성한다.</li>
+          <li>수동 승인은 가입 완료 계정을 <code>pending</code>으로 만들고 세션을 생성하지 않는다. 정확한 자격 증명으로 다시 로그인해도 승인 대기 안내만 표시한다.</li>
+          <li><code>oj_approve_user_registrations</code>가 있는 가입 승인 담당자만 사용자 목록의 승인 대기 필터에서 <code>pending</code>을 <code>active</code>로 바꿀 수 있다. 사용자 수정·가입 정책·그룹 관리 권한은 이를 대신하지 않는다.</li>
+          <li>승인은 전용 <code>oj_console_approve_user_registration</code> POST만 사용한다. 사용자별 nonce, 전용 capability, 현재 <code>pending</code>, 필수 동의·법정대리인 확인과 원본 버전을 실행 직전에 다시 검사한다.</li>
+          <li>승인 전용 목록에는 로그인 아이디, 표시 이름, 이메일, 서비스, 가입 시각, 필수 동의·법정대리인 확인 완료 여부만 표시한다. 역할·비밀번호·제출·학습 기록·전체 프로필과 편집 링크는 제공하지 않는다.</li>
+          <li>승인 방식 변경은 이후 가입부터 적용하며 기존 <code>pending</code> 계정을 자동 승인하지 않는다. 관리자 생성·CSV 등록·기존 계정 전환은 공개 가입 승인 방식의 대상이 아니다.</li>
+        </ol>
+        <h3 id="guardian-document-contract">법정대리인 동의서 연결</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>구현 계약</th></tr></thead>
+          <tbody>
+            <tr><td>문서 관리</td><td><code>/oj-console/agreements</code>에서 <strong>법정대리인 동의서</strong>를 선택하고 공통 HTML 편집기로 게시한다. 키 <code>guardian-consent</code>는 서버에서 결정한다. 일반 공개 정책 4종의 경로는 유지하며 전용 문서를 사용자 가입·재동의 체크박스에 추가하지 않는다.</td></tr>
+            <tr><td>확인 화면</td><td>기존 <code>/guardian-consent/{token}</code>에서 가입자 이메일, 법정대리인 이름·이메일, 요청에 연결된 동의서 전체 본문·버전을 표시한다. 부모 또는 법적으로 지정된 후견인 관계와 본인이 법정대리인이라는 동의 의사를 확인한다. 응답은 캐시·검색 수집·referrer 전달을 막는다.</td></tr>
+            <tr><td>확인·가입</td><td>이메일 링크 확인 방식 <code>email_link</code>를 기록한다. 동일한 가입자·법정대리인 이메일은 허용하지 않는다. 문서가 없거나 요청 후 문서가 변경되면 새 요청을 받아야 하며, 확인·가입 연결 시 현재 버전·내용·만료·미사용 상태를 SQL에서 다시 검증한다.</td></tr>
+            <tr><td>이력</td><td>가입까지 완료한 동의는 이후 새 버전이 게시되어도 당시 문서에 연결된 증빙으로 유지한다. 문서 본문을 사용자마다 복제하지 않는다. 과거 기록에 없는 문서·버전·확인 방법은 임의로 보충하거나 새로운 동의 완료 증빙으로 인정하지 않는다.</td></tr>
+            <tr><td>적용</td><td><code>guardian_verifications</code> 스키마 2를 공통 설치·업그레이드 절차로 반영한다. 기존 행은 새 열을 NULL로 유지하며 기존 계정·문서를 삭제하지 않는다. 새 동의서를 게시하고 가입 설정에서 법정대리인 동의를 사용해야 한다. 애드온 공개 API와 Judge DB는 변경하지 않는다.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>운영 확인:</strong> 이메일 링크와 관계 확인은 이메일 접근 및 동의 의사에 관한 기록이며 공인 본인·가족관계 인증을 의미하지 않는다. 실제 개인정보 항목·목적·보유 기간·거부 시 영향과 법정대리인 정보 처리 내용을 작성하고, 운영 환경에 맞는 동의 확인 방법을 검토해야 한다. <a href="https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1029335257">개인정보 보호법 제22조의2</a> · <a href="development-ds-08-access-policy-ui.html#guardian">동의 화면 시안</a></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>가입 설정</th><th>형식</th><th>기본·검증</th></tr></thead>
+          <tbody>
+            <tr><td>가입 허용</td><td>토글</td><td>기본 OFF, 저장 즉시 메뉴·직접 주소에 반영</td></tr>
+            <tr><td>가입 승인 방식</td><td>자동 승인·수동 승인 세그먼트</td><td>기본 수동 승인, 허용값 <code>automatic</code>·<code>manual</code></td></tr>
+            <tr><td>필수 이용약관·개인정보 동의</td><td>문서 유형별 토글</td><td>활성 문서가 없으면 ON 저장을 거부</td></tr>
+            <tr><td>법정대리인 동의</td><td>토글 + 나이 + 만료 시간</td><td>나이 1~18, 만료 1~168시간</td></tr>
+            <tr><td>가입 기본 역할</td><td>허용 역할 선택</td><td>WordPress 기본 학습자 역할 <code>subscriber</code>, 관리자·운영 역할 제외</td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>승인 방식</th><th>가입 완료 상태</th><th>로그인 결과</th><th>관리자 동작</th></tr></thead>
+          <tbody>
+            <tr><td><code>automatic</code></td><td><code>active</code></td><td>세션 생성 뒤 메인 홈</td><td>별도 승인 없음</td></tr>
+            <tr><td><code>manual</code></td><td><code>pending</code></td><td>세션을 만들지 않고 승인 대기 안내</td><td><code>oj_approve_user_registrations</code>로 승인 시 <code>active</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="risk"><strong>제거할 설정:</strong> 현재 <code>auto_link_judge_user</code>는 명시적 전환 계약과 충돌하므로 목표 가입 설정에서 제거한다.</div>
+      </section>
+
+      <section class="section" id="profile">
+        <div class="section-heading"><div><h2>프로필·설정·계정 상태</h2><p>공개 정보, 본인 설정과 운영 상태를 구분한다.</p></div><span class="badge info">본인 범위</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>본인 변경</th><th>운영자 변경</th><th>비고</th></tr></thead>
+          <tbody>
+            <tr><td>로그인 아이디</td><td>불가</td><td>불가</td><td>Judge 제출 문자열 계약 때문에 정상 운영 중 불변. 승인된 계정 익명화만 예외</td></tr>
+            <tr><td>이메일·표시 이름</td><td>가능</td><td><code>oj_edit_users</code></td><td>WordPress 사용자 API만 사용. 사용자 화면의 대표 이름은 표시 이름으로 통일</td></tr>
+            <tr><td>학생 이름 (관리용)</td><td>불가</td><td>전역 <code>oj_edit_users</code> 또는 담당 그룹 소유자·활성 위임 운영자</td><td>기존 WordPress <code>nickname</code> 사용. 사용자 목록·상세는 <code>oj_manage_users</code>, 그룹 구성원 관리에서는 담당 범위로 조회·일괄 수정. 공개 프로필·본인 설정·전역 가입 승인 전용 목록에는 노출하지 않음</td></tr>
+            <tr><td>소속·소개</td><td>가능</td><td><code>oj_edit_users</code></td><td><code>user_profiles</code>에만 저장</td></tr>
+            <tr><td>생년</td><td>확인 절차 뒤 가능</td><td><code>oj_edit_users</code></td><td>법정대리인 동의 필요 여부를 다시 계산하고 미충족이면 적용 보류</td></tr>
+            <tr><td>공개 항목·언어·편집기</td><td>가능</td><td>본인 대행 수정 불가</td><td><code>user_preferences</code>. 기본 언어 표시·저장 모두 현재 관리자 허용 언어와 교차 검증</td></tr>
+            <tr><td>가입 승인 상태</td><td>불가</td><td><code>oj_approve_user_registrations</code></td><td><code>pending</code>→<code>active</code>만 허용, 현재 상태 재검증</td></tr>
+            <tr><td>OJ 이용 상태</td><td>불가</td><td><code>oj_deactivate_users</code></td><td><code>active</code>↔<code>suspended</code>, WordPress 계정 상태와 별도</td></tr>
+            <tr><td>역할</td><td>불가</td><td><code>oj_manage_roles</code></td><td>DS-02 역할 영향 미리보기와 보호 규칙 적용</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>공개 프로필:</strong> URL은 숫자 <code>/users/{user_id}</code>다. 표시 이름과 사용자가 공개한 항목만 Auth가 제공하고, 제출·문제·랭킹 통계는 해당 기능의 Read Provider를 사용한다. Auth Repository가 Judge <code>solution</code>을 직접 조회하지 않는다.</div>
+        <div class="summary"><strong>이름 구분 (2026-09-17 확정):</strong> 가입·관리자 생성·일괄 등록·로그인 전환으로 새 계정을 만들 때 학생 이름은 최초 표시 이름과 같게 저장한다. 이후 본인이 표시 이름을 바꾸거나 프로필을 보완해도 학생 이름은 변경하지 않는다. 관리자는 학생 이름을 별도로 수정하며 기존 별명 값은 일괄 덮어쓰지 않고 보존한다. 수업·대회·랭킹·쪽지·새 제출의 공개 이름은 계속 표시 이름을 사용한다. DB 구조와 애드온 공개 API는 변경하지 않는다.</div>
+        <h3>정지·비밀번호·삭제</h3>
+        <ul class="rule-list">
+          <li>이용 정지는 OJ 접근만 막고 WordPress 계정과 데이터를 삭제하지 않는다. 해제하면 다음 요청부터 다시 접근한다.</li>
+          <li>비밀번호 변경과 초기화는 WordPress API만 사용하며 기존·새 비밀번호와 재설정 키를 로그·Jobs·감사 메타데이터에 남기지 않는다.</li>
+          <li>본인 계정 삭제는 재인증, 영향 확인, 활성 역할·소유 대상 확인 뒤 Auth 소유 <code>user_account_erasure</code> Jobs를 등록하고 세션을 폐기한다. 수업·대회·그룹·문제 소유권이 남으면 작업 등록 전 차단한다.</li>
+          <li>익명화 Jobs는 실행 직전 대상을 다시 확인하고 로그인 차단, 플랫폼 참조 익명화, Judge 사용자 문자열 익명화, WordPress 개인정보 제거, 고아 참조 검증을 순서대로 완료한다. 되돌릴 수 없는 단계 전까지만 취소할 수 있고 이후 실패는 마지막 미완료 단계부터 앞으로 완료한다.</li>
+          <li>삭제 완료는 숫자 ID의 참조 무결성을 유지하는 익명화 절차다. <code>deleted_users</code>에는 자격 증명이 없는 최소 스냅샷·행위자·시각·사유만 남기며 Jobs 단계가 성공하기 전에는 완료로 표시하지 않는다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="console">
+        <div class="section-heading"><div><h2>사용자 관리·일괄 등록·초기화</h2><p>플랫폼 전체 작업과 그룹 범위 작업을 분리한다.</p></div><span class="badge good">범위 제한</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>작업</th><th>전역 사용자 운영자</th><th>그룹 소유자·위임 운영자</th><th>보호 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>사용자 목록·상세</td><td>전체 사용자 메뉴에서 조회</td><td>그룹 구성원 화면에서 승인된 구성원만 조회</td><td>필요한 계정 요약만 제공</td></tr>
+            <tr><td>단건 생성</td><td><code>oj_create_users</code></td><td>그룹 구성원 추가 흐름에서 학습자 계정만</td><td>운영 역할은 <code>oj_manage_roles</code> 없이 배정 불가</td></tr>
+            <tr><td>CSV 일괄 등록</td><td>전체 사용자 메뉴의 <code>user_csv_import</code> Jobs</td><td>DS-12 그룹 구성원 화면이 같은 Auth Handler를 <code>group_id</code> Context로 호출</td><td>행마다 현재 범위·중복·역할 재검사</td></tr>
+            <tr><td>관리용 이름 일괄 수정</td><td>그룹 구성원 화면에서도 가능</td><td>승인된 일반 구성원 이름을 여러 행에서 편집 후 한 번에 저장. 표시 이름은 별도 읽기 전용 열</td><td>최대 100명. 저장 직전 담당 범위·보호 계정·기존 값 확인. 성공 행만 확정하고 실패 행 입력 유지</td></tr>
+            <tr><td>비밀번호 초기화</td><td>사용자 목록의 행 또는 선택 항목에서 단건·일괄 실행</td><td>그룹 구성원 목록의 행 또는 선택 항목에서 승인된 일반 구성원 단건·일괄 실행</td><td>실행마다 대상별 현재 권한·상태를 다시 확인하고 금지 대상은 항목별 제외</td></tr>
+            <tr><td>정지·역할·삭제</td><td>각 전역 capability가 있는 경우</td><td>불가</td><td>위험 작업 확인·감사 사건 필수</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>그룹 권한 구현:</strong> 그룹 운영자에게 <code>/oj-console/users</code>나 전역 <code>oj_create_users</code>를 열지 않는다. Groups가 소유한 화면이 <code>Group_Account_Scope</code>를 전달하고 Auth의 <code>Scoped_User_Provisioning_Service</code>와 <code>Password_Reset_Service</code>가 실행 직전 같은 그룹의 활성 운영자·승인 구성원·금지 역할을 다시 확인한다.</div>
+        <div class="warning"><strong>이메일 비의존:</strong> 초기화는 이메일 주소의 존재·정확성·발송 성공에 의존하지 않는다. 기본 방식은 서버가 생성한 무작위 임시 비밀번호를 결과 화면에 한 번만 표시하는 것이며, 대상은 다음 로그인에서 새 비밀번호를 정해야 한다. 검증된 이메일이 있는 대상에게 재설정 링크를 보내는 방식은 운영자가 선택할 수 있는 보조 수단일 뿐이다.</div>
+        <h3>단건·선택 일괄 초기화 계약</h3>
+        <ol class="rule-list">
+          <li>전역 작업은 <code>/oj-console/users</code>, 그룹 작업은 <code>/oj-console/groups/{group_id}/members</code>에서 행 명령 또는 체크박스 선택으로 실행한다. 사용자 상세 화면에는 초기화 명령을 중복 배치하지 않는다.</li>
+          <li>한 요청은 최대 100명을 처리한다. 입력된 숫자 <code>user_id</code>를 중복 제거한 뒤 실행 직전에 현재 행 범위, <code>active</code> 상태, WordPress 대상 편집 권한과 그룹 구성원·운영자 상태를 대상별로 다시 검사한다.</li>
+          <li>전역 작업은 <code>oj_edit_users</code>와 WordPress 대상별 <code>edit_user</code> 판정을 모두 통과해야 한다. 행위자 본인은 내 계정에서 변경하고 사용자 목록 초기화 대상에서는 제외한다.</li>
+          <li>그룹 작업은 소유자·활성 위임 운영자만 실행하며 같은 그룹의 승인된 일반 구성원만 허용한다. 그룹 소유자·위임 운영자·전역 계정 관리자·행위자 본인과 그룹 밖 사용자는 제외한다.</li>
+          <li>성공한 대상은 강한 무작위 임시 비밀번호로 WordPress 비밀번호를 교체하고 기존 로그인 세션을 모두 폐기하며 <code>user_profiles.must_change_password=1</code>을 기록한다. 임시 비밀번호로 인증한 사용자는 다른 OJ 화면보다 비밀번호 변경 화면을 먼저 완료한다.</li>
+          <li>임시 비밀번호는 성공 응답에서 한 번만 표시하고 새로고침·화면 이탈 뒤 복구하지 않는다. WordPress 옵션·PlatformDb·Jobs·로그·감사 사건·CSV 결과에는 원문을 저장하지 않으며 분실하면 다시 초기화한다.</li>
+          <li>감사 사건에는 행위자·범위·대상 <code>user_id</code>·시각·성공 또는 안전한 실패 코드만 남긴다. 일부 실패가 있어도 성공 항목을 되돌리지 않고 항목별 결과를 같은 화면에 표시한다.</li>
+        </ol>
+        <h3>CSV 작업 계약</h3>
+        <ol class="rule-list">
+          <li>UTF-8 CSV를 업로드하면 열 이름·행 수·중복·WordPress 로그인·이메일·역할·그룹 범위를 먼저 검증하고 생성 전 미리보기를 보여 준다.</li>
+          <li>확정한 대상 Snapshot과 암호화된 <code>payload_ref</code>로 <code>user_csv_import</code>를 등록하며 사용자 후보 1명이 Jobs 항목 1개다.</li>
+          <li>원본 CSV와 초기 비밀번호는 Jobs 테이블·이벤트·결과 파일에 넣지 않는다. 암호화 Form Draft에서 항목 실행 때 읽고 성공·취소 시 즉시 삭제하며, 실패·확인 필요 항목은 재시도를 위해 최대 24시간만 보존한다.</li>
+          <li>기존 WordPress 로그인은 자동 병합하지 않는다. 새 계정 생성과 기존 계정의 그룹 추가를 미리보기에서 서로 다른 작업으로 표시하고 명시적으로 선택한다.</li>
+          <li>결과 파일은 행 번호·로그인 아이디·성공 여부·사용자용 사유 코드만 포함하고 비밀번호·재설정 키·내부 예외는 제외한다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="structure">
+        <div class="section-heading"><div><h2>목표 코드 구조와 책임</h2><p>Auth 모듈 안에서도 화면·업무·저장 책임을 분리한다.</p></div><span class="badge info">실제 구현 구조</span></div>
+        <div class="tree">modules/Auth/
+├─ Module.php                         [의존 조립·Provider 등록만]
+├─ Route/Auth_Route_Provider.php      [공개 10·관리자 8 Route]
+├─ Controller/Public/
+│  ├─ Login_Controller.php            [로그인·복구·전환 화면]
+│  ├─ Registration_Controller.php     [가입]
+│  ├─ Profile_Controller.php          [공개 프로필]
+│  ├─ Account_Settings_Controller.php [본인 설정·비밀번호·삭제]
+│  ├─ Agreement_Controller.php        [내 동의·정책 문서]
+│  └─ Guardian_Consent_Controller.php [법정대리인 확인]
+├─ Controller/Console/
+│  ├─ User_List_Controller.php        [목록·상세·목록 초기화 명령]
+│  ├─ User_Edit_Controller.php        [추가·수정·정지]
+│  ├─ User_Import_Controller.php      [CSV 미리보기·Jobs 등록]
+│  ├─ Deleted_User_Controller.php     [익명화 기록]
+│  ├─ Agreement_Admin_Controller.php  [문서 버전·게시]
+│  └─ Registration_Settings_Controller.php
+├─ Application/
+│  ├─ Login_Service.php
+│  ├─ Legacy_Account_Transition_Service.php
+│  ├─ Registration_Service.php
+│  ├─ User_Profile_Service.php
+│  ├─ User_Account_Service.php
+│  ├─ Scoped_User_Provisioning_Service.php
+│  ├─ Password_Reset_Service.php      [전역·그룹 단건/선택 일괄]
+│  ├─ Password_Reset_Target_Policy.php
+│  ├─ Account_Erasure_Service.php
+│  └─ User_Csv_Import_Handler.php
+├─ Repository/
+│  ├─ User_Profile_Repository.php
+│  ├─ User_Preference_Repository.php
+│  ├─ Agreement_Repository.php
+│  ├─ Guardian_Verification_Repository.php
+│  └─ Deleted_User_Repository.php
+├─ Adapter/
+│  ├─ WordPress_User_Gateway.php
+│  └─ Legacy_Judge_User_Reader.php     [전환 전용·제거 가능]
+└─ View/Presenter/                     [한글 화면 모델·상태·오류]</div>
+        <div class="summary"><strong>Permission 화면 소유:</strong> <code>/oj-console/roles</code>와 <code>/oj-console/users/{user_id}/roles</code>는 DS-02 Permission의 Route·Controller가 소유한다. Auth 사용자 상세는 링크만 만들고 역할 변경 규칙을 복제하지 않는다.</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>경계</th><th>허용 의존</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td>Controller</td><td>요청 DTO, Access Policy, Application Service, Presenter</td><td>직접 SQL·HTML 문자열 조립·Judge 조회</td></tr>
+            <tr><td>Auth Application</td><td>WordPress Gateway, Auth Repository, Permission, Jobs 등록 포트</td><td>Groups·Classes·Contests Repository 직접 접근</td></tr>
+            <tr><td>기능 모듈</td><td>숫자 사용자 Read Provider와 범위 제한 Auth Command</td><td>WordPress 비밀번호·Judge 사용자 직접 조회</td></tr>
+            <tr><td>Legacy Reader</td><td>전환 서비스 한 곳</td><td>일반 로그인·프로필·사용자 목록·CSV에서 사용</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="section" id="data">
+        <div class="section-heading"><div><h2>데이터 쓰기·보안 계약</h2><p>D-008의 Auth 7개 테이블을 화면 작업과 연결한다.</p></div><span class="badge good">무접두어 7개</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>저장소</th><th>핵심 속성</th><th>쓰기 작업</th><th>금지 데이터</th></tr></thead>
+          <tbody>
+            <tr><td>WordPress 사용자</td><td><code>ID</code>, <code>user_login</code>, 이메일·비밀번호·표시 이름·학생 이름(<code>nickname</code>)</td><td>가입·관리자 생성·본인 설정·초기화·익명화. 학생 이름 변경은 관리자 경로만 허용</td><td>플랫폼 테이블에 같은 값 복제 또는 본인 설정에서 학생 이름 덮어쓰기</td></tr>
+            <tr><td><code>user_profiles</code></td><td><code>user_id</code>, 소속, 소개, 생년, <code>access_status</code>, <code>must_change_password</code>, 상태 변경 사용자·시각, 로그인·생성·수정 시각</td><td>가입 대기·자동/수동 승인·전환·프로필·정지·초기화 뒤 변경 강제</td><td>Judge ID·비밀번호·재설정 키·제출 통계</td></tr>
+            <tr><td><code>user_preferences</code></td><td><code>user_id</code>, 공개 설정 3개, 관리자 허용 목록 안의 기본 제출 언어, 편집기 종류·Ace 테마 slug·글자 크기·템플릿</td><td>가입 기본값·본인 설정</td><td><code>oj_user_id</code>, 외부 CDN 주소</td></tr>
+            <tr><td><code>agreement_document_types</code>, <code>agreement_documents</code></td><td>유형·버전·본문·필수·활성·게시 시각</td><td>관리자 새 버전 작성·활성화</td><td>게시 문서 덮어쓰기</td></tr>
+            <tr><td><code>user_agreement_log</code></td><td><code>user_id</code>, 문서·버전, IP·사용자 에이전트, 동의 시각</td><td>일반 사용자의 가입·재동의. 법정대리인 동의를 사용자 동의로 대신 기록하지 않음</td><td>기존 사건 수정·삭제</td></tr>
+            <tr><td><code>guardian_verifications</code></td><td>선택적 <code>user_id</code>, 자녀 이메일, 법정대리인 이름·이메일, <code>document_id</code>, <code>document_version</code>, <code>document_sha256</code>, <code>guardian_relationship</code>, <code>verification_method</code>, <code>verified_at</code>, 토큰·코드 해시, 상태·만료</td><td>법정대리인 요청·문서 확인 증빙·가입 계정 연결. 스키마 2의 새 5개 열은 기존 기록에 대해 NULL 유지</td><td>토큰·코드 원문, 확인하지 않은 동의 증빙</td></tr>
+            <tr><td><code>deleted_users</code></td><td><code>user_id</code>, 최소 Snapshot, 행위자·시각·사유</td><td>익명화 완료 뒤 최종 기록</td><td>비밀번호·재설정 키·불필요한 개인정보</td></tr>
+          </tbody>
+        </table></div>
+        <ul class="rule-list">
+          <li>2026-09-14 약관 입력 개선: 관리자 문서 종류는 일반 공개 정책 4종(이용약관·개인정보 처리방침·저작권 정책·이메일 수집 거부)과 법정대리인 전용 동의서로 제공한다. 내부 유형 키와 유형 이름은 직접 입력하지 않으며 공통 유형 정의를 저장 처리와 공개 페이지에서도 사용한다. 제목을 비우면 선택한 문서 이름을 사용한다. 본문은 문제 작성과 같은 공통 HTML 편집기로 작성하며 제목·글자 크기·굵게·목록·링크를 지원한다. 저장과 표시 시 WordPress 게시물 HTML 허용 규칙으로 위험한 태그·이벤트·주소를 제거하며, 기존 일반 텍스트는 escape와 줄바꿈을 유지한다. 편집기 CSS·JS를 복제하지 않는다. 일반 문서 이력·필수 여부·공개 주소는 유지하고, 법정대리인 문서는 위 전용 계약을 따른다. <a href="development-ds-08-access-policy-ui.html#terms">기존 정책 시안의 네 문서</a>와 법정대리인 시안은 예시이며 운영 문서로 자동 등록하지 않는다.</li>
+          <li>가입·전환·관리자 생성은 먼저 모든 입력과 권한을 검증하고 WordPress ID를 확보한 뒤 플랫폼 로컬 트랜잭션으로 확장 데이터를 저장한다.</li>
+          <li>WordPress와 PlatformDb를 함께 쓰는 작업은 단계·완료 조건·멱등키·보상 동작을 가진 Application Service에서만 수행한다.</li>
+          <li><code>user_account_erasure</code>는 <code>background_job_steps</code>에 단계와 검증 결과를 기록하되 원본 로그인 아이디·이메일·프로필·비밀번호를 payload와 사건에 저장하지 않는다.</li>
+          <li>로그인·가입·복구·법정대리인 확인에는 요청 횟수 제한을 적용하되 원본 로그인 아이디·이메일·IP 대신 서버 비밀키로 만든 해시를 짧게 보관한다.</li>
+          <li>모든 POST는 nonce, 현재 로그인·capability·대상 범위, 원본 버전을 실행 직전에 다시 검사한다.</li>
+          <li>오류 화면과 CSV에는 계정 존재 여부, 비밀번호 검증 방식, SQL·클래스명·내부 예외를 노출하지 않는다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="verification">
+        <div class="section-heading"><div><h2>구현 순서와 완료 관문</h2><p>R-04 인수 범위와 후속 모듈 연결 범위를 구분한다.</p></div><span class="badge good">R-04 검사 완료</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>순서</th><th>구현</th><th>완료 증거</th></tr></thead>
+          <tbody>
+            <tr><td>A-0</td><td>운영 읽기 전용 사용자·연결·중복·고아 보고서와 복구 시험</td><td>WordPress/Judge/플랫폼 건수 승인</td></tr>
+            <tr><td>A-1</td><td>WordPress Gateway, Auth 7개 Repository, 숫자 ID 계약</td><td>Repository·스키마·고아 참조 검사</td></tr>
+            <tr><td>A-2</td><td>로그인·가입·자동/수동 승인·전환·복구·법정대리인 동의</td><td>승인 대기 차단, 승인 뒤 로그인, 동의·취소·충돌·만료·동시 요청 E2E</td></tr>
+            <tr><td>A-3</td><td>프로필·설정·동의 현황·익명화</td><td>본인/타인/공개 범위와 복구 검사</td></tr>
+            <tr><td>A-4</td><td>사용자 관리자 화면·가입 승인·CSV Jobs·목록 단건/선택 일괄 비밀번호 초기화</td><td>전용 승인 권한, 최소 Projection, 이메일 비의존, 대상별 재검사, 일회 표시·세션 폐기·변경 강제와 항목별 결과</td></tr>
+            <tr><td>A-5</td><td>일반 Auth 코드에서 이전 식별자 제거, 전환 Reader 격리와 DS-15 Migration 인계 계약</td><td>일반 코드 <code>oj_user_id</code> 0건, Judge 사용자 조회는 전환 Adapter 1곳만 허용</td></tr>
+          </tbody>
+        </table></div>
+        <div class="gate"><div><strong>식별자</strong></div><div>플랫폼 <code>user_id</code>는 모두 숫자 WordPress ID이고 로그인 문자열은 <code>user_login</code>으로만 표현된다.</div><div>정적·통합 검사</div></div>
+        <div class="gate"><div><strong>전환</strong></div><div>WordPress 계정 없음·사용자 동의·최종 재검증을 모두 통과한 경우에만 전환하고 영구 Judge 매핑이 남지 않는다.</div><div>동시성·실패 주입</div></div>
+        <div class="gate"><div><strong>권한</strong></div><div>관리자 메뉴·직접 주소·POST·Jobs·그룹 범위 서비스가 같은 Policy를 사용하고 역할 상승이 차단된다.</div><div>역할 행렬 검사</div></div>
+        <div class="gate"><div><strong>비밀번호 초기화</strong></div><div>사용자·그룹 목록의 단건·선택 일괄이 같은 Auth Service를 사용하고 이메일 없이 완료되며, 금지 대상·100명 제한·일회 표시·세션 폐기·다음 로그인 변경 강제가 적용된다.</div><div>권한·보안·E2E</div></div>
+        <div class="gate"><div><strong>민감 정보</strong></div><div>로그·Jobs·CSV·오류·감사 사건에 비밀번호·재설정 키·Judge 자격 증명·원본 토큰이 없다.</div><div>누출 검사</div></div>
+        <div class="gate"><div><strong>UI</strong></div><div>첫 접근에는 로그인만 보이고 가입·복구·동의는 비로그인 예외다. 수동 승인 대기자는 홈 대신 승인 대기 안내를 보며 승인 뒤 로그인해야 홈으로 이동한다.</div><div>Playwright 반응형</div></div>
+        <div class="gate"><div><strong>인코딩</strong></div><div>PHP·HTML·CSS·JavaScript는 UTF-8 한글 원문을 사용하고 한글 <code>\uXXXX</code> 표현이 없다.</div><div>엄격 UTF-8 검사</div></div>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading"><div><h2>확정 항목</h2><p>2026-07-23 확정한 여덟 항목을 유지하고, 2026-07-25 지시에 따라 Q05·Q06의 초기화 위치·일괄 처리·이메일 비의존 계약을 보강했다.</p></div><span class="badge good">보강 반영</span></div>
+        <ol class="check-list">
+          <li><strong>DS08-Q01 · 사용자 원본:</strong> 숫자 <code>wp_users.ID</code>를 <code>user_id</code>, 문자열 <code>user_login</code>을 로그인·Judge 어댑터 값으로 유지하고 중복 사용자 원본과 영구 Judge 매핑을 제거한다.</li>
+          <li><strong>DS08-Q02 · 로그인·전환:</strong> WordPress 계정을 우선 인증하고 계정이 없을 때만 정확한 Judge 후보와 비밀번호를 확인한 뒤 사용자 동의·최종 재검증·단계 완료 후 로그인한다.</li>
+          <li><strong>DS08-Q03 · 가입·동의:</strong> WordPress 계정, Auth 프로필·환경설정, 현재 문서 버전 동의와 필요한 법정대리인 확인을 하나의 완료 계약으로 처리한다. 가입 승인은 기본 <code>manual</code> 또는 <code>automatic</code>으로 설정하고 <code>auto_link_judge_user</code>를 제거한다.</li>
+          <li><strong>DS08-Q04 · 프로필·계정:</strong> 로그인 아이디는 불변으로 두고 본인 설정·공개 범위·이용 정지·재설정·소유권 이관 뒤 익명화 절차를 구분한다.</li>
+          <li><strong>DS08-Q05 · 관리자 작업:</strong> 사용자 생성·수정·가입 승인·역할·정지·삭제 권한을 분리한다. 전용 <code>oj_approve_user_registrations</code>만 수동 가입을 승인하고 CSV는 Jobs 항목별 실행한다. 비밀번호 초기화는 사용자 목록의 행 또는 선택 항목에서 최대 100명까지 처리하며 이메일이 없어도 임시 비밀번호를 한 번 제공하고 다음 로그인 변경을 강제한다.</li>
+          <li><strong>DS08-Q06 · 그룹 범위:</strong> 그룹 소유자·위임 운영자는 전역 사용자 메뉴 없이 자기 그룹 구성원 목록에서 승인된 일반 구성원 일괄 등록과 단건·선택 일괄 비밀번호 초기화를 수행한다. 그룹 소유자·운영자·전역 계정 관리자·본인과 그룹 밖 사용자는 대상에서 제외한다.</li>
+          <li><strong>DS08-Q07 · 코드·데이터:</strong> 두 대형 Controller와 통합 Repository를 화면·Application·Repository·Adapter로 분리하고 D-008 Auth 7개 무접두어 테이블만 사용한다.</li>
+          <li><strong>DS08-Q08 · 검증·이전:</strong> 비로그인 예외 목록, 자동·수동 승인, 승인 대기 로그인 차단, 전환 동시성·실패 복구, 역할 상승, 그룹 범위, 민감 정보와 반응형 UI를 검증하고 일반 Auth 코드의 <code>oj_user_id</code>를 제거한다. 전환 Adapter 종료와 기존 데이터 최종 정리는 DS-15/I-09 관문에서 수행한다.</li>
+        </ol>
+        <div class="summary"><strong>구현 판정:</strong> R-04는 Auth 7개 스키마·Repository, WordPress 숫자 ID, 로그인 우선 셸, 가입·자동/수동 승인·동의·복구, 명시적 Judge 계정 전환, 사용자·역할·CSV·전역 비밀번호 초기화를 실제 코드와 자동 검사로 완료했다. CSV 확정 요청은 후보별 암호화 입력과 <code>user_csv_import</code> 작업만 등록하고, 계정 생성·현재 권한·역할 재검사는 Worker Handler가 항목별로 수행한다. 사용자·프로필·환경설정 생성은 같은 DB 트랜잭션으로 묶으며, 작업 결과 저장 직전 중단으로 항목이 다시 실행되면 로그인·이메일·비밀번호·표시명·역할·프로필이 모두 같은 기존 결과만 완료로 인정해 중복 계정을 만들지 않는다. Q06의 그룹 화면 호출은 Groups가 구현되는 R-07에서 같은 Auth 서비스에 범위 Policy를 연결하고, 계정 익명화의 교차 모듈 소유권 검사·운영 데이터 처리는 I-09 전환 관문에서 완료한다. 운영 DB 쓰기와 실데이터 이전은 아직 수행하지 않았다.</div>
+      </section>
+
+      <footer>OJ Platform 개발 설계 · DS-08 계정·사용자 · 설계 동결 및 R-04 핵심 구현 완료 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

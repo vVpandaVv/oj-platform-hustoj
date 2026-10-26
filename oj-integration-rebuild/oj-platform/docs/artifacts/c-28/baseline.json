@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "phase": "C28-I01",
+  "captured_at": "2026-08-10",
+  "branch": "rebuild/oj-platform-v2",
+  "start_commit": "af444f0463f3e40db65e4799bf6db166c3ea9e8f",
+  "runtime_fingerprint": {
+    "scope": [
+      "composer.json",
+      "oj-platform.php",
+      "config/",
+      "modules/",
+      "resources/",
+      "src/"
+    ],
+    "file_count": 1170,
+    "algorithm": "sha256(UTF-8(relative-path + NUL + file-sha256 + LF), ordinal path order)",
+    "sha256": "12be19836441df1b51e5dcb625a42d1e34cf300bab2fee8ef51b1668094cc0cf"
+  },
+  "core_contract": {
+    "routes": 152,
+    "actions": 128,
+    "capabilities": 61,
+    "roles": 16,
+    "permission_presets": 10,
+    "console_menus": 58,
+    "public_default_menus": 19,
+    "platform_tables": 42,
+    "core_ai_tasks": 4,
+    "public_addon_api_symbols": 0,
+    "addon_registration_hooks": 0
+  },
+  "verification": {
+    "suite": "test:fast",
+    "total": 40,
+    "passed": 40,
+    "failed": 0
+  },
+  "consumer_profile": {
+    "path": "../../../oj-ai-dashboard/docs/ai-assessment/a-ds-02-addon-api-profile.html",
+    "sha256": "8393e6e1c3ba045b68d25ed3149d62494ce285634a2b7ab55f619f31cd780997"
+  }
+}

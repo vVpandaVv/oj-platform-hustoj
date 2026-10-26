@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "edu-games/data-extraction",
+  "title": "Data Extraction",
+  "category": "widgets",
+  "icon": "chart-line",
+  "description": "Extract the columns needed to solve a problem from a noisy table and pick how to use them.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

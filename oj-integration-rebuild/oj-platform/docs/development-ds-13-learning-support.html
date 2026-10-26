@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-13 학습 지원 상세 설계 | OJ Platform</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5d6975;
+      --line: #d8dfe5;
+      --surface: #ffffff;
+      --soft: #f4f7f8;
+      --navy: #17364d;
+      --teal: #167883;
+      --green: #24734e;
+      --yellow: #a36500;
+      --red: #a33d3d;
+      --blue-soft: #eaf3f7;
+      --green-soft: #eaf5ef;
+      --yellow-soft: #fff6df;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--soft); font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif; line-height: 1.62; }
+    .topbar { color: #fff; background: var(--navy); border-bottom: 4px solid var(--teal); }
+    .topbar-inner { width: min(1180px, calc(100% - 32px)); min-height: 58px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+    .brand { width: 34px; height: 34px; display: grid; place-items: center; color: var(--navy); background: #fff; border-radius: 5px; font-weight: 900; }
+    .topbar strong { font-size: 16px; }
+    .topbar span { color: #dbe8ee; font-size: 13px; }
+    .layout { width: min(1180px, calc(100% - 32px)); margin: 22px auto 48px; display: grid; grid-template-columns: 205px minmax(0, 1fr); gap: 22px; align-items: start; }
+    nav { position: sticky; top: 20px; padding: 15px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    nav strong { display: block; margin-bottom: 8px; }
+    nav ul { margin: 0; padding: 0; list-style: none; }
+    nav li + li { margin-top: 4px; }
+    nav a { display: block; padding: 5px 6px; border-radius: 4px; color: var(--ink); text-decoration: none; font-size: 13px; }
+    nav a:hover { color: var(--teal); background: var(--soft); }
+    main { min-width: 0; }
+    .report-header, .section { padding: 28px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); }
+    .section { margin-top: 18px; }
+    .eyebrow { margin: 0 0 5px; color: var(--teal); font-size: 13px; font-weight: 800; }
+    h1, h2, h3 { margin-top: 0; color: var(--navy); letter-spacing: 0; }
+    h1 { margin-bottom: 10px; font-size: 30px; }
+    h2 { margin-bottom: 5px; font-size: 21px; }
+    h3 { margin: 24px 0 9px; font-size: 17px; }
+    p { margin: 8px 0; }
+    .lede { max-width: 850px; margin-bottom: 16px; color: #344551; }
+    .meta { display: flex; flex-wrap: wrap; gap: 7px; }
+    .meta span, .badge { display: inline-flex; align-items: center; min-height: 25px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--soft); color: #40515d; font-size: 12px; font-weight: 700; }
+    .badge.good { color: var(--green); border-color: #acd5bd; background: var(--green-soft); }
+    .badge.info { color: #236178; border-color: #bad4df; background: var(--blue-soft); }
+    .badge.wait { color: var(--yellow); border-color: #e4c88e; background: var(--yellow-soft); }
+    .metrics { margin-top: 18px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .metric { min-height: 83px; padding: 14px; background: #fbfcfd; }
+    .metric + .metric { border-left: 1px solid var(--line); }
+    .metric strong { display: block; color: var(--navy); font-size: 24px; }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .section-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; font-size: 13px; }
+    th, td { padding: 10px 11px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #fff; background: var(--navy); font-weight: 750; }
+    tr:last-child td { border-bottom: 0; }
+    code { padding: 1px 4px; border-radius: 3px; color: #0f5d67; background: #edf5f6; font-family: Consolas, monospace; font-size: 0.94em; overflow-wrap: anywhere; }
+    .callout, .summary, .warning { margin-top: 14px; padding: 13px 15px; border-left: 4px solid var(--teal); background: var(--blue-soft); }
+    .summary { border-left-color: var(--green); background: var(--green-soft); }
+    .warning { border-left-color: var(--yellow); background: var(--yellow-soft); }
+    .flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 14px 0; }
+    .flow article { min-height: 88px; padding: 13px; border: 1px solid var(--line); border-radius: 6px; background: #fbfcfd; }
+    .flow span { display: block; color: var(--teal); font-size: 12px; font-weight: 800; }
+    .flow strong { display: block; margin-top: 4px; color: var(--navy); }
+    .rules { margin: 12px 0 0; padding-left: 20px; }
+    .rules li + li { margin-top: 6px; }
+    .gate { display: grid; grid-template-columns: 130px minmax(0, 1fr) 125px; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .gate:last-child { border-bottom: 0; }
+    .gate strong { color: var(--navy); }
+    pre.tree { margin: 0; padding: 16px; overflow: auto; border: 1px solid #29475b; border-radius: 6px; color: #eef6f8; background: #173247; font: 12px/1.65 Consolas, monospace; }
+    footer { padding: 24px 4px 0; color: var(--muted); font-size: 12px; text-align: center; }
+    @media (max-width: 940px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; }
+      nav ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 8px; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric + .metric { border-left: 0; }
+      .metric:nth-child(even) { border-left: 1px solid var(--line); }
+      .metric:nth-child(n+3) { border-top: 1px solid var(--line); }
+    }
+    @media (max-width: 620px) {
+      .topbar-inner, .layout { width: min(100% - 20px, 1180px); }
+      .topbar span { display: none; }
+      .report-header, .section { padding: 19px; }
+      h1 { font-size: 25px; }
+      .flow, .metrics { grid-template-columns: 1fr; }
+      .metric:nth-child(n) { border-left: 0; border-top: 1px solid var(--line); }
+      .metric:first-child { border-top: 0; }
+      .gate { grid-template-columns: 1fr; gap: 3px; }
+      nav ul { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">OJ</div>
+      <strong>OJ Platform 재정비</strong>
+      <span>DS-13 · 학습 지원 상세 설계</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="문서 목차">
+      <strong>목차</strong>
+      <ul>
+        <li><a href="#scope">범위와 기준</a></li>
+        <li><a href="#pages">메뉴와 페이지</a></li>
+        <li><a href="#ui">화면 시안</a></li>
+        <li><a href="#feedback">AI 피드백</a></li>
+        <li><a href="#level">학습 수준</a></li>
+        <li><a href="#dashboard">내 학습</a></li>
+        <li><a href="#ranking">전체 랭킹</a></li>
+        <li><a href="#integration">모듈 계약</a></li>
+        <li><a href="#data">데이터 계약</a></li>
+        <li><a href="#verification">검증 관문</a></li>
+        <li><a href="#approval">확인 항목</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header" id="scope">
+        <p class="eyebrow">DS-13 · 메뉴 기반 상세 설계</p>
+        <h1>학습 지원 상세 설계</h1>
+        <p class="lede">채점 결과를 이해하도록 돕는 AI 피드백, 본인의 풀이 흐름을 정리하는 내 학습, 로그인 사용자 사이의 선택적 전체 랭킹을 설계한다. 세 기능은 학습을 돕는 보조 기능이며 성적·평가 결과·수업 권한을 결정하지 않는다.</p>
+        <div class="meta">
+          <span>작성일: 2026-07-23 · 보완일: 2026-07-24</span>
+          <span>상태: 사용자 확정 · 설계 동결</span>
+          <span>UI 시안 2종: 사용자 확정</span>
+          <span>선행 설계: DS-00~DS-12 확정</span>
+          <span>실행: I-00 뒤 I-06</span>
+          <span>근거: D-001·D-002·D-003·D-005·D-008·DS-05·DS-09·DS-10·DS-11·DS-12·사용자 제공 학습자 수준 분석 연구</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>9개</strong><span>직접 GET 경로</span></div>
+          <div class="metric"><strong>2개</strong><span>AI Feedback 테이블</span></div>
+          <div class="metric"><strong>7개</strong><span>확정 대상 컨트롤러</span></div>
+          <div class="metric"><strong>0개</strong><span>추가 경로·테이블·액션</span></div>
+        </div>
+        <div class="callout"><strong>전체 순서에서의 위치:</strong> DS13-Q01~Q08과 UI 시안 2종은 사용자 확정으로 동결했다. DS-16 전체 승인도 완료했으며, I-00 보호 환경을 통과한 뒤 I-06에서 AI Feedback Jobs → 내 학습 → 전체 랭킹 순서로 구현한다.</div>
+        <div class="warning"><strong>범위 경계:</strong> 문제 난이도·주제는 DS-10, 제출·결과 상세 권한은 DS-11, 수업·대회·평가·그룹 보고서는 DS-12가 소유한다. DS-13은 원본을 복제하거나 평가 점수를 만들지 않고 승인된 읽기 Provider로 학습 보조 화면만 조립한다.</div>
+      </header>
+
+      <section class="section" id="pages">
+        <div class="section-heading"><div><h2>메뉴와 페이지</h2><p>기존 경로를 유지하며 사용자 화면에 기술 설정을 노출하지 않는다.</p></div><span class="badge info">직접 9개</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>위치</th><th>페이지</th><th>접근</th><th>소유 화면</th></tr></thead>
+          <tbody>
+            <tr><td>제출 상세 안</td><td>AI 피드백 패널</td><td>DS-11이 <code>full</code>을 허용한 본인 제출 또는 승인된 담당 범위</td><td>별도 사용자 메뉴·경로를 추가하지 않고 <code>/submissions/{submission_id}</code>에 Provider로 삽입</td></tr>
+            <tr><td>내 정보 &gt; 내 학습</td><td><code>/dashboard</code></td><td>로그인한 본인의 집계만</td><td>요약, 복습할 문제, 주제·난이도 흐름, 최근 제출</td></tr>
+            <tr><td>내 정보 &gt; 내 학습</td><td><code>/ranking</code></td><td>랭킹 기능 ON, 로그인, 표시 정책을 통과한 사용자만</td><td>상시 문제 풀이의 전체 랭킹</td></tr>
+            <tr><td>관리자 제출</td><td>AI 피드백 설정, AI 답변 지침 5개, 학습 수준 분석 · 7개</td><td><code>oj_manage_ai_feedback</code></td><td>설정·지침·분석을 분리하되 제출 1차 메뉴 아래 유지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>전체 수량 유지:</strong> 위 9개는 D-002의 최종 목표 GET 152개에 이미 포함되어 있다. 기존 AI 명령 6개와 공통 Jobs 명령을 사용하며, 중복·폐기 계약 정리 뒤 DS-15의 작업별 AI 배정 저장 명령까지 포함한 고유 액션 128개와 호환 경로 0개를 바꾸지 않는다.</div>
+        <div class="callout"><strong>기존 AI 명령 6개:</strong> <code>oj_ai_feedback_generate</code>, <code>oj_save_ai_feedback_settings</code>, <code>oj_ai_persona_save</code>, <code>oj_ai_persona_duplicate</code>, <code>oj_ai_persona_delete</code>, <code>oj_ai_persona_restore</code>를 유지한다. 화면에는 “답변 지침”으로 표시하되 내부 액션 키는 전체 수량을 바꾸지 않기 위해 그대로 사용한다.</div>
+      </section>
+
+      <section class="section" id="ui">
+        <div class="section-heading"><div><h2>화면 시안</h2><p>기능 계약을 반복하지 않고 사용자 화면과 관리자 화면의 실제 배치만 두 문서로 나눈다.</p></div><span class="badge good">사용자 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>시안</th><th>포함 화면</th><th>책임 경계</th><th>열기</th></tr></thead>
+          <tbody>
+            <tr><td>사용자 학습 지원</td><td>내 학습, 전체 랭킹, 제출 상세의 AI 풀이 도움</td><td>직접 경로 2개와 DS-11 제출 상세 삽입 영역. 수준 근거, 고정 2개·교체 4개 추천, 공동 순위와 AJAX 피드백 상태를 확인</td><td><a href="development-ds-13-user-learning-ui.html">사용자 시안</a></td></tr>
+            <tr><td>관리자 AI 지원</td><td>AI 피드백 설정, 답변 지침 목록·추가·수정·미리보기·변경 기록, 학습 수준 분석</td><td>확정된 관리자 직접 화면 7개. 공통 AI 설정과 제출 소스 접근 권한은 소유하지 않음</td><td><a href="development-ds-13-admin-ai-ui.html">관리자 시안</a></td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>문서 경계:</strong> DS-13의 산식·권한·데이터·Jobs 계약은 이 문서만 원본으로 유지한다. 두 시안은 화면 구조와 상호작용만 보여 주며 별도 설계 결정을 만들지 않는다.</div>
+      </section>
+
+      <section class="section" id="feedback">
+        <div class="section-heading"><div><h2>AI 피드백</h2><p>사용자가 요청한 제출 한 건을 Jobs에서 처리하고 성공 결과만 저장한다.</p></div><span class="badge good">비동기·명시적 요청</span></div>
+        <div class="flow">
+          <article><span>1 · 요청</span><strong>제출·권한·수행 모드·결과 확인</strong></article>
+          <article><span>2 · 생성</span><strong>Jobs 등록·Worker 검증·AI 호출</strong></article>
+          <article><span>3 · 표시</span><strong>AJAX 상태 갱신·구조화된 피드백</strong></article>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>권장 동작</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td>생성 시점</td><td>채점이 끝난 허용 결과에서 학습자 또는 승인된 담당자가 버튼을 눌렀을 때만 생성</td><td>모든 제출에 자동 생성, 웹 요청에서 AI 호출</td></tr>
+            <tr><td>입력</td><td>문제 본문·허용된 소스·오류 요약·결과 코드·분석 상태·허용된 학습 수준·답변 지침 버전</td><td>이름·로그인 아이디·이메일·서비스·수업·그룹명·누적 제출 원문 전송</td></tr>
+            <tr><td>출력</td><td>결과 이해, 가능한 원인, 단계별 힌트, 확인할 코드 구간, 다시 풀기 질문</td><td>정답 코드 전체, 평가 점수 변경, 근거 없는 단정</td></tr>
+            <tr><td>수준 결합</td><td>Worker가 최신 수준 프로필을 확인하고 수준·분석 상태에 맞는 피드백 전략을 내부 답변 지침에 결합</td><td>오래된 수준 사용, 자료 부족 사용자를 임의로 초급 판정, 응답에서 학습자를 “초급 사용자”처럼 호명</td></tr>
+            <tr><td>중복 방지</td><td>제출·소스·문제·작업 배정 revision·연결 프로필 fingerprint·모델·답변 지침·수준 정책·수준 프로필 기준점 해시가 같으면 성공 결과 재사용</td><td>새로고침·중복 클릭마다 외부 호출</td></tr>
+            <tr><td>권한 재검사</td><td>등록·Worker 실행·상태 조회·결과 조회마다 기능, 상세 권한, 수행 모드와 원본 해시 확인</td><td>작업 생성자라는 이유만으로 권한 유지</td></tr>
+            <tr><td>실패·취소</td><td>기존 결과를 보존하고 안전한 실패 코드와 재시도 가능 여부만 표시</td><td>부분 응답 저장, 원본 피드백 덮어쓰기</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>화면:</strong> 제출 상세의 채점 요약 아래에 “AI 풀이 도움” 영역을 둔다. 생성 전에는 한 개의 요청 버튼, 처리 중에는 상태와 취소, 완료 뒤에는 결과 이해 → 힌트 → 다시 확인할 점 순으로 보여 준다. 기술적인 모델명·프롬프트 파일명·작업 ID는 일반 사용자에게 표시하지 않는다.</div>
+        <div class="warning"><strong>수행 모드:</strong> 활성 수행 모드 그룹의 일반 구성원은 그룹 밖 제출을 포함한 본인 제출 전체에서 생성 버튼, 작업 상태와 저장된 피드백을 볼 수 없다. 담당 그룹의 소유자·활성 위임 운영자와 승인된 전역 제출 범위만 DS-11 정책에 따라 접근한다.</div>
+
+        <h3>AI 답변 지침</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>화면</th><th>동작</th><th>보호 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>목록</td><td>지침 이름, 사용 대상, 활성 여부, 수정 시각과 변경 기록 진입만 표시</td><td>내부 파일명과 서버 경로는 숨김</td></tr>
+            <tr><td>추가·편집</td><td>한글 이름, 적용 수준·분석 상태, 지시문을 작성하고 저장 전 금지 항목·크기·형식을 검사</td><td>활성 지침은 새 개정으로 저장하고 이전 개정을 덮어쓰지 않음</td></tr>
+            <tr><td>미리보기</td><td>가상 입력으로 응답 구조와 학습자에게 보일 문구를 확인하되 외부 AI를 호출하지 않음</td><td>실제 학습자 코드·개인정보 사용 금지</td></tr>
+            <tr><td>삭제·복원</td><td>사용 중인 지침은 대체 지침을 선택한 뒤 보관하고 필요하면 복원</td><td>현재 작업이 참조하는 개정과 기본 내장 지침 영구 삭제 금지</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="section" id="level">
+        <div class="section-heading"><div><h2>학습 수준 분석</h2><p>사용자 제공 연구의 산식을 적용해 AI 피드백의 직접성과 개입 정도를 조절한다.</p></div><span class="badge wait">평가 점수 아님</span></div>
+
+        <h3>분석 상태와 표시 조건</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>분석 상태</th><th>제출 수·시도 문제 수</th><th>처리와 화면 표시</th><th>AI 피드백</th></tr></thead>
+          <tbody>
+            <tr><td><code>insufficient</code><br>분석 보류</td><td>10회 미만 또는 5문제 미만</td><td>점수·수준을 표시하지 않고 필요한 최소 자료 안내</td><td>수준을 가정하지 않는 기본 안내</td></tr>
+            <tr><td><code>provisional</code><br>임시 분석</td><td>10회 이상 그리고 5문제 이상</td><td>SkillScore와 지표는 임시로 표시하되 초급·중급·고급 명칭은 표시하지 않음</td><td>수준을 단정하지 않는 기본 안내</td></tr>
+            <tr><td><code>classified</code><br>수준 판정</td><td>20회 이상 그리고 8문제 이상</td><td>초급·중급·고급 수준과 산정 근거 표시</td><td>판정 수준별 전략 적용</td></tr>
+            <tr><td><code>reliable</code><br>신뢰 수준</td><td>30회 이상 그리고 10문제 이상</td><td>수준과 함께 “신뢰 자료 충족” 표시</td><td>판정 수준별 전략 적용</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>자료 부족 기본 안내:</strong> 분석 보류와 임시 분석에서는 학습자 수준을 추정하지 않는다. 결과의 의미, 관련 가능성이 높은 개념 한 가지와 스스로 실행 흐름을 확인할 질문 한 가지를 제공하되 수준 명칭은 응답에 쓰지 않는다.</div>
+        <div class="callout"><strong>표시 위치:</strong> 학습자는 본인의 <code>/dashboard</code>에서만 분석 상태·수준·산정 근거를 확인한다. 공개 프로필 <code>/users/{user_id}</code>과 전체 랭킹에는 학습 수준을 표시하지 않는다. <code>oj_manage_ai_feedback</code> 권한자는 관리자 학습 수준 분석 화면에서 운영에 필요한 범위만 조회한다.</div>
+        <ul class="rules">
+          <li>제출 수와 시도 문제 수는 두 기준을 모두 만족해야 다음 상태로 올라간다.</li>
+          <li><code>valid=1</code>이고 채점이 끝난 누적 제출을 사용하며 무효 제출은 제외한다. 진행 중 대회·평가 제출은 종료 전 제외하고 종료 뒤 공개 정책을 통과한 이력만 반영한다.</li>
+          <li>누적 지표는 임의의 300건 상한을 두지 않고 사용자·문제별 집계 Provider로 계산한다. 최근 지표만 최근 시도한 서로 다른 문제 최대 20개를 사용한다.</li>
+        </ul>
+
+        <h3>난이도와 증명 기준</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>난이도</th><th>기준 점수</th><th>필요 해결 문제</th><th>필요 고유 주제</th><th>난이도 정보가 없을 때</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>20</td><td>10</td><td>4</td><td>문제 전체 제출 10회 이상이고 정답률 70% 이상</td></tr>
+            <tr><td>2</td><td>40</td><td>8</td><td>4</td><td>정답률 50% 이상 70% 미만</td></tr>
+            <tr><td>3</td><td>60</td><td>6</td><td>3</td><td>정답률 30% 이상 50% 미만</td></tr>
+            <tr><td>4</td><td>80</td><td>4</td><td>2</td><td>정답률 15% 이상 30% 미만</td></tr>
+            <tr><td>5</td><td>100</td><td>2</td><td>2</td><td>정답률 15% 미만</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>난이도 원본 우선순위:</strong> DS-10에서 검증된 문제 메타데이터의 정수 1~5를 먼저 사용한다. 값이 없을 때만 해당 문제의 유효한 전체 채점 제출이 10회 이상이면 <code>Accepted 제출 수 / 전체 제출 수</code>로 임시 추정하고, 10회 미만이면 난이도 미확정으로 제외한다. 추정값은 분석 프로필에 출처만 기록하며 문제 메타데이터를 자동으로 덮어쓰지 않는다.</div>
+
+        <h3>점수 산식</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>지표</th><th>산식</th><th>운영 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>증명 난이도<br><code>ProvenDifficulty</code></td><td>난이도별 <code>TierScore = BaseScore × min(SolvedCount / RequiredSolved, 1) × min(TopicCount / RequiredTopic, 1)</code>, 다섯 단계 중 최댓값</td><td>해당 난이도 이상에서 해결한 서로 다른 문제와 표준 주제를 센다. 최고 점수가 같으면 과대 판정을 막기 위해 낮은 난이도를 <code>ProvenTier</code>로 선택한다.</td></tr>
+            <tr><td>학습 범위<br><code>Breadth</code></td><td><code>min(전체 해결 고유 주제 수 / 8, 1) × 100</code></td><td>난이도와 관계없이 해결한 문제의 표준 주제를 중복 없이 센다.</td></tr>
+            <tr><td>최근 도전<br><code>RecentChallenge</code></td><td><code>(ProvenTier 이상 시도 수 / 최근 난이도 확정 문제 수) × 60 + (그중 해결 수 / ProvenTier 이상 시도 수) × 40</code></td><td>최근 시도한 서로 다른 문제 최대 20개를 사용한다. 난이도 확정 표본 또는 도전 문제가 없으면 해당 비율은 0으로 처리하고 표본 수를 함께 표시한다.</td></tr>
+            <tr><td>풀이 안정성<br><code>Stability</code></td><td><code>(해결 문제 수 / 최근 시도 문제 수 × 100) × 0.60 + SubmissionEfficiency × 0.40</code></td><td>같은 최근 20문제에서 첫 Accepted까지 평균 제출이 2회 이하 100, 3회 이하 80, 5회 이하 60, 8회 이하 40, 초과 20이다. 해결 문제가 없으면 효율은 0이다.</td></tr>
+            <tr><td>최종 점수<br><code>SkillScore</code></td><td><code>ProvenDifficulty × 0.50 + Breadth × 0.15 + RecentChallenge × 0.20 + Stability × 0.15</code></td><td>0~100으로 제한하고 소수 첫째 자리까지 표시한다. 정책 키는 <code>learner-level-v1</code>로 고정해 산식 변경을 구분한다.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>근거 우선순위:</strong> 난이도별 필요 해결 수·주제 수와 수준 경계는 이번에 제공된 연구를 원본으로 사용한다. 첨부 텍스트에서 수식 이미지가 빠진 RecentChallenge·Stability의 60:40 결합과 SkillScore의 50:15:20:15 결합만 기존 <code>hustoj-ai-dashboard</code>의 같은 지표 구현으로 복원했다. 기존 구현의 별도 최근성·단계별 학습 범위·학습 과정 보정은 연구 핵심 산식에 없으므로 포함하지 않는다.</div>
+
+        <h3>수준 판정과 AI 답변</h3>
+        <div class="callout"><strong>조절 원칙:</strong> 수준별 차이는 답변의 양보다 정답에 얼마나 가까이 개입하는지에 둔다. 모든 수준에서 결과 이해 → 탐색 단서 → 다시 확인할 질문의 같은 화면 구조를 유지한다.</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>수준</th><th>판정 조건</th><th>AI 피드백 전략</th><th>제공하지 않는 것</th></tr></thead>
+          <tbody>
+            <tr><td><code>beginner</code><br>초급</td><td>중급·고급 조건에 해당하지 않음</td><td>오류와 관련된 코드 위치와 개념을 구체적으로 좁혀 주고 다음 확인 행동을 한 단계씩 제시</td><td>완성된 정답 코드와 전체 해결 절차</td></tr>
+            <tr><td><code>intermediate</code><br>중급</td><td>SkillScore 40 이상 그리고 ProvenDifficulty 40 이상</td><td>특정 입력의 변수 값·실행 흐름을 추적하게 하고 문제 조건과 코드를 비교하는 질문 중심 단서 제공</td><td>바로 적용할 수정문과 정답 단정</td></tr>
+            <tr><td><code>advanced</code><br>고급</td><td>SkillScore 70 이상 그리고 ProvenDifficulty 60 이상</td><td>직접적인 오류 위치 안내를 줄이고 알고리즘 조건·경계값·예외 입력·자료 처리·복잡도를 스스로 검토하도록 질문</td><td>오류 위치와 수정 방법의 선제적 공개</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>연구 문구 해석:</strong> 제공된 연구의 본문은 초급일수록 구체적으로 안내하고 고급일수록 자기 점검을 유도하지만 마지막 요약표의 초급·고급 행은 반대로 적혀 있다. 본 설계는 반복해서 설명된 본문과 학습 지원 방향을 기준으로 적용하고, 해당 요약표는 수준 이름이 뒤바뀐 편집 오류로 본다.</div>
+        <div class="warning"><strong>현재 코드와의 차이:</strong> 통합 플러그인의 기존 단순 평균 방식과 45:20:20:15 가중치는 이 설계를 충족하지 않는다. I-00 보호 환경을 통과한 뒤 I-06에서 이 문서의 분석 상태·산식·수준별 답변 전략으로 교체한다.</div>
+        <div class="callout"><strong>생성 시점의 수준 고정:</strong> Worker는 AI 호출 직전 새 유효 제출 여부를 확인해 프로필을 갱신하고, 그때의 분석 상태·수준·정책 버전·마지막 반영 제출 ID를 피드백 결과에 함께 기록한다. 이후 수준이 바뀌어도 저장된 피드백을 자동 재생성하지 않으며 사용자가 다시 요청할 때 새 기준으로 생성한다. 외부 AI에는 수준 전략만 보내고 다른 제출 원문과 개인 식별 정보는 보내지 않는다.</div>
+        <div class="callout"><strong>관리자 화면:</strong> 학습 수준 분석은 사용자, 분석 상태, 수준, 신뢰 자료 충족 여부, 세부 지표, 난이도 확정률, 주제 연결률, 최근 분석 시각과 정책 버전을 필터링한다. AI 피드백 관리 권한은 수준 프로필을 볼 수 있지만 제출 소스·피드백 내용을 자동으로 열 수 없으며, 해당 자료는 별도의 제출 접근 정책을 다시 통과해야 한다.</div>
+      </section>
+
+      <section class="section" id="dashboard">
+        <div class="section-heading"><div><h2>내 학습</h2><p>현재 사용자에게 다음 행동이 보이도록 집계하되 별도 이력 스냅샷은 저장하지 않는다.</p></div><span class="badge good">본인 전용</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>화면 순서</th><th>내용</th><th>데이터 계약</th></tr></thead>
+          <tbody>
+            <tr><td>1 · 요약</td><td>푼 문제, 시도한 문제, 최근 30일 풀이, 오답 뒤 해결</td><td>Submissions 집계 Provider</td></tr>
+            <tr><td>2 · 이어서 하기</td><td>아직 해결하지 못한 최근 문제와 다시 풀기 버튼</td><td>Submissions + Problems 접근 Provider</td></tr>
+            <tr><td>3 · 학습 흐름</td><td>난이도 1~5와 표준 주제별 시도·해결 분포</td><td>Problems 메타데이터 + Submissions 집계</td></tr>
+            <tr><td>4 · 추천</td><td>최근 미해결, 부족한 주제, 최근 해결 난이도보다 한 단계 도전 가능한 공개 문제를 이유와 함께 최대 6개</td><td>제출·문제 메타데이터 기반 규칙 추천. AI 기능과 독립</td></tr>
+            <tr><td>5 · 최근 제출</td><td>문제, 언어, 결과와 시각. 상세 링크는 DS-11 정책 적용</td><td>Submissions 목록 Provider</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>추천 갱신 정책</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>기준</th><th>동작</th><th>저장·성능</th></tr></thead>
+          <tbody>
+            <tr><td>후보 구성</td><td>접근 가능한 미해결 문제를 최근 미해결, 부족한 표준 주제, 최근 해결 난이도 다음 단계 순으로 점수화해 최대 18개 후보 구성</td><td>후보와 이유는 요청 시 Read Provider로 계산하고 영구 저장하지 않음</td></tr>
+            <tr><td>매일 교체</td><td>추천 6개 중 우선순위가 가장 높은 2개는 유지하고 나머지 4개는 WordPress 사이트 날짜가 바뀌는 자정부터 후보 안에서 교체. 회전 후보가 8개 이상이면 전날 표시한 4개를 우선 제외</td><td><code>user_id + 사이트 날짜 + 추천 정책 버전</code>의 결정적 순서로 오늘과 전날 묶음을 계산해 별도 이력 저장 없이 같은 날 안정성과 다음 날 변화를 보장</td></tr>
+            <tr><td>즉시 갱신</td><td>새 유효 제출, Accepted, 문제 공개·접근·난이도·주제 변경이 발생하면 일일 주기를 기다리지 않고 다시 계산</td><td>최신 제출 ID와 문제 카탈로그 개정값이 바뀌면 추천 캐시 무효화</td></tr>
+            <tr><td>다른 추천 보기</td><td>추천 영역의 새로고침 아이콘으로 같은 날 후보의 다음 4개를 볼 수 있으며 고정 2개는 유지</td><td>같은 <code>/dashboard</code> 읽기 요청의 묶음 번호만 사용해 새 경로·명령·테이블을 추가하지 않음</td></tr>
+            <tr><td>후보 부족</td><td>조건을 만족하는 문제가 6개 이하이면 가능한 문제만 표시하고 억지로 이미 해결한 문제를 채우지 않음</td><td>“현재 조건에 맞는 다른 문제가 없습니다”와 추천 기준 표시</td></tr>
+          </tbody>
+        </table></div>
+        <ul class="rules">
+          <li>추천은 자동 배정이나 성적 반영이 아니며 사용자가 숨기거나 다른 문제를 선택할 수 있다.</li>
+          <li>숨김·기간 종료·참여 권한이 없는 문제는 추천과 통계 제목에서 제외한다.</li>
+          <li>AI Feedback이 꺼져도 요약·복습·추천은 제출과 문제 메타데이터만으로 정상 동작하고 학습 단계 영역만 숨긴다.</li>
+          <li>페이지 단위 집계와 짧은 객체 캐시를 사용하며 Controller가 Judge DB나 플랫폼 테이블을 직접 조회하지 않는다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="ranking">
+        <div class="section-heading"><div><h2>전체 랭킹</h2><p>재시도 횟수나 풀이 속도를 벌점으로 사용하지 않는 단순한 참고 순위다.</p></div><span class="badge info">로그인 사용자만</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>권장 정책</th><th>이유</th></tr></thead>
+          <tbody>
+            <tr><td>대상 제출</td><td><code>valid=1</code>, 상시 풀이 <code>contest_id=0</code>, 전체 로그인 사용자에게 공개된 문제만</td><td>평가·비공개 수업 문제와 접근 정보 노출 방지</td></tr>
+            <tr><td>해결 계산</td><td>사용자·문제별 Accepted 한 번, 같은 문제의 재제출은 중복 계산하지 않음</td><td>실제 해결한 서로 다른 문제 수 표시</td></tr>
+            <tr><td>정답률 표시</td><td><code>result 4~11</code>의 채점 완료 제출 중 <code>result=4</code>인 제출 비율을 <code>정답/완료 제출</code>과 함께 표시</td><td>집계 근거를 투명하게 보여 주되 순위에는 사용하지 않음</td></tr>
+            <tr><td>순위</td><td>해결 문제 수 내림차순의 공동 순위. 동률은 표시 이름 순으로만 안정 정렬</td><td>실패 횟수·속도로 학습자를 벌점 처리하지 않음</td></tr>
+            <tr><td>사용자 표시</td><td>Auth가 제공한 표시 이름과 공개 프로필 링크만 사용</td><td>로그인 아이디·이메일·서비스 정보 노출 금지</td></tr>
+            <tr><td>공개 선택</td><td><code>user_preferences.ranking_visibility</code>가 <code>members</code>인 사용자만 표시하고 본인은 <code>hidden</code>으로 변경 가능</td><td>서비스 내부 공개와 개인 선택권 병행</td></tr>
+            <tr><td>저장·성능</td><td>랭킹 테이블·사용자별 스냅샷 없이 페이지 집계, 제출 기준점 기반 60초 객체 캐시</td><td>중복 저장과 과도한 전체 집계 방지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>비평가 원칙:</strong> 전체 랭킹은 참고 화면이며 수업·대회 성적, 학습 수준, 사용자 권한에 사용하지 않는다. 서비스가 경쟁형 표시를 원하지 않으면 Ranking 기능만 꺼도 내 학습과 AI 피드백은 정상 동작한다.</div>
+      </section>
+
+      <section class="section" id="integration">
+        <div class="section-heading"><div><h2>모듈 계약과 기능 OFF</h2><p>조회 모듈이 JudgeDb나 다른 기능의 Repository를 직접 사용하지 않는다.</p></div><span class="badge good">단방향 Provider</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>제공자</th><th>소비자</th><th>계약</th><th>OFF 동작</th></tr></thead>
+          <tbody>
+            <tr><td>Submissions</td><td>AI Feedback·Learning Dashboard·Ranking</td><td>허용된 제출 상세, 본인 집계, 랭킹용 익명 집계와 최신 제출 기준점</td><td>세 기능 경로와 Provider 등록 중단</td></tr>
+            <tr><td>Problems</td><td>AI Feedback·Learning Dashboard·Ranking</td><td>문제 본문, 난이도 1~5, 주제, 추천·랭킹 공개 가능 여부와 카탈로그 개정값</td><td>원본 복제나 직접 Judge 조회 금지</td></tr>
+            <tr><td>Auth</td><td>세 기능</td><td>숫자 <code>user_id</code>, 표시 이름, 프로필·랭킹 공개 설정의 일괄 조회</td><td>로그인·사용자 원본 우회 금지</td></tr>
+            <tr><td>AI Feedback</td><td>Learning Dashboard</td><td>본인의 학습 단계와 자료 충분 여부를 제공하는 선택 Provider</td><td>내 학습의 단계 영역만 숨김</td></tr>
+            <tr><td>Classes·Contests·Groups</td><td>Learning Dashboard</td><td>현재 사용자가 접근 가능한 학습 문맥 요약 선택 Provider</td><td>꺼진 문맥 영역만 제외</td></tr>
+            <tr><td>Jobs</td><td>AI Feedback</td><td><code>submission_ai_feedback_generate</code> Handler 실행과 공통 상태·취소·재시도</td><td>AI 생성 버튼 비활성, 저장 결과 보존</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>의존 방향:</strong> AI Feedback, Learning Dashboard와 Ranking은 <code>Judge_Db</code>, Problems·Submissions의 Repository, WordPress 사용자 테이블을 직접 주입받지 않는다. 조립 단계에서 공개 Read Provider와 Policy만 연결한다.</div>
+      </section>
+
+      <section class="section" id="data">
+        <div class="section-heading"><div><h2>데이터와 코드 구조</h2><p>영구 테이블은 AI Feedback의 2개만 사용하고 집계 결과를 사용자별로 복제하지 않는다.</p></div><span class="badge info">테이블 추가 0개</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>저장소</th><th>소유</th><th>DS-13 상세화</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td><code>submission_ai_feedback</code></td><td>AI Feedback</td><td>제출 ID, 구조화된 결과, 입력·소스·문제 해시, 답변 지침 버전, 생성 때의 분석 상태·수준·수준 정책·마지막 반영 제출 ID, 작업 배정 revision·연결 프로필 키·fingerprint·모델 키, 생성 시각</td><td>개인정보, API 키, endpoint, 원본 요청·응답, 누적 제출 원문, 실패 중간 결과</td></tr>
+            <tr><td><code>learner_level_profiles</code></td><td>AI Feedback</td><td>숫자 사용자 ID, 분석 상태, 초급·중급·고급, ProvenTier, 네 지표와 SkillScore, 제출·시도·최근 표본 수, 난이도 확정률·주제 연결률, 정책 버전, 마지막 반영 제출과 분석 시각</td><td>공식 성적, 수업 권한, 랭킹 값, 제출 원문</td></tr>
+            <tr><td>비공개 답변 지침 파일</td><td>AI Feedback</td><td>변경 불가 개정, 활성 포인터, 해시와 변경 사용자·시각</td><td>웹 공개 경로, 실행 코드, 사용자 업로드 HTML</td></tr>
+            <tr><td>내 학습·랭킹</td><td>Learning Dashboard·Ranking</td><td>자체 테이블 없이 Read Provider 결과와 짧은 객체 캐시 사용</td><td>사용자별 일일 스냅샷, 제출·문제 복제</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>사용자 키:</strong> 플랫폼 테이블과 화면은 숫자 <code>wp_users.ID</code>만 사용한다. Judge의 로그인 문자열은 Submissions 어댑터 내부에서만 처리하고 DS-13의 캐시 키·URL·테이블에 저장하지 않는다.</div>
+
+        <h3>목표 코드 구조</h3>
+        <pre class="tree">modules/
+|-- AI/
+|   |-- Http/                 [피드백·설정·지침·수준 5개 Controller]
+|   |-- Application/          [피드백 등록·지침·수준 Service]
+|   |-- Domain/               [자격·중복·출력·수준 정책]
+|   |-- Infrastructure/       [2개 Repository·비공개 파일 Storage]
+|   |-- Jobs/                 [Submission_Ai_Feedback_Handler]
+|   `-- Integration/          [Problems·Submissions·Auth Provider]
+|-- LearningDashboard/
+|   |-- Http/                 [Public_Dashboard_Controller]
+|   |-- Application/          [집계·복습·추천 조립]
+|   `-- Integration/          [필수·선택 Read Provider]
+`-- Ranking/
+    |-- Http/                 [Public_Ranking_Controller]
+    |-- Application/          [공동 순위·페이지·캐시]
+    |-- Domain/               [대상·공개·동률 정책]
+    `-- Integration/          [Submissions·Problems·Auth Provider]</pre>
+        <div class="summary"><strong>컨트롤러 7개:</strong> AI 5개, Learning Dashboard 1개, Ranking 1개를 D-005의 목표 이름 그대로 사용한다. Controller는 요청·권한·응답만 처리하고 집계 SQL·AI 호출·파일 저장을 포함하지 않는다.</div>
+      </section>
+
+      <section class="section" id="verification">
+        <div class="section-heading"><div><h2>구현·검증 관문</h2><p>I-00 보호 환경 뒤 I-06에서 통과해야 할 완료 기준이다.</p></div><span class="badge wait">I-06 시작 대기</span></div>
+        <div class="gate"><div><strong>AI 피드백</strong></div><div>등록·Worker·AJAX·결과의 권한 재검사, 최신 수준 프로필 결합, 수준별 직접성 차이, 멱등 재사용, 실패·취소·재시도, 개인정보 제거</div><div>Jobs·정책·E2E</div></div>
+        <div class="gate"><div><strong>수행 모드</strong></div><div>그룹 밖 제출을 포함해 생성·상태·결과 직접 접근을 모두 차단하고 제출 자체는 유지</div><div>권한·우회 검사</div></div>
+        <div class="gate"><div><strong>학습 수준</strong></div><div>10·5 임시, 20·8 판정, 30·10 신뢰 상태와 난이도 1~5 추정, 네 지표 산식, 수준 경계, 진행 중 평가 제외, 새 제출 기준점 갱신</div><div>단위·경계·집계 검사</div></div>
+        <div class="gate"><div><strong>내 학습</strong></div><div>본인만 조회, 숨김 문제 제외, 추천 이유 표시, 고정 2개·일일 교체 4개, 새 제출·문제 개정 즉시 갱신, 같은 날 안정성, AI OFF 독립성과 N+1 없는 페이지 집계</div><div>통합·시간 경계·성능·E2E</div></div>
+        <div class="gate"><div><strong>전체 랭킹</strong></div><div>공개 상시 문제·유효 제출만 집계, 공동 순위, 숨김 사용자 제외, 로그인 아이디 미노출</div><div>정책·성능 검사</div></div>
+        <div class="gate"><div><strong>기능 독립성</strong></div><div>AI Feedback·Learning Dashboard·Ranking을 하나씩 꺼도 다른 두 기능과 제출·문제 화면 정상</div><div>ON/OFF 조합</div></div>
+        <div class="gate"><div><strong>UI/UX</strong></div><div>사용자 화면에 모델·프롬프트·작업 ID가 없고 상태·빈 화면·오류·모바일 표가 겹치지 않음</div><div>브라우저 승인</div></div>
+        <div class="gate"><div><strong>일관성</strong></div><div>직접 경로 9개·테이블 2개·컨트롤러 7개·추가 액션 0개, UTF-8 한글 원문과 호환 경로 0개</div><div>정적·계약 검사</div></div>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading"><div><h2>DS-13 확정 항목</h2><p>아래 여덟 항목을 2026-07-24 사용자 확인으로 동결했다.</p></div><span class="badge good">8건 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>결정</th><th>주제</th><th>권장안</th><th>영향</th></tr></thead>
+          <tbody>
+            <tr><td>DS13-Q01</td><td>범위·메뉴</td><td>제출 상세 AI 피드백, 내 정보 &gt; 내 학습·전체 랭킹, 관리자 제출 &gt; AI 지원만 소유</td><td>직접 GET 9개·추가 경로 0개</td></tr>
+            <tr><td>DS13-Q02</td><td>피드백 실행</td><td>명시적 요청만 Jobs에 등록하고 AJAX로 상태를 갱신하며 성공 결과만 저장</td><td>비용·대기·중복 호출 제한</td></tr>
+            <tr><td>DS13-Q03</td><td>피드백 내용·보호</td><td>초급은 구체적 위치·행동, 중급은 실행 추적, 고급은 조건·경계 자기 점검 중심으로 조절하고 정답 전체·개인정보를 제외하며 모든 단계에서 상세·수행 모드를 재검사</td><td>수준별 학습 개입과 우회 차단</td></tr>
+            <tr><td>DS13-Q04</td><td>학습 수준</td><td>누적 이력의 10·5 임시, 20·8 판정, 30·10 신뢰 상태와 ProvenDifficulty 50%·Breadth 15%·RecentChallenge 20%·Stability 15%를 적용</td><td>연구 기준 적용, 성적·순위·권한과 분리</td></tr>
+            <tr><td>DS13-Q05</td><td>내 학습</td><td>본인 집계·복습·주제·난이도·최근 제출을 조립하고 추천은 고정 2개와 매일 교체 4개로 구성하며 새 제출·문제 개정에는 즉시 갱신</td><td>스냅샷 없이 주기적 변화, AI OFF에서도 정상 동작</td></tr>
+            <tr><td>DS13-Q06</td><td>전체 랭킹</td><td>공개 상시 문제의 해결 수 공동 순위, 재시도 벌점 없음, 표시 이름과 공개 선택 적용</td><td>서비스 내부 참고 순위</td></tr>
+            <tr><td>DS13-Q07</td><td>데이터·성능</td><td>AI 테이블 2개에 수준 분석 상태·지표·생성 시점 수준 기준을 기록하고 누적 이력은 집계 Provider로 계산하며 내 학습·랭킹 테이블은 만들지 않음</td><td>D-008 열 동기화 필요</td></tr>
+            <tr><td>DS13-Q08</td><td>구조·검증</td><td>컨트롤러 7개와 Provider 경계, 기능별 OFF, Jobs·권한·성능·반응형 검증 적용</td><td>목표 컨트롤러 66개 유지</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>확정:</strong> DS13-Q01~Q08, 연구 기반 수준 분석, 수준별 AI 피드백, 추천 일일 교체·즉시 갱신 정책과 UI 시안 2종을 동결했다. D-008의 AI Feedback 열 계약과 개발 순서를 동기화했으며, 실행 코드와 실제 DB는 아직 변경하지 않았다. I-00을 통과한 뒤 I-06에서 구현한다.</div>
+      </section>
+
+      <footer>OJ Platform 재정비 · DS-13 학습 지원 상세 설계 · 기능·UI 설계 사용자 확정 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+Ace 1.44.0
+Source: https://www.npmjs.com/package/ace-builds
+License: BSD-3-Clause (see LICENSE.txt)
+
+Bundled files:
+- ace.js
+- Official theme modules
+- Syntax mode modules used by the HUSTOJ language catalog
+
+Local packaging note:
+- mode-python.js keeps the original identifier range while spelling its four
+  Unicode range endpoints as UTF-8 characters to satisfy the project-wide
+  no-backslash-u source policy.
+
+Workers are not used by OJ Platform. Syntax checking and judging remain on
+the configured judge server.

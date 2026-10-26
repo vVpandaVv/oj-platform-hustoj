@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "edu-games/ai-model-lab",
+  "title": "AI Model Lab",
+  "category": "widgets",
+  "icon": "chart-line",
+  "description": "Train a real scikit-learn model, read its results, then diagnose and improve it.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

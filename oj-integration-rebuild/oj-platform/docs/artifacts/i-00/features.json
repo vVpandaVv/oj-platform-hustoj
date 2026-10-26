@@ -1,0 +1,282 @@
+{
+    "core": {
+        "label": "Core",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": []
+    },
+    "settings": {
+        "label": "Settings",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": [
+            "core"
+        ]
+    },
+    "permission": {
+        "label": "Permission",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": [
+            "core"
+        ]
+    },
+    "access_router": {
+        "label": "Access Router",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": [
+            "core"
+        ]
+    },
+    "public_ui": {
+        "label": "Public UI Shell",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": [
+            "core"
+        ]
+    },
+    "admin_console": {
+        "label": "Admin Console Shell",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": [
+            "settings",
+            "permission"
+        ]
+    },
+    "migration": {
+        "label": "Installer And Migration",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": [
+            "core"
+        ]
+    },
+    "judge_db": {
+        "label": "Judge DB Adapter",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": [
+            "core"
+        ]
+    },
+    "platform_db": {
+        "label": "Platform DB",
+        "default_enabled": true,
+        "required": true,
+        "can_disable": false,
+        "dependencies": [
+            "core"
+        ]
+    },
+    "home": {
+        "label": "Home",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "public_ui"
+        ]
+    },
+    "auth": {
+        "label": "Login And Account",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": false,
+        "dependencies": [
+            "permission",
+            "platform_db",
+            "judge_db"
+        ]
+    },
+    "legal_documents": {
+        "label": "Legal Documents",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "auth"
+        ]
+    },
+    "registration": {
+        "label": "Registration",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "auth"
+        ]
+    },
+    "user_profiles": {
+        "label": "User Profiles",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "auth"
+        ]
+    },
+    "problems": {
+        "label": "Problems",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "platform_db",
+            "judge_db"
+        ]
+    },
+    "problem_statistics": {
+        "label": "Problem Statistics",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems"
+        ]
+    },
+    "problem_books": {
+        "label": "Problem Books",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems"
+        ]
+    },
+    "quizzes": {
+        "label": "Quizzes",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems"
+        ]
+    },
+    "testcase_tools": {
+        "label": "Testcase Tools",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems"
+        ]
+    },
+    "problem_ai_assist": {
+        "label": "Problem AI Assist",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems"
+        ]
+    },
+    "submissions": {
+        "label": "Submissions",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems",
+            "judge_db",
+            "auth"
+        ]
+    },
+    "ranking": {
+        "label": "Ranking",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "submissions"
+        ]
+    },
+    "ai_feedback": {
+        "label": "AI Wrong Answer Feedback",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "submissions"
+        ]
+    },
+    "learning_dashboard": {
+        "label": "Learning Dashboard",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "auth",
+            "problems",
+            "submissions"
+        ]
+    },
+    "contests": {
+        "label": "Contests",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems",
+            "submissions"
+        ]
+    },
+    "classes": {
+        "label": "Classes",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems",
+            "submissions",
+            "auth"
+        ]
+    },
+    "groups": {
+        "label": "Groups",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "auth"
+        ]
+    },
+    "board": {
+        "label": "Board",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "auth"
+        ]
+    },
+    "notices": {
+        "label": "Notices",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "permission"
+        ]
+    },
+    "blockly": {
+        "label": "Blockly",
+        "default_enabled": true,
+        "required": false,
+        "can_disable": true,
+        "dependencies": [
+            "problems",
+            "submissions"
+        ]
+    }
+}

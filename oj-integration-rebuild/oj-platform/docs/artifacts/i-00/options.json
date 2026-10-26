@@ -1,0 +1,337 @@
+[
+    {
+        "name": "oj_platform_ai_feedback_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_AI_FEEDBACK",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 24
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_ai_provider_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_AI_PROVIDER",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 23
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_blockly_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_BLOCKLY",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 26
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_board_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_BOARD",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 25
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_database_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_DATABASE",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 16
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_database_test_result",
+        "references": [
+            {
+                "access": "constant:OPTION_DATABASE_TEST",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 17
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_db_health",
+        "references": [
+            {
+                "access": "constant:OPTION_HEALTH",
+                "file": "modules/JudgeDb/Health/Db_Health_Checker.php",
+                "line": 13
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_db_schema_version",
+        "references": [
+            {
+                "access": "constant:OPTION_SCHEMA_VERSION",
+                "file": "modules/PlatformDb/Schema/Platform_Schema_Installer.php",
+                "line": 13
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_feature_flags",
+        "references": [
+            {
+                "access": "constant:OPTION_KEY",
+                "file": "src/Core/Feature/Feature_Flag_Service.php",
+                "line": 11
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_home_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_HOME",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 15
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_import_state",
+        "references": [
+            {
+                "access": "constant:OPTION_IMPORT_STATE",
+                "file": "modules/Migration/Repository/Migration_Repository.php",
+                "line": 13
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_install_state",
+        "references": [
+            {
+                "access": "update_option",
+                "file": "src/Core/Plugin.php",
+                "line": 68
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_last_fatal",
+        "references": [
+            {
+                "access": "get_option",
+                "file": "src/Core/Error_Logger.php",
+                "line": 57
+            },
+            {
+                "access": "delete_option",
+                "file": "src/Core/Error_Logger.php",
+                "line": 79
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_last_runtime_ok",
+        "references": [
+            {
+                "access": "update_option",
+                "file": "src/Core/Error_Logger.php",
+                "line": 63
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_legacy_page_redirects",
+        "references": [
+            {
+                "access": "constant:OPTION_PAGE_REDIRECTS",
+                "file": "modules/Migration/Repository/Migration_Repository.php",
+                "line": 14
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_migration_settings",
+        "references": [
+            {
+                "access": "get_option",
+                "file": "modules/AccessRouter/Page_Resolver.php",
+                "line": 267
+            },
+            {
+                "access": "constant:OPTION_MIGRATION",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 28
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_modules",
+        "references": [
+            {
+                "access": "get_option",
+                "file": "src/Core/Config.php",
+                "line": 35
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_problem_submit_modes",
+        "references": [
+            {
+                "access": "constant:OPTION",
+                "file": "modules/Problems/Repository/Problem_Submit_Mode_Repository.php",
+                "line": 11
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_public_menu_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_PUBLIC_MENU",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 29
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_registration_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_REGISTRATION",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 18
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_role_schema_version",
+        "references": [
+            {
+                "access": "constant:OPTION_SCHEMA_VERSION",
+                "file": "src/Core/Permission/Role_Capability_Installer.php",
+                "line": 13
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_route_signature",
+        "references": [
+            {
+                "access": "get_option",
+                "file": "src/Core/System_Status.php",
+                "line": 60
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_route_state",
+        "references": [
+            {
+                "access": "get_option",
+                "file": "src/Core/System_Status.php",
+                "line": 61
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_schema_state",
+        "references": [
+            {
+                "access": "constant:OPTION_SCHEMA_STATE",
+                "file": "modules/PlatformDb/Schema/Platform_Schema_Installer.php",
+                "line": 15
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_secret_store",
+        "references": [
+            {
+                "access": "constant:OPTION_KEY",
+                "file": "modules/Settings/Secrets/Secret_Store.php",
+                "line": 9
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_COMMON",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 14
+            },
+            {
+                "access": "get_option",
+                "file": "src/Core/Config.php",
+                "line": 34
+            },
+            {
+                "access": "get_option",
+                "file": "src/Core/Plugin.php",
+                "line": 64
+            },
+            {
+                "access": "update_option",
+                "file": "src/Core/Plugin.php",
+                "line": 65
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_smtp_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_SMTP",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 19
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_submission_display_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_SUBMISSION_DISPLAY",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 22
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_submission_rules",
+        "references": [
+            {
+                "access": "constant:OPTION_SUBMISSION_RULES",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 21
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_submission_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_SUBMISSION",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 20
+            }
+        ]
+    },
+    {
+        "name": "oj_platform_system_settings",
+        "references": [
+            {
+                "access": "constant:OPTION_SYSTEM",
+                "file": "modules/Settings/Repository/Settings_Repository.php",
+                "line": 27
+            }
+        ]
+    }
+]

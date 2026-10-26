@@ -1,0 +1,207 @@
+.htt-quickboard-anonymous {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.htt-quickboard-message {
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.htt-quickboard-message.is-danger {
+    color: var(--htt-error-fg);
+    background: var(--htt-danger-tint);
+}
+
+.htt-quickboard-message.is-success,
+.htt-quickboard-message.is-info {
+    color: var(--htt-info-fg);
+    background: var(--htt-info-bg);
+}
+
+.htt-quickboard-sessionbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding-block: 8px 14px;
+    border-bottom: 1px solid var(--htt-border);
+}
+
+.htt-quickboard-sessionbar > div:last-child {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.htt-quickboard-prompt {
+    margin: 18px 0 12px;
+    font-size: 1.25rem;
+}
+
+.htt-quickboard-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.htt-quickboard-card {
+    min-width: 0;
+    border: 1px solid var(--htt-border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--htt-card-bg);
+}
+
+.htt-quickboard-card.is-waiting {
+    opacity: 0.7;
+}
+
+.htt-quickboard-card-heading,
+.htt-quickboard-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 10px;
+}
+
+.htt-quickboard-card-heading h3 {
+    min-width: 0;
+    margin: 0;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+
+.htt-quickboard-preview {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-block: 1px solid var(--htt-border);
+    border-radius: 0;
+    background: var(--ojp-color-surface, #fff);
+    cursor: zoom-in;
+}
+
+.htt-quickboard-preview:disabled {
+    cursor: default;
+}
+
+.htt-quickboard-preview canvas,
+.htt-quickboard-spotlight canvas,
+.htt-join-quickboard-canvas-wrap canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 5 / 3;
+    background: var(--ojp-color-surface, #fff);
+    touch-action: none;
+}
+
+.htt-quickboard-spotlight {
+    position: fixed;
+    z-index: 10000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.htt-quickboard-spotlight-inner {
+    width: min(1100px, 96vw);
+    max-height: 94vh;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--htt-card-bg);
+}
+
+.htt-quickboard-spotlight-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+}
+
+.htt-quickboard-spotlight-heading h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.htt-join-quickboard {
+    width: min(100%, 1040px);
+    margin-inline: auto;
+}
+
+.htt-join-quickboard h2 {
+    margin: 0 0 12px;
+    font-size: 1.1rem;
+}
+
+.htt-join-quickboard-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.htt-join-quickboard-toolbar button.is-active {
+    color: var(--htt-primary-fg);
+    background: var(--htt-primary);
+}
+
+.htt-join-quickboard-colors {
+    display: flex;
+    gap: 6px;
+}
+
+.htt-join-quickboard-color {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 50%;
+}
+
+.htt-join-quickboard-color.is-active {
+    border-color: var(--htt-fg);
+    box-shadow: 0 0 0 2px var(--htt-card-bg) inset;
+}
+
+.htt-join-quickboard-canvas-wrap {
+    border: 1px solid var(--htt-border);
+    background: var(--ojp-color-surface, #fff);
+}
+
+.htt-join-quickboard-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.htt-join-quickboard-status {
+    color: var(--htt-muted);
+}
+
+@media (max-width: 620px) {
+    .htt-quickboard-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .htt-quickboard-spotlight {
+        padding: 8px;
+    }
+
+    .htt-join-quickboard-actions .ojp-button--primary {
+        width: 100%;
+    }
+}

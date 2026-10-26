@@ -1,0 +1,856 @@
+[
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_accept_user_agreements",
+        "file": "modules/Auth/Module.php",
+        "line": 188
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_activate_agreement_document",
+        "file": "modules/Auth/Module.php",
+        "line": 204
+    },
+    {
+        "transport": "admin_post",
+        "owner": "ai_feedback",
+        "action": "oj_ai_feedback_generate",
+        "file": "modules/AI/Module.php",
+        "line": 85
+    },
+    {
+        "transport": "admin_post",
+        "owner": "ai_feedback",
+        "action": "oj_ai_persona_delete",
+        "file": "modules/AI/Module.php",
+        "line": 89
+    },
+    {
+        "transport": "admin_post",
+        "owner": "ai_feedback",
+        "action": "oj_ai_persona_duplicate",
+        "file": "modules/AI/Module.php",
+        "line": 88
+    },
+    {
+        "transport": "admin_post",
+        "owner": "ai_feedback",
+        "action": "oj_ai_persona_restore",
+        "file": "modules/AI/Module.php",
+        "line": 90
+    },
+    {
+        "transport": "admin_post",
+        "owner": "ai_feedback",
+        "action": "oj_ai_persona_save",
+        "file": "modules/AI/Module.php",
+        "line": 87
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_add_comment",
+        "file": "modules/Board/Module.php",
+        "line": 121
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_add_thread",
+        "file": "modules/Board/Module.php",
+        "line": 119
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_create_thread",
+        "file": "modules/Board/Module.php",
+        "line": 125
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_delete_comment",
+        "file": "modules/Board/Module.php",
+        "line": 132
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_restore_thread",
+        "file": "modules/Board/Module.php",
+        "line": 130
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_toggle_comment_hidden",
+        "file": "modules/Board/Module.php",
+        "line": 131
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_toggle_thread_hidden",
+        "file": "modules/Board/Module.php",
+        "line": 127
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_toggle_thread_pinned",
+        "file": "modules/Board/Module.php",
+        "line": 128
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_trash_thread",
+        "file": "modules/Board/Module.php",
+        "line": 129
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_update_thread",
+        "file": "modules/Board/Module.php",
+        "line": 126
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_board_update_thread_public",
+        "file": "modules/Board/Module.php",
+        "line": 120
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_change_password",
+        "file": "modules/Auth/Module.php",
+        "line": 186
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_check_guardian_consent_request",
+        "file": "modules/Auth/Module.php",
+        "line": 184
+    },
+    {
+        "transport": "admin_post",
+        "owner": "classes",
+        "action": "oj_class_delete",
+        "file": "modules/Classes/Module.php",
+        "line": 102
+    },
+    {
+        "transport": "admin_post",
+        "owner": "classes",
+        "action": "oj_class_export_progress",
+        "file": "modules/Classes/Module.php",
+        "line": 100
+    },
+    {
+        "transport": "admin_post",
+        "owner": "classes",
+        "action": "oj_class_join",
+        "file": "modules/Classes/Module.php",
+        "line": 99
+    },
+    {
+        "transport": "admin_post",
+        "owner": "classes",
+        "action": "oj_class_save",
+        "file": "modules/Classes/Module.php",
+        "line": 101
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_bulk_execute_users",
+        "file": "modules/Auth/Module.php",
+        "line": 199
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_bulk_import_users",
+        "file": "modules/Auth/Module.php",
+        "line": 200
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_bulk_preview_users",
+        "file": "modules/Auth/Module.php",
+        "line": 198
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_create_user",
+        "file": "modules/Auth/Module.php",
+        "line": 191
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_create_wp_user",
+        "file": "modules/Auth/Module.php",
+        "line": 197
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_link_wp_user",
+        "file": "modules/Auth/Module.php",
+        "line": 196
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_permanent_delete_user",
+        "file": "modules/Auth/Module.php",
+        "line": 202
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_restore_deleted_user",
+        "file": "modules/Auth/Module.php",
+        "line": 201
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_sync_role_presets",
+        "file": "modules/Auth/Module.php",
+        "line": 194
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_toggle_user_active",
+        "file": "modules/Auth/Module.php",
+        "line": 195
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_update_user",
+        "file": "modules/Auth/Module.php",
+        "line": 192
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_console_update_user_roles",
+        "file": "modules/Auth/Module.php",
+        "line": 193
+    },
+    {
+        "transport": "admin_post",
+        "owner": "contests",
+        "action": "oj_contest_admin_allowed_ip",
+        "file": "modules/Contests/Module.php",
+        "line": 110
+    },
+    {
+        "transport": "admin_post",
+        "owner": "contests",
+        "action": "oj_contest_allowed_ip",
+        "file": "modules/Contests/Module.php",
+        "line": 106
+    },
+    {
+        "transport": "admin_post",
+        "owner": "contests",
+        "action": "oj_contest_delete",
+        "file": "modules/Contests/Module.php",
+        "line": 109
+    },
+    {
+        "transport": "admin_post",
+        "owner": "contests",
+        "action": "oj_contest_export",
+        "file": "modules/Contests/Module.php",
+        "line": 111
+    },
+    {
+        "transport": "admin_post",
+        "owner": "contests",
+        "action": "oj_contest_join",
+        "file": "modules/Contests/Module.php",
+        "line": 105
+    },
+    {
+        "transport": "admin_post",
+        "owner": "contests",
+        "action": "oj_contest_public_admin_allowed_ip",
+        "file": "modules/Contests/Module.php",
+        "line": 107
+    },
+    {
+        "transport": "admin_post",
+        "owner": "contests",
+        "action": "oj_contest_save",
+        "file": "modules/Contests/Module.php",
+        "line": 108
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_delete_account",
+        "file": "modules/Auth/Module.php",
+        "line": 187
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_add_member",
+        "file": "modules/Groups/Module.php",
+        "line": 123
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_approve_membership",
+        "file": "modules/Groups/Module.php",
+        "line": 124
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_archive",
+        "file": "modules/Groups/Module.php",
+        "line": 121
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_bulk_members",
+        "file": "modules/Groups/Module.php",
+        "line": 130
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_cancel_request",
+        "file": "modules/Groups/Module.php",
+        "line": 113
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_grant_manager",
+        "file": "modules/Groups/Module.php",
+        "line": 127
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_join",
+        "file": "modules/Groups/Module.php",
+        "line": 112
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_leave",
+        "file": "modules/Groups/Module.php",
+        "line": 114
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_public_approve_membership",
+        "file": "modules/Groups/Module.php",
+        "line": 115
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_public_reject_membership",
+        "file": "modules/Groups/Module.php",
+        "line": 116
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_public_remove_membership",
+        "file": "modules/Groups/Module.php",
+        "line": 117
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_public_reset_member_password",
+        "file": "modules/Groups/Module.php",
+        "line": 118
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_reject_membership",
+        "file": "modules/Groups/Module.php",
+        "line": 125
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_remove_membership",
+        "file": "modules/Groups/Module.php",
+        "line": 126
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_reset_member_password",
+        "file": "modules/Groups/Module.php",
+        "line": 129
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_restore",
+        "file": "modules/Groups/Module.php",
+        "line": 122
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_revoke_manager",
+        "file": "modules/Groups/Module.php",
+        "line": 128
+    },
+    {
+        "transport": "admin_post",
+        "owner": "groups",
+        "action": "oj_group_save",
+        "file": "modules/Groups/Module.php",
+        "line": 120
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_guardian_consent",
+        "file": "modules/Auth/Module.php",
+        "line": 189
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_login",
+        "file": "modules/Auth/Module.php",
+        "line": 180
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_lost_password",
+        "file": "modules/Auth/Module.php",
+        "line": 181
+    },
+    {
+        "transport": "admin_post",
+        "owner": "migration",
+        "action": "oj_migration_cleanup_report",
+        "file": "modules/Migration/Module.php",
+        "line": 45
+    },
+    {
+        "transport": "admin_post",
+        "owner": "migration",
+        "action": "oj_migration_clear_redirects",
+        "file": "modules/Migration/Module.php",
+        "line": 43
+    },
+    {
+        "transport": "admin_post",
+        "owner": "migration",
+        "action": "oj_migration_deactivate_legacy_plugins",
+        "file": "modules/Migration/Module.php",
+        "line": 46
+    },
+    {
+        "transport": "admin_post",
+        "owner": "migration",
+        "action": "oj_migration_dry_run",
+        "file": "modules/Migration/Module.php",
+        "line": 42
+    },
+    {
+        "transport": "admin_post",
+        "owner": "migration",
+        "action": "oj_migration_scan",
+        "file": "modules/Migration/Module.php",
+        "line": 41
+    },
+    {
+        "transport": "admin_post",
+        "owner": "migration",
+        "action": "oj_migration_validate",
+        "file": "modules/Migration/Module.php",
+        "line": 44
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_notice_add_comment",
+        "file": "modules/Board/Module.php",
+        "line": 123
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_notice_create",
+        "file": "modules/Board/Module.php",
+        "line": 122
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_notice_create_console",
+        "file": "modules/Board/Module.php",
+        "line": 133
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_notice_delete_comment",
+        "file": "modules/Board/Module.php",
+        "line": 137
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_notice_restore",
+        "file": "modules/Board/Module.php",
+        "line": 136
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_notice_trash",
+        "file": "modules/Board/Module.php",
+        "line": 135
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_notice_update",
+        "file": "modules/Board/Module.php",
+        "line": 134
+    },
+    {
+        "transport": "admin_post",
+        "owner": "admin_console",
+        "action": "oj_platform_clear_last_fatal",
+        "file": "modules/AdminConsole/Module.php",
+        "line": 40
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_book_delete_category",
+        "file": "modules/Problems/Module.php",
+        "line": 134
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_book_personal_add",
+        "file": "modules/Problems/Module.php",
+        "line": 123
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_book_personal_remove",
+        "file": "modules/Problems/Module.php",
+        "line": 124
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_book_save_category",
+        "file": "modules/Problems/Module.php",
+        "line": 133
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_bulk_visibility",
+        "file": "modules/Problems/Module.php",
+        "line": 127
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_change_id",
+        "file": "modules/Problems/Module.php",
+        "line": 135
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_delete",
+        "file": "modules/Problems/Module.php",
+        "line": 130
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_generate_metadata",
+        "file": "modules/Problems/Module.php",
+        "line": 128
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_generate_metadata_filtered",
+        "file": "modules/Problems/Module.php",
+        "line": 129
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_save",
+        "file": "modules/Problems/Module.php",
+        "line": 125
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_test_data_action",
+        "file": "modules/Problems/Module.php",
+        "line": 138
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_toggle_visibility",
+        "file": "modules/Problems/Module.php",
+        "line": 126
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_xml_export",
+        "file": "modules/Problems/Module.php",
+        "line": 136
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_problem_xml_import",
+        "file": "modules/Problems/Module.php",
+        "line": 137
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_quiz_create",
+        "file": "modules/Problems/Module.php",
+        "line": 131
+    },
+    {
+        "transport": "admin_post",
+        "owner": "problems",
+        "action": "oj_quiz_save",
+        "file": "modules/Problems/Module.php",
+        "line": 132
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_register_user",
+        "file": "modules/Auth/Module.php",
+        "line": 182
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_reset_public_menu_settings",
+        "file": "modules/Settings/Module.php",
+        "line": 52
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_save_agreement_document",
+        "file": "modules/Auth/Module.php",
+        "line": 203
+    },
+    {
+        "transport": "admin_post",
+        "owner": "ai_feedback",
+        "action": "oj_save_ai_feedback_settings",
+        "file": "modules/AI/Module.php",
+        "line": 86
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_save_ai_provider_settings",
+        "file": "modules/Settings/Module.php",
+        "line": 56
+    },
+    {
+        "transport": "admin_post",
+        "owner": "blockly",
+        "action": "oj_save_blockly_settings",
+        "file": "modules/Blockly/Module.php",
+        "line": 29
+    },
+    {
+        "transport": "admin_post",
+        "owner": "board",
+        "action": "oj_save_board_settings",
+        "file": "modules/Board/Module.php",
+        "line": 138
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_save_feature_flags",
+        "file": "modules/Settings/Module.php",
+        "line": 49
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_save_home_settings",
+        "file": "modules/Settings/Module.php",
+        "line": 53
+    },
+    {
+        "transport": "admin_post",
+        "owner": "judge_db",
+        "action": "oj_save_judge_db_settings",
+        "file": "modules/JudgeDb/Module.php",
+        "line": 41
+    },
+    {
+        "transport": "admin_post",
+        "owner": "migration",
+        "action": "oj_save_migration_settings",
+        "file": "modules/Migration/Module.php",
+        "line": 47
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_save_public_menu_settings",
+        "file": "modules/Settings/Module.php",
+        "line": 51
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_save_registration_settings",
+        "file": "modules/Auth/Module.php",
+        "line": 205
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_save_site_settings",
+        "file": "modules/Settings/Module.php",
+        "line": 50
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_save_smtp_settings",
+        "file": "modules/Settings/Module.php",
+        "line": 54
+    },
+    {
+        "transport": "admin_post",
+        "owner": "submissions",
+        "action": "oj_save_submission_display_settings",
+        "file": "modules/Submissions/Module.php",
+        "line": 109
+    },
+    {
+        "transport": "admin_post",
+        "owner": "submissions",
+        "action": "oj_save_submission_settings",
+        "file": "modules/Submissions/Module.php",
+        "line": 108
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_save_system_settings",
+        "file": "modules/Settings/Module.php",
+        "line": 57
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_save_user_settings",
+        "file": "modules/Auth/Module.php",
+        "line": 185
+    },
+    {
+        "transport": "admin_post",
+        "owner": "auth",
+        "action": "oj_send_guardian_consent_request",
+        "file": "modules/Auth/Module.php",
+        "line": 183
+    },
+    {
+        "transport": "admin_post",
+        "owner": "settings",
+        "action": "oj_send_smtp_test_mail",
+        "file": "modules/Settings/Module.php",
+        "line": 55
+    },
+    {
+        "transport": "admin_post",
+        "owner": "submissions",
+        "action": "oj_status_delete",
+        "file": "modules/Submissions/Module.php",
+        "line": 107
+    },
+    {
+        "transport": "admin_post",
+        "owner": "submissions",
+        "action": "oj_status_rejudge",
+        "file": "modules/Submissions/Module.php",
+        "line": 106
+    },
+    {
+        "transport": "admin_post",
+        "owner": "submissions",
+        "action": "oj_submission_delete",
+        "file": "modules/Submissions/Module.php",
+        "line": 105
+    },
+    {
+        "transport": "ajax",
+        "owner": "submissions",
+        "action": "oj_submission_poll",
+        "file": "modules/Submissions/Module.php",
+        "line": 110
+    },
+    {
+        "transport": "admin_post",
+        "owner": "submissions",
+        "action": "oj_submission_rejudge",
+        "file": "modules/Submissions/Module.php",
+        "line": 104
+    },
+    {
+        "transport": "admin_post",
+        "owner": "submissions",
+        "action": "oj_submit_submission",
+        "file": "modules/Submissions/Module.php",
+        "line": 103
+    }
+]

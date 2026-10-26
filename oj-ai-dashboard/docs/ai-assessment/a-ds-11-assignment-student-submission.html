@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-11 배포·학생 작성·제출</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-11 배포·학생 작성·제출</p>
+      <nav><div class="nav-group"><strong>문서</strong>
+        <a href="index.html">허브</a>
+        <a href="design-procedure.html">전체 설계 순서</a>
+        <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+        <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+        <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+        <a href="a-d-004-data-storage.html">A-D-004 데이터·저장</a>
+        <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+        <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+        <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+        <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+        <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+        <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+        <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+        <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+        <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+        <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+        <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+        <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+        <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+        <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+        <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+        <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html" aria-current="page">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+        <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+        <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+        <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+        <a href="redesign.html">재설계 기준</a>
+        <a href="code-consistency.html">코드 일관성</a>
+      </div><div class="nav-group"><strong>섹션</strong>
+        <a href="#result">결론</a>
+        <a href="#scope">범위·입력</a>
+        <a href="#baseline">현재 구현</a>
+        <a href="#domain">도메인·상태</a>
+        <a href="#assignment">배포·대상</a>
+        <a href="#schedule">일정·마감</a>
+        <a href="#responses">응답 계약</a>
+        <a href="#autosave">저장·충돌</a>
+        <a href="#attachments">첨부</a>
+        <a href="#zip-import">제출 파일 가져오기</a>
+        <a href="#submit">제출·접수증</a>
+        <a href="#reopen">재개방</a>
+        <a href="#automatic">자동 제출</a>
+        <a href="#pdf">PDF</a>
+        <a href="#rest">REST 추적</a>
+        <a href="#storage">저장 보강</a>
+        <a href="#platform-gap">플랫폼 공백</a>
+        <a href="#ui">화면 설계</a>
+        <a href="#security">보안·개인정보</a>
+        <a href="#errors">오류·복구</a>
+        <a href="#acceptance">수용 기준</a>
+        <a href="#decisions">결정 기록</a>
+        <a href="#completion">완료 판정</a>
+      </div></nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">Detailed Design 12 / 17</p>
+        <h2>배포·학생 작성·제출</h2>
+        <p>교사가 발행본과 대상을 확인해 배포하면 학생은 PublicUI의 학습 &gt; 활동지에서 정확한 발행 snapshot을 작성한다. 모든 저장은 불변 revision으로 남고, 제출은 공식 revision과 접수증을 고정한다. 마감·재개방·첨부·PDF도 같은 이력을 기준으로 판단한다.</p>
+        <div class="meta"><span class="badge">작성일 2026-08-13</span><span class="badge good">상태 사용자 확인·동결</span><span class="badge good">확정일 2026-08-13</span><span class="badge good">A-DS-05 Amendment 04 반영</span><span class="badge good">A-DS-08 Amendment 02 반영</span><span class="badge">응답칸 10종</span><span class="badge">REST 보강 3건 확정</span><span class="badge">DB 보강 2건 확정</span><span class="badge danger">플랫폼 CG01·CG02·CG11·RC02</span><span class="badge good">RC03 구현 인수</span><span class="badge">업무 Runtime 변경 0건</span></div>
+      </section>
+
+      <h2 id="scope">목적·범위·동결 입력</h2>
+      <section class="panel">
+        <p>이 단계는 assignment 생성부터 학생의 시작·저장·첨부·제출·재개방·작성 결과물 PDF까지 정한다. 제출물 AI 평가, 교사 채점, 피드백 공개는 A-DS-12·13이고 PDF 조판 엔진은 A-DS-14다.</p>
+        <table>
+          <thead><tr><th>입력</th><th>계승하는 동결 계약</th><th>A-DS-11 처리</th></tr></thead>
+          <tbody>
+            <tr><td><a href="a-ds-01-ui-system.html">A-DS-01</a></td><td>교사 배포 4단계, PublicUI 할 일·제출함·결과, 짧은 제품 문구</td><td>저장·첨부·제출·접수증 상태를 클릭형 시안에 구체화</td></tr>
+            <tr><td><a href="a-ds-03-access-policy.html">A-DS-03</a></td><td><code>assign_worksheets</code>, <code>manage_submissions</code>, <code>participate</code>와 Context·객체 Policy</td><td>교사와 학생 명령마다 현재 참여·대상·소유를 재검사</td></tr>
+            <tr><td><a href="a-ds-05-addon-database.html">A-DS-05</a></td><td>assignment·target·submission·revision·receipt·attachment·private file</td><td>신규 table 없이 일정·접수 증빙 공백만 amendment 후보로 기록</td></tr>
+            <tr><td><a href="a-ds-06-platform-ledger-connector.html">A-DS-06</a></td><td>플랫폼 class·group·participant 원장, 로컬 명단 master 금지</td><td><code>CG11</code> exact roster를 배정 증빙으로만 저장하고 현재 참여 권한은 매번 재검사</td></tr>
+            <tr><td><a href="a-ds-08-route-rest-command.html">A-DS-08</a></td><td>PG06·PG08, Q12~Q15·Q30~Q32, C13~C28·C48~C51</td><td>DTO·상태·오류·내부 자동 제출을 상세화하고 학생 결과물 PDF·ZIP 미리보기·연결 공백을 후보화</td></tr>
+            <tr><td><a href="a-ds-09-worksheet-authoring-version.html">A-DS-09</a></td><td>immutable publication, student document·response schema·print projection, 응답칸 10종</td><td>학생 입력을 stable response ID와 exact publication hash에 고정</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>동결선:</strong> 2026-08-13 사용자 확인으로 <code>A-DS11-D01~D24</code>, <code>A-DS11-DBA01~DBA02</code>, <code>A-DS11-RA01~RA03</code>을 동결했다. DB 보강은 A-DS-05 Amendment 04, REST 보강은 A-DS-08 Amendment 02에 반영했다. A-DS-16 승인 전에는 assignment·submission·PDF DDL·REST·Runtime을 구현하지 않으며 OJ Platform Runtime도 수정하지 않는다.</div>
+      </section>
+
+      <h2 id="baseline">현재 구현 기준선과 교체 지점</h2>
+      <table>
+        <thead><tr><th>ID</th><th>실제 구현 사실</th><th>목표 계약</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS11-B01</code></td><td>현재 assignment는 mutable template ID를 다시 읽어 배포 뒤 활동지·채점 기준이 달라질 수 있다.</td><td>정확한 worksheet publication public ID·hash와 학생 projection만 사용</td><td>교체</td></tr>
+          <tr><td><code>A-DS11-B02</code></td><td>대상은 조건값으로 저장되고 미시작 학생은 submission 행이 없어 제출 현황에서 누락된다.</td><td>배포 시 플랫폼 명단을 immutable target snapshot으로 고정하고 전원을 not_started부터 표시</td><td>교체</td></tr>
+          <tr><td><code>A-DS11-B03</code></td><td>학생 접근·저장·제출이 시작·마감을 서버 command 관문으로 강제하지 않는다.</td><td>서버 UTC 시각과 assignment schedule을 모든 조회·명령에서 재검사</td><td>교체</td></tr>
+          <tr><td><code>A-DS11-B04</code></td><td>autosave는 base revision 충돌을 409로 반환하지만 브라우저가 최신 내용을 버려 반복 충돌한다.</td><td>두 revision을 보존하고 비교·선택·병합 뒤 새 base로 저장</td><td>교체</td></tr>
+          <tr><td><code>A-DS11-B05</code></td><td>제출은 mutable root를 submitted로 바꾸며 별도 immutable receipt가 없다.</td><td>exact submission revision을 official pointer로 승격하고 append-only receipt를 생성</td><td>교체</td></tr>
+          <tr><td><code>A-DS11-B06</code></td><td>검사 대기 첨부도 공식 제출되고 ZIP 가져오기는 public uploads 추출·generic 응답·기존 공식본 덮어쓰기를 허용한다.</td><td>student·ZIP 파일 모두 private scan·exact response bind·official non-overwrite를 강제</td><td>교체</td></tr>
+          <tr><td><code>A-DS11-B07</code></td><td>재개방은 같은 submission의 제출·잠금 시각을 null로 덮고 사유·기존 공식본을 보존하지 않는다.</td><td>기존 official revision을 유지한 채 새 editable fork와 감사 사유를 생성</td><td>교체</td></tr>
+          <tr><td><code>A-DS11-B08</code></td><td>WP-Cron 5분·과제 100개가 기존 draft만 자동 제출하며 lock·checkpoint·receipt가 없다.</td><td>애드온 내부 지속 작업이 started draft를 멱등 처리하고 receipt·감사·재실행을 남김</td><td>교체</td></tr>
+          <tr><td><code>A-DS11-B09</code></td><td>학생 화면에 활동지·결과 PDF는 있으나 제출 직후 작성 결과물 PDF 명령은 없다.</td><td>본인의 exact official submission revision PDF를 비동기 생성</td><td><code>RA01</code> 필요</td></tr>
+          <tr><td><code>A-DS11-B10</code></td><td>동결 당시 학생 self participation·본인 Context 목록·교사용 exact roster가 없었다.</td><td>현재 Addon API 1.1의 CG01·CG02·CG11만 소비하고 로컬 우회 명단을 만들지 않음</td><td><span class="badge good">G0 해결·G1 연결 대기</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="domain">도메인 root와 상태 계약</h2>
+      <pre><code>PublishedWorksheetRevision (immutable)
+  → Assignment (schedule·policy, mutable before/while open)
+      → AssignmentTargetSnapshot (immutable learners·context revision)
+          → Submission (one root per assignment + learner)
+              → SubmissionRevision 1..n (immutable answers·attachments)
+                  → SubmissionReceipt 1..n (submit·auto_submit·proxy_submit·reopen·lock evidence)
+
+official_revision_public_id → 평가·PDF가 읽는 유일한 제출 source</code></pre>
+      <table>
+        <thead><tr><th>객체</th><th>상태</th><th>허용 전이</th></tr></thead>
+        <tbody>
+          <tr><td>Assignment</td><td><code>draft|scheduled|open|closed|withdrawn</code></td><td><code>draft → scheduled|open → closed ↔ open</code>, 어느 활성 상태에서나 명시적 <code>withdrawn</code></td></tr>
+          <tr><td>Target</td><td><code>active|revoked</code></td><td>배포 snapshot은 immutable, 보안·정정 목적의 명시적 revoke만 append audit와 함께 허용</td></tr>
+          <tr><td>Submission</td><td><code>draft|conflict|submitted|auto_submitted|proxy_submitted|reopened|locked</code></td><td>root가 없는 대상은 target에서 <code>not_started</code>로 계산한다. root 상태는 pointer와 행동 가능성을 요약하며 revision을 대체하지 않음</td></tr>
+          <tr><td>Submission revision</td><td><code>saved|reopened_fork</code></td><td>불변 row의 상태를 제출 때 바꾸지 않는다. official·superseded 의미는 root pointer와 append-only receipt 이력으로 계산</td></tr>
+          <tr><td>Attachment</td><td><code>staged|scanning|ready|rejected|bound|removed|expired</code></td><td><code>staged → scanning → ready → bound</code>; rejected·removed·expired는 terminal</td></tr>
+          <tr><td>Receipt action</td><td><code>submit|auto_submit|proxy_submit|reopen|lock</code></td><td>append-only이며 같은 idempotency key는 같은 receipt 반환</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>핵심 불변식:</strong> AI 평가·교사 검토·작성 결과물 PDF는 current draft나 브라우저 payload가 아니라 <code>official_revision_public_id + content_hash + publication_hash</code> 조합만 읽는다.</div>
+
+      <h2 id="assignment">배포 생성과 대상 snapshot</h2>
+      <div class="flow">
+        <div class="step"><div><strong>1 · 발행본</strong><br>published 상태의 exact publication ID·hash와 제목을 선택</div></div>
+        <div class="step"><div><strong>2 · 대상</strong><br>플랫폼 teaching Context와 <code>CG11</code> roster revision을 조회하고 학생 수·제외자를 미리 확인</div></div>
+        <div class="step"><div><strong>3 · 일정</strong><br>시작·정시 마감·최종 종료·재개방 횟수·자동 제출을 지정</div></div>
+        <div class="step"><div><strong>4 · 확인</strong><br>발행본·대상 인원·시간대·제출 정책을 다시 보고 한 번 생성</div></div>
+      </div>
+      <table>
+        <thead><tr><th>항목</th><th>고정 계약</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>발행 source</td><td><code>worksheet_publication_public_id</code>, <code>publication_hash</code>, <code>title_snapshot</code></td><td>현재 worksheet revision·mutable template 재조회</td></tr>
+          <tr><td>Context</td><td>class 또는 group stable ID·expected revision, operation <code>assign</code></td><td>학년 label을 Context ID로 사용, 애드온 학사 master</td></tr>
+          <tr><td>대상</td><td><code>CG11</code>의 활성 learner user ID·membership revision·roster revision, 최소 표시 snapshot, 각 row hash와 전체 canonical hash</td><td>브라우저가 보낸 학생 목록 신뢰, 배포 뒤 자동 명단 변경</td></tr>
+          <tr><td>멱등성</td><td>actor·publication hash·context revision·schedule hash·client operation ID</td><td>재시도로 중복 assignment 생성</td></tr>
+          <tr><td>명단 변경</td><td>open 뒤 신규·탈퇴 학생을 조용히 추가·삭제하지 않음. 현재 참여 상실은 접근을 즉시 거부</td><td>snapshot을 현재 권한으로 사용</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>원자 대상 수집:</strong> 첫 roster page가 반환한 <code>rosterRevision</code>을 후속 page의 <code>expectedRosterRevision</code>으로 고정한다. 명단 변경·반복 cursor·50 page·5,000명 상한·중복 learner·inactive 관계 하나라도 발견되면 assignment와 target row를 모두 만들지 않는다. target snapshot은 현재 권한이 아니라 배정 당시 증빙이다.</div>
+      <div class="warning callout"><strong>v1 대상 정정:</strong> 동결된 A-DS-08에는 개별 대상 수정 명령이 없다. 배포 뒤 잘못된 대상은 assignment 전체를 철회하고 올바른 snapshot으로 새 배포한다. 대상 행을 직접 update하는 숨은 기능을 만들지 않는다.</div>
+
+      <h2 id="schedule">일정·마감·정시 판정</h2>
+      <table>
+        <thead><tr><th>필드</th><th>의미</th><th>서버 행동</th></tr></thead>
+        <tbody>
+          <tr><td><code>opens_at_utc</code></td><td>작성 시작 시각, null이면 교사 open 명령 시각</td><td>이전에는 제목·예정 시각만 보여 주고 문서·start·save·submit 차단</td></tr>
+          <tr><td><code>due_at_utc</code></td><td>정시 제출 기준</td><td>이후 <code>closes_at_utc</code> 전까지 정책이 허용하면 <code>late</code>로 접수</td></tr>
+          <tr><td><code>closes_at_utc</code></td><td>작성·제출 최종 종료</td><td>이 시각부터 학생 start·save·upload·submit 차단, started draft의 자동 제출 대상화</td></tr>
+          <tr><td>수동 close</td><td>교사가 즉시 종료</td><td>명령 성공 시각을 effective close로 사용하고 같은 자동 제출 절차 실행</td></tr>
+          <tr><td>schedule version</td><td>시간·정책을 바꿀 때 1 증가</td><td>매 변경을 audit하고 receipt에 사용한 version·hash 고정</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li>시간 비교는 DB·브라우저 시각이 아니라 애드온 서버 UTC 한 곳에서 수행한다.</li>
+        <li><code>opens_at_utc &lt;= due_at_utc &lt;= closes_at_utc</code>를 요구한다. due와 close가 같으면 지각 허용 구간이 없다.</li>
+        <li>마감 연장은 제출 전·후 모두 새 schedule version이며 이미 발급한 receipt의 당시 판정은 바꾸지 않는다.</li>
+        <li>학생 화면은 site timezone의 절대 시각을 우선 표시하고 상대 문구는 보조로만 쓴다.</li>
+      </ul>
+
+      <h2 id="responses">학생 문서·응답칸 10종</h2>
+      <p>Q31은 A-DS-09 P01 학생 문서와 P02 <code>oj_ai.student_response_schema@1.0.0</code>만 반환한다. 정답·배점·rubric·교사 메모·grading schema는 모든 깊이에서 제외한다. 답안 envelope는 publication ID·hash, response schema version과 stable response ID map을 포함한다.</p>
+      <table>
+        <thead><tr><th>응답 종류</th><th>학생 입력</th><th>저장 검증</th></tr></thead>
+        <tbody>
+          <tr><td>단답형·서술형</td><td><code>short_text</code>·<code>long_text</code> UTF-8 문자열</td><td>trim·LF 정규화, min/max 문자 수</td></tr>
+          <tr><td>단일·복수 선택·확인 체크</td><td>stable option ID·boolean</td><td>발행 schema의 option 집합·선택 수</td></tr>
+          <tr><td>숫자</td><td>decimal string</td><td>min·max·step·소수 자릿수, float 변환 금지</td></tr>
+          <tr><td>표 입력</td><td>row·column ID별 cell map</td><td>알려진 ID·행 수·cell type</td></tr>
+          <tr><td>이미지·파일 첨부</td><td><code>image_upload</code>·<code>file_upload</code> ready private file ID 배열</td><td>owner·response ID·MIME·byte·count·scan·hash</td></tr>
+          <tr><td>그림 응답</td><td>drawing document ID·PNG preview ID</td><td>stroke schema·canvas·stroke 수·두 file hash</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>코드 응답 정합성:</strong> A-DS-09에서 동결한 학생 응답칸은 10종이며 별도 code response는 없다. <code>code_block</code>은 활동지 본문의 읽기 전용 콘텐츠 node다. A-DS-11은 긴 코드 답안을 임의로 서술형에 숨기거나 11번째 종류를 추가하지 않는다. 전용 코드 응답이 필요하면 A-DS-09 계약 개정부터 별도 승인한다.</div>
+
+      <h2 id="autosave">시작·자동 저장·충돌 복구</h2>
+      <pre><code>StartOwnSubmission
+  → root 1개 생성 또는 기존 root 반환
+  → editable revision pointer와 save token 반환
+
+AutosaveOwnSubmission(expected_current_revision, client_operation_id, answers, staged_attachment_ids)
+  → 전체 schema 검증
+  → immutable revision 생성 + ready attachment 원자 bind
+  → current pointer 변경 + save receipt 반환
+
+expected_current_revision 불일치
+  → 409 + server revision metadata
+  → client draft 보존 + 비교 화면
+  → 학생 선택·병합 뒤 최신 revision을 base로 새 autosave</code></pre>
+      <table>
+        <thead><tr><th>상태</th><th>화면 문구</th><th>행동</th></tr></thead>
+        <tbody>
+          <tr><td><code>local_only</code></td><td>기기에 보관됨</td><td>온라인 복구 뒤 서버 저장</td></tr>
+          <tr><td><code>saving</code></td><td>저장 중</td><td>중복 요청 없이 같은 operation ID 대기</td></tr>
+          <tr><td><code>saved</code></td><td>저장됨 · 시각</td><td>server revision과 content hash를 메모리에 갱신</td></tr>
+          <tr><td><code>offline</code></td><td>연결되면 저장됩니다</td><td>암호화 가능한 최소 local recovery만 queue</td></tr>
+          <tr><td><code>conflict</code></td><td>다른 저장 내용이 있습니다</td><td>자동 overwrite 금지, 내 내용·저장된 내용 비교</td></tr>
+          <tr><td><code>failed</code></td><td>저장하지 못했습니다</td><td>원인별 재시도·다시 로그인·공간 확보</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>local recovery 한계:</strong> 브라우저 저장소는 서버 정본이 아니다. 로그아웃·공용 기기에서는 즉시 제거하고 학생·assignment·publication hash와 짧은 만료를 결합한다. 첨부 binary, grading 정보, 다른 학생 데이터는 저장하지 않는다.</div>
+
+      <h2 id="attachments">학생 첨부·그림 응답</h2>
+      <table>
+        <thead><tr><th>단계</th><th>계약</th><th>실패 처리</th></tr></thead>
+        <tbody>
+          <tr><td>선택</td><td>응답 schema의 kind·개수·MIME·byte와 전체 제출 한도를 브라우저에서 미리 안내</td><td>서버가 같은 규칙을 다시 검사</td></tr>
+          <tr><td>업로드</td><td>C24 <code>multipart/form-data</code>, submission root owner, response ID, 파일 stream, operation ID</td><td>확장자만 믿지 않고 stream MIME·hash 계산</td></tr>
+          <tr><td>격리·검사</td><td><code>oj_ai_private_files</code> quarantined·scan 상태와 attachment staged row 연결</td><td>rejected 이유는 안전 code로만 표시</td></tr>
+          <tr><td>준비</td><td>ready file의 public ID·hash·byte·MIME receipt를 반환</td><td>pending이면 저장할 수 있으나 제출은 차단</td></tr>
+          <tr><td>결합</td><td>autosave transaction이 exact revision에 attachment를 bind하고 set hash 계산</td><td>bind 실패 시 revision pointer를 바꾸지 않고 staged 유지</td></tr>
+          <tr><td>정리</td><td>미결합 staged file은 24시간 뒤 expiry 후보, 학생 remove는 아직 bound되지 않은 항목만</td><td>과거 revision이 참조한 ready file 즉시 삭제 금지</td></tr>
+        </tbody>
+      </table>
+      <p>v1 기본 상한은 파일당 25MiB, 응답당 5개, 제출 전체 20개·100MiB다. image는 JPEG·PNG·WebP, file은 PDF·TXT·CSV·DOCX·XLSX·PPTX만 허용하며 학교 정책은 이보다 좁게만 설정할 수 있다. archive·HTML·SVG·script·실행 파일은 거부한다.</p>
+
+      <h2 id="zip-import">교사 제출 파일 가져오기</h2>
+      <p>A-DS08-C19~C21은 종이·오프라인으로 받은 파일을 교사가 학생 대신 수집하는 보호된 경로다. ZIP의 파일 하나는 발행본에 존재하는 정확한 <code>image_upload|file_upload</code> response ID 하나와 assignment target learner 한 명에 연결되어야 하며, 일반 답안 JSON이나 임의 response를 만들지 않는다.</p>
+      <div class="flow">
+        <div class="step"><div><strong>1 · 파일 확인</strong><br>C19가 ZIP을 private quarantine에 두고 비동기로 목록·MIME·압축 안전성을 검사</div></div>
+        <div class="step"><div><strong>2 · 학생 연결</strong><br>Q35에서 제안 결과를 보고 C68로 target 학생·응답칸을 명시적으로 고정</div></div>
+        <div class="step"><div><strong>3 · 최종 확인</strong><br>성공·제외 수와 교사 제출 사유를 확인하고 기존 공식 제출 충돌을 분리</div></div>
+        <div class="step"><div><strong>4 · 항목별 확정</strong><br>C20이 각 항목을 독립 transaction으로 proxy official revision·receipt에 반영</div></div>
+      </div>
+      <table>
+        <thead><tr><th>영역</th><th>고정 계약</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>안전 상한</td><td>압축 파일 100MiB, regular entry 500개, 항목 25MiB, 총 해제 500MiB, 항목·전체 압축비 20:1 이하</td><td>암호화·multi-disk·symlink·nested archive·absolute path·<code>..</code>·500자 초과 path</td></tr>
+          <tr><td>형식</td><td>대상 response의 image/file allowlist와 MIME·extension·magic byte·malware scan 모두 통과</td><td>JSON 답안, HTML·SVG·script·실행 파일, 확장자만 신뢰</td></tr>
+          <tr><td>학생 연결</td><td>filename 결과는 제안일 뿐이며 교사가 exact target learner와 response ID를 확인, server가 target snapshot을 재검사</td><td>이름·email fuzzy match만으로 자동 확정, assignment 밖 학생</td></tr>
+          <tr><td>공식본</td><td>미제출·draft 또는 교사가 C27로 연 reopened attempt만 새 <code>proxy_submit</code> official 가능</td><td>기존 official pointer 조용한 덮어쓰기, 학생 attempt 감소</td></tr>
+          <tr><td>부분 실패</td><td>item별 idempotency·receipt·error를 보존하고 성공 item은 유지, 실패 item만 mapping 수정 뒤 재개</td><td>실패를 성공으로 표시, 같은 item 중복 revision</td></tr>
+          <tr><td>보존</td><td>원본 ZIP·미확정 추출물은 private이며 취소 또는 완료 24시간 뒤 cleanup 후보</td><td>public uploads URL·절대 경로·원본 filename 로그</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>현재 구현 교체:</strong> 기존 <code>Zip_Safety_Validator</code>의 500개·50MiB·500MiB 제한은 압축비·symlink·암호화·MIME을 검사하지 않고, <code>Zip_Upload_Service</code>는 public uploads에 추출한 뒤 generic <code>zip_upload_submission</code>을 만들며 제출 완료 상태도 덮어쓸 수 있다. 이 코드는 목표 구현에서 재사용하지 않고 위 계약으로 교체한다.</div>
+
+      <h2 id="submit">제출 검증·공식 revision·접수증</h2>
+      <div class="flow">
+        <div class="step"><div><strong>1 · 다시 저장</strong><br>현재 화면 답안을 새 revision으로 저장하고 save receipt 확인</div></div>
+        <div class="step"><div><strong>2 · 사전 검증</strong><br>필수 응답·제약·ready 첨부·publication·마감·현재 참여 확인</div></div>
+        <div class="step"><div><strong>3 · 학생 확인</strong><br>답변 수·첨부 수·마감·제출 뒤 잠금을 짧게 표시</div></div>
+        <div class="step"><div><strong>4 · 원자 제출</strong><br>exact revision을 official로 승격하고 root pointer·attempt·receipt·audit 반영</div></div>
+        <div class="step"><div><strong>5 · 영수증</strong><br>새로고침해도 제출 시각·정시 여부·attempt·PDF 행동을 재조회</div></div>
+      </div>
+      <table>
+        <thead><tr><th>접수증 필드</th><th>값</th><th>목적</th></tr></thead>
+        <tbody>
+          <tr><td>정체성</td><td>receipt·submission·official revision public ID, receipt no, attempt no</td><td>재조회·지원·중복 요청 판정</td></tr>
+          <tr><td>source</td><td>submission revision hash, publication ID·hash, attachment set hash</td><td>평가·PDF 입력 불변성</td></tr>
+          <tr><td>시간</td><td>server received UTC, schedule version·hash, <code>on_time|late</code></td><td>마감 분쟁 재현</td></tr>
+          <tr><td>정책</td><td>resubmission policy hash, Context revision</td><td>당시 재제출·권한 규칙 증명</td></tr>
+          <tr><td>행동</td><td><code>submit|auto_submit|proxy_submit|reopen|lock</code>, <code>learner|teacher|system</code> actor type, nullable actor user ID, 교사 행동 사유</td><td>학생·교사·자동 행동 구분과 감사</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>응답 유실 복구:</strong> C26의 같은 <code>Idempotency-Key</code> 재전송은 같은 receipt를 반환한다. 네트워크가 끊기면 새 제출을 만들기 전에 Q32로 official pointer와 receipt를 조회한다.</div>
+
+      <h2 id="reopen">재개방·다시 제출·잠금</h2>
+      <table>
+        <thead><tr><th>명령</th><th>전제·효과</th><th>학생 경험</th></tr></thead>
+        <tbody>
+          <tr><td>C27 교사 재개방</td><td>사유 필수, assignment가 open이고 policy의 최대 attempt 안. 기존 official revision을 base로 새 editable revision 생성</td><td>재개방 사유·최종 시각·남은 시도 표시</td></tr>
+          <tr><td>C26 다시 제출</td><td>reopened 상태에서만 허용. 새 official pointer와 attempt+1 receipt 생성</td><td>이전 제출은 이력으로 남고 현재 결과물은 새 공식본</td></tr>
+          <tr><td>C28 교사 잠금</td><td>사유 필수, 현재 official을 유지하고 학생 편집 행동 제거</td><td>잠김 상태와 교사 문의 안내</td></tr>
+          <tr><td>C17 assignment 재개방</td><td>전체 일정의 새 schedule version 생성. 개별 submitted 학생을 자동 editable로 바꾸지 않음</td><td>해당 학생은 C27이 있어야 다시 작성</td></tr>
+        </tbody>
+      </table>
+      <p>v1은 학생이 임의로 제출을 취소하거나 스스로 다시 열 수 없다. <code>resubmission_policy</code>는 <code>max_attempts</code>, reopen 가능 종료 시각, 재개방 시 기존 답안 복사 여부를 고정하며 기본은 교사 재개방·최대 2회다.</p>
+
+      <h2 id="automatic">마감 자동 제출·미시작 학생</h2>
+      <p>자동 제출은 공개 REST가 아니라 애드온 내부 <code>AutoSubmitDueAssignments</code> Application command다. A-DS-07의 60초 trigger adapter를 공유하되 AI 평가 run table·AI Gateway·OJ Platform 작업 배정 기능은 사용하지 않는다. close·manual close transaction이 <code>oj_ai_outbox_events</code>에 assignment별 <code>assignment.auto_submit_due</code>를 넣고, worker는 outbox의 lease·attempt·error·idempotency를 정본으로 사용한다.</p>
+      <ol>
+        <li>60초 주기의 애드온 trigger가 close transaction이 만든 due outbox를 깨운다. 누락된 close event는 <code>closes_at_utc &lt;= server_now</code>와 <code>auto_submit_completed_at_utc IS NULL</code> 대조로 보상 생성하며 worker는 assignment별 outbox 한 건을 lease한다.</li>
+        <li>target snapshot 전원을 대조해 <code>draft|conflict|reopened</code>이면서 유효한 current revision이 있는 학생만 처리한다.</li>
+        <li>conflict는 자동 병합하지 않는다. 마지막으로 서버에 정상 저장된 revision만 정책이 허용할 때 official로 승격하고 receipt에 <code>auto_submit</code>을 기록한다.</li>
+        <li>한 번도 시작하지 않은 학생은 submission root나 빈 답안을 만들지 않는다. target row에서 <code>not_started</code>로 계산해 교사 모니터링에 미제출로 표시한다.</li>
+        <li>pending·rejected 첨부, invalid response schema, current revision 없음은 자동 제출 실패 항목으로 기록하고 교사 해결 작업에 남긴다.</li>
+        <li>WP-Cron 지연 뒤 실행되어도 effective close와 schedule hash로 판정하며 재실행은 같은 receipt를 반환한다.</li>
+      </ol>
+      <div class="warning callout"><strong>즉시 차단과 작업 지연 분리:</strong> close 시각부터 학생 명령은 동기적으로 즉시 거부한다. 자동 제출 receipt 생성은 worker가 최대 60초 늦을 수 있지만 학생이 그 사이 새 revision을 저장할 수는 없다.</div>
+
+      <h2 id="pdf">활동지·작성 결과물 PDF</h2>
+      <table>
+        <thead><tr><th>제품 행동</th><th>source</th><th>권한·출력</th><th>REST</th></tr></thead>
+        <tbody>
+          <tr><td>학생용 활동지 PDF</td><td>assignment의 exact publication ID·hash + P05 print projection</td><td>본인 active target, 정답·rubric 없음</td><td>A-DS08-C51</td></tr>
+          <tr><td>학생 작성 결과물 PDF</td><td>본인 official submission revision ID·hash + publication hash + bound attachment set</td><td>본인 submission, 교사용 비공개 정보 없음</td><td><code>A-DS11-RA01</code> 후보</td></tr>
+          <tr><td>교사용 제출 PDF</td><td>지정 exact submission revision</td><td><code>export_reports</code> + submission Context</td><td>A-DS08-C49</td></tr>
+          <tr><td>평가 결과 PDF</td><td>공개된 release revision + official submission source</td><td>본인 current release</td><td>A-DS08-C52, A-DS-13·14</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>REST 공백 반영 완료:</strong> C49는 교사용이고 C52는 평가 결과 공개 뒤 PDF다. 학생이 제출 직후 자신의 작성 결과물을 받을 수 있도록 <code>A-DS11-RA01</code>을 A-DS-08 Amendment 02의 C67로 반영했다.</div>
+
+      <h2 id="rest">A-DS-08 REST·Page 추적</h2>
+      <table>
+        <thead><tr><th>업무</th><th>기존 계약</th><th>A-DS-11 상세 입력·결과</th></tr></thead>
+        <tbody>
+          <tr><td>교사 화면</td><td>PG06 assignments, Q12~Q15</td><td>target 전원과 not_started 포함 상태, exact source·schedule·receipt</td></tr>
+          <tr><td>학생 화면</td><td>PG08, Q30~Q32</td><td>예정·할 일·제출함, student projection, actions allowlist</td></tr>
+          <tr><td>배포</td><td>C13~C18</td><td>publication·Context·target·schedule·policy expected hash와 idempotency</td></tr>
+          <tr><td>학생 작성</td><td>C22~C26</td><td>start, immutable autosave, private attachment, remove, official submit receipt</td></tr>
+          <tr><td>교사 파일 수집</td><td>C19~C21 + <code>A-DS11-RA02~RA03</code></td><td>private ZIP stage, preview poll, exact learner·response mapping, item별 proxy receipt</td></tr>
+          <tr><td>교사 제출 제어</td><td>C27~C28</td><td>reason·expected official revision·attempt·새 editable fork 또는 lock receipt</td></tr>
+          <tr><td>PDF</td><td>C48~C51</td><td>exact revision·hash·audience·print profile, 비동기 artifact</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>ID</th><th>A-DS-08 Amendment 02 확정</th><th>Method·path</th><th>결과</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS11-RA01</code></td><td><code>A-DS08-C67</code></td><td><code>POST /me/submissions/{submission_id}/commands/export-pdf</code></td><td><code>EnqueueOwnSubmissionPdf → 202 export job</code>; 본인 current official revision·hash 고정</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-RA02</code></td><td><code>A-DS08-Q35</code></td><td><code>GET /zip-uploads/{upload_id}</code></td><td><code>GetSubmissionZipPreview</code>; scan·제안·mapping version·항목 오류의 안전 projection</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-RA03</code></td><td><code>A-DS08-C68</code></td><td><code>POST /zip-uploads/{upload_id}/commands/map</code></td><td><code>MapSubmissionZipItems</code>; expected mapping version과 item별 target learner·response ID</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="storage">A-DS-05 Database Amendment 04 후보</h2>
+      <p>45개 table과 owner 10개는 충분하며 신규 table은 필요하지 않다. 다만 roster provenance, mutable assignment 일정과 receipt 당시 판정을 재현하려면 기존 세 table의 컬럼·profile을 보강해야 한다.</p>
+      <table>
+        <thead><tr><th>ID</th><th>Table</th><th>추가 컬럼</th><th>이유</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS11-DBA01</code></td><td><code>oj_ai_assignments</code>·<code>oj_ai_assignment_targets</code></td><td>assignment: <code>target_roster_revision VARCHAR(191)</code>, <code>schedule_version INT UNSIGNED</code>, <code>schedule_hash CHAR(64)</code>, <code>auto_submit_enabled TINYINT UNSIGNED</code>, <code>auto_submit_completed_at_utc DATETIME nullable</code>; target: <code>membership_revision VARCHAR(191)</code></td><td>exact roster provenance, 일정 변경·worker 멱등 처리·마감 재실행 기준</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-DBA02</code></td><td><code>oj_ai_submission_receipts</code></td><td>profile <code>PK, PID, IMM</code> → <code>PK, PID, SYS + content_hash</code>; 필수 <code>created_by_user_id</code> 제거. <code>actor_type VARCHAR(16)</code>, <code>actor_user_id BIGINT UNSIGNED nullable</code>, <code>reason VARCHAR(500) nullable</code>, <code>attempt_no INT UNSIGNED</code>, <code>submission_revision_hash CHAR(64)</code>, <code>publication_hash CHAR(64)</code>, <code>attachment_set_hash CHAR(64)</code>, <code>assignment_schedule_version INT UNSIGNED</code>, <code>assignment_schedule_hash CHAR(64)</code>, <code>resubmission_policy_hash CHAR(64)</code>, <code>timeliness VARCHAR(16)</code></td><td>system 자동 제출의 nullable actor, 교사 사유, source·정시·일정·정책 재현</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>Amendment 04 반영 완료:</strong> 2026-08-13 사용자 확정으로 기존 3개 table에 17개 column을 추가하고 receipt profile 1건을 전환했다. Table 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code> 원칙은 유지하며 DDL 구현은 A-DS-16 승인 뒤에만 시작한다. 추적 ID는 <code>A-DS11-DBA01</code>과 <code>A-DS11-DBA02</code>다.</div>
+
+      <h2 id="platform-gap">OJ Platform 공개 API 적합성</h2>
+      <table>
+        <thead><tr><th>플랫폼 ID</th><th>A-DS-11 필요</th><th>현재 상태</th><th>처리</th></tr></thead>
+        <tbody>
+          <tr><td><code>C28-I06-CG01</code></td><td>학생 actor 자신의 active class·group <code>participate</code> 판정</td><td>자기 참여만 허용·타인 대리 거부 구현</td><td><span class="badge good">PublicUI 기반 충족</span></td></tr>
+          <tr><td><code>C28-I06-CG02</code></td><td>학생 본인의 최소 class·group Context 목록</td><td><code>AddonLearningContextGatewayV1</code> 구현</td><td><span class="badge good">API 1.1 인수</span></td></tr>
+          <tr><td><code>C28-I06-CG11</code></td><td>교사가 배정할 Context의 exact active learner와 stable roster revision</td><td><code>AddonAssignmentRosterGatewayV1</code> 구현</td><td><span class="badge good">전체 배포 기반 충족</span></td></tr>
+          <tr><td><code>C28-I06-RC02</code></td><td>Public menu의 선언 capability 판정</td><td>scope와 addon capability를 모두 검사</td><td><span class="badge good">학습 &gt; 활동지 메뉴 기반 충족</span></td></tr>
+          <tr><td><code>C28-I06-RC03</code></td><td>REST에서 manifest capability의 실제 WordPress key 획득</td><td><code>AddonCapabilityKeyV1::wordpress()</code> 구현·fixture 통과</td><td><span class="badge good">R3 구현 인수, prefix 복제 금지</span></td></tr>
+          <tr><td><code>C28-I06-CG03~CG10</code></td><td>학년 의미·stale·pagination·오류 보상</td><td>소비자 인수·선택 후속</td><td>A-DS-06 결정을 그대로 적용</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>플랫폼 변경 기록:</strong> 위 공백은 이미 <a href="platform-api-implementation-audit.html">애드온 API 구현 재검증</a>과 OJ Platform <a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html#a-ds06-context-gap">C28 확장 API 문서</a>·<a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-api-v1-contract.html#a-ds06-consumer-gap">구현 이관 기록</a>에 같은 ID로 기록돼 있다. A-DS-11은 공개 API만 기다리며 OJ Platform source·table·migration을 수정하지 않는다.</div>
+
+      <h2 id="ui">PublicUI·Console 화면 계약</h2>
+      <table>
+        <thead><tr><th>화면</th><th>첫 화면 정보</th><th>주요 행동</th><th>금지 문구·구조</th></tr></thead>
+        <tbody>
+          <tr><td>교사 배포</td><td>발행본·대상 수·시작·마감·최종 종료·제출 정책</td><td>다음·이전·배포 예약</td><td>Context ID·hash·DTO를 제품 문구로 노출</td></tr>
+          <tr><td>제출 파일 가져오기</td><td>활동지·응답칸·파일 수·연결 완료·제외 수</td><td>ZIP 선택·학생 연결·가져오기</td><td>개발자 상태명·자동 fuzzy 확정·기존 제출 덮어쓰기</td></tr>
+          <tr><td>학생 할 일</td><td>예정·오늘 마감·진행 중, 교과·교사·절대 마감·저장 상태</td><td>활동지 열기</td><td>설명 카드 중첩, 개발자 상태명</td></tr>
+          <tr><td>학생 작성</td><td>활동지 제목·마감·진행 문항·저장 상태</td><td>응답·첨부·활동지 PDF·제출</td><td>정답·배점·rubric·교사 메모</td></tr>
+          <tr><td>저장 충돌</td><td>내 내용과 저장된 내용, 충돌 문항</td><td>내 것 사용·저장된 것 사용·문항별 병합</td><td>자동 overwrite, raw JSON</td></tr>
+          <tr><td>제출 확인</td><td>답변 수·필수 누락·첨부 준비·마감·잠금</td><td>취소·제출</td><td>generic confirm 한 줄</td></tr>
+          <tr><td>제출함</td><td>제출 시각·정시/지각·attempt·접수 번호</td><td>작성 결과물 PDF·재개방 알림</td><td>평가 전 점수 추측</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>시안 반영:</strong> <a href="a-ds-01-ui-prototype.html">클릭형 UI 시안</a>의 학생 작업대에 활동지 PDF, 문항 진행, 첨부 준비 상태, 저장 상태, 제출 접수증과 작성 결과물 행동을 보강한다. 화면 문구는 “저장 중”, “저장됨”, “파일 확인 중”, “제출 완료”처럼 짧게 유지한다.</div>
+
+      <h2 id="security">보안·개인정보·권한 재검사</h2>
+      <ul>
+        <li>Q30은 현재 actor의 target row만 반환하고 다른 학생 public ID·제출 상태·명단을 노출하지 않는다.</li>
+        <li>Q31·C22~C26은 capability, self Context, active target, learner ID=actor, assignment schedule, object ownership을 매번 재검사한다.</li>
+        <li>교사가 담당에서 해제되거나 학생이 탈퇴하면 snapshot이 남아 있어도 현재 접근은 거부한다. 보존·분쟁 처리는 별도 권한으로 한다.</li>
+        <li>student document는 allowlist로 새 tree를 만들고 모든 깊이에서 <code>correct_answer</code>, <code>grading</code>, <code>rubric</code>, <code>teacher_note</code> 0건을 검증한다.</li>
+        <li>private file은 public URL·절대 경로를 저장·반환하지 않고 Q24 또는 owner-aware stream query에서 현재 원본 Policy를 재검사한다.</li>
+        <li>ZIP preview는 target learner와 upload response만 반환하고 email·login·원본 path를 숨긴다. C20은 현재 교사 Context와 기존 official pointer를 item마다 다시 검사한다.</li>
+        <li>파일명은 표시용이며 경로에 사용하지 않는다. MIME·byte·hash·scan·owner·response ID를 모두 확인한다.</li>
+        <li>submission·receipt·audit에는 provider secret·AI routing·플랫폼 내부 table key를 저장하지 않는다.</li>
+        <li>rate limit은 actor·submission·operation 조합으로 적용하고 제출·PDF에는 안정 idempotency key를 요구한다.</li>
+      </ul>
+
+      <h2 id="errors">안정 오류·제품 문구·복구</h2>
+      <table>
+        <thead><tr><th>안정 code</th><th>상황</th><th>학생 문구</th><th>복구</th></tr></thead>
+        <tbody>
+          <tr><td><code>assignment_not_open</code></td><td>시작 전</td><td>아직 시작 전입니다</td><td>시작 시각 표시</td></tr>
+          <tr><td><code>assignment_closed</code></td><td>최종 종료 뒤 command</td><td>작성 시간이 끝났습니다</td><td>저장된 내용·접수 상태 조회</td></tr>
+          <tr><td><code>assignment_withdrawn</code></td><td>배포 철회</td><td>이 활동지는 종료되었습니다</td><td>목록 이동</td></tr>
+          <tr><td><code>submission_revision_conflict</code></td><td>expected revision 불일치</td><td>다른 저장 내용이 있습니다</td><td>비교·병합</td></tr>
+          <tr><td><code>submission_validation_failed</code></td><td>필수·형식 누락</td><td>확인할 답변이 있습니다</td><td>첫 오류 문항 이동</td></tr>
+          <tr><td><code>attachment_not_ready</code></td><td>검사 중·실패 파일</td><td>파일 확인이 끝나지 않았습니다</td><td>대기·재시도·제거</td></tr>
+          <tr><td><code>submission_already_official</code></td><td>제출 뒤 저장·재제출</td><td>이미 제출했습니다</td><td>접수증 열기</td></tr>
+          <tr><td><code>submission_attempt_limit_reached</code></td><td>최대 시도 초과</td><td>더 이상 다시 제출할 수 없습니다</td><td>교사 문의</td></tr>
+          <tr><td><code>student_context_unavailable</code></td><td>플랫폼 Context API 미준비·실패</td><td>지금은 활동지를 열 수 없습니다</td><td>나중에 다시 시도, correlation ID 운영 로그</td></tr>
+          <tr><td><code>assignment_roster_api_required</code></td><td><code>CG11</code> 미지원·roster 변경</td><td>대상을 다시 불러오세요</td><td>배포 row 0건, 첫 page부터 재선택</td></tr>
+          <tr><td><code>zip_preview_not_ready</code></td><td>ZIP 검사 진행 중</td><td>파일을 확인하고 있습니다</td><td>Q35 다시 조회</td></tr>
+          <tr><td><code>zip_mapping_invalid</code></td><td>대상·응답칸 누락·stale mapping</td><td>확인할 파일이 있습니다</td><td>해당 항목 다시 연결</td></tr>
+          <tr><td><code>submission_official_exists</code></td><td>기존 공식 제출 덮어쓰기 시도</td><td>이미 제출된 학생입니다</td><td>C27 재개방 또는 제외</td></tr>
+          <tr><td><code>export_source_not_official</code></td><td>학생 작성 결과물 source 없음</td><td>제출 후에 받을 수 있습니다</td><td>접수증 확인</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="acceptance">수용 기준 24개</h2>
+      <table>
+        <thead><tr><th>ID</th><th>자동·브라우저 수용 기준</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS11-A01</code></td><td>assignment가 exact publication public ID·hash를 보존하고 mutable worksheet를 다시 읽지 않음</td></tr>
+          <tr><td><code>A-DS11-A02</code></td><td>배포 대상이 <code>CG11</code> Context·roster·membership revision과 학생 전원 snapshot으로 고정되고 미시작도 교사 목록에 표시됨</td></tr>
+          <tr><td><code>A-DS11-A03</code></td><td>대상 snapshot과 현재 플랫폼 참여 판정을 모두 통과해야 학생 조회·명령이 허용됨</td></tr>
+          <tr><td><code>A-DS11-A04</code></td><td>시작 전·close 뒤 start·save·upload·submit이 서버에서 거부되고 화면 행동도 없음</td></tr>
+          <tr><td><code>A-DS11-A05</code></td><td>due 뒤 close 전 허용 제출이 late receipt로, due 전 제출이 on_time receipt로 고정됨</td></tr>
+          <tr><td><code>A-DS11-A06</code></td><td>학생 Q31 응답의 모든 깊이에서 정답·배점·rubric·교사 메모가 0건임</td></tr>
+          <tr><td><code>A-DS11-A07</code></td><td>A-DS-09 응답칸 10종 값이 stable response ID로 validation·autosave round-trip됨</td></tr>
+          <tr><td><code>A-DS11-A08</code></td><td>각 autosave가 immutable revision과 content hash를 만들고 root current pointer만 원자 변경함</td></tr>
+          <tr><td><code>A-DS11-A09</code></td><td>같은 autosave operation ID 재전송은 revision을 중복 생성하지 않음</td></tr>
+          <tr><td><code>A-DS11-A10</code></td><td>expected revision 충돌 시 두 답안을 보존하고 자동 overwrite 없이 비교·병합할 수 있음</td></tr>
+          <tr><td><code>A-DS11-A11</code></td><td>staged attachment가 private quarantine·scan·owner·response ID·hash를 거쳐 ready가 됨</td></tr>
+          <tr><td><code>A-DS11-A12</code></td><td>pending·rejected·wrong owner·unknown response 첨부가 bind되지 않고, ZIP item은 exact target·upload response만 proxy 제출하며 기존 official을 덮어쓰지 않음</td></tr>
+          <tr><td><code>A-DS11-A13</code></td><td>제출 transaction이 exact revision·official pointer·attempt·receipt·audit를 함께 반영함</td></tr>
+          <tr><td><code>A-DS11-A14</code></td><td>제출 응답 유실 뒤 같은 key 재전송 또는 Q32 조회로 같은 receipt를 회복함</td></tr>
+          <tr><td><code>A-DS11-A15</code></td><td>receipt에 source·publication·attachment·schedule·policy hash, timeliness, actor type·nullable actor user·교사 사유가 있음</td></tr>
+          <tr><td><code>A-DS11-A16</code></td><td>교사 재개방이 사유와 새 editable fork를 만들고 과거 official revision·receipt를 변경하지 않음</td></tr>
+          <tr><td><code>A-DS11-A17</code></td><td>assignment 전체 reopen이 제출된 학생을 자동 editable로 바꾸지 않음</td></tr>
+          <tr><td><code>A-DS11-A18</code></td><td>자동 제출은 started valid draft만 처리하고 미시작 학생에게 빈 submission을 만들지 않음</td></tr>
+          <tr><td><code>A-DS11-A19</code></td><td>자동 제출 worker 재실행이 중복 official revision·receipt를 만들지 않고 실패 항목을 재개함</td></tr>
+          <tr><td><code>A-DS11-A20</code></td><td>본인 활동지 PDF가 exact publication, 작성 결과물 PDF가 exact official revision을 source로 사용함</td></tr>
+          <tr><td><code>A-DS11-A21</code></td><td>PDF·첨부 stream이 nonce와 현재 원본 Policy를 재검사하고 공개 URL·영구 서명 URL이 0건임</td></tr>
+          <tr><td><code>A-DS11-A22</code></td><td>학생 UI의 저장·첨부·접수증과 교사 UI의 ZIP 선택·학생 연결·가져오기 결과가 짧은 제품 문구로 표시됨</td></tr>
+          <tr><td><code>A-DS11-A23</code></td><td><code>CG01~CG02·CG11·RC02</code> 미완료 시 배포·PublicUI release-ready 검사가 실패하고 로컬 학사 우회가 0건임</td></tr>
+          <tr><td><code>A-DS11-A24</code></td><td>A-DS-16 승인 전 assignment·submission·PDF Runtime·DDL과 OJ Platform Runtime 변경이 0건임</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">결정 기록 24개 · 사용자 확인·동결</h2>
+      <table>
+        <thead><tr><th>ID</th><th>설계 결정</th><th>근거</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS11-D01</code></td><td>assignment는 exact worksheet publication ID·hash만 배포 source로 사용한다.</td><td>배포 뒤 활동지 변동 차단</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D02</code></td><td>대상은 배포 시 플랫폼 Context revision과 학생 전원 immutable snapshot으로 고정한다.</td><td>미제출 포함 기대 명단 재현</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D03</code></td><td>snapshot은 증빙일 뿐 현재 플랫폼 참여·권한 검사를 대체하지 않는다.</td><td>탈퇴·담당 해제 즉시 반영</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D04</code></td><td>v1 배포 뒤 대상 오류는 철회·새 배포로 정정하고 대상 row를 update하지 않는다.</td><td>A-DS-08 명령 표면과 불변 snapshot 유지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D05</code></td><td>opens·due·closes 세 시각과 schedule version/hash를 서버 UTC로 판정한다.</td><td>시작·정시·최종 종료 의미 분리</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D06</code></td><td>due 뒤 close 전은 정책상 late 제출, close 뒤 모든 학생 write command는 차단한다.</td><td>지각 허용과 최종 잠금 일관성</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D07</code></td><td>학생 projection에는 P01·P02만 포함하고 모든 교사용 grading 정보를 제외한다.</td><td>정답·rubric 누출 차단</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D08</code></td><td>학생 응답칸은 A-DS-09의 10종을 유지하고 code response를 암묵 추가하지 않는다.</td><td>동결 계약 정합성</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D09</code></td><td>각 autosave는 immutable submission revision이며 stable response ID와 publication hash를 고정한다.</td><td>재현·평가 source 안정성</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D10</code></td><td>저장 충돌은 두 사본을 보존하고 사용자가 비교·병합한 뒤 새 revision으로 해결한다.</td><td>응답 손실 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D11</code></td><td>local recovery는 짧은 만료의 보조 수단이며 서버 정본·첨부 binary 저장소로 사용하지 않는다.</td><td>공용 기기 개인정보 최소화</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D12</code></td><td>학생 첨부와 교사 ZIP은 분리된 private quarantine을 사용하고, ZIP item은 exact target·upload response에만 bind한다.</td><td>악성·orphan·generic 응답·오대상 파일 차단</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D13</code></td><td>ready가 아닌 첨부를 포함한 official 제출은 fail closed한다.</td><td>미검사 공식 결과물 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D14</code></td><td>학생·자동·교사 대리 제출은 exact saved revision을 official로 승격하고 append-only receipt를 만든다.</td><td>브라우저 payload 직접 제출·공식본 덮어쓰기 금지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D15</code></td><td>receipt는 source·일정·정책·정시 여부·attempt와 learner|teacher|system actor·사유를 당시 값으로 고정한다.</td><td>마감·대리 제출 분쟁과 PDF·평가 provenance</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D16</code></td><td>재개방은 과거 official을 유지하고 그 revision을 base로 새 editable fork를 만든다.</td><td>제출 이력 보존</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D17</code></td><td>학생 self cancel·self reopen은 v1에서 제공하지 않고 교사 C27만 허용한다.</td><td>명확한 책임·REST 표면 유지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D18</code></td><td>자동 제출은 내부 지속 command이며 started valid draft만 official로 만든다.</td><td>빈 제출 생성·공개 REST 남용 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D19</code></td><td>자동 제출은 60초 trigger·outbox lease·idempotency·receipt·감사·실패 재개를 갖는다.</td><td>WP-Cron 5분 best-effort 교체</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D20</code></td><td>본인 활동지 PDF는 C51, 본인 작성 결과물 PDF는 RA01의 exact official revision으로 생성한다.</td><td>사용자 PDF 요구와 권한 분리</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D21</code></td><td><code>A-DS11-DBA01~DBA02</code>를 A-DS-05 Amendment 04로 반영한다.</td><td>roster·일정·actor·접수 증빙 공백 보완</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D22</code></td><td><code>A-DS11-RA01</code>·<code>A-DS11-RA02</code>·<code>A-DS11-RA03</code>을 A-DS-08 Amendment 02의 C67·Q35·C68로 반영한다.</td><td>학생 결과물 PDF와 ZIP preview·mapping REST 공백 보완</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D23</code></td><td><code>CG01~CG02·CG11·RC02</code>가 닫히기 전 배포·PublicUI를 release-ready로 판정하지 않는다.</td><td>플랫폼 공개 API 준수</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS11-D24</code></td><td>A-DS-16 승인 전 애드온 Runtime·DDL·REST와 OJ Platform Runtime을 구현·수정하지 않는다.</td><td>설계 동결 전 코드 변경 차단</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="completion">완료 판정과 다음 단계</h2>
+      <table>
+        <thead><tr><th>영역</th><th>상태</th><th>판정 근거</th></tr></thead>
+        <tbody>
+          <tr><td>배포·대상·일정</td><td>설계 동결</td><td>exact publication, immutable target, opens·due·closes, 서버 판정</td></tr>
+          <tr><td>학생 응답·저장</td><td>설계 동결</td><td>10종 응답, immutable autosave, local recovery, 충돌 비교·병합</td></tr>
+          <tr><td>첨부·ZIP·제출·재개방</td><td>설계 동결</td><td>private scan·exact mapping, proxy non-overwrite, official receipt, editable fork</td></tr>
+          <tr><td>자동 제출·PDF</td><td>설계 동결</td><td>internal worker, 미시작 제외, 활동지·작성 결과물 source</td></tr>
+          <tr><td>DB 정합성</td><td>보강 확정·반영</td><td><code>A-DS11-DBA01~DBA02</code>, 신규 table 0개</td></tr>
+          <tr><td>REST 정합성</td><td>보강 확정·반영</td><td><code>A-DS11-RA01~RA03</code>, 학생 own PDF·ZIP preview·mapping</td></tr>
+          <tr><td>플랫폼 API</td><td>G0 구현 인수</td><td><code>CG01~CG02·CG11·RC02·RC03</code> 충족, G1 애드온 adapter·Policy·화면 구현 대기</td></tr>
+          <tr><td>결정 24개</td><td>사용자 확인·동결</td><td><code>A-DS11-D01~D24</code></td></tr>
+          <tr><td>구현</td><td>미착수</td><td>A-DS-16 사용자 승인 뒤 시작</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>사용자 확정·동결:</strong> 2026-08-13 A-DS-11의 결정 24개, DB 보강 2건, REST 보강 3건을 확정했다. A-DS-05 Amendment 04와 A-DS-08 Amendment 02 반영을 마쳤으며 다음 상세 설계는 <a href="a-ds-12-submission-ai-assessment.html"><code>A-DS-12 학생 제출물 AI 평가</code></a>다.</div>
+      <p class="footer">A-DS-11 배포·학생 작성·제출 · 2026-08-13 사용자 확인·동결 · A-DS-05 Amendment 04·A-DS-08 Amendment 02 반영 · HTML 정본 · Runtime 변경 0건</p>
+    </main>
+  </div>
+</body>
+</html>

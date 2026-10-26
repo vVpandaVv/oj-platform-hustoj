@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-12 관리자 학습 공간 허브 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds12-prototype.css">
+</head>
+<body class="console">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <svg class="icon-symbols" aria-hidden="true">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 22a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M17 15a7 7 0 0 1 5 7"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4M20 4h-7v16h7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+  </svg>
+
+  <div class="prototype-bar"><div class="prototype-inner"><div class="prototype-title"><strong>DS-12 관리자 학습 공간 허브</strong><span>역할과 기능 ON/OFF 상태를 비교합니다.</span></div><div class="screen-switcher" role="tablist" aria-label="허브 상태 선택"><button type="button" role="tab" data-screen-target="learning-admin" aria-selected="true">전역 관리자</button><button type="button" role="tab" data-screen-target="learning-instructor" aria-selected="false">담당 강사</button><button type="button" role="tab" data-screen-target="learning-groups-off" aria-selected="false">Groups OFF</button><button type="button" role="tab" data-screen-target="learning-partial" aria-selected="false">부분 실패</button></div></div></div>
+  <header class="app-header"><div class="app-header-inner"><a class="brand" href="development-ds-12-learning-spaces.html"><span class="brand-mark">OJ</span><span>관리자 콘솔</span></a><a class="button ghost header-utility" href="development-ds-12-user-classes-ui.html">사용자 화면</a></div></header>
+
+  <div class="workspace console-workspace">
+    <aside class="console-sidebar" data-admin-sidebar="learning-admin" aria-label="전역 관리자 메뉴"><strong>관리자 메뉴</strong><div class="sidebar-role">플랫폼 관리자 · 전체 범위</div><a href="#dashboard"><svg><use href="#i-grid"/></svg>대시보드</a><a href="#users"><svg><use href="#i-users"/></svg>사용자</a><a href="#problems"><svg><use href="#i-book"/></svg>문제</a><a href="#submissions"><svg><use href="#i-send"/></svg>제출</a><a href="#learning-admin" aria-current="page"><svg><use href="#i-learn"/></svg>학습 공간</a><a href="#community"><svg><use href="#i-message"/></svg>커뮤니티</a><a href="#operations"><svg><use href="#i-settings"/></svg>운영</a></aside>
+    <aside class="console-sidebar" data-admin-sidebar="learning-instructor" aria-label="담당 강사 메뉴" hidden><strong>관리자 메뉴</strong><div class="sidebar-role">강사 · 담당 범위</div><a href="#dashboard"><svg><use href="#i-grid"/></svg>대시보드</a><a href="#problems"><svg><use href="#i-book"/></svg>문제</a><a href="#submissions"><svg><use href="#i-send"/></svg>제출</a><a href="#learning-instructor" aria-current="page"><svg><use href="#i-learn"/></svg>학습 공간</a><a href="#community"><svg><use href="#i-message"/></svg>커뮤니티</a></aside>
+    <aside class="console-sidebar" data-admin-sidebar="learning-groups-off" aria-label="Groups OFF 메뉴" hidden><strong>관리자 메뉴</strong><div class="sidebar-role">플랫폼 관리자 · Groups OFF</div><a href="#dashboard"><svg><use href="#i-grid"/></svg>대시보드</a><a href="#users"><svg><use href="#i-users"/></svg>사용자</a><a href="#problems"><svg><use href="#i-book"/></svg>문제</a><a href="#submissions"><svg><use href="#i-send"/></svg>제출</a><a href="#learning-groups-off" aria-current="page"><svg><use href="#i-learn"/></svg>학습 공간</a><a href="#community"><svg><use href="#i-message"/></svg>커뮤니티</a><a href="#operations"><svg><use href="#i-settings"/></svg>운영</a></aside>
+    <aside class="console-sidebar" data-admin-sidebar="learning-partial" aria-label="부분 실패 메뉴" hidden><strong>관리자 메뉴</strong><div class="sidebar-role">플랫폼 관리자 · 일부 Provider 실패</div><a href="#dashboard"><svg><use href="#i-grid"/></svg>대시보드</a><a href="#users"><svg><use href="#i-users"/></svg>사용자</a><a href="#problems"><svg><use href="#i-book"/></svg>문제</a><a href="#submissions"><svg><use href="#i-send"/></svg>제출</a><a href="#learning-partial" aria-current="page"><svg><use href="#i-learn"/></svg>학습 공간</a><a href="#community"><svg><use href="#i-message"/></svg>커뮤니티</a><a href="#operations"><svg><use href="#i-settings"/></svg>운영</a></aside>
+
+    <main class="page" id="main">
+      <section class="screen" data-screen="learning-admin"><div class="breadcrumb"><span>관리자</span><span>/</span><span>학습 공간</span></div><header class="page-heading"><div class="page-heading-main"><p class="eyebrow">전체 운영</p><h1>학습 공간</h1><p>수업, 대회·평가, 그룹을 기능별 소유 화면에서 관리합니다.</p></div></header><p class="route-caption">/oj-console/learning</p>
+        <div class="hub-grid"><a class="hub-item" href="development-ds-12-admin-classes-ui.html"><div><span class="badge info">구현 1순위</span><h2>수업</h2><span>진행 7개 · 참여자 186명 · 확인 필요 3건</span></div><span class="hub-action">수업 관리</span></a><a class="hub-item" href="development-ds-12-admin-contests-ui.html"><div><span class="badge wait">구현 2순위</span><h2>대회·평가</h2><span>진행 2개 · 준비 3개 · 오늘 종료 1개</span></div><span class="hub-action">대회·평가 관리</span></a><a class="hub-item" href="development-ds-12-admin-groups-ui.html"><div><span class="badge">구현 3순위</span><h2>그룹</h2><span>활성 8개 · 가입 승인 12명 · 수행 모드 1개</span></div><span class="hub-action">그룹 관리</span></a></div>
+        <section class="content-section"><div class="section-heading"><div><h2>확인할 운영 항목</h2><p>각 기능 Provider가 허용된 요약만 제공합니다.</p></div></div><div class="task-list"><div class="task-row"><span class="task-count">3</span><div class="task-main"><strong>수업 참여 승인</strong><span>담당 수업의 신청 대기</span></div><button class="button" type="button">확인</button></div><div class="task-row"><span class="task-count">1</span><div class="task-main"><strong>오늘 종료되는 평가</strong><span>결과 공개와 통계 검토 필요</span></div><button class="button" type="button">확인</button></div><div class="task-row"><span class="task-count">12</span><div class="task-main"><strong>그룹 가입 승인</strong><span>소유·위임 운영 범위</span></div><button class="button" type="button">확인</button></div></div></section>
+      </section>
+
+      <section class="screen" data-screen="learning-instructor" hidden><div class="breadcrumb"><span>관리자</span><span>/</span><span>학습 공간</span></div><header class="page-heading"><div class="page-heading-main"><p class="eyebrow">담당 범위</p><h1>학습 공간</h1><p>소유자·공동 강사·대회 담당자·그룹 운영자로 지정된 대상만 표시합니다.</p></div><span class="badge info">강사</span></header><p class="route-caption">/oj-console/learning</p>
+        <div class="hub-grid"><a class="hub-item" href="development-ds-12-admin-classes-ui.html"><div><h2>수업</h2><span>소유 2개 · 공동 강사 1개</span></div><span class="hub-action">담당 수업</span></a><a class="hub-item" href="development-ds-12-admin-contests-ui.html"><div><h2>대회·평가</h2><span>소유 1개 · 감독 1개</span></div><span class="hub-action">담당 대회·평가</span></a><a class="hub-item" href="development-ds-12-admin-groups-ui.html"><div><h2>그룹</h2><span>소유 1개 · 위임 운영 1개</span></div><span class="hub-action">담당 그룹</span></a></div><div class="scope-note"><strong>행 범위:</strong> 전역 통계나 다른 강사의 공간 수는 계산하거나 표시하지 않습니다.</div>
+      </section>
+
+      <section class="screen" data-screen="learning-groups-off" hidden><div class="breadcrumb"><span>관리자</span><span>/</span><span>학습 공간</span></div><header class="page-heading"><div class="page-heading-main"><p class="eyebrow">기능 구성</p><h1>학습 공간</h1><p>Groups 기능이 꺼져도 수업과 대회·평가는 직접 참여 관계로 정상 동작합니다.</p></div><span class="badge wait">Groups OFF</span></header><p class="route-caption">/oj-console/learning</p>
+        <div class="hub-grid"><a class="hub-item" href="development-ds-12-admin-classes-ui.html"><div><h2>수업</h2><span>직접 참여 수업 7개 · 정상 운영</span></div><span class="hub-action">수업 관리</span></a><a class="hub-item" href="development-ds-12-admin-contests-ui.html"><div><h2>대회·평가</h2><span>직접 참가 대회 5개 · 정상 운영</span></div><span class="hub-action">대회·평가 관리</span></a></div><div class="notice"><div><strong>그룹 메뉴는 표시하지 않습니다.</strong><br>기존 그룹 관계 행은 보존하지만 메뉴·경로·Jobs와 수업·대회 조회에서 사용하지 않습니다.</div></div>
+      </section>
+
+      <section class="screen" data-screen="learning-partial" hidden><div class="breadcrumb"><span>관리자</span><span>/</span><span>학습 공간</span></div><header class="page-heading"><div class="page-heading-main"><p class="eyebrow">부분 실패</p><h1>학습 공간</h1><p>한 기능의 요약 조회가 실패해도 다른 기능은 계속 사용할 수 있습니다.</p></div></header><p class="route-caption">/oj-console/learning</p>
+        <div class="hub-grid"><a class="hub-item" href="development-ds-12-admin-classes-ui.html"><div><h2>수업</h2><span>진행 7개 · 정상 조회</span></div><span class="hub-action">수업 관리</span></a><div class="empty-provider"><div><strong>대회·평가 요약을 불러오지 못했습니다.</strong><p>상세 오류는 운영 로그에만 기록합니다.</p><button class="button" type="button" data-toast="대회·평가 Provider만 다시 요청합니다.">다시 시도</button></div></div><a class="hub-item" href="development-ds-12-admin-groups-ui.html"><div><h2>그룹</h2><span>활성 8개 · 정상 조회</span></div><span class="hub-action">그룹 관리</span></a></div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" role="status" aria-live="polite"></div><script src="assets/oj-ui-prototype.js"></script><script src="assets/ds09-prototype.js"></script>
+</body>
+</html>

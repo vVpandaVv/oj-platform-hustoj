@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-D-008 모듈·데이터 소유권</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-D-008 모듈·데이터 소유권</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html" aria-current="page">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">판정</a>
+          <a href="#scope">범위·방법</a>
+          <a href="#evidence">조사 근거</a>
+          <a href="#inventory">현재 구성 수량</a>
+          <a href="#composition">현재 조립 구조</a>
+          <a href="#access">직접 데이터 접근</a>
+          <a href="#tables-current">현재 테이블 소유</a>
+          <a href="#cycles">순환 의존 후보</a>
+          <a href="#topology-target">목표 의존 방향</a>
+          <a href="#modules-target">목표 모듈 소유</a>
+          <a href="#contracts-target">목표 Contract</a>
+          <a href="#tables-target">목표 테이블 소유</a>
+          <a href="#rules">경계 규칙</a>
+          <a href="#findings">발견 격차</a>
+          <a href="#decision">확인할 결정</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <p class="notice">이 문서는 당시 구현의 조사 기록입니다. 아래에서 제거됨으로 표시한 구형 소스는 현재 사용되지 않아 정리했습니다. <a href="retired-runtime-removal-2026-10-20.html">제거 범위와 유지한 호환 기능</a>을 참고하세요.</p>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-D-008 · Module and Data Ownership Baseline</p>
+        <h2>모듈·데이터 소유권</h2>
+        <p>현재 12개 모듈의 조립 코드, 32개 구체 Repository, 35개 애드온 테이블과 플랫폼 연결을 다시 추적했다. 이름공간이 아니라 실제 생성·읽기·쓰기·JOIN 주체를 기준으로 소유자를 판정하고, 다른 모듈의 구현을 직접 참조하지 않는 목표 Contract 경계를 제안한다.</p>
+        <div class="meta">
+          <span class="badge">조사일 2026-08-10</span>
+          <span class="badge">상태 사용자 확인·기준선 확정</span>
+          <span class="badge">Module 12개</span>
+          <span class="badge">Service 30개</span>
+          <span class="badge">구체 Repository 32개</span>
+          <span class="badge">명시 Contract 2개</span>
+          <span class="badge">고정 테이블 35개</span>
+          <span class="badge">양방향 namespace 5쌍</span>
+          <span class="badge">경계 자동 검사 0개</span>
+          <span class="badge">실행 코드 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 판정</h2>
+      <section class="panel">
+        <p>현재 코드는 기능별 namespace를 갖췄지만 모듈 경계는 갖추지 못했다. 각 <code>*_Module</code>이 다른 도메인의 구체 Repository와 Service를 다시 생성하고, <code>Dashboard</code>와 <code>Submission</code>은 여러 소유 테이블을 직접 JOIN하며, <code>Import</code>는 대상 도메인의 저장소에 직접 쓴다. 목표 구조는 하나의 composition root, 모듈별 공개 application Contract, 테이블 단일 소유자, DTO 기반 교차 조회와 domain command 기반 쓰기로 전환해야 한다.</p>
+        <div class="warning callout"><strong>가장 큰 변경 확산 위험:</strong> <code>Submission_Repository</code>의 조회 한 건이 제출·과제·평가 결과·피드백·재평가·WordPress 사용자 schema를 동시에 알고, <code>Report_Content_Builder</code>는 11개 애드온 테이블을 직접 읽는다. 한 모듈의 column이나 상태 변경이 제출 화면과 모든 보고서에 즉시 전파된다.</div>
+      </section>
+
+      <h2 id="scope">조사 범위와 판정 방법</h2>
+      <table>
+        <thead><tr><th>관점</th><th>추적 범위</th><th>완료 질문</th></tr></thead>
+        <tbody>
+          <tr><td>조립</td><td><code>Plugin</code>, <code>Module_Manager</code>, 12개 <code>*_Module</code> 생성자와 등록 순서</td><td>구체 객체를 만드는 곳이 하나이며 boot 순서가 명시 계약으로 보장되는가</td></tr>
+          <tr><td>코드 의존</td><td>namespace 간 <code>use</code>, 생성자 타입, 선택 인자와 내부 <code>new</code>, WordPress filter</td><td>다른 모듈 구현 class와 숨은 runtime provider를 직접 참조하는가</td></tr>
+          <tr><td>데이터</td><td>Repository의 기본 테이블, 교차 JOIN, Service의 <code>$wpdb</code>, WordPress·OJ 원장 직접 읽기</td><td>각 물리 테이블의 읽기·쓰기 소유자가 하나이며 외부 원장은 공개 gateway로만 읽는가</td></tr>
+          <tr><td>이전·보고</td><td>Legacy Import commit, Dashboard 집계, PDF·CSV·ZIP source 조회</td><td>보조 기능이 도메인 저장 규칙을 우회하거나 schema 결합을 확대하는가</td></tr>
+          <tr><td>검증</td><td>테스트·정적 검사 script의 import·table owner·cycle 검사</td><td>금지 의존이 다시 들어오면 자동으로 실패하는가</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>변경 경계:</strong> 이 단계는 HTML 설계 문서만 갱신한다. <code>oj-ai-dashboard</code> PHP·JavaScript·schema와 <code>oj-platform</code> runtime은 수정하지 않는다. 애드온 설치·업데이트·실행 중 플랫폼 파일 또는 migration을 패치하지 않으며, 모든 유지 대상 애드온 테이블은 WordPress prefix 없는 <code>oj_ai_*</code> 이름을 계속 사용한다.</div>
+
+      <h2 id="evidence">조사 근거</h2>
+      <table>
+        <thead><tr><th>근거 코드·문서</th><th>확인 범위</th><th>확인 결과</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../../src/Core/Plugin.php"><code>Core/Plugin.php</code></a><br><a href="../../src/Core/Module_Manager.php"><code>Core/Module_Manager.php</code></a></td><td>모듈 생성·등록</td><td>Plugin이 12개 Module을 순서대로 만들고 Manager는 배열 등록만 수행한다. 공유 service registry나 typed composition bundle은 없다.</td></tr>
+          <tr><td><a href="../../src/Contracts/Module_Interface.php"><code>Module_Interface.php</code></a><br><span title="2026-10-20 제거된 구형 소스"><code>Scope_Provider_Interface.php</code> (제거됨)</span></td><td>공개 Contract</td><td>명시 interface는 모듈 등록과 학사 scope 두 개뿐이다. Worksheet·Submission·Assessment·Reporting·Import application Contract는 0개다.</td></tr>
+          <tr><td><code>Admin_Module.php·Platform_Module.php·Oj_Console_Connector.php (이전)</code><br>→ <a href="../../src/Core/Composition_Root.php"><code>Composition_Root.php</code></a>·<a href="../../src/Platform/Addon_Module.php"><code>Addon_Module.php</code></a>·<a href="../../src/Platform/Addon_Integration.php"><code>Addon_Integration.php</code></a></td><td>Console 조립</td><td>Admin이 Platform connector와 여러 도메인 서비스를 만들고 Platform은 다시 <code>Admin_Shell</code>을 참조한다.</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Submission_Module.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Assessment_Module.php</code> (제거됨)</span></td><td>핵심 도메인 조립</td><td>Submission이 Worksheet·Academic 구현을, Assessment가 Submission·Curriculum·Academic 구현을 직접 생성한다.</td></tr>
+          <tr><td><span title="2026-10-23 제거된 구형 소스"><code>Submission_Repository.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Worksheet_Assignment_Service.php</code> (제거됨)</span></td><td>제출 조회·대상 결정</td><td>Submission Repository가 Assessment 테이블과 WordPress users를 JOIN하고 Assignment Service가 Academic의 <code>group_members</code>를 직접 읽는다.</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Dashboard_Service.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Report_Content_Builder.php</code> (제거됨)</span></td><td>집계·보고서</td><td>Dashboard Service는 6개, Report Builder는 11개 애드온 테이블의 이름과 column을 직접 알고 교차 조회한다.</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Import_Module.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Legacy_Import_Service.php</code> (제거됨)</span></td><td>이전 데이터 commit</td><td>Import가 Academic·Worksheet·Curriculum·Assessment·Reporting의 구체 객체를 조립하고 여섯 target type을 대상 Repository 또는 Service로 직접 저장한다.</td></tr>
+          <tr><td><a href="../../src/Database/Table_Names.php"><code>Table_Names.php</code></a><br><a href="../../src/Database/Schema.php"><code>Schema.php</code></a><br><span title="2026-10-20 제거된 구형 소스"><code>Migrator.php</code> (제거됨)</span></td><td>물리 이름·DDL·migration</td><td>35개 도메인 테이블 이름과 DDL이 Database에 집중되어 있다. 실제 business owner와 schema 변경 owner가 분리되지 않는다.</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Oj_Table_Resolver.php</code> (제거됨)</span><br><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html#runtime-gateways"><code>C28-D09~D11</code></a></td><td>플랫폼 원장·AI 연결</td><td>현재 connector는 OJ table 후보를 추측하는 fallback을 갖는다. 목표 계약은 공개 context authorization과 AI task gateway만 허용한다.</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>check-functional-equivalence.mjs</code> (제거됨)</span><br><a href="../../scripts/validate-plugin-harness.ps1"><code>validate-plugin-harness.ps1</code></a></td><td>자동 경계 검사</td><td>기능 문자열·파일 존재 검사는 있으나 namespace cycle, foreign Repository import, foreign Table_Names 사용, table owner 중복 검사는 없다.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="inventory">현재 구성 수량</h2>
+      <table>
+        <thead><tr><th>현재 namespace</th><th>Module</th><th>Service</th><th>구체 Repository</th><th>현재 책임과 결합</th></tr></thead>
+        <tbody>
+          <tr><td>Core·Contracts</td><td>0</td><td>0</td><td>0</td><td>Plugin·Module Manager와 interface 2개. 조립 전용 composition root는 없음</td></tr>
+          <tr><td>Security·Admin</td><td>2</td><td>2</td><td>0</td><td>권한과 화면 shell뿐 아니라 학사·대시보드·플랫폼 service 조립과 AI 설정까지 담당</td></tr>
+          <tr><td>Environment·Platform·Compatibility</td><td>3</td><td>2</td><td>0</td><td>환경 진단, OJ DB fallback, Console 연결, legacy shortcode가 여러 Module에서 중복 생성됨</td></tr>
+          <tr><td>Academic</td><td>1</td><td>7</td><td>5</td><td>플랫폼 원장과 겹치는 학년도·학급·그룹·학생 mapping을 로컬에 보유</td></tr>
+          <tr><td>Curriculum·Worksheet</td><td>2</td><td>6</td><td>6</td><td>활동지 Service가 선택 인자 누락 시 Curriculum Repository를 내부 생성</td></tr>
+          <tr><td>Submission</td><td>1</td><td>4</td><td>6</td><td>과제·학생 제출·첨부·ZIP을 소유하면서 Worksheet와 Academic 구현을 직접 사용</td></tr>
+          <tr><td>Assessment</td><td>1</td><td>6</td><td>10</td><td>계획·실행·점수·검토·피드백을 소유하면서 Submission·Curriculum·Academic 저장소를 직접 사용</td></tr>
+          <tr><td>Dashboard</td><td>1</td><td>2</td><td>3</td><td>보고서·export를 소유하고 여러 도메인 테이블을 직접 집계</td></tr>
+          <tr><td>Import</td><td>1</td><td>1</td><td>2</td><td>run·item뿐 아니라 다섯 도메인의 구체 저장 구현을 직접 조립</td></tr>
+          <tr><td><strong>합계</strong></td><td><strong>12</strong></td><td><strong>30</strong></td><td><strong>32</strong></td><td><code>Database/Abstract_Repository</code> 1개는 구체 Repository 합계에서 제외</td></tr>
+        </tbody>
+      </table>
+      <p><code>src/Users</code>는 빈 namespace다. 반면 학생 identity는 Academic mapping, Submission의 WordPress users JOIN, Platform connector와 Dashboard DTO에 분산되어 있어 “사용자 소유 모듈”이 실제로 존재하지 않는다.</p>
+
+      <h2 id="composition">현재 조립 구조</h2>
+      <pre><code>Core\Plugin
+  ├─ Security_Module
+  ├─ Admin_Module ─────────────┬─ Academic concrete services/repositories
+  │                            ├─ Dashboard_Service
+  │                            ├─ Environment_Service
+  │                            ├─ Platform connectors
+  │                            └─ Worksheet/Admin presentation
+  ├─ Environment_Module
+  ├─ Platform_Module ──────────── Admin_Shell
+  ├─ Academic_Module ───────────── Platform connector + Security permission
+  ├─ Curriculum_Module
+  ├─ Worksheet_Module
+  ├─ Submission_Module ─────────── Worksheet repositories/services + Academic repository
+  ├─ Assessment_Module ─────────── Submission + Curriculum + Academic repositories
+  ├─ Dashboard_Module ──────────── Academic + Environment + Platform + cross-table SQL
+  ├─ Import_Module ──────────────── Academic + Worksheet + Curriculum + Assessment + Dashboard
+  └─ Compatibility_Module
+
+Module_Manager
+  └─ insertion order로 register()만 호출
+     service 공유·contract lookup·cycle 검사·table owner 검증 없음</code></pre>
+      <div class="warning callout"><strong>중복 조립:</strong> 같은 <code>Environment_Service</code>, <code>Oj_Connector</code>, <code>Student_Mapping_Repository</code>, <code>Worksheet_Template_Service</code>가 여러 Module에서 따로 생성된다. 동일 요청 안에서도 cache·상태·설정 snapshot이 서로 다른 객체에 머물 수 있고 테스트 대체점도 분산된다.</div>
+
+      <h2 id="access">현재 직접 Repository·테이블 접근</h2>
+      <table>
+        <thead><tr><th>접근 주체</th><th>직접 아는 대상</th><th>현재 위험</th><th>목표 대체</th></tr></thead>
+        <tbody>
+          <tr><td><code>Admin_Module</code></td><td>Academic Repository 5개와 service, Dashboard, Environment, Platform, Worksheet page</td><td>Presentation이 composition root와 domain coordinator 역할을 동시에 수행</td><td>주입받은 Console page handler와 application use-case Contract만 호출</td></tr>
+          <tr><td><code>Worksheet_Template_Service</code></td><td>Curriculum의 link·standard Repository를 선택 인자 fallback으로 내부 생성</td><td>생성자 호출만 보고 실제 의존을 알 수 없고 Worksheet 단위 테스트가 Curriculum DB까지 연결됨</td><td><code>AchievementCatalogQuery</code>와 Worksheet 소유 link port를 필수 주입</td></tr>
+          <tr><td><code>Submission_Module</code></td><td>Worksheet concrete Repository·Service, Academic Student Mapping</td><td>배포·제출이 mutable template과 로컬 학사 원장을 구현 수준에서 결합</td><td><code>PublishedWorksheetQuery</code>와 <code>PlatformContextPort</code></td></tr>
+          <tr><td><code>Submission_Repository</code></td><td>Submission·Assignment·Assessment Result·Feedback·Regrade Review·WordPress users</td><td>제출 aggregate 조회가 Assessment와 identity schema를 역방향 소유</td><td><code>SubmissionQuery</code>는 제출 데이터만 반환하고 검토·학생 표시 정보는 별도 DTO를 합성</td></tr>
+          <tr><td><code>Worksheet_Assignment_Service</code></td><td><code>oj_ai_group_members</code> 직접 SQL과 Student Mapping Repository</td><td>배포 대상이 플랫폼 context revision이 아니라 로컬 table row에 고정</td><td>C28-D10 기반 roster snapshot·authorization Contract</td></tr>
+          <tr><td><code>Assessment_Module</code></td><td>Submission 3개, Curriculum 5개, Academic 1개 concrete 객체</td><td>활동지·제출 평가 입력이 source snapshot Contract가 아니라 외부 저장 구현에 결합</td><td><code>EvaluationSubjectSource</code>, <code>RubricSource</code>, <code>AiTaskExecutionPort</code></td></tr>
+          <tr><td><code>Dashboard_Service</code></td><td>6개 애드온 테이블과 WordPress users</td><td>목록·집계가 Worksheet/Submission/Assessment/Academic 상태·column을 직접 해석</td><td>domain query DTO 또는 Reporting 소유 projection</td></tr>
+          <tr><td><code>Report_Content_Builder</code></td><td>11개 애드온 테이블</td><td>PDF·CSV 형식 변경과 모든 원천 schema 변경이 한 class에 모임</td><td>고정 source revision을 가진 <code>ReportSourceSnapshot</code></td></tr>
+          <tr><td><code>Legacy_Import_Service</code></td><td>worksheet, roster, assessment result, feedback, special note, report 대상 저장 구현</td><td>도메인 validation·transaction·audit를 우회하고 import가 대상 column을 소유</td><td>각 도메인이 제공하는 idempotent <code>ImportTargetPort</code></td></tr>
+          <tr><td><code>Oj_*_Connector</code></td><td>OJ table 후보와 column fallback</td><td>플랫폼 내부 schema 변경을 애드온이 추측하고 내부 DB를 공개 API처럼 사용</td><td>C28 Registration·onReady Runtime Context adapter만 유지</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="tables-current">현재 35개 테이블의 사실상 소유</h2>
+      <table>
+        <thead><tr><th>현재 소유 영역</th><th>물리 테이블</th><th>수</th><th>현재 판정</th></tr></thead>
+        <tbody>
+          <tr><td>Academic</td><td><code>oj_ai_academic_years</code>, <code>oj_ai_classes</code>, <code>oj_ai_groups</code>, <code>oj_ai_group_members</code>, <code>oj_ai_academic_context_mappings</code>, <code>oj_ai_student_mappings</code></td><td>6</td><td>Repository는 Academic에 있으나 플랫폼 사용자·학급·그룹 원장과 중복</td></tr>
+          <tr><td>미소유 운영 기록</td><td><code>oj_ai_activity_events</code>, <code>oj_ai_audit_logs</code></td><td>2</td><td>Table Name과 DDL만 있고 runtime Repository·writer 0개</td></tr>
+          <tr><td>Worksheet</td><td><code>oj_ai_worksheet_templates</code>, <code>oj_ai_worksheet_questions</code></td><td>2</td><td>Worksheet Repository 소유</td></tr>
+          <tr><td>Submission</td><td><code>oj_ai_worksheet_assignments</code>, <code>oj_ai_worksheet_submissions</code>, <code>oj_ai_submission_revisions</code>, <code>oj_ai_submission_attachments</code>, <code>oj_ai_zip_uploads</code>, <code>oj_ai_zip_upload_items</code></td><td>6</td><td>과제·제출·첨부·ZIP이 한 namespace에 있음</td></tr>
+          <tr><td>Curriculum</td><td><code>oj_ai_curriculums</code>, <code>oj_ai_achievement_standards</code>, <code>oj_ai_worksheet_achievement_links</code>, <code>oj_ai_question_achievement_links</code></td><td>4</td><td>catalog와 Worksheet lifecycle을 따르는 association의 소유가 섞임</td></tr>
+          <tr><td>Assessment</td><td><code>oj_ai_assessment_plans</code>, <code>oj_ai_assessment_runs</code>, <code>oj_ai_grading_inputs</code>, <code>oj_ai_rubric_snapshots</code>, <code>oj_ai_grading_items</code>, <code>oj_ai_assessment_results</code>, <code>oj_ai_regrade_reviews</code>, <code>oj_ai_feedback</code>, <code>oj_ai_feedback_approvals</code>, <code>oj_ai_special_notes</code></td><td>10</td><td>평가·검토·피드백의 주 소유는 명확하지만 Submission과 Dashboard가 일부를 직접 읽음</td></tr>
+          <tr><td>Dashboard·Reporting</td><td><code>oj_ai_reports</code>, <code>oj_ai_export_jobs</code>, <code>oj_ai_export_files</code></td><td>3</td><td>산출물 metadata는 소유하지만 source는 교차 SQL로 조립</td></tr>
+          <tr><td>Import</td><td><code>oj_ai_import_runs</code>, <code>oj_ai_import_items</code></td><td>2</td><td>실행·항목 기록은 명확하나 target write 소유를 침범</td></tr>
+          <tr><td><strong>합계</strong></td><td>WordPress prefix 없는 <code>oj_ai_*</code> 고정 물리 이름</td><td><strong>35</strong></td><td>DDL은 모두 중앙 <code>Database/Schema</code>가 소유</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="cycles">순환 의존 후보</h2>
+      <table>
+        <thead><tr><th>ID</th><th>현재 고리</th><th>형태</th><th>끊는 지점</th></tr></thead>
+        <tbody>
+          <tr><td><code>CYCLE-01</code></td><td>Admin → Platform connector/page → Admin_Shell</td><td>compile-time 양방향</td><td>PlatformBridge는 C28 adapter만, Console shell은 Presentation 소유</td></tr>
+          <tr><td><code>CYCLE-02</code></td><td>Admin → Academic service/page → Admin_Shell</td><td>compile-time 양방향</td><td>Academic 화면 제거, 플랫폼 context page handler를 Presentation에서 조립</td></tr>
+          <tr><td><code>CYCLE-03</code></td><td>Admin → Dashboard service/page → Admin_Shell</td><td>compile-time 양방향</td><td>Reporting application Contract를 Presentation에 주입</td></tr>
+          <tr><td><code>CYCLE-04</code></td><td>Admin → Environment page → Admin_Shell</td><td>compile-time 양방향</td><td>진단 query를 Operations가 제공하고 Presentation이 렌더링</td></tr>
+          <tr><td><code>CYCLE-05</code></td><td>Admin → Worksheet page → Admin_Shell</td><td>compile-time 양방향</td><td>Worksheet application Contract와 Console handler 분리</td></tr>
+          <tr><td><code>CYCLE-06</code></td><td>Academic → Security permission, Security → filter로 Academic scope provider 조회</td><td>숨은 runtime 양방향</td><td>Security가 typed <code>PlatformContextAuthorizationPort</code>를 필수 주입받음</td></tr>
+          <tr><td><code>CYCLE-07</code></td><td>Import가 다섯 도메인의 저장 구현에 fan-in</td><td>잠재 순환·변경 확산</td><td>Import는 도메인 소유 command port만 소비하고 어떤 도메인도 Import를 참조하지 않음</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>판정:</strong> 현재 확인된 compile-time 양방향 namespace는 다섯 쌍이고, scope provider는 WordPress filter에 숨은 여섯 번째 runtime 고리다. Import는 아직 역참조가 없어 엄밀한 cycle은 아니지만 거의 모든 도메인을 직접 조립하므로 작은 요구 하나로 순환이 생길 가능성이 가장 큰 fan-in 지점이다.</div>
+
+      <h2 id="topology-target">목표 의존 방향</h2>
+      <pre><code>OJ Platform C-28 public API
+  └─ AddonRegistrationGatewayV1
+       └─ AddonManifestBuilderV1::onReady()
+            └─ AddonRuntimeContextV1
+                 ├─ Context Authorization
+                 └─ AI Task Execution
+              │
+              ▼
+PlatformBridge adapters ── typed addon ports ───────────────┐
+                                                           │
+Presentation: OJ Console · PublicUI · REST                  │
+  └─ application use-case Contract만 호출                  │
+       ├─ Worksheet ── AchievementCatalogQuery ── Curriculum
+       ├─ Submission ── PublishedWorksheetQuery + ContextPort
+       ├─ Assessment ── EvaluationSubjectSource + AiTaskPort
+       ├─ Reporting  ◀── domain event/query DTO
+       └─ Import ────── domain별 ImportTargetPort
+
+Operations: AuditEventPort · Job 상태 · 진단
+Database: TransactionManager · migration runner · DB adapter
+Core CompositionRoot: 위 concrete 구현을 만드는 유일한 위치
+
+금지 방향
+  Domain ─X─ Admin/Presentation
+  Domain ─X─ 다른 Domain의 Repository 또는 Table
+  Add-on ─X─ Platform Container/Repository/DB/Secret
+  Import/Reporting ─X─ 대상 Domain table 직접 읽기·쓰기</code></pre>
+      <p>화살표는 호출 가능한 공개 Contract 방향을 뜻한다. concrete 구현 의존은 <code>Core CompositionRoot</code> 안에서만 허용하고, runtime service locator나 문자열 service ID를 만들지 않는다.</p>
+
+      <h2 id="modules-target">목표 모듈 책임</h2>
+      <table>
+        <thead><tr><th>목표 모듈</th><th>소유 책임</th><th>소유하지 않는 것</th><th>현재 코드 처리</th></tr></thead>
+        <tbody>
+          <tr><td>Core Composition</td><td>bootstrap, 환경 조건, concrete adapter·Repository·Service 조립, boot 실패 격리</td><td>화면, 업무 규칙, business table</td><td><code>Plugin</code>과 <code>Module_Manager</code>를 명시 조립 지점으로 재설계</td></tr>
+          <tr><td>PlatformBridge</td><td>C28 Manifest·단일 <code>onReady()</code> 등록, 전달받은 Runtime Context의 context·AI adapter, 호환 상태</td><td>플랫폼 DB·Container·secret, <code>oj_ai_*</code> table, 평가 정책</td><td><code>Oj_Table_Resolver</code>·내부 table fallback 제거 후보</td></tr>
+          <tr><td>Security·Policy</td><td>capability와 worksheet·assignment·submission·evaluation object scope 합성</td><td>로컬 역할 자동 생성, 학사 원장</td><td>filter provider를 typed Context Port로 교체</td></tr>
+          <tr><td>Curriculum</td><td>교육과정·성취기준 catalog와 read Contract</td><td>활동지 association lifecycle, Worksheet Repository</td><td>catalog 2개 table만 단일 소유</td></tr>
+          <tr><td>Worksheet</td><td>Plate 원문, 문항, draft revision, 자체 평가 대상 snapshot, 발행 snapshot, 성취기준 association</td><td>배포 대상·학생 답안·학생 평가 결과</td><td>template/question과 association의 owner를 통합</td></tr>
+          <tr><td>Submission</td><td>assignment·target snapshot·시작/마감, 학생 response revision, submit receipt, attachment, ZIP 수집</td><td>mutable Worksheet 원문, 공식 평가 결과, 플랫폼 roster 원장</td><td>현재 Assignment를 Submission 내부 하위 영역으로 유지하되 공개 Contract를 분리</td></tr>
+          <tr><td>Assessment</td><td>활동지 revision과 제출 revision의 평가 계획·batch·attempt·입력·rubric·결과·재평가·검토·feedback·release</td><td>평가 subject 원문, provider secret·model routing, 학생 공개 shell</td><td>두 평가 subject type의 prompt·schema·정책은 분리하고 실행 기반만 공유</td></tr>
+          <tr><td>Reporting</td><td>읽기 projection, 교사 작업함 집계, report/export/PDF artifact metadata</td><td>원천 domain table schema, public uploads 무권한 URL</td><td><code>Dashboard</code>의 교차 SQL을 DTO·event projection으로 교체</td></tr>
+          <tr><td>Import</td><td>legacy bundle parsing, staging, preview, mapping, run·item·checkpoint</td><td>대상 aggregate 저장 규칙과 Repository</td><td>domain별 idempotent import command를 호출</td></tr>
+          <tr><td>Operations·Audit</td><td>audit·activity event, worker heartbeat, 진단, 복구 명령의 공통 기록</td><td>각 도메인의 업무 상태 결정</td><td>현재 schema-only 두 table에 실제 owner 부여</td></tr>
+          <tr><td>Database Infrastructure</td><td>DB adapter, transaction, migration 실행·버전, 무접두어 이름·충돌 검사</td><td>도메인 DDL 의미, cross-domain query, business Repository</td><td>중앙 <code>Schema</code>를 모듈 schema descriptor 합성 방식으로 전환</td></tr>
+          <tr><td>Presentation</td><td>OJ Console·PublicUI page handler, REST controller, view model, asset</td><td>Service 생성, Repository, transaction, domain 상태 직접 변경</td><td><code>Admin</code>을 shell·handler 역할로 축소하고 domain page의 Admin 역참조 제거</td></tr>
+          <tr><td>Compatibility</td><td>명시적으로 허용된 legacy route·shortcode·데이터 판독과 만료 진단</td><td>정상 업무의 fallback 원장·silent write</td><td>기한·사용량·제거 관문이 있는 외곽 adapter로 제한</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>Academic target:</strong> 별도 Academic master 모듈을 유지하지 않는다. 사용자·학년도·학급·그룹·담당·roster는 플랫폼 원장이다. 애드온은 assignment와 평가에 필요한 stable ID·context revision·최소 표시 snapshot만 해당 aggregate 소유 테이블에 고정한다.</div>
+
+      <h2 id="contracts-target">목표 Contract 표</h2>
+      <table>
+        <thead><tr><th>Contract</th><th>정의·제공 소유자</th><th>주 소비자</th><th>허용 데이터</th></tr></thead>
+        <tbody>
+          <tr><td><code>AddonRegistrationGatewayV1</code><br><code>AddonManifestBuilderV1::onReady()</code><br><code>AddonRuntimeContextV1</code></td><td>OJ Platform C-28</td><td>PlatformBridge</td><td>Manifest 원자 등록, immutable runtime snapshot, context authorization, AI task 실행</td></tr>
+          <tr><td><code>PlatformContextPort</code></td><td>애드온 PlatformBridge adapter</td><td>Security, Submission, Reporting</td><td>stable actor·class·group·student ID, 최소 표시값, revision, authorization decision</td></tr>
+          <tr><td><code>AiTaskExecutionPort</code></td><td>애드온 PlatformBridge adapter</td><td>Assessment</td><td>선언 task의 route snapshot, 구조화 request·response, provider/model fingerprint, correlation ID</td></tr>
+          <tr><td><code>AchievementCatalogQuery</code></td><td>Curriculum</td><td>Worksheet, Assessment</td><td>성취기준 ID·version·label과 존재 여부. Repository 또는 table name은 비공개</td></tr>
+          <tr><td><code>WorksheetApplication</code></td><td>Worksheet</td><td>Console/REST Presentation</td><td>draft·revision·validate·evaluate request·publish command와 결과 DTO</td></tr>
+          <tr><td><code>PublishedWorksheetQuery</code></td><td>Worksheet</td><td>Submission, Reporting</td><td>불변 student·grading·print snapshot ID, hash, schema version</td></tr>
+          <tr><td><code>WorksheetEvaluationSource</code></td><td>Worksheet</td><td>Assessment subject adapter</td><td>특정 draft revision의 평가 허용 projection. mutable Repository 접근 금지</td></tr>
+          <tr><td><code>AssignmentApplication</code><br><code>SubmissionApplication</code></td><td>Submission</td><td>Console/PublicUI/REST Presentation</td><td>배포 preflight·commit, save·submit·reopen·proxy command와 receipt</td></tr>
+          <tr><td><code>SubmissionEvaluationSource</code></td><td>Submission</td><td>Assessment subject adapter</td><td>고정 submission revision, attachment extraction 상태와 허용 artifact reference</td></tr>
+          <tr><td><code>AssessmentApplication</code><br><code>AssessmentQuery</code><br><code>ReleaseQuery</code></td><td>Assessment</td><td>Console/PublicUI Presentation, Reporting</td><td>batch command, 검토·확정·공개 command, 공식 결과·공개 feedback DTO</td></tr>
+          <tr><td><code>ReportingProjectionInput</code><br><code>ReportApplication</code></td><td>Reporting</td><td>도메인 event adapter, Console/REST Presentation</td><td>event ID·source revision·허용 projection과 export job·artifact DTO</td></tr>
+          <tr><td><code>ImportTargetPort</code></td><td>각 대상 도메인</td><td>Import</td><td>normalized import DTO, dry-run validation, idempotency key, domain receipt</td></tr>
+          <tr><td><code>AuditEventPort</code></td><td>Operations</td><td>모든 상태 변경 use case</td><td>actor·object·command·before/after version·reason·correlation ID. 비밀값·민감 원문 제외</td></tr>
+          <tr><td><code>TransactionManager</code><br><code>SchemaDescriptor</code></td><td>Database Contract·adapter</td><td>도메인 application·schema provider</td><td>소유 모듈 transaction callback, table key·DDL·index·migration ID</td></tr>
+        </tbody>
+      </table>
+      <p>Contract는 concrete class를 반환하지 않고 versioned DTO 또는 command receipt를 반환한다. Pagination, filter, actor와 object scope, source revision, 오류 code를 입력·출력에 포함하며 WordPress hook 이름만으로 domain 계약을 대신하지 않는다.</p>
+
+      <h2 id="tables-target">목표 단일 테이블 소유자</h2>
+      <table>
+        <thead><tr><th>목표 소유자</th><th>현재 테이블 배정</th><th>목표 처리</th></tr></thead>
+        <tbody>
+          <tr><td>Platform 원장·Legacy Retirement</td><td>Academic 6개</td><td>신규 정상 업무 read/write 중단. C28 context로 전환하고 기존 행은 A-DS-15의 명시 이전·검증·보존 절차에서만 읽음</td></tr>
+          <tr><td>Operations·Audit</td><td>activity·audit 2개</td><td>공통 event·감사 writer의 단일 소유. schema-only 상태를 종료</td></tr>
+          <tr><td>Curriculum</td><td>curriculums·achievement_standards 2개</td><td>catalog 단일 소유와 read Contract 제공</td></tr>
+          <tr><td>Worksheet</td><td>worksheet_templates·worksheet_questions·worksheet_achievement_links·question_achievement_links 4개</td><td>association이 Worksheet revision lifecycle과 함께 검증·복제·보관되도록 이동</td></tr>
+          <tr><td>Submission</td><td>assignment·submission·revision·attachment·ZIP 6개</td><td>배포와 수집 aggregate 소유. Platform roster는 target snapshot으로만 고정</td></tr>
+          <tr><td>Assessment</td><td>plan·run·input·rubric·item·result·regrade·feedback·approval·special note 10개</td><td>평가와 검토·release 내부 package가 공유하되 Repository는 Assessment 밖에 비공개</td></tr>
+          <tr><td>Reporting</td><td>report·export job·export file 3개</td><td>source revision을 참조하고 필요한 조회 projection은 Reporting 소유 schema로 추가 설계</td></tr>
+          <tr><td>Import</td><td>import run·item 2개</td><td>staging·preview·checkpoint만 소유. target domain row는 소유하지 않음</td></tr>
+          <tr><td>Database</td><td>business table 0개</td><td>각 소유 모듈의 schema descriptor를 검증·정렬·실행할 뿐 DDL 의미를 소유하지 않음</td></tr>
+          <tr><td><strong>검산</strong></td><td><strong>6 + 2 + 2 + 4 + 6 + 10 + 3 + 2 = 35</strong></td><td>실제 유지·분할·추가·폐기 table과 column은 A-DS-05에서 aggregate·transaction 기준으로 확정</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>무접두어 유지:</strong> 소유자 이동은 물리 이름에 WordPress prefix를 붙인다는 뜻이 아니다. 유지되는 모든 table은 <code>oj_ai_*</code> 고정 이름을 사용한다. 기존 table 자동 rename·삭제·이중 쓰기는 하지 않고 A-DS-15의 사용자 확인 이전 절차를 거친다.</div>
+
+      <h2 id="rules">경계·transaction·조회 규칙</h2>
+      <table>
+        <thead><tr><th>규칙</th><th>허용</th><th>금지</th><th>자동 관문</th></tr></thead>
+        <tbody>
+          <tr><td>Concrete 생성</td><td>Core CompositionRoot와 해당 모듈 내부 factory</td><td>Module·Controller·Service에서 foreign Repository <code>new</code></td><td>namespace별 forbidden import 검사</td></tr>
+          <tr><td>Repository</td><td>소유 모듈 table만 읽기·쓰기</td><td>다른 owner의 <code>Table_Names</code>, Repository, WordPress users JOIN</td><td>table owner manifest와 SQL token 검사</td></tr>
+          <tr><td>교차 조회</td><td>versioned Query Contract, immutable DTO, Reporting projection</td><td>Dashboard·PDF builder의 cross-domain SQL</td><td>query contract unit·integration fixture</td></tr>
+          <tr><td>교차 변경</td><td>대상 domain command와 receipt, idempotent workflow</td><td>Import·Admin·Reporting의 target Repository 직접 write</td><td>command receipt·audit·idempotency 검사</td></tr>
+          <tr><td>Transaction</td><td>한 owner의 aggregate와 table을 owner service가 원자 처리</td><td>여러 module Repository를 한 service가 직접 묶는 pseudo transaction</td><td>failure injection과 rollback 검사</td></tr>
+          <tr><td>다중 domain workflow</td><td>지속 job·outbox/event·보상 command·checkpoint</td><td>브라우저 요청 안의 순차 write와 부분 성공 은폐</td><td>중단·resume·중복 delivery fixture</td></tr>
+          <tr><td>Platform</td><td>C28 public Registration + 애드온별 <code>onReady</code> Runtime Context</td><td>플랫폼 파일 patch, Container, DB, 내부 Repository, SecretVault 접근</td><td>플랫폼 file hash·forbidden symbol 검사</td></tr>
+          <tr><td>Schema</td><td>owner별 descriptor와 중앙 runner, <code>oj_ai_*</code> 충돌 preflight</td><td>Database가 35개 business schema를 단독 의미 소유</td><td>owner 1개·이름 중복 0·prefix 0 검사</td></tr>
+          <tr><td>Presentation</td><td>Use Case input/output DTO와 ViewModel</td><td>Repository, <code>$wpdb</code>, 상태 문자열 직접 update</td><td>Controller dependency 정적 검사</td></tr>
+          <tr><td>Cycle</td><td>CompositionRoot의 단방향 wiring</td><td>domain → Presentation, 상호 namespace import, filter service locator</td><td>namespace dependency graph acyclic 검사</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Import와 설정의 별도 소유권</h3>
+      <table>
+        <thead><tr><th>항목</th><th>현재</th><th>목표</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 템플릿 가져오기</td><td>Worksheet Service가 commit</td><td>Worksheet application command로 유지. 일반 legacy migration과 분리</td></tr>
+          <tr><td>이전 설치 데이터 가져오기</td><td>Import가 다섯 도메인의 저장 구현을 직접 호출</td><td>Import가 stage·preview하고 각 domain의 ImportTargetPort가 검증·commit·receipt 소유</td></tr>
+          <tr><td>legacy roster</td><td>Academic local master row 생성</td><td>Platform stable ID와 매핑 가능한 reference만 변환하고 불일치 항목은 격리·수동 확인. 플랫폼 write와 로컬 master 생성 금지</td></tr>
+          <tr><td>AI provider·model</td><td><code>Admin_Settings_Service</code> option에 중복 필드 존재</td><td>Platform AI 작업 배정의 route snapshot만 사용. 애드온 설정에서는 제거·이전 후보</td></tr>
+          <tr><td>assistant role</td><td>애드온이 WordPress 역할 sync</td><td>플랫폼 capability 명시 배정으로 이동하고 자동 role 생성 중단</td></tr>
+          <tr><td>평가 정책·rubric·검토 기준</td><td>Assessment와 Admin form에 분산</td><td>Assessment 정책 module이 version·검증·이력을 소유하고 Presentation은 command만 호출</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="findings">발견 격차와 후속 소유</h2>
+      <table>
+        <thead><tr><th>ID</th><th>중요도</th><th>현재 사실과 위험</th><th>후속</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-D008-F01</code></td><td><span class="badge danger">Critical</span></td><td>32개 구체 Repository에 비해 업무 Contract는 0개여서 다른 모듈의 구현 class가 사실상 공개 API로 사용됨</td><td>A-DS-00·02·16</td></tr>
+          <tr><td><code>A-D008-F02</code></td><td><span class="badge danger">Critical</span></td><td>단일 composition root 없이 Admin·Submission·Assessment·Import가 foreign concrete 객체를 반복 조립</td><td>A-DS-02·16</td></tr>
+          <tr><td><code>A-D008-F03</code></td><td><span class="badge danger">Critical</span></td><td>Platform connector가 OJ table 후보를 추측하고 Academic 6개 table이 플랫폼 원장을 중복해 context·권한·배포 대상이 갈라질 수 있음</td><td>A-DS-02·03·06·15</td></tr>
+          <tr><td><code>A-D008-F04</code></td><td><span class="badge danger">Critical</span></td><td>Submission Repository가 Assessment 3개 table과 WordPress users를 직접 JOIN해 제출과 평가·identity 소유권을 뒤섞음</td><td>A-DS-05·11·12</td></tr>
+          <tr><td><code>A-D008-F05</code></td><td><span class="badge danger">Critical</span></td><td>Dashboard·Report Builder가 최대 11개 table을 직접 읽어 모든 상태·column 변경이 집계와 PDF에 전파됨</td><td>A-DS-05·13·14</td></tr>
+          <tr><td><code>A-D008-F06</code></td><td><span class="badge danger">Critical</span></td><td>Import가 대상 Repository에 직접 써 domain validation·transaction·audit와 향후 schema 호환을 우회</td><td>A-DS-05·08·15</td></tr>
+          <tr><td><code>A-D008-F07</code></td><td><span class="badge danger">High</span></td><td>Admin↔Platform·Academic·Dashboard·Environment·Worksheet 다섯 compile-time 양방향 의존이 화면과 업무 코드의 독립 변경을 막음</td><td>A-DS-01·02·08·16</td></tr>
+          <tr><td><code>A-D008-F08</code></td><td><span class="badge danger">High</span></td><td>Security scope provider가 WordPress filter로 Academic 구현을 늦게 찾는 숨은 runtime 의존이라 boot 누락과 대체 실패를 정적으로 판정할 수 없음</td><td>A-DS-02·03·16</td></tr>
+          <tr><td><code>A-D008-F09</code></td><td><span class="badge danger">High</span></td><td>Worksheet Service의 선택 의존 fallback이 Curriculum Repository를 내부 생성해 생성자 계약과 실제 DB 의존이 다름</td><td>A-DS-05·09·16</td></tr>
+          <tr><td><code>A-D008-F10</code></td><td><span class="badge danger">High</span></td><td>35개 DDL을 Database가 중앙 소유해 schema 변경 책임과 domain aggregate 책임이 분리됨</td><td>A-DS-05·15·16</td></tr>
+          <tr><td><code>A-D008-F11</code></td><td><span class="badge danger">High</span></td><td>activity·audit 2개 table은 runtime writer와 Repository가 0개라 상태 변경·복구 명령의 감사 증거가 남지 않음</td><td>A-DS-05·07·13·15</td></tr>
+          <tr><td><code>A-D008-F12</code></td><td><span class="badge danger">High</span></td><td>AI provider·model과 assistant role 설정이 애드온 option에 남아 플랫폼 routing·capability 소유권과 중복</td><td>A-DS-03·04·15</td></tr>
+          <tr><td><code>A-D008-F13</code></td><td><span class="badge wait">Medium</span></td><td>Environment·Connector·Student Mapping·Worksheet Service를 여러 Module이 재생성해 요청 내 snapshot·cache·test double이 일관되지 않을 수 있음</td><td>A-DS-02·06·16</td></tr>
+          <tr><td><code>A-D008-F14</code></td><td><span class="badge danger">High</span></td><td>foreign Repository import, foreign table access, namespace cycle, table owner 중복을 차단하는 자동 architecture test가 0개</td><td>A-DS-16</td></tr>
+          <tr><td><code>A-D008-F15</code></td><td><span class="badge wait">Medium</span></td><td>빈 Users namespace와 여러 identity 조회 경로 때문에 사용자 표시·PII 최소화·삭제 사용자 처리의 책임이 불명확</td><td>A-DS-03·06·13·14</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decision">확인할 목표 결정</h2>
+      <section class="panel">
+        <ol>
+          <li>구체 Repository·Service·adapter를 만드는 곳은 Core CompositionRoot 하나로 제한한다. 각 Module은 자기 application Contract와 registration descriptor만 제공하며 runtime service locator를 두지 않는다.</li>
+          <li>모든 <code>oj_ai_*</code> 물리 table에 정확히 한 owner를 부여한다. Repository는 owner module의 table만 읽고 쓰며, 다른 module의 Repository·table name·WordPress users table을 직접 참조하지 않는다.</li>
+          <li>PlatformBridge는 C28의 등록·runtime gateway만 adapter로 감싼다. 플랫폼 파일·migration·Container·내부 Repository·DB·비밀 저장소를 읽거나 수정하지 않고, 자체 business table도 소유하지 않는다.</li>
+          <li>사용자·학년도·학급·그룹·담당·roster는 OJ Platform 원장만 사용한다. 현재 Academic 6개 table은 정상 업무 source에서 제외하고, A-DS-15의 명시적 legacy 이전·검증·보존·폐기 대상으로 둔다.</li>
+          <li>Curriculum은 교육과정·성취기준 catalog를, Worksheet는 Plate 원문·문항·revision·발행 snapshot과 worksheet/question 성취기준 association을 소유한다. 교차 확인은 <code>AchievementCatalogQuery</code>로 수행한다.</li>
+          <li>Submission은 assignment·target snapshot·학생 response revision·receipt·attachment·ZIP을 소유하고, <code>PublishedWorksheetQuery</code>와 <code>PlatformContextPort</code>만 소비한다. mutable Worksheet와 로컬 roster를 직접 읽지 않는다.</li>
+          <li>Assessment는 활동지 자체 평가와 학생 제출 평가의 계획·실행·결과·검토·feedback·release를 소유한다. 두 subject의 prompt·input/output schema·정책·이력은 분리하고, source는 고정 revision Contract로만 받으며 AI provider routing은 플랫폼 port로 실행한다.</li>
+          <li>Reporting은 report·export·PDF artifact와 전용 read projection을 소유한다. 원천 domain table을 JOIN하지 않고 versioned query DTO·event로 projection을 만들며 정확한 source revision과 권한을 보존한다.</li>
+          <li>Import는 run·item·staging·preview·mapping·checkpoint만 소유한다. 대상 데이터는 각 domain의 idempotent <code>ImportTargetPort</code>로 commit하고 target Repository를 주입받지 않는다.</li>
+          <li>Database는 transaction·migration 실행·schema version·<code>oj_ai_*</code> 이름과 충돌 검증만 소유한다. 각 domain이 자기 <code>SchemaDescriptor</code>를 제공하고, activity·audit table은 Operations가 실제 writer와 함께 소유한다.</li>
+          <li>Presentation은 OJ Console·PublicUI·REST handler와 ViewModel만 소유한다. domain Service 생성, Repository·<code>$wpdb</code> 접근, 상태 직접 update를 금지하고 application use-case Contract를 주입받는다.</li>
+          <li>A-DS-16 관문에 namespace cycle, foreign concrete import, foreign table access, table owner 1개, platform forbidden access와 platform file hash 검사를 추가한다. 위 규칙을 통과하기 전 구현 완료로 처리하지 않는다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>사용자 확정·동결:</strong> 2026-08-10 위 열두 항목을 모두 목표 소유권 기준으로 확인했다. A-D-008 모듈·데이터 소유권 기준선을 동결했으며, 다음 조사는 <a href="a-d-009-baseline-gap-freeze.html"><code>A-D-009 현재 상태 기준선과 격차</code></a>에서 진행한다.</div>
+
+      <h2 id="completion">A-D-008 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>결과</th><th>증거</th></tr></thead>
+        <tbody>
+          <tr><td>Module·Service·Repository 수량 검산</td><td>충족</td><td>Module 12, Service 30, 구체 Repository 32, Abstract Repository 1</td></tr>
+          <tr><td>명시 Contract 조사</td><td>충족</td><td><code>Module_Interface</code>·<code>Scope_Provider_Interface</code> 2개와 업무 Contract 0개 구분</td></tr>
+          <tr><td>모듈 조립 경로 추적</td><td>충족</td><td>Core boot부터 Admin·Submission·Assessment·Dashboard·Import의 foreign concrete 생성 기록</td></tr>
+          <tr><td>직접 Repository 접근 식별</td><td>충족</td><td>Admin·Submission·Assessment·Import의 foreign Repository·Service 참조 표</td></tr>
+          <tr><td>직접 테이블 접근 식별</td><td>충족</td><td>Submission 5개+users, Dashboard 6개+users, Report Builder 11개, Assignment의 group_members 직접 접근</td></tr>
+          <tr><td>현재 35개 table 소유 검산</td><td>충족</td><td>Academic 6, 미소유 2, Worksheet 2, Submission 6, Curriculum 4, Assessment 10, Reporting 3, Import 2</td></tr>
+          <tr><td>목표 단일 owner 배정</td><td>충족</td><td>Platform retirement 6, Operations 2, Curriculum 2, Worksheet 4, Submission 6, Assessment 10, Reporting 3, Import 2</td></tr>
+          <tr><td>순환 의존 후보 식별</td><td>충족</td><td>compile-time 양방향 5쌍, hidden scope provider 1개, Import fan-in 1개</td></tr>
+          <tr><td>목표 Contract와 의존 방향</td><td>충족</td><td>Platform·Worksheet·Submission·Assessment·Reporting·Import·Operations·Database의 제공·소비 표</td></tr>
+          <tr><td>자동 경계 검사 현황</td><td>충족</td><td>현재 architecture test 0개와 목표 6개 관문 기록</td></tr>
+          <tr><td>실행 코드·플랫폼 코드 변경 금지</td><td>충족</td><td>HTML 설계 문서만 작성, PHP·JS·schema·플랫폼 runtime 변경 0건</td></tr>
+          <tr><td>사용자 목표 기준 확인</td><td>충족</td><td>2026-08-10 열두 목표 소유권 결정을 사용자 확인으로 동결</td></tr>
+        </tbody>
+      </table>
+
+      <p class="footer">A-D-008 모듈·데이터 소유권 기준선을 사용자 확인으로 동결했다. 다음 단계: <a href="a-d-009-baseline-gap-freeze.html"><code>A-D-009 현재 상태 기준선과 격차</code></a></p>
+    </main>
+  </div>
+</body>
+</html>

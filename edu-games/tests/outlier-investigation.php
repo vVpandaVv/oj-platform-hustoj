@@ -1,0 +1,55 @@
+<?php
+declare(strict_types=1);
+use EduGames\Games\Modules\Outlier_Detection\Strategy_Board as Outlier_Board;
+
+$c=Outlier_Board::class;
+$expected=array('board-01'=>array(3,5),'board-02'=>array(4),'board-03'=>array(5),'board-04'=>array(3),'board-05'=>array(4),'board-06'=>array(3),'board-07'=>array(4),'board-08'=>array(2),'board-09'=>array(2),'board-10'=>array(),'board-11'=>array(2,4),'board-12'=>array(3));
+foreach($expected as $id=>$candidates){
+    $s=$c::create($id);$v=$c::view($s);
+    check_strategy($v['phase']==='compare'&&$v['initialCandidates']===null&&$v['audit']===array(),'fresh candidate judgment');
+    check_strategy(!isset($v['referenceCost']),'reference score does not leak candidate count');
+    foreach($v['records'] as $row)foreach(array('bad','evidence','sufficient','candidate') as $key)check_strategy(!array_key_exists($key,$row),'no preselected answer '.$key);
+    rejects_strategy(fn()=>$c::apply($s,array('type'=>'inspect','record'=>0,'evidence'=>'repeat')));
+    rejects_strategy(fn()=>$c::apply($s,array('type'=>'route','record'=>0,'route'=>'keep')));
+    $moves=$c::solution($id);$won=play_strategy('outlier-detection',$id,$moves);
+    check_strategy($won['initialCandidates']===$candidates&&$won['score']===1000,'independent candidate key and perfect strategy '.$id);
+    check_strategy(array_column(array_filter($won['audit'],static fn($r)=>$r['unusual']),'id')===array_map(static fn($i)=>chr(65+$i),$candidates),'terminal candidate review');
+    $assisted=$moves;foreach($assisted as &$move)if($move['type']==='inspect')$move['evidence']='repeat';unset($move);
+    $a=play_strategy('outlier-detection',$id,$assisted);
+    check_strategy($a['status']==='won'&&(!$candidates||$a['score']<1000),'universal remeasurement is not a perfect strategy '.$id);
+    $s=$c::apply($c::create($id),array('type'=>'investigate'));
+    $s=$c::apply($s,array('type'=>'inspect','record'=>0,'evidence'=>'repeat'));
+    $s=$c::apply($s,array('type'=>'inspect','record'=>1,'evidence'=>'repeat'));
+    rejects_strategy(fn()=>$c::apply($s,array('type'=>'inspect','record'=>2,'evidence'=>'repeat')));
+    check_strategy($s['spent']===8&&$c::view($s)['repeatRemaining']===0,'two measurements consume eight resources');
+}
+$s=$c::create('board-01');$s=$c::apply($s,array('type'=>'mark','record'=>3));$s=$c::apply($s,array('type'=>'mark','record'=>3));
+check_strategy($s['marked']===array()&&$s['spent']===0,'selection can be revised freely before confirmation');
+$s=$c::apply($s,array('type'=>'mark','record'=>3));$s=$c::apply($s,array('type'=>'mark','record'=>5));$s=$c::apply($s,array('type'=>'investigate'));
+rejects_strategy(fn()=>$c::apply($s,array('type'=>'mark','record'=>0)));
+rejects_strategy(fn()=>$c::apply($s,array('type'=>'investigate')));
+$s=$c::apply($s,array('type'=>'inspect','record'=>3,'evidence'=>'context'));
+check_strategy(!$c::view($s)['reviews'][3]['supported'],'inconclusive evidence gives no verdict');
+rejects_strategy(fn()=>$c::apply($s,array('type'=>'route','record'=>3,'route'=>'keep')));
+$s=$c::apply($s,array('type'=>'inspect','record'=>3,'evidence'=>'unit'));
+$s=$c::apply($s,array('type'=>'route','record'=>3,'route'=>'keep'));
+check_strategy($s['mistakes']===1&&$c::view($s)['reviews'][3]['state']==='recheck','guessing after evidence costs points');
+$s=$c::apply($s,array('type'=>'route','record'=>3,'route'=>'quarantine'));
+check_strategy($s['mistakes']===1&&$c::view($s)['reviews'][3]['state']==='settled','correcting does not erase first mistake');
+$s=$c::apply($s,array('type'=>'inspect','record'=>5,'evidence'=>'context'));$s=$c::apply($s,array('type'=>'route','record'=>5,'route'=>'keep'));$s=$c::apply($s,array('type'=>'finish'));
+check_strategy($s['status']==='won'&&$s['score']<1000&&$s['evaluation']['판단 수정 감점']===50,'a corrected real extreme observation remains valid but not perfect');
+$all=array();foreach(range(0,5) as $i)$all[]=array('type'=>'mark','record'=>$i);$all[]=array('type'=>'investigate');
+foreach(range(0,5) as $i){$all[]=array('type'=>'inspect','record'=>$i,'evidence'=>$i===3?'unit':'context');$all[]=array('type'=>'route','record'=>$i,'route'=>$i===3?'quarantine':'keep');}$all[]=array('type'=>'finish');
+$s=play_strategy('outlier-detection','board-01',$all);
+check_strategy($s['status']==='won'&&$s['score']===440&&$s['evaluation']['불필요하게 고른 후보']===4,'selecting every record cannot earn a perfect score');
+$missed=array_values(array_filter($c::solution('board-01'),static fn($m)=>!($m['type']==='mark'&&$m['record']===5)));
+$s=play_strategy('outlier-detection','board-01',$missed);
+check_strategy($s['status']==='won'&&$s['score']===900&&$s['evaluation']['첫 선택에서 놓친 후보']===1,'late discovery preserves the original missed-candidate penalty');
+$s=play_strategy('outlier-detection','board-01',array(array('type'=>'investigate'),array('type'=>'finish')));
+check_strategy($s['status']==='lost','empty selection cannot bypass unusual record evidence');
+$s=play_strategy('outlier-detection','board-10',$c::solution('board-10'));
+check_strategy($s['status']==='won'&&$s['spent']===1&&$s['initialCandidates']===array(),'different contexts can have no unusual values');
+$s=play_strategy('outlier-detection','board-12',$c::solution('board-12'));
+check_strategy($s['routes'][3]==='flag','unresolved outlier is held, not forced to error or normal');
+check_strategy(\EduGames\Boards\Catalog::version('outlier-detection')===Outlier_Board::VERSION,'new outlier season');
+check_strategy(\EduGames\Boards\Catalog::version('missing-values')===\EduGames\Boards\Catalog::VERSION,'other games keep existing season');

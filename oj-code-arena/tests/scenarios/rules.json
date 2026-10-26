@@ -1,0 +1,832 @@
+{
+  "_doc": "Shared rule scenarios run by BOTH engines: game-server/test/scenarios.test.js (Node) and tests/php/scenarios.php (built-in PHP). A 24-block board (2 rows x 12). Steps: move, occupy, submit, release, advance (ms), spawnBoss, grab, bossSubmit, giveUp, give (item into deck), item (use slot), pause. Expect keys: ok, why, correct, pos {id:[r,c]}, solvedCount, solved [i], unsolved [i], occ {i: id|null}, boss (null|phase), deckSize {id:n} (penalty off, attacks off, so a boss win always gives one help item), ended.",
+  "defaults": {
+    "occMs": 30000,
+    "bossWaitMs": 8000,
+    "bossLimitMs": 30000,
+    "limitMs": 300000,
+    "penalty": false
+  },
+  "scenarios": [
+    {
+      "name": "single steps and edges",
+      "players": [
+        {
+          "id": "1",
+          "r": 0,
+          "c": 0
+        }
+      ],
+      "steps": [
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "L"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "U"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "D"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                1,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "D"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                1,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "to": "end"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                1,
+                11
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "to": "first"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "to": "last"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                1,
+                11
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "to": "home"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                1,
+                0
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "jumps over solved and unsolved runs",
+      "solved": [
+        3,
+        4,
+        5,
+        9
+      ],
+      "players": [
+        {
+          "id": "1",
+          "r": 0,
+          "c": 0
+        }
+      ],
+      "steps": [
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "R",
+            "jump": true
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                2
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "R",
+            "jump": true
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                6
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "R",
+            "jump": true
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                8
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "R",
+            "jump": true
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                10
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "L",
+            "jump": true
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                8
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "boss blocks movement and edges",
+      "players": [
+        {
+          "id": "1",
+          "r": 0,
+          "c": 2
+        }
+      ],
+      "boss": {
+        "i": 5,
+        "phase": "wait"
+      },
+      "steps": [
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "R",
+            "jump": true
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                4
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "R"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                4
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "to": "end"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                4
+              ]
+            }
+          }
+        },
+        {
+          "do": "occupy",
+          "id": "1",
+          "expect": {
+            "ok": true
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "L"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                0,
+                4
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "occupy, taken, wrong and right answers",
+      "cells": {
+        "0": "print('a b')"
+      },
+      "players": [
+        {
+          "id": "1",
+          "r": 0,
+          "c": 0
+        },
+        {
+          "id": "2",
+          "r": 0,
+          "c": 0
+        }
+      ],
+      "steps": [
+        {
+          "do": "occupy",
+          "id": "1",
+          "expect": {
+            "ok": true,
+            "occ": {
+              "0": "1"
+            }
+          }
+        },
+        {
+          "do": "occupy",
+          "id": "2",
+          "expect": {
+            "ok": false,
+            "why": "taken"
+          }
+        },
+        {
+          "do": "submit",
+          "id": "1",
+          "text": "print('ab')",
+          "expect": {
+            "ok": true,
+            "correct": false,
+            "occ": {
+              "0": null
+            },
+            "unsolved": [
+              0
+            ]
+          }
+        },
+        {
+          "do": "occupy",
+          "id": "2",
+          "expect": {
+            "ok": true
+          }
+        },
+        {
+          "do": "submit",
+          "id": "2",
+          "text": "print ( \"a b\" )",
+          "expect": {
+            "correct": true,
+            "solved": [
+              0
+            ],
+            "solvedCount": 1,
+            "occ": {
+              "0": null
+            }
+          }
+        },
+        {
+          "do": "occupy",
+          "id": "1",
+          "expect": {
+            "ok": false,
+            "why": "solved"
+          }
+        }
+      ]
+    },
+    {
+      "name": "occupation times out, pause stops the clock",
+      "players": [
+        {
+          "id": "1",
+          "r": 0,
+          "c": 1
+        }
+      ],
+      "steps": [
+        {
+          "do": "occupy",
+          "id": "1",
+          "expect": {
+            "ok": true
+          }
+        },
+        {
+          "do": "advance",
+          "ms": 20000
+        },
+        {
+          "do": "pause",
+          "on": true
+        },
+        {
+          "do": "advance",
+          "ms": 60000,
+          "expect": {
+            "occ": {
+              "1": "1"
+            }
+          }
+        },
+        {
+          "do": "pause",
+          "on": false
+        },
+        {
+          "do": "advance",
+          "ms": 9000,
+          "expect": {
+            "occ": {
+              "1": "1"
+            }
+          }
+        },
+        {
+          "do": "advance",
+          "ms": 2000,
+          "expect": {
+            "occ": {
+              "1": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "boss grab sides, one chance, crown",
+      "players": [
+        {
+          "id": "1",
+          "r": 1,
+          "c": 3
+        },
+        {
+          "id": "2",
+          "r": 1,
+          "c": 6
+        }
+      ],
+      "steps": [
+        {
+          "do": "spawnBoss",
+          "i": 17,
+          "q": {
+            "title": "t",
+            "code": "print(6)",
+            "answers": [
+              "6"
+            ]
+          },
+          "expect": {
+            "boss": "wait"
+          }
+        },
+        {
+          "do": "grab",
+          "id": "1",
+          "key": "Delete",
+          "expect": {
+            "ok": false,
+            "why": "not-adjacent"
+          }
+        },
+        {
+          "do": "grab",
+          "id": "2",
+          "key": "Delete",
+          "expect": {
+            "ok": false,
+            "why": "not-adjacent"
+          }
+        },
+        {
+          "do": "grab",
+          "id": "2",
+          "key": "Backspace",
+          "expect": {
+            "ok": true,
+            "boss": "fight"
+          }
+        },
+        {
+          "do": "grab",
+          "id": "1",
+          "key": "Delete",
+          "expect": {
+            "ok": false,
+            "why": "no-boss"
+          }
+        },
+        {
+          "do": "bossSubmit",
+          "id": "2",
+          "text": "7",
+          "expect": {
+            "ok": true,
+            "correct": false,
+            "boss": null,
+            "unsolved": [
+              17
+            ]
+          }
+        },
+        {
+          "do": "spawnBoss",
+          "i": 17,
+          "q": {
+            "title": "t",
+            "code": "x = ___",
+            "answers": [
+              "1"
+            ],
+            "blank": true
+          },
+          "expect": {
+            "boss": "wait"
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "R"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                1,
+                4
+              ]
+            }
+          }
+        },
+        {
+          "do": "move",
+          "id": "1",
+          "cmd": {
+            "dir": "R"
+          },
+          "expect": {
+            "pos": {
+              "1": [
+                1,
+                4
+              ]
+            }
+          }
+        },
+        {
+          "do": "grab",
+          "id": "1",
+          "key": "Delete",
+          "expect": {
+            "ok": true,
+            "boss": "fight"
+          }
+        },
+        {
+          "do": "bossSubmit",
+          "id": "1",
+          "text": " 1 ",
+          "expect": {
+            "correct": true,
+            "solved": [
+              17
+            ],
+            "boss": null,
+            "deckSize": {
+              "1": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "boss escapes when nobody grabs it",
+      "players": [
+        {
+          "id": "1",
+          "r": 0,
+          "c": 0
+        }
+      ],
+      "steps": [
+        {
+          "do": "spawnBoss",
+          "i": 20,
+          "q": {
+            "title": "t",
+            "code": "print(1)",
+            "answers": [
+              "1"
+            ]
+          },
+          "expect": {
+            "boss": "wait"
+          }
+        },
+        {
+          "do": "advance",
+          "ms": 7900,
+          "expect": {
+            "boss": "wait"
+          }
+        },
+        {
+          "do": "advance",
+          "ms": 200,
+          "expect": {
+            "boss": null,
+            "unsolved": [
+              20
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "help items",
+      "solved": [
+        0
+      ],
+      "players": [
+        {
+          "id": "1",
+          "r": 0,
+          "c": 5
+        },
+        {
+          "id": "2",
+          "r": 1,
+          "c": 6
+        }
+      ],
+      "steps": [
+        {
+          "do": "occupy",
+          "id": "2",
+          "expect": {
+            "ok": true
+          }
+        },
+        {
+          "do": "give",
+          "id": "1",
+          "item": "bomb"
+        },
+        {
+          "do": "item",
+          "id": "1",
+          "slot": 1,
+          "expect": {
+            "ok": true,
+            "solved": [
+              4,
+              6,
+              16,
+              17,
+              18
+            ],
+            "unsolved": [
+              5
+            ],
+            "occ": {
+              "18": null
+            },
+            "solvedCount": 6,
+            "deckSize": {
+              "1": 0
+            }
+          }
+        },
+        {
+          "do": "give",
+          "id": "1",
+          "item": "sweep"
+        },
+        {
+          "do": "item",
+          "id": "1",
+          "slot": 1,
+          "expect": {
+            "ok": true,
+            "solved": [
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "unsolved": [
+              5
+            ],
+            "solvedCount": 11
+          }
+        },
+        {
+          "do": "give",
+          "id": "1",
+          "item": "drop"
+        },
+        {
+          "do": "item",
+          "id": "1",
+          "slot": 1,
+          "expect": {
+            "ok": true,
+            "solvedCount": 11
+          }
+        },
+        {
+          "do": "item",
+          "id": "1",
+          "slot": 1,
+          "expect": {
+            "ok": false,
+            "why": "empty"
+          }
+        }
+      ]
+    },
+    {
+      "name": "clearing the board ends the match",
+      "solvedAllBut": [
+        23
+      ],
+      "players": [
+        {
+          "id": "1",
+          "r": 1,
+          "c": 11
+        }
+      ],
+      "cells": {
+        "23": "x = 1"
+      },
+      "steps": [
+        {
+          "do": "occupy",
+          "id": "1",
+          "expect": {
+            "ok": true
+          }
+        },
+        {
+          "do": "submit",
+          "id": "1",
+          "text": "x=1",
+          "expect": {
+            "correct": true,
+            "ended": "clear",
+            "solvedCount": 24
+          }
+        }
+      ]
+    },
+    {
+      "name": "time limit ends the match",
+      "players": [
+        {
+          "id": "1",
+          "r": 0,
+          "c": 0
+        }
+      ],
+      "steps": [
+        {
+          "do": "advance",
+          "ms": 299000,
+          "expect": {
+            "ended": null
+          }
+        },
+        {
+          "do": "advance",
+          "ms": 1500,
+          "expect": {
+            "ended": "time"
+          }
+        },
+        {
+          "do": "occupy",
+          "id": "1",
+          "expect": {
+            "ok": false,
+            "why": "ended"
+          }
+        }
+      ]
+    }
+  ]
+}

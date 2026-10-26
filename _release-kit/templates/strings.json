@@ -1,0 +1,8 @@
+{
+  "tableHeader": "| 순서 | 플러그인 | 버전 | WordPress | PHP | OJ Platform | 패키지 파일 |",
+  "tableSeparator": "|---|---|---|---|---|---|---|",
+  "notPackagedShort": "(패키지 미생성)",
+  "notPackagedLong": "(아직 패키지가 생성되지 않았습니다. `_release-kit\release.cmd package` 실행 후 다시 생성하세요.)",
+  "overviewTitle": "설치 개요",
+  "serverTitle": "서버 준비 (순서대로)"
+}

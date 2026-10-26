@@ -1,0 +1,195 @@
+.htt-seat-board {
+    --htt-seat-cols: 6;
+    display: grid;
+    grid-template-columns: repeat(var(--htt-seat-cols), minmax(80px, 1fr));
+    gap: 8px;
+    margin: 16px 0;
+    overflow-x: auto;
+}
+
+.htt-seat-board::before {
+    content: "칠판";
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 8px;
+    border: 1px dashed var(--htt-muted);
+    border-radius: 4px;
+    color: var(--htt-muted);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+/*
+ * [data-htt-host]/[data-htt-join] prefixes aren't for scoping — .htt-seat
+ * is already unique to this feature — they exist purely to outrank
+ * console.css's generic "[data-htt-host] button" rule now that seat cells
+ * on the host board and the exclusion-grid preview are real <button>s
+ * (needed for click-to-swap and click-to-exclude), not inert <div>s.
+ */
+[data-htt-host] .htt-seat,
+[data-htt-join] .htt-seat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+    border: 1px solid var(--htt-border);
+    border-radius: 6px;
+    padding: 6px;
+    background: var(--htt-card-bg);
+    color: var(--htt-fg);
+    font-size: 1rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.htt-seat.is-empty {
+    color: var(--htt-disabled-fg);
+    border-style: dashed;
+}
+
+.htt-seat.is-disabled {
+    background: var(--htt-disabled-bg);
+    color: var(--htt-disabled-fg);
+    border-style: dotted;
+    cursor: not-allowed;
+}
+
+.htt-seat.is-locked {
+    border-color: var(--htt-accent);
+    box-shadow: inset 0 0 0 1px var(--htt-accent);
+}
+
+.htt-seat.is-selected,
+.htt-seat.is-me {
+    background: var(--htt-highlight-bg);
+    border-color: var(--htt-highlight-border);
+    box-shadow: 0 0 0 3px var(--htt-highlight-border);
+    color: var(--htt-fg);
+    font-weight: 700;
+}
+
+.htt-seat.is-covered {
+    background: var(--htt-accent);
+    border-color: var(--htt-accent);
+    color: var(--htt-accent-contrast, #fff);
+    font-weight: 700;
+}
+
+.htt-seat.is-covered .htt-seat-index {
+    color: inherit;
+    opacity: 0.8;
+}
+
+.htt-seating-result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.htt-seating-result-actions .htt-student-name-mode {
+    display: grid;
+    gap: 4px;
+    min-width: 180px;
+    margin-right: auto;
+}
+
+.htt-condition-help {
+    margin: 8px 0 12px;
+    color: var(--htt-muted);
+    font-size: 0.9rem;
+}
+
+.htt-seat-board-preview {
+    margin-bottom: 8px;
+}
+
+.htt-seat-board-preview::before {
+    content: none;
+}
+
+.htt-seat-board-preview .htt-seat {
+    min-height: 44px;
+    font-size: 0.8rem;
+}
+
+.htt-seat-index {
+    font-size: 0.7rem;
+    color: var(--htt-muted);
+}
+
+.htt-seating-setup textarea {
+    width: 100%;
+    min-height: 100px;
+    box-sizing: border-box;
+    background: var(--htt-card-bg);
+    color: var(--htt-fg);
+    border: 1px solid var(--htt-border);
+}
+
+.htt-seating-setup label {
+    display: block;
+    margin-bottom: 12px;
+}
+
+.htt-seating-setup fieldset {
+    margin-bottom: 12px;
+}
+
+.htt-seating-messages .message {
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+.htt-seating-messages .message.warning {
+    background: var(--htt-warning-bg);
+    color: var(--htt-warning-fg);
+}
+
+.htt-seating-messages .message.info {
+    background: var(--htt-info-bg);
+    color: var(--htt-info-fg);
+}
+
+@media print {
+    /* Print-scoped selectors isolate the board without overriding the cascade. */
+    body.htt-print-seating * {
+        visibility: hidden;
+    }
+
+    body.htt-print-seating .htt-seating-result,
+    body.htt-print-seating .htt-seating-result .htt-seat-board,
+    body.htt-print-seating .htt-seating-result .htt-seat-board * {
+        visibility: visible;
+    }
+
+    body.htt-print-seating .htt-seating-result {
+        position: absolute;
+        inset: 0;
+        padding: 12mm;
+        background: rgb(255 255 255);
+        color: rgb(17 17 17);
+    }
+
+    body.htt-print-seating .htt-seating-result > :not(.htt-seat-board) {
+        display: none;
+    }
+
+    body.htt-print-seating .htt-seat-board {
+        overflow: visible;
+        gap: 4mm;
+    }
+
+    body.htt-print-seating .htt-seat,
+    body.htt-print-seating .htt-seat.is-covered {
+        min-height: 18mm;
+        border: 1px solid rgb(119 119 119);
+        background: rgb(255 255 255);
+        color: rgb(17 17 17);
+        box-shadow: none;
+    }
+}

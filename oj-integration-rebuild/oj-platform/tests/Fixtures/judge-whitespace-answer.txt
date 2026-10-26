@@ -1,0 +1,9 @@
+spaces.out
+--
+|Expected|Yours
+|--|--
+|  Hello world  ↩|Hello` `world↩
+|	42 	↩|`    42 `↩
+| |` `
+||
+|A B↩|A` `B↩

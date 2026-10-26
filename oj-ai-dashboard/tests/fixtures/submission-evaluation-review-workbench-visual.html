@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학생 제출 평가</title>
+  <link rel="stylesheet" href="../../resources/css/admin-shell.css">
+  <link rel="stylesheet" href="../../resources/css/worksheet-evaluation-workbench.css">
+  <link rel="stylesheet" href="../../resources/css/submission-evaluation-review-workbench.css">
+  <link rel="stylesheet" href="../../resources/css/submission-document.css">
+  <style>
+    body { margin: 0; background: #eef1f4; color: #17202a; font-family: Arial, "Malgun Gothic", sans-serif; }
+    .fixture-shell { background: #fff; margin: 0 auto; max-width: 1440px; min-height: 100vh; padding: 18px 28px 40px; }
+    .fixture-placeholder { border: 1px solid #d6dde7; color: #667085; min-height: 240px; padding: 24px; }
+    @media (max-width: 760px) { .fixture-shell { padding: 12px 16px 32px; } }
+  </style>
+  <style data-fixture-icon-style>.oj-ai-icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}</style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+  </svg>
+  <main class="fixture-shell">
+    <div class="oj-ai-assessment-surface" data-oj-ai-assessment-shell data-default-tab="submission">
+      <nav class="oj-ai-assessment-switch" role="tablist" aria-label="평가 종류">
+        <button type="button" role="tab" id="oj-ai-assessment-tab-submission" data-assessment-tab="submission" aria-controls="oj-ai-assessment-panel-submission" aria-selected="true">학생 제출</button>
+        <button type="button" role="tab" id="oj-ai-assessment-tab-worksheet" data-assessment-tab="worksheet" aria-controls="oj-ai-assessment-panel-worksheet" aria-selected="false">활동지 자체 점검</button>
+      </nav>
+      <div id="oj-ai-assessment-panel-submission" role="tabpanel" data-assessment-panel="submission" aria-labelledby="oj-ai-assessment-tab-submission">
+        <section
+          id="oj-ai-submission-review-app" data-icon-sprite=""
+          class="oj-ai-submission-review"
+          data-rest-root="https://example.test/wp-json/oj-ai/v1"
+          data-rest-nonce="submission-review-visual-nonce"
+          data-locale="ko-KR"
+          data-can-assess="1"
+          data-can-review="1"
+        >
+          <header class="oj-ai-submission-review__header">
+            <div><h1>학생 제출 평가</h1><p data-role="submission-summary">수업을 선택하세요.</p></div>
+            <button type="button" class="oj-ai-submission-review__icon-button" data-review-action="refresh" aria-label="새로고침" title="새로고침"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button>
+          </header>
+          <div class="oj-ai-submission-review__filters">
+            <label><span>수업</span><select data-review-field="context"><option value="">수업 선택</option></select></label>
+            <label><span>배포</span><select data-review-field="assignment"><option value="">전체 활동지</option></select></label>
+            <label hidden><span>제출 상태</span><select data-review-field="submission-status"><option value="">전체 학생</option><option value="submitted">제출</option><option value="not_submitted">미제출</option><option value="not_assigned">배포 대상 아님</option></select></label>
+            <label><span>상태</span><select data-review-field="state"><option value="" selected>전체</option><option value="not_evaluated">평가 전</option><option value="requested">요청됨</option><option value="queued">대기</option><option value="running">진행 중</option><option value="review_required">검토 대기</option><option value="reviewed">검토 완료</option><option value="failed">평가 실패</option></select></label>
+            <label class="oj-ai-submission-review__search"><span>찾기</span><input type="search" data-review-field="search" placeholder="활동지 또는 학생"></label>
+            <label><span>학생 표시</span><select data-learner-label-mode><option value="management_name">관리용 이름</option><option value="login">아이디</option><option value="display_name" selected>표시이름</option></select></label>
+          </div>
+          <p class="oj-ai-submission-review__notice" data-review-role="notice" role="status">수업을 불러오는 중입니다.</p>
+          <div class="oj-ai-submission-review__layout" data-review-role="content" hidden>
+            <aside class="oj-ai-submission-review__inbox" aria-label="학생 제출 평가 목록" tabindex="0"><div data-review-role="list"></div><button type="button" data-review-action="load-more" class="oj-ai-submission-review__load-more" hidden>더 보기</button></aside>
+            <section class="oj-ai-submission-review__detail" data-review-role="detail" aria-label="학생 평가 상세" aria-live="polite" tabindex="0"><div class="oj-ai-submission-review__empty"><strong>제출을 선택하세요.</strong></div></section>
+          </div>
+          <dialog class="oj-ai-submission-review__dialog" data-review-role="reject-dialog" aria-labelledby="oj-ai-submission-reject-title">
+            <form method="dialog">
+              <header><h2 id="oj-ai-submission-reject-title">평가 반려</h2><button type="submit" value="cancel" class="oj-ai-submission-review__dialog-close" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+              <label><span>반려 사유</span><textarea rows="4" maxlength="2000" data-review-field="reject-reason" placeholder="다시 평가해야 하는 이유를 입력하세요."></textarea></label>
+              <p data-review-role="reject-status" class="oj-ai-submission-review__dialog-status" role="alert"></p>
+              <footer><button type="submit" value="cancel">취소</button><button type="button" class="oj-ai-submission-review__danger" data-review-action="confirm-reject">반려</button></footer>
+            </form>
+          </dialog>
+          <dialog class="oj-ai-submission-review__dialog" data-feedback-role="reject-dialog" aria-labelledby="oj-ai-submission-feedback-reject-title">
+            <form method="dialog">
+              <header><h2 id="oj-ai-submission-feedback-reject-title">피드백 기각</h2><button type="submit" value="cancel" class="oj-ai-submission-review__dialog-close" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+              <label><span>기각 사유</span><textarea rows="4" maxlength="2000" data-feedback-field="reject-reason" placeholder="다시 작성할 이유를 입력하세요."></textarea></label>
+              <p data-feedback-role="reject-status" class="oj-ai-submission-review__dialog-status" role="alert"></p>
+              <footer><button type="submit" value="cancel">취소</button><button type="button" class="oj-ai-submission-review__danger" data-feedback-action="confirm-reject">기각</button></footer>
+            </form>
+          </dialog>
+        </section>
+      </div>
+      <div id="oj-ai-assessment-panel-worksheet" role="tabpanel" data-assessment-panel="worksheet" aria-labelledby="oj-ai-assessment-tab-worksheet" hidden>
+        <section class="fixture-placeholder"><strong>활동지 자체 점검</strong></section>
+      </div>
+    </div>
+  </main>
+  <script>
+    (() => {
+      const ids = {
+        evaluation: '01K5A000000000000000000001',
+        evaluationTwo: '01K5A000000000000000000002',
+        assignment: '01K5A000000000000000000003',
+        submission: '01K5A000000000000000000004',
+        revision: '01K5A000000000000000000005',
+        result: '01K5A000000000000000000006',
+        run: '01K5A000000000000000000007',
+        responseEssay: '01K5A000000000000000000008',
+        responseChoice: '01K5A000000000000000000009',
+        responseNumber: '01K5A00000000000000000000A',
+        responseTable: '01K5A00000000000000000000B',
+        criterionEvidence: '01K5A00000000000000000000C',
+        criterionReasoning: '01K5A00000000000000000000D',
+        criterionSafety: '01K5A00000000000000000000E',
+        candidateSubmission: '01K5A00000000000000000000J',
+        candidateRevision: '01K5A00000000000000000000K',
+        candidateEvaluation: '01K5A00000000000000000000M',
+        candidateAttachment: '01K5A00000000000000000000N',
+      };
+      const hash = (letter) => letter.repeat(64);
+      const bindings = [
+        { binding_key: hash('b'), criterion_id: ids.criterionEvidence, label: '관찰 근거', maximum_points: '5.0000', position: 0, response_id: ids.responseEssay, scope: 'response' },
+        { binding_key: hash('c'), criterion_id: ids.criterionReasoning, label: '설명과 추론', maximum_points: '3.0000', position: 1, response_id: ids.responseChoice, scope: 'response' },
+        { binding_key: hash('d'), criterion_id: ids.criterionSafety, label: '안전한 실천', maximum_points: '2.0000', position: 2, response_id: ids.responseNumber, scope: 'response' },
+      ];
+      const evaluation = {
+        id: ids.evaluation,
+        state: 'review_required',
+        assignment: { id: ids.assignment, title: '우리 동네 생태 관찰', state: 'closed', due_at_utc: '2026-08-22 08:00:00' },
+        context: { type: 'class', id: 'class-5-2', revision: 'membership-17' },
+        learner: { user_id: 72, display_name: '김하늘', labels: { management_name: '김하늘 (1반)', login: 'student10101', display_name: '김하늘' }, membership_revision: 'membership-17' },
+        submission: { id: ids.submission, state: 'submitted', source_revision_id: ids.revision, is_source_current: true, submitted_at_utc: '2026-08-22 07:42:00' },
+        candidate: { id: ids.result, score: null, maximum_score: '10.0000', confidence: '0.7600', abstained: false, safety_flagged: true, summary: '관찰 근거는 좋지만 안전 관련 답변은 교사의 확인이 필요합니다.', created_at_utc: '2026-08-22 07:46:00' },
+        review: { count: 0, latest_id: null, latest_no: null, latest_decision: null, official_id: null, official_scope: 'none' },
+        feedback: { count: 0, latest_id: null, latest_revision_no: null, state: null },
+        release: { count: 0, latest_id: null, latest_no: null, state: null, current_id: null, current_hash: null, current_scope: 'none' },
+        priority: { rank: 5, reasons: ['safety_review'], review_needed_count: 1, item_count: 3 },
+        latest_run: { id: ids.run, run_no: 1, state: 'succeeded', queued_at_utc: '2026-08-22 07:43:00', updated_at_utc: '2026-08-22 07:46:00' },
+        requested_at_utc: '2026-08-22 07:43:00',
+        updated_at_utc: '2026-08-22 07:46:00',
+      };
+      const second = {
+        ...evaluation,
+        id: ids.evaluationTwo,
+        learner: { ...evaluation.learner, user_id: 73, display_name: '이도윤', labels: { management_name: '이도윤 (1반)', login: 'student10102', display_name: '이도윤' } },
+        candidate: { ...evaluation.candidate, score: '8.5000', confidence: '0.9100', safety_flagged: false },
+        priority: { rank: 1, reasons: ['waiting_review'], review_needed_count: 0, item_count: 3 },
+      };
+      const candidate = {
+        kind: 'candidate',
+        id: ids.candidateSubmission,
+        state: 'not_evaluated',
+        assignment: { id: ids.assignment, title: '저작권 보호하기', state: 'closed' },
+        learner: { user_id: 74, display_name: '박지민', membership_revision: 'membership-17' },
+        submission: {
+          id: ids.candidateSubmission,
+          state: 'submitted',
+          official_revision_id: ids.candidateRevision,
+          official_revision_hash: hash('7'),
+          submitted_at_utc: '2026-08-22 07:30:00',
+        },
+      };
+      const candidateSubmission = {
+        id: ids.candidateSubmission,
+        assignment_id: ids.assignment,
+        assignment_title: '저작권 보호하기',
+        assignment_state: 'closed',
+        context: { type: 'class', id: 'class-5-2', revision: 'membership-17' },
+        target: { id: '01K5A00000000000000000000P', learner_user_id: 74, display_name: '박지민', membership_revision: 'membership-17', state: 'active' },
+        state: 'submitted',
+        lock_version: 3,
+        current_revision_id: ids.candidateRevision,
+        official_revision_id: ids.candidateRevision,
+        official_attempt_no: 1,
+        evaluation: { status: 'not_evaluated', review_id: null, review_hash: null },
+        release: { status: 'not_released', release_id: null, release_hash: null },
+        submitted_at_utc: '2026-08-22 07:30:00',
+        source: { worksheet_publication_id: '01K5A00000000000000000000Q', publication_hash: hash('6') },
+        official_revision: {
+          id: ids.candidateRevision,
+          content_hash: hash('7'),
+          response: {
+            answers: {
+              answerOne: '다른 사람이 만든 사진은 허락과 출처를 확인한 뒤 사용해야 합니다.',
+              answerTwo: [ids.candidateAttachment],
+            },
+          },
+        },
+        attachments: [{ id: ids.candidateAttachment, response_id: 'answerTwo', name: '출처표시-예시.png', state: 'bound' }],
+      };
+      const candidateEvaluation = {
+        ...evaluation,
+        id: ids.candidateEvaluation,
+        state: 'queued',
+        assignment: { id: ids.assignment, title: '저작권 보호하기', state: 'closed', due_at_utc: '2026-08-22 08:00:00' },
+        learner: { user_id: 74, display_name: '박지민', membership_revision: 'membership-17' },
+        submission: {
+          id: ids.candidateSubmission,
+          state: 'submitted',
+          source_revision_id: ids.candidateRevision,
+          is_source_current: true,
+          submitted_at_utc: '2026-08-22 07:30:00',
+        },
+        candidate: null,
+        priority: { rank: 0, reasons: [], review_needed_count: 0, item_count: 0 },
+        latest_run: { id: ids.run, run_no: 1, state: 'queued', queued_at_utc: '2026-08-22 07:31:00', updated_at_utc: '2026-08-22 07:31:00' },
+        requested_at_utc: '2026-08-22 07:31:00',
+        updated_at_utc: '2026-08-22 07:31:00',
+      };
+      const detail = {
+        evaluation,
+        source: {
+          evaluation_ref: 'EV_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+          submission_revision: { id: ids.revision, content_hash: hash('e'), revision_no: 2, is_official: true },
+          worksheet_publication: { id: '01K5A00000000000000000000F', content_hash: hash('f') },
+          locale: 'ko-KR', grading_schema_hash: hash('1'), representation_set_hash: hash('2'),
+          responses: [
+            { response_id: ids.responseEssay, kind: 'long_text', label: '생물과 환경의 관계를 설명하세요.', position: 0, answer: { text: '하천 주변의 풀과 곤충은 서로 먹이와 숨을 곳을 제공한다. 물이 깨끗해야 다양한 생물이 함께 살 수 있다.' } },
+            { response_id: ids.responseChoice, kind: 'multiple_choice', label: '관찰에서 확인한 요소', position: 1, answer: { options: [{ option_id: 'one', label: '물' }, { option_id: 'two', label: '식물' }, { option_id: 'three', label: '곤충' }] } },
+            { response_id: ids.responseNumber, kind: 'number', label: '관찰한 생물의 수', position: 2, answer: { decimal: '7', constraints: { unit: '종' } } },
+            { response_id: ids.responseTable, kind: 'table', label: '관찰 기록표', position: 3, answer: { rows: [
+              { row_id: 'row-1', label: '하천', cells: [{ column_id: 'col-1', kind: 'short_text', label: '관찰 내용', value: '잠자리와 갈대' }, { column_id: 'col-2', kind: 'checkbox', label: '사진', value: true }] },
+              { row_id: 'row-2', label: '공원', cells: [{ column_id: 'col-1', kind: 'short_text', label: '관찰 내용', value: '개미와 민들레' }, { column_id: 'col-2', kind: 'checkbox', label: '사진', value: false }] },
+            ] } },
+          ],
+          bindings,
+          rubric: { content_hash: hash('3'), revision_ref: '01K5A00000000000000000000G', total_points: '10.0000', criteria: bindings.map((item) => ({ criterion_id: item.criterion_id, label: item.label, maximum_points: item.maximum_points, scope: item.scope })) },
+        },
+        configuration: {},
+        selected_result: {
+          id: ids.result, run_id: ids.run, provider_status: 'partial', candidate_score: null, maximum_score: '10.0000', overall_confidence: '0.7600', abstained: false, safety_flagged: true,
+          summary: '관찰한 생물과 환경의 관계를 구체적으로 설명했습니다. 마지막 안전 실천 항목은 학생 답변의 맥락을 교사가 직접 확인해야 합니다.',
+          items: [
+            { binding_key: hash('b'), criterion_id: ids.criterionEvidence, response_id: ids.responseEssay, scope: 'response', decision: 'score', candidate_points: '4.0000', maximum_points: '5.0000', confidence: '0.9200', rationale: '두 장소에서 관찰한 생물과 환경 조건을 구체적으로 연결했습니다.', abstain_reason: null, evidence: [{ source: 'response', anchor: 'answer.text', quote: '물이 깨끗해야 다양한 생물이 함께 살 수 있다.' }], flags: [], position: 0 },
+            { binding_key: hash('c'), criterion_id: ids.criterionReasoning, response_id: ids.responseChoice, scope: 'response', decision: 'score', candidate_points: '2.5000', maximum_points: '3.0000', confidence: '0.8500', rationale: '관찰 요소를 빠짐없이 골랐고 서술 응답과도 일치합니다.', abstain_reason: null, evidence: [{ source: 'response', anchor: 'answer.options', quote: '물, 식물, 곤충' }], flags: ['teacher_review_required'], position: 1 },
+            { binding_key: hash('d'), criterion_id: ids.criterionSafety, response_id: ids.responseNumber, scope: 'response', decision: 'abstain', candidate_points: null, maximum_points: '2.0000', confidence: '0.5100', rationale: null, abstain_reason: 'safety_context_required', evidence: [{ source: 'response', anchor: 'answer.decimal', quote: '7종' }], flags: ['safety_review_required'], position: 2 },
+          ],
+          limitations: ['현장 안전 수칙을 지켰는지는 제출 내용만으로 확인할 수 없습니다.'], created_at_utc: '2026-08-22 07:46:00',
+        },
+        runs: [{ id: ids.run, run_no: 1, state: 'succeeded', result_id: ids.result, attempt_count: 1, available_at_utc: '2026-08-22 07:43:00', queued_at_utc: '2026-08-22 07:43:00', started_at_utc: '2026-08-22 07:44:00', finished_at_utc: '2026-08-22 07:46:00', last_error_code: null }],
+        reviews: [], feedback: [], releases: [],
+        review_precondition: { expected_result_id: ids.result, expected_result_hash: hash('9'), expected_official_review_id: null, expected_official_review_hash: null, expected_review_no: 0 },
+      };
+      const candidateEvaluationDetail = {
+        evaluation: candidateEvaluation,
+        source: null,
+        configuration: {},
+        selected_result: null,
+        runs: [],
+        reviews: [],
+        feedback: [],
+        releases: [],
+        review_precondition: null,
+      };
+      const envelope = (data, meta = {}) => ({ data, meta: { correlation_id: 'submission-review-visual', ...meta }, links: {}, actions: [] });
+      const jsonResponse = (payload, status = 200) => Promise.resolve({ ok: status >= 200 && status < 300, status, json: async () => payload });
+      window.__reviewRequests = [];
+      window.__manualRequests = [];
+      if (new URLSearchParams(location.search).has('manual_only')) document.querySelector('#oj-ai-submission-review-app').dataset.canAssess = '0';
+      window.__evaluationRequests = [];
+      window.__evaluationStarted = false;
+      window.__reviewDetailReads = 0;
+      window.__reviewConflictOnce = false;
+      window.__reviewPermissionDenied = false;
+      window.fetch = async (url, options = {}) => {
+        const value = String(url);
+        if (value.includes('/submission-evaluation-roster?')) {
+          if (new URLSearchParams(location.search).has('roster_error')) return jsonResponse({ message: '학생 명단을 불러오지 못했습니다.' }, 503);
+          const rows = [evaluation, second, candidate].map((item, index) => ({
+            id: `target-${index}`, learner: item.learner, assigned: true, current_member: true, status: 'submitted',
+            submission: { id: item.submission.id, official_revision_id: item.submission.source_revision_id || item.submission.official_revision_id, submitted_at_utc: item.submission.submitted_at_utc },
+          }));
+          if (new URLSearchParams(location.search).has('roster')) rows.push(
+            { id: 'target-draft', learner: { user_id: 75, display_name: '최서연' }, assigned: true, current_member: true, status: 'draft', submission: { id: 'draft', official_revision_id: null } },
+            { id: 'target-missing', learner: { user_id: 76, display_name: '한지우' }, assigned: true, current_member: true, status: 'not_started', submission: null },
+            { id: 'learner-new', learner: { user_id: 77, display_name: '홍예준' }, assigned: false, current_member: true, status: 'not_assigned', submission: null }
+          );
+          return jsonResponse(envelope({ items: rows }));
+        }
+        if (value.includes('/assignments?')) return jsonResponse(envelope({items:[evaluation.assignment]}));
+        if (value.endsWith('/contexts?limit=100')) return jsonResponse(envelope({ items: [{ type: 'class', id: 'class-5-2', revision: 'membership-17', label: '5학년 2반', selectable: true }] }));
+        if (value.includes('/submission-evaluations?')) {
+          const items = window.__evaluationStarted ? [evaluation, second, candidateEvaluation] : [evaluation, second];
+          return jsonResponse(envelope({ items }, { next_cursor: '', has_more: false, limit: 40 }));
+        }
+        if (value.includes('/submission-evaluation-candidates?')) {
+          const items = window.__evaluationStarted || window.__manualRequests.length ? [] : [candidate];
+          return jsonResponse(envelope({ items }, { next_cursor: '', has_more: false, limit: 40 }));
+        }
+        if (value.includes(`/submission-evaluation-candidates/${ids.candidateSubmission}?`) && (!options.method || options.method === 'GET')) {
+          return jsonResponse(envelope({ submission: candidateSubmission }));
+        }
+        if (value.includes(`/submission-evaluations/${ids.candidateEvaluation}?`) && (!options.method || options.method === 'GET')) {
+          window.__reviewDetailReads += 1;
+          return jsonResponse(envelope(candidateEvaluationDetail));
+        }
+        if (value.includes(`/submission-evaluations/${ids.evaluation}?`) && (!options.method || options.method === 'GET')) {
+          window.__reviewDetailReads += 1;
+          return jsonResponse(envelope(detail));
+        }
+        if (value.includes(`/submission-evaluations/${ids.evaluationTwo}?`) && (!options.method || options.method === 'GET')) {
+          window.__reviewDetailReads += 1;
+          return jsonResponse(envelope({ ...detail, evaluation: second }));
+        }
+        if (value.includes(`/submissions/${ids.candidateSubmission}/commands/evaluate?`) && options.method === 'POST') {
+          window.__evaluationRequests.push({ url: value, headers: options.headers, body: JSON.parse(options.body) });
+          window.__evaluationStarted = true;
+          return jsonResponse(envelope({
+            evaluation: {
+              id: ids.candidateEvaluation,
+              state: 'queued',
+              submission_id: ids.candidateSubmission,
+              submission_revision_id: ids.candidateRevision,
+            },
+            run: { id: ids.run, run_no: 1, state: 'queued' },
+          }), 202);
+        }
+        if (value.includes(`/submissions/${ids.candidateSubmission}/commands/start-manual-assessment?`) && options.method === 'POST') {
+          window.__manualRequests.push({ url: value, headers: options.headers, body: JSON.parse(options.body) });
+          Object.assign(evaluation, { learner: candidate.learner, submission: candidateEvaluation.submission, state: 'review_required', latest_run: { ...evaluation.latest_run, operation: 'manual_prepare' } });
+          Object.assign(detail.source.submission_revision, { id: ids.candidateRevision, content_hash: hash('7') });
+          Object.assign(detail.selected_result, { provider_status: 'not_requested', candidate_score: null, abstained: true, safety_flagged: false, overall_confidence: '0.0000', summary: '교사 직접 채점' });
+          detail.selected_result.items.forEach(item => Object.assign(item, { candidate_points: null, decision: 'abstain', rationale: null, abstain_reason: 'not_requested', confidence: '0.0000', flags: [], evidence: [], levels: [
+            { label: '관찰한 사실과 판단 근거를 구체적으로 연결하여 설명함.', points: item.maximum_points },
+            { label: '관찰한 사실을 부분적으로 설명하였으나 판단 근거가 부족함.', points: '1.0000' },
+            { label: '평가 기준에 해당하는 응답이 없음.', points: '0.0000' },
+          ] }));
+          return jsonResponse(envelope({ evaluation: { id: ids.evaluation, state: 'review_required' }, run: { id: ids.run, state: 'succeeded' } }), 201);
+        }
+        if (value.includes('/commands/review?') && options.method === 'POST') {
+          window.__reviewRequests.push({ url: value, headers: options.headers, body: JSON.parse(options.body) });
+          if (window.__reviewConflictOnce) {
+            window.__reviewConflictOnce = false;
+            return jsonResponse({ code: 'review_source_stale', message: '평가 결과가 변경되었습니다.', data: { status: 409 } }, 409);
+          }
+          if (window.__reviewPermissionDenied) {
+            return jsonResponse({ code: 'submission_evaluation_review_scope_denied', message: '권한이 없습니다.', data: { status: 403 } }, 403);
+          }
+          if (window.__reviewPersistTransitions) {
+            const body = JSON.parse(options.body);
+            const withdrawn = body.payload.decision === 'withdrawn';
+            const reviewNo = detail.reviews.length + 1;
+            const reviewId = '01K5A0000000000000000000' + String(reviewNo).padStart(2, '0');
+            const items = body.payload.decision === 'accepted'
+              ? detail.selected_result.items.map(item => ({ ...item, official_points: item.candidate_points }))
+              : body.payload.item_decisions;
+            detail.reviews.forEach(item => { item.is_official = false; });
+            detail.reviews.push({ id: reviewId, result_id: ids.result, review_no: reviewNo,
+              decision: body.payload.decision, official_score: withdrawn ? null : String(items.reduce((sum, item) => sum + Number(item.official_points), 0)),
+              score_decisions: withdrawn ? null : { value: { items } }, is_official: !withdrawn,
+              reason: body.payload.reason, created_at_utc: '2026-10-23 10:00:00' });
+            detail.review_precondition.expected_review_no = reviewNo;
+            detail.review_precondition.expected_official_review_id = withdrawn ? null : reviewId;
+            detail.review_precondition.expected_official_review_hash = withdrawn ? null : hash('8');
+            evaluation.review = { official_id: withdrawn ? null : reviewId, official_scope: withdrawn ? 'none' : 'this_evaluation' };
+            evaluation.state = withdrawn ? 'review_required' : 'reviewed';
+          } else evaluation.state = 'reviewed';
+          return jsonResponse(envelope({ evaluation: { id: ids.evaluation }, result: { id: ids.result, hash: hash('9') }, review: { id: '01K5A00000000000000000000H', hash: hash('8'), review_no: 1, decision: 'adjusted', official_score: '6.5000', item_decisions: [] }, official_review: { id: '01K5A00000000000000000000H', hash: hash('8'), advanced: true } }), 201);
+        }
+        return jsonResponse({ code: 'oj_ai_not_found', message: '대상을 찾을 수 없습니다.', data: { status: 404 } }, 404);
+      };
+      window.__reviewFixture = detail;
+    })();
+  </script>
+  <script src="../../resources/js/worksheet-workflow.js"></script>
+  <script src="../../resources/js/learner-labels.js"></script>
+  <script src="../../resources/js/submission-document.js"></script>
+  <script src="../../resources/js/submission-evaluation-review-workbench.js"></script>
+</body>
+</html>

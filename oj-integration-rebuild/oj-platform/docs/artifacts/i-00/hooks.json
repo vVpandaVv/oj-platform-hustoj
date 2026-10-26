@@ -1,0 +1,278 @@
+[
+    {
+        "registration": "add_action",
+        "hook": "admin_enqueue_scripts",
+        "file": "src/Core/Plugin.php",
+        "line": 42
+    },
+    {
+        "registration": "add_action",
+        "hook": "admin_init",
+        "file": "modules/AdminConsole/Module.php",
+        "line": 49
+    },
+    {
+        "registration": "add_action",
+        "hook": "admin_menu",
+        "file": "modules/AdminConsole/Module.php",
+        "line": 48
+    },
+    {
+        "registration": "add_action",
+        "hook": "admin_notices",
+        "file": "oj-platform.php",
+        "line": 40
+    },
+    {
+        "registration": "add_action",
+        "hook": "admin_notices",
+        "file": "oj-platform.php",
+        "line": 47
+    },
+    {
+        "registration": "add_filter",
+        "hook": "authenticate",
+        "file": "modules/Auth/Module.php",
+        "line": 113
+    },
+    {
+        "registration": "add_filter",
+        "hook": "body_class",
+        "file": "src/Core/Plugin.php",
+        "line": 44
+    },
+    {
+        "registration": "add_filter",
+        "hook": "gettext",
+        "file": "src/Core/Plugin.php",
+        "line": 39
+    },
+    {
+        "registration": "add_action",
+        "hook": "init",
+        "file": "modules/AccessRouter/Module.php",
+        "line": 36
+    },
+    {
+        "registration": "add_action",
+        "hook": "init",
+        "file": "modules/AccessRouter/Module.php",
+        "line": 37
+    },
+    {
+        "registration": "add_action",
+        "hook": "init",
+        "file": "modules/Board/Module.php",
+        "line": 49
+    },
+    {
+        "registration": "add_action",
+        "hook": "init",
+        "file": "modules/PlatformDb/Module.php",
+        "line": 32
+    },
+    {
+        "registration": "add_action",
+        "hook": "init",
+        "file": "src/Core/Plugin.php",
+        "line": 40
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_allow_ai_feedback_for_submission",
+        "file": "modules/Contests/Module.php",
+        "line": 44
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_allow_status_result_detail_access",
+        "file": "modules/Contests/Module.php",
+        "line": 45
+    },
+    {
+        "registration": "add_action",
+        "hook": "oj_platform_loaded",
+        "file": "modules/PublicUi/Module.php",
+        "line": 29
+    },
+    {
+        "registration": "add_action",
+        "hook": "oj_platform_loaded",
+        "file": "tests/architecture-smoke.php",
+        "line": 275
+    },
+    {
+        "registration": "add_action",
+        "hook": "oj_platform_loaded",
+        "file": "tests/architecture-smoke.php",
+        "line": 276
+    },
+    {
+        "registration": "add_action",
+        "hook": "oj_platform_register_assets",
+        "file": "modules/AdminConsole/Module.php",
+        "line": 39
+    },
+    {
+        "registration": "add_action",
+        "hook": "oj_platform_register_assets",
+        "file": "modules/Blockly/Module.php",
+        "line": 37
+    },
+    {
+        "registration": "add_action",
+        "hook": "oj_platform_register_assets",
+        "file": "modules/PublicUi/Module.php",
+        "line": 30
+    },
+    {
+        "registration": "add_action",
+        "hook": "oj_platform_submission_created",
+        "file": "modules/Contests/Module.php",
+        "line": 43
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/AI/Module.php",
+        "line": 91
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Auth/Module.php",
+        "line": 114
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Blockly/Module.php",
+        "line": 38
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Board/Module.php",
+        "line": 50
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Classes/Module.php",
+        "line": 43
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Contests/Module.php",
+        "line": 46
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Groups/Module.php",
+        "line": 55
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/JudgeDb/Module.php",
+        "line": 50
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/LearningDashboard/Module.php",
+        "line": 55
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Migration/Module.php",
+        "line": 48
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/PlatformDb/Module.php",
+        "line": 31
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Problems/Module.php",
+        "line": 67
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Ranking/Module.php",
+        "line": 41
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_system_status",
+        "file": "modules/Submissions/Module.php",
+        "line": 54
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_validate_class_submission",
+        "file": "modules/Classes/Module.php",
+        "line": 42
+    },
+    {
+        "registration": "add_filter",
+        "hook": "oj_platform_validate_contest_submission",
+        "file": "modules/Contests/Module.php",
+        "line": 42
+    },
+    {
+        "registration": "add_action",
+        "hook": "phpmailer_init",
+        "file": "modules/Settings/Module.php",
+        "line": 58
+    },
+    {
+        "registration": "add_action",
+        "hook": "plugins_loaded",
+        "file": "src/Core/Plugin.php",
+        "line": 37
+    },
+    {
+        "registration": "add_action",
+        "hook": "plugins_loaded",
+        "file": "src/Core/Plugin.php",
+        "line": 38
+    },
+    {
+        "registration": "add_filter",
+        "hook": "query_vars",
+        "file": "modules/AccessRouter/Module.php",
+        "line": 35
+    },
+    {
+        "registration": "add_filter",
+        "hook": "show_admin_bar",
+        "file": "src/Core/Plugin.php",
+        "line": 45
+    },
+    {
+        "registration": "add_action",
+        "hook": "template_redirect",
+        "file": "modules/AccessRouter/Module.php",
+        "line": 38
+    },
+    {
+        "registration": "add_action",
+        "hook": "template_redirect",
+        "file": "src/Core/Plugin.php",
+        "line": 43
+    },
+    {
+        "registration": "add_action",
+        "hook": "wp_enqueue_scripts",
+        "file": "src/Core/Plugin.php",
+        "line": 41
+    }
+]

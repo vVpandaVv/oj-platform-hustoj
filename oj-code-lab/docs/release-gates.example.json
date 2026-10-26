@@ -1,0 +1,23 @@
+{
+  "policy_version": 2,
+  "current": "1.4.0",
+  "target": "1.4.0",
+  "decision": "HOLD",
+  "license_decision": "pending_owner_review",
+  "code_license": {
+    "spdx": "GPL-2.0-or-later",
+    "text_sha256": "",
+    "source_url": "",
+    "approval_reference": ""
+  },
+  "gates": [
+    {"id": "R1", "status": "pending", "evidence": "", "verified_version": ""},
+    {"id": "R2", "status": "pending", "evidence": "", "verified_version": ""},
+    {"id": "R3", "status": "pending", "evidence": "", "verified_version": ""},
+    {"id": "R4", "status": "pending", "evidence": "", "verified_version": ""},
+    {"id": "R5", "status": "pending", "evidence": "", "verified_version": ""},
+    {"id": "R6", "status": "pending", "evidence": "", "verified_version": ""},
+    {"id": "R7", "status": "pending", "evidence": "", "verified_version": ""}
+  ],
+  "note": "Public template only. No live deployment evidence or owner approval is asserted. Complete the existing release checks for your environment before building a stable package."
+}

@@ -1,0 +1,989 @@
+.oj-ai-student-page {
+  width: min(100%, 1080px);
+  margin: 0 auto;
+  color: var(--ojp-color-ink, #202124);
+}
+
+.oj-ai-student-page__header {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-student-page__header h1 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.oj-ai-student-page__status,
+.oj-ai-student-empty,
+.oj-ai-student-error {
+  margin: 24px 0;
+  color: var(--ojp-color-muted, #5f6368);
+}
+
+.oj-ai-student-error {
+  color: var(--ojp-color-caution, #b3261e);
+}
+
+.oj-ai-student-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 20px 0 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-student-tabs__button {
+  min-width: 88px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--ojp-color-muted, #5f6368);
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.oj-ai-student-tabs__button[aria-selected="true"] {
+  border-bottom-color: var(--ojp-color-primary, #0f766e);
+  color: var(--ojp-color-primary, #0f766e);
+}
+
+.oj-ai-student-tabs__button:focus-visible,
+.oj-ai-student-primary:focus-visible,
+.oj-ai-student-secondary:focus-visible,
+.oj-ai-student-back:focus-visible,
+.oj-ai-student-card__title a:focus-visible {
+  outline: 3px solid var(--ojp-color-focus, #f9ab00);
+  outline-offset: 2px;
+}
+
+.oj-ai-student-summary {
+  margin: 0 0 12px;
+  color: var(--ojp-color-muted, #5f6368);
+  font-size: 14px;
+}
+
+.oj-ai-student-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.oj-ai-student-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  min-width: 0;
+  min-height: 240px;
+  padding: 18px;
+  border: 1px solid var(--ojp-color-line, #dadce0);
+  border-radius: 8px;
+  background: var(--ojp-color-surface, #fff);
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.08);
+}
+
+.oj-ai-student-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.oj-ai-student-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--ojp-color-subtle, #eef8f6);
+  color: var(--ojp-color-primary, #0f766e);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.oj-ai-student-status--open {
+  background: var(--ojp-color-success-bg, #e6f4ea);
+  color: var(--ojp-color-success, #137333);
+}
+
+.oj-ai-student-status--late {
+  background: var(--ojp-color-caution-bg, #fce8e6);
+  color: var(--ojp-color-danger, #a50e0e);
+}
+
+.oj-ai-student-status--closed {
+  background: var(--ojp-color-subtle, #f1f3f4);
+  color: var(--ojp-color-muted, #5f6368);
+}
+
+.oj-ai-student-card__context {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ojp-color-muted, #5f6368);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.oj-ai-student-card__title {
+  margin: 16px 0 14px;
+  font-size: 19px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-card__title a {
+  color: var(--ojp-color-ink, #202124);
+  text-decoration: none;
+}
+
+.oj-ai-student-card__details {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 7px 12px;
+  margin: 0 0 18px;
+  font-size: 14px;
+}
+
+.oj-ai-student-card__details dt {
+  color: var(--ojp-color-muted, #5f6368);
+}
+
+.oj-ai-student-card__details dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 9px 16px;
+  border: 1px solid var(--ojp-color-primary, #0f766e);
+  border-radius: 6px;
+  background: var(--ojp-color-primary, #0f766e);
+  color: var(--ojp-color-on-accent, #fff);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/*
+ * The active WordPress theme's own link styling can otherwise win the
+ * cascade over a single-class selector on an <a> element (same
+ * specificity, later source order), leaving this button's text nearly
+ * invisible against its own background. Qualify by element to outrank it.
+ */
+a.oj-ai-student-primary,
+a.oj-ai-student-primary:link,
+a.oj-ai-student-primary:visited,
+a.oj-ai-student-primary:hover,
+a.oj-ai-student-primary:active {
+  color: var(--ojp-color-on-accent, #fff);
+}
+
+.oj-ai-student-primary:disabled {
+  border-color: var(--ojp-color-line, #9aa0a6);
+  background: var(--ojp-color-tertiary, #9aa0a6);
+  cursor: wait;
+}
+
+.oj-ai-student-export {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  margin: 16px 0;
+}
+
+.oj-ai-student-export__status {
+  min-width: 0;
+  color: var(--ojp-color-muted, #5f6368);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+
+.oj-ai-student-export .oj-ai-student-secondary {
+  min-height: 44px;
+  border-color: var(--ojp-color-primary, #0f766e);
+}
+.oj-ai-student-back {
+  display: inline-flex;
+  margin: 20px 0 14px;
+  color: var(--ojp-color-primary, #0f766e);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.oj-ai-student-detail__header {
+  padding: 0 0 18px;
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-student-detail__header h2 {
+  margin: 0 0 8px;
+  font-size: 26px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-detail__header p {
+  margin: 0;
+  color: var(--ojp-color-muted, #5f6368);
+}
+
+.oj-ai-student-detail__notice {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--ojp-color-primary, #0f766e);
+  background: var(--ojp-color-subtle, #eef8f6);
+  color: var(--ojp-color-primary, #0f766e);
+}
+
+.oj-ai-student-detail__notice--closed {
+  border-left-color: var(--ojp-color-muted, #5f6368);
+  background: var(--ojp-color-subtle, #f1f3f4);
+  color: var(--ojp-color-ink-2, #3c4043);
+}
+
+.oj-ai-student-detail__notice--late {
+  border-left-color: var(--ojp-color-danger, #d93025);
+  background: var(--ojp-color-caution-bg, #fce8e6);
+  color: var(--ojp-color-danger, #a50e0e);
+}
+
+.oj-ai-student-document {
+  margin: 18px 0;
+  padding: 20px 0;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+  line-height: 1.7;
+}
+
+.oj-ai-student-document h2,
+.oj-ai-student-document h3,
+.oj-ai-student-document h4 {
+  letter-spacing: 0;
+}
+
+#oj-ai-student-assignment-app .oj-ai-student-document__question {
+  min-width: 0;
+  margin: 24px 0;
+  padding: 16px 0 0;
+  border: 0;
+  border-top: 1px solid var(--ojp-color-line, #d6d9df);
+  background: var(--ojp-color-surface, #fff);
+  color: var(--ojp-color-ink, #202124);
+  font-style: normal;
+  box-shadow: none;
+}
+
+#oj-ai-student-assignment-app .oj-ai-student-document__question > :first-child {
+  margin-top: 0;
+}
+
+.oj-ai-student-response-anchor {
+  min-width: 0;
+  margin: 18px 0;
+  padding: 16px;
+  border: 1px solid var(--ojp-color-line, #d6d9df);
+  border-radius: 6px;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--ojp-color-ink, #202124);
+  font-style: normal;
+  box-shadow: none;
+}
+
+.oj-ai-student-response-anchor:focus-visible,
+.oj-ai-student-response-input:focus-visible {
+  outline: 3px solid var(--ojp-color-focus, #f9ab00);
+  outline-offset: 2px;
+}
+
+.oj-ai-student-response-label {
+  max-width: 100%;
+  padding: 0 6px;
+  color: var(--ojp-color-ink, #202124);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-response-required {
+  color: var(--ojp-color-caution, #b3261e);
+}
+
+.oj-ai-student-response-input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid var(--ojp-color-line, #80868b);
+  border-radius: 4px;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--ojp-color-ink, #202124);
+  font: inherit;
+  letter-spacing: 0;
+}
+
+textarea.oj-ai-student-response-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.oj-ai-student-response-choices {
+  display: grid;
+  gap: 8px;
+}
+
+.oj-ai-student-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-height: 40px;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.oj-ai-student-choice:hover {
+  background: var(--ojp-color-subtle, #eef8f6);
+}
+
+.oj-ai-student-choice input {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  margin: 1px 0 0;
+}
+
+.oj-ai-student-response-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.oj-ai-student-response-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.oj-ai-student-response-table th,
+.oj-ai-student-response-table td {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--ojp-color-line, #dadce0);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-response-input[type="file"] {
+  max-width: 100%;
+}
+
+.oj-ai-student-response-drawing {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  aspect-ratio: 9 / 4;
+  border: 1px solid var(--ojp-color-line, #80868b);
+  border-radius: 4px;
+  background: var(--ojp-color-surface, #fff);
+}
+
+.oj-ai-student-response-help {
+  margin: 8px 0 0;
+  color: var(--ojp-color-muted, #5f6368);
+  font-size: 14px;
+}
+
+.oj-ai-student-primary--start {
+  min-width: 140px;
+}
+
+@media (max-width: 700px) {
+  .oj-ai-student-page__header h1 {
+    font-size: 22px;
+  }
+
+  .oj-ai-student-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oj-ai-student-card {
+    min-height: 0;
+  }
+
+  .oj-ai-student-detail__header h2 {
+    font-size: 23px;
+  }
+
+  .oj-ai-student-primary--start {
+    width: 100%;
+  }
+  .oj-ai-student-export {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .oj-ai-student-secondary {
+    width: 100%;
+  }
+}
+
+.oj-ai-student-submission-status {
+  min-width: 0;
+  margin: 16px 0;
+  padding: 16px 0;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+  color: var(--ojp-color-ink, #202124);
+}
+
+.oj-ai-student-submission-status h3 {
+  margin: 0 0 8px;
+  color: var(--ojp-color-primary, #0f766e);
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.oj-ai-student-submission-status--reopened h3 {
+  color: var(--ojp-color-success, #137333);
+}
+
+.oj-ai-student-submission-status--locked h3 {
+  color: var(--ojp-color-danger, #a50e0e);
+}
+
+.oj-ai-student-submission-status__reason,
+.oj-ai-student-submission-status__help {
+  margin: 8px 0;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-submission-status__reason {
+  padding-left: 12px;
+  border-left: 4px solid var(--ojp-color-caution, #f9ab00);
+  font-weight: 700;
+}
+
+.oj-ai-student-submission-status__help {
+  color: var(--ojp-color-danger, #a50e0e);
+}
+
+.oj-ai-student-submission-status__details {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+  gap: 7px 12px;
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
+.oj-ai-student-submission-status__details dt {
+  color: var(--ojp-color-muted, #5f6368);
+}
+
+.oj-ai-student-submission-status__details dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-save {
+  min-width: 0;
+  margin: 16px 0;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+  background: var(--ojp-color-surface, #fff);
+}
+
+.oj-ai-student-submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 0;
+}
+
+.oj-ai-student-submit__label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ojp-color-success, #188038);
+}
+
+.oj-ai-student-save__indicator {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 0;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--ojp-color-ink-2, #3c4043);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.oj-ai-student-save__indicator::before {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--ojp-color-muted, #5f6368);
+  content: '';
+}
+
+.oj-ai-student-save__indicator > span {
+  flex: 1 1 auto;
+}
+
+.oj-ai-student-save__indicator[data-state="saving"]::before {
+  background: var(--ojp-color-primary, #0f766e);
+}
+
+.oj-ai-student-save__indicator[data-state="saved"]::before {
+  background: var(--ojp-color-success, #188038);
+}
+
+.oj-ai-student-save__indicator[data-state="local_only"]::before,
+.oj-ai-student-save__indicator[data-state="offline"]::before {
+  background: var(--ojp-color-caution, #e37400);
+}
+
+.oj-ai-student-save__indicator[data-state="conflict"]::before,
+.oj-ai-student-save__indicator[data-state="failed"]::before {
+  background: var(--ojp-color-caution, #b3261e);
+}
+
+.oj-ai-student-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 7px 12px;
+  border: 1px solid var(--ojp-color-line, #80868b);
+  border-radius: 6px;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--ojp-color-primary, #0f766e);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+#oj-ai-student-assignment-app [hidden] {
+  display: none;
+}
+
+.oj-ai-student-secondary:hover {
+  background: var(--ojp-color-subtle, #f1f3f4);
+}
+
+.oj-ai-student-secondary:focus-visible,
+.oj-ai-student-conflict__choice:has(input:focus-visible) {
+  outline: 3px solid var(--ojp-color-focus, #f9ab00);
+  outline-offset: 2px;
+}
+
+.oj-ai-student-recovery,
+.oj-ai-student-conflict {
+  padding: 14px 0;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-student-recovery {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--ojp-color-warning, #7a3e00);
+}
+
+.oj-ai-student-recovery[hidden],
+.oj-ai-student-conflict[hidden] {
+  display: none;
+}
+
+.oj-ai-student-recovery > div:first-child,
+.oj-ai-student-conflict__header {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.oj-ai-student-recovery span,
+.oj-ai-student-conflict__header span {
+  font-size: 14px;
+}
+
+.oj-ai-student-recovery__actions,
+.oj-ai-student-conflict__actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.oj-ai-student-conflict {
+  color: var(--ojp-color-ink, #202124);
+}
+
+.oj-ai-student-conflict__header {
+  margin-bottom: 12px;
+  color: var(--ojp-color-danger, #a50e0e);
+}
+
+.oj-ai-student-conflict__list {
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-student-conflict__item {
+  min-width: 0;
+  margin: 0;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-student-conflict__item legend {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-conflict__choice {
+  display: grid;
+  grid-template-columns: 22px minmax(88px, auto) minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  min-height: 44px;
+  padding: 9px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.oj-ai-student-conflict__choice:hover,
+.oj-ai-student-conflict__choice:has(input:checked) {
+  background: var(--ojp-color-subtle, #f1f3f4);
+}
+
+.oj-ai-student-conflict__choice input {
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+}
+
+.oj-ai-student-conflict__choice span {
+  min-width: 0;
+  color: var(--ojp-color-muted, #5f6368);
+  overflow-wrap: anywhere;
+}
+
+.oj-ai-student-conflict__actions {
+  margin-top: 14px;
+}
+
+.oj-ai-student-response-anchor:disabled {
+  color: var(--ojp-color-muted, #5f6368);
+  opacity: 0.76;
+}
+
+@media (max-width: 700px) {
+  .oj-ai-student-submission-status__details {
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+
+  .oj-ai-student-recovery {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .oj-ai-student-recovery__actions,
+  .oj-ai-student-conflict__actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oj-ai-student-recovery__actions button,
+  .oj-ai-student-conflict__actions button {
+    width: 100%;
+  }
+
+  .oj-ai-student-conflict__choice {
+    grid-template-columns: 22px minmax(0, 1fr);
+  }
+
+  .oj-ai-student-conflict__choice span {
+    grid-column: 2;
+  }
+}
+
+
+/* Frozen A-DS-01 learner IA: three queues and direct question navigation. */
+.oj-ai-student-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.oj-ai-student-tabs__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.oj-ai-student-tabs__count {
+  display: inline-grid;
+  min-width: 22px;
+  height: 22px;
+  place-items: center;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: var(--ojp-color-accent-bg, #eef1f3);
+  color: var(--ojp-color-muted, #5f6368);
+  font-size: 12px;
+}
+
+.oj-ai-student-tabs__button[aria-selected="true"] .oj-ai-student-tabs__count {
+  background: var(--ojp-color-line, #d9efeb);
+  color: var(--ojp-color-primary, #0f766e);
+}
+
+.oj-ai-student-detail__workspace {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+  min-width: 0;
+  margin-top: 18px;
+}
+
+.oj-ai-student-question-nav {
+  position: sticky;
+  top: 16px;
+  min-width: 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--ojp-color-line, #dadce0);
+  border-bottom: 1px solid var(--ojp-color-line, #dadce0);
+}
+
+.oj-ai-student-question-nav__header {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.oj-ai-student-question-nav__header h3 {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.oj-ai-student-question-nav__header span {
+  color: var(--ojp-color-muted, #5f6368);
+  font-size: 13px;
+}
+
+.oj-ai-student-question-nav__list {
+  display: grid;
+  grid-template-columns: repeat(4, 40px);
+  gap: 6px;
+}
+
+.oj-ai-student-question-nav__button {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 1px solid var(--ojp-color-line, #bdc1c6);
+  border-radius: 50%;
+  background: var(--ojp-color-surface, #fff);
+  color: var(--ojp-color-ink-2, #3c4043);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.oj-ai-student-question-nav__button[data-complete="true"] {
+  border-color: var(--ojp-color-primary, #0f766e);
+  background: var(--ojp-color-subtle, #eef8f6);
+  color: var(--ojp-color-primary, #0f766e);
+}
+
+.oj-ai-student-question-nav__button[aria-current="true"] {
+  border-color: var(--ojp-color-primary, #0f766e);
+  background: var(--ojp-color-primary, #0f766e);
+  color: var(--ojp-color-on-accent, #fff);
+}
+
+.oj-ai-student-detail__workspace .oj-ai-student-document {
+  min-width: 0;
+  margin-top: 0;
+}
+
+#oj-ai-student-assignment-app .oj-ai-student-attachments { display: grid; gap: 8px; margin-top: 12px; min-width: 0; }
+#oj-ai-student-assignment-app .oj-ai-student-attachment { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; min-width: 0; }
+#oj-ai-student-assignment-app .oj-ai-student-attachment > span { flex: 1 1 180px; min-width: 0; overflow-wrap: anywhere; }
+#oj-ai-student-assignment-app input[type="file"] { width: 100%; min-width: 0; max-width: 100%; }
+
+@media (max-width: 700px) {
+  .oj-ai-student-tabs__button {
+    min-width: 0;
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+
+  .oj-ai-student-detail__workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .oj-ai-student-question-nav {
+    position: sticky;
+    z-index: 6;
+    top: 0;
+    padding: 9px 0;
+    background: var(--ojp-color-surface, #fff);
+  }
+
+  .oj-ai-student-question-nav__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 7px;
+  }
+
+  .oj-ai-student-question-nav__list {
+    grid-template-columns: repeat(5, 40px);
+    max-width: 100%;
+    overflow: visible;
+    padding-bottom: 3px;
+  }
+
+  .oj-ai-student-question-nav__button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+#oj-ai-student-assignment-app .oj-ai-student-source {
+  margin: 16px 0;
+  min-width: 0;
+}
+#oj-ai-student-assignment-app .oj-ai-student-source img,
+#oj-ai-student-assignment-app .oj-ai-student-source video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+#oj-ai-student-assignment-app .oj-ai-student-source audio {
+  width: 100%;
+  max-width: 520px;
+}
+#oj-ai-student-assignment-app .oj-ai-student-equation,
+#oj-ai-student-assignment-app .oj-ai-student-document pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+#oj-ai-student-assignment-app .oj-ai-student-response-drawing {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 9 / 4;
+  touch-action: none;
+  background: var(--ojp-color-surface, #fff);
+  border: 1px solid var(--ojp-color-line, #b8c6d5);
+}
+#oj-ai-student-assignment-app .oj-ai-student-drawing-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+#oj-ai-student-assignment-app .oj-ai-student-document__column_group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+#oj-ai-student-assignment-app .oj-ai-student-document__column {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+#oj-ai-student-assignment-app .oj-ai-student-submit-dialog {
+  box-sizing: border-box;
+  width: min(440px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  margin: auto;
+  padding: 24px;
+  overflow: auto;
+  border: 1px solid var(--ojp-color-separator, #b8c6d5);
+  border-radius: var(--ojp-radius-lg, 8px);
+  background: var(--ojp-color-elevated, #fff);
+  color: var(--ojp-color-ink, #182330);
+  box-shadow: var(--ojp-shadow-3, none);
+  overflow-wrap: anywhere;
+}
+#oj-ai-student-assignment-app .oj-ai-student-submit-dialog::backdrop {
+  background: var(--ojp-color-scrim, rgb(15 23 42 / 45%));
+}
+#oj-ai-student-assignment-app .oj-ai-student-submit-dialog h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+  line-height: 1.4;
+}
+#oj-ai-student-assignment-app .oj-ai-student-submit-dialog p {
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+#oj-ai-student-assignment-app .oj-ai-student-submit-dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+#oj-ai-student-assignment-app .oj-ai-student-submit-dialog button {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 8px 16px;
+  border: 1px solid var(--ojp-color-line, #b8c6d5);
+  border-radius: 4px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+#oj-ai-student-assignment-app .oj-ai-student-submit-dialog button:not(.oj-ai-student-primary) {
+  background: var(--ojp-color-surface, #fff);
+  color: var(--ojp-color-ink, #182330);
+}
+#oj-ai-student-assignment-app .oj-ai-student-submit-dialog button:focus-visible {
+  outline: 2px solid var(--ojp-color-focus, #167a71);
+  outline-offset: 3px;
+}

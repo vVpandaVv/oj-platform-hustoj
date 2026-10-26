@@ -1,0 +1,150 @@
+<?php
+/**
+ * Expire and purge at most one unbound submission attachment.
+ *
+ * @package OJAI\Dashboard
+ */
+
+declare(strict_types=1);
+
+namespace OJAI\Dashboard\Submission\Student\Application;
+
+use Closure;
+use DateTimeImmutable;
+use DateTimeZone;
+use OJAI\Dashboard\Storage\Port\Private_File_Store_Port_Interface;
+use OJAI\Dashboard\Submission\Student\Domain\Submission_Attachment_Cleanup_Item;
+use OJAI\Dashboard\Submission\Student\Port\Student_Attachment_Cleanup_Repository_Port_Interface;
+use OJAI\Dashboard\Worksheet\Authoring\Domain\Public_Id_Generator;
+use Throwable;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Keeps binary deletion inside a repository-controlled legal-hold row lock.
+ */
+final class Run_Next_Submission_Attachment_Cleanup {
+	public const RETRY_SECONDS = 300;
+
+	/**
+	 * Clock.
+	 *
+	 * @var Closure
+	 */
+	private Closure $clock;
+
+	/**
+	 * Initialize submission attachment cleanup dependencies and state.
+	 *
+	 * @param Student_Attachment_Cleanup_Repository_Port_Interface $repository Persistence boundary used by this operation.
+	 * @param Private_File_Store_Port_Interface                    $files Files.
+	 * @param Public_Id_Generator                                  $ids Ids.
+	 * @param callable|null                                        $clock Clock.
+	 */
+	public function __construct(
+		private Student_Attachment_Cleanup_Repository_Port_Interface $repository,
+		private Private_File_Store_Port_Interface $files,
+		private Public_Id_Generator $ids,
+		?callable $clock = null
+	) {
+		$this->clock = null === $clock ? static fn (): string => gmdate( 'Y-m-d H:i:s' ) : Closure::fromCallable( $clock );
+	}
+
+	/**
+	 * Run once.
+	 *
+	 * @return Run_Submission_Attachment_Cleanup_Result
+	 */
+	public function run_once(): Run_Submission_Attachment_Cleanup_Result {
+		$now  = $this->now();
+		$item = $this->repository->claim_purge_due( $now, $this->minus_seconds( $now, self::RETRY_SECONDS ) );
+		if ( null === $item ) {
+			$item = $this->repository->expire_due(
+				$now,
+				$this->ids->create()->value(),
+				$this->ids->create()->value()
+			);
+		}
+		if ( null === $item ) {
+			return new Run_Submission_Attachment_Cleanup_Result( Run_Submission_Attachment_Cleanup_Result::IDLE );
+		}
+
+		try {
+			$purged = $this->repository->purge_claimed(
+				$item,
+				fn ( string $storage_key ): null => $this->delete( $storage_key ),
+				$this->ids->create()->value(),
+				$this->ids->create()->value(),
+				$this->now()
+			);
+		} catch ( Throwable ) {
+			return $this->result( Run_Submission_Attachment_Cleanup_Result::RETRY_WAIT, $item, 'attachment_cleanup_unavailable' );
+		}
+
+		return $this->result(
+			$purged ? Run_Submission_Attachment_Cleanup_Result::PURGED : Run_Submission_Attachment_Cleanup_Result::STALE,
+			$item,
+			null
+		);
+	}
+
+	/**
+	 * Delete submission attachment cleanup.
+	 *
+	 * @param string $storage_key Storage key.
+	 * @return null
+	 */
+	private function delete( string $storage_key ): null {
+		$this->files->delete( $storage_key );
+		return null;
+	}
+
+	/**
+	 * Result.
+	 *
+	 * @param string                             $state State.
+	 * @param Submission_Attachment_Cleanup_Item $item Item.
+	 * @param string|null                        $reason Reason.
+	 * @return Run_Submission_Attachment_Cleanup_Result
+	 */
+	private function result( string $state, Submission_Attachment_Cleanup_Item $item, ?string $reason ): Run_Submission_Attachment_Cleanup_Result {
+		return new Run_Submission_Attachment_Cleanup_Result(
+			$state,
+			$item->attachment_id(),
+			$item->file_id(),
+			$reason
+		);
+	}
+
+	/**
+	 * Now.
+	 *
+	 * @return string
+	 * @throws \Throwable Propagates validation or dependency failures.
+	 */
+	private function now(): string {
+		$value = ( $this->clock )();
+		if ( ! is_string( $value ) || 1 !== preg_match( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/D', $value ) ) {
+			throw new \RuntimeException( 'Submission attachment cleanup clock is invalid.' );
+		}
+		return $value;
+	}
+
+	/**
+	 * Minus seconds.
+	 *
+	 * @param string $utc Utc.
+	 * @param int    $seconds Seconds.
+	 * @return string
+	 * @throws \Throwable Propagates validation or dependency failures.
+	 */
+	private function minus_seconds( string $utc, int $seconds ): string {
+		$date = DateTimeImmutable::createFromFormat( '!Y-m-d H:i:s', $utc, new DateTimeZone( 'UTC' ) );
+		if ( false === $date ) {
+			throw new \RuntimeException( 'Submission attachment cleanup clock cannot be converted.' );
+		}
+		return $date->modify( '-' . $seconds . ' seconds' )->format( 'Y-m-d H:i:s' );
+	}
+}

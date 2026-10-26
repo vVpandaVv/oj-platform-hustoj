@@ -1,0 +1,352 @@
+{
+  "py-short-sum": {
+    "sha256": "d40c333a9813dcf946082735664d2570ad9dc41f0dac434b09c00ee6a3836aa1",
+    "stdin": "",
+    "stdout": "39\n"
+  },
+  "py-short-filter": {
+    "sha256": "262e560f6128d2ffa1c8876a4d2e4bcc7354807a0c6144ebffaf0dc25d61f0ee",
+    "stdin": "",
+    "stdout": "[2, 4, 6, 8, 10]\n"
+  },
+  "py-short-dict-count": {
+    "sha256": "6858cbb124011b8f2b0c4ef7ac22b8f7b33a1925d774f4df7794b8913244ca58",
+    "stdin": "",
+    "stdout": "{'red': 2, 'blue': 1, 'green': 1}\n"
+  },
+  "py-short-clean-names": {
+    "sha256": "5387ca977aa1698ec5aac75034b9d3a760b3139b7d4c43a3d241c64a0be76b70",
+    "stdin": "",
+    "stdout": "['Kim', 'Lee', 'Park']\n"
+  },
+  "py-short-function-tax": {
+    "sha256": "87124740c54ec0ea613e78e44505b44682e74a9f02e94f15a1c95568cb974d13",
+    "stdin": "",
+    "stdout": "13200\n"
+  },
+  "py-short-sort-score": {
+    "sha256": "c711eea92ad9a56b7637311a8601d04defbc2be2704117a8bb0b41850f91819c",
+    "stdin": "",
+    "stdout": "Jin 24\nSol 21\nMina 18\n"
+  },
+  "py-long-grade": {
+    "sha256": "f67de718291b79ffe301cd732ffce102d050aa8c8e0ffb40457cff80194bce06",
+    "stdin": "",
+    "stdout": "1 92 A\n2 81 B\n3 76 C\n4 64 D\n"
+  },
+  "py-long-frequency": {
+    "sha256": "cb38ca2875769eeb89b0abd816faa4dc9acf29569b0293e55754ffa11dafa582",
+    "stdin": "",
+    "stdout": "a 2\nc 2\nd 1\ne 2\ni 1\nn 1\ns 1\nt 1\n"
+  },
+  "py-long-window-average": {
+    "sha256": "f54278cc6b79a72f3e1ffe142bb9d9bdc4d915c7170aeb3eedb7b26d9cbb5fb5",
+    "stdin": "",
+    "stdout": "20.0\n21.7\n23.3\n25.0\n24.7\n"
+  },
+  "py-long-stack-brackets": {
+    "sha256": "bc0bcd339078e8f05e5ffa8a0869aaf4159205cc5809c6c52fae05aba87bb314",
+    "stdin": "",
+    "stdout": "True\nFalse\n"
+  },
+  "py-long-gradebook": {
+    "sha256": "e34a07cfbb29a9ec8e0c08973c268825d5ee11966b43390f4cef137035bc3aa9",
+    "stdin": "",
+    "stdout": "Mina 87.7 steady\nJae 77.3 steady\nSol 95.0 excellent\n"
+  },
+  "py-long-parse-log": {
+    "sha256": "e2c68dc3d3276e34f0610fb4ddbe7a376f3f7fb89e6186d09efd4004bcbbc4fa",
+    "stdin": "",
+    "stdout": "ERROR 1\nINFO 2\nWARN 1\n"
+  },
+  "py-assessment-report": {
+    "sha256": "d544f354232785b522fba4055102f2adda0d26de49a597692ecd9b36a11d5f48",
+    "stdin": "",
+    "stdout": "average=74.8\ncompleted=3\nbest=Cia(91)\nworst=Eun(58)\nAri: 82 -> B\nBo: 69 -> D\nCia: 91 -> A\nDan: 74 -> C\nEun: 58 -> D\n"
+  },
+  "py-assessment-matrix": {
+    "sha256": "1b8ef8eabd52b862a29b0e9604248044c0ff19b41ddaf2a0ad0ce51d36dc026b",
+    "stdin": "",
+    "stdout": "main 28\nsub 15\nrows [14, 22, 18, 20]\ncols [19, 17, 20, 18]\nlargest_row=1\n"
+  },
+  "py-assessment-inventory": {
+    "sha256": "86835e065f3779c9d88511c105b311df5bef07a9f5a70f068d72d14aa228729b",
+    "stdin": "",
+    "stdout": "total=653000\nshortage: keyboard, monitor\n"
+  },
+  "py-assessment-bfs": {
+    "sha256": "92436c0898b9301f3e3abdb085242a7a2a833a88678f961736c5b6a06f9b659c",
+    "stdin": "",
+    "stdout": "A 0\nB 1\nC 1\nD 2\nE 2\nF 2\n"
+  },
+  "py-assessment-sales": {
+    "sha256": "9d033d4888d5d63d7728f581a0b02ae5fd92348667a7a070787ad2c8970db2c7",
+    "stdin": "",
+    "stdout": "monthly rates\n2: 12.5%\n3: -5.2%\n4: 25.0%\n5: 7.5%\n6: 10.5%\nbest month=4\n"
+  },
+  "py-assessment-class-report": {
+    "sha256": "81c9b971a26140d27fdcce64002a3f6083a2f68d8cf0b06a1a1ab67fae103df2",
+    "stdin": "",
+    "stdout": "Mina: 86.3 (B)\nJun: 67.7 (D)\nSora: 94.7 (A)\nTae: 76.0 (C)\nYuna: 60.3 (D)\ngrade distribution\nA: 1\nB: 1\nC: 1\nD: 2\ntop=Sora(94.7)\nclass_average=77.0\n"
+  },
+  "py-short-squares": {
+    "sha256": "084cd6160bef809561c6138f6827e733ad72b5b8e8240ba65c71f4d9cc1ad1f3",
+    "stdin": "",
+    "stdout": "1\n4\n9\n16\n25\n36\n49\n"
+  },
+  "py-short-minmax": {
+    "sha256": "d97f86e12f7dba27557445f0a21903cca1b008eba687db6152491c20f9cd60b6",
+    "stdin": "",
+    "stdout": "low=7\nhigh=35\n"
+  },
+  "py-short-safe-divide": {
+    "sha256": "2b55dedd07e607226116132c5b85bf8893ac47df1baad0fcdf53f37378b3d64d",
+    "stdin": "",
+    "stdout": "4.0\n"
+  },
+  "py-short-unique": {
+    "sha256": "d920814a883d045b37eb54742e945fc65001ca380d6f38a07aef28f554063d4f",
+    "stdin": "",
+    "stdout": "1\n3\n5\n8\n"
+  },
+  "py-short-parse-csv": {
+    "sha256": "f2e732611c896d00bb790ea856dbf24c4aa69d3956a3dfbad4a180f5ae59db96",
+    "stdin": "",
+    "stdout": "kim\n105\n"
+  },
+  "py-short-queue": {
+    "sha256": "34b9ec9fc2da3a4e259a26a066bf15793a6ed8cce9ae968d50ea8de73a341dfd",
+    "stdin": "",
+    "stdout": "run compile\nrun test\nrun submit\n"
+  },
+  "py-long-binary-search": {
+    "sha256": "a640f147d899449acd564fdf709e36f4878335a577598577002d03dd81533b8f",
+    "stdin": "",
+    "stdout": "3\n"
+  },
+  "py-long-two-sum": {
+    "sha256": "92660ebc16e8963f72e24aa61b53320d74522c3f176a017e4e1b2c4286f2587a",
+    "stdin": "",
+    "stdout": "(3, 4)\n"
+  },
+  "py-long-merge-counts": {
+    "sha256": "f93c19281297fa26c05eb75880c3b482cb8c3d095e9ec19287f518555b269406",
+    "stdin": "",
+    "stdout": "apple 5\nbanana 6\norange 5\n"
+  },
+  "py-long-caesar": {
+    "sha256": "10820c1f64fdffe688927ac25b2da86e9e57603323b6ae5a39e98efd4df21667",
+    "stdin": "",
+    "stdout": "frgh wbslqj\n"
+  },
+  "py-long-recursive-factorial": {
+    "sha256": "290b36e2f5448ed7e3a87e9af02b19f7db096d4b120e1e11b89600284cad5e27",
+    "stdin": "",
+    "stdout": "[1, 2, 6, 24, 120, 720]\n"
+  },
+  "py-long-task-summary": {
+    "sha256": "8e52b84fd17fc7b42a0d995147539dbdd0798bf0511bd64eaa198ac7a147bd21",
+    "stdin": "",
+    "stdout": "done=2\nleft=2\n"
+  },
+  "py-assessment-top-students": {
+    "sha256": "423d561b41ea4505c76b14d3086cd00a6d6c26a5b30182695527447af5970241",
+    "stdin": "",
+    "stdout": "Sol: 95.7\nMina: 91.3\nRin: 86.7\n"
+  },
+  "py-assessment-reservation": {
+    "sha256": "17e2b4b22a362c17da568f16cc8830172bcc69aabe3b58dc4761867ea6f972dd",
+    "stdin": "",
+    "stdout": "A1 A3 A4\nB1 B2 B3\nC2 C3 C4\n"
+  },
+  "py-assessment-grid-path": {
+    "sha256": "17e9be513f956dbc47b6244221f05803119d86af1d9b696fe7b78d7f9524a577",
+    "stdin": "",
+    "stdout": "6\n"
+  },
+  "py-assessment-tokenizer": {
+    "sha256": "ca6c0df1a9fd357cdbd05bee8958cae34a26f974bd5ddb07fda01ddbae2d51c8",
+    "stdin": "",
+    "stdout": "code 2\ntyping 2\nand 1\nfaster 1\nmakes 1\npractice 1\n"
+  },
+  "py-assessment-cache": {
+    "sha256": "7b8599bb3e5c66d291268e08ee792ecdc261fb61f932a36cef167dd6fc5d3706",
+    "stdin": "",
+    "stdout": "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]\ncached 12\n"
+  },
+  "c-short-max": {
+    "sha256": "910d1f43b285293e2357f0aa373ca147387759c0c2b0dd53bb78f4be1e3e3ee8",
+    "stdin": "",
+    "stdout": "15\n"
+  },
+  "c-short-count": {
+    "sha256": "6a00231ae06e640e753b425356c8d8970f3ce419f70ca014f63980a2dcf7b2ac",
+    "stdin": "",
+    "stdout": "3\n"
+  },
+  "c-short-factorial": {
+    "sha256": "ac4ffe40f9ca5c3aea3e543f697bf7e14e4006eba175a38473e854be555e2d5f",
+    "stdin": "",
+    "stdout": "120\n"
+  },
+  "c-short-swap": {
+    "sha256": "53c9cc2074bb00bbb580dd977e1758503c8c92b9acef21f6f8542ff840dd3728",
+    "stdin": "",
+    "stdout": "13 7\n"
+  },
+  "c-short-vowel-count": {
+    "sha256": "068bf992d4cb12fe654dd82b692e496f7a3e295afdd9eec806e23df447adbf9f",
+    "stdin": "",
+    "stdout": "5\n"
+  },
+  "c-short-clamp": {
+    "sha256": "73ee6c06f888478e0caece9c621c29b97789f9fa17906c0da7b469a9157f245f",
+    "stdin": "",
+    "stdout": "100\n"
+  },
+  "c-long-average": {
+    "sha256": "2a1b1a02d724ba805ef79ede1c8df4a2ed81f3de582c6a2481aec63589827cba",
+    "stdin": "",
+    "stdout": "average: 80.2\npassed: 4\n"
+  },
+  "c-long-reverse": {
+    "sha256": "e7d8a9832397cf71e79377179c63058f8f000104603511dc2dd53ce4ae339f9a",
+    "stdin": "",
+    "stdout": "gnidoc\n"
+  },
+  "c-long-bubble-sort": {
+    "sha256": "d026e6957bd9a3c890a6fd2832c5371beea7c89989e84ab92ca2d1e178646228",
+    "stdin": "",
+    "stdout": "1 2 4 5 7 9 "
+  },
+  "c-long-prime-count": {
+    "sha256": "54f9aa12f0fd50af450094db39b74440c65fd34297ed6ade3faa873373463fce",
+    "stdin": "",
+    "stdout": "10\n"
+  },
+  "c-long-struct-ranking": {
+    "sha256": "6d7de31f7165caeaa6b5b155d07f7324cec56ab2e1659825e5ece3777bc43158",
+    "stdin": "",
+    "stdout": "Jae 91\n"
+  },
+  "c-long-matrix-sum": {
+    "sha256": "a91dd736eafbf4f9f88eefd66c7bd3d064dffb510c0b719412a7219275efe7c6",
+    "stdin": "",
+    "stdout": "row 0: 8\nrow 1: 15\nrow 2: 13\n"
+  },
+  "c-assessment-stats": {
+    "sha256": "0bb1d0284766d932502df5cfcabe456e02aaff29b19394bd3dc5c1902883e701",
+    "stdin": "",
+    "stdout": "min=17\nmax=26\navg=21.50\nabove_20=6\nvariance=8.25\n"
+  },
+  "c-assessment-search": {
+    "sha256": "099ed14e6f4ea59fb1074cae14590d55732336a919f3075d6ce6b21158ad4fe3",
+    "stdin": "",
+    "stdout": "found 25 at 4\nfound 4 at 3\n100 not found\ngreater_than_10=5\n"
+  },
+  "c-assessment-student-sort": {
+    "sha256": "93f9fd2189e9c6f0f4be2dcfacd6909ed4a4719a26764acef37925e2144c5f03",
+    "stdin": "",
+    "stdout": "Rin 95\nJae 91\nMina 88\nSol 84\n"
+  },
+  "c-assessment-matrix-product": {
+    "sha256": "cc31340032dff21657629387e5cde72e7ea8e5f482872cf8ccc580b35de3bfd4",
+    "stdin": "",
+    "stdout": "58 64 \n139 154 \n"
+  },
+  "c-assessment-word-frequency": {
+    "sha256": "644526333637716d2ed2e17eb6c33ca0be265e724324bc77650476a4dadc0ad9",
+    "stdin": "",
+    "stdout": "a: 1\nc: 3\nd: 1\ne: 2\ng: 1\ni: 2\nn: 1\no: 1\np: 2\nr: 1\nt: 2\ny: 1\n"
+  },
+  "c-assessment-inventory-system": {
+    "sha256": "76d4e0e6cdff73682e8c4f83f8761b044bb88c6c8d4a5bc63a80e2007e7f529d",
+    "stdin": "",
+    "stdout": "total_value=2021000\nlow: mouse (3 left)\nlow: cable (2 left)\nmonitor_stock=7\n"
+  },
+  "c-short-array-sum": {
+    "sha256": "27d54a7f23f8b2473c7dc45f67b34aaff5a04cd4b8c5695325b681f399056b4c",
+    "stdin": "",
+    "stdout": "30\n"
+  },
+  "c-short-even-sum": {
+    "sha256": "a5a31541a67d93b681452f792fe2ae18bd18617dc48827e5ffe5e238cf359687",
+    "stdin": "",
+    "stdout": "110\n"
+  },
+  "c-short-strlen-loop": {
+    "sha256": "d323a625d3fda35c12c3e54c155e408ecf63b7fef1396f3be60970b95183adef",
+    "stdin": "",
+    "stdout": "6\n"
+  },
+  "c-short-pointer-basic": {
+    "sha256": "6a7d77fff187298236f73ed0061482d1c7e7b664a548beb2ef8485198db032fa",
+    "stdin": "",
+    "stdout": ""
+  },
+  "c-short-switch-grade": {
+    "sha256": "d004b8bdc666d082528801a981ecdf1f6379fbe6b4fc937db11da66e3633b784",
+    "stdin": "",
+    "stdout": "good\n"
+  },
+  "c-short-min-function": {
+    "sha256": "eef744f8177ffc03a55697cb08811b7faf92de098e2f9ee2da3c3dbc327884f9",
+    "stdin": "",
+    "stdout": "11\n"
+  },
+  "c-long-binary-search": {
+    "sha256": "2ecf67d986784610703e2553bcf49a1e320a798ed37af75d1ba293d590346e77",
+    "stdin": "",
+    "stdout": "3\n"
+  },
+  "c-long-selection-sort": {
+    "sha256": "c8ba790cabd77d454d705599b72481832ab149e055afaa614aa8c3b7dd025219",
+    "stdin": "",
+    "stdout": "1 4 6 7 9 "
+  },
+  "c-long-fibonacci-array": {
+    "sha256": "8e3804b51abdc3ac362ff11ba327af61b7ace9985a18fad85451d7381f901a87",
+    "stdin": "",
+    "stdout": "0 1 1 2 3 5 8 13 21 34 "
+  },
+  "c-long-string-copy": {
+    "sha256": "28afae64e423194bcf525f8ed4f3c96d66df5e4dcf1e66a61326082f49079c3b",
+    "stdin": "",
+    "stdout": "practice\n"
+  },
+  "c-long-temperature-table": {
+    "sha256": "cbdbcfb3f21b5d1470ccee7f2959bb5f5a054a4989f1581fd1ce6fa29e9a979a",
+    "stdin": "",
+    "stdout": "0 32.0\n10 50.0\n20 68.0\n30 86.0\n40 104.0\n"
+  },
+  "c-long-running-total": {
+    "sha256": "bd4eba38965e1c47d347c2fc9ebf9d5ef0b3c9713f7aaac70199a5e242add18c",
+    "stdin": "",
+    "stdout": "day 1: 12\nday 2: 27\nday 3: 38\nday 4: 56\nday 5: 76\n"
+  },
+  "c-assessment-stack": {
+    "sha256": "ea0965c0dbb8cf7b4cd9a7a202167b2db34c692784637125062ebdbccf0146a0",
+    "stdin": "",
+    "stdout": "20\n10\n"
+  },
+  "c-assessment-linked-list": {
+    "sha256": "be13a167531cf47556e5c0e025b72a18b0d7a8a09dd58bbda08ec5d1a28f2cb5",
+    "stdin": "",
+    "stdout": "33\n"
+  },
+  "c-assessment-ticket-summary": {
+    "sha256": "2aea0907574f936ea37121f359e7fee78e92c34e00d29c0fb6cc70ae4d4325e3",
+    "stdin": "",
+    "stdout": "revenue=461000\ncount=52\n"
+  },
+  "c-assessment-caesar": {
+    "sha256": "266c2ea996fefc2ff1c1983a5284eec73e182016d0784a4606826bd50f9b839b",
+    "stdin": "",
+    "stdout": "htij ydunsl\n"
+  },
+  "c-assessment-ring-queue": {
+    "sha256": "f54a7bf8e951a4f7f89def21ec014684f9f024b04b90c2906387038e8f7cfdb3",
+    "stdin": "",
+    "stdout": "3\n8\n"
+  }
+}

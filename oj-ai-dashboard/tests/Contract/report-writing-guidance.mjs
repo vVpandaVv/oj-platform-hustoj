@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
+
+const source = await readFile(new URL('../../resources/js/submission-evaluation-review-workbench.js', import.meta.url), 'utf8');
+const window = {};
+vm.runInNewContext(source, { window, document: { querySelector: () => null }, URLSearchParams, console });
+const check = (values, note = false) => [...window.OJAISubmissionEvaluationReviewWorkbench.reportWritingIssues(values, note)];
+assert.deepEqual(check(['두 자료를 비교함. 근거를 선별하여 설명을 구성함.', '차이가 드러남. 보완이 필요함. 수행 과정이 확인됨. 근거는 제출물임.']), []);
+assert.deepEqual(check(['자료를 비교했습니다.\n근거를 제시했다.']), ['문장 끝을 명사형(~함·~음·~됨·~임)으로 확인하세요.']);
+assert.deepEqual(check(['1.5배의 차이를 비교함. “차이가 났다.”라는 문장을 인용함.']), []);
+assert.deepEqual(check(['', '  ', 'English legacy draft.']), []);
+assert.equal(check(['나는 근거를 비교함.'], true).length, 1);
+assert.equal(check(['필요성을 깨달음.'], true).length, 1);
+assert.deepEqual(check(['논설문에서 자료 선택 이유를 설명함.'], true), []);
+const draft = ['자료를 비교했습니다.'];
+check(draft, true);
+assert.deepEqual(draft, ['자료를 비교했습니다.'], 'Style checks must never mutate stored prose.');
+assert.match(source, /학생부 기록 초안/);
+assert.match(source, /지도 참고사항 \(학생부 기록과 별도/);
+assert.match(source, /실제 관찰 근거, 수행 과정, 명사형 문체/);
+console.log('Report writing guidance passed: nominal prose, observer hints, quote preservation and non-mutating legacy drafts.');

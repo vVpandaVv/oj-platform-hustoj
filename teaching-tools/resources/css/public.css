@@ -1,0 +1,199 @@
+/*
+ * Learner join page. console.css loads first and maps the --htt-* names onto
+ * the platform --ojp-* tokens; this file only lays the page out for phones.
+ */
+[data-htt-join] {
+    color: var(--htt-fg);
+}
+
+[data-htt-join] :where(button:not(.ojp-button)) {
+    background: var(--htt-card-bg);
+    color: var(--htt-fg);
+    border: 1px solid var(--htt-border);
+    border-radius: var(--htt-radius-sm);
+    min-height: 44px;
+    padding: 10px 16px;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color var(--ojp-duration, 0.15s) var(--ojp-ease, ease), background var(--ojp-duration, 0.15s) var(--ojp-ease, ease);
+}
+
+[data-htt-join] :where(button:not(.ojp-button)):hover {
+    border-color: var(--htt-accent);
+}
+
+[data-htt-join] button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+[data-htt-join] .htt-primary-action {
+    width: 100%;
+}
+
+.htt-join {
+    max-width: 480px;
+    margin: 24px auto;
+    padding: 24px;
+    border-radius: var(--htt-radius-lg);
+    background: var(--ojp-color-elevated, #ffffff);
+    box-shadow: var(--htt-shadow);
+}
+
+.htt-join.is-whiteboard-active,
+.htt-join.is-quickboard-active {
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
+}
+
+.htt-join.is-whiteboard-active .htt-join-view,
+.htt-join.is-whiteboard-active .htt-join-whiteboard,
+.htt-join.is-quickboard-active .htt-join-view,
+.htt-join.is-quickboard-active .htt-join-quickboard {
+    width: 100%;
+}
+
+.htt-join .htt-join-header {
+    margin-bottom: var(--ojp-space-4, 16px);
+}
+
+.htt-join-form label {
+    display: block;
+    margin-bottom: 12px;
+    font-size: var(--ojp-text-subhead, 13px);
+    color: var(--htt-muted);
+    font-weight: 600;
+}
+
+.htt-join-form input[type="text"] {
+    display: block;
+    width: 100%;
+    font-size: 1.75rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 12px 8px;
+    margin-top: 6px;
+    background: var(--htt-card-bg);
+    color: var(--htt-fg);
+    border: 1px solid var(--ojp-color-line-strong, #b8b8bf);
+    border-radius: var(--htt-radius);
+    box-sizing: border-box;
+}
+
+.htt-join-form input[type="text"]:focus {
+    border-color: var(--htt-primary);
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--htt-primary-tint);
+}
+
+.htt-join-error {
+    margin-top: 12px;
+}
+
+.htt-participation-controls,
+.htt-participation-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.htt-participation-controls {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    flex: 0 0 auto;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--htt-bg);
+    padding: 4px 0;
+}
+
+.htt-participation-controls strong { font-size: 14px; }
+.htt-participation-actions .ojp-button { min-height: 44px; white-space: nowrap; }
+
+.htt-join:fullscreen,
+.htt-join.is-expanded {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    margin: 0;
+    padding: 16px;
+    border-radius: 0;
+    box-sizing: border-box;
+    background: var(--htt-bg);
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    box-shadow: none;
+}
+
+.htt-join.is-expanded {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+}
+
+.htt-join:fullscreen > .htt-assigned-list,
+.htt-join.is-expanded > .htt-assigned-list { display: none; }
+
+.htt-join:fullscreen .htt-join-view,
+.htt-join.is-expanded .htt-join-view,
+.htt-join:fullscreen .htt-join-whiteboard,
+.htt-join.is-expanded .htt-join-whiteboard {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    min-height: 0;
+}
+
+.htt-join:fullscreen.is-whiteboard-active .htt-join-view,
+.htt-join.is-expanded.is-whiteboard-active .htt-join-view,
+.htt-join:fullscreen .htt-join-whiteboard,
+.htt-join.is-expanded .htt-join-whiteboard { flex: 1 1 0; }
+
+.htt-join:fullscreen .htt-join-whiteboard,
+.htt-join.is-expanded .htt-join-whiteboard { height: auto; }
+
+.htt-join .htt-timer-clock {
+    font-size: 4rem;
+}
+
+.htt-join .htt-timer-ended {
+    font-size: 1.25rem;
+}
+
+@media (max-width: 600px) {
+    .htt-join {
+        margin: 12px auto;
+        padding: 18px 16px;
+    }
+
+    .htt-join .htt-timer-clock {
+        font-size: 3.25rem;
+    }
+
+    .htt-join.is-whiteboard-active,
+    .htt-join.is-quickboard-active {
+        margin: 0 auto;
+        padding: 8px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
+.htt-assigned-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.htt-assigned-list[hidden] {
+    display: none;
+}
+
+[data-htt-join][data-config] [hidden] {
+    display: none;
+}

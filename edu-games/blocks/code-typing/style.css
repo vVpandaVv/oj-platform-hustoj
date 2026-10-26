@@ -1,0 +1,553 @@
+.wp-block-edu-games-code-typing,
+.code-typing-block {
+    width: min(var(--shell-width, 1120px), calc(100% - (var(--shell-padding-x, 1rem) * 2)));
+    max-width: none;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.oj-typing-shell {
+    --typing-bg: #f6f8fb;
+    --typing-ink: #172033;
+    --typing-muted: #69758a;
+    --typing-line: #d7dee9;
+    --typing-panel: #ffffff;
+    --typing-primary: #1d6fd8;
+    --typing-primary-dark: #164c96;
+    --typing-coral: #e65d4f;
+    --typing-good: #22845c;
+    --typing-bad: #c03221;
+    width: 100%;
+    color: var(--typing-ink);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.oj-typing-shell * {
+    box-sizing: border-box;
+}
+
+.oj-typing-topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.oj-typing-kicker {
+    margin: 0 0 6px;
+    color: var(--typing-coral);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.oj-typing-topbar h2 {
+    margin: 0;
+    font-size: clamp(1.7rem, 2.6vw, 2.6rem);
+    line-height: 1.05;
+}
+
+.oj-typing-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.oj-typing-button,
+.oj-typing-controls select {
+    font: inherit;
+}
+
+.oj-typing-button {
+    min-height: 42px;
+    padding: 0 14px;
+    border: 1px solid var(--typing-primary);
+    border-radius: 8px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.oj-typing-button-primary {
+    background: var(--typing-primary);
+    color: #ffffff;
+}
+
+.oj-typing-button-ghost {
+    background: #ffffff;
+    color: var(--typing-primary-dark);
+}
+
+.oj-typing-controls {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.75fr) minmax(280px, 1.3fr) minmax(240px, 1fr);
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 12px;
+}
+
+.oj-typing-controls label,
+.oj-typing-sample-select {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.oj-typing-controls label > span,
+.oj-typing-sample-select > span {
+    color: var(--typing-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.oj-typing-controls select {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid var(--typing-line);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--typing-ink);
+    padding: 0 10px;
+}
+
+.oj-typing-mode-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.oj-typing-mode-tabs button {
+    min-height: 42px;
+    border: 1px solid var(--typing-line);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--typing-ink);
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.oj-typing-mode-tabs button.is-active {
+    border-color: var(--typing-primary);
+    background: #eaf3ff;
+    color: var(--typing-primary-dark);
+}
+
+.oj-typing-stats {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.oj-typing-stat {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--typing-line);
+    border-radius: 8px;
+    background: var(--typing-panel);
+}
+
+.oj-typing-stat span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--typing-muted);
+    font-size: 0.74rem;
+    font-weight: 900;
+}
+
+.oj-typing-stat strong {
+    display: block;
+    font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+    line-height: 1;
+    overflow-wrap: anywhere;
+}
+
+.oj-typing-stream-panel {
+    min-width: 0;
+    border: 1px solid var(--typing-line);
+    border-radius: 8px;
+    background: var(--typing-panel);
+}
+
+.oj-typing-panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px;
+    border-bottom: 1px solid var(--typing-line);
+}
+
+.oj-typing-panel-head span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--typing-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.oj-typing-panel-head h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.25;
+}
+
+.oj-typing-panel-head b {
+    flex: 0 0 auto;
+    color: var(--typing-primary-dark);
+    font-size: 1.1rem;
+}
+
+.oj-typing-panel-head b.is-warning {
+    color: var(--typing-bad);
+}
+
+.oj-typing-stream {
+    height: 460px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding: 16px;
+    background: #0f172a;
+    font-family: Consolas, "SFMono-Regular", "Cascadia Mono", monospace;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    tab-size: 4;
+}
+
+.oj-typing-line-slot {
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+
+.oj-typing-line-target,
+.oj-typing-line-typed {
+    color: #dbeafe;
+    min-height: 1.65em;
+}
+
+.oj-typing-line-typed {
+    margin-top: 2px;
+    padding-top: 2px;
+    border-top: 1px dashed rgba(219, 234, 254, 0.18);
+}
+
+.oj-typing-line-slot.is-done {
+    opacity: 0.5;
+}
+
+.oj-typing-line-slot.is-current {
+    border-color: var(--typing-primary);
+    background: rgba(29, 111, 216, 0.14);
+}
+
+.oj-typing-line-slot.is-current .oj-typing-line-target {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.oj-typing-line-slot.is-upcoming {
+    opacity: 0.38;
+}
+
+.oj-typing-line-slot.is-upcoming .oj-typing-line-target {
+    color: rgba(219, 234, 254, 0.6);
+}
+
+.oj-typing-char.is-correct {
+    color: #bbf7d0;
+}
+
+.oj-typing-char.is-space,
+.oj-typing-char.is-tab {
+    display: inline-block;
+    min-width: 0.62em;
+    text-align: center;
+    color: rgba(219, 234, 254, 0.42);
+}
+
+.oj-typing-char.is-space.is-correct,
+.oj-typing-char.is-tab.is-correct {
+    color: rgba(187, 247, 208, 0.72);
+}
+
+.oj-typing-char.is-current {
+    background: #facc15;
+    color: #172033;
+}
+
+.oj-typing-char.is-wrong {
+    background: #fecaca;
+    color: #7f1d1d;
+}
+
+.oj-typing-char.is-wrong.is-space,
+.oj-typing-char.is-wrong.is-tab,
+.oj-typing-char.is-extra {
+    box-shadow: inset 0 -2px 0 #ef4444;
+}
+
+.oj-typing-char.is-pending {
+    color: #dbeafe;
+}
+
+.oj-typing-char.is-space.is-pending,
+.oj-typing-char.is-tab.is-pending {
+    color: rgba(219, 234, 254, 0.42);
+}
+
+/*
+ * The actual focused input element. It stays fully functional (receives
+ * every keystroke, can be focused by clicking anywhere on the stream — see
+ * view.js#bindEvents) but is visually hidden, since what the player sees is
+ * the rendered stream above, not this element's own box.
+ */
+.oj-typing-input-capture {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 0;
+    opacity: 0;
+}
+
+.oj-typing-feedback {
+    min-height: 50px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--typing-line);
+    color: var(--typing-muted);
+    font-weight: 800;
+    line-height: 1.45;
+}
+
+.oj-typing-shell.is-running .oj-typing-feedback {
+    color: var(--typing-primary-dark);
+}
+
+.oj-typing-shell.is-finished .oj-typing-feedback {
+    color: var(--typing-good);
+}
+
+.oj-typing-keyboard {
+    overflow-x: auto;
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid var(--typing-line);
+    border-radius: 8px;
+    background: var(--typing-panel);
+    user-select: none;
+}
+
+.oj-typing-key-row {
+    display: flex;
+    min-width: 490px;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.oj-typing-key-row:last-child {
+    margin-bottom: 0;
+}
+
+.oj-typing-key {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    max-width: 52px;
+    min-width: 28px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--typing-line);
+    border-radius: 6px;
+    background: #eef2f8;
+    color: var(--typing-muted);
+    font-family: Consolas, "SFMono-Regular", "Cascadia Mono", monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: background 0.12s ease, color 0.12s ease, transform 0.12s ease;
+}
+
+.oj-typing-key-shift {
+    position: absolute;
+    top: 3px;
+    right: 6px;
+    font-size: 0.62rem;
+    color: rgba(105, 117, 138, 0.7);
+}
+
+.oj-typing-key-base {
+    margin-top: 4px;
+}
+
+.oj-typing-key-special {
+    flex: 2 1 0;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.oj-typing-key-wide {
+    flex: 2 1 0;
+}
+
+.oj-typing-key-extra-wide {
+    flex: 8 1 0;
+}
+
+.oj-typing-key.is-next {
+    border-color: var(--typing-primary);
+    background: var(--typing-primary);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(29, 111, 216, 0.35);
+}
+
+.oj-typing-key.is-next .oj-typing-key-shift {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.oj-typing-key.is-next-shift:not(.is-next) {
+    border-color: var(--typing-coral);
+    background: #fde2de;
+    color: #7f1d1d;
+}
+
+.oj-typing-rank-panel {
+    margin-top: 12px;
+    border: 1px solid var(--typing-line);
+    border-radius: 8px;
+    background: var(--typing-panel);
+    overflow: hidden;
+}
+
+.oj-typing-rank-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--typing-line);
+    color: var(--typing-muted);
+    font-weight: 900;
+}
+
+.oj-typing-leaderboard {
+    display: grid;
+    gap: 6px;
+    padding: 10px;
+}
+
+.oj-typing-rank-row {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 88px;
+    gap: 8px;
+    align-items: center;
+    min-height: 42px;
+    padding: 8px;
+    border: 1px solid var(--typing-line);
+    border-radius: 8px;
+}
+
+.oj-typing-rank-row.oj-typing-rank-columns {
+    min-height: 30px;
+    padding: 0 8px;
+    border: 0;
+    color: var(--typing-muted);
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+}
+
+.oj-typing-rank-row.is-me {
+    border-color: var(--typing-primary);
+    background: #eaf3ff;
+}
+
+.oj-typing-rank-row strong,
+.oj-typing-rank-row b {
+    color: var(--typing-primary-dark);
+}
+
+.oj-typing-rank-row span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.oj-typing-rank-row b {
+    text-align: right;
+}
+
+.oj-typing-rank-empty {
+    padding: 16px;
+    color: var(--typing-muted);
+    font-weight: 800;
+}
+
+@media (max-width: 980px) {
+    .oj-typing-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .oj-typing-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .oj-typing-stream {
+        height: 380px;
+    }
+}
+
+@media (max-width: 640px) {
+    .oj-typing-key {
+        height: 36px;
+        font-size: 0.72rem;
+    }
+
+    .oj-typing-key-shift {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .wp-block-edu-games-code-typing,
+    .code-typing-block {
+        width: calc(100% - 12px);
+    }
+
+    .oj-typing-topbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .oj-typing-actions {
+        justify-content: stretch;
+    }
+
+    .oj-typing-actions .oj-typing-button {
+        flex: 1 1 140px;
+    }
+
+    .oj-typing-mode-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .oj-typing-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+.oj-typing-shell [data-field="expected-output"] { margin:16px 0; }
+.oj-typing-shell [data-field="expected-output"][hidden] { display:none; }
+.oj-typing-shell [data-field="expected-output"] pre { max-width:100%; max-height:320px; overflow:auto; white-space:pre; font:15px/1.5 Consolas, monospace; }

@@ -1,0 +1,263 @@
+[
+  {
+    "file": "anagrams.csv",
+    "bytes": 361,
+    "sha256": "b482ed07f06c201f83ce9c44c24a33e6e413195e01d45f34ca65f7f6b22fb8d3",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "anscombe.csv",
+    "bytes": 556,
+    "sha256": "a0c1f636aa0347101de76271e7efe4c86a22ef28cda62886eaff23a1bf1924b1",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "attention.csv",
+    "bytes": 1198,
+    "sha256": "5c1de4b2a7cb7a9521145074815e0f3824f2d11786e72fc843f6fcb24701bc19",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "brain_networks.csv",
+    "bytes": 1075911,
+    "sha256": "538dd9952e03837a78242494cee2583c3eaf3fe5978a60ebad05235bc60a0c82",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "car_crashes.csv",
+    "bytes": 3301,
+    "sha256": "78ac44c0f6d407bda2d646a65447d119994d34afa11bb9f689833031bc4869c7",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "diamonds.csv",
+    "bytes": 2772143,
+    "sha256": "9574730b03aba241d899c4a97511c5061b19358fab89510774fb6c24168345c4",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "dots.csv",
+    "bytes": 25742,
+    "sha256": "dd8ed5e18358ec23250ecc877c98d0212c0419d0152e1bf5387b20341059842b",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "dowjones.csv",
+    "bytes": 11349,
+    "sha256": "8b1bc96432981689eb6d00de1909fb1f61aa82064418a39104ec186dfd22c539",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "exercise.csv",
+    "bytes": 2735,
+    "sha256": "d67ff5896d7d262bba3ec0bd7a8db410e56afc96a0436e08dfe53016d5f1e4e6",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "flights.csv",
+    "bytes": 2350,
+    "sha256": "237d834127d9c6355630d8f443a7a2377b5925923010009b59809ba0b67f4fac",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "fmri.csv",
+    "bytes": 38329,
+    "sha256": "8a0bfdce94daa31c95ae9f49ca6a2a3ac39e2fe85719c892cb0b06bca94ffe3e",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "geyser.csv",
+    "bytes": 4199,
+    "sha256": "ce8f6bd15967c9a3dee345aaf268f6b92623abb1e1d313e04d79b720aa6b8bd6",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "glue.csv",
+    "bytes": 2054,
+    "sha256": "0c6b840da0a2c7fba3422d3b6867492bc8e61dd99dec7a276f6108774c81744e",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "healthexp.csv",
+    "bytes": 7222,
+    "sha256": "ba4178979b7b0c0f0f793fe7999b3e2303cd6e47a545b1957a2501cbc2ca2b62",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "iris.csv",
+    "bytes": 3858,
+    "sha256": "9cc1c345c71bcc9b486b74cbf6063fa66f4bb5e0f603a4b3c3471ec2e5e8e355",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "kosis_airline_company.csv",
+    "bytes": 189571,
+    "sha256": "d12f3ac6f66329c1296c06624e694d0363a25c68c3b36f06ab1c521a8f60ed97",
+    "upstream_declared_by_seeder": "corazzon teaching repositories (exact file/revision pending)",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "kosis_customer_price.csv",
+    "bytes": 502099,
+    "sha256": "23e79fa5d70a90ddacabecc40e62208bb86f17e258dc2df5892965b593bdd343",
+    "upstream_declared_by_seeder": "corazzon teaching repositories (exact file/revision pending)",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "kosis_economic_index.csv",
+    "bytes": 59665,
+    "sha256": "b6dc78a55b943195415bbfebbd8925d0864196f16f03a185081a7559e50a7250",
+    "upstream_declared_by_seeder": "corazzon teaching repositories (exact file/revision pending)",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "kosis_job_seeker_giveup.csv",
+    "bytes": 27860,
+    "sha256": "2974f942296cdaa36a3f94ccb6fcceec658fc7ddffdf2af5e2314fad51beffde",
+    "upstream_declared_by_seeder": "corazzon teaching repositories (exact file/revision pending)",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "krx_listed_companies.csv",
+    "bytes": 439728,
+    "sha256": "48d7a9fcd9014c2781f6f73cfc01c6e193d9186d6671519e19d268e5412e5aa0",
+    "upstream_declared_by_seeder": "corazzon teaching repositories (exact file/revision pending)",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "mpg.csv",
+    "bytes": 21222,
+    "sha256": "c14b8b855ea7ee86cb9736bf8caaf281c4685ca08826f3eb2acaccaaf40f0d5a",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "penguins.csv",
+    "bytes": 13478,
+    "sha256": "e07636bd8af74260099ea2f8678e2eabbf35def579940cc76f67061ee16c06c1",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "planets.csv",
+    "bytes": 36263,
+    "sha256": "a6d10044887e17396974525a366f5fa2e4b34df70f491e64eb9943de0e3d3825",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "seaice.csv",
+    "bytes": 231046,
+    "sha256": "a6ea8fad59199919f3ab3ece99b46dc7484e58824f30af2924316205b411e509",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "seoul_bike_rental_gu.csv",
+    "bytes": 199437,
+    "sha256": "c4d7ed34afa5fd2f00e7f0e127e0acc959f57691bc2b8dc2f7e966a1208d8997",
+    "upstream_declared_by_seeder": "corazzon teaching repositories (exact file/revision pending)",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "seoul_covid19.csv",
+    "bytes": 38987,
+    "sha256": "571c30fda7b2f9e814ba3b65a6e7cf624d66b6ed7c18ddf80e3464b419d785ee",
+    "upstream_declared_by_seeder": "corazzon teaching repositories (exact file/revision pending)",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "taxis.csv",
+    "bytes": 869349,
+    "sha256": "08d6d71784dbaa2651fee37fc03389754194c05d72d2d19cbc2c799dea6ac09d",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "tips.csv",
+    "bytes": 9729,
+    "sha256": "e54cc4d2ce1bff65d32ca60b3e4b802e06bde1d7e7caf6f796f6bf7370e863b0",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  },
+  {
+    "file": "titanic.csv",
+    "bytes": 57018,
+    "sha256": "81787d320d7f7b03df935e91de8bd19e11d45c5bbcab86ef4d4a76dc91b7d4f2",
+    "upstream_declared_by_seeder": "https://github.com/mwaskom/seaborn-data",
+    "source_revision": "unverified",
+    "redistribution_status": "pending",
+    "license_evidence": ""
+  }
+]

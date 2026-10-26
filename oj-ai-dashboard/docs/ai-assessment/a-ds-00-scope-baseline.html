@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-00 목적·범위·기준선</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-00 목적·범위·기준선</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html" aria-current="page">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">결론</a>
+          <a href="#purpose">목적·결정 권한</a>
+          <a href="#inputs">동결 입력</a>
+          <a href="#product">제품 정의</a>
+          <a href="#actors">사용자·진입점</a>
+          <a href="#runtime">실행 경계</a>
+          <a href="#workflow">수직 업무 흐름</a>
+          <a href="#subjects">평가 주제</a>
+          <a href="#ownership">소유권</a>
+          <a href="#data">데이터 경계</a>
+          <a href="#terms">고정 용어</a>
+          <a href="#scope">범위·비목표</a>
+          <a href="#success">성공 기준</a>
+          <a href="#trace">위험 추적</a>
+          <a href="#deferred">후속 단계 이관</a>
+          <a href="#decisions">결정 기록</a>
+          <a href="#completion">완료 판정</a>
+          <a href="#confirm">확인할 결정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">A-DS-00 · Purpose, Scope and Baseline</p>
+        <h2>목적·범위·기준선</h2>
+        <p>AI 평가 애드온을 OJ Platform 설치 이후 활성화하는 독립 배포 애드온으로 정의하고, 활동지 제작부터 활동지 자체 평가, 학생 제출 평가, 교사 확정과 PDF까지 하나의 제품 범위로 고정한다. 이 문서는 상세 설계가 바꿀 수 없는 경계와 용어를 결정하며 아직 업무 runtime을 구현하지 않는다.</p>
+        <div class="meta">
+          <span class="badge">작성일 2026-08-10</span>
+          <span class="badge good">A-D-001~009 사용자 확인·동결</span>
+          <span class="badge good">상태 사용자 확인·동결</span>
+          <span class="badge">상세 설계 1/17 동결</span>
+          <span class="badge">A-DS-01 상세 설계 시작</span>
+          <span class="badge">업무 runtime 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 결론</h2>
+      <section class="panel">
+        <p>목표 제품은 OJ Console에서 교사가 Plate 활동지를 만들고 자체 AI 진단을 거쳐 발행·배포하며, PublicUI에서 학생이 작성·제출한 결과물을 별도 AI 평가와 교사 검토를 통해 공개하는 <strong>OJ Platform 필수 AI 평가 애드온</strong>이다.</p>
+        <div class="callout"><strong>고정 경계:</strong> 플랫폼은 사용자·학사 context·권한 배정·AI 연결과 공통 실행 기반을 제공하고, 애드온은 활동지·배포·제출·평가·검토·공개·PDF 업무를 소유한다. 애드온 설치·업데이트·실행은 플랫폼 파일·migration·DB를 패치하지 않는다.</div>
+      </section>
+
+      <h2 id="purpose">목적과 결정 권한</h2>
+      <table>
+        <thead><tr><th>항목</th><th>A-DS-00에서 확정</th><th>이후 단계에서 상세화</th></tr></thead>
+        <tbody>
+          <tr><td>제품 목적</td><td>활동지 자체 품질 진단과 학생 제출 평가를 교사 중심의 한 업무 흐름으로 제공</td><td>화면 배치·문구·상태별 상호작용은 A-DS-01</td></tr>
+          <tr><td>제품 경계</td><td>OJ Platform 필수 애드온, OJ Console·PublicUI 명시 통합, standalone 목표 제외</td><td>manifest·호환 행렬·비활성 상태는 A-DS-02</td></tr>
+          <tr><td>도메인 경계</td><td>플랫폼·애드온·Judge의 원장과 쓰기 책임 분리</td><td>Contract·DTO·Repository·schema는 A-DS-02·05·06</td></tr>
+          <tr><td>평가 원칙</td><td>활동지 자체 평가와 학생 제출 평가를 서로 다른 평가 주제로 분리</td><td>각 input/output·prompt·normalizer는 A-DS-10·12</td></tr>
+          <tr><td>사람의 판단</td><td>AI는 추천·근거를 만들고 교사가 발행·최종 점수·학생 공개를 결정</td><td>검토·정정·철회 규칙은 A-DS-13</td></tr>
+          <tr><td>구현 전환</td><td>A-DS-16 사용자 승인 전 새 업무 PHP·JavaScript·schema·migration 구현 금지</td><td>최종 추적표와 구현 backlog는 A-DS-16</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>결정 우선순위:</strong> 사용자의 최신 확정 요구, 이 HTML 상세 설계, 플랫폼 C-28 공개 계약, 현재 runtime 조사 사실 순으로 적용한다. 현재 코드에 값이 있다는 이유만으로 목표 계약이 되지 않는다.</div>
+
+      <h2 id="inputs">동결 입력과 출발 기준선</h2>
+      <table>
+        <thead><tr><th>입력</th><th>동결된 사실</th><th>A-DS-00 사용 방식</th></tr></thead>
+        <tbody>
+          <tr><td><a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a></td><td>플랫폼 본체 패치 금지, 공개 API 선행, 외부 원본 읽기 전용</td><td>제품·배포·의존 경계로 승격</td></tr>
+          <tr><td><a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a></td><td>현재 Console/PublicUI 등록 0, wp-admin·shortcode 분산</td><td>두 플랫폼 셸만 목표 진입점으로 고정</td></tr>
+          <tr><td><a href="a-d-003-access-settings.html">A-D-003 권한·설정</a></td><td>플랫폼 권한·context와 애드온 평가 정책의 소유권 분리 필요</td><td>플랫폼 배정과 애드온 정책을 별도 책임으로 고정</td></tr>
+          <tr><td><a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a></td><td>현재 물리 테이블 35개, 고정 무접두어 이름, 소유·불변성 격차</td><td><code>oj_ai_*</code>와 owner Repository 원칙만 고정하고 목표 schema는 이관</td></tr>
+          <tr><td><a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a></td><td>Plate 구조화 문서, student projection·불변 발행·정확한 PDF 격차</td><td>Plate 원본과 세 projection·불변 revision 방향을 고정</td></tr>
+          <tr><td><a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a></td><td>활동지 자체 평가 0, 실제 AI transport 0, 두 작업의 분리 필요</td><td>두 평가 주제와 플랫폼 AI gateway 의존을 고정</td></tr>
+          <tr><td><a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a></td><td>제작부터 공개·PDF까지 실패·복구와 E2E 단절</td><td>한 개의 수직 제품 흐름과 복구 가능한 상태를 범위로 포함</td></tr>
+          <tr><td><a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a></td><td>foreign Repository·table 접근과 분산 조립 제거 필요</td><td>단일 소유자와 Contract 기반 교차 모듈 호출을 고정</td></tr>
+          <tr><td><a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a></td><td>131개 격차, Critical 36·High 79·Medium 16, 미결정 Q01~Q12</td><td>10개 교차 위험과 A-DS owner를 그대로 추적</td></tr>
+          <tr><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html">플랫폼 C-28</a></td><td>2026-08-10에는 공개 계약만 있고 Runtime 구현 0이었다. 2026-08-12 C28-I01~I05·AM-01 구현과 계약 테스트를 확인했다.</td><td>C28-I06 정식 릴리스·소비자 인수는 외부 prerequisite로 유지</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>공유 source 관찰:</strong> 상세 설계 시작 시 표준 fingerprint는 애드온 370파일 <code>3bae6a3e1aaf2996e925a1e8b657c03c0bebbf0c794ffdf930813b38415807fe</code>, 플랫폼 1116파일 <code>5d5094d49954e433cfab96c0359241c4aec5b58ebacec9e10d91f49a47ee37cc</code>다. 플랫폼은 A-D 보완 종료의 1106파일에서 다시 이동했으며, 문서 작업 종료에는 파일 수 1116개가 같은 상태에서 hash가 <code>0669e9b850c44d27b706adc93b7122706ff5b9112ca7f4b221c89c9baadd686e</code>로 추가 이동했다. A-DS-00 사용자 확정 뒤 A-DS-01 시작 재검사에서는 같은 1116파일의 hash가 <code>f3a7aeb03a741d2a2666a7148d350689f8f665f08d7315a39d1fb7f4b9dfed68</code>로 다시 이동했다. 모두 외부 작업으로 간주해 되돌리지 않으며 A-DS-02에서 호환 계약을 설계할 때 다시 검산한다.</div>
+
+      <h2 id="product">제품 정의</h2>
+      <section class="panel">
+        <ul>
+          <li><strong>설치 형태:</strong> OJ Platform 설치 이후 별도 WordPress 플러그인 패키지로 설치·활성화하는 애드온이다.</li>
+          <li><strong>교사 경험:</strong> OJ Console 안에서 활동지를 제작·자체 평가·발행·배포하고 제출 평가를 검토·확정한다.</li>
+          <li><strong>학생 경험:</strong> PublicUI 안에서 자신에게 배정된 활동지를 조회·작성·제출하고 공개된 결과와 PDF를 확인한다.</li>
+          <li><strong>AI 역할:</strong> 플랫폼이 선택한 AI 연결 경로를 통해 구조화된 진단·평가 후보와 근거를 생성한다.</li>
+          <li><strong>교사 역할:</strong> 활동지 발행, 평가 승인·수정, 학생 피드백 공개·정정의 최종 책임을 가진다.</li>
+          <li><strong>기록 역할:</strong> 어떤 활동지·학생 결과·정책·루브릭·AI 경로로 판단했는지 불변 snapshot과 이력으로 재현한다.</li>
+        </ul>
+      </section>
+
+      <h2 id="actors">사용자와 화면 진입점</h2>
+      <table>
+        <thead><tr><th>행위자</th><th>기본 진입점</th><th>핵심 업무</th><th>범위 원장</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼 관리자</td><td>OJ Console의 플랫폼 운영 화면</td><td>AI 연결 프로필·비밀값·모델 routing·공통 작업 경로와 capability 배정</td><td>OJ Platform</td></tr>
+          <tr><td>교사·권한 있는 보조교사</td><td>OJ Console <code>학습 공간 &gt; AI 활동지</code></td><td>제작, 자체 평가 요청·검토, 발행, 배포, 제출 평가 검토·확정·공개, PDF·보고서</td><td>플랫폼 담당 수업·학급·그룹 context</td></tr>
+          <tr><td>학생</td><td>PublicUI <code>학습 &gt; 활동지</code></td><td>배정 목록, 작성·자동 저장, 제출·재제출, 공개 결과·피드백·PDF 확인</td><td>본인 identity와 배정된 assignment</td></tr>
+          <tr><td>백그라운드 실행자</td><td>사용자 메뉴 없음</td><td>AI task, artifact, PDF, 집계, 보존·정리 작업의 재시도 가능한 실행</td><td>요청 당시 actor·context·policy snapshot</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>그룹 해석:</strong> 학년·수업·학급·사이트 그룹을 애드온에서 새로 관리하지 않는다. 플랫폼이 제공하는 context를 배정 대상으로 조회하고, 애드온은 배정 시점의 안정 식별자와 표시용 snapshot만 보존한다. 최종 대상 종류와 조회 DTO는 A-DS-03·06에서 확정한다.</div>
+
+      <h2 id="runtime">설치·실행 환경 경계</h2>
+      <table>
+        <thead><tr><th>실행 영역</th><th>책임</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>애드온 runtime</td><td>활동지·배포·제출·평가 workflow, 정책 적용, domain job 요청, 결과·이력·artifact 소유</td><td>독립 플랫폼 흉내, 플랫폼 내부 Container·서비스·테이블 직접 접근</td></tr>
+          <tr><td>플랫폼 공개 runtime</td><td>애드온 등록, Console/PublicUI 기여 수집, identity·context authorization, AI profile routing과 공통 task gateway</td><td>애드온 업무 테이블·루브릭·평가 결과 소유</td></tr>
+          <tr><td>AI provider</td><td>플랫폼이 선택한 연결을 통한 모델 추론</td><td>브라우저 또는 애드온이 provider 비밀값을 직접 보유·전송</td></tr>
+          <tr><td>Judge</td><td>문제·제출·코드 등 원본 제공</td><td>애드온의 Judge 원본 수정, 스키마 추측 JOIN</td></tr>
+          <tr><td>지속 작업 실행</td><td>작업 lease·retry·cancel·timeout을 갖는 공통 실행 기반과 애드온 domain 상태의 협력</td><td>브라우저 요청이 장기 AI·PDF 작업 완료를 책임지는 구조</td></tr>
+        </tbody>
+      </table>
+      <p>“AI 작업 배정”은 플랫폼 운영자가 연결 프로필과 모델 경로를 작업 종류에 매핑하는 공통 운영 기능이다. “학생 제출 평가”는 그 경로를 사용해 애드온이 소유하는 제출물을 평가·검토·공개하는 업무 기능이다. 메뉴 이름이 비슷해도 데이터와 책임은 합치지 않는다.</p>
+
+      <h2 id="workflow">제품 수직 업무 흐름</h2>
+      <div class="flow">
+        <div class="step"><div><strong>활동지 초안 제작</strong><br>교사가 OJ Console의 Plate 작업대에서 구조화된 활동지와 응답 블록, 교사용 기준을 작성하고 draft revision으로 저장한다.</div></div>
+        <div class="step"><div><strong>활동지 자체 AI 평가</strong><br>특정 draft revision을 학습목표 정합성·명료성·답변 가능성·난이도·루브릭 품질·안전성 관점으로 진단한다.</div></div>
+        <div class="step"><div><strong>교사 수정·승인</strong><br>교사는 근거와 개선안을 검토해 직접 수정하고 발행 가능한 상태인지 판단한다. AI가 문서를 자동 수정하거나 승인하지 않는다.</div></div>
+        <div class="step"><div><strong>불변 발행</strong><br>선택한 draft를 학생용·채점용·인쇄용 projection과 함께 불변 published worksheet revision으로 고정한다.</div></div>
+        <div class="step"><div><strong>플랫폼 context 배포</strong><br>교사가 담당하는 플랫폼 수업·학급·그룹·학생 범위에 발행 revision을 배정하고 대상 snapshot과 마감 정책을 기록한다.</div></div>
+        <div class="step"><div><strong>학생 작성·제출</strong><br>학생은 PublicUI에서 본인 배정을 열어 자동 저장하고, 충돌·마감·첨부 상태를 확인한 뒤 명시적으로 제출한다.</div></div>
+        <div class="step"><div><strong>학생 제출물 AI 평가</strong><br>확정 submission revision과 rubric revision을 별도 입력으로 평가해 점수 후보·근거·불확실성·검토 필요 항목을 만든다.</div></div>
+        <div class="step"><div><strong>교사 검토·확정·공개</strong><br>교사가 결과를 승인·수정·반려하고 공식 평가와 공개 revision을 만든 뒤 학생에게 점수·피드백을 공개하거나 정정·철회한다.</div></div>
+        <div class="step"><div><strong>PDF·보고서</strong><br>불변 worksheet/submission revision에서 권한이 적용된 PDF와 집계 projection을 비동기로 생성하고 감사 가능한 private artifact로 제공한다.</div></div>
+      </div>
+
+      <h2 id="subjects">두 평가 주제의 분리</h2>
+      <table>
+        <thead><tr><th>계약</th><th>활동지 자체 평가</th><th>학생 제출 평가</th></tr></thead>
+        <tbody>
+          <tr><td>주제</td><td>교사가 만든 특정 활동지 draft revision의 설계 품질</td><td>학생이 제출한 특정 official submission revision의 수행 결과</td></tr>
+          <tr><td>입력 기준</td><td>교사용 활동지 projection, 학습목표, 응답 가능성, 평가 정책</td><td>학생 공개 활동지 projection, 학생 답변·첨부·코드 artifact, rubric revision</td></tr>
+          <tr><td>출력</td><td>차원별 진단, 근거 위치, 위험, 개선 권고, 불확실성</td><td>기준별 점수 후보, 근거, 누락·충돌, 불확실성, 검토 표시</td></tr>
+          <tr><td>사람의 결정</td><td>교사가 직접 수정한 뒤 발행 여부 결정</td><td>교사가 공식 점수·피드백과 공개 여부 결정</td></tr>
+          <tr><td>저장·이력</td><td><code>WorksheetEvaluation</code> 계열의 독립 이력</td><td><code>SubmissionEvaluation</code> 계열의 독립 이력</td></tr>
+          <tr><td>공유 가능 기반</td><td colspan="2">플랫폼 AI task gateway, 비동기 실행 원칙, 비용·attempt·audit 공통 형식만 공유</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>자동 결정 금지:</strong> AI 결과가 성공해도 활동지를 자동 발행하거나 학생 점수·피드백을 자동 공개하지 않는다. 구조화 응답 검증 실패·근거 부족·불확실성 기준 초과 시 사람 검토 대기 상태로 남긴다.</div>
+
+      <h2 id="ownership">플랫폼·애드온·Judge 소유권</h2>
+      <table>
+        <thead><tr><th>영역</th><th>OJ Platform</th><th>AI 평가 애드온</th><th>Judge·외부</th></tr></thead>
+        <tbody>
+          <tr><td>Identity·학사 context</td><td>사용자, 수업, 학년·학급·그룹, 담당 관계의 원장과 조회·판정 gateway</td><td>외부 안정 ID 참조와 배정 당시 표시 snapshot</td><td>소유하지 않음</td></tr>
+          <tr><td>권한</td><td>역할·사용자에 capability 배정, context authorization</td><td>도메인 capability 선언, worksheet·assignment·submission 객체 Policy</td><td>소유하지 않음</td></tr>
+          <tr><td>메뉴·경로</td><td>Console/PublicUI 등록·동결·dispatch 공개 API</td><td>기여 manifest, page handler, 화면·REST 업무 계약</td><td>소유하지 않음</td></tr>
+          <tr><td>AI 연결</td><td>provider profile, 비밀값, 모델·fallback routing, 공통 실행 gateway와 운영 진단</td><td>평가 정책, task 요청, 입력 snapshot, 결과 정규화, 도메인 상태·검토</td><td>모델 추론 응답</td></tr>
+          <tr><td>활동지·배포·제출</td><td>context 조회와 actor 확인</td><td>전체 수명주기·revision·assignment·submission·첨부</td><td>Judge 원본 문제·제출·코드는 gateway로 읽기</td></tr>
+          <tr><td>평가·공개</td><td>공통 task 인프라와 actor/context 증명</td><td>두 평가, rubric·policy, review decision, official result, release revision</td><td>소유하지 않음</td></tr>
+          <tr><td>PDF·보고</td><td>다운로드 진입의 identity·context 지원</td><td>print projection, private artifact, 집계·내보내기·보존</td><td>승인된 storage·renderer adapter만 사용</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="data">데이터와 쓰기 경계</h2>
+      <section class="panel">
+        <ul>
+          <li>애드온 소유 물리 테이블은 WordPress prefix를 붙이지 않은 고정 <code>oj_ai_*</code> 이름을 사용한다.</li>
+          <li>각 테이블은 정확히 한 모듈이 소유하고 해당 모듈의 Repository만 쓰기·조회를 수행한다.</li>
+          <li>다른 모듈은 table·concrete Repository를 직접 호출하지 않고 명시적 application Contract를 사용한다.</li>
+          <li>플랫폼 사용자·수업·학급·그룹·권한·AI profile을 애드온 master table로 복제하거나 양방향 동기화하지 않는다.</li>
+          <li>플랫폼과 Judge 원본은 공개 Gateway를 통한 읽기만 허용하고 애드온에서 수정하지 않는다.</li>
+          <li>활동지 발행, 학생 제출 확정, 평가 공식화, 학생 공개와 PDF source는 모두 불변 revision 또는 snapshot을 참조한다.</li>
+          <li>설치·업데이트·migration은 플랫폼 파일·config·migration·schema·option을 변경하지 않는다.</li>
+          <li>구체 목표 테이블·컬럼·인덱스·보존 기간은 A-DS-05에서 source 35개와 mapping한 뒤 확정한다.</li>
+        </ul>
+      </section>
+
+      <h2 id="terms">고정 도메인 용어</h2>
+      <table>
+        <thead><tr><th>표시 용어</th><th>정본 코드 용어</th><th>정의</th><th>불변성</th></tr></thead>
+        <tbody>
+          <tr><td>활동지</td><td><code>WorksheetTemplate</code></td><td>제목·소유자·수명주기를 묶는 활동지의 지속 식별자</td><td>내용 자체가 아니라 revision의 묶음</td></tr>
+          <tr><td>활동지 초안</td><td><code>WorksheetDraftRevision</code></td><td>Plate 원문과 교사용 메타데이터를 가진 편집 가능한 revision</td><td>새 revision으로 변경 이력 보존</td></tr>
+          <tr><td>발행 활동지</td><td><code>PublishedWorksheetRevision</code></td><td>학생용·채점용·인쇄용 projection이 고정된 배포 기준</td><td>발행 뒤 수정 불가</td></tr>
+          <tr><td>활동지 자체 평가</td><td><code>WorksheetEvaluation</code></td><td>특정 draft revision의 설계 품질 진단과 근거</td><td>입력·정책·AI route snapshot에 결속</td></tr>
+          <tr><td>배정</td><td><code>Assignment</code></td><td>발행 활동지를 일정·재제출 정책과 함께 대상에게 제공하는 업무 단위</td><td>참조 발행 revision 고정</td></tr>
+          <tr><td>배정 대상 snapshot</td><td><code>AssignmentTargetSnapshot</code></td><td>배정 시점 플랫폼 context의 안정 ID와 표시 정보</td><td>원장 대체가 아닌 감사·재현용</td></tr>
+          <tr><td>학생 작성 revision</td><td><code>SubmissionRevision</code></td><td>학생 답변·첨부·코드 참조의 저장 이력</td><td>자동 저장마다 충돌 가능한 revision</td></tr>
+          <tr><td>제출 확정본</td><td><code>OfficialSubmissionRevision</code></td><td>제출 또는 허용된 재제출로 공식화된 평가 입력</td><td>공식화 뒤 내용 수정 불가</td></tr>
+          <tr><td>학생 제출 평가</td><td><code>SubmissionEvaluation</code></td><td>공식 제출 확정본과 rubric revision에 대한 AI 평가 후보·근거</td><td>활동지 자체 평가와 별도 이력</td></tr>
+          <tr><td>평가 정책</td><td><code>EvaluationPolicy</code></td><td>AI 사용·검토 필요·실패·공개 기본 원칙</td><td>평가 시 version snapshot</td></tr>
+          <tr><td>루브릭 revision</td><td><code>RubricRevision</code></td><td>기준·배점·설명·근거 요구가 고정된 채점 계약</td><td>사용 중인 revision 수정 불가</td></tr>
+          <tr><td>검토 결정</td><td><code>ReviewDecision</code></td><td>교사의 승인·수정·반려와 사유 기록</td><td>새 결정으로 정정 이력 보존</td></tr>
+          <tr><td>공개 revision</td><td><code>ReleaseRevision</code></td><td>학생에게 보이는 공식 점수·피드백의 공개 단위</td><td>공개·정정·철회 이력 보존</td></tr>
+          <tr><td>PDF 산출물</td><td><code>PdfArtifact</code></td><td>고정 source hash와 print profile로 생성한 private 파일</td><td>source·renderer version으로 재현</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>명명 규칙:</strong> “평가”만 단독으로 써서 두 주제를 혼합하지 않는다. 화면·API·Service·table 설계에서 반드시 <code>WorksheetEvaluation</code> 또는 <code>SubmissionEvaluation</code> 주제를 드러낸다.</div>
+
+      <h2 id="scope">포함 범위와 비목표</h2>
+      <table>
+        <thead><tr><th>포함 범위</th><th>이번 제품에서 제외하는 비목표</th></tr></thead>
+        <tbody>
+          <tr><td>OJ Console 교사용 전체 업무와 PublicUI 학생용 전체 업무</td><td>OJ Platform 없이 정상 운영하는 standalone mode</td></tr>
+          <tr><td>Plate 활동지 제작·revision·발행과 세 projection</td><td>별도 wp-admin 메뉴를 목표 진입점으로 유지하는 fallback</td></tr>
+          <tr><td>활동지 자체 평가와 학생 제출 평가의 분리된 end-to-end 흐름</td><td>shortcode를 신규·정본 사용자 진입점으로 제공</td></tr>
+          <tr><td>플랫폼 context 기반 배정과 대상 snapshot</td><td>애드온 내부 학년·학급·그룹·사용자 master CRUD</td></tr>
+          <tr><td>교사 검토·공식 결과·학생 공개·정정·철회</td><td>AI의 활동지 자동 수정·자동 발행 또는 점수·피드백 자동 공개</td></tr>
+          <tr><td>활동지·학생 결과물 PDF와 보고서·private artifact</td><td>브라우저나 애드온이 provider API key·비밀값 직접 관리</td></tr>
+          <tr><td>기존 데이터의 안전한 조사·미리보기·명시 이전</td><td>기존 table·URL·shortcode의 즉시 삭제 또는 자동 변환</td></tr>
+          <tr><td>A-DS-00의 제품·경계·용어 결정</td><td>정확한 화면 wireframe, route key, capability key, table·column, AI JSON schema 값을 선결정</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="success">제품 성공 기준</h2>
+      <table>
+        <thead><tr><th>ID</th><th>성공 결과</th><th>최종 증거</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS00-S01</code></td><td>교사가 제작→자체 평가→발행→배포→제출 평가→공개를 OJ Console 안에서 완료</td><td>교사 역할 기반 수직 E2E</td></tr>
+          <tr><td><code>A-DS00-S02</code></td><td>학생이 PublicUI에서 본인 배정만 작성·제출하고 공개된 결과·PDF만 조회</td><td>학생·타학생·비담당자 허용/거부 E2E</td></tr>
+          <tr><td><code>A-DS00-S03</code></td><td>활동지 자체 평가와 제출 평가가 서로 다른 schema·service·이력으로 재현</td><td>계약·저장·architecture 검사</td></tr>
+          <tr><td><code>A-DS00-S04</code></td><td>학생 표면과 학생 PDF에 정답·루브릭 원문·배점·교사 메모·AI raw가 노출되지 않음</td><td>projection leak fixture와 브라우저 검사</td></tr>
+          <tr><td><code>A-DS00-S05</code></td><td>AI·PDF·집계 작업이 중단·재시도·취소 뒤 중복 공식 결과 없이 복구</td><td>idempotency·lease·failure injection 통합 검사</td></tr>
+          <tr><td><code>A-DS00-S06</code></td><td>PDF가 고정 worksheet/submission revision과 print profile에서 재현되고 private scope로 다운로드</td><td>source hash·권한·시각 회귀 검사</td></tr>
+          <tr><td><code>A-DS00-S07</code></td><td>애드온 설치·업데이트·실행 전후 플랫폼 source·migration이 동일하고 직접 플랫폼 DB 쓰기 0건</td><td>boundary hash·architecture·통합 검사</td></tr>
+          <tr><td><code>A-DS00-S08</code></td><td>모든 애드온 table이 고정 <code>oj_ai_*</code>이고 owner 1·foreign Repository/table 접근 0</td><td>schema registry·dependency graph 검사</td></tr>
+          <tr><td><code>A-DS00-S09</code></td><td>모든 주요 화면이 capability·Policy·API·Use Case·AI schema·Repository·Table/Gateway·test까지 추적</td><td>A-DS-16 추적표 미연결 0건</td></tr>
+        </tbody>
+      </table>
+      <p>응답 시간, 작업 처리량, 비용, 보존 기간, 접근성 수준의 수치 목표는 운영 규모와 인프라 선택이 필요한 A-DS-01·07·14·15에서 확정한다. 여기서는 측정 대상을 누락하지 않는 것을 성공 기준으로 삼는다.</p>
+
+      <h2 id="trace">A-D 교차 위험 추적</h2>
+      <table>
+        <thead><tr><th>교차 위험</th><th>A-DS-00에서 고정한 방향</th><th>상세 owner</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼 등록·두 shell</td><td>OJ Console 교사 기능과 PublicUI 학생 기능을 별도 명시 기여로 등록</td><td>A-DS-01·02·08</td></tr>
+          <tr><td>identity·권한·context</td><td>플랫폼 원장·capability 배정과 애드온 객체 Policy를 결합</td><td>A-DS-03·06·08</td></tr>
+          <tr><td>module·데이터 소유</td><td>table owner 1, Repository 우회 0, 단일 조립과 Contract 호출</td><td>A-DS-02·05·16</td></tr>
+          <tr><td>활동지 불변성·공개 projection</td><td>Plate draft→자체 평가→교사 승인→불변 publish와 allowlist projection</td><td>A-DS-09·10</td></tr>
+          <tr><td>학생 작성·제출 복구</td><td>revision·충돌·마감·receipt·재제출을 제품 범위에 포함</td><td>A-DS-08·11</td></tr>
+          <tr><td>AI 실행·재현성</td><td>플랫폼 gateway와 애드온 input/policy/route/attempt snapshot을 분리 기록</td><td>A-DS-04·07·10·12</td></tr>
+          <tr><td>검토·확정·공개</td><td>AI 후보, 교사 ReviewDecision, 공식 결과, ReleaseRevision을 분리</td><td>A-DS-12·13</td></tr>
+          <tr><td>파일·PDF·보존</td><td>private storage와 불변 source 기반 PdfArtifact·만료·감사</td><td>A-DS-05·11·14·15</td></tr>
+          <tr><td>Reporting·Import·호환</td><td>projection 읽기와 domain import command를 사용하고 자동 legacy 변경 금지</td><td>A-DS-14·15</td></tr>
+          <tr><td>운영·관측·검증</td><td>지속 작업 상태, correlation, 실제 통합·권한·브라우저·architecture 검사를 완료 조건에 포함</td><td>A-DS-07·14·15·16</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="deferred">후속 단계 이관</h2>
+      <table>
+        <thead><tr><th>단계</th><th>A-DS-00이 넘기는 결정</th><th>해당 단계가 확정할 값</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS-01</code></td><td>두 shell과 행위자·전체 업무 목록</td><td>정보 구조, 화면 상태, 반응형·접근성, Plate 작업대 UI</td></tr>
+          <tr><td><code>A-DS-02</code></td><td>플랫폼 필수 애드온·본체 무수정·C-28 prerequisite</td><td>manifest, boot 순서, 호환·비활성·downgrade 계약과 source drift 재검산</td></tr>
+          <tr><td><code>A-DS-03</code></td><td>플랫폼 capability 배정 + 애드온 객체 Policy</td><td>capability key, actor·context·object scope matrix</td></tr>
+          <tr><td><code>A-DS-04</code></td><td>플랫폼 AI profile과 애드온 평가 정책 경계</td><td>설정 화면, route snapshot, 비밀값·진단·fallback 정책</td></tr>
+          <tr><td><code>A-DS-05</code></td><td><code>oj_ai_*</code>, owner Repository, 불변 revision</td><td>target table·column·index·migration·retention·collision preflight</td></tr>
+          <tr><td><code>A-DS-06</code></td><td>플랫폼·Judge 원본 read-only와 context snapshot</td><td>Gateway DTO, stable ID, pagination·부분 실패·삭제 context</td></tr>
+          <tr><td><code>A-DS-07</code></td><td>장기 작업의 지속 실행과 domain 상태 분리</td><td>backend, lease·heartbeat·retry·cancel·rate·비용·SLO</td></tr>
+          <tr><td><code>A-DS-08</code></td><td>Console/PublicUI·direct URL·REST의 공통 Policy</td><td>route·action·request/response·오류·nonce 계약</td></tr>
+          <tr><td><code>A-DS-09</code></td><td>Plate, 세 projection, draft/publish revision</td><td>node/property allowlist, upcaster, renderer·print parity</td></tr>
+          <tr><td><code>A-DS-10</code></td><td><code>WorksheetEvaluation</code>의 주제·사람 승인 원칙</td><td>진단 차원, input/output JSON schema, 상태·이력 UI</td></tr>
+          <tr><td><code>A-DS-11</code></td><td>배정 snapshot, 학생 revision·공식 제출, 결과물 PDF</td><td>마감·저장·충돌·offline·첨부·제출·재제출 계약</td></tr>
+          <tr><td><code>A-DS-12</code></td><td><code>SubmissionEvaluation</code>의 분리와 rubric revision</td><td>채점 schema, 계산, evidence·uncertainty·abstain·재평가</td></tr>
+          <tr><td><code>A-DS-13</code></td><td>교사 ReviewDecision과 ReleaseRevision</td><td>승인·수정·반려·공개·정정·철회·통지 정책</td></tr>
+          <tr><td><code>A-DS-14</code></td><td>불변 source 기반 private PDF·보고서</td><td>projection, renderer·font·print profile, artifact·CSV·ZIP·집계</td></tr>
+          <tr><td><code>A-DS-15</code></td><td>자동 legacy 변경 금지와 데이터 보존 우선</td><td>install·upgrade·preview migration·backup·rollback·sunset</td></tr>
+          <tr><td><code>A-DS-16</code></td><td>결정·성공 기준·10개 위험과 전 단계 산출물</td><td>전수 추적, 미결정 0, 검증 명령, 사용자 최종 승인</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">A-DS-00 결정 기록</h2>
+      <table>
+        <thead><tr><th>ID</th><th>결정</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS00-D01</code></td><td>제품은 OJ Platform 설치 이후 활성화되는 플랫폼 필수 애드온이다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D02</code></td><td>애드온 설치·업데이트·runtime은 플랫폼 파일·migration·DB를 패치하지 않는다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D03</code></td><td>교사·관리자는 OJ Console <code>학습 공간 &gt; AI 활동지</code>, 학생은 PublicUI <code>학습 &gt; 활동지</code>를 사용한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D04</code></td><td>사용자·수업·학년·학급·그룹·담당 관계와 capability 배정은 플랫폼이 소유한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D05</code></td><td>AI 연결 프로필·비밀값·모델 routing·공통 task gateway는 플랫폼이 소유한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D06</code></td><td>활동지·배포·제출·정책·루브릭·두 평가·검토·공개·PDF는 애드온이 소유한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D07</code></td><td>활동지 제작 원본은 Plate 교사용 구조화 문서이며 학생용·채점용·인쇄용 projection을 분리한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D08</code></td><td>활동지 자체 평가와 학생 제출 평가는 별도 subject·schema·service·이력이다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D09</code></td><td>교사 승인 후 발행한 활동지 revision은 불변이며 배정은 그 revision을 참조한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D10</code></td><td>배정은 플랫폼 context master를 복제하지 않고 안정 ID와 배정 당시 snapshot을 보존한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D11</code></td><td>AI는 자동 발행·자동 공개하지 않으며 교사가 최종 판단과 정정 책임을 가진다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D12</code></td><td>활동지·학생 작성 결과물 PDF는 고정 revision과 print profile에서 만든 private <code>PdfArtifact</code>다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D13</code></td><td>애드온 물리 테이블은 WordPress prefix 없는 고정 <code>oj_ai_*</code> 이름을 사용한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D14</code></td><td>각 table은 owner 1개이며 외부 원장과 다른 모듈 데이터는 공개 Contract·Gateway로만 접근한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D15</code></td><td>standalone·wp-admin·shortcode·local academic master·직접 provider secret을 목표 구조에서 제외한다.</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS00-D16</code></td><td>구체 route·capability·table·AI schema는 담당 A-DS 단계에서 확정하고 A-DS-16 승인 전 runtime 구현을 시작하지 않는다.</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="completion">A-DS-00 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>현재 결과</th><th>증거</th></tr></thead>
+        <tbody>
+          <tr><td>A-D 기준선 사용자 동결을 입력으로 사용</td><td>충족</td><td>A-D-001~009와 131개 격차·10개 교차 위험 연결</td></tr>
+          <tr><td>제품 목적·필수 플랫폼 경계 정의</td><td>충족</td><td>제품 정의·실행 경계·비목표 표</td></tr>
+          <tr><td>교사·학생 진입점과 수직 흐름 정의</td><td>충족</td><td>OJ Console·PublicUI 행위자 표와 9단계 업무 흐름</td></tr>
+          <tr><td>두 AI 평가 주제 분리</td><td>충족</td><td>주제·입력·출력·사람 결정·저장 이력 비교</td></tr>
+          <tr><td>플랫폼·애드온·Judge 소유권 정의</td><td>충족</td><td>identity·권한·AI·업무·PDF 소유권 표</td></tr>
+          <tr><td>무접두어·Repository·불변 snapshot 경계 정의</td><td>충족</td><td>데이터와 쓰기 경계 8개 원칙</td></tr>
+          <tr><td>정본 용어와 비목표 정의</td><td>충족</td><td>14개 도메인 용어와 포함·제외 범위</td></tr>
+          <tr><td>성공 기준과 후속 owner 배정</td><td>충족</td><td><code>A-DS00-S01~S09</code>와 A-DS-01~16 이관표</td></tr>
+          <tr><td>업무 runtime·플랫폼 runtime 변경 없음</td><td>충족</td><td>HTML·검증·운영 문서만 변경하고 source fingerprint로 재확인</td></tr>
+          <tr><td>사용자 결정 확인</td><td>충족</td><td>2026-08-10 사용자 확인으로 <code>A-DS00-D01~D16</code> 동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="confirm">확정된 결정과 다음 단계</h2>
+      <section class="panel">
+        <ol>
+          <li>제품은 OJ Platform 필수 애드온이며 OJ Console 교사 업무와 PublicUI 학생 업무를 하나의 활동지 수명주기로 제공한다.</li>
+          <li>플랫폼은 identity·학사 context·capability 배정·AI 연결/공통 실행을, 애드온은 활동지부터 평가·공개·PDF까지의 업무와 데이터를 소유한다.</li>
+          <li>Plate 활동지 자체 평가와 학생 제출 평가는 서로 다른 평가 주제이며, 교사가 발행과 최종 공개를 결정한다.</li>
+          <li>무접두어 <code>oj_ai_*</code>, owner Repository, 외부 읽기 전용, 불변 revision·snapshot, 플랫폼 patch 금지는 이후 단계가 바꿀 수 없는 경계다.</li>
+          <li>standalone·wp-admin/shortcode 목표 진입·local academic master·직접 AI 비밀값·AI 자동 발행/공개는 비목표다.</li>
+          <li>구체 화면·manifest·capability·table·AI schema·작업·PDF 값은 지정된 A-DS owner 단계에서 결정하며 A-DS-16 승인 전 구현하지 않는다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>사용자 확정 2026-08-10:</strong> 위 여섯 묶음과 <code>A-DS00-D01~D16</code>을 상세 설계 기준으로 확인했다. A-DS-00을 동결하고 <a href="a-ds-01-ui-system.html"><code>A-DS-01 공통 사용자·관리자 UI 시스템</code></a> 상세 설계를 시작했다. C-28 runtime API 부재는 애드온 구현의 선행 차단 조건으로 유지한다.</div>
+
+      <p class="footer">A-DS-00 목적·범위·기준선을 2026-08-10 사용자 확인으로 동결했다. 다음 상세 설계인 <a href="a-ds-01-ui-system.html"><code>A-DS-01 공통 사용자·관리자 UI 시스템</code></a>을 시작했다.</p>
+    </main>
+  </div>
+</body>
+</html>

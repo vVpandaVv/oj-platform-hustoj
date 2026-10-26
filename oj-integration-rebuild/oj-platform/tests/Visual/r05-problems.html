@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>R-05 문제 화면 검증</title>
+  <link rel="stylesheet" href="../../resources/ui/css/oj-ui-system.css">
+</head>
+<body class="ojp-app">
+  <div id="fixture-root"></div>
+
+  <template id="screen-list">
+    <div class="ojp-public-shell">
+      <header class="ojp-public-header">
+        <div class="ojp-public-header__inner">
+          <a class="ojp-brand" href="#">OJ Platform</a>
+          <nav class="ojp-public-nav" aria-label="사용자 메뉴">
+            <div class="ojp-nav-item"><a href="#">홈</a></div>
+            <div class="ojp-nav-item"><a href="#">문제</a></div>
+            <div class="ojp-nav-item"><a href="#">제출 현황</a></div>
+          </nav>
+          <div class="ojp-account-menu"><span>학습자</span><a href="#">로그아웃</a></div>
+        </div>
+      </header>
+      <main class="ojp-public-main">
+        <div class="ojp-shell">
+          <header class="ojp-page-header">
+            <div>
+              <p class="ojp-eyebrow">문제</p>
+              <h1>문제 목록</h1>
+              <p>주제와 난이도를 확인하고 풀 문제를 선택합니다.</p>
+            </div>
+          </header>
+          <form class="ojp-filter-bar">
+            <div class="ojp-filter-bar__primary">
+              <label class="ojp-field">
+                <span class="ojp-label">검색</span>
+                <input class="ojp-input" type="search" value="배열" placeholder="문제 번호 또는 제목">
+              </label>
+            </div>
+            <button class="ojp-button" type="button">검색</button>
+          </form>
+          <div class="ojp-table-wrap">
+            <table class="ojp-table">
+              <thead>
+                <tr><th>번호</th><th>제목</th><th>난이도</th><th>주제</th><th>정답 / 제출</th><th>작업</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a class="ojp-row-link" href="#">1000</a></td>
+                  <td><a class="ojp-row-link" href="#">두 수의 합</a></td>
+                  <td><span class="ojp-status-badge ojp-status-badge--difficulty-1">1 · 입문</span></td>
+                  <td><span class="ojp-topic-badge">기초 · 입출력</span></td>
+                  <td>381 / 442<span class="ojp-table-subvalue">86.2%</span></td>
+                  <td><a class="ojp-button ojp-button--small" href="#">열기</a></td>
+                </tr>
+                <tr>
+                  <td><a class="ojp-row-link" href="#">1032</a></td>
+                  <td><span class="ojp-table-title"><a class="ojp-row-link" href="#">구간의 최댓값</a><span class="ojp-status-badge ojp-status-badge--info" title="전용 채점 프로그램으로 정답을 검사합니다.">특수 채점</span></span></td>
+                  <td><span class="ojp-status-badge ojp-status-badge--difficulty-3">3 · 보통</span></td>
+                  <td><span class="ojp-topic-badge">자료구조 · 배열</span></td>
+                  <td>94 / 175<span class="ojp-table-subvalue">53.7%</span></td>
+                  <td><a class="ojp-button ojp-button--small" href="#">열기</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </template>
+
+  <template id="screen-detail">
+    <div class="ojp-public-shell">
+      <header class="ojp-public-header">
+        <div class="ojp-public-header__inner">
+          <a class="ojp-brand" href="#">OJ Platform</a>
+          <nav class="ojp-public-nav" aria-label="사용자 메뉴">
+            <div class="ojp-nav-item"><a href="#">홈</a></div>
+            <div class="ojp-nav-item"><a href="#">문제</a></div>
+            <div class="ojp-nav-item"><a href="#">제출 현황</a></div>
+          </nav>
+          <div class="ojp-account-menu"><a href="#">관리자</a><span>문제 관리자</span><a href="#">로그아웃</a></div>
+        </div>
+      </header>
+      <main class="ojp-public-main">
+        <div class="ojp-shell">
+          <div class="ojp-problem-detail-page">
+            <nav class="ojp-breadcrumb" aria-label="현재 위치"><a href="/problems">문제</a><span>/</span><span>문제 1000</span></nav>
+            <header class="ojp-problem-detail-header">
+              <div class="ojp-problem-detail-header__main">
+                <div class="ojp-problem-detail-title">
+                  <p class="ojp-eyebrow">문제 1000</p>
+                  <h1>두 수의 합</h1>
+                  <div class="ojp-problem-runtime" aria-label="채점 제한">
+                    <span><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#clock"></use></svg>시간 제한 <strong>1초</strong></span>
+                    <span><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#memory-stick"></use></svg>메모리 제한 <strong>128MB</strong></span>
+                  </div>
+                  <div class="ojp-problem-detail-tags">
+                    <span class="ojp-status-badge ojp-status-badge--difficulty-1">1 · 입문</span>
+                    <span class="ojp-tag">기초 · 입출력</span>
+                  </div>
+                </div>
+                <div class="ojp-problem-detail-actions">
+                  <button class="ojp-icon-button" type="button" aria-label="내 문제집에 추가"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#bookmark"></use></svg></button>
+                  <a class="ojp-button" href="/problems"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#arrow-left"></use></svg>목록</a>
+                  <a class="ojp-button ojp-button--primary" href="/submit/1000"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#send"></use></svg>제출하기</a>
+                </div>
+              </div>
+              <div class="ojp-problem-admin-tools" aria-label="관리 작업">
+                <strong>관리 작업</strong>
+                <div class="ojp-command-group">
+                  <a class="ojp-button" href="/oj-console/problems/1000/edit"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#edit"></use></svg>문제 수정</a>
+                  <a class="ojp-button" href="/oj-console/problems/1000/test-data"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#database"></use></svg>테스트 데이터 수정</a>
+                </div>
+              </div>
+            </header>
+            <div class="ojp-problem-detail-grid">
+              <article class="ojp-problem-detail-content">
+                <section class="ojp-content-section"><h2>문제</h2><div class="ojp-prose ojp-math-content"><p>두 정수 <strong>A</strong>와 <strong>B</strong>를 입력받아 합을 출력합니다.</p></div></section>
+                <section class="ojp-content-section"><h2>입력</h2><div class="ojp-prose ojp-math-content"><p>첫째 줄에 A와 B가 주어집니다.</p></div></section>
+                <section class="ojp-content-section"><h2>출력</h2><div class="ojp-prose ojp-math-content"><p>두 수의 합을 출력합니다.</p></div></section>
+                <section class="ojp-content-section">
+                  <h2>예시</h2>
+                  <div class="ojp-sample-grid">
+                    <div class="ojp-code-block ojp-code-sample"><div class="ojp-code-block__label">입력</div><pre><code>1 2</code></pre></div>
+                    <div class="ojp-code-block ojp-code-sample"><div class="ojp-code-block__label">출력</div><pre><code>3</code></pre></div>
+                  </div>
+                </section>
+                <section class="ojp-problem-questions">
+                  <div class="ojp-section-heading"><div><h2>질문과 답변</h2></div><div class="ojp-command-group"><a class="ojp-button" href="#">전체 질문</a><a class="ojp-button" href="#">질문하기</a></div></div>
+                  <ul class="ojp-problem-community"><li><a href="#"><strong>입력값의 범위가 궁금합니다.</strong><span>댓글 2</span><span class="ojp-status-badge ojp-status-badge--neutral">답변 있음</span></a></li></ul>
+                </section>
+              </article>
+              <aside class="ojp-problem-aside" aria-label="문제 요약">
+                <section><h2>문제 정보</h2><dl class="ojp-problem-info-list"><div><dt>정답률</dt><dd>86.2%</dd></div><div><dt>제출</dt><dd>442회</dd></div><div><dt>정답</dt><dd>381회</dd></div></dl></section>
+                <section><h2>내 상태</h2><div class="ojp-problem-status-line"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#info"></use></svg><span>제출 현황에서 내 코드의 채점 결과를 확인할 수 있습니다.</span></div></section>
+                <section><h2>더 보기</h2><nav class="ojp-problem-aside-links"><a href="#"><span>통계</span></a><a href="#"><span>순위</span></a><a href="#"><span>제출 현황</span></a></nav></section>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </template>
+
+
+  <template id="screen-admin">
+    <div class="ojp-console-shell">
+      <header class="ojp-console-header">
+        <div class="ojp-console-header__inner">
+          <button class="ojp-icon-button ojp-console-menu-button" type="button" aria-label="관리 메뉴 열기">
+            <svg class="ojp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          </button>
+          <a class="ojp-brand" href="#">OJ Platform 관리자</a>
+          <div class="ojp-console-account"><a href="#">사용자 화면</a><span>문제 관리자</span><a href="#">로그아웃</a></div>
+        </div>
+      </header>
+      <div class="ojp-console-layout">
+        <aside class="ojp-console-sidebar">
+          <nav class="ojp-console-nav" aria-label="관리자 메뉴">
+            <section class="ojp-console-nav__group"><a class="ojp-console-nav__root" href="#">대시보드</a></section>
+            <section class="ojp-console-nav__group">
+              <a class="ojp-console-nav__root is-current" href="#">문제</a>
+              <div class="ojp-console-nav__children">
+                <a aria-current="page" href="#">문제 관리</a>
+                <a href="#">문제 추가</a>
+                <a href="#">주제 관리</a>
+                <a href="#">번호 변경</a>
+              </div>
+            </section>
+          </nav>
+        </aside>
+        <main class="ojp-console-main">
+          <div class="ojp-shell">
+            <header class="ojp-page-header">
+              <div><p class="ojp-eyebrow">문제</p><h1>문제 관리</h1><p>담당 문제의 내용과 공개 상태를 관리합니다.</p></div>
+              <div class="ojp-command-group">
+                <button class="ojp-button" type="button">전체 메타데이터 생성</button>
+                <a class="ojp-button ojp-button--primary" href="#">문제 추가</a>
+              </div>
+            </header>
+            <form class="ojp-filter-bar">
+              <div class="ojp-filter-bar__primary">
+                <label class="ojp-field"><span class="ojp-label">검색</span><input class="ojp-input" type="search" placeholder="문제 번호 또는 제목"></label>
+                <label class="ojp-field"><span class="ojp-label">상태</span><select class="ojp-select"><option>전체</option><option>공개</option><option>보관</option></select></label>
+                <label class="ojp-field"><span class="ojp-label">채점 방식</span><select class="ojp-select" name="judging"><option>전체</option><option>일반 채점</option><option>특수 채점</option></select></label>
+              </div>
+              <button class="ojp-button" type="button">적용</button>
+            </form>
+            <div class="ojp-bulk-bar">
+              <span><strong>2</strong>개 선택</span>
+              <button class="ojp-button" type="button">메타데이터 생성</button>
+              <button class="ojp-button" type="button">선택 문제 보관</button>
+            </div>
+            <div class="ojp-table-wrap">
+              <table class="ojp-table">
+                <thead><tr><th><input type="checkbox" checked aria-label="전체 선택"></th><th>번호</th><th>제목</th><th>난이도</th><th>주제</th><th>상태</th><th>작업</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox" checked aria-label="1000번 선택"></td>
+                    <td>1000</td>
+                    <td><a class="ojp-row-link" href="#">두 수의 합</a></td>
+                    <td><span class="ojp-status-badge ojp-status-badge--difficulty-1">1 · 입문</span></td>
+                    <td><span class="ojp-topic-badge">기초 · 입출력</span></td>
+                    <td><span class="ojp-status-badge ojp-status-badge--success">공개</span></td>
+                    <td><div class="ojp-command-group"><a class="ojp-button ojp-button--small" href="#">보기</a><a class="ojp-button ojp-button--small" href="#">수정</a><a class="ojp-button ojp-button--small" href="#">테스트 데이터</a></div></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked aria-label="1032번 선택"></td>
+                    <td>1032</td>
+                    <td><span class="ojp-table-title"><a class="ojp-row-link" href="#">구간의 최댓값</a><span class="ojp-status-badge ojp-status-badge--info" title="전용 채점 프로그램으로 정답을 검사합니다.">특수 채점</span></span></td>
+                    <td><span class="ojp-status-badge ojp-status-badge--neutral">미분석</span></td>
+                    <td><span class="ojp-muted">미분류</span></td>
+                    <td><span class="ojp-status-badge ojp-status-badge--neutral">보관</span></td>
+                    <td><div class="ojp-command-group"><a class="ojp-button ojp-button--small" href="#">보기</a><a class="ojp-button ojp-button--small" href="#">수정</a><a class="ojp-button ojp-button--small" href="#">테스트 데이터</a></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (() => {
+      const screen = new URLSearchParams(window.location.search).get("screen") || "list";
+      const template = document.getElementById(`screen-${screen}`) || document.getElementById("screen-list");
+      document.getElementById("fixture-root").replaceChildren(template.content.cloneNode(true));
+      document.title = `R-05 ${screen} 문제 화면 검증`;
+    })();
+  </script>
+</body>
+</html>

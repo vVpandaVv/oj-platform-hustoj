@@ -1,0 +1,26 @@
+.edu-rank-paged [hidden] { display:none!important; }
+.edu-rank-pagination { display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; padding:12px 0; margin-top:8px; border-top:1px solid var(--ojp-color-line,#ced5d7); color:var(--ojp-color-ink,#29363c); font-size:13px; line-height:1.4; letter-spacing:0; }
+.edu-rank-pagination * { box-sizing:border-box; letter-spacing:0; }
+.edu-rank-pagination .edu-rank-range { font-variant-numeric:tabular-nums; }
+.edu-rank-pagination label { display:flex; align-items:center; gap:6px; margin:0; }
+.edu-rank-pagination select { min-height:36px; width:76px; padding:4px; border:1px solid var(--ojp-color-line,#a7b3b8); border-radius:4px; background:var(--ojp-color-surface,#fff); color:var(--ojp-color-ink,#29363c); font:inherit; }
+.edu-rank-pagination .edu-rank-page-controls { display:flex; align-items:center; gap:4px; }
+.edu-rank-pagination .edu-rank-page-controls button { display:grid; place-items:center; width:36px; height:36px; min-width:36px; min-height:36px; margin:0; padding:0; border:1px solid var(--ojp-color-line,#a7b3b8); border-radius:4px; background:var(--ojp-color-surface,#fff); color:var(--ojp-color-ink,#29363c); font:20px/1 Arial,sans-serif; cursor:pointer; }
+.edu-rank-pagination .edu-rank-page-controls button:disabled { opacity:.4; cursor:default; }
+.edu-rank-pagination output { display:block; min-width:64px; text-align:center; font-variant-numeric:tabular-nums; }
+.edu-rank-pagination :is(button,select):focus-visible { outline:3px solid #26775a; outline-offset:2px; }
+.edu-rank-paged .edu-rank-delete{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;width:36px;height:36px;min-height:36px;padding:8px;margin-left:12px;border:1px solid var(--ojp-color-line,#d2d2d7);border-radius:8px;background:var(--ojp-color-surface,#fff);color:var(--ojp-color-danger,#b42332);cursor:pointer}
+.edu-rank-paged .edu-rank-delete:hover{background:var(--ojp-color-danger-bg,#fff1f2)}
+.edu-rank-paged .edu-rank-delete svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.edu-rank-dialog{box-sizing:border-box;width:min(440px,calc(100% - 32px));max-height:calc(100vh - 48px);padding:24px;border:1px solid var(--ojp-color-line,#d2d2d7);border-radius:8px;box-shadow:0 16px 64px #0002;color:var(--ojp-color-ink,#1d1d1f);background:var(--ojp-color-surface,#fff);font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0}
+.edu-rank-dialog::backdrop{background:#0005}
+.edu-rank-dialog h2{font-size:20px;line-height:1.4;margin:0 0 16px;color:inherit}
+.edu-rank-dialog p{margin:12px 0;overflow-wrap:anywhere}
+.edu-rank-dialog [data-delete-status]{color:var(--ojp-color-danger,#b42332)}
+.edu-rank-dialog>div{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.edu-rank-dialog button{min-height:44px;padding:8px 16px;border:1px solid var(--ojp-color-line,#d2d2d7);border-radius:8px;background:var(--ojp-color-surface,#fff);color:inherit;font:inherit;cursor:pointer}
+.edu-rank-dialog [data-confirm]{background:var(--ojp-color-danger,#b42332);border-color:var(--ojp-color-danger,#b42332);color:#fff}
+.edu-rank-dialog button:focus-visible,.edu-rank-paged .edu-rank-delete:focus-visible{outline:3px solid var(--ojp-color-focus,#0071e3);outline-offset:3px}
+.edu-rank-dialog button:disabled{opacity:.5;cursor:wait}
+.edu-rank-paged .edu-rank-moderated:not(tr),.edu-rank-paged tr.edu-rank-moderated>td:last-child{position:relative;padding-right:56px;min-height:48px}
+.edu-rank-paged .edu-rank-moderated .edu-rank-delete{position:absolute;right:8px;top:50%;transform:translateY(-50%);margin:0}

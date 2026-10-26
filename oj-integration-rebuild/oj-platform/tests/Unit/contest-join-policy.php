@@ -1,0 +1,52 @@
+<?php
+
+declare(strict_types=1);
+
+use CodingPanda\OjPlatform\Modules\Contests\Application\ContestService;
+use CodingPanda\OjPlatform\Modules\Contests\Application\ContestStaffPolicy;
+use CodingPanda\OjPlatform\Modules\Contests\Application\ContestRankingCalculator;
+use CodingPanda\OjPlatform\Modules\Contests\Application\ContestStatisticsCalculator;
+use CodingPanda\OjPlatform\Modules\Contests\Presentation\ContestRequestFactory;
+use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpRequest;
+
+require __DIR__ . '/learning-access.php';
+$startChecks = $learningAccessAssertions;
+$judge = new LearningAccessContestJudge();
+$platform = new LearningAccessContestPlatform();
+$service = new ContestService($judge, $platform, new ContestStaffPolicy($platform, $authorization), $users, $learningProblems, $submissions, new ContestRankingCalculator(), new ContestStatisticsCalculator(), new LearningAccessClock(), $groupChoices);
+$service->participation(11, 101, 'request', 11);
+learningAccessAssert($platform->participantStatus(101, 11) === 'active', '공개 대회는 기본적으로 즉시 참가해야 합니다.');
+$service->participation(11, 101, 'request', 11);
+learningAccessAssert($platform->participantStatus(101, 11) === 'active', '재요청으로 활성 참가자를 승인 대기로 바꾸면 안 됩니다.');
+$platform->settings[101] = learningAccessContestSettings(101, ['approval_required' => true]);
+$service->participation(60, 101, 'request', 60);
+learningAccessAssert($platform->participantStatus(101, 60) === 'pending', '승인이 필요한 대회는 참가를 대기로 저장해야 합니다.');
+$service->participation(10, 101, 'approve', 60);
+learningAccessAssert($platform->participantStatus(101, 60) === 'active', '담당자는 참가 대기자를 승인할 수 있어야 합니다.');
+$platform->settings[101] = learningAccessContestSettings(101);
+$platform->participantStatuses[101][60] = 'pending';
+$service->participation(60, 101, 'request', 60);
+learningAccessAssert($platform->participantStatus(101, 60) === 'active', '승인 불필요 대회에서는 기존 대기자도 즉시 참가할 수 있어야 합니다.');
+$platform->participantStatuses[101][60] = 'removed';
+learningAccessThrows(static fn () => $service->participation(60, 101, 'request', 60), '제외된 참가자는 스스로 제한을 우회하면 안 됩니다.');
+learningAccessThrows(static fn () => $service->participation(60, 101, 'withdraw', 60), '참가 취소로 제외 상태를 지운 뒤 재참가할 수 없어야 합니다.');
+learningAccessThrows(static fn () => $service->participation(11, 101, 'request', 60), '다른 학생의 참가 상태를 변경하면 안 됩니다.');
+$platform->settings[101] = learningAccessContestSettings(101, ['visibility' => 'private']);
+learningAccessThrows(static fn () => $service->participation(11, 101, 'request', 11), '비공개 대회는 직접 참가할 수 없어야 합니다.');
+$platform->settings[101] = learningAccessContestSettings(101, ['visibility' => 'group_only', 'group_id' => 7]);
+learningAccessThrows(static fn () => $service->participation(11, 101, 'request', 11), '그룹 대회 제한을 공개 참가로 우회하면 안 됩니다.');
+$platform->settings[101] = learningAccessContestSettings(101);
+$judge->setArchived(101, true);
+learningAccessThrows(static fn () => $service->participation(11, 101, 'request', 11), '보관된 대회는 참가할 수 없어야 합니다.');
+$judge->setArchived(101, false);
+$platform->participantStatuses[101][11] = 'withdrawn';
+$platform->failParticipantTransition = true;
+learningAccessThrows(static fn () => $service->participation(11, 101, 'request', 11), '동시 상태 변경을 참가 요청이 덮어쓰면 안 됩니다.');
+learningAccessAssert($platform->participantStatus(101, 11) === 'withdrawn', '동시 처리 실패 시 기존 참가 상태를 보존해야 합니다.');
+$factory = new ContestRequestFactory($users);
+$command = $factory->saveCommand(new HttpRequest('POST', '/', [], ['starts_at' => '2026-01-01T02:00', 'ends_at' => '2026-01-01T03:00', 'approval_required' => '1']));
+learningAccessAssert($command->requiresApproval(), '참가 승인 설정을 저장 명령에 전달해야 합니다.');
+$platform->saveSettings(101, 10, $command);
+learningAccessAssert($platform->settings(101)->requiresApproval(), '참가 승인 설정을 저장 후 복원해야 합니다.');
+learningAccessAssert($platform->settings(101)->snapshot()['approval_required'] === true, '대회 정책 스냅샷에도 승인 설정이 포함되어야 합니다.');
+echo 'Contest join policy: ' . ($learningAccessAssertions - $startChecks) . " checks passed\n";

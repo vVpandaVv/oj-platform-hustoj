@@ -1,0 +1,30 @@
+{
+  "name": "edu-games",
+  "version": "1.6.7",
+  "private": true,
+  "description": "Build tooling for Edu Games blocks and frontend assets.",
+  "scripts": {
+    "test:addon": "php tests/addon-assets.php",
+    "test:php": "php tests/regression.php",
+    "test:hands": "php tests/hands.php && php -d extension=pdo_sqlite tests/play-api.php && node tests/browser-play.cjs",
+    "test:missing-methods": "php tests/missing-methods.php && node tests/missing-preview.cjs",
+    "test:handwriting": "php tests/handwriting-combinations.php",
+    "test:rescue": "php tests/rescue-solo.php && php tests/visualization-scenes.php && node tests/visualization-preview.cjs",
+    "test:v1": "php -d extension=pdo_sqlite tests/v1.php && node tests/browser-v1.cjs",
+    "test:scoring": "node tests/client-scoring.cjs",
+    "test:content": "node tests/content-seeds.cjs",
+    "test:learning": "php tests/learning-content.php && php tests/learning-state.php && node tests/learning-assets.cjs",
+    "test:browser": "node tests/browser-learning.cjs",
+    "test:warehouse": "php tests/warehouse.php && node tests/browser-warehouse.cjs",
+    "test:challenges": "node tests/personal-challenges.cjs",
+    "test:devices": "node tests/device-matching.cjs",
+    "test:rankings": "php tests/leaderboard-all.php && node tests/browser-leaderboard-all.cjs && node tests/browser-rank-pagination.cjs",
+    "test:moderation": "php -d extension=pdo_sqlite tests/ranking-moderation.php",
+    "test:strategy": "php tests/strategy.php && php tests/strategy-schema.php && node tests/browser-strategy.cjs",
+    "lint:js": "wp-scripts lint-js",
+    "lint:css": "wp-scripts lint-style"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "latest"
+  }
+}

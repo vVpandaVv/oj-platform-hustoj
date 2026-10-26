@@ -1,0 +1,284 @@
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ * Additional permission: see PLATFORM-LINKING-EXCEPTION.txt.
+ */
+.ocl-markdown-editor {
+    min-width: 0;
+    color: var(--ojp-color-ink, #1f2937);
+    background: var(--ojp-color-surface, #fff);
+}
+
+.ocl-markdown-editor [hidden] {
+    display: none;
+}
+
+.ocl-markdown-toolbar,
+.ocl-markdown-view-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ojp-space-1, 4px);
+    padding: var(--ojp-space-1, 4px) var(--ojp-space-2, 8px);
+}
+
+.ocl-markdown-toolbar {
+    border-bottom: 1px solid var(--ojp-color-line, #d1d5db);
+    background: var(--ojp-color-subtle, #f8fafc);
+}
+
+.ocl-markdown-view-actions {
+    justify-content: flex-end;
+    padding-bottom: 0;
+}
+
+.ocl-markdown-editor .ocl-md-action {
+    min-width: 32px;
+    min-height: 32px;
+    padding: var(--ojp-space-1, 4px) var(--ojp-space-2, 8px);
+    border: 1px solid transparent;
+    border-radius: var(--ojp-radius-sm, 8px);
+    background: transparent;
+    color: var(--ojp-color-ink, #1f2937);
+    font-family: inherit;
+    font-size: var(--ojp-text-subhead, 13px);
+}
+
+.ocl-markdown-editor .ocl-md-action:hover {
+    color: var(--ojp-color-primary, #2563eb);
+    background: var(--ojp-color-accent-bg, #eff6ff);
+}
+
+.ocl-markdown-editor .ocl-md-action:focus-visible {
+    outline: 2px solid var(--ojp-color-focus, var(--ojp-color-primary, #2563eb));
+    outline-offset: 1px;
+}
+
+.ocl-markdown-editor .ocl-md-bold {
+    font-weight: 800;
+}
+
+.ocl-markdown-editor .ocl-md-italic {
+    font-style: italic;
+}
+
+.ocl-markdown-editor .ocl-md-strike {
+    text-decoration: line-through;
+}
+
+.ocl-markdown-editor .ocl-md-close {
+    margin-left: auto;
+    color: var(--ojp-color-primary, #2563eb);
+}
+
+.ocl-markdown-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+}
+
+.ocl-markdown-editor.is-editing .ocl-markdown-body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.ocl-markdown-source,
+.ocl-markdown-preview-pane {
+    min-width: 0;
+}
+
+.ocl-markdown-source {
+    border-right: 1px solid var(--ojp-color-line, #d1d5db);
+}
+
+.ocl-markdown-pane-label {
+    padding: var(--ojp-space-2, 8px) var(--ojp-space-3, 12px) 0;
+    color: var(--ojp-color-muted, #64748b);
+    font-size: var(--ojp-text-footnote, 12px);
+}
+
+.ocl-markdown-editor .ocl-text {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-height: 120px;
+    max-height: 60vh;
+    padding: var(--ojp-space-3, 12px);
+    border: 0;
+    color: var(--ojp-color-ink, #1f2937);
+    background: var(--ojp-color-surface, #fff);
+    font-family: var(--ojp-font-mono, monospace);
+    font-size: var(--ojp-text-callout, 14px);
+    line-height: 1.7;
+    overflow-y: auto;
+    resize: vertical;
+}
+
+.ocl-markdown-help {
+    margin: 0;
+    padding: var(--ojp-space-2, 8px) var(--ojp-space-3, 12px);
+    border-top: 1px solid var(--ojp-color-line, #d1d5db);
+    color: var(--ojp-color-muted, #64748b);
+    font-size: var(--ojp-text-footnote, 12px);
+}
+
+/* Shared rendered notes in the notebook and the teacher's read-only viewer. */
+.ocl-markdown {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+    padding: var(--ojp-space-3, 12px) var(--ojp-space-4, 16px);
+    color: var(--ojp-color-ink, #1f2937);
+    font: inherit;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.ocl-markdown.ocl-markdown-empty {
+    color: var(--ojp-color-muted, #64748b);
+}
+
+.ocl-markdown.ocl-markdown-plain {
+    white-space: pre-wrap;
+}
+
+.ocl-markdown > :first-child {
+    margin-top: 0;
+}
+
+.ocl-markdown > :last-child {
+    margin-bottom: 0;
+}
+
+.ocl-markdown p,
+.ocl-markdown ul,
+.ocl-markdown ol,
+.ocl-markdown blockquote,
+.ocl-markdown pre,
+.ocl-markdown table {
+    margin: 0 0 var(--ojp-space-3, 12px);
+}
+
+.ocl-markdown h1,
+.ocl-markdown h2,
+.ocl-markdown h3,
+.ocl-markdown h4,
+.ocl-markdown h5,
+.ocl-markdown h6 {
+    margin: var(--ojp-space-5, 24px) 0 var(--ojp-space-2, 8px);
+    color: inherit;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.ocl-markdown h1 { font-size: 1.8em; }
+.ocl-markdown h2 { font-size: 1.5em; }
+.ocl-markdown h3 { font-size: 1.25em; }
+.ocl-markdown h4,
+.ocl-markdown h5,
+.ocl-markdown h6 { font-size: 1em; }
+
+.ocl-markdown a {
+    color: var(--ojp-color-primary, #2563eb);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.ocl-markdown ul,
+.ocl-markdown ol {
+    padding-left: 1.6em;
+}
+
+.ocl-markdown li > ul,
+.ocl-markdown li > ol {
+    margin-bottom: 0;
+}
+
+.ocl-markdown blockquote {
+    padding: var(--ojp-space-1, 4px) var(--ojp-space-3, 12px);
+    border-left: 4px solid var(--ojp-color-line-strong, #cbd5e1);
+    color: var(--ojp-color-muted, #64748b);
+}
+
+.ocl-markdown blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+.ocl-markdown code {
+    padding: 0.1em 0.3em;
+    border-radius: var(--ojp-radius-sm, 4px);
+    background: var(--ojp-color-fill, #f1f5f9);
+    color: inherit;
+    font-family: var(--ojp-font-mono, monospace);
+    font-size: 0.9em;
+    white-space: break-spaces;
+}
+
+.ocl-markdown pre {
+    max-width: 100%;
+    padding: var(--ojp-space-3, 12px);
+    border-radius: var(--ojp-radius-sm, 8px);
+    background: var(--ojp-color-fill, #f1f5f9);
+    color: inherit;
+    overflow-x: auto;
+    overflow-wrap: normal;
+    white-space: pre;
+}
+
+.ocl-markdown pre code {
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    white-space: pre;
+}
+
+.ocl-markdown table {
+    display: block;
+    max-width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto;
+}
+
+.ocl-markdown th,
+.ocl-markdown td {
+    min-width: 80px;
+    padding: var(--ojp-space-2, 8px) var(--ojp-space-3, 12px);
+    border: 1px solid var(--ojp-color-line, #d1d5db);
+    text-align: left;
+}
+
+.ocl-markdown th {
+    background: var(--ojp-color-subtle, #f8fafc);
+    font-weight: 700;
+}
+
+.ocl-markdown img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: var(--ojp-space-2, 8px) 0;
+    border-radius: var(--ojp-radius-sm, 8px);
+}
+
+.ocl-markdown hr {
+    margin: var(--ojp-space-4, 16px) 0;
+    border: 0;
+    border-top: 1px solid var(--ojp-color-line, #d1d5db);
+}
+
+@media (max-width: 600px) {
+    .ocl-markdown-editor.is-editing .ocl-markdown-body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ocl-markdown-source {
+        border-right: 0;
+        border-bottom: 1px solid var(--ojp-color-line, #d1d5db);
+    }
+
+    .ocl-markdown-editor .ocl-md-action {
+        min-height: 40px;
+    }
+
+    .ocl-markdown-editor .ocl-text {
+        max-height: 45vh;
+    }
+}

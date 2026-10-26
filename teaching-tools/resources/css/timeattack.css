@@ -1,0 +1,108 @@
+.htt-timeattack-problem-results {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 8px 0;
+}
+
+.htt-timeattack-selected-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0;
+}
+
+.htt-timeattack-selected-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--htt-border);
+    border-radius: 999px;
+    padding: 4px 6px 4px 10px;
+    font-size: 0.85rem;
+    background: var(--htt-card-bg);
+}
+
+.htt-timeattack-selected-item button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--htt-muted);
+    font-size: 1rem;
+    line-height: 1;
+    padding: 2px;
+}
+
+.htt-timeattack-problem-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 8px 0;
+}
+
+.htt-timeattack-problem-title ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * A wide table (one column per problem) can easily outgrow the page on a
+ * long problem set — scroll it horizontally rather than letting it force
+ * the whole page to overflow.
+ */
+.htt-timeattack-list {
+    margin: 12px 0;
+    overflow-x: auto;
+}
+
+.htt-timeattack-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.htt-timeattack-table th,
+.htt-timeattack-table td {
+    border: 1px solid var(--htt-border);
+    padding: 6px 10px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.htt-timeattack-table thead th {
+    background: var(--htt-disabled-bg);
+    color: var(--htt-fg);
+    font-weight: 700;
+}
+
+.htt-timeattack-name-cell {
+    text-align: left;
+    font-weight: 600;
+}
+
+.htt-timeattack-table tbody tr.is-finished {
+    background: var(--htt-success-bg);
+}
+
+.htt-timeattack-table tbody tr.is-finished td {
+    color: var(--htt-fg);
+    font-weight: 700;
+}
+
+.htt-timeattack-messages .message {
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+.htt-timeattack-messages .message.warning {
+    background: var(--htt-warning-bg);
+    color: var(--htt-warning-fg);
+}
+
+.htt-timeattack-messages .message.info {
+    background: var(--htt-info-bg);
+    color: var(--htt-info-fg);
+}

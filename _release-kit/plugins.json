@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "outputRoot": "_releases",
+  "latestDir": "_releases/latest",
+  "platform": {
+    "id": "oj-platform",
+    "name": "OJ Platform",
+    "note": "All plugins below are OJ Platform addons. Install and activate OJ Platform first."
+  },
+  "plugins": [
+    {
+      "id": "oj-platform",
+      "order": 0,
+      "source": "oj-integration-rebuild/oj-platform",
+      "mainFile": "oj-platform.php",
+      "guide": "guides/oj-platform.md",
+      "builder": {
+        "type": "powershell",
+        "script": "../../_release-kit/builders/oj-platform.ps1",
+        "args": [
+          "-OutputDirectory",
+          "{out}",
+          "-PhpBinary",
+          "{php}"
+        ]
+      }
+    },
+    {
+      "id": "edu-games",
+      "order": 1,
+      "source": "edu-games",
+      "mainFile": "edu-games.php",
+      "guide": "guides/edu-games.md",
+      "builder": {
+        "type": "powershell",
+        "script": "scripts/build-release.ps1",
+        "args": [
+          "-OutputDirectory",
+          "{out}"
+        ]
+      },
+      "uiLintExclude": [
+        "assets/*",
+        "blocks/*"
+      ]
+    },
+    {
+      "id": "learning-materials",
+      "order": 2,
+      "source": "learning-materials",
+      "mainFile": "learning-materials.php",
+      "guide": "guides/learning-materials.md",
+      "builder": {
+        "type": "generic",
+        "include": [
+          "learning-materials.php",
+          "plugin-package.php",
+          "uninstall.php",
+          "src",
+          "resources",
+          "languages"
+        ]
+      }
+    },
+    {
+      "id": "oj-ai-dashboard",
+      "order": 3,
+      "source": "oj-ai-dashboard",
+      "mainFile": "oj-ai-dashboard.php",
+      "guide": "guides/oj-ai-dashboard.md",
+      "platformRequires": ">=2.0.0-dev.33 <3.0.0",
+      "builder": {
+        "type": "powershell",
+        "script": "scripts/build-release.ps1",
+        "args": [],
+        "collect": [
+          "dist/oj-ai-dashboard-{version}.zip",
+          "dist/oj-ai-dashboard-{version}.zip.sha256"
+        ]
+      },
+      "uiLintExclude": [
+        "resources/assets/builder/*",
+        "resources/plate/*"
+      ]
+    },
+    {
+      "id": "oj-code-arena",
+      "order": 4,
+      "source": "oj-code-arena",
+      "mainFile": "oj-code-arena.php",
+      "guide": "guides/oj-code-arena.md",
+      "extraPackages": [
+        "oj-code-arena-server-{version}.zip"
+      ],
+      "platformRequires": ">=2.0.0-dev.30",
+      "builder": {
+        "type": "powershell",
+        "script": "tools/release/pack.ps1",
+        "args": [
+          "-Version",
+          "{version}",
+          "-OutDir",
+          "{out}"
+        ]
+      },
+      "uiLintExclude": [
+        "resources/css/arena.css",
+        "resources/css/board.css",
+        "resources/js/play.js",
+        "resources/js/board.js",
+        "resources/js/arena-look.js",
+        "game-server/*",
+        "shared/*"
+      ]
+    },
+    {
+      "id": "oj-code-lab",
+      "order": 5,
+      "source": "oj-code-lab",
+      "mainFile": "oj-code-lab.php",
+      "guide": "guides/oj-code-lab.md",
+      "builder": {
+        "type": "python",
+        "script": "scripts/build_release.py",
+        "args": [
+          "--output-dir",
+          "{out}"
+        ]
+      }
+    },
+    {
+      "id": "oj-ml-playgrounds",
+      "order": 6,
+      "source": "oj-ml-playgrounds",
+      "mainFile": "oj-ml-playgrounds.php",
+      "guide": "guides/oj-ml-playgrounds.md",
+      "builder": {
+        "type": "php",
+        "preScript": "scripts/verify.ps1",
+        "script": "scripts/package.php",
+        "args": [
+          "{out}"
+        ],
+        "env": {
+          "OJ_ML_UPSTREAM_FRONTEND": "_notes/tmp/ml-playgrounds-2276d1f-applycheck-20260911/ml-playgrounds-2276d1f98d6b7c5c11608a27b20f3c0709aa1542/frontend"
+        }
+      },
+      "uiLintExclude": [
+        "resources/playground/*"
+      ]
+    },
+    {
+      "id": "readcontents-library",
+      "order": 7,
+      "source": "readcontents-library",
+      "mainFile": "contents-editor.php",
+      "guide": "guides/readcontents-library.md",
+      "platformRequires": ">=2.0.0-dev.28 <3.0.0",
+      "contentCatalog": "readcontents-content/catalog.json",
+      "builder": {
+        "type": "generic",
+        "include": [
+          "contents-editor.php",
+          "uninstall.php",
+          "README.md",
+          "src",
+          "assets",
+          "resources"
+        ],
+        "forbid": [
+          "data/",
+          "assets/media/"
+        ]
+      },
+      "uiLintExclude": [
+        "assets/editor/*"
+      ]
+    },
+    {
+      "id": "teaching-tools",
+      "order": 8,
+      "source": "teaching-tools",
+      "mainFile": "teaching-tools.php",
+      "guide": "guides/teaching-tools.md",
+      "builder": {
+        "type": "generic",
+        "include": [
+          "teaching-tools.php",
+          "plugin-package.php",
+          "uninstall.php",
+          "README.md",
+          "src",
+          "resources",
+          "languages",
+          "realtime-server",
+          "realtime-addon.json"
+        ],
+        "sharedBundles": [
+          {
+            "source": "_shared/oj-realtime-hub",
+            "target": "common-server"
+          }
+        ]
+      }
+    },
+    {
+      "id": "focus-tracker",
+      "order": 9,
+      "source": "focus-tracker",
+      "mainFile": "focus-tracker.php",
+      "guide": "guides/focus-tracker.md",
+      "platformRequires": ">=2.3.22 <3.0.0",
+      "builder": {
+        "type": "generic",
+        "include": [
+          "focus-tracker.php",
+          "plugin-package.php",
+          "uninstall.php",
+          "README.md",
+          "docs",
+          "src",
+          "resources"
+        ],
+        "forbid": [
+          "tests/",
+          "_notes/"
+        ]
+      }
+    },
+    {
+      "id": "oj-primm",
+      "order": 10,
+      "source": "oj-primm",
+      "mainFile": "oj-primm.php",
+      "guide": "guides/oj-primm.md",
+      "platformRequires": ">=2.4.3 <3.0.0",
+      "builder": {
+        "type": "generic",
+        "preScript": "scripts/verify.ps1",
+        "include": [
+          "oj-primm.php",
+          "plugin-package.php",
+          "uninstall.php",
+          "README.md",
+          "CHANGELOG.md",
+          "LICENSE.txt",
+          "src",
+          "resources"
+        ],
+        "forbid": [
+          "tests/",
+          "_notes/"
+        ]
+      }
+    }
+  ]
+}

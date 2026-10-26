@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    ['key' => 'core', 'label' => '공통 기반', 'required' => true, 'default_enabled' => true, 'dependencies' => []],
+    ['key' => 'settings', 'label' => '설정 기반', 'required' => true, 'default_enabled' => true, 'dependencies' => ['core']],
+    ['key' => 'permission', 'label' => '권한 기반', 'required' => true, 'default_enabled' => true, 'dependencies' => ['core']],
+    ['key' => 'access_router', 'label' => '접근 경로', 'required' => true, 'default_enabled' => true, 'dependencies' => ['core']],
+    ['key' => 'public_ui', 'label' => '사용자 화면', 'required' => true, 'default_enabled' => true, 'dependencies' => ['core']],
+    ['key' => 'admin_console', 'label' => '관리자 화면', 'required' => true, 'default_enabled' => true, 'dependencies' => ['settings', 'permission']],
+    ['key' => 'migration', 'label' => '데이터 이전', 'required' => true, 'default_enabled' => true, 'dependencies' => ['core']],
+    ['key' => 'judge_db', 'label' => 'Judge 데이터베이스', 'required' => true, 'default_enabled' => true, 'dependencies' => ['core']],
+    ['key' => 'platform_db', 'label' => '플랫폼 데이터베이스', 'required' => true, 'default_enabled' => true, 'dependencies' => ['core']],
+    ['key' => 'home', 'label' => '홈', 'required' => false, 'default_enabled' => true, 'dependencies' => ['public_ui']],
+    ['key' => 'auth', 'label' => '로그인과 계정', 'required' => false, 'default_enabled' => true, 'dependencies' => ['permission', 'platform_db', 'judge_db']],
+    ['key' => 'legal_documents', 'label' => '법적 문서', 'required' => false, 'default_enabled' => true, 'dependencies' => ['auth']],
+    ['key' => 'registration', 'label' => '회원가입', 'required' => false, 'default_enabled' => true, 'dependencies' => ['auth']],
+    ['key' => 'user_profiles', 'label' => '사용자 프로필', 'required' => false, 'default_enabled' => true, 'dependencies' => ['auth']],
+    ['key' => 'problems', 'label' => '문제', 'required' => false, 'default_enabled' => true, 'dependencies' => ['platform_db', 'judge_db']],
+    ['key' => 'problem_statistics', 'label' => '문제 통계', 'required' => false, 'default_enabled' => true, 'dependencies' => ['problems']],
+    ['key' => 'problem_books', 'label' => '문제집', 'required' => false, 'default_enabled' => true, 'dependencies' => ['problems']],
+    ['key' => 'quizzes', 'label' => '퀴즈', 'required' => false, 'default_enabled' => true, 'dependencies' => ['problems']],
+    ['key' => 'testcase_tools', 'label' => '테스트 데이터 도구', 'required' => false, 'default_enabled' => true, 'dependencies' => ['problems']],
+    ['key' => 'problem_ai_assist', 'label' => '문제 AI 지원', 'required' => false, 'default_enabled' => false, 'dependencies' => ['problems']],
+    ['key' => 'submissions', 'label' => '제출', 'required' => false, 'default_enabled' => true, 'dependencies' => ['problems', 'judge_db', 'auth']],
+    ['key' => 'ranking', 'label' => '랭킹', 'required' => false, 'default_enabled' => true, 'dependencies' => ['submissions']],
+    ['key' => 'ai_feedback', 'label' => 'AI 피드백', 'required' => false, 'default_enabled' => true, 'dependencies' => ['submissions']],
+    ['key' => 'learning_dashboard', 'label' => '학습 현황', 'required' => false, 'default_enabled' => true, 'dependencies' => ['auth', 'problems', 'submissions']],
+    ['key' => 'contests', 'label' => '대회와 평가', 'required' => false, 'default_enabled' => true, 'dependencies' => ['problems', 'submissions']],
+    ['key' => 'classes', 'label' => '수업', 'required' => false, 'default_enabled' => true, 'dependencies' => ['problems', 'submissions', 'auth']],
+    ['key' => 'groups', 'label' => '그룹', 'required' => false, 'default_enabled' => true, 'dependencies' => ['auth']],
+    ['key' => 'board', 'label' => '게시판', 'required' => false, 'default_enabled' => true, 'dependencies' => ['auth']],
+    ['key' => 'notices', 'label' => '공지', 'required' => false, 'default_enabled' => true, 'dependencies' => ['permission']],
+    ['key' => 'blockly', 'label' => '블록 코딩', 'required' => false, 'default_enabled' => true, 'dependencies' => ['problems', 'submissions']],
+    ['key' => 'messaging', 'label' => '쪽지', 'required' => false, 'default_enabled' => false, 'dependencies' => ['auth']],
+];

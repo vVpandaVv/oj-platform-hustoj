@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-09 홈·대시보드·셸 상세 설계 | OJ Platform</title>
+  <style>
+    :root { --ink:#17202a; --muted:#5e6b78; --line:#d7dee5; --surface:#fff; --soft:#f5f7f9; --navy:#15344c; --cyan:#16818b; --green:#25734f; --yellow:#a56a00; --red:#a73b3b; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:#edf1f4; font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif; line-height:1.65; }
+    a { color:#075f73; }
+    code { padding:1px 4px; border-radius:3px; background:#edf1f4; font-family:Consolas,monospace; font-size:.94em; overflow-wrap:anywhere; }
+    .topbar { color:#fff; background:var(--navy); border-bottom:4px solid var(--cyan); }
+    .topbar-inner { width:min(1180px,calc(100% - 32px)); margin:auto; padding:14px 0; display:flex; justify-content:space-between; gap:16px; align-items:center; }
+    .brand { display:flex; gap:10px; align-items:center; color:#fff; text-decoration:none; }
+    .brand-mark { width:34px; height:34px; display:grid; place-items:center; color:var(--navy); background:#fff; border-radius:5px; font-weight:900; }
+    .layout { width:min(1180px,calc(100% - 32px)); margin:24px auto 40px; display:grid; grid-template-columns:220px minmax(0,1fr); gap:20px; }
+    nav { position:sticky; top:20px; align-self:start; padding:16px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+    nav ul { margin:10px 0 0; padding:0; list-style:none; }
+    nav li + li { margin-top:6px; }
+    nav a { color:var(--ink); text-decoration:none; font-size:14px; }
+    main { min-width:0; }
+    .report-header,.section { padding:26px; border:1px solid var(--line); border-radius:6px; background:var(--surface); }
+    .section { margin-top:18px; }
+    .eyebrow { margin:0 0 8px; color:var(--cyan); font-size:13px; font-weight:800; }
+    h1,h2,h3 { color:var(--navy); letter-spacing:0; }
+    h1 { margin:0; font-size:34px; line-height:1.25; }
+    h2 { margin:0; font-size:23px; }
+    h3 { margin:20px 0 8px; font-size:18px; }
+    p { margin:8px 0 0; }
+    .lede { max-width:860px; color:var(--muted); font-size:17px; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:18px; color:var(--muted); font-size:13px; }
+    .summary,.callout,.warning,.risk { margin-top:16px; padding:14px 16px; border-left:4px solid var(--cyan); background:#edf8f8; }
+    .callout { border-left-color:var(--green); background:#eef8f3; }
+    .warning { border-left-color:var(--yellow); background:#fff8e6; }
+    .risk { border-left-color:var(--red); background:#fff0f0; }
+    .section-heading { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; padding-bottom:12px; border-bottom:1px solid var(--line); }
+    .section-heading p { color:var(--muted); }
+    .badge { flex:0 0 auto; padding:4px 8px; border-radius:999px; font-size:12px; font-weight:800; }
+    .badge.good { color:#175c40; background:#def2e8; }
+    .badge.info { color:#075e68; background:#dff4f5; }
+    .badge.wait { color:#7b5200; background:#fff0c7; }
+    .badge.risk { color:#8a2929; background:#f8dede; }
+    .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .metric { padding:14px; border:1px solid var(--line); border-top:4px solid var(--cyan); border-radius:5px; background:var(--soft); }
+    .metric strong { display:block; color:var(--navy); font-size:25px; }
+    .metric span { color:var(--muted); font-size:13px; }
+    .flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:16px; }
+    .flow article { min-width:0; padding:13px; border:1px solid var(--line); border-radius:5px; background:var(--soft); }
+    .flow span { color:var(--muted); font-size:12px; }
+    .flow strong { display:block; margin-top:3px; color:var(--navy); overflow-wrap:anywhere; }
+    .table-wrap { margin-top:16px; overflow-x:auto; border:1px solid var(--line); border-radius:5px; }
+    table { width:100%; border-collapse:collapse; background:var(--surface); font-size:14px; }
+    th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:#fff; background:var(--navy); }
+    tbody tr:nth-child(even) { background:#f8fafb; }
+    tbody tr:last-child td { border-bottom:0; }
+    .rule-list,.check-list { margin:16px 0 0; padding-left:22px; }
+    .rule-list li + li,.check-list li + li { margin-top:8px; }
+    .tree { margin-top:14px; padding:16px; overflow:auto; color:#d8e8f0; background:#102a3e; border-radius:5px; font:13px/1.65 Consolas,monospace; white-space:pre; }
+    .gate { display:grid; grid-template-columns:135px minmax(0,1fr) 180px; margin-top:10px; border:1px solid var(--line); border-radius:5px; overflow:hidden; }
+    .gate > div { padding:11px; }
+    .gate > div + div { border-left:1px solid var(--line); }
+    footer { margin-top:20px; padding:16px 4px; color:var(--muted); text-align:center; font-size:13px; }
+    @media (max-width:980px) { .layout { grid-template-columns:1fr; } nav { position:static; } .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:680px) { .topbar-inner,.layout { width:min(100% - 20px,1180px); } .topbar span:last-child { display:none; } .report-header,.section { padding:18px; } h1 { font-size:27px; } .section-heading { display:block; } .badge { display:inline-block; margin-top:10px; } .metrics,.flow { grid-template-columns:1fr; } .gate { grid-template-columns:1fr; } .gate > div + div { border-left:0; border-top:1px solid var(--line); } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 설계</strong></a>
+      <span>첫 화면과 탐색 구조</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="문서 목차">
+      <strong>목차</strong>
+      <ul>
+        <li><a href="#baseline">현재 차이</a></li>
+        <li><a href="#scope">소유·범위</a></li>
+        <li><a href="#public-shell">사용자 셸</a></li>
+        <li><a href="#home">사용자 홈</a></li>
+        <li><a href="#console-shell">관리자 셸</a></li>
+        <li><a href="#dashboard">관리자 대시보드</a></li>
+        <li><a href="#ui">시각 시안</a></li>
+        <li><a href="#providers">Provider 계약</a></li>
+        <li><a href="#settings">설정·알림·자산</a></li>
+        <li><a href="#structure">목표 구조</a></li>
+        <li><a href="#verification">완료 관문</a></li>
+        <li><a href="#approval">확인 항목</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header">
+        <p class="eyebrow">DS-09 · 메뉴 기반 상세 설계</p>
+        <h1>홈·대시보드·셸 상세 설계</h1>
+        <p class="lede">로그인 후 첫 화면과 모든 메뉴의 공통 틀을 학습용 채점 서비스에 맞게 정리한다. 사용자 홈은 학습을 이어 가는 화면, 관리자 대시보드는 맡은 운영 작업을 확인하는 화면으로 만들고 두 셸은 권한이 검증된 ViewModel만 표시한다.</p>
+        <div class="meta"><span>작성일: 2026-07-23</span><span>기능 확정일: 2026-07-23</span><span>시안 작성일: 2026-07-24</span><span>최종 확정일: 2026-07-26</span><span>구현 갱신일: 2026-07-26</span><span>상태: 사용자 확정 · 기능·UI 설계 동결 · R-04 셸 구현 완료</span><span>선행 설계: DS-00~DS-08 확정</span><span>실행: I-02/R-04</span><span>근거: D-002·D-003·D-005·D-007·D-009·DS-01·DS-02·DS-06·DS-07·DS-08·DS-16</span></div>
+        <div class="callout"><strong>시안·구현 상태:</strong> 기능 계약과 <a href="development-ds-09-user-home-shell-ui.html">사용자 홈·셸 시안</a>, <a href="development-ds-09-admin-dashboard-shell-ui.html">관리자 대시보드·셸 시안</a>을 기준으로 로그인 우선 PublicUi 셸, 사용자 홈, 역할별 AdminConsole 셸과 대시보드를 R-04에서 구현했다. 후속 기능의 최근 학습·작업 항목은 각 모듈 단계에서 Provider로 연결한다.</div>
+      </header>
+
+      <section class="section" id="baseline">
+        <div class="section-heading"><div><h2>현재 코드와 목표 차이</h2><p>기능은 유지하되 홍보형 홈과 기술 진단 중심 대시보드를 업무 화면으로 바꾼다.</p></div><span class="badge risk">재구성 필요</span></div>
+        <div class="metrics">
+          <div class="metric"><strong>6</strong><span>목표 사용자 1차 메뉴</span></div>
+          <div class="metric"><strong>7 + 48</strong><span>관리자 상위·하위 메뉴</span></div>
+          <div class="metric"><strong>2,333</strong><span>현재 셸·홈·대시보드 Renderer 4개 행</span></div>
+          <div class="metric"><strong>0</strong><span>DS-09 신규 테이블</span></div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>현재</th><th>확인된 문제</th><th>목표</th></tr></thead>
+          <tbody>
+            <tr><td><code>Home_Page_Service</code> 627행</td><td>Container에서 Problems·Submissions·Notices·Classes·Groups 서비스를 직접 찾고 문자열 <code>oj_user_id</code>로 제출을 조회</td><td>숫자 <code>user_id</code>와 기능별 Home Provider 조립</td></tr>
+            <tr><td><code>Home_Page_Renderer</code> 531행</td><td>마케팅형 hero, 전체 문제·제출 통계, 빠른 링크와 업무 목록을 함께 표시</td><td>이어서 학습, 내 공간, 최근 제출과 공지를 우선하는 조용한 홈</td></tr>
+            <tr><td><code>Console_Dashboard_Renderer</code> 740행</td><td>모듈·기능·라우트 수와 Foundation 상태를 대시보드 본문에 크게 노출</td><td>내 할 일·최근 Jobs·운영 알림 우선, 기술 진단은 시스템 상태 화면으로 분리</td></tr>
+            <tr><td>현재 관리자 메뉴 9개</td><td>대회·수업·그룹이 따로 있고 설정은 기술 메뉴처럼 보임</td><td>D-007의 7개 업무 메뉴·58개 Registry 항목</td></tr>
+            <tr><td>셸 내부 조건문</td><td>Route별 명령, 메뉴 권한, 그룹 예외, 전체 시스템 상태와 URL 알림을 직접 판정</td><td>DS-07 Route Link, 등록형 명령·경고 Provider, <code>Flash_Store</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>경로 수량:</strong> 서비스 시작 엔트리는 DS-08의 로그인 <code>/login</code>이고, 사용자 메인 홈 <code>/</code>은 로그인한 사용자만 렌더링한다. 관리자 대시보드는 <code>/oj-console</code>을 유지한다. 셸은 경로가 아니라 모든 화면의 레이아웃이며 DS-09 자체는 새 GET 경로를 추가하지 않는다. 최고 관리자 주제 관리, AI 작업 배정 화면과 보호 첨부 파일 응답까지 반영한 D-002의 전체 목표는 152개다.</div>
+      </section>
+
+      <section class="section" id="scope">
+        <div class="section-heading"><div><h2>모듈 소유와 의존 방향</h2><p>홈과 대시보드는 읽기 결과를 조립하지만 업무 규칙을 소유하지 않는다.</p></div><span class="badge info">DB 소유 없음</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>소유자</th><th>소유</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td><code>src/Ui</code></td><td>DS-01 토큰·컴포넌트·아이콘·메시지·접근성 계약</td><td>메뉴·업무·DB·권한 판정</td></tr>
+            <tr><td><code>PublicUi</code></td><td>비로그인 최소 셸, 사용자 셸, 설정형 1차·2차 메뉴, <code>/</code> Home 조립</td><td>기능 Repository 직접 조회·업무 상태 해석</td></tr>
+            <tr><td><code>AdminConsole</code></td><td>관리자 셸, 7개 메뉴 Registry 단일 소유, <code>/oj-console</code> Dashboard 조립</td><td>기능별 권한 복제·설정 저장·시스템 진단 원본</td></tr>
+            <tr><td>기능 모듈</td><td>Home·Dashboard Block Provider와 화면 명령 선언</td><td>셸 HTML·상단 메뉴·사이드바 직접 출력</td></tr>
+            <tr><td>AccessRouter·Permission</td><td>Route Link와 현재 접근 가능 여부</td><td>셸 모양·블록 순서·업무 조회</td></tr>
+            <tr><td>Settings</td><td>홈·사용자 메뉴 옵션의 정의·검증·저장 화면</td><td>메뉴 권한과 기능 상태 우회</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>관리자 메뉴 단일 소유:</strong> 기능 모듈은 승인된 메뉴 선언을 제공하고 AdminConsole의 Registry가 전체 58개를 수집·검증·동결한 뒤 한 번만 렌더링한다. 기능 모듈이 WordPress 관리자 메뉴나 별도 사이드바를 등록하지 않는다.</div>
+      </section>
+
+      <section class="section" id="public-shell">
+        <div class="section-heading"><div><h2>사용자 셸과 설정형 메뉴</h2><p>기본 6개 구성을 제공하고 운영 설정에 따라 1차·2차 탐색을 조립한다.</p></div><span class="badge good">최대 2단계</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>요청·상태</th><th>처리</th><th>화면·이동</th></tr></thead>
+          <tbody>
+            <tr><td>서비스 시작</td><td>시작 엔트리 <code>auth.login</code></td><td><code>/login</code> 로그인 화면</td></tr>
+            <tr><td>비로그인 사용자의 서비스 페이지 직접 접근</td><td>Controller·Provider를 호출하기 전에 로그인 Policy 적용</td><td><code>/</code>을 포함한 모든 보호 페이지에서 <code>/login</code>으로 이동</td></tr>
+            <tr><td>시작 엔트리에서 로그인 성공</td><td>WordPress 세션과 계정 상태를 확정한 뒤 이동</td><td>기본 목적지 <code>/</code> 메인 홈</td></tr>
+            <tr><td>보호 화면에서 로그인으로 이동한 뒤 성공</td><td>DS-07이 검증한 내부 <code>redirect_to</code>만 사용</td><td>검증된 원래 화면, 없거나 잘못된 값이면 <code>/</code></td></tr>
+            <tr><td>로그인 사용자의 <code>/login</code> 접근</td><td>로그인 폼을 다시 표시하지 않음</td><td><code>/</code> 메인 홈으로 이동</td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>환경</th><th>구조</th><th>표시</th><th>숨김</th></tr></thead>
+          <tbody>
+            <tr><td>비로그인</td><td>인증·동의 예외용 최소 셸</td><td>로그인, 가입, 복구, 법정대리인 동의와 법적 문서만 제공</td><td>6개 메뉴, 홈·문제·제출·학습·커뮤니티·프로필 콘텐츠, 관리자 진입</td></tr>
+            <tr><td>사용자 데스크톱</td><td>58px 상단 바, 최대 1180px 본문</td><td>설정된 1차 메뉴와 2차 드롭다운, 최신 공지 패널, 계정 메뉴</td><td>접근 불가 기능·관리 명령</td></tr>
+            <tr><td>사용자 모바일</td><td>58px 상단 바, 한 열 본문, 하단 탐색</td><td>홈·문제·제출·학습 + 더보기</td><td>더보기에는 커뮤니티·내 정보와 계정 보조 동작만 배치</td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>1차 메뉴</th><th>대표·하위 화면</th><th>표시 규칙</th></tr></thead>
+          <tbody>
+            <tr><td>홈</td><td><code>/</code></td><td>로그인 필수, 인증 성공 뒤 항상 표시</td></tr>
+            <tr><td>문제</td><td>문제·퀴즈·문제집</td><td>접근 가능한 하위 기능이 하나 이상일 때</td></tr>
+            <tr><td>제출</td><td>제출 목록·상황별 상세</td><td>Submissions ON + 로그인</td></tr>
+            <tr><td>학습</td><td>수업·대회·그룹</td><td>각 기능을 독립 판정하고 접근 가능한 항목만 표시</td></tr>
+            <tr><td>커뮤니티</td><td>게시판·공지</td><td>두 기능 중 접근 가능한 항목만 표시</td></tr>
+            <tr><td>내 정보</td><td>프로필·내 학습·계정 설정·동의</td><td>현재 숫자 WordPress <code>user_id</code> 사용</td></tr>
+          </tbody>
+        </table></div>
+        <ul class="rule-list">
+          <li>사이트 로고와 기본 시작 동작은 비로그인 상태에서 <code>/login</code>, 로그인 상태에서 <code>/</code>을 사용한다.</li>
+          <li>비로그인 허용 목록은 <code>auth.login</code>, 가입 기능이 켜진 <code>auth.register</code>, <code>auth.guardian_consent</code>, <code>legal.terms</code>, <code>legal.privacy</code>, <code>legal.copyright</code>, <code>legal.email_collection_refusal</code> 일곱 Route 키로 고정한다. 비밀번호 복구·재설정은 <code>auth.login</code>의 화면 상태다.</li>
+          <li>위 예외를 제외한 모든 OJ HTML 페이지는 <code>active</code> 플랫폼 사용자만 접근한다. 비로그인·승인 대기·이용 중지 상태에서는 업무 Controller·Provider를 호출하지 않는다.</li>
+          <li>HTML 페이지의 비로그인 요청은 <code>/login</code>으로 이동한다. API·파일·작업 응답은 로그인 HTML을 섞지 않고 401 또는 403을 반환한다.</li>
+          <li>홈·문제·제출·학습·커뮤니티·내 정보는 기본 구성이다. 운영자는 내부 메뉴의 1차·2차 단계·표시 이름·Route 연결·부모·대상·순서·모바일 위치를 설정하고 외부 HTTPS 메뉴도 두 단계에 배치할 수 있다. 3단계 메뉴는 만들지 않는다.</li>
+          <li>메뉴는 DS-07의 <code>Route_Link_Service</code>가 반환한 접근 가능한 링크만 표시하며 직접 주소도 같은 Policy를 다시 검사한다.</li>
+          <li>계정 메뉴에는 프로필·계정 설정·동의·로그아웃을 제공하고, 접근 가능한 관리자 경로가 하나 이상일 때만 관리자 화면 링크를 표시한다.</li>
+          <li>지속형 알림함과 읽지 않음 수는 새 테이블 없이 만들지 않는다. 상단 알림 영역은 최신 공지와 현재 요청의 일회성 안내만 제공한다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="home">
+        <div class="section-heading"><div><h2>로그인 후 사용자 홈</h2><p>설명보다 바로 이어 갈 수 있는 행동을 먼저 보여 준다.</p></div><span class="badge info">학습 중심</span></div>
+        <div class="flow">
+          <article><span>1 · 가장 먼저</span><strong>이어서 하기</strong><p>진행 중 대회, 최근 오답·미완료 문제, 문제 찾기 순으로 한 개 주 행동을 선택한다.</p></article>
+          <article><span>2 · 참여</span><strong>내 학습 공간</strong><p>활성 수업·대회·그룹을 최대 6개 표시하고 각 기능의 접근 정책을 따른다.</p></article>
+          <article><span>3 · 결과</span><strong>최근 제출</strong><p>최근 5건의 문제·시각·결과만 표시하며 상세 접근이 막힌 수행 모드에는 링크를 만들지 않는다.</p></article>
+          <article><span>4 · 안내</span><strong>공지</strong><p>게시된 최신 공지 최대 5건과 전체 보기만 제공한다.</p></article>
+          <article><span>5 · 운영 역할</span><strong>담당 공간 바로가기</strong><p>강사·운영자에게 맡은 수업·대회·그룹과 관리자 화면 진입을 추가한다.</p></article>
+          <article><span>빈 상태</span><strong>문제 찾기</strong><p>참여 공간과 제출이 없어도 문제 목록으로 가는 한 개 행동을 제공한다.</p></article>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>우선순위</th><th>후보</th><th>선택 기준</th><th>이동</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>진행 중 대회</td><td>현재 참가 중이고 접근·기간 정책을 통과</td><td>대회 상세</td></tr>
+            <tr><td>2</td><td>최근 오답·미완료 문제</td><td>현재도 문제 접근 가능, 수행 모드에서 허용된 정보만 사용</td><td>문제 상세 또는 제출</td></tr>
+            <tr><td>3</td><td>최근 참여 수업</td><td>활성 수강 관계와 공개된 문제 존재</td><td>수업 상세</td></tr>
+            <tr><td>4</td><td>문제 찾기</td><td>Problems 기능과 목록 접근 가능</td><td>문제 목록</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>홈에서 제거:</strong> 공개 문제 전체 수, 전체 제출 수, 모듈 수 같은 사이트 통계와 마케팅 hero·홍보 카드·임의 빠른 링크를 기본 홈에 두지 않는다. 홈은 사용자에게 필요한 현재 상태와 다음 행동만 표시한다.</div>
+        <div class="summary"><strong>부분 실패:</strong> 한 Provider가 실패하면 해당 블록만 안전한 빈 상태로 바꾸고 나머지 홈은 렌더링한다. 오류 상세는 화면에 노출하지 않고 추적 ID만 기록하며 권한 없음과 조회 실패를 같은 값으로 캐시하지 않는다.</div>
+      </section>
+
+      <section class="section" id="console-shell">
+        <div class="section-heading"><div><h2>관리자 셸과 7개 메뉴</h2><p>기능 이동은 사이드바 한 곳에서만 제공한다.</p></div><span class="badge good">58개 Registry</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>1차 메뉴</th><th>2차 묶음</th><th>진입</th></tr></thead>
+          <tbody>
+            <tr><td>대시보드</td><td>내 할 일·최근 작업·운영 알림</td><td><code>console.dashboard</code></td></tr>
+            <tr><td>사용자</td><td>계정·역할과 권한·가입 정책</td><td>접근 가능한 첫 하위 화면</td></tr>
+            <tr><td>문제</td><td>문제 관리·콘텐츠 구성·문제 도구</td><td>접근 가능한 첫 하위 화면</td></tr>
+            <tr><td>제출</td><td>제출 관리·기록·AI 지원·제출 환경</td><td>접근 가능한 첫 하위 화면</td></tr>
+            <tr><td>학습 공간</td><td>수업 · 대회·평가 · 그룹</td><td><code>console.learning.index</code></td></tr>
+            <tr><td>커뮤니티</td><td>게시판·공지</td><td><code>console.community.index</code></td></tr>
+            <tr><td>운영</td><td>서비스 설정·메일·데이터 이전·시스템 상태</td><td><code>console.settings.index</code></td></tr>
+          </tbody>
+        </table></div>
+        <ul class="rule-list">
+          <li>D-007의 상위 7개·하위 51개·전체 58개 키와 순서를 그대로 사용하고 이 문서에서 중복 목록을 만들지 않는다.</li>
+          <li>데스크톱은 58px 상단 바·240px 사이드바·최대 1280px 본문, 모바일은 상단 바·열기식 사이드바·한 열 본문을 사용한다.</li>
+          <li>데스크톱 사이드바는 상단 바 아래의 화면 높이에 고정하고 메뉴 영역만 독립 스크롤한다. 상위 메뉴의 링크와 하위 메뉴 토글을 구분하며, 현재 페이지의 상위 메뉴는 자동으로 펼친다. 다른 메뉴의 펼침 상태는 탭 세션 안에서 유지하고 모바일 메뉴에도 같은 토글 상태를 적용한다. 아이콘 전용 접기 상태는 모바일 메뉴를 숨기지 않는다. 탭으로 다른 기능 메뉴를 반복하지 않으며, 탭은 기능이 같은 대상의 보기 전환을 명시적으로 등록한 경우에만 출력한다.</li>
+          <li>화면 제목·설명·주 명령 1개·보조 명령은 Route ViewModel이 제공한다. 셸에 문제 추가·사용자 추가 같은 경로별 조건문을 두지 않는다.</li>
+          <li>상단에는 사용자 화면으로 돌아가기, 현재 계정, 로그아웃을 제공한다. 시스템 경고는 해당 조회 권한과 등록된 Alert Provider를 모두 통과한 경우에만 표시한다.</li>
+        </ul>
+        <div class="callout"><strong>상위 메뉴 진입:</strong> 사용자·문제·제출은 독립 화면을 만들지 않고 같은 Route Policy가 허용한 첫 하위 화면으로 이동한다. 허용 하위 화면이 없으면 상위 메뉴 자체를 숨기며 임의 홈 대체는 하지 않는다.</div>
+      </section>
+
+      <section class="section" id="dashboard">
+        <div class="section-heading"><div><h2>역할별 관리자 대시보드</h2><p>관리자가 맡은 작업과 조치가 필요한 상태를 우선한다.</p></div><span class="badge info">업무 우선</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>내용</th><th>표시 조건</th><th>제외</th></tr></thead>
+          <tbody>
+            <tr><td>내 할 일</td><td>가입 승인·검토·확인 필요·실패 작업, 담당 공간의 임박한 운영 항목</td><td>현재 역할과 대상 범위, 가입 승인은 전용 capability</td><td>다른 담당자의 비공개 대상과 승인 대기자의 불필요한 개인정보</td></tr>
+            <tr><td>최근 작업</td><td>조회 가능한 Jobs 최대 8건의 종류·상태·진행 수·시각</td><td>작업별 현재 조회 Policy</td><td>원본 입력·내부 예외·다른 사용자 작업 ID</td></tr>
+            <tr><td>운영 알림</td><td>연결 실패·스키마 불일치·최근 치명 오류의 짧은 요약</td><td>시스템 상태 조회 권한</td><td>SQL·경로·비밀값·원시 예외</td></tr>
+            <tr><td>담당 바로가기</td><td>사용자·문제·제출·수업·대회·그룹·커뮤니티 중 접근 가능한 대표 작업</td><td>기능 ON + 현재 Route Policy</td><td>권한 없는 생성·설정 링크</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>기술 진단 분리:</strong> 모듈 목록, 기능 플래그 전체, 라우트 수, Foundation 상태와 원시 시스템 정보는 대시보드에 펼치지 않는다. 권한 있는 운영자에게 경고 요약과 <code>/oj-console/system-status</code> 이동만 제공한다.</div>
+        <div class="summary"><strong>쓰기 금지:</strong> 대시보드는 위험 작업을 직접 실행하지 않는다. 승인·재시도·설정 변경은 해당 소유 화면으로 이동한 뒤 권한·nonce·대상 상태를 다시 검사한다.</div>
+      </section>
+
+      <section class="section" id="ui">
+        <div class="section-heading"><div><h2>시각 시안</h2><p>새 경로를 늘리지 않고 두 직접 경로의 역할·데이터 상태를 비교한다.</p></div><span class="badge good">사용자 확정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>시안</th><th>대상 경로</th><th>전환해 볼 상태</th><th>확인할 설계 계약</th></tr></thead>
+          <tbody>
+            <tr><td><a href="development-ds-09-user-home-shell-ui.html"><strong>사용자 홈·셸</strong></a></td><td><code>/</code></td><td>학습자 홈 · 강사 홈 · 첫 사용 · Provider 부분 실패</td><td>설정형 1차·2차 메뉴, 데스크톱 드롭다운, 모바일 최대 4개+더보기와 2차 시트, 외부 HTTPS 메뉴, 학습 우선순위, 수행 모드 제출 결과, 관리자 진입 조건</td></tr>
+            <tr><td><a href="development-ds-09-admin-dashboard-shell-ui.html"><strong>관리자 대시보드·셸</strong></a></td><td><code>/oj-console</code></td><td>전역 관리자 · 담당 강사 · 가입 승인 담당자 · Provider 부분 실패</td><td>역할별 메뉴 범위, 할 일·Jobs·알림·바로가기, 가입 승인 최소 정보, 블록 단위 실패 격리</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>문서 분리 기준:</strong> 사용자 셸과 관리자 셸은 탐색 구조·권한·본문 폭이 다르므로 두 시안으로 분리한다. 각 시안의 상태 전환은 같은 경로에서 사용자 역할이나 Provider 결과가 달라지는 예시이며 별도 Route를 추가한다는 뜻이 아니다.</div>
+        <div class="warning"><strong>검토 범위:</strong> 시안의 버튼은 화면 이동과 상태 설명을 위한 상호작용 예시다. 승인·재시도·설정 변경 같은 실제 쓰기 동작은 구현하지 않았고 운영 코드와 데이터베이스도 변경하지 않았다.</div>
+      </section>
+
+      <section class="section" id="providers">
+        <div class="section-heading"><div><h2>Home·Dashboard Provider 계약</h2><p>조립 화면이 기능 클래스와 Repository를 직접 찾지 않게 한다.</p></div><span class="badge info">등록형 읽기</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>계약</th><th>입력</th><th>출력</th><th>검증</th></tr></thead>
+          <tbody>
+            <tr><td><code>Home_Block_Provider_Interface</code></td><td>숫자 <code>user_id</code>, locale, 현재 시각</td><td>키·제목·우선순위·최대 6개 항목·허용 Route Link·빈 상태</td><td>기능 ON·로그인·대상 접근</td></tr>
+            <tr><td><code>Dashboard_Block_Provider_Interface</code></td><td>숫자 <code>user_id</code>, 현재 관리자 Context</td><td>할 일·작업·경고·바로가기 중 한 블록</td><td>capability·대상 범위·작업 조회 Policy</td></tr>
+            <tr><td><code>Page_Action_Provider_Interface</code></td><td>현재 Route·대상·사용자</td><td>주 명령 0~1개와 보조 명령</td><td>실행 작업과 같은 Policy</td></tr>
+            <tr><td><code>Shell_Alert_Provider_Interface</code></td><td>현재 area·Route·사용자</td><td>메시지 코드·tone·허용된 다음 Route</td><td>알림 조회 권한과 민감 정보 제거</td></tr>
+          </tbody>
+        </table></div>
+        <ul class="rule-list">
+          <li>Provider는 완성 HTML, SQL, Repository 객체와 외부 URL을 반환하지 않고 타입이 있는 ViewModel만 반환한다.</li>
+          <li>한 기능은 같은 키를 중복 등록할 수 없고 Registry는 owner·feature·priority·출력 스키마·Route 참조를 전체 수집 뒤 검증·동결한다.</li>
+          <li>각 Provider는 제한된 한 번의 조회로 최대 항목 수를 지키고 행별 추가 조회를 금지한다. 민감한 사용자 결과는 공유 캐시에 넣지 않는다.</li>
+          <li>Provider 실패는 해당 블록 단위로 격리하며 권한 없음·기능 OFF는 조용히 제외하고 실제 오류만 추적 ID와 함께 기록한다.</li>
+          <li>Groups Provider가 없거나 기능이 꺼져도 Classes·Contests 블록과 메뉴는 독립적으로 동작한다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="settings">
+        <div class="section-heading"><div><h2>설정·일회성 알림·자산 적재</h2><p>설정 자유도보다 용어·권한·성능의 일관성을 우선한다.</p></div><span class="badge good">기존 옵션 사용</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>영역</th><th>목표 저장 값</th><th>허용</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td>사용자 메뉴<br><code>oj_platform_public_menu_settings</code></td><td>내부 메뉴의 단계·이름·Route·부모·대상·순서·모바일 위치와 최대 20개 외부 HTTPS 메뉴</td><td>내부 항목은 Manifest 안에서 1차·2차로 배치하고 기본 복원. 외부 메뉴는 키·단계·부모·이름·정규화 URL·표시 대상·순서·사용 여부만 저장</td><td>임의 내부 URL, 3단계·순환 부모, 접근 가능한 1차 메뉴 0개, 외부 메뉴의 내부 Route 위장, HTTP·위험 스킴·HTML·권한 우회</td></tr>
+            <tr><td>홈<br><code>oj_platform_home_settings</code></td><td>블록 표시·순서·항목 수 제한</td><td>승인된 Provider 블록 선택과 기본 복원</td><td>마케팅 hero, 임의 HTML, 임의 빠른 링크, 업무 데이터 직접 입력</td></tr>
+            <tr><td>화면 결과<br><code>Flash_Store</code></td><td>메시지 코드·허용 문맥·사용자·만료</td><td>5분 또는 1회 읽기</td><td>URL 실제 문구, 원시 예외, 비밀번호·소스</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>기존 설정 전환:</strong> 현재 hero 문구·통계·빠른 링크 설정은 새 홈 실행값으로 사용하지 않는다. DS-15 이전 보고서에 기존 값과 새 블록 매핑 결과를 보여 주고, 승인·복구 기간 동안만 원본을 보존한 뒤 정리한다.</div>
+        <ul class="rule-list">
+          <li>사용자 셸은 공통 tokens·base·components·public shell 자산만 기본 적재한다. 관리자 셸도 공통 자산과 console shell만 기본 적재한다.</li>
+          <li>MathJax, Ace, Blockly, 기능별 표·편집기·대화상자 자산은 현재 Route의 Asset Registry 선언이 있을 때만 적재한다.</li>
+          <li>셸이 URI 문자열로 문제·제출 경로를 추정하거나 CDN 라이브러리를 직접 등록하지 않는다. 기능 모듈이 Route 이름으로 자산을 선언한다.</li>
+          <li>완료·경고는 URL의 <code>oj_flash</code> 문자열을 읽지 않고 <code>Flash_Store</code>의 사용자 소유 일회성 토큰만 소비한다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="structure">
+        <div class="section-heading"><div><h2>목표 코드 구조</h2><p>셸, 메뉴, 조립과 기능 Provider를 물리적으로 나눈다.</p></div><span class="badge info">실제 구현 구조</span></div>
+        <div class="tree">src/Ui/
+├─ Component/                     [공통 렌더러]
+├─ Icon/                          [Lucide 로컬 Registry]
+├─ Message/Flash_Store.php        [일회성 메시지 코드]
+└─ View/                          [Page·Action·Alert ViewModel]
+
+modules/PublicUi/
+├─ Module.php                     [의존 조립]
+├─ Navigation/
+│  ├─ Public_Menu_Manifest.php    [등록된 내부 Route·기본 구성·외부 HTTPS 메뉴]
+│  └─ Public_Menu_Resolver.php    [기능·Route Policy·설정 조정]
+├─ Shell/Public_Shell.php         [최소·사용자 셸]
+├─ Home/
+│  ├─ Home_Controller.php
+│  ├─ Home_View_Model_Factory.php
+│  ├─ Home_Block_Registry.php
+│  └─ Home_View.php
+└─ Contract/Home_Block_Provider_Interface.php
+
+modules/AdminConsole/
+├─ Module.php                     [메뉴·Provider 조립]
+├─ Navigation/
+│  ├─ Console_Menu_Manifest.php   [7개 상위·51개 하위]
+│  └─ Console_Menu_Resolver.php   [Route Policy·first child]
+├─ Shell/Console_Shell.php
+├─ Dashboard/
+│  ├─ Dashboard_Controller.php
+│  ├─ Dashboard_View_Model_Factory.php
+│  ├─ Dashboard_Block_Registry.php
+│  └─ Dashboard_View.php
+└─ Contract/
+   ├─ Dashboard_Block_Provider_Interface.php
+   ├─ Page_Action_Provider_Interface.php
+   └─ Shell_Alert_Provider_Interface.php</div>
+        <div class="summary"><strong>Container 제한:</strong> <code>Module.php</code> 조립에서만 Container를 사용한다. 셸·Resolver·Factory·Controller는 생성자에서 구체 의존을 받고 실행 중 서비스 키를 찾지 않는다.</div>
+      </section>
+
+      <section class="section" id="verification">
+        <div class="section-heading"><div><h2>구현 순서와 완료 관문</h2><p>계정 화면과 함께 최초 기준 셸로 구현하고 후속 모듈이 내용을 공급한다.</p></div><span class="badge good">R-04 셸 완료</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>순서</th><th>구현</th><th>완료 증거</th></tr></thead>
+          <tbody>
+            <tr><td>S-0</td><td>현재 6개 사용자 흐름·51개 관리자 메뉴·홈·대시보드 스냅샷 고정</td><td>역할별 화면·쿼리·브라우저 기준</td></tr>
+            <tr><td>S-1</td><td>공통 Shell ViewModel, Flash·Action·Alert 계약</td><td>단위 검사·민감 정보 검사</td></tr>
+          <tr><td>S-2</td><td>설정형 1차·2차 사용자 메뉴·Public Shell·Home Provider</td><td>7개 비로그인 예외와 나머지 142개 로그인 전용 렌더링 경로, 보호 파일 응답 2개, 승인 대기·이용 중지, 로그인→<code>/</code>, 기능 ON/OFF, 역할·수행 모드 E2E</td></tr>
+            <tr><td>S-3</td><td>58개 관리자 메뉴·Console Shell·Dashboard Provider</td><td>16개 역할 메뉴 Snapshot·가입 승인 최소 목록·첫 하위 진입·직접 주소 검사</td></tr>
+            <tr><td>S-4</td><td>홈·메뉴 설정 전환과 기존 직접 조회·명령·알림 제거</td><td>옵션 이전 보고서·회귀·불필요 자산 0건</td></tr>
+          </tbody>
+        </table></div>
+        <div class="gate"><div><strong>접근</strong></div><div>비로그인 예외 7개를 제외한 모든 HTML 페이지는 비로그인 요청을 <code>/login</code>으로 이동한다. 수동 승인 대기·이용 중지 사용자는 홈과 업무 화면을 열지 못한다.</div><div>152개 Route 행렬·Playwright E2E</div></div>
+        <div class="gate"><div><strong>메뉴</strong></div><div>설정된 사용자 1차·2차 메뉴와 관리자 58개가 기능·역할·대상별로 정확히 필터링된다. 내부 Route 권한은 배치 변경과 무관하게 유지되고 외부 HTTPS 메뉴는 설정된 단계·부모에 안전한 새 창 속성으로 표시된다. 접근 가능한 내부 1차 메뉴가 최소 1개이며 3단계는 생성되지 않는다.</div><div>16개 역할 Snapshot</div></div>
+        <div class="gate"><div><strong>부분 실패</strong></div><div>한 Provider 실패가 전체 홈·대시보드를 중단하지 않고 권한 정보·내부 오류를 노출하지 않는다.</div><div>실패 주입 검사</div></div>
+        <div class="gate"><div><strong>성능</strong></div><div>Provider별 최대 항목·쿼리 상한과 N+1 금지를 지키고 기능 OFF Provider는 호출하지 않으며 셸 기본 자산만 적재한다.</div><div>쿼리·자산 예산</div></div>
+        <div class="gate"><div><strong>반응형</strong></div><div>1440×900, 1024×768, 390×844에서 메뉴·본문·긴 한글·빈 상태·오류가 겹치거나 잘리지 않는다.</div><div>Chromium 시각 승인</div></div>
+        <div class="gate"><div><strong>인코딩</strong></div><div>PHP·HTML·CSS·JavaScript는 UTF-8 한글 원문을 사용하고 한글 <code>\uXXXX</code> 표현이 없다.</div><div>엄격 UTF-8 검사</div></div>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading"><div><h2>확정 항목</h2><p>아래 여덟 항목을 2026-07-23 사용자 확인으로 동결했다.</p></div><span class="badge good">8건 확정</span></div>
+        <ol class="check-list">
+          <li><strong>DS09-Q01 · 역할·진입:</strong> 서비스 시작 엔트리는 <code>/login</code>으로 고정한다. 가입·복구·법정대리인 동의·법적 문서의 7개 Route 키만 비로그인 예외로 두고, 나머지 모든 HTML 페이지는 비로그인 요청을 <code>/login</code>으로 이동한다. <code>active</code> 사용자만 홈과 업무 화면을 열며 검증된 내부 이동값만 보존한다. 관리자 권한 사용자는 로그인 후 계정 메뉴에서 <code>/oj-console</code>로 이동한다.</li>
+          <li><strong>DS09-Q02 · 사용자 셸 · 보완:</strong> 데스크톱은 설정된 1차 메뉴와 2차 드롭다운, 모바일은 지정된 최대 4개+더보기와 부모별 2차 시트를 사용한다. 운영자는 내부 메뉴의 단계·이름·Route 연결·부모·대상·순서·모바일 위치를 설정하고 외부 HTTPS 메뉴도 1차 또는 2차에 배치할 수 있다. Route 권한은 바뀌지 않으며 3단계 메뉴는 허용하지 않는다.</li>
+          <li><strong>DS09-Q03 · 사용자 홈:</strong> 마케팅 hero·전체 통계를 제거하고 이어서 하기·내 학습 공간·최근 제출·공지·담당 바로가기를 Provider로 조립한다.</li>
+          <li><strong>DS09-Q04 · 관리자 셸:</strong> AdminConsole이 D-007의 7개 상위·51개 하위 메뉴를 단일 소유하고 사이드바·제목·등록형 명령을 렌더링하며 메뉴를 탭으로 반복하지 않는다.</li>
+          <li><strong>DS09-Q05 · 대시보드:</strong> 내 할 일·조회 가능한 최근 Jobs·권한 있는 운영 알림·담당 바로가기를 우선하고 기술 진단은 시스템 상태 화면으로 분리한다.</li>
+          <li><strong>DS09-Q06 · Provider:</strong> 홈·대시보드·명령·경고는 타입이 있는 등록형 ViewModel을 사용하고 기능 OFF·권한 없음·실패를 블록 단위로 격리한다.</li>
+          <li><strong>DS09-Q07 · 설정·알림·자산:</strong> 기존 두 WordPress 옵션의 네임스페이스를 유지하되 승인된 블록·메뉴만 설정하고 URL 문구를 Flash Store로 교체하며 기능 자산은 Route별로 적재한다.</li>
+          <li><strong>DS09-Q08 · 구현·검증:</strong> 새 테이블 없이 숫자 <code>user_id</code>, Route Policy, 16개 역할 메뉴 Snapshot, 가입 승인 전용 범위, 쿼리·자산 상한과 데스크톱·모바일 시각 검증을 완료한다.</li>
+        </ol>
+        <div class="summary"><strong>현재 상태:</strong> DS09-Q01~Q08의 기능 계약을 유지한다. R-04에서 사용자 홈·셸과 관리자 대시보드·셸 실행 코드를 구현했고 역할별 메뉴·가입 승인 작업을 연결했다. Problems·Submissions·학습 공간·Jobs의 최근 항목은 각 소유 단계에서 Read Provider로 추가하며 운영 DB는 변경하지 않았다.</div>
+      </section>
+
+      <footer>OJ Platform 개발 설계 · DS-09 홈·대시보드·셸 · 기능·UI 설계 사용자 확정 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

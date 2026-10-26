@@ -1,0 +1,58 @@
+Traceback (most recent call last):
+  File "/home/judge/run0/Main.py", line 1, in <module>
+    a,b,c=input().spilt('.')
+          ^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'spilt'. Did you mean: 'split'?
+sample.in:	    non-zero return = 1
+
+Traceback (most recent call last):
+  File "/home/judge/run0/Main.py", line 1, in <module>
+    a,b,c=input().spilt('.')
+          ^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'spilt'. Did you mean: 'split'?
+test.in:	    non-zero return = 1
+
+Traceback (most recent call last):
+  File "/home/judge/run0/Main.py", line 1, in <module>
+    a,b,c=input().spilt('.')
+          ^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'spilt'. Did you mean: 'split'?
+test001.in:	    non-zero return = 1
+
+Traceback (most recent call last):
+  File "/home/judge/run0/Main.py", line 1, in <module>
+    a,b,c=input().spilt('.')
+          ^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'spilt'. Did you mean: 'split'?
+test002.in:	    non-zero return = 1
+
+Traceback (most recent call last):
+  File "/home/judge/run0/Main.py", line 1, in <module>
+    a,b,c=input().spilt('.')
+          ^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'spilt'. Did you mean: 'split'?
+test003.in:	    non-zero return = 1
+
+Traceback (most recent call last):
+  File "/home/judge/run0/Main.py", line 1, in <module>
+    a,b,c=input().spilt('.')
+          ^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'spilt'. Did you mean: 'split'?
+test004.in:	    non-zero return = 1
+
+Traceback (most recent call last):
+  File "/home/judge/run0/Main.py", line 1, in <module>
+    a,b,c=input().spilt('.')
+          ^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'spilt'. Did you mean: 'split'?
+test005.in:	    non-zero return = 1
+
+filename|size|result|memory|time
+--|--|--|--|--
+sample.in|9|RE|17936k|16ms
+test.in|9|RE|17936k|12ms
+test001.in|11|RE|17936k|12ms
+test002.in|9|RE|17936k|12ms
+test003.in|10|RE|17936k|11ms
+test004.in|9|RE|17936k|13ms
+test005.in|11|RE|17936k|12ms

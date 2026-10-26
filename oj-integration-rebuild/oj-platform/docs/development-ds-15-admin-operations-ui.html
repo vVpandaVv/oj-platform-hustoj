@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-15 신규 설치·운영 관리자 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds15-prototype.css">
+</head>
+<body class="console">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M17 14a7 7 0 0 1 5 7"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4M20 4h-7v16h7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a2 2 0 0 0 .4 2.2l.1.1-2.6 2.6-.1-.1a2 2 0 0 0-2.2-.4A2 2 0 0 0 13.8 21h-3.6A2 2 0 0 0 9 19.4a2 2 0 0 0-2.2.4l-.1.1-2.6-2.6.1-.1A2 2 0 0 0 4.6 15 2 2 0 0 0 3 13.8v-3.6A2 2 0 0 0 4.6 9a2 2 0 0 0-.4-2.2l-.1-.1 2.6-2.6.1.1A2 2 0 0 0 9 4.6 2 2 0 0 0 10.2 3h3.6A2 2 0 0 0 15 4.6a2 2 0 0 0 2.2-.4l.1-.1 2.6 2.6-.1.1a2 2 0 0 0-.4 2.2 2 2 0 0 0 1.6 1.2v3.6a2 2 0 0 0-1.6 1.2z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7h-6V1M4 17h6v6"/><path d="M20 7a9 9 0 0 0-15-2M4 17a9 9 0 0 0 15 2"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 21h20L12 3z"/><path d="M12 9v5M12 18h.01"/></symbol>
+    <symbol id="i-test" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 3h7v7M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-15 신규 설치·운영 관리자 시안</strong><span>설치 전용 일시 화면 1개 · 정상 운영 12개</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="운영 관리자 화면 선택">
+        <button type="button" role="tab" data-screen-target="operations-overview" aria-selected="true">운영 개요</button>
+        <button type="button" role="tab" data-screen-target="feature-settings" aria-selected="false">기능</button>
+        <button type="button" role="tab" data-screen-target="site-settings" aria-selected="false">사이트</button>
+        <button type="button" role="tab" data-screen-target="menu-settings" aria-selected="false">사용자 메뉴</button>
+        <button type="button" role="tab" data-screen-target="home-settings" aria-selected="false">홈</button>
+        <button type="button" role="tab" data-screen-target="database-settings" aria-selected="false">Judge DB</button>
+        <button type="button" role="tab" data-screen-target="test-data-settings" aria-selected="false">테스트 환경</button>
+        <button type="button" role="tab" data-screen-target="smtp-settings" aria-selected="false">메일</button>
+        <button type="button" role="tab" data-screen-target="ai-settings" aria-selected="false">AI 연결</button>
+        <button type="button" role="tab" data-screen-target="ai-routing" aria-selected="false">AI 작업</button>
+        <button type="button" role="tab" data-screen-target="system-settings" aria-selected="false">운영 설정</button>
+        <button type="button" role="tab" data-screen-target="system-status" aria-selected="false">시스템 상태</button>
+        <button type="button" role="tab" data-screen-target="migration-settings" aria-selected="false">데이터 이전</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="setup-preview" id="fresh-install" aria-labelledby="fresh-install-title">
+    <header class="setup-preview-header">
+      <div class="setup-preview-brand"><span class="brand-mark">OJ</span><div><strong>OJ Platform 시작 설정</strong><small>설치 완료 전 최고 관리자 전용</small></div></div>
+      <span class="badge wait">설치 계획 확인</span>
+    </header>
+    <div class="setup-workspace">
+      <aside class="setup-steps" aria-label="신규 설치 단계">
+        <strong>설치 순서</strong>
+        <ol>
+          <li class="done"><span>1</span><div><strong>환경 검사</strong><small>신규 설치 판정 완료</small></div></li>
+          <li class="done"><span>2</span><div><strong>Judge 연결</strong><small>기본 8개 확인</small></div></li>
+          <li class="done"><span>3</span><div><strong>관리자·기본 정책</strong><small>수동 승인 선택</small></div></li>
+          <li class="current"><span>4</span><div><strong>설치 계획</strong><small>실행 전 최종 확인</small></div></li>
+          <li><span>5</span><div><strong>단계 실행</strong><small>Jobs 4 + 기능 36</small></div></li>
+          <li><span>6</span><div><strong>완료 검사</strong><small>로그인·권한·채점 기반</small></div></li>
+        </ol>
+      </aside>
+      <div class="setup-content">
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">신규 설치 · 쓰기 전 마지막 단계</p><h1 id="fresh-install-title">설치 계획 확인</h1><p>검사된 환경과 생성 순서를 확인한 뒤 새로운 플랫폼 기반만 설치합니다.</p></div>
+        </header>
+        <p class="route-caption">/wp-admin/admin.php?page=oj-platform-setup</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: WordPress <code>manage_options</code> · 설치 완료 뒤 화면과 명령은 등록되지 않음</p>
+        <div class="notice info"><svg><use href="#i-check"/></svg><span><strong>신규 설치로 판정했습니다.</strong> 설치 ID와 목표 42개 이름이 없고 이전 플랫폼 표식·동명 충돌도 발견되지 않았습니다.</span></div>
+
+        <div class="setup-summary">
+          <div><span>설치 모드</span><strong>신규 설치</strong><small>Migration 사용 안 함</small></div>
+          <div><span>Platform DB</span><strong>42개 이름 비어 있음</strong><small>WordPress DB · 무접두어</small></div>
+          <div><span>Judge DB</span><strong>jol · 정상</strong><small>필수 8개 · 확장 열 5개 준비</small></div>
+          <div><span>백업 관문</span><strong>통과</strong><small>production 복원 증거 확인</small></div>
+        </div>
+
+        <section class="setup-plan">
+          <header><h2>실행 계획</h2><p>각 단계는 구조와 소유 표식을 검증한 뒤 다음 단계로 이동합니다.</p></header>
+          <div class="setup-phase-list">
+            <div class="setup-phase"><span class="stage-number">1</span><div><strong>Jobs 기반 4개</strong><small>작업·항목·사건·단계 테이블을 먼저 생성하고 검증</small></div><span class="badge info">bootstrap</span></div>
+            <div class="setup-phase"><span class="stage-number">2</span><div><strong>소유 모듈별 38개</strong><small>한 SQL 묶음이 아니라 모듈 파동과 체크포인트로 준비</small></div><span class="badge">준비</span></div>
+            <div class="setup-phase"><span class="stage-number">3</span><div><strong>권한·역할·설정</strong><small>capability 61 · 역할 16 · preset 10 · 수동 가입 승인</small></div><span class="badge">준비</span></div>
+            <div class="setup-phase"><span class="stage-number">4</span><div><strong>Registry·완료 검사</strong><small>GET 152 · Action 128 · 메뉴 58 · 로그인→홈과 Jobs Worker</small></div><span class="badge">준비</span></div>
+          </div>
+        </section>
+
+        <section class="settings-sheet">
+          <header><h2>설치 후 첫 운영값</h2><p>검사되지 않은 외부 기능은 설치 완료와 동시에 자동으로 켜지지 않습니다.</p></header>
+          <div class="setting-row"><div><strong>플랫폼 최고 관리자</strong><small>현재 WordPress 사용자 박지현(ID 1)에게 명시적으로 부여</small></div><span class="badge good">지정</span></div>
+          <div class="setting-row"><div><strong>회원가입 승인</strong><small>설치 뒤 운영 설정에서 자동 승인으로 변경 가능</small></div><span class="badge info">수동 승인</span></div>
+          <div class="setting-row"><div><strong>메일·AI</strong><small>각 후보 연결 검사를 통과한 뒤 운영 화면에서 활성화</small></div><span class="badge wait">꺼짐</span></div>
+        </section>
+
+        <div class="notice warning"><svg><use href="#i-alert"/></svg><span>활성화 Hook과 이 화면의 첫 조회는 DDL을 실행하지 않습니다. 실행 중 실패해도 자동으로 테이블을 삭제하거나 처음부터 다시 만들지 않고 같은 설치 ID와 계획 해시의 마지막 성공 단계에서만 재개합니다.</span></div>
+        <div class="setup-actions">
+          <button class="button" type="button" data-toast="환경과 설치 계획을 다시 읽기 전용으로 검사했습니다.">계획 다시 검사</button>
+          <button class="button primary" type="button" data-toast="실제 구현에서는 확인 문구와 최신 계획 해시를 재검사한 뒤 설치 Job을 등록합니다.">확인 후 설치 시작</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="setup-divider"><span>설치 완료 뒤 사용하는 정상 운영 관리자 화면</span></div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-15-operations-migration.html"><span class="brand-mark">OJ</span><span>관리자 콘솔</span></a>
+      <a class="button ghost header-utility" href="index.html">설계 문서</a>
+    </div>
+  </header>
+
+  <div class="workspace console-workspace">
+    <aside class="console-sidebar" aria-label="관리자 메뉴">
+      <strong>관리자 메뉴</strong>
+      <div class="sidebar-role">시스템 관리자 · 전체 범위</div>
+      <a href="development-ds-09-admin-dashboard-shell-ui.html"><svg><use href="#i-grid"/></svg>대시보드</a>
+      <a href="development-ds-08-admin-users-ui.html"><svg><use href="#i-users"/></svg>사용자</a>
+      <a href="development-ds-10-admin-problems-ui.html"><svg><use href="#i-book"/></svg>문제</a>
+      <a href="development-ds-11-admin-submissions-ui.html"><svg><use href="#i-send"/></svg>제출</a>
+      <a href="development-ds-12-admin-learning-hub-ui.html"><svg><use href="#i-learn"/></svg>학습 공간</a>
+      <a href="development-ds-14-admin-community-ui.html"><svg><use href="#i-message"/></svg>커뮤니티</a>
+      <a href="#operations-overview" aria-current="page"><svg><use href="#i-settings"/></svg>운영</a>
+    </aside>
+
+    <main class="page" id="main">
+      <nav class="operations-nav" aria-label="운영 관리 메뉴">
+        <a href="#operations-overview" data-sidebar-for="operations-overview" aria-current="page">개요</a>
+        <a href="#feature-settings" data-sidebar-for="feature-settings">기능</a>
+        <a href="#site-settings" data-sidebar-for="site-settings">사이트</a>
+        <a href="#menu-settings" data-sidebar-for="menu-settings">사용자 메뉴</a>
+        <a href="#home-settings" data-sidebar-for="home-settings">홈</a>
+        <a href="#database-settings" data-sidebar-for="database-settings">Judge DB</a>
+        <a href="#test-data-settings" data-sidebar-for="test-data-settings">테스트 환경</a>
+        <a href="#smtp-settings" data-sidebar-for="smtp-settings">메일</a>
+        <a href="#ai-settings" data-sidebar-for="ai-settings">AI 연결</a>
+        <a href="#ai-routing" data-sidebar-for="ai-routing">AI 작업</a>
+        <a href="#system-settings" data-sidebar-for="system-settings">운영 설정</a>
+        <a href="#system-status" data-sidebar-for="system-status">시스템 상태</a>
+        <a href="#migration-settings" data-sidebar-for="migration-settings">데이터 이전</a>
+      </nav>
+
+      <section class="screen" id="operations-overview" data-screen="operations-overview">
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">권한별 운영 진입</p><h1>운영 개요</h1><p>현재 상태와 필요한 조치를 비교하고 담당 화면으로 바로 이동합니다.</p></div>
+          <button class="button" type="button" data-toast="화면 표시용 상태를 다시 조회했습니다. 저장 작업은 실행하지 않습니다."><svg><use href="#i-refresh"/></svg>상태 새로고침</button>
+        </header>
+        <p class="route-caption">/oj-console/settings</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>현재 권한: 시스템 관리자 · 접근 가능한 운영 화면만 표시</p>
+        <div class="operations-summary">
+          <div><span>정상</span><strong>9개</strong><small>마지막 확인 11:20</small></div>
+          <div><span>확인 필요</span><strong>2개</strong><small>메일 · 데이터 이전</small></div>
+          <div><span>사용 불가</span><strong>0개</strong><small>차단된 서비스 없음</small></div>
+          <div><span>진행 중 작업</span><strong>1개</strong><small>기준 보고서 생성</small></div>
+        </div>
+        <div class="table-wrap operations-table"><table>
+          <thead><tr><th>운영 화면</th><th>상태</th><th>마지막 확인·변경</th><th>담당 권한</th><th class="wrap">필요한 조치</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><strong>기능 관리</strong></td><td><span class="badge good">정상</span></td><td>07-24 17:40 · 박지현</td><td><code>oj_manage_settings</code></td><td class="wrap">변경 없음</td><td><button class="button" type="button" data-open-screen="feature-settings">열기</button></td></tr>
+            <tr><td><strong>사이트·사용자 메뉴·홈</strong></td><td><span class="badge good">정상</span></td><td>07-23 14:15 · 박지현</td><td><code>oj_manage_settings</code></td><td class="wrap">변경 없음</td><td><button class="button" type="button" data-open-screen="site-settings">열기</button></td></tr>
+            <tr><td><strong>Judge DB</strong></td><td><span class="badge good">정상</span></td><td>오늘 11:18 · 자동 검사</td><td><code>oj_manage_settings</code></td><td class="wrap">다음 정기 검사 10분 후</td><td><button class="button" type="button" data-open-screen="database-settings">열기</button></td></tr>
+            <tr><td><strong>테스트 환경</strong></td><td><span class="badge good">정상</span></td><td>오늘 11:19 · 자동 검사</td><td><code>oj_manage_system</code></td><td class="wrap">데이터 폴더 읽기·쓰기, SPJ 실행 파일 준비</td><td><button class="button" type="button" data-open-screen="test-data-settings">열기</button></td></tr>
+            <tr><td><strong>메일 발송</strong></td><td><span class="badge wait">확인 필요</span></td><td>07-21 09:05 · 시험 실패</td><td><code>oj_manage_smtp</code></td><td class="wrap">후보 설정으로 시험 메일을 다시 발송하세요.</td><td><button class="button" type="button" data-open-screen="smtp-settings">확인</button></td></tr>
+            <tr><td><strong>AI 연결 프로필</strong></td><td><span class="badge wait">검사 필요</span></td><td>별도 AI 서버 설정 대기</td><td><code>oj_manage_settings</code></td><td class="wrap">Provider·모델별 후보 연결 검사</td><td><button class="button" type="button" data-open-screen="ai-settings">열기</button></td></tr>
+            <tr><td><strong>작업별 AI 배정</strong></td><td><span class="badge good">정상</span></td><td>07-25 15:20 · revision 6</td><td><code>oj_manage_settings</code></td><td class="wrap">4개 작업에 사용 가능한 프로필 배정</td><td><button class="button" type="button" data-open-screen="ai-routing">열기</button></td></tr>
+            <tr><td><strong>운영 설정</strong></td><td><span class="badge good">정상</span></td><td>07-20 18:00 · 박지현</td><td><code>oj_manage_system</code></td><td class="wrap">점검 모드 꺼짐 · 쓰기 동결 없음</td><td><button class="button" type="button" data-open-screen="system-settings">열기</button></td></tr>
+            <tr><td><strong>시스템 상태</strong></td><td><span class="badge good">정상</span></td><td>오늘 11:20 · 상태 집계</td><td><code>oj_view_system_status</code></td><td class="wrap">치명 오류 없음</td><td><button class="button" type="button" data-open-screen="system-status">보기</button></td></tr>
+            <tr><td><strong>데이터 이전</strong></td><td><span class="badge wait">확인 필요</span></td><td>오늘 11:16 · 단계 0</td><td><code>oj_manage_migration</code></td><td class="wrap">기준 보고서 완료 뒤 담당자 승인이 필요합니다.</td><td><button class="button" type="button" data-open-screen="migration-settings">확인</button></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="screen" id="feature-settings" data-screen="feature-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">설정 revision 18</p><h1>기능 관리</h1><p>기능을 끄기 전에 경로·메뉴·명령과 의존 기능에 미치는 영향을 확인합니다.</p></div></header>
+        <p class="route-caption">/oj-console/settings/features</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_settings</code> · 기능 OFF는 데이터와 설정을 삭제하지 않음</p>
+        <div class="notice warning"><svg><use href="#i-alert"/></svg><span>공통 기반, 인증, 관리자 콘솔, Jobs는 필수 기능이므로 끌 수 없습니다. 변경은 미리보기와 서버 재검사를 통과한 뒤 한 묶음으로 저장됩니다.</span></div>
+        <div class="module-groups">
+          <section class="module-group"><header><h2>필수 기반</h2><span class="badge good">4개 고정</span></header>
+            <div class="module-row"><div><strong>인증·권한</strong><small>로그인, 사용자 상태, 접근 정책</small></div><div class="impact-line">전체 페이지와 처리 명령이 사용합니다.</div><label class="switch"><input type="checkbox" checked disabled><span>필수</span></label></div>
+            <div class="module-row"><div><strong>Jobs</strong><small>비동기 작업과 사건 기록</small></div><div class="impact-line">AI 피드백, 문제 생성, 이전 작업이 사용합니다.</div><label class="switch"><input type="checkbox" checked disabled><span>필수</span></label></div>
+          </section>
+          <section class="module-group"><header><h2>학습 서비스</h2><span class="badge info">8개 사용</span></header>
+            <div class="module-row"><div><strong>문제</strong><small>문제 은행·퀴즈·주제</small></div><div class="impact-line">제출, 수업, 대회·평가가 의존하여 단독으로 끌 수 없습니다.</div><label class="switch"><input type="checkbox" checked><span>사용</span></label></div>
+            <div class="module-row"><div><strong>Blockly</strong><small>문제 제출의 선택 편집기</small></div><div class="impact-line">끄면 코드 제출은 유지되고 블록 선택만 사라집니다.</div><label class="switch"><input type="checkbox" checked><span>사용</span></label></div>
+            <div class="module-row"><div><strong>AI 학습 지원</strong><small>수준 분석·피드백·추천</small></div><div class="impact-line">끄면 신규 AI 작업만 중단되고 기존 결과는 보존됩니다.</div><label class="switch"><input type="checkbox" checked><span>사용</span></label></div>
+          </section>
+          <section class="module-group"><header><h2>학습 공간·커뮤니티</h2><span class="badge info">7개 사용</span></header>
+            <div class="module-row"><div><strong>그룹</strong><small>구성원·위임 운영·수행 모드</small></div><div class="impact-line">꺼도 수업과 대회·평가는 정상 동작합니다.</div><label class="switch"><input type="checkbox" checked><span>사용</span></label></div>
+            <div class="module-row"><div><strong>커뮤니티</strong><small>게시판·공지·문맥 질문</small></div><div class="impact-line">끄면 질문 화면만 닫고 게시글과 첨부는 보존합니다.</div><label class="switch"><input type="checkbox" checked><span>사용</span></label></div>
+          </section>
+        </div>
+        <section class="panel soft"><div class="section-heading"><div><h2>변경 영향 미리보기</h2><p>현재 선택과 저장된 revision 18의 차이입니다.</p></div><span class="badge wait">1개 변경</span></div><div class="table-wrap"><table><thead><tr><th>변경</th><th>닫히는 화면</th><th>중단되는 명령</th><th>보존</th></tr></thead><tbody><tr><td>Blockly 사용 안 함</td><td>제출 화면의 블록 모드</td><td>블록 작업공간 저장·Python 생성</td><td>기존 작업공간·제출·코드</td></tr></tbody></table></div></section>
+        <div class="save-dock"><div><strong>저장할 변경 1개</strong><span>마지막 저장: 박지현 · 07-24 17:40 · revision 18</span></div><div class="save-dock-actions"><button class="button" type="button" data-toast="저장된 값으로 선택을 되돌렸습니다.">변경 취소</button><button class="button primary" type="button" data-toast="서버에서 의존성과 권한을 다시 검사한 뒤 기능 변경을 저장합니다.">검사 후 저장</button></div></div>
+      </section>
+
+      <section class="screen" id="site-settings" data-screen="site-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">서비스 표시 정보</p><h1>사이트 설정</h1><p>서비스 사용자에게 보이는 이름과 안내만 관리합니다. 주소와 라우팅은 변경하지 않습니다.</p></div></header>
+        <p class="route-caption">/oj-console/settings/site</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_settings</code></p>
+        <section class="settings-sheet"><header><h2>표시 정보</h2><p>로그인, 헤더와 안내 화면에 공통으로 사용합니다.</p></header>
+          <div class="form-grid">
+            <label class="field"><span class="field-label">서비스 이름</span><input type="text" value="학습용 온라인 저지" maxlength="40"></label>
+            <label class="field"><span class="field-label">운영 연락 표시</span><input type="text" value="운영 지원 · support@example.com" maxlength="60"></label>
+            <label class="field wide"><span class="field-label">짧은 설명</span><input type="text" value="수업과 대회에서 사용하는 학습용 채점 시스템" maxlength="100"></label>
+          </div>
+        </section>
+        <section class="settings-sheet"><header><h2>고정 주소</h2><p>현재 WordPress와 OJ Platform의 확정 주소입니다.</p></header>
+          <div class="setting-row"><div><strong>WordPress 주소</strong><small>WordPress 설정에서만 변경할 수 있습니다.</small></div><div class="read-only compact-field">https://judge.example.com</div></div>
+          <div class="setting-row"><div><strong>관리자 콘솔</strong><small>Route Registry의 고정 경로입니다.</small></div><div class="read-only compact-field">/oj-console</div></div>
+          <div class="setting-row"><div><strong>사용자 시작 위치</strong><small>비로그인 사용자는 로그인으로 이동합니다.</small></div><div class="read-only compact-field">/login → /home</div></div>
+        </section>
+        <div class="save-dock"><div><strong>변경 없음</strong><span>마지막 저장: 박지현 · 07-23 14:15 · revision 7</span></div><div class="save-dock-actions"><button class="button primary" type="button" data-toast="표시 정보만 저장합니다. 주소와 경로는 변경하지 않습니다.">표시 정보 저장</button></div></div>
+      </section>
+
+      <section class="screen" id="menu-settings" data-screen="menu-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">1차·2차 메뉴 모두 설정</p><h1>사용자 메뉴</h1><p>두 단계의 이름, 연결 페이지, 부모, 표시 대상과 순서를 한곳에서 관리합니다.</p></div><label class="field compact-field"><span class="field-label">미리보기 역할</span><select><option>학습자</option><option>강사</option><option>그룹 위임 운영자</option><option>시스템 관리자</option></select></label></header>
+        <p class="route-caption">/oj-console/settings/menu</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_settings</code> · 최대 2단계 · 내부 경로는 Route Registry에서 선택 · 외부 주소는 HTTPS 검증 필수</p>
+        <div class="menu-level-heading"><div><h2>1차 메뉴</h2><p>이름, 첫 연결 페이지, 표시 여부, 순서와 모바일 위치를 설정합니다.</p></div><div class="menu-heading-actions"><span class="badge info">최대 8개 표시</span><button class="button" type="button" data-toast="Route Registry에서 1차 메뉴로 사용할 내부 페이지를 선택합니다.">1차 메뉴 추가</button></div></div>
+        <div class="ordered-list" data-primary-menu-list>
+          <div class="ordered-row"><span class="order-index">1</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="홈" maxlength="20"></label><label class="inline-menu-field"><span>연결</span><select><option selected>홈 · /</option><option>첫 접근 가능한 2차 메뉴</option></select></label><label class="inline-menu-field"><span>위치</span><select><option selected>데스크톱 · 모바일</option><option>데스크톱 · 모바일 더보기</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label><div class="order-actions"><button class="icon-button" type="button" title="위로 이동" aria-label="홈 위로 이동" disabled><svg><use href="#i-up"/></svg></button><button class="icon-button" type="button" title="아래로 이동" aria-label="홈 아래로 이동"><svg><use href="#i-down"/></svg></button></div></div>
+          <div class="ordered-row"><span class="order-index">2</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="문제" maxlength="20"></label><label class="inline-menu-field"><span>연결</span><select><option selected>첫 접근 가능한 2차 메뉴</option><option>문제 목록 · /problems</option></select></label><label class="inline-menu-field"><span>위치</span><select><option selected>데스크톱 · 모바일</option><option>데스크톱 · 모바일 더보기</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label><div class="order-actions"><button class="icon-button" type="button" title="위로 이동" aria-label="문제 위로 이동"><svg><use href="#i-up"/></svg></button><button class="icon-button" type="button" title="아래로 이동" aria-label="문제 아래로 이동"><svg><use href="#i-down"/></svg></button></div></div>
+          <div class="ordered-row"><span class="order-index">3</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="제출" maxlength="20"></label><label class="inline-menu-field"><span>연결</span><select><option selected>제출 목록 · /submissions</option><option>첫 접근 가능한 2차 메뉴</option></select></label><label class="inline-menu-field"><span>위치</span><select><option selected>데스크톱 · 모바일</option><option>데스크톱 · 모바일 더보기</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label><div class="order-actions"><button class="icon-button" type="button" title="위로 이동" aria-label="제출 위로 이동"><svg><use href="#i-up"/></svg></button><button class="icon-button" type="button" title="아래로 이동" aria-label="제출 아래로 이동"><svg><use href="#i-down"/></svg></button></div></div>
+          <div class="ordered-row"><span class="order-index">4</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="학습" maxlength="20"></label><label class="inline-menu-field"><span>연결</span><select><option selected>첫 접근 가능한 2차 메뉴</option><option>수업 목록 · /classes</option></select></label><label class="inline-menu-field"><span>위치</span><select><option selected>데스크톱 · 모바일</option><option>데스크톱 · 모바일 더보기</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label><div class="order-actions"><button class="icon-button" type="button" title="위로 이동" aria-label="학습 위로 이동"><svg><use href="#i-up"/></svg></button><button class="icon-button" type="button" title="아래로 이동" aria-label="학습 아래로 이동"><svg><use href="#i-down"/></svg></button></div></div>
+          <div class="ordered-row"><span class="order-index">5</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="커뮤니티" maxlength="20"></label><label class="inline-menu-field"><span>연결</span><select><option selected>첫 접근 가능한 2차 메뉴</option><option>게시판 · /board</option></select></label><label class="inline-menu-field"><span>위치</span><select><option>데스크톱 · 모바일</option><option selected>데스크톱 · 모바일 더보기</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label><div class="order-actions"><button class="icon-button" type="button" title="위로 이동" aria-label="커뮤니티 위로 이동"><svg><use href="#i-up"/></svg></button><button class="icon-button" type="button" title="아래로 이동" aria-label="커뮤니티 아래로 이동"><svg><use href="#i-down"/></svg></button></div></div>
+          <div class="ordered-row"><span class="order-index">6</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="내 정보" maxlength="20"></label><label class="inline-menu-field"><span>연결</span><select><option selected>첫 접근 가능한 2차 메뉴</option><option>내 학습 · /dashboard</option></select></label><label class="inline-menu-field"><span>위치</span><select><option>데스크톱 · 모바일</option><option selected>데스크톱 · 모바일 더보기</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label><div class="order-actions"><button class="icon-button" type="button" title="위로 이동" aria-label="내 정보 위로 이동"><svg><use href="#i-up"/></svg></button><button class="icon-button" type="button" title="아래로 이동" aria-label="내 정보 아래로 이동" disabled><svg><use href="#i-down"/></svg></button></div></div>
+        </div>
+        <section class="custom-link-section" aria-labelledby="custom-link-heading">
+          <header class="custom-link-heading"><div><h2 id="custom-link-heading">2차 메뉴</h2><p>이름, 부모, 표시 대상과 순서를 설정합니다. 내부 페이지도 다른 1차 메뉴로 이동할 수 있습니다.</p></div><div class="menu-heading-actions"><span class="badge info">부모당 최대 12개</span><label class="field compact-field"><span class="field-label">목록 부모</span><select><option>홈</option><option selected>문제</option><option>제출</option><option>학습</option><option>커뮤니티</option><option>내 정보</option></select></label><button class="button" type="button" data-toast="Route Registry에서 2차 메뉴로 사용할 내부 페이지를 선택합니다.">2차 메뉴 추가</button></div></header>
+          <div class="custom-link-list" aria-label="문제 2차 메뉴" data-secondary-menu-list>
+            <div class="custom-link-row">
+              <div class="custom-link-name"><span class="order-index">1</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="문제 목록" maxlength="30"></label></div>
+              <code>/problems</code>
+              <label class="inline-menu-field"><span>부모</span><select><option>홈</option><option selected>문제</option><option>제출</option><option>학습</option><option>커뮤니티</option><option>내 정보</option></select></label>
+              <span>전체 사용자</span>
+              <span class="badge info">내부</span>
+              <label class="switch"><input type="checkbox" checked><span>표시</span></label>
+            </div>
+            <div class="custom-link-row">
+              <div class="custom-link-name"><span class="order-index">2</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="퀴즈" maxlength="30"></label></div>
+              <code>/quizzes</code>
+              <label class="inline-menu-field"><span>부모</span><select><option>홈</option><option selected>문제</option><option>제출</option><option>학습</option><option>커뮤니티</option><option>내 정보</option></select></label>
+              <span>전체 사용자</span>
+              <span class="badge info">내부</span>
+              <label class="switch"><input type="checkbox" checked><span>표시</span></label>
+            </div>
+            <div class="custom-link-row">
+              <div class="custom-link-name"><span class="order-index">3</span><label class="inline-menu-field"><span>표시 이름</span><input type="text" value="문제집" maxlength="30"></label></div>
+              <code>/problem-books</code>
+              <label class="inline-menu-field"><span>부모</span><select><option>홈</option><option selected>문제</option><option>제출</option><option>학습</option><option>커뮤니티</option><option>내 정보</option></select></label>
+              <span>전체 사용자</span>
+              <span class="badge info">내부</span>
+              <label class="switch"><input type="checkbox" checked><span>표시</span></label>
+            </div>
+            <div class="custom-link-row" data-custom-link-preview>
+              <div class="custom-link-name"><span class="order-index" data-custom-link-preview-index>4</span><span><strong data-custom-link-preview-label>Python 문서</strong><small><span data-custom-link-preview-level>2차</span> · <span data-custom-link-preview-domain>docs.python.org</span></small></span></div>
+              <code data-custom-link-preview-url>https://docs.python.org/3/</code>
+              <span data-custom-link-preview-parent>문제</span>
+              <span data-custom-link-preview-scope>전체 사용자</span>
+              <span class="badge good" data-custom-link-preview-status>외부</span>
+              <label class="switch"><input type="checkbox" checked><span>표시</span></label>
+            </div>
+          </div>
+          <div class="secondary-menu-actions"><span>기능·권한이 없는 내부 항목은 저장 순서와 관계없이 자동으로 숨깁니다.</span><div><button class="icon-button" type="button" title="선택 항목 위로 이동" aria-label="선택한 2차 메뉴 위로 이동"><svg><use href="#i-up"/></svg></button><button class="icon-button" type="button" title="선택 항목 아래로 이동" aria-label="선택한 2차 메뉴 아래로 이동"><svg><use href="#i-down"/></svg></button></div></div>
+          <form class="custom-link-editor" data-custom-link-form>
+            <h3>외부 HTTPS 메뉴 추가</h3>
+            <div class="form-grid">
+              <label class="field"><span class="field-label">메뉴 단계</span><select data-custom-link-level><option>1차 메뉴</option><option selected>2차 메뉴</option></select><span class="help">외부 메뉴는 전체 최대 20개입니다.</span></label>
+              <label class="field"><span class="field-label">표시 이름</span><input type="text" value="Python 문서" maxlength="30" data-custom-link-label><span class="help">2~30자</span></label>
+              <label class="field wide"><span class="field-label">외부 HTTPS 주소</span><input type="url" value="https://docs.python.org/3/" maxlength="2048" data-custom-link-url><span class="help">주소를 서버에서 미리 요청하지 않고 URL 구조만 검사합니다.</span></label>
+              <label class="field"><span class="field-label">부모 1차 메뉴</span><select data-custom-link-parent><option>홈</option><option selected>문제</option><option>제출</option><option>학습</option><option>커뮤니티</option><option>내 정보</option></select><span class="help">1차 메뉴를 선택하면 사용하지 않습니다.</span></label>
+              <label class="field"><span class="field-label">표시 대상</span><select data-custom-link-scope><option>전체 사용자</option><option>학습자</option><option>강사·담당자</option><option>시스템 관리자</option></select></label>
+              <label class="field"><span class="field-label">열기 방식</span><input type="text" value="새 창 · 외부 링크 표시" readonly></label>
+            </div>
+            <div class="custom-link-validation"><span class="badge wait" data-custom-link-validation-badge>검사 필요</span><span data-custom-link-validation-text>HTTPS, 호스트, 사용자 정보 포함 여부를 검사합니다.</span></div>
+            <div class="form-actions"><button class="button" type="button" data-custom-link-validate><svg><use href="#i-external"/></svg>검사하고 목록에 반영</button></div>
+          </form>
+          <div class="notice"><svg><use href="#i-shield"/></svg><span>내부 메뉴는 Route Registry 항목만 연결하며 표시 이름과 1·2차 배치는 바꿀 수 있습니다. 외부 링크는 <code>https://</code>만 허용하며 항상 새 창에서 <code>noopener noreferrer</code>로 엽니다.</span></div>
+        </section>
+        <div class="save-dock"><div><strong>1차·2차 메뉴 변경 4개</strong><span>이름 1 · 부모 1 · 순서 1 · 외부 링크 1</span></div><div class="save-dock-actions"><button class="button" type="button" data-toast="기본 6개 메뉴와 기본 부모·순서를 복원하기 전에 차이를 표시합니다.">기본 구성 복원</button><button class="button" type="button" data-toast="역할별 1차·2차 메뉴 변경을 미리 표시합니다.">변경 미리보기</button><button class="button primary" type="button" data-toast="현재 revision, 내부 Route, 메뉴 깊이와 외부 URL을 다시 검사한 뒤 저장합니다.">메뉴 저장</button></div></div>
+      </section>
+
+      <section class="screen" id="home-settings" data-screen="home-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">등록된 Provider만 사용</p><h1>홈 구성</h1><p>역할별 홈에 표시할 블록, 순서와 항목 수를 정합니다.</p></div><label class="field compact-field"><span class="field-label">미리보기 역할</span><select><option>학습자</option><option>강사</option><option>그룹 위임 운영자</option></select></label></header>
+        <p class="route-caption">/oj-console/settings/home</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_settings</code> · 임의 HTML과 업무 데이터 직접 입력 금지</p>
+        <div class="provider-layout">
+          <div class="provider-list">
+            <div class="provider-row"><span class="order-index">1</span><div><strong>이어서 하기</strong><small>최근 풀이 중인 문제와 수업</small></div><div class="provider-role">학습자</div><label class="field provider-count"><span class="field-label">항목</span><select><option>4개</option><option>6개</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label></div>
+            <div class="provider-row"><span class="order-index">2</span><div><strong>내 학습 공간</strong><small>참여 중인 수업·대회·그룹</small></div><div class="provider-role">전체</div><label class="field provider-count"><span class="field-label">항목</span><select><option>4개</option><option>6개</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label></div>
+            <div class="provider-row"><span class="order-index">3</span><div><strong>최근 제출</strong><small>본인의 최근 채점 결과</small></div><div class="provider-role">전체</div><label class="field provider-count"><span class="field-label">항목</span><select><option>5개</option><option>10개</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label></div>
+            <div class="provider-row"><span class="order-index">4</span><div><strong>공지</strong><small>게시 중인 중요 공지</small></div><div class="provider-role">전체</div><label class="field provider-count"><span class="field-label">항목</span><select><option>3개</option><option>5개</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label></div>
+            <div class="provider-row"><span class="order-index">5</span><div><strong>담당 바로가기</strong><small>운영 범위의 관리 화면</small></div><div class="provider-role">담당자</div><label class="field provider-count"><span class="field-label">항목</span><select><option>4개</option><option>6개</option></select></label><label class="switch"><input type="checkbox" checked><span>표시</span></label></div>
+          </div>
+          <aside class="provider-preview"><h2>학습자 홈 미리보기</h2><p>데이터 내용이 아닌 블록 순서와 밀도만 확인합니다.</p><div class="preview-block"><strong>이어서 하기</strong><small>최대 4개 · 빈 경우 숨김</small></div><div class="preview-block"><strong>내 학습 공간</strong><small>최대 4개</small></div><div class="preview-block"><strong>최근 제출</strong><small>최대 5개 · 수행 모드 상세 제한 반영</small></div><div class="preview-block"><strong>공지</strong><small>최대 3개</small></div></aside>
+        </div>
+        <div class="save-dock"><div><strong>변경 없음</strong><span>마지막 저장: 박지현 · 07-23 14:15 · revision 9</span></div><div class="save-dock-actions"><button class="button primary" type="button" data-toast="Provider 키와 역할 범위를 다시 검사한 뒤 홈 구성을 저장합니다.">홈 구성 저장</button></div></div>
+      </section>
+
+      <section class="screen" id="database-settings" data-screen="database-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">후보 검사 후 명시 적용</p><h1>Judge 데이터베이스</h1><p>운영 연결을 유지한 채 후보 연결의 스키마·권한·지연을 먼저 검사합니다.</p></div></header>
+        <p class="route-caption">/oj-console/settings/database</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_settings</code> · 후보 검사는 읽기 전용, 적용 시 없는 problem 확장 열 추가만 허용</p>
+        <div class="connection-layout">
+          <form class="connection-form">
+            <section class="form-section"><div class="section-heading"><div><h2>후보 연결</h2><p>비밀번호를 비워 두면 저장된 비밀값을 유지합니다.</p></div></div><div class="form-grid"><label class="field"><span class="field-label">호스트</span><input type="text" value="judge-db.internal"></label><label class="field"><span class="field-label">포트</span><input type="number" value="3306"></label><label class="field"><span class="field-label">데이터베이스</span><input type="text" value="jol"></label><label class="field"><span class="field-label">문자셋</span><select><option>utf8mb4</option></select></label><label class="field"><span class="field-label">읽기 계정</span><input type="text" value="oj_reader"></label><label class="field"><span class="field-label">쓰기 계정</span><input type="text" value="oj_writer"></label><label class="field"><span class="field-label">새 비밀번호</span><input type="password" placeholder="기존 값 유지"></label><label class="field"><span class="field-label">연결 시간 제한</span><select><option>3초</option><option>5초</option></select></label></div></section>
+            <section class="settings-sheet"><header><h2>보안 연결</h2><p>운영 환경의 TLS 정책과 맞아야 합니다.</p></header><div class="setting-row"><div><strong>TLS 사용</strong><small>인증서 검증을 기본으로 사용합니다.</small></div><label class="switch"><input type="checkbox" checked><span>사용</span></label></div><div class="setting-row"><div><strong>자체 서명 인증서</strong><small>서비스 내부 CA가 승인된 경우에만 허용합니다.</small></div><label class="switch"><input type="checkbox"><span>차단</span></label></div></section>
+          </form>
+          <aside class="connection-state"><h2>현재 운영 연결</h2><dl class="state-list"><div><dt>상태</dt><dd><span class="badge good">정상</span></dd></div><div><dt>대상</dt><dd>judge-db.internal:3306 / jol</dd></div><div><dt>기본 테이블</dt><dd>8개 준비 · 선택 custominput 사용</dd></div><div><dt>마지막 성공</dt><dd>오늘 11:18 · 24ms</dd></div><div><dt>비밀값</dt><dd>보호 저장소에 저장됨</dd></div></dl><div class="candidate-result"><strong>후보 검사 결과</strong><span>같은 후보 검사 통과</span><small>읽기·쓰기 권한, 기본 8개 테이블과 fingerprint 일치 · 11:24</small></div><div class="connection-actions"><button class="button" type="button" data-toast="후보 연결로 읽기·권한·스키마 검사를 실행합니다."><svg><use href="#i-test"/></svg>후보 검사</button><button class="button primary" type="button" data-toast="검사한 동일 후보를 active 연결로 적용합니다.">검사 결과 확인 후 적용</button></div></aside>
+        </div>
+      </section>
+
+      <section class="screen" id="test-data-settings" data-screen="test-data-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">문제 운영 환경</p><h1>테스트 환경</h1><p>문제 테스트 파일 저장 위치와 특수 채점기 컴파일 환경을 관리합니다.</p></div></header>
+        <p class="route-caption">/oj-console/settings/test-data</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_system</code> · Problems 소유 설정 · WordPress 공개 경로와 중첩 금지</p>
+        <div class="metric-grid"><div class="metric"><span>테스트 데이터</span><strong>정상</strong><small>읽기·쓰기 가능</small></div><div class="metric"><span>SPJ 컴파일</span><strong>정상</strong><small>C11 · C++17</small></div><div class="metric"><span>자원 제한</span><strong>prlimit</strong><small>승인된 /usr 경로</small></div><div class="metric"><span>격리 실행</span><strong>bwrap</strong><small>사용 가능</small></div></div>
+        <form class="settings-form">
+          <section class="form-section"><div class="section-heading"><div><h2>테스트 데이터 폴더</h2><p>웹 서버가 관리하고 Judge가 같은 데이터를 읽는 문제별 폴더의 상위 경로입니다.</p></div></div><label class="field"><span class="field-label">절대 경로</span><input type="text" value="/home/judge/data"><span class="help">두 서버가 분리된 경우 같은 저장소가 보이도록 마운트하고 웹 서버 계정에 읽기·쓰기 권한을 부여합니다.</span></label><div class="connection-actions"><button class="button primary" type="button" data-toast="데이터 폴더의 경계와 읽기·쓰기 권한을 확인한 뒤 저장합니다.">데이터 폴더 저장</button></div></section>
+        </form>
+        <form class="settings-form">
+          <section class="form-section"><div class="section-heading"><div><h2>특수 채점기 컴파일</h2><p>승인된 <code>/usr</code> 실행 파일만 저장하고 컴파일은 bwrap 안에서 수행합니다.</p></div></div><div class="form-grid"><label class="field"><span class="field-label">C 컴파일러</span><input type="text" value="/usr/bin/gcc"></label><label class="field"><span class="field-label">C++ 컴파일러</span><input type="text" value="/usr/bin/g++"></label><label class="field"><span class="field-label">자원 제한 실행 파일</span><input type="text" value="/usr/bin/prlimit"></label><label class="field"><span class="field-label">격리 실행 파일</span><input type="text" value="/usr/bin/bwrap"></label></div><div class="connection-actions"><button class="button primary" type="button" data-toast="컴파일러와 격리 실행 파일을 확인한 뒤 저장합니다.">SPJ 환경 저장</button></div></section>
+        </form>
+      </section>
+
+      <section class="screen" id="smtp-settings" data-screen="smtp-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">후보 시험 메일 후 저장</p><h1>메일 발송</h1><p>후보 설정으로 시험 메일이 성공한 경우에만 운영 설정으로 저장합니다.</p></div></header>
+        <p class="route-caption">/oj-console/settings/smtp</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_smtp</code> · 시험 실패 시 기존 발송 설정 유지</p>
+        <div class="connection-layout">
+          <form class="connection-form">
+            <section class="settings-sheet"><header><h2>발송 사용</h2><p>회원가입 승인, 비밀번호 복구와 운영 알림에 사용합니다.</p></header><div class="setting-row"><div><strong>SMTP 메일 발송</strong><small>끄면 새 메일 작업을 만들지 않습니다.</small></div><label class="switch"><input type="checkbox" checked><span>사용</span></label></div></section>
+            <section class="form-section"><div class="form-grid"><label class="field"><span class="field-label">SMTP 호스트</span><input type="text" value="smtp.example.com"></label><label class="field"><span class="field-label">포트</span><input type="number" value="587"></label><label class="field"><span class="field-label">암호화</span><select><option>STARTTLS</option><option>TLS</option></select></label><label class="field"><span class="field-label">인증</span><select><option>사용</option><option>사용 안 함</option></select></label><label class="field"><span class="field-label">계정</span><input type="text" value="judge@example.com"></label><label class="field"><span class="field-label">새 비밀번호</span><input type="password" placeholder="기존 값 유지"></label><label class="field"><span class="field-label">발신 주소</span><input type="email" value="judge@example.com"></label><label class="field"><span class="field-label">발신 이름</span><input type="text" value="학습용 온라인 저지"></label></div></section>
+            <label class="field"><span class="field-label">시험 메일 수신자</span><input type="email" value="admin@example.com"><span class="help">시험 주소는 설정에 저장하지 않습니다.</span></label>
+          </form>
+          <aside class="connection-state"><h2>현재 발송 설정</h2><dl class="state-list"><div><dt>상태</dt><dd><span class="badge wait">확인 필요</span></dd></div><div><dt>마지막 성공</dt><dd>07-18 14:02</dd></div><div><dt>최근 시험</dt><dd>07-21 09:05 · 연결 시간 초과</dd></div><div><dt>비밀값</dt><dd>보호 저장소에 저장됨</dd></div></dl><div class="candidate-result"><strong>후보 시험 결과</strong><span class="pending">새 시험이 필요합니다.</span><small>후보값을 수정했으므로 이전 성공 결과를 사용할 수 없습니다.</small></div><div class="connection-actions"><button class="button" type="button" data-toast="후보 설정으로 지정한 수신자에게 시험 메일을 보냅니다."><svg><use href="#i-test"/></svg>시험 메일 보내기</button><button class="button primary" type="button" disabled>성공한 후보 저장</button></div></aside>
+        </div>
+      </section>
+
+      <section class="screen" id="ai-settings" data-screen="ai-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">공통 AI 기반 · 연결 전용</p><h1>AI 연결 프로필</h1><p>서버와 모델을 재사용 가능한 프로필로 등록하고 후보 검사를 통과한 연결만 활성화합니다.</p></div><button class="button" type="button" data-toast="새 연결 프로필 입력 영역을 엽니다.">프로필 추가</button></header>
+        <p class="route-caption">/oj-console/settings/ai-provider</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_settings</code> · endpoint와 비밀값은 이 화면에서만 관리</p>
+        <div class="ai-profile-workspace">
+          <aside class="ai-profile-list" aria-label="AI 연결 프로필">
+            <div class="ai-profile-list-heading"><div><h2>등록 프로필</h2><p>3개 · 사용 가능 3개</p></div></div>
+            <button class="ai-profile-button active" type="button" data-ai-profile-select="ollama-gemma4" aria-pressed="true"><strong>Ollama Gemma 4</strong><small><span class="profile-health good"></span>자체 서버 · 검사 완료</small></button>
+            <button class="ai-profile-button" type="button" data-ai-profile-select="vllm-code" aria-pressed="false"><strong>vLLM 코드 모델</strong><small><span class="profile-health good"></span>자체 서버 · 검사 완료</small></button>
+            <button class="ai-profile-button" type="button" data-ai-profile-select="gemini-api" aria-pressed="false"><strong>Gemini API</strong><small><span class="profile-health good"></span>외부 API · 검사 완료</small></button>
+            <p class="help">작업 배정은 별도 화면에서 설정합니다. 프로필 삭제 전 사용 중인 배정을 먼저 해제해야 합니다.</p>
+          </aside>
+          <div class="ai-profile-detail">
+            <div class="connection-layout">
+              <form class="connection-form" data-ai-provider-form>
+                <section class="form-section">
+                  <div class="form-grid">
+                    <label class="field"><span class="field-label">프로필 이름</span><input type="text" value="Ollama Gemma 4" data-ai-profile-name></label>
+                    <label class="field"><span class="field-label">프로필 키</span><input type="text" value="ollama-gemma4" readonly data-ai-profile-key><span class="help">저장 후에는 변경할 수 없습니다.</span></label>
+                    <label class="field"><span class="field-label">Provider</span><select id="ai-provider-type" data-ai-provider-select><option value="ollama" selected>Ollama · 자체 AI 서버</option><option value="mlx_lm">MLX-LM · Apple Silicon</option><option value="vllm">vLLM · GPU 서버</option><option value="sglang">SGLang · GPU 서버</option><option value="gemini">Gemini API</option><option value="openai">OpenAI API</option><option value="openai_compatible_gateway">OpenAI 호환 AI Gateway</option></select></label>
+                    <label class="field"><span class="field-label">Base URL</span><input type="url" value="https://ai.example.com/ollama" data-ai-field="base-url"></label>
+                    <label class="field"><span class="field-label">인증 방식</span><select data-ai-field="auth-mode"><option value="bearer" selected>Bearer API 키</option><option value="x-api-key">X-API-Key</option><option value="google-api-key">Google API 키</option></select></label>
+                    <label class="field"><span class="field-label">모델</span><input type="text" value="gemma4:latest" data-ai-field="model"></label>
+                    <label class="field"><span class="field-label">새 비밀값</span><input type="password" placeholder="Reverse Proxy API 키" data-ai-field="secret"></label>
+                    <label class="field"><span class="field-label">연결 제한</span><select data-ai-field="connect-timeout"><option>3초</option><option selected>5초</option></select></label>
+                    <label class="field"><span class="field-label">후보 검사 제한</span><select data-ai-field="request-timeout"><option>30초</option><option selected>60초</option><option>120초</option></select></label>
+                  </div>
+                </section>
+                <section class="settings-sheet"><header><h2>보안 승인</h2><p>작업 배정과 별개로 민감 데이터 전송 가능 여부를 제한합니다.</p></header><div class="setting-row"><div><strong>업무 계약 검사</strong><small>고정 시험 자료로 메타데이터·문제·테스트케이스·피드백 응답을 각각 검사합니다.</small></div><span class="badge good">4개 준비</span></div><div class="setting-row"><div><strong>제출 코드 처리 승인</strong><small data-ai-source-note>자체 AI 서버라도 명시적으로 승인한 연결에서만 제출 코드를 보냅니다.</small></div><label class="switch"><input type="checkbox" checked data-ai-source-switch><span data-ai-source-label>명시적 허용</span></label></div></section>
+                <div class="notice"><svg><use href="#i-shield"/></svg><span data-ai-network-note>Ollama는 별도 AI 서버 안에서만 실행하고 HTTPS·Bearer 인증 Reverse Proxy를 통해 연결합니다. Judge 서버는 AI 요청을 전달하지 않습니다.</span></div>
+              </form>
+              <aside class="connection-state"><h2>선택한 프로필</h2><dl class="state-list"><div><dt>상태</dt><dd><span class="badge good" data-ai-profile-state>사용 가능</span></dd></div><div><dt>프로필</dt><dd data-ai-state-profile>Ollama Gemma 4</dd></div><div><dt>Provider</dt><dd data-ai-state-provider>Ollama · 자체 AI 서버</dd></div><div><dt>모델</dt><dd data-ai-state-model>gemma4:latest</dd></div><div><dt>검사된 작업</dt><dd data-ai-state-tasks>4개</dd></div><div><dt>모델 확인</dt><dd><code data-ai-state-models>GET /api/tags</code></dd></div><div><dt>생성 요청</dt><dd><code data-ai-state-chat>POST /api/chat</code></dd></div></dl><div class="candidate-result"><strong>후보 검사 결과</strong><span data-ai-test-state>07-25 14:32 · 검사 완료</span><small data-ai-test-detail>모델·인증·한국어·코드·구조화 응답이 등록 fingerprint와 일치합니다.</small></div><div class="connection-actions"><button class="button" type="button" data-toast="선택한 Provider의 후보 연결과 네 가지 업무 계약을 검사합니다."><svg><use href="#i-test"/></svg><span data-ai-test-label>Ollama 검사</span></button><button class="button primary" type="button" data-toast="검사 fingerprint가 같은 후보 프로필을 저장합니다.">검사된 프로필 저장</button></div></aside>
+            </div>
+          </div>
+        </div>
+        <section class="provider-example" aria-live="polite" data-ai-provider-example>
+          <header class="provider-example-heading"><div><p class="eyebrow">선택 즉시 갱신</p><h2 data-ai-example-title>Ollama 연결 예시</h2><p data-ai-example-summary>별도 AI 서버의 Ollama를 Reverse Proxy 뒤에서 사용합니다.</p></div><span class="badge info" data-ai-example-kind>자체 서버</span></header>
+          <dl class="provider-example-meta"><div><dt>모델 확인</dt><dd><code data-ai-example-models>GET /api/tags</code></dd></div><div><dt>생성 요청</dt><dd><code data-ai-example-chat>POST /api/chat</code></dd></div><div><dt>인증</dt><dd data-ai-example-auth>Reverse Proxy Bearer</dd></div><div><dt>구조화 결과</dt><dd data-ai-example-structured>Ollama format JSON Schema</dd></div></dl>
+          <div class="provider-example-grid"><div><h3>서버 준비 예시</h3><pre data-ai-example-server>ollama pull gemma4
+OLLAMA_HOST=127.0.0.1:11434 ollama serve</pre></div><div><h3>연결 요청 예시</h3><pre data-ai-example-request>curl https://ai.example.com/ollama/api/chat \
+  -H "Authorization: Bearer &lt;token&gt;" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gemma4:latest","messages":[{"role":"user","content":"연결 확인"}],"stream":false,"think":false}'</pre></div></div>
+          <div class="notice warning"><svg><use href="#i-alert"/></svg><span data-ai-example-note>Ollama 포트를 외부에 직접 공개하지 않습니다. AI 서버의 Reverse Proxy만 허용하고 Judge 서버 주소는 사용할 수 없습니다.</span></div>
+        </section>
+        <details class="technical-details"><summary>전체 Provider 통신 규칙</summary><div class="table-wrap"><table><thead><tr><th>Provider</th><th>모델 확인</th><th>생성 요청</th><th>필수 경계</th></tr></thead><tbody><tr><td>Ollama</td><td><code>GET /api/tags</code></td><td><code>POST /api/chat</code></td><td>자체 AI 서버 Reverse Proxy 필수</td></tr><tr><td>MLX-LM</td><td><code>GET /v1/models</code></td><td><code>POST /v1/chat/completions</code></td><td>기본 서버 직접 공개 금지</td></tr><tr><td>vLLM</td><td><code>GET /v1/models</code></td><td><code>POST /v1/chat/completions</code></td><td>API 키·Chat Template 확인</td></tr><tr><td>SGLang</td><td><code>GET /v1/models</code></td><td><code>POST /v1/chat/completions</code></td><td>API 키·served model 확인</td></tr><tr><td>Gemini API</td><td><code>GET /v1beta/models</code></td><td><code>POST /v1beta/models/{model}:generateContent</code></td><td><code>x-goog-api-key</code>·공개 HTTPS</td></tr><tr><td>OpenAI·Gateway</td><td><code>GET /v1/models</code></td><td><code>POST /v1/chat/completions</code></td><td>Bearer 또는 승인된 X-API-Key</td></tr></tbody></table></div><p class="help">초기 버전은 비스트리밍 요청만 사용합니다. Provider별 Profile이 경로·인증·응답 매핑을 소유하고 업무 Handler는 임의 URL·헤더·Provider 전용 JSON을 전달할 수 없습니다.</p></details>
+      </section>
+
+      <section class="screen" id="ai-routing" data-screen="ai-routing" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">공통 AI 기반 · 작업 배정 전용</p><h1>작업별 AI 배정</h1><p>각 AI 작업이 사용할 주 프로필과 일시 장애 시 대체 프로필을 지정합니다.</p></div><button class="button" type="button" data-open-screen="ai-settings">연결 프로필 관리</button></header>
+        <p class="route-caption">/oj-console/settings/ai-routing</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_settings</code> · endpoint·API 키·프롬프트는 이 화면에 저장하지 않음</p>
+        <div class="routing-overview">
+          <div><span>등록 작업</span><strong>4개</strong><small>기능 Registry 고정</small></div>
+          <div><span>사용 가능 프로필</span><strong>3개</strong><small>후보 검사 완료</small></div>
+          <div><span>배정 완료</span><strong>4개</strong><small>차단 항목 없음</small></div>
+          <div><span>설정 revision</span><strong>6</strong><small>07-25 15:20</small></div>
+        </div>
+        <div class="notice"><svg><use href="#i-shield"/></svg><span>학생 수준 분석은 누적 풀이 이력으로 결정적으로 계산합니다. AI는 계산된 수준과 허용된 제출 정보만 받아 수준별 피드백 문장을 생성합니다.</span></div>
+        <form class="ai-routing-form" data-ai-routing-form>
+          <div class="table-wrap ai-routing-table"><table>
+            <thead><tr><th>작업</th><th>주 프로필</th><th>대체 프로필</th><th>요청 제한</th><th class="wrap">고정 계약·전송 범위</th><th>검사</th></tr></thead>
+            <tbody>
+              <tr data-ai-routing-row data-task-type="problem_metadata">
+                <td><strong>문제 정보 생성</strong><small><code>problem_metadata</code> · Problems</small></td>
+                <td><select aria-label="문제 정보 생성 주 프로필" data-routing-primary><option value="ollama-gemma4" selected>Ollama Gemma 4</option><option value="vllm-code">vLLM 코드 모델</option><option value="gemini-api">Gemini API</option></select></td>
+                <td><select aria-label="문제 정보 생성 대체 프로필" data-routing-fallback><option value="">사용 안 함</option><option value="gemini-api" selected>Gemini API</option><option value="vllm-code">vLLM 코드 모델</option></select></td>
+                <td><select aria-label="문제 정보 생성 요청 제한"><option>30초</option><option selected>60초</option><option>120초</option></select></td>
+                <td class="wrap"><code>metadata_json_v1</code><small>난이도 정수 1~5 · 선택 활성 세부 주제 0~3개</small></td>
+                <td><span class="badge good" data-routing-status>준비</span></td>
+              </tr>
+              <tr data-ai-routing-row data-task-type="problem_draft">
+                <td><strong>문제 초안 생성</strong><small><code>problem_draft</code> · Problems</small></td>
+                <td><select aria-label="문제 초안 생성 주 프로필" data-routing-primary><option value="ollama-gemma4">Ollama Gemma 4</option><option value="vllm-code">vLLM 코드 모델</option><option value="gemini-api" selected>Gemini API</option></select></td>
+                <td><select aria-label="문제 초안 생성 대체 프로필" data-routing-fallback><option value="">사용 안 함</option><option value="ollama-gemma4" selected>Ollama Gemma 4</option><option value="vllm-code">vLLM 코드 모델</option></select></td>
+                <td><select aria-label="문제 초안 생성 요청 제한"><option>60초</option><option selected>120초</option></select></td>
+                <td class="wrap"><code>problem_draft_v1</code><small>관리자 요구·난이도·주제 제약만 전송</small></td>
+                <td><span class="badge good" data-routing-status>준비</span></td>
+              </tr>
+              <tr data-ai-routing-row data-task-type="testcase_draft">
+                <td><strong>테스트케이스 초안</strong><small><code>testcase_draft</code> · Problems</small></td>
+                <td><select aria-label="테스트케이스 초안 주 프로필" data-routing-primary><option value="ollama-gemma4">Ollama Gemma 4</option><option value="vllm-code" selected>vLLM 코드 모델</option><option value="gemini-api">Gemini API</option></select></td>
+                <td><select aria-label="테스트케이스 초안 대체 프로필" data-routing-fallback><option value="">사용 안 함</option><option value="ollama-gemma4" selected>Ollama Gemma 4</option><option value="gemini-api">Gemini API</option></select></td>
+                <td><select aria-label="테스트케이스 초안 요청 제한"><option>60초</option><option selected>120초</option></select></td>
+                <td class="wrap"><code>testcase_json_v1</code><small>문제 본문·제약·공개 예시 · 운영 파일 제외</small></td>
+                <td><span class="badge good" data-routing-status>준비</span></td>
+              </tr>
+              <tr data-ai-routing-row data-task-type="submission_feedback">
+                <td><strong>제출 AI 피드백</strong><small><code>submission_feedback</code> · AI Feedback</small></td>
+                <td><select aria-label="제출 AI 피드백 주 프로필" data-routing-primary><option value="ollama-gemma4" selected>Ollama Gemma 4</option><option value="vllm-code">vLLM 코드 모델</option></select></td>
+                <td><select aria-label="제출 AI 피드백 대체 프로필" data-routing-fallback><option value="" selected>사용 안 함</option><option value="vllm-code">vLLM 코드 모델</option></select></td>
+                <td><select aria-label="제출 AI 피드백 요청 제한"><option>30초</option><option selected>60초</option></select></td>
+                <td class="wrap"><code>feedback_level_v1</code><small>계산된 학습 수준·제출 코드 포함 · 전송을 승인한 프로필만</small></td>
+                <td><span class="badge good" data-routing-status>준비</span></td>
+              </tr>
+            </tbody>
+          </table></div>
+          <div class="routing-policy">
+            <div><strong>대체 실행 조건</strong><span>연결 실패·시간 초과·429·502·503·504에서만 사용</span></div>
+            <div><strong>대체 금지 조건</strong><span>인증·입력·응답 스키마 오류, 작업 미허용, 제출 코드 승인 없음</span></div>
+            <div><strong>피드백 기본값</strong><span>제출 코드가 포함되므로 기본 대체 없음. 외부 AI도 프로필별 승인 후 사용 가능</span></div>
+          </div>
+          <div class="notice" data-ai-routing-notice><svg><use href="#i-alert"/></svg><span data-ai-routing-message>4개 작업 배정이 모두 유효합니다. 저장할 때 프로필 fingerprint와 작업 허용 범위를 다시 검사합니다.</span></div>
+          <div class="save-dock"><div><strong data-ai-routing-summary>변경 없음</strong><span>마지막 저장: 박지현 · 07-25 15:20 · revision 6</span></div><div class="save-dock-actions"><button class="button primary" type="button" data-ai-routing-save data-toast="프로필 상태와 작업 계약을 다시 검사한 뒤 배정을 저장합니다.">AI 배정 저장</button></div></div>
+        </form>
+      </section>
+
+      <section class="screen" id="system-settings" data-screen="system-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">고위험 운영 권한</p><h1>운영 설정</h1><p>사용자 안내를 위한 점검 모드와 데이터 이전용 쓰기 동결을 구분합니다.</p></div></header>
+        <p class="route-caption">/oj-console/settings/system</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_system</code></p>
+        <div class="system-layout">
+          <div>
+            <section class="settings-sheet"><header><h2>점검 모드</h2><p>로그인·복구·동의 화면과 권한 있는 관리자 콘솔은 계속 사용할 수 있습니다.</p></header><div class="setting-row"><div><strong>사용자 업무 화면 닫기</strong><small>활성화하면 일반 업무 요청에 503 안내를 표시합니다.</small></div><label class="switch"><input type="checkbox"><span>꺼짐</span></label></div><div class="setting-row"><div><strong>안내 문구</strong><small>학습자와 운영자에게 표시할 간단한 설명</small></div><label class="compact-field"><input type="text" value="채점 서버 점검 중입니다. 잠시 후 다시 이용해 주세요." aria-label="점검 안내 문구"></label></div><div class="setting-row"><div><strong>예상 종료</strong><small>비워 두면 종료 시각을 표시하지 않습니다.</small></div><label class="compact-field"><input type="datetime-local" value="2026-07-26T09:00" aria-label="점검 예상 종료"></label></div></section>
+            <section class="settings-sheet"><header><h2>모듈별 쓰기 동결</h2><p>Migration 계획이 선택하며 운영 설정에서 임의로 추가하거나 해제하지 않습니다.</p></header><div class="freeze-list"><div class="freeze-row"><strong>현재 동결</strong><span class="badge good">없음</span><span>사용자 화면·명령·Worker 정상</span></div><div class="freeze-row"><strong>예약된 동결</strong><span class="badge wait">Problems</span><span>승인 계획 M-2026-004 · 아직 실행 전</span></div></div><button class="button" type="button" data-open-screen="migration-settings">데이터 이전에서 확인</button></section>
+          </div>
+          <aside class="panel warning"><h2>점검 모드와 쓰기 동결</h2><p>점검 모드는 사용자에게 안내 화면을 보여 주지만 외부 Judge, WP-Cron, CLI와 Worker 쓰기를 멈추지 않습니다.</p><p><strong>데이터 전환 전에는</strong> 관련 모듈 쓰기 동결과 실행 중 작업 0건을 별도로 확인해야 합니다.</p></aside>
+        </div>
+        <div class="save-dock"><div><strong>운영 설정 변경 없음</strong><span>마지막 저장: 박지현 · 07-20 18:00 · revision 4</span></div><div class="save-dock-actions"><button class="button primary" type="button" data-toast="점검 모드 상태와 안내 문구를 저장합니다.">운영 설정 저장</button></div></div>
+        <details class="danger-details"><summary>플러그인 제거 시 데이터 삭제 승인</summary><div class="danger-details-body"><div class="notice danger"><svg><use href="#i-alert"/></svg><span>기본 정책은 데이터 보존입니다. 삭제 승인은 30분 동안 한 번만 유효하며 최종 백업·분리 환경 복구 증거가 모두 필요합니다.</span></div><div class="form-grid"><label class="field"><span class="field-label">백업 증거 참조</span><input type="text" value="backup-proof-2026-07-24"></label><label class="field"><span class="field-label">복구 리허설 참조</span><input type="text" value="restore-proof-2026-07-24"></label><label class="field wide"><span class="field-label">서비스 이름 다시 입력</span><input type="text" placeholder="학습용 온라인 저지"></label></div><div class="form-actions"><button class="button danger" type="button" data-toast="증거와 서비스 이름을 검사한 뒤 30분짜리 일회성 승인을 발급합니다.">일회성 승인 발급</button></div></div></details>
+      </section>
+
+      <section class="screen" id="system-status" data-screen="system-status" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">읽기 전용 Provider 집계</p><h1>시스템 상태</h1><p>사용 가능한 기능과 필요한 조치를 먼저 보여 주고 기술 상세는 권한이 있을 때만 엽니다.</p></div><button class="button" type="button" data-toast="캐시 제한을 확인한 뒤 상태 Provider를 다시 조회했습니다."><svg><use href="#i-refresh"/></svg>다시 확인</button></header>
+        <p class="route-caption">/oj-console/system-status</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>안전한 요약: <code>oj_view_system_status</code> · 기술 상세: <code>oj_manage_system</code></p>
+        <div class="status-overview"><div><span>정상</span><strong>6개</strong></div><div><span>확인 필요</span><strong>1개</strong></div><div><span>사용 불가</span><strong>0개</strong></div></div>
+        <div class="table-wrap"><table><thead><tr><th>상태 영역</th><th>상태</th><th>마지막 확인</th><th class="wrap">요약</th><th class="wrap">다음 조치</th></tr></thead><tbody>
+          <tr><td><strong>플랫폼 기반</strong></td><td><span class="badge good">정상</span></td><td>11:20</td><td class="wrap">WordPress·PHP·필수 모듈·보호 저장소 준비</td><td class="wrap">없음</td></tr>
+          <tr><td><strong>Platform DB</strong></td><td><span class="badge good">정상</span></td><td>11:20</td><td class="wrap">목표 테이블 42개 · 스키마 revision 일치</td><td class="wrap">없음</td></tr>
+          <tr><td><strong>Judge DB</strong></td><td><span class="badge good">정상</span></td><td>11:18</td><td class="wrap">기본 8개·선택 custominput · 지연 24ms</td><td class="wrap">없음</td></tr>
+          <tr><td><strong>테스트 환경</strong></td><td><span class="badge good">정상</span></td><td>11:19</td><td class="wrap">데이터 폴더 읽기·쓰기 · SPJ 격리 실행 준비</td><td class="wrap"><button class="button" type="button" data-open-screen="test-data-settings">보기</button></td></tr>
+          <tr><td><strong>라우팅·메뉴</strong></td><td><span class="badge good">정상</span></td><td>11:20</td><td class="wrap">Registry 봉인 · 충돌 경로 없음</td><td class="wrap">없음</td></tr>
+          <tr><td><strong>Jobs</strong></td><td><span class="badge good">정상</span></td><td>11:19</td><td class="wrap">대기 1개 · 만료 임대 없음</td><td class="wrap">기준 보고서 완료 대기</td></tr>
+          <tr><td><strong>메일·AI</strong></td><td><span class="badge wait">확인 필요</span></td><td>11:20</td><td class="wrap">AI 정상 · 메일 최근 시험 실패</td><td class="wrap"><button class="button" type="button" data-open-screen="smtp-settings">메일 확인</button></td></tr>
+          <tr><td><strong>데이터 이전</strong></td><td><span class="badge good">정상</span></td><td>11:16</td><td class="wrap">단계 0 진행 중 · 차단 오류 없음</td><td class="wrap"><button class="button" type="button" data-open-screen="migration-settings">진행 보기</button></td></tr>
+        </tbody></table></div>
+        <details class="technical-details"><summary>기술 상세 보기 · 시스템 관리자 전용</summary><pre>provider: JudgeDb
+trace_id: health-7f2a
+schema_fingerprint: 9bd2...a81c
+required_tables: 8/8
+optional_profiles: custominput
+safe_result_code: JUDGE_DB_OK
+cached_at: 2026-07-25 11:18:24 KST</pre></details>
+        <div class="form-actions"><button class="button" type="button" data-toast="상단 경고에 사용한 마지막 치명 오류 표시만 지웁니다. 서버 로그와 Jobs 사건은 보존합니다.">마지막 치명 오류 표시 지우기</button></div>
+      </section>
+
+      <section class="screen" id="migration-settings" data-screen="migration-settings" hidden>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">자동 실행 금지</p><h1>데이터 이전</h1><p>기준 조사부터 관찰과 정리까지 승인 관문을 순서대로 통과합니다.</p></div><button class="button" type="button" data-toast="현재 계획과 Job 상태를 다시 조회했습니다."><svg><use href="#i-refresh"/></svg>진행 새로고침</button></header>
+        <p class="route-caption">/oj-console/settings/migration</p>
+        <p class="permission-note"><svg><use href="#i-shield"/></svg>필요 권한: <code>oj_manage_migration</code> · 웹에서 DB 덤프·복원·운영 Judge DDL 실행 금지</p>
+        <div class="migration-rail"><div><span>현재 파동</span><strong>준비 · Jobs 기반</strong></div><div><span>현재 단계</span><strong>0 · 기준 보고서</strong></div><div><span>관찰</span><strong>아직 시작 전</strong></div><div><span>실행 중 Job</span><strong>1개 · 64%</strong></div></div>
+        <div class="migration-layout">
+          <div>
+            <div class="stage-list">
+              <div class="stage-row current"><span class="stage-number">0</span><div><strong>기준 보고서</strong><small>두 DB 구조·건수·중복·고아</small></div><div>읽기 전용 조사 진행 중 · 쓰기 0건</div><span class="badge info">진행 중</span></div>
+              <div class="stage-row"><span class="stage-number">1</span><div><strong>복구 리허설</strong><small>외부 백업·분리 환경 복원 증거</small></div><div>기준 보고서 완료와 증거 등록 필요</div><span class="badge">대기</span></div>
+              <div class="stage-row"><span class="stage-number">2</span><div><strong>목표 구조</strong><small>무접두어 42개 플랫폼 테이블</small></div><div>개인정보 정책과 스키마 계획 승인 필요</div><span class="badge">대기</span></div>
+              <div class="stage-row"><span class="stage-number">3</span><div><strong>사전 복사</strong><small>승인된 후보를 Jobs 항목으로 고정</small></div><div>실행 계획 해시 생성 전</div><span class="badge">대기</span></div>
+              <div class="stage-row blocked"><span class="stage-number">4</span><div><strong>쓰기 동결·최종 복사</strong><small>화면·명령·Worker 쓰기 차단</small></div><div>현재 단계가 아니므로 실행할 수 없음</div><span class="badge wait">차단</span></div>
+              <div class="stage-row"><span class="stage-number">5</span><div><strong>최종 검증</strong><small>건수·해시·고유키·필수 관계</small></div><div>차단 오류 0건 필요</div><span class="badge">대기</span></div>
+              <div class="stage-row"><span class="stage-number">6</span><div><strong>모듈별 전환</strong><small>스키마 포인터 원자 교환</small></div><div>소유 모듈 한 항목씩 별도 승인</div><span class="badge">대기</span></div>
+              <div class="stage-row"><span class="stage-number">7</span><div><strong>제한 점검·재개</strong><small>핵심 사용자 흐름과 예약 작업</small></div><div>실패 시 쓰기 동결 유지</div><span class="badge">대기</span></div>
+              <div class="stage-row"><span class="stage-number">8</span><div><strong>7일 관찰</strong><small>오류율·고아·응답·Jobs</small></div><div>7일 연속 통과 필요</div><span class="badge">대기</span></div>
+              <div class="stage-row"><span class="stage-number">9</span><div><strong>Judge 호환</strong><small>격리 DB에서 전체 채점 흐름 검증</small></div><div>확장 열 설치 외 DDL 0건</div><span class="badge">대기</span></div>
+              <div class="stage-row"><span class="stage-number">10</span><div><strong>기존 구조 정리</strong><small>관찰·인증 전환·최종 백업 후</small></div><div>별도 사용자 승인 필요</div><span class="badge">대기</span></div>
+            </div>
+          </div>
+          <aside class="migration-side">
+            <section class="panel"><h2>복구 증거</h2><ul class="evidence-list"><li><strong>WordPress DB 백업</strong>07-24 23:00 · 암호화 · manifest 확인</li><li><strong>Judge DB 백업</strong>07-24 23:00 · 암호화 · manifest 확인</li><li><strong>보호 파일 백업</strong>07-24 23:10 · 해시 확인</li><li><strong>분리 환경 복원</strong><span class="badge wait">등록 필요</span></li></ul><button class="button" type="button" data-toast="외부 복구 리허설 결과의 참조와 해시를 등록합니다.">복구 증거 등록</button></section>
+            <section class="panel"><h2>현재 Job</h2><dl class="state-list"><div><dt>작업</dt><dd>기준 보고서 생성</dd></div><div><dt>진행</dt><dd>64% · Platform DB 관계 검사</dd></div><div><dt>시작</dt><dd>오늘 11:16 · 박지현 승인</dd></div><div><dt>사건</dt><dd>차단 오류 0 · 경고 2</dd></div></dl><div class="connection-actions"><button class="button" type="button" data-toast="현재 체크포인트를 보존하고 취소 가능 여부를 다시 검사합니다.">작업 취소 검토</button></div></section>
+            <section class="action-review"><h2>다음 단계 실행 전 확인</h2><ul><li>기준 보고서 Job 완료</li><li>보고서 해시와 경고 담당자 승인</li><li>분리 환경 복원 증거 등록</li><li>현재 단계용 계획 해시 일치</li></ul><button class="button primary" type="button" disabled>승인 관문 통과 후 실행</button></section>
+          </aside>
+        </div>
+        <div class="notice warning"><svg><use href="#i-alert"/></svg><span>전환 파동은 Jobs 기반 준비 → Auth → Problems → Submissions → Classes → Contests → Groups → AI Feedback 순서입니다. 한 파동의 7일 관찰이 끝나기 전에는 다음 파동을 시작하지 않습니다.</span></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds15-prototype.js"></script>
+</body>
+</html>

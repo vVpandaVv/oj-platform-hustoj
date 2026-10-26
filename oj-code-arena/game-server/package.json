@@ -1,0 +1,20 @@
+{
+  "name": "oj-code-arena-server",
+  "version": "1.3.0",
+  "private": true,
+  "description": "Code Arena real-time game server for the oj-code-arena WordPress addon",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "setup": "node src/setup.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "ws": "8.18.0"
+  },
+  "license": "GPL-2.0-or-later"
+}

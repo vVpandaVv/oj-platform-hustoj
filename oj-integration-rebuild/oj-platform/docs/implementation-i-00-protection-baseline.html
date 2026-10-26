@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>I-00 보호 기준선 실행 보고서 | OJ Platform</title>
+  <style>
+    :root {
+      --ink: #18212b;
+      --muted: #5c6875;
+      --line: #d8dee5;
+      --surface: #ffffff;
+      --soft: #f4f7f9;
+      --navy: #17324d;
+      --cyan: #087e8b;
+      --green: #237a57;
+      --yellow: #946200;
+      --red: #a33a3a;
+      --code: #eef3f6;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--soft); font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif; line-height: 1.65; }
+    a { color: var(--cyan); }
+    code { padding: 2px 5px; border-radius: 4px; background: var(--code); font-family: Consolas, "Courier New", monospace; font-size: .92em; overflow-wrap: anywhere; }
+    .topbar { background: var(--navy); color: #fff; }
+    .topbar-inner { width: min(1180px, calc(100% - 32px)); min-height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+    .brand-mark { display: inline-grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 6px; font-weight: 800; }
+    .topbar span:last-child { color: #d5e5ef; font-size: 14px; }
+    .layout { width: min(1180px, calc(100% - 32px)); margin: 24px auto 48px; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
+    nav { position: sticky; top: 20px; padding: 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    nav strong { display: block; margin-bottom: 8px; }
+    nav ul { margin: 0; padding: 0; list-style: none; }
+    nav li + li { margin-top: 5px; }
+    nav a { display: block; padding: 5px 7px; color: var(--ink); text-decoration: none; border-radius: 4px; }
+    nav a:hover { color: var(--cyan); background: var(--soft); }
+    main { min-width: 0; }
+    .report-header, .section { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .report-header { padding: 30px; border-top: 5px solid var(--yellow); }
+    .section { margin-top: 20px; padding: 24px; }
+    .eyebrow { margin: 0 0 6px; color: var(--cyan); font-weight: 800; font-size: 13px; }
+    h1 { margin: 0; font-size: 34px; line-height: 1.25; letter-spacing: 0; }
+    h2 { margin: 0; font-size: 23px; letter-spacing: 0; }
+    p { margin: 8px 0 0; }
+    .lede { max-width: 860px; color: var(--muted); font-size: 17px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 18px; color: var(--muted); font-size: 13px; }
+    .section-heading { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .section-heading p { color: var(--muted); }
+    .badge { flex: 0 0 auto; padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+    .badge.good { color: #175c40; background: #def2e8; }
+    .badge.wait { color: #7b5200; background: #fff0c7; }
+    .badge.stop { color: #812f2f; background: #fbe2e2; }
+    .summary, .callout, .warning, .risk { margin-top: 18px; padding: 14px 16px; border-left: 4px solid var(--cyan); background: #edf8f8; }
+    .callout { border-left-color: var(--green); background: #eef8f3; }
+    .warning { border-left-color: var(--yellow); background: #fff8e6; }
+    .risk { border-left-color: var(--red); background: #fff0f0; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+    .metric { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--soft); }
+    .metric span { display: block; color: var(--muted); font-size: 12px; }
+    .metric strong { display: block; margin-top: 2px; color: var(--navy); font-size: 20px; overflow-wrap: anywhere; }
+    .table-wrap { margin-top: 16px; overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; background: var(--surface); font-size: 14px; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #fff; background: var(--navy); font-weight: 750; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) { background: #f8fafb; }
+    .check-list, .link-list { margin: 16px 0 0; padding-left: 22px; }
+    .check-list li + li, .link-list li + li { margin-top: 8px; }
+    .status-list { display: grid; grid-template-columns: 180px minmax(0, 1fr) 110px; margin-top: 12px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .status-list > div { padding: 12px; background: var(--surface); }
+    .status-list > div + div { border-left: 1px solid var(--line); }
+    footer { margin-top: 22px; padding: 16px 4px; color: var(--muted); font-size: 13px; text-align: center; }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px) {
+      .topbar-inner, .layout { width: min(100% - 20px, 1180px); }
+      .topbar span:last-child { display: none; }
+      .report-header, .section { padding: 18px; }
+      h1 { font-size: 27px; }
+      .section-heading { display: block; }
+      .badge { display: inline-block; margin-top: 10px; }
+      .metrics { grid-template-columns: 1fr; }
+      .status-list { grid-template-columns: 1fr; }
+      .status-list > div + div { border-left: 0; border-top: 1px solid var(--line); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">OJ</span><strong>OJ Platform 재구축</strong></a>
+      <span>I-00 보호 기준선 실행 기록</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="문서 목차">
+      <strong>목차</strong>
+      <ul>
+        <li><a href="#status">현재 판정</a></li>
+        <li><a href="#baseline">보호 기준점</a></li>
+        <li><a href="#contracts">현재와 목표</a></li>
+        <li><a href="#evidence">산출물과 도구</a></li>
+        <li><a href="#fresh-install">신규 설치와의 경계</a></li>
+        <li><a href="#recovery">복구 준비 상태</a></li>
+        <li><a href="#security">보호 원칙</a></li>
+        <li><a href="#gate">R-01 진입 관문</a></li>
+      </ul>
+    </nav>
+
+    <main id="main">
+      <header class="report-header" id="status">
+        <p class="eyebrow">I-00 · R-00 실행 보고서</p>
+        <h1>보호 기준선과 배포 복구 계약</h1>
+        <p class="lede">완전 재구축 전에 기존 코드와 계약을 변경 불가능한 Git 기준점으로 고정하고, 새 작업 공간에서 정적 목록과 복구 도구를 검증했다. 실제 WordPress·<code>jol</code> 데이터베이스 백업과 격리 복원은 플러그인 개발 작업이 아니라 운영 교체 전 배포 승인 절차에서 운영자가 수행한다.</p>
+        <div class="meta">
+          <span>실행일: 2026-07-26</span>
+          <span>기준 commit: <code>a238a8ff6151b881240be9df04d1d4e5ddbc9a9b</code></span>
+          <span>작업 branch: <code>rebuild/oj-platform-v2</code></span>
+          <span>상태: 개발 보호 기준선 완료 · R-01 진입 허용</span>
+          <span>인코딩: UTF-8 한글 원문</span>
+        </div>
+        <div class="warning"><strong>현재 판정:</strong> I-00의 플러그인 개발 관문은 완료됐다. 별도 재구축 worktree에서 R-01 새 runtime 구현을 시작할 수 있다. 운영 서버 설치·운영 DB 쓰기·실데이터 전환은 여전히 금지하며, 실제 백업과 격리 복원은 I-09 운영 교체 승인 조건으로 남긴다.</div>
+      </header>
+
+      <section class="section" id="baseline">
+        <div class="section-heading">
+          <div><h2>보호 기준점</h2><p>원본 보존과 새 구현을 물리적으로 분리했다.</p></div>
+          <span class="badge good">정적 보호 완료</span>
+        </div>
+        <div class="status-list">
+          <div><strong>원본 기준점</strong></div>
+          <div><code>oj-integration</code>의 commit <code>a238a8f</code>를 재구축 전 복귀 기준으로 고정</div>
+          <div><span class="badge good">완료</span></div>
+        </div>
+        <div class="status-list">
+          <div><strong>재구축 작업 공간</strong></div>
+          <div><code>D:\프로젝트\plugins\oj-integration-rebuild</code>와 <code>rebuild/oj-platform-v2</code> branch를 별도 생성</div>
+          <div><span class="badge good">완료</span></div>
+        </div>
+        <div class="status-list">
+          <div><strong>기존 runtime</strong></div>
+          <div>삭제·복사·상속·호출·재작성하지 않음</div>
+          <div><span class="badge good">보존</span></div>
+        </div>
+        <div class="status-list">
+          <div><strong>운영 데이터</strong></div>
+          <div>연결하거나 쓰지 않음. 제공된 <code>jol.sql</code>은 구조 지문을 만드는 참고 자료로만 사용</div>
+          <div><span class="badge good">무변경</span></div>
+        </div>
+        <div class="metrics" aria-label="정적 기준선 핵심 수치">
+          <div class="metric"><span>Git 추적 파일</span><strong>274</strong></div>
+          <div class="metric"><span>PHP 파일 / 타입</span><strong>175 / 197</strong></div>
+          <div class="metric"><span>현재 Route / Action</span><strong>176 / 122</strong></div>
+          <div class="metric"><span>현재 플랫폼 테이블</span><strong>32</strong></div>
+        </div>
+      </section>
+
+      <section class="section" id="contracts">
+        <div class="section-heading">
+          <div><h2>현재 계약과 동결 목표</h2><p>새 구현은 현재 구조를 복제하지 않고 동결된 목표 수치에 맞춘다.</p></div>
+          <span class="badge good">검산 완료</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>계약</th><th>현재 기준선</th><th>동결 목표</th><th>재구축 판정 기준</th></tr></thead>
+            <tbody>
+              <tr><td>모듈</td><td>19</td><td>전환기 20 · 정상 운영 19</td><td>Jobs 추가 후 I-09에서 임시 Migration 제거</td></tr>
+              <tr><td>기능</td><td>30</td><td>30</td><td>수량은 유지하고 소유권·의존 계약 재작성</td></tr>
+              <tr><td>GET Route</td><td>176<br>직접 137 · 호환 39</td><td>정상 운영 151<br>호환 0<br>설치 중 WordPress 관리자 setup 1</td><td>이전 호환 경로를 새 runtime에 만들지 않고 setup 화면은 설치 완료 뒤 등록 0개</td></tr>
+              <tr><td>Action</td><td>122</td><td>I-00 당시 132<br>R-05 감사 뒤 126<br>설치 중 setup 1</td><td>I-00 원본 증거는 132를 보존하고, 구현 감사에서 중복·폐기 계약 6개를 제거한 현재 목표는 126개다. setup 액션은 설치 완료 뒤 등록 0개</td></tr>
+              <tr><td>관리 메뉴</td><td>51</td><td>57</td><td>단일 AdminConsole Registry가 소유</td></tr>
+              <tr><td>권한 / 역할 / preset</td><td>60 / 15 / 9</td><td>61 / 16 / 10</td><td>가입 승인 전용 권한·역할·preset 추가</td></tr>
+              <tr><td>플랫폼 테이블</td><td>32</td><td>40</td><td>무접두어 새 스키마, 기존 테이블은 승인된 이전 원본으로만 읽음</td></tr>
+              <tr><td>Judge 테이블</td><td>노출 14 · 필수 판정 4</td><td>필수 8 · 선택 1</td><td>기본 채점 8개와 선택 <code>custominput</code>만 Gateway에 노출</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="summary"><strong>자동 검증 결과:</strong> I-00 실행 당시 JSON 15개, 기존 runtime 파일 197개 불변, 문서 기준 파일 77개 별도 관리, 현재 Route 176개·Action 122개와 당시 목표 Route 151개·Action 132개, 설치 중 일시 setup 화면·액션 각 1개의 구조·중복·기준 commit 검사가 통과했다. 이 JSON은 기준점 증거로 수정하지 않으며 현재 구현 목표 Action은 R-05 감사 뒤 126개다.</div>
+      </section>
+
+      <section class="section" id="evidence">
+        <div class="section-heading">
+          <div><h2>산출물과 실행 도구</h2><p>사람이 읽는 보고서와 기계가 검사하는 JSON을 분리했다.</p></div>
+          <span class="badge good">15개 JSON</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>분류</th><th>산출물</th><th>용도</th></tr></thead>
+            <tbody>
+              <tr><td>요약</td><td><a href="artifacts/i-00/summary.json">summary.json</a> · <a href="artifacts/i-00/target-gap.json">target-gap.json</a></td><td>기준 commit, 환경, 현재 수량과 목표 차이</td></tr>
+              <tr><td>코드</td><td><a href="artifacts/i-00/files.json">files.json</a> · <a href="artifacts/i-00/php-types.json">php-types.json</a> · <a href="artifacts/i-00/hooks.json">hooks.json</a></td><td>파일 지문, PHP 타입, 정적 Hook 목록</td></tr>
+              <tr><td>기능 계약</td><td><a href="artifacts/i-00/modules.json">modules.json</a> · <a href="artifacts/i-00/features.json">features.json</a> · <a href="artifacts/i-00/permissions.json">permissions.json</a></td><td>모듈·기능·권한·역할·preset 기준선</td></tr>
+              <tr><td>접근 계약</td><td><a href="artifacts/i-00/routes.json">routes.json</a> · <a href="artifacts/i-00/actions.json">actions.json</a> · <a href="artifacts/i-00/menus.json">menus.json</a></td><td>Route·Action·메뉴 이름과 중복 검사</td></tr>
+              <tr><td>데이터 계약</td><td><a href="artifacts/i-00/options.json">options.json</a> · <a href="artifacts/i-00/tables.json">tables.json</a> · <a href="artifacts/i-00/judge-schema-reference.json">judge-schema-reference.json</a></td><td>WordPress 옵션, 플랫폼·Judge 테이블과 제공 스키마 지문</td></tr>
+              <tr><td>복구 준비</td><td><a href="artifacts/i-00/recovery-readiness.json">recovery-readiness.json</a></td><td>도구·입력·격리 환경 준비 여부</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="check-list">
+          <li><code>collect-baseline.php</code>: 고정된 Git tree와 기존 소스를 읽기 전용으로 분석해 JSON을 생성한다.</li>
+          <li><code>verify-baseline.php</code>: 스키마 버전, 기준 commit, 필수 산출물, 중복과 목표 수치를 자동 검사한다.</li>
+          <li><code>check-recovery-readiness.ps1</code>: 비밀값을 기록하지 않고 백업·복원 선행 조건만 검사한다.</li>
+          <li><code>backup-databases.ps1</code>: WordPress DB와 Judge DB를 분리 덤프하고 선택한 보호 파일과 함께 SHA-256 manifest를 만든다.</li>
+          <li><code>restore-rehearsal.ps1</code>: 운영지와 다른 격리 서버의 새 <code>_test</code> DB에만 복원하고 핵심 테이블을 검증한다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="fresh-install">
+        <div class="section-heading">
+          <div><h2>제품 신규 설치와 현재 재구축의 경계</h2><p>빈 환경 설치를 위한 제품 기능과 기존 운영 원본을 보호하는 I-00 절차를 같은 것으로 취급하지 않는다.</p></div>
+          <span class="badge info">서로 다른 진입 조건</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>상황</th><th>판정 근거</th><th>허용 경로</th><th>I-00 관계</th></tr></thead>
+            <tbody>
+              <tr><td>완전한 신규 설치</td><td>설치 ID 없음, 목표 40개 이름 없음, 이전 플랫폼 표식·업무 데이터·동명 충돌 없음</td><td>DS-15의 일시 setup 마법사에서 Judge를 읽기 전용 검사하고 Jobs 4개 뒤 기능 소유 36개를 준비</td><td>빈 로컬·개발 환경은 이전할 원본이 없으므로 legacy DB 복구 증거를 요구하지 않음</td></tr>
+              <tr><td>데이터가 있는 운영 WordPress 또는 Judge</td><td>플랫폼 표식은 없지만 보존해야 할 WordPress·Judge 데이터가 존재</td><td>외부 백업과 격리 복원 증거를 승인한 뒤 신규 플랫폼 영역만 설치</td><td>데이터 보존 범위에는 I-00과 같은 백업·복원 관문을 적용</td></tr>
+              <tr><td>기존 플랫폼 또는 부분 설치</td><td>이전 테이블·옵션·사용자 키, 설치 ID 또는 setup 체크포인트 발견</td><td>같은 설치 ID로 재개하거나 승인형 Migration으로 전환. 새 설치로 덮어쓰기 금지</td><td>코드 재구축은 I-00 개발 기준점이 필수이며 실데이터 전환은 I-09 복구 증거가 필수</td></tr>
+              <tr><td>동명 충돌</td><td>목표 테이블 이름은 존재하지만 설치 ID·소유 revision·구조 fingerprint가 일치하지 않음</td><td>읽기 전용 충돌 보고만 제공하고 자동 채택·이름 변경·삭제 금지</td><td>사람의 원본 판정과 복구 계획 승인 전 진행 금지</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout"><strong>구현 위치:</strong> 제품 신규 설치 마법사와 setup 상태 기계는 <a href="development-ds-15-operations-migration.html#fresh-install">DS-15 신규 설치 절차</a>에 따라 I-01에서 만든다. I-00은 기존 코드의 Git 기준점과 재구축 경계를 고정하며, 운영 데이터 백업을 개발자가 대신 실행하는 단계가 아니다.</div>
+      </section>
+
+      <section class="section" id="recovery">
+        <div class="section-heading">
+          <div><h2>운영 배포용 복구 실행 조건</h2><p>플러그인 개발 완료와 운영 데이터 전환 승인을 같은 단계로 취급하지 않는다.</p></div>
+          <span class="badge wait">I-09에서 실행</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>검사 항목</th><th>상태</th><th>근거·필요 조치</th></tr></thead>
+            <tbody>
+              <tr><td>PHP · Node.js · npm</td><td><span class="badge good">준비</span></td><td>PHP 8.5.5, Node.js 24.15.0, npm 11.12.1 확인</td></tr>
+              <tr><td><code>wp-env</code> 구성·실행 파일</td><td><span class="badge good">도구 계약 준비</span></td><td><code>@wordpress/env 11.10.0</code>과 로컬 구성 생성</td></tr>
+              <tr><td>Docker</td><td><span class="badge wait">개발 단계 비대상</span></td><td>I-09 배포 검증 환경에서 격리 WordPress를 실행할 때 확인</td></tr>
+              <tr><td>MySQL/MariaDB client·dump</td><td><span class="badge wait">개발 단계 비대상</span></td><td>I-09에서 운영자가 승인한 백업·복원 도구를 사용</td></tr>
+              <tr><td>운영 WordPress 경로</td><td><span class="badge good">수집 안 함</span></td><td>플러그인 개발 과정에서 운영 경로나 파일을 요청·탐색하지 않음</td></tr>
+              <tr><td>WP·Judge 원본 연결</td><td><span class="badge good">수집 안 함</span></td><td>플러그인 개발 과정에서 운영 연결 정보와 비밀번호를 받거나 저장하지 않음</td></tr>
+              <tr><td>Judge 격리 복원 대상</td><td><span class="badge wait">배포 시 지정</span></td><td>I-09에서 원본과 다른 server:port 및 새 <code>_test</code> DB를 운영자가 지정</td></tr>
+              <tr><td>암호화 백업 위치</td><td><span class="badge wait">배포 시 지정</span></td><td>I-09에서 Git 작업 폴더 밖의 승인된 암호화 저장소를 운영자가 지정</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="risk"><strong><code>wp-env</code> 개발 도구 위험:</strong> 현재 npm 감사에서 전이 개발 의존성에 high 6건이 보고됐다. 플러그인 운영 runtime 의존성은 아니지만 무시하지 않고 버전 고정·격리 실행·후속 업데이트 대상으로 둔다. 강제 자동 수정은 재현성을 깨뜨리므로 실행하지 않았다.</div>
+        <p>로컬 WordPress 검증 환경은 <a href="https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/">WordPress wp-env 공식 문서</a>의 Docker 기반 절차를 따른다. 기준 WordPress 버전은 <a href="https://wordpress.org/documentation/article/wordpress-versions/">공식 릴리스 목록</a>에서 확인한 7.0.1로 고정했다.</p>
+      </section>
+
+      <section class="section" id="security">
+        <div class="section-heading">
+          <div><h2>보호 원칙</h2><p>백업과 복원 도구 자체가 운영 데이터를 훼손하지 않게 제한한다.</p></div>
+          <span class="badge good">강제 규칙</span>
+        </div>
+        <ul class="check-list">
+          <li>DB 비밀번호는 파일·명령 인수·JSON·Git에 기록하지 않고 실행 중 보안 입력으로만 받는다.</li>
+          <li>백업 위치가 Git 저장소 내부이거나 암호화 저장소 확인이 없으면 백업을 중단한다.</li>
+          <li>WordPress DB와 Judge DB의 host·port·DB가 같으면 잘못된 경계로 판정하고 중단한다.</li>
+          <li>복원 대상은 두 원본 서버와 다른 server:port이어야 하며 DB명은 <code>_test</code>로 끝나야 한다.</li>
+          <li>이미 존재하는 복원 DB는 삭제하거나 덮어쓰지 않는다.</li>
+          <li>복원 원본의 host·port·DB명은 수동 입력을 신뢰하지 않고 서명 대상 manifest에서 읽으며, 두 SQL 파일의 크기와 SHA-256을 다시 확인한다.</li>
+          <li>복원 뒤 WordPress 핵심 테이블과 Judge 기본 8개 테이블을 확인하고 증거 파일의 SHA-256을 남긴다.</li>
+        </ul>
+      </section>
+
+      <section class="section" id="gate">
+        <div class="section-heading">
+          <div><h2>R-01 개발 진입 관문</h2><p>운영 인프라를 직접 다루지 않고 새 플러그인 코드를 만들기 위한 보호 조건이다.</p></div>
+          <span class="badge good">통과</span>
+        </div>
+        <ol class="check-list">
+          <li>원본 코드가 기준 commit <code>a238a8f</code>에 고정됐다.</li>
+          <li>재구축 branch와 worktree가 원본 작업 공간과 분리됐다.</li>
+          <li>기존 runtime 파일·Route·Action·권한·메뉴·옵션·테이블 manifest와 SHA-256이 생성됐다.</li>
+          <li>I-00 당시 동결 목표 GET 151개·Action 132개와 설치 중 일시 계약의 자동 검사가 통과했다. 현재 Action 목표 126개는 R-05 구현 감사 결과다.</li>
+          <li>원본 worktree와 기존 runtime이 변경되지 않았다.</li>
+          <li>운영 DB·파일·접속 정보에 접근하거나 쓰지 않았다.</li>
+          <li>사용자가 기존 코드를 이어 붙이지 않는 완전 재구축과 개발 시작을 확정했다.</li>
+        </ol>
+        <div class="callout"><strong>다음 작업:</strong> 별도 재구축 worktree에서 R-01의 기존 runtime을 정리하고 새 플러그인 골격을 생성한다. 실제 설치·DB 이전·운영 교체 전에는 I-09에서 외부 백업과 격리 복원 증거를 별도로 승인받는다.</div>
+      </section>
+
+      <footer>OJ Platform · I-00 개발 보호 기준선 완료 · R-01 진입 허용 · 운영 복구는 I-09 관문 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

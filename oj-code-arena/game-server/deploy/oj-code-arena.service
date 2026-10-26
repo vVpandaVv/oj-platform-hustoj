@@ -1,0 +1,25 @@
+# systemd unit — copy to /etc/systemd/system/oj-code-arena.service
+# Assumes the server package is unpacked at /opt/oj-code-arena-server and
+# the .env file sits in /opt/oj-code-arena-server/game-server/.env
+[Unit]
+Description=OJ Code Arena game server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/oj-code-arena-server/game-server
+ExecStart=/usr/bin/node src/index.js
+Restart=always
+RestartSec=3
+User=www-data
+Group=www-data
+Environment=NODE_ENV=production
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/oj-code-arena-server/game-server/data
+
+[Install]
+WantedBy=multi-user.target

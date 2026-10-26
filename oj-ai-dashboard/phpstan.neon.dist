@@ -1,0 +1,17 @@
+includes:
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon
+parameters:
+  level: 5
+  phpVersion: 80100
+  tmpDir: .cache/phpstan
+  bootstrapFiles:
+    - tests/phpstan-bootstrap.php
+  stubFiles:
+    - tests/StaticAnalysis/wordpress-filter-boundaries.stub
+  paths:
+    - oj-ai-dashboard.php
+    - src
+  scanFiles:
+    - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+  scanDirectories:
+    - ../oj-integration-rebuild/oj-platform/src/AddonApi/V1

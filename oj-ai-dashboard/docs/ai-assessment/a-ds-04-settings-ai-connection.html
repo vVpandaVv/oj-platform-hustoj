@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-04 설정·비밀값·AI 연결</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-04 설정·비밀값·AI 연결</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html" aria-current="page">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">결론</a>
+          <a href="#purpose">목적·범위</a>
+          <a href="#inputs">동결 입력</a>
+          <a href="#ownership">소유권</a>
+          <a href="#screens">설정 화면</a>
+          <a href="#records">설정 레코드</a>
+          <a href="#policy">평가 정책</a>
+          <a href="#rubric">기본 루브릭</a>
+          <a href="#review">검토 기준</a>
+          <a href="#prompt">Prompt 계약</a>
+          <a href="#routing">플랫폼 AI 연결</a>
+          <a href="#diagnostics">연결 진단</a>
+          <a href="#secrets">비밀값 경계</a>
+          <a href="#versioning">버전·활성화</a>
+          <a href="#runtime">실행 적용</a>
+          <a href="#failures">실패 처리</a>
+          <a href="#legacy">기존 설정</a>
+          <a href="#security">보안·감사</a>
+          <a href="#deferred">후속 이관</a>
+          <a href="#acceptance">수용 기준</a>
+          <a href="#decisions">결정 기록</a>
+          <a href="#completion">완료 판정</a>
+          <a href="#confirm">확인할 결정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">A-DS-04 · Settings, Secrets and AI Connection</p>
+        <h2>설정·비밀값·AI 연결</h2>
+        <p>플랫폼의 AI 연결과 애드온의 평가 정책을 분리한다. OJ Platform은 provider profile·endpoint·인증 비밀값·model routing을 소유하고, AI 평가 애드온은 활동지 자체 평가와 학생 제출 평가의 정책·루브릭·검토 기준을 소유한다.</p>
+        <div class="meta">
+          <span class="badge">작성일 2026-08-12</span>
+          <span class="badge good">A-DS-03 사용자 확인·동결</span>
+          <span class="badge good">상태 사용자 확인·동결</span>
+          <span class="badge good">사용자 확정 2026-08-12</span>
+          <span class="badge">상세 설계 5/17 동결</span>
+          <span class="badge">설정 영역 4개</span>
+          <span class="badge">AI Task 정확히 2개</span>
+          <span class="badge">Runtime 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 결론</h2>
+      <section class="panel">
+        <p>애드온 설정에는 provider·API key·endpoint·model 선택기를 만들지 않는다. 사용자는 애드온에서 평가 정책을 관리하고, <code>연결 및 진단</code>에서 두 AI 작업의 안전한 준비 상태를 확인한 뒤 필요한 설정은 OJ Platform의 운영 화면에서 수행한다.</p>
+        <div class="warning callout"><strong>실행과 설정 분리:</strong> 연결 상태가 정상이어도 정책·루브릭이 준비되지 않으면 평가를 시작하지 않는다. 반대로 정책이 준비돼도 플랫폼 routing이 없으면 직접 provider 호출이나 임시 모델로 우회하지 않는다.</div>
+      </section>
+
+      <h2 id="purpose">목적과 결정 범위</h2>
+      <table>
+        <thead><tr><th>A-DS-04에서 확정</th><th>이번 단계에서 확정하지 않음</th><th>후속 owner</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼 AI 연결과 애드온 평가 설정의 소유권 경계</td><td>provider adapter·SecretVault·모델 catalog의 플랫폼 내부 구현</td><td>OJ Platform C-28·Settings</td></tr>
+          <tr><td>설정 화면 네 영역과 사용자 행동</td><td>Console Route·REST의 정확한 request·response</td><td><code>A-DS-08</code></td></tr>
+          <tr><td>평가 정책·루브릭·검토 기준의 논리 레코드와 revision 규칙</td><td>무접두어 <code>oj_ai_*</code> table·column·index</td><td><code>A-DS-05</code></td></tr>
+          <tr><td>두 AI task의 연결 상태·진단·fail-closed 정책</td><td>queue·retry·timeout·rate limit·비용 한도</td><td><code>A-DS-07</code></td></tr>
+          <tr><td>비밀값 비저장·비노출·감사 원칙</td><td>raw AI 응답의 암호화·보존·삭제 기간</td><td><code>A-DS-05</code>·<code>A-DS-15</code></td></tr>
+          <tr><td>기존 <code>ai_provider</code>·<code>ai_model</code> 설정의 목표 처리</td><td>실제 기존 데이터 변환·삭제·rollback 실행</td><td><code>A-DS-15</code></td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>구현 차단:</strong> 이 문서는 목표 계약이다. A-DS-16 사용자 승인 전 PHP·JavaScript·option·table·migration·OJ Platform Runtime을 변경하지 않는다.</div>
+
+      <h2 id="inputs">동결 입력과 정본</h2>
+      <table>
+        <thead><tr><th>입력</th><th>A-DS-04가 계승하는 결정</th></tr></thead>
+        <tbody>
+          <tr><td><a href="a-d-003-access-settings.html">A-D-003 권한·설정 기준선</a></td><td>provider profile·비밀값·연결 검사는 플랫폼 소유, 애드온은 상태 code만 사용하며 평가 정책·루브릭·검토 기준을 소유</td></tr>
+          <tr><td><a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행 기준선</a></td><td>실제 provider transport는 플랫폼 Gateway만 사용하고 두 평가 subject·input·output·normalizer를 분리</td></tr>
+          <tr><td><a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권 기준선</a></td><td>Assessment가 정책 snapshot을 소유하고 PlatformBridge는 공개 Context·AI Gateway만 감쌈</td></tr>
+          <tr><td><a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a></td><td>C06 설정 화면, 네 설정 영역, 짧은 문구, 읽기 전용 연결 진단과 플랫폼 화면 handoff</td></tr>
+          <tr><td><a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a><br><a href="a-ds-02-addon-api-profile.html">API 소비자 프로필</a></td><td>AI task 정확히 2개, <code>canRoute()</code>·<code>snapshot()</code>·<code>execute()</code>, 비밀값 없는 Runtime Context</td></tr>
+          <tr><td><a href="a-ds-03-access-policy.html">A-DS-03 권한·객체 범위</a></td><td><code>oj_ai_dashboard_manage_policies</code>, 실행·검토·공개 권한 분리와 모든 surface의 복합 Policy</td></tr>
+          <tr><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-api-v1-contract.html">C28-API-V1-LOCK-01</a></td><td>AI routing snapshot의 provider key·model key·profile fingerprint·routing revision만 안전 projection으로 제공</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="ownership">설정 소유권 경계</h2>
+      <table>
+        <thead><tr><th>영역</th><th>OJ Platform</th><th>AI 평가 애드온</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>Provider 연결</td><td>provider profile, endpoint, 인증 비밀값, 허용 작업, 연결 검사</td><td>연결 가능 여부와 안전한 상태 code 소비</td><td>애드온 option·table에 API key·endpoint 복제</td></tr>
+          <tr><td>작업 routing</td><td>task별 주·대체 profile, model, routing revision</td><td>두 task 선언, route snapshot을 실행 이력에 참조</td><td>애드온 model selector·fallback provider</td></tr>
+          <tr><td>평가 정책</td><td>소유하지 않음</td><td>subject별 활성 정책 revision, 입력·출력 계약 참조</td><td>정책에서 provider·model 강제</td></tr>
+          <tr><td>기본 루브릭</td><td>소유하지 않음</td><td>활동지 품질·학생 제출용 rubric template와 revision</td><td>실행 중 사용한 revision을 제자리 수정</td></tr>
+          <tr><td>검토·승인</td><td>소유하지 않음</td><td>검토 우선순위·보류 조건·명시적 공개 기준</td><td>AI 결과 자동 확정·학생 자동 공개</td></tr>
+          <tr><td>Prompt 계약</td><td>provider에 전달하고 결과를 반환</td><td>task별 package-managed prompt contract의 version·hash</td><td>브라우저가 system prompt·provider 요청을 직접 작성</td></tr>
+          <tr><td>실행 안정성</td><td>provider 호출·routing 실패의 안전 결과</td><td>job·attempt·retry·timeout·idempotency</td><td>설정 화면 요청 안에서 장기 AI 실행</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>고정 경계:</strong> 플랫폼 소유 provider profile·비밀값·model routing과 애드온 소유 평가 정책·루브릭·검토 기준을 어떤 option이나 화면에서도 합치지 않는다.</div>
+
+      <h2 id="screens">C06 설정 화면 정보 구조</h2>
+      <pre><code>AI 활동지 · 설정
+├─ 평가 정책
+├─ 기본 루브릭
+├─ 검토·승인 기준
+└─ 연결 및 진단
+
+조건부 보조 진입
+└─ 기존 데이터 이전  [A-DS-15, 감지된 경우만]</code></pre>
+      <table>
+        <thead><tr><th>영역</th><th>화면에 보이는 것</th><th>Primary command</th><th>표시하지 않는 것</th></tr></thead>
+        <tbody>
+          <tr><td>평가 정책</td><td>활동지 점검·학생 평가의 활성 revision, 상태, 적용 시각</td><td>새 revision 만들기</td><td>provider·model·queue driver</td></tr>
+          <tr><td>기본 루브릭</td><td>subject, criterion 수, 총 배점, 사용 중 revision</td><td>루브릭 편집</td><td>AI raw output·실행 로그</td></tr>
+          <tr><td>검토·승인 기준</td><td>검토 필수, 낮은 신뢰도·abstain·safety 처리, 공개 조건</td><td>새 기준 저장</td><td>자동 승인·자동 공개 toggle</td></tr>
+          <tr><td>연결 및 진단</td><td>두 task의 연결됨·설정 필요·잠시 확인 불가·실행 연결 확인 필요·다시 확인 필요, 확인 시각, 짧은 조치</td><td>상태 새로고침</td><td>API key·endpoint·Authorization header·raw 오류</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>문구 원칙:</strong> 일반 화면에는 “연결됨”, “설정 필요”, “잠시 확인 불가”, “실행 연결 확인 필요”, “다시 확인 필요”와 다음 행동만 표시한다. task key·routing revision·correlation ID·provider·model·stack trace와 개발 설명은 표시하지 않는다.</div>
+
+      <h2 id="records">논리 설정 레코드</h2>
+      <p>아래는 도메인 계약이며 실제 물리 table은 A-DS-05에서 확정한다. 물리 저장이 필요하면 WordPress prefix 없이 고정 <code>oj_ai_*</code> 이름만 사용한다.</p>
+      <table>
+        <thead><tr><th>논리 레코드</th><th>핵심 필드</th><th>불변식</th></tr></thead>
+        <tbody>
+          <tr><td><code>EvaluationPolicyRevision</code></td><td>id, subject type, revision, state, rubric revision, review rule revision, prompt contract version, input/output contract version, content hash</td><td>active 뒤 내용 변경 금지</td></tr>
+          <tr><td><code>RubricRevision</code></td><td>id, subject type, revision, criteria, total points, evidence rule, content hash</td><td>criterion ID 안정, 사용된 revision 삭제 금지</td></tr>
+          <tr><td><code>ReviewRuleRevision</code></td><td>id, subject type, review required, confidence threshold, abstain·safety handling, explicit release required, content hash</td><td>필수 사람 검토와 명시 공개를 끌 수 없음</td></tr>
+          <tr><td><code>PromptContractDescriptor</code></td><td>task key, outer contract version, operation key, inner contract, template version, input/output schema version, package hash</td><td>v1 사용자 편집 불가, 허용 operation 조합과 package를 함께 검증</td></tr>
+          <tr><td><code>AiRouteObservation</code></td><td>task key, status, safe code, routing revision, profile fingerprint, checked at, correlation ID</td><td>읽기 전용 진단이며 설정 원본·권한 증명이 아님</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="policy">평가 정책 계약</h2>
+      <table>
+        <thead><tr><th>필드</th><th>활동지 자체 평가</th><th>학생 제출 평가</th><th>규칙</th></tr></thead>
+        <tbody>
+          <tr><td>subject type</td><td><code>worksheet_quality</code></td><td><code>student_submission</code></td><td>서로 바꿔 사용할 수 없음</td></tr>
+          <tr><td>기본 정책</td><td>사이트 활성 revision 1개</td><td>사이트 활성 revision 1개</td><td>published worksheet가 별도 revision을 pin할 수 있음</td></tr>
+          <tr><td>실행 허용</td><td>저장된 immutable worksheet revision</td><td>official submission revision</td><td>draft·mutable 원본 직접 평가 금지</td></tr>
+          <tr><td>평가 결과</td><td>진단 차원·근거·개선안·confidence</td><td>criterion 점수 후보·근거·feedback draft·confidence</td><td>versioned output schema 검증</td></tr>
+          <tr><td>사람 판단</td><td>교사가 해결·보류·기각</td><td>교사가 검토·조정·확정</td><td>AI가 publish·release하지 않음</td></tr>
+          <tr><td>route 선택</td><td>정책 필드에 없음</td><td>정책 필드에 없음</td><td>플랫폼 task routing만 사용</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>기본 정책의 의미:</strong> 기본값은 새 plan을 만들 때 선택할 후보일 뿐이다. 이미 만들어진 plan·실행·평가 결과가 새 기본 revision으로 자동 이동하지 않는다.</div>
+
+      <h2 id="rubric">기본 루브릭 계약</h2>
+      <table>
+        <thead><tr><th>구분</th><th>고정 내용</th><th>검증</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 품질 루브릭</td><td>학습목표 정합성, 명료성, 답변 가능성, 난이도, 루브릭 품질, 안전성 차원을 기본 제공</td><td>dimension ID 중복·누락, 근거 요구, 허용 confidence 범위</td></tr>
+          <tr><td>학생 제출 루브릭</td><td>criterion ID, 설명, max points, weight, evidence 요구, 부분점수 규칙</td><td>총점·weight·문항 binding·점수 범위</td></tr>
+          <tr><td>편집</td><td>draft revision에서 criterion 추가·순서·설명·배점 편집</td><td>저장 전 구조 검증과 차이 미리보기</td></tr>
+          <tr><td>활성화</td><td>검증된 draft만 active 전환</td><td>같은 subject의 활성 기본 revision은 정확히 1개</td></tr>
+          <tr><td>사용 뒤 변경</td><td>새 revision을 만들어 교체</td><td>과거 plan·result가 참조한 revision 보존</td></tr>
+          <tr><td>가져오기·내보내기</td><td>후속 A-DS-15 package 계약에서만 허용</td><td>provider·secret·routing 필드 포함 금지</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="review">검토·승인 기준</h2>
+      <table>
+        <thead><tr><th>규칙</th><th>설정 가능 값</th><th>고정 안전값</th></tr></thead>
+        <tbody>
+          <tr><td>사람 검토</td><td>우선 검토 목록의 정렬·필터</td><td><code>review_required=true</code></td></tr>
+          <tr><td>학생 공개</td><td>공개 대상 field와 후속 workflow는 A-DS-13에서 상세화</td><td><code>explicit_release_required=true</code></td></tr>
+          <tr><td>낮은 confidence</td><td>0~1 범위의 검토 우선순위 threshold</td><td>threshold 미만 결과 자동 반려·0점·공개 금지</td></tr>
+          <tr><td>abstain</td><td>검토 목록 label·담당</td><td>점수 0으로 변환하지 않고 검토 필수</td></tr>
+          <tr><td>safety flag</td><td>운영 알림 대상</td><td>확정·공개 차단, 권한 있는 검토 필요</td></tr>
+          <tr><td>점수 조정</td><td>조정 사유 분류</td><td>원 점수·조정값·actor·reason 감사 보존</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>Threshold 의미:</strong> confidence threshold는 검토 우선순위를 정한다. AI 결과의 사실성·정답성을 보증하거나 사람의 확정 명령을 대신하지 않는다.</div>
+
+      <h2 id="prompt">Prompt·schema 계약</h2>
+      <table>
+        <thead><tr><th>항목</th><th>v1 정책</th><th>이유</th></tr></thead>
+        <tbody>
+          <tr><td>system·instruction template</td><td>애드온 package가 task별 versioned template로 제공</td><td>임의 편집으로 output contract가 깨지는 것을 방지</td></tr>
+          <tr><td>운영자 추가 지침</td><td>v1 설정 화면에서 제공하지 않음</td><td>개발자 문구와 prompt injection 경계를 사용자 설정에 노출하지 않음</td></tr>
+          <tr><td>input schema</td><td>A-DS-10·12의 contract version과 함께 고정</td><td>정책 revision만으로 payload 구조를 바꾸지 않음</td></tr>
+          <tr><td>output schema</td><td>task별 versioned JSON schema와 normalizer가 검증</td><td>자유 형식 텍스트를 점수·공식 결과로 직접 저장하지 않음</td></tr>
+          <tr><td>실행 증거</td><td>template·schema version과 hash만 평가 snapshot에 기록</td><td>감사 log·학생 응답에 prompt 원문 중복 저장 금지</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>G0 구현 인수 <code>C28-I06-AJ08</code>:</strong> Addon API 1.1의 <code>AddonAiTaskInstructionV1</code>이 package-owned instruction을 platform system prompt 다음, 사용자 payload 앞에 적용하고 contract·content hash를 fingerprint에 포함한다. G1은 두 평가 task의 확정 instruction을 Manifest에 선언하며 일반 input으로 우회하지 않는다.</div>
+
+      <h2 id="routing">플랫폼 AI 연결 계약</h2>
+      <table>
+        <thead><tr><th>Task</th><th>sourceKind</th><th>애드온 사용</th><th>플랫폼 운영 위치</th></tr></thead>
+        <tbody>
+          <tr><td><code>addon.oj_ai_dashboard.worksheet_quality_assessment</code></td><td><code>none</code></td><td>활동지 revision을 애드온 input contract로 구성</td><td><code>운영 &gt; 작업별 AI 배정</code></td></tr>
+          <tr><td><code>addon.oj_ai_dashboard.student_submission_assessment</code></td><td><code>addon_payload</code></td><td>정규화 답안·rubric·안전한 추출물을 payload로 전달</td><td><code>운영 &gt; 작업별 AI 배정</code></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>Gateway 호출</th><th>A-DS-04 사용</th><th>제약</th></tr></thead>
+        <tbody>
+          <tr><td><code>canRoute(taskKey)</code></td><td>연결 가능 여부와 안전 code를 진단·preflight에 사용</td><td>권한 증명·실행 성공 보장이 아님</td></tr>
+          <tr><td><code>snapshot(taskKey)</code></td><td>provider key·model key·profile fingerprint·routing revision의 안전 projection 확인</td><td>비밀값·endpoint·raw client 없음</td></tr>
+          <tr><td><code>execute(request)</code></td><td>설정 화면에서 호출하지 않음</td><td>A-DS-07 job worker와 A-DS-10·12 평가 use case만 호출</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>연결 테스트 소유권:</strong> provider 자격 증명 확인과 실제 연결 검사는 OJ Platform의 <code>운영 &gt; AI 연결 프로필</code>에서 수행한다. 애드온 진단 화면은 평가를 가장한 시험 호출을 만들지 않는다.</div>
+
+      <h2 id="diagnostics">연결 및 진단 상태</h2>
+      <table>
+        <thead><tr><th>내부 상태</th><th>사용자 표시</th><th>평가 명령</th><th>다음 행동</th></tr></thead>
+        <tbody>
+          <tr><td><code>ready</code></td><td>연결됨</td><td>정책·권한·원본 preflight 뒤 허용</td><td>없음</td></tr>
+          <tr><td><code>unroutable</code></td><td>설정 필요</td><td>차단</td><td>플랫폼 작업별 AI 배정 확인</td></tr>
+          <tr><td><code>unroutable_transient</code></td><td>잠시 확인 불가</td><td>차단</td><td>다시 확인</td></tr>
+          <tr><td><code>runtime_unavailable</code></td><td>실행 연결 확인 필요</td><td>차단</td><td>플랫폼 상태 열기</td></tr>
+          <tr><td><code>routing_stale</code></td><td>다시 확인 필요</td><td>새 실행 차단, 실행 중 항목은 A-DS-07 정책 적용</td><td>상태 새로고침·plan 재생성</td></tr>
+          <tr><td><code>incompatible</code></td><td>업데이트 필요</td><td>차단</td><td>플랫폼 애드온 상태 확인</td></tr>
+          <tr><td><code>unknown</code></td><td>확인 불가</td><td>차단</td><td>correlation ID로 운영 진단</td></tr>
+        </tbody>
+      </table>
+      <p>두 task는 독립 상태다. 활동지 자체 평가가 연결됐다는 이유로 학생 제출 평가도 준비됐다고 표시하지 않으며, 둘 중 하나가 실패해도 다른 task의 실제 상태를 그대로 보여 준다. 공개 API는 미배정·profile 누락/비허용·source 조건을 모두 <code>addon_ai_task_unroutable</code>로 축약하므로 <code>profile_unavailable</code>을 별도 상태로 추정하지 않는다. <code>retryable=false</code>는 설정 필요, <code>retryable=true</code>는 현재 확인 불가로만 구분한다.</p>
+
+      <h2 id="secrets">비밀값·민감정보 경계</h2>
+      <table>
+        <thead><tr><th>표면</th><th>허용</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>애드온 option·table</td><td>정책·rubric·review revision과 안전한 hash</td><td>API key, token, secret reference, endpoint, Authorization header</td></tr>
+          <tr><td>브라우저 HTML·REST</td><td>상태 label, safe code, 확인 시각, 필요한 경우 correlation ID</td><td>provider secret·endpoint·raw client·전체 stack trace</td></tr>
+          <tr><td>로그·감사</td><td>task key, revision, result code, duration, actor, correlation ID</td><td>비밀값, prompt 원문, 학생 답안 원문, raw provider response</td></tr>
+          <tr><td>내보내기·진단 package</td><td>redacted 설정 revision·hash와 안전 상태</td><td>플랫폼 AI profile 원문·비밀 참조·환경 변수</td></tr>
+          <tr><td>오류 메시지</td><td>allowlist code와 사용자 조치</td><td>exception message·class·절대 경로·SQL</td></tr>
+        </tbody>
+      </table>
+      <div class="risk callout"><strong>저장 0건:</strong> 애드온은 provider credential을 암호화해서 보관하는 기능도 만들지 않는다. 암호화 저장소를 중복 구현하는 것이 아니라 비밀값 자체를 받지 않는 것이 경계다.</div>
+
+      <h2 id="versioning">설정 revision과 활성화</h2>
+      <pre><code>EvaluationPolicyRevision / RubricRevision / ReviewRuleRevision
+
+draft → active → retired
+  |        |
+  |        `-- 사용된 내용 변경 금지, 새 revision으로 교체
+  `-- 검증 실패 시 draft 유지
+
+plan 생성
+  active policy + rubric + review + prompt contract + routing snapshot
+      `-- ID·version·hash를 immutable snapshot으로 고정</code></pre>
+      <table>
+        <thead><tr><th>행동</th><th>규칙</th></tr></thead>
+        <tbody>
+          <tr><td>draft 저장</td><td>구조 검증을 통과하지 못해도 명시적 validation 오류와 함께 draft로만 보존</td></tr>
+          <tr><td>active 전환</td><td>필수 참조·schema compatibility·subject 일치·총점 검사를 모두 통과하고 optimistic version 확인</td></tr>
+          <tr><td>기존 active 교체</td><td>새 revision을 active로 만든 transaction 안에서 기존 revision을 retired 처리</td></tr>
+          <tr><td>삭제</td><td>어떤 plan·run·result도 참조하지 않는 draft만 허용, active·retired는 삭제 금지</td></tr>
+          <tr><td>동시 편집</td><td>stale version 저장 거부, 최신 revision과 diff를 보여 주고 명시 재적용</td></tr>
+          <tr><td>rollback</td><td>retired revision을 제자리 복원하지 않고 그 내용으로 새 revision을 생성</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="runtime">평가 실행에 설정을 적용하는 순서</h2>
+      <div class="flow">
+        <div class="step"><div><strong>1 · 권한과 대상</strong><br>A-DS-03 capability·Context·객체·state를 확인한다.</div></div>
+        <div class="step"><div><strong>2 · 정책 snapshot</strong><br>subject에 맞는 active policy·rubric·review·prompt contract의 ID·version·hash를 고정한다.</div></div>
+        <div class="step"><div><strong>3 · AI route</strong><br><code>canRoute()</code>와 <code>snapshot()</code>으로 현재 task routing을 확인하고 snapshot을 plan에 고정한다.</div></div>
+        <div class="step"><div><strong>4 · Plan ready</strong><br>원본·첨부·계약·한도와 명시 검토·공개 규칙을 검증한다.</div></div>
+        <div class="step"><div><strong>5 · Job 실행</strong><br>A-DS-07 worker가 같은 idempotency key와 고정 snapshot으로 <code>execute()</code>를 호출한다.</div></div>
+        <div class="step"><div><strong>6 · 검토·공개</strong><br>schema 검증 결과를 교사가 검토하고 별도 확정·공개 명령을 수행한다.</div></div>
+      </div>
+      <div class="warning callout"><strong>Mutable 재조회 금지:</strong> job이 시작된 뒤 현재 기본 정책이나 현재 routing을 다시 읽어 기존 plan의 의미를 바꾸지 않는다. 고정 snapshot과 현재 실행 가능 여부가 충돌하면 stale·failed로 닫고 새 plan을 만든다.</div>
+
+      <h2 id="failures">실패·복구 정책</h2>
+      <table>
+        <thead><tr><th>상황</th><th>저장 상태</th><th>사용자 경험</th><th>복구</th></tr></thead>
+        <tbody>
+          <tr><td>정책·루브릭 없음</td><td><code>policy_not_ready</code></td><td>평가 시작 비활성, 부족한 설정 표시</td><td>새 revision 활성화</td></tr>
+          <tr><td>task 미배정·profile 누락/비허용·source 조건</td><td><code>addon_ai_task_unroutable</code></td><td>설정 필요 또는 현재 확인 불가</td><td>raw message로 원인을 추정하지 않고 플랫폼 작업 배정·연결 프로필을 함께 확인</td></tr>
+          <tr><td>Runtime callback 없음</td><td><code>addon_runtime_unavailable</code></td><td>확인 불가, 업무 쓰기 차단</td><td>플랫폼 상태 확인</td></tr>
+          <tr><td>routing 변경</td><td><code>routing_stale</code></td><td>기존 plan 재확인 필요</td><td>새 preflight·새 plan</td></tr>
+          <tr><td>설정 동시 편집</td><td><code>settings_conflict</code></td><td>저장되지 않음, 변경 비교</td><td>최신 revision에서 재적용</td></tr>
+          <tr><td>provider 일시 오류</td><td>이 단계에서 설정 오류로 바꾸지 않음</td><td>실행 화면에서 재시도 상태</td><td>A-DS-07 retry 정책</td></tr>
+          <tr><td>output schema 불일치</td><td><code>output_invalid</code></td><td>AI 완료로 표시하지 않음</td><td>계약·provider 응답 확인 후 새 attempt</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="legacy">기존 설정 처리</h2>
+      <table>
+        <thead><tr><th>기존 필드·플래그</th><th>A-DS-04 판정</th><th>A-DS-15 이전 원칙</th></tr></thead>
+        <tbody>
+          <tr><td><code>ai_provider</code></td><td>폐기 대상, 실행에서 읽지 않음</td><td>값을 플랫폼 profile로 자동 복사하지 않고 존재 여부만 보고</td></tr>
+          <tr><td><code>ai_model</code></td><td>폐기 대상, 정책 field로 이전하지 않음</td><td>플랫폼 task routing을 운영자가 새로 확인</td></tr>
+          <tr><td><code>queue_batch_limit</code></td><td>A-DS-04 설정에서 제외</td><td>A-DS-07이 실제 worker 계약을 확정한 뒤 명시 이전 여부 결정</td></tr>
+          <tr><td><code>assistant_role_enabled</code></td><td>평가 설정이 아님</td><td>A-DS-03 권한 이관 미리보기에서만 처리</td></tr>
+          <tr><td><code>oj_platform_available</code> 등 큰 flag</td><td>개별 Runtime·Context·task 상태로 교체</td><td>저장값을 신규 준비 상태로 자동 변환하지 않음</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>자동 이전 금지:</strong> 기존 provider·model 문자열은 비밀값의 출처·정합성·권한을 보증하지 않는다. OJ Platform 설정으로 자동 기록하거나 새 평가의 routing 근거로 사용하지 않는다.</div>
+
+      <h2 id="security">보안·권한·감사</h2>
+      <table>
+        <thead><tr><th>행동</th><th>필수 권한·검사</th><th>감사 필드</th></tr></thead>
+        <tbody>
+          <tr><td>설정 C06 진입</td><td><code>oj_access_console</code> + <code>oj_ai_dashboard_view_workspace</code> + <code>oj_ai_dashboard_manage_policies</code></td><td>조회 자체는 민감 상세 접근 때만 기록</td></tr>
+          <tr><td>draft 저장</td><td><code>manage_policies</code>, schema validation, optimistic version</td><td>actor, record type·id, before/after hash, reason, correlation ID</td></tr>
+          <tr><td>active 전환</td><td><code>manage_policies</code>, 참조·subject·schema 검증</td><td>old/new active revision, 검증 결과, 시각</td></tr>
+          <tr><td>연결 상태 조회</td><td>C06 Policy와 accepted Runtime</td><td>task key, safe code, routing revision, checked at, correlation ID</td></tr>
+          <tr><td>플랫폼 운영 화면 이동</td><td>애드온은 플랫폼 권한을 추정하거나 우회하지 않음</td><td>플랫폼이 자체 접근·변경 감사를 소유</td></tr>
+        </tbody>
+      </table>
+      <p>애드온 감사에는 설정 원문 전체를 넣지 않고 revision ID와 hash를 남긴다. 루브릭·정책 내용은 권한 있는 상세 조회로만 읽고 학생·PublicUI·일반 보고서 projection에 포함하지 않는다.</p>
+
+      <h2 id="deferred">후속 단계 이관</h2>
+      <table>
+        <thead><tr><th>후속</th><th>이관 계약</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS-05</code></td><td>정책·rubric·review revision의 고정 <code>oj_ai_*</code> table·column·index·FK·migration</td></tr>
+          <tr><td><code>A-DS-07</code></td><td>routing snapshot을 포함한 job·attempt·retry·timeout·rate limit·비용·취소</td></tr>
+          <tr><td><code>A-DS-08</code></td><td>C06 Route·REST·nonce·오류 DTO와 플랫폼 운영 화면 handoff URL</td></tr>
+          <tr><td><code>A-DS-09</code></td><td>published worksheet가 pin하는 policy·rubric revision과 편집·발행 UI</td></tr>
+          <tr><td><code>A-DS-10</code></td><td>활동지 자체 평가 prompt·input/output schema·normalizer의 정확한 contract version</td></tr>
+          <tr><td><code>A-DS-12</code></td><td>학생 제출 평가 rubric binding·prompt·input/output schema·normalizer</td></tr>
+          <tr><td><code>A-DS-13</code></td><td>검토·조정·확정·release의 상태와 공개 field</td></tr>
+          <tr><td><code>A-DS-15</code></td><td>기존 option 감지·미리보기·승인 이전·비밀 비복사·rollback</td></tr>
+          <tr><td><code>A-DS-16</code></td><td>secret 정적 검사, 두 task routing E2E, 설정 revision 재현성과 전체 추적 동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="acceptance">A-DS-04 수용 기준</h2>
+      <table>
+        <thead><tr><th>ID</th><th>검증</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS04-A01</code></td><td>설정 화면이 평가 정책·기본 루브릭·검토·승인 기준·연결 및 진단 네 영역으로 구성됨</td></tr>
+          <tr><td><code>A-DS04-A02</code></td><td>애드온 option·table·HTML·REST·log·export에 provider credential·endpoint·Authorization header 저장 0건</td></tr>
+          <tr><td><code>A-DS04-A03</code></td><td>provider·model routing 편집은 OJ Platform에만 있고 애드온은 두 task의 안전 상태만 읽음</td></tr>
+          <tr><td><code>A-DS04-A04</code></td><td>연결 진단이 <code>canRoute()</code>·<code>snapshot()</code>만 사용하고 <code>execute()</code> 시험 호출은 0건</td></tr>
+          <tr><td><code>A-DS04-A05</code></td><td>활동지 자체 평가와 학생 제출 평가의 policy·rubric 기본 revision이 분리됨</td></tr>
+          <tr><td><code>A-DS04-A06</code></td><td>active·retired 설정은 제자리 수정·삭제되지 않고 모든 실행이 ID·version·hash snapshot을 보존함</td></tr>
+          <tr><td><code>A-DS04-A07</code></td><td><code>review_required=true</code>와 <code>explicit_release_required=true</code>를 UI·REST로 끌 수 없음</td></tr>
+          <tr><td><code>A-DS04-A08</code></td><td>confidence·abstain·safety 기준이 검토 우선순위·차단에만 쓰이고 자동 확정·0점·공개를 만들지 않음</td></tr>
+          <tr><td><code>A-DS04-A09</code></td><td>두 task가 독립적으로 연결됨·설정 필요·잠시 확인 불가·실행 연결 확인 필요·다시 확인 필요 상태와 짧은 다음 행동을 표시함</td></tr>
+          <tr><td><code>A-DS04-A10</code></td><td>C06 조회·저장·활성화가 A-DS-03 복합 Policy와 <code>manage_policies</code>를 동일하게 적용함</td></tr>
+          <tr><td><code>A-DS04-A11</code></td><td>기존 <code>ai_provider</code>·<code>ai_model</code>이 실행·신규 정책에 사용되지 않고 자동 플랫폼 이전도 하지 않음</td></tr>
+          <tr><td><code>A-DS04-A12</code></td><td>일반 사용자 화면에 task key·revision·correlation ID·개발 설명을 기본 노출하지 않고 오류를 빈 상태로 숨기지 않음</td></tr>
+          <tr><td><code>A-DS04-A13</code></td><td>C28 AI Task API의 공개 field·오류·비밀 비노출 계약과 A-DS-04 진단 상태가 자동 교차 검증되며 <code>profile_unavailable</code>을 raw message에서 추정하지 않음</td></tr>
+          <tr><td><code>A-DS04-A14</code></td><td>애드온·플랫폼 Runtime 변경 0건과 고정 무접두어 <code>oj_ai_*</code> 원칙이 유지됨</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">사용자 확인 결정 기록</h2>
+      <table>
+        <thead><tr><th>ID</th><th>확정 제안</th><th>영향</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS04-D01</code></td><td>provider profile·endpoint·비밀값·model routing은 OJ Platform만 소유한다.</td><td>애드온의 중복 AI 연결 설정 제거</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D02</code></td><td>애드온 설정은 평가 정책·기본 루브릭·검토·승인 기준·연결 및 진단 네 영역으로 고정한다.</td><td>C06 정보 구조와 REST owner 고정</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D03</code></td><td>애드온 DB·option·브라우저·로그·내보내기에 provider 비밀값·endpoint를 저장하거나 노출하지 않는다.</td><td>비밀 저장소 중복과 유출 경로 제거</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D04</code></td><td>연결 진단은 두 task의 <code>canRoute()</code>·<code>snapshot()</code>만 사용하고 시험 <code>execute()</code>를 호출하지 않는다.</td><td>진단과 실제 평가·비용 분리</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D05</code></td><td>두 task의 연결 상태를 독립적으로 표시하고 하나의 큰 “AI 연결됨” flag를 만들지 않는다.</td><td>부분 설정·부분 장애를 정확히 표현</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D06</code></td><td>활동지 자체 평가와 학생 제출 평가의 정책·루브릭 기본 revision을 분리한다.</td><td>서로 다른 subject·schema·민감도 보존</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D07</code></td><td>정책·루브릭·검토 기준은 <code>draft → active → retired</code> revision으로 관리하고 사용 뒤 제자리 수정하지 않는다.</td><td>평가 재현성과 감사 보장</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D08</code></td><td>v1 prompt template은 package-managed contract로 두고 일반 설정 화면에서 편집하지 않는다.</td><td>schema 불일치와 복잡한 개발 문구 노출 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D09</code></td><td><code>review_required=true</code>를 고정하고 AI 결과 자동 확정 기능을 제공하지 않는다.</td><td>교사 최종 판단 유지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D10</code></td><td><code>explicit_release_required=true</code>를 고정하고 승인과 학생 공개를 별도 명령으로 유지한다.</td><td>검토 결과의 의도하지 않은 공개 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D11</code></td><td>confidence·abstain·safety 기준은 검토 우선순위와 차단에만 사용한다.</td><td>낮은 신뢰도를 0점·자동 반려로 오해하지 않음</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D12</code></td><td>모든 plan은 policy·rubric·review·prompt·schema·routing의 ID·version·hash snapshot을 고정한다.</td><td>설정 변경 뒤에도 과거 실행 재현</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D13</code></td><td>설정 화면은 일반 상태와 다음 행동을 먼저 보여 주고 기술 식별자는 권한 있는 상세에만 표시한다.</td><td>직관적인 UI와 안전한 진단</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D14</code></td><td>플랫폼 연결·routing이 없거나 stale이면 평가를 fail closed하고 직접 provider·임시 model로 우회하지 않는다.</td><td>실제 실행과 운영 설정의 일치</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D15</code></td><td>기존 <code>ai_provider</code>·<code>ai_model</code>은 폐기 대상으로 보고 플랫폼 설정에 자동 복사하지 않는다.</td><td>잘못된 연결·비밀 이전 방지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D16</code></td><td><code>queue_batch_limit</code> 등 실행 설정은 A-DS-07에서 실제 worker 계약과 함께 결정한다.</td><td>dead setting과 화면 책임 혼합 제거</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D17</code></td><td>C06 조회·변경은 <code>oj_ai_dashboard_manage_policies</code>와 A-DS-03 복합 Policy를 사용하고 플랫폼 운영 권한을 우회하지 않는다.</td><td>설정 권한과 플랫폼 권한 경계 유지</td><td>사용자 확인·동결</td></tr>
+          <tr><td><code>A-DS04-D18</code></td><td>A-DS-16 승인 전 Runtime·table을 구현하지 않고 향후 물리 table은 고정 무접두어 <code>oj_ai_*</code>만 사용한다.</td><td>설계 단계와 플랫폼 무수정 원칙 유지</td><td>사용자 확인·동결</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="completion">A-DS-04 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>현재 판정</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼·애드온 설정 소유권</td><td>충족</td><td>provider·routing과 policy·rubric·review 경계</td></tr>
+          <tr><td>C06 네 설정 영역과 사용자 행동</td><td>충족</td><td>평가 정책·기본 루브릭·검토·승인 기준·연결 및 진단</td></tr>
+          <tr><td>정책·루브릭·검토 논리 레코드</td><td>충족</td><td>revision·state·hash·불변 참조 계약</td></tr>
+          <tr><td>두 task routing·진단 상태</td><td>충족</td><td><code>canRoute()</code>·<code>snapshot()</code>·안전 상태 표</td></tr>
+          <tr><td>비밀값 비저장·비노출</td><td>충족</td><td>option·table·브라우저·로그·export 금지 표</td></tr>
+          <tr><td>사람 검토·명시 공개 고정</td><td>충족</td><td><code>review_required=true</code>·<code>explicit_release_required=true</code></td></tr>
+          <tr><td>기존 설정·후속 owner</td><td>충족</td><td>A-DS-05·07·08·09·10·12·13·15·16 이관</td></tr>
+          <tr><td>수용 기준</td><td>충족</td><td><code>A-DS04-A01~A14</code></td></tr>
+          <tr><td>사용자 결정 확인</td><td>충족</td><td>2026-08-12 <code>A-DS04-D01~D18</code> 사용자 확인·동결</td></tr>
+          <tr><td>애드온·플랫폼 Runtime 변경</td><td>0건</td><td>HTML 설계·검증 문서만 변경</td></tr>
+        </tbody>
+      </table>
+
+      <section class="panel" id="confirm">
+        <h2>확정한 결정</h2>
+        <p>2026-08-12 위 18개 결정을 사용자 확인으로 동결했다. AI 연결 소유권, 네 설정 영역, policy·rubric·review revision, 두 task 진단, 비밀값 비노출과 기존 설정 처리 방향을 한 묶음으로 유지한다.</p>
+        <ol>
+          <li>provider·비밀값·model routing은 플랫폼에만 두고 애드온에는 평가 설정만 두는 경계를 확인한다.</li>
+          <li>평가 정책·기본 루브릭·검토·승인 기준·연결 및 진단 네 영역을 확인한다.</li>
+          <li>사람 검토·명시 공개를 끌 수 없고 prompt를 v1 일반 설정에서 편집하지 않는 원칙을 확인한다.</li>
+          <li>두 task의 독립 진단, fail-closed와 기존 provider·model 자동 이전 금지를 확인한다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>사용자 확정·동결:</strong> <code>A-DS04-D01~D18</code>을 2026-08-12 확정했다. 다음 단계는 <a href="a-ds-05-addon-database.html"><code>A-DS-05 애드온 데이터베이스</code></a> 상세 설계다. 2026-08-13 <a href="platform-api-implementation-audit.html#findings"><code>API-AUD-F06 / C28-I06-AJ06</code></a>에 따라 공개 API로 구분할 수 없는 profile 전용 진단을 통합 상태로 정정했다. C28-I06 릴리스·소비자 인수와 A-DS-16 구현 승인은 별도 선행 관문이다.</div>
+
+      <div class="callout"><strong>A-DS13-CA01 설정 Amendment · 사용자 확인·동결:</strong> <code>student_submission</code> 정책 snapshot은 manifest outer <code>student_submission_assessment.v1</code>과 operation별 inner <code>submission_score.v1|submission_feedback.v1</code>·schema·prompt section의 ID·version·hash를 함께 고정한다. 현재 기본값 재조회나 operation 간 prompt·output 재사용은 금지한다.</div>
+
+      <div class="callout"><strong>A-DS14-CA01 설정 Amendment · 사용자 확인·동결:</strong> <code>student_submission</code> 정책 snapshot은 <code>student_submission_assessment.v1</code> outer와 <code>submission_score.v1|submission_feedback.v1|student_special_note.v1</code> inner 계약, operation별 schema와 prompt section의 ID·version·hash를 함께 고정한다. 특기사항 AI 생성은 G1 Manifest에 <code>C28-I06-AJ08</code> instruction이 등록되기 전 비활성화하며 교사 직접 기록은 유지한다.</div>
+      <div class="good callout"><strong>CFG-BOOTSTRAP-02 구현 완료:</strong> <a href="g5-imp-04-assessment-configuration.html">G5-IMP-04-S01~S05</a>에서 두 subject의 package-owned 안전 seed, Q25~Q27, C55~C60과 OJ Console 네 영역 UI를 구현했다. 기존 자료가 하나라도 있으면 subject 전체를 보존하고 AI 동의·provider·model·비밀값은 만들지 않는다.</div>
+      <div class="good callout"><strong>G4-IMP-02-R01 연결 및 진단 구현:</strong> <a href="g4-imp-02-r01-submission-external-ai-consent.html">학생 제출 외부 AI 동의</a>를 추가해 같은 설정 화면 안에서 <strong>활동지 평가</strong>와 <strong>학생 제출 평가</strong> 두 탭을 바로 전환한다. 각 탭은 서로 다른 Q37/C76/C77 또는 Q38/C78/C79 경로와 exact task·전송 범주를 사용하며 한쪽 승인을 다른 쪽에 재사용하지 않는다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S01 진단 인수:</strong> Q28의 Bridge·schema·queue 검사는 AI Gateway의 <code>canRoute()</code>·<code>snapshot()</code>·<code>execute()</code>를 호출하지 않는다. provider·model·endpoint·credential은 응답에 없으며 두 task routing은 S02에서 읽기 전용 공개 메서드만 연결한다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S02 AI routing 인수:</strong> 활동지 자체 평가와 학생 제출 평가를 각각 <strong>연결됨·설정 필요·잠시 확인 불가·실행 연결 확인 필요·다시 확인 필요</strong>로 판정한다. Q28은 provider·model을 표시하지 않고 원본 Problem message·details를 버린다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S03 비밀 보호 인수:</strong> <a href="g5-imp-05-s03-storage-secret-diagnostics.html">Q28 전체 projection</a>에서 storage 경로·파일명·저장 키·해시와 provider·model·endpoint·credential·Authorization을 canary로 재검사했다. 운영 화면에는 상태와 다음 행동만 전달한다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S04 운영 화면 인수:</strong> <a href="g5-imp-05-s04-operations-ui-regression.html">시스템 상태 탭</a>은 기존 설정 Page와 Console 공통 권한을 재사용한다. Q28의 집계 상태·시각·허용된 다음 행동과 두 task의 <code>status</code>만 소비하며 code·details·issues·path·metrics와 task 내부의 다른 값은 DOM에 넣지 않는다.</div>
+      <div class="good callout"><strong>0.1.15 구현 확인:</strong> 두 task 상태를 화면에 독립 표시하고 미배정은 AI 작업 배정, Runtime 관찰 실패는 플랫폼 상태, 일시 오류는 다시 확인으로 연결한다. 공개 Addon API와 OJ Platform source 변경은 0건이다.</div>
+
+      <p class="footer">A-DS-04 설정·비밀값·AI 연결 · 0.1.15 두 AI 작업 독립 상태·원인별 복구 행동 확인 · AI execute 0회 · Platform API change: 0</p>
+    </main>
+  </div>
+</body>
+</html>

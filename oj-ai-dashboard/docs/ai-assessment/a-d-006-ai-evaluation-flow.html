@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-D-006 평가와 AI 실행 흐름</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-D-006 평가와 AI 실행 흐름</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html" aria-current="page">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">판정</a>
+          <a href="#scope">범위·소유권</a>
+          <a href="#evidence">조사 근거</a>
+          <a href="#entrypoints">현재 진입점</a>
+          <a href="#current-score">현재 점수 흐름</a>
+          <a href="#plan">평가 계획</a>
+          <a href="#input">입력·지문</a>
+          <a href="#output">출력·정규화</a>
+          <a href="#runtime">실행·재시도</a>
+          <a href="#review">검토·공개</a>
+          <a href="#target-tasks">목표 AI task</a>
+          <a href="#target-flow">목표 실행 흐름</a>
+          <a href="#contracts">목표 계약</a>
+          <a href="#security">보안·개인정보</a>
+          <a href="#findings">발견 격차</a>
+          <a href="#target">목표 구성요소</a>
+          <a href="#decision">확인할 결정</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <p class="notice">이 문서는 당시 구현의 조사 기록입니다. 아래에서 제거됨으로 표시한 구형 소스는 현재 사용되지 않아 정리했습니다. <a href="retired-runtime-removal-2026-10-20.html">제거 범위와 유지한 호환 기능</a>을 참고하세요.</p>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-D-006 · Evaluation and AI Runtime Baseline</p>
+        <h2>평가와 AI 실행 흐름</h2>
+        <p>활동지 자체 평가와 학생 제출 평가가 현재 어디서 시작되고, 어떤 입력·provider·normalizer·저장·검토·공개 경로를 거치는지 코드에서 역추적했다. 이 문서는 AI라는 이름과 실제 실행을 구분하고, OJ Platform의 AI 연결 경로와 애드온 평가 실행환경을 결합하는 목표 기준선이다.</p>
+        <div class="meta">
+          <span class="badge">조사일 2026-08-10</span>
+          <span class="badge">상태 사용자 확인·기준선 확정</span>
+          <span class="badge">플랫폼 addon task 2종 설계</span>
+          <span class="badge">활동지 자체 평가 경로 0개</span>
+          <span class="badge">실제 provider transport 0개</span>
+          <span class="badge">평가 REST 16경로·17작업</span>
+          <span class="badge">AI 대체 filter 3개</span>
+          <span class="badge">평가 자동 테스트 0개</span>
+          <span class="badge">실행 코드 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 판정</h2>
+      <section class="panel">
+        <p>현재 애드온에는 실제 AI provider 호출도 활동지 자체 평가도 없다. 학생 제출의 “AI 채점”은 요청자가 보낸 결과, 수동 점수, WordPress filter, 정답 문자열 일치 규칙을 같은 AI 결과로 저장하는 동기식 경로이며, 평가 계획의 준비 완료 상태와도 연결되지 않는다. 기존 흐름을 확장하기보다 출처를 분리하고 플랫폼 gateway를 사용하는 비동기 평가 실행으로 교체해야 한다.</p>
+        <div class="warning callout"><strong>실행환경 판정:</strong> 평가 화면, queue·worker, 입력·출력 schema, 정책, 결과 이력과 교사 검토는 AI 평가 애드온이 소유한다. OJ Platform의 <code>운영 &gt; AI 작업 배정</code>은 provider profile·model·주/대체 routing을 선택하는 설정이며 평가 화면이 아니다. 실제 provider 접근만 플랫폼 <code>AddonAiTaskGatewayV1</code>을 통과한다.</div>
+      </section>
+
+      <h2 id="scope">평가 범위와 소유권</h2>
+      <table>
+        <thead><tr><th>대상</th><th>현재</th><th>목표 소유권</th><th>학생 공개</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 자체 평가</td><td>화면·REST·service·result 0개</td><td>애드온이 특정 immutable worksheet revision을 독립 subject로 평가</td><td>진단·개선안은 기본 비공개, AI가 자동 수정·발행하지 않음</td></tr>
+          <tr><td>학생 제출 평가</td><td>submission ID 기반 동기 score 경로 1개</td><td>애드온이 published grading snapshot과 immutable submission revision을 평가</td><td>교사가 확정하고 별도로 공개한 score·feedback revision만</td></tr>
+          <tr><td>학생 피드백 초안</td><td>직접 text·filter·점수 문자열 fallback</td><td>학생 제출 평가의 후속 operation과 독립 검토 artifact</td><td>승인과 공개를 분리하고 published revision만</td></tr>
+          <tr><td>특기사항 초안</td><td>직접 text·filter·문자열 조합 fallback, draft 이후 명령 없음</td><td>학생 제출 평가의 후속 operation과 독립 교사 기록 artifact</td><td>학생 공개 대상이 아니며 보고서 포함은 별도 승인</td></tr>
+          <tr><td>Plate 작성 보조</td><td>비표준 endpoint 실패를 Faker stream으로 대체</td><td>평가와 분리된 교사 authoring command. v1 평가 task에 포함하지 않음</td><td>없음</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>두 평가의 공통 기반과 분리:</strong> queue, platform routing gateway, attempt 기록, schema validator와 감사 형식은 공유할 수 있다. 그러나 subject, input builder, prompt profile, output schema, normalizer, 결과 aggregate와 공개 정책은 공유하지 않는다.</div>
+
+      <h2 id="evidence">조사 근거</h2>
+      <table>
+        <thead><tr><th>근거 코드·문서</th><th>확인 범위</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Ai_Scoring_Service.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Assessment_Service.php</code> (제거됨)</span></td><td>점수 출처, 실행 순서, 결과 재사용·재채점</td><td>provider 호출 없이 네 입력 경로를 동기 실행하고 모두 <code>raw_ai_response</code>로 저장</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Assessment_Rest_Controller.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>admin-actions.js</code> (제거됨)</span></td><td>REST·화면·일괄 실행</td><td>16개 route pattern·17개 operation, worksheet self-evaluation 0개, 브라우저가 제출별 요청을 순차 실행</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Assessment_Plan_Service.php</code> (제거됨)</span></td><td>계획·preflight·실행 관문</td><td>과제·루브릭·성취기준·로컬 학생 매핑만 검사하고 score 요청은 plan ID·ready를 요구하지 않음</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Grading_Input_Builder.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Grading_Fingerprint_Service.php</code> (제거됨)</span></td><td>채점 입력과 idempotency</td><td>직접 학생 ID·file URL을 포함하고 답안 배열을 ID map으로 오인하며 prompt·schema·routing revision은 fingerprint에서 누락</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Scoring_Normalizer.php</code> (제거됨)</span><br><a href="../../src/Database/Schema.php"><code>Schema.php</code></a><br><a href="../../src/Database/Status_Values.php"><code>Status_Values.php</code></a></td><td>출력 정규화, run·result 상태와 저장 제약</td><td>점수 clamp·서버 합계는 있으나 JSON schema, 근거·신뢰도·abstain, attempt·lease·retry·비용 계약이 없음</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Feedback_Service.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Special_Note_Service.php</code> (제거됨)</span></td><td>후속 생성·승인·공개</td><td>run·provider 증거 없이 생성하며 feedback 승인과 공개가 한 명령, 특기사항은 draft 이후 전이 명령이 없음</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Dashboard_Service.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>dashboard-frontend.js</code> (제거됨)</span></td><td>학생 결과 노출</td><td>accepted 점수는 즉시 조회되고 published feedback은 ID·상태만 표시되며 본문 조회 UI·REST가 연결되지 않음</td></tr>
+          <tr><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html#runtime-gateways"><code>C28-D11</code></a></td><td>플랫폼 AI task 선언·배정·실행 계약</td><td>addon task 2종, <code>canRoute</code>·<code>snapshot</code>·<code>execute</code>, routing 정보 비밀 비노출이 설계됨. 현재 플랫폼 PHP 구현 검색 결과는 0개</td></tr>
+          <tr><td><a href="../../tests/bootstrap.php"><code>tests/bootstrap.php</code></a><br><span title="2026-10-20 제거된 구형 소스"><code>plate-editor-visual.html</code> (제거됨)</span></td><td>자동 검증</td><td>bootstrap과 Plate 시각 fixture만 있으며 평가 입력·정규화·상태·재시도·권한·공개 테스트는 0개</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="entrypoints">현재 평가 진입점</h2>
+      <table>
+        <thead><tr><th>업무</th><th>현재 진입점</th><th>실행 주체</th><th>핵심 누락</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 자체 평가</td><td>없음</td><td>없음</td><td>worksheet revision subject·input·result·review 전체</td></tr>
+          <tr><td>학생 제출 점수 생성</td><td><code>POST /assessments/{submission_id}/score</code></td><td>교사 브라우저 요청 안의 PHP</td><td>plan 관문, queue, 실제 provider, object scope, timeout·retry</td></tr>
+          <tr><td>평가 계획</td><td><code>/assessment-plans</code> 계열 6작업</td><td>교사 화면과 PHP</td><td>실행 batch·item·checkpoint 연결</td></tr>
+          <tr><td>결과·재채점 검토</td><td>accept·reject·regrade GET/accept/reject 5작업</td><td>교사 브라우저</td><td>원자 교체, 엄격한 source-state guard, 공개 revision 분리</td></tr>
+          <tr><td>피드백</td><td>generate·approve·reject·unpublish 4작업</td><td>교사 브라우저와 filter</td><td>실제 AI run, approve/publish 분리, 학생 본문 조회</td></tr>
+          <tr><td>특기사항</td><td>generate 1작업</td><td>교사 브라우저와 filter</td><td>review·approve·include 명령과 감사</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>권한 경계:</strong> 각 route는 capability와 쓰기 nonce를 검사하지만 submission·assignment·student·plan 객체 범위는 permission callback에서 확인하지 않는다. 목표 명령은 플랫폼 context authorization과 애드온 소유 관계를 AND로 검사한 뒤 enqueue해야 한다.</div>
+
+      <h2 id="current-score">현재 “AI 채점” 흐름</h2>
+      <pre><code>교사 score 클릭
+  --&gt; model_key = "manual-or-filtered-ai"
+  --&gt; policy_version = "score-v1"
+  --&gt; 현재 submission + assignment + attachment metadata 조회
+  --&gt; grading input·rubric hash·fingerprint 생성
+  --&gt; assessment_run을 곧바로 running으로 생성
+  --&gt; Ai_Scoring_Service::score()
+       1. request payload.ai_result 그대로 반환
+       2. manual_items/items를 AI 응답 형태로 변환
+       3. oj_ai_dashboard_ai_score_result filter 반환
+       4. 정답 문자열 완전 일치면 만점, 아니면 0점
+  --&gt; Scoring_Normalizer가 문항 점수 clamp·합계 계산
+  --&gt; raw_ai_response + normalized_result + grading_items 저장
+  --&gt; run succeeded
+  --&gt; 교사 accept 또는 regrade review</code></pre>
+      <table>
+        <thead><tr><th>우선순위</th><th>실제 출처</th><th>현재 저장 표기</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>REST 요청의 임의 <code>ai_result</code></td><td><code>raw_ai_response</code></td><td><span class="badge danger">AI 아님·주입 가능</span></td></tr>
+          <tr><td>2</td><td>교사가 입력한 rubric click·수동 점수</td><td>같은 run·result·raw 필드</td><td><span class="badge danger">human 출처 혼합</span></td></tr>
+          <tr><td>3</td><td>WordPress filter callback</td><td>같은 run·result·raw 필드</td><td><span class="badge wait">provider 증거 없음</span></td></tr>
+          <tr><td>4</td><td>정답과 답안의 문자열 완전 일치 규칙</td><td>같은 run·result·raw 필드</td><td><span class="badge danger">rule을 AI로 오표기</span></td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>재현성 오류:</strong> <code>ai_result</code>는 grading fingerprint에 포함되지 않는다. 같은 기본 입력에 서로 다른 요청 결과를 보내도 먼저 저장된 결과가 재사용될 수 있다. 반대로 수동 점수는 fingerprint에 추가되지만 출처 유형 자체를 별도 aggregate로 보존하지 않는다.</div>
+
+      <h2 id="plan">평가 계획과 실제 실행의 단절</h2>
+      <table>
+        <thead><tr><th>현재 계획 항목</th><th>preflight 검사</th><th>score 실행과 연결</th></tr></thead>
+        <tbody>
+          <tr><td>assignment·template</td><td>과제 존재</td><td>score가 submission에서 다시 assignment를 찾고 plan ID는 받지 않음</td></tr>
+          <tr><td>rubric·성취기준</td><td>rubric 준비·link 1개 이상</td><td>plan rubric을 쓰지 않고 submission의 grading schema를 사용</td></tr>
+          <tr><td>대상 학급·학생</td><td>애드온 로컬 학생 매핑 1명 이상</td><td>score route의 대상 범위·plan target 검사가 없음</td></tr>
+          <tr><td><code>model_key</code>·<code>policy_version</code></td><td>값 존재·routing 가능 여부를 검사하지 않음</td><td>브라우저가 별도 hidden field 값을 다시 보냄</td></tr>
+          <tr><td><code>status=ready</code></td><td>위 네 범주만 통과하면 가능</td><td>draft·archived plan이거나 plan이 없어도 score 가능</td></tr>
+          <tr><td>성취기준 동기화</td><td>save payload에 따라 mutable template link를 교체</td><td>계획 snapshot이 아니라 활동지 원본을 변경할 수 있음</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>목표 의미:</strong> 평가 계획은 단순 폼 저장이 아니라 “어떤 불변 subject 집합을 어떤 정책·task contract로 실행할지” 고정한 batch definition이어야 한다. ready revision만 job을 만들 수 있고 모든 item은 plan revision과 preflight evidence를 참조한다.</div>
+
+      <h2 id="input">현재 채점 입력과 fingerprint</h2>
+      <table>
+        <thead><tr><th>입력 범주</th><th>현재 값</th><th>문제</th></tr></thead>
+        <tbody>
+          <tr><td>subject</td><td>submission·assignment·template ID</td><td>submission revision ID·hash와 published grading snapshot ID·hash가 없음</td></tr>
+          <tr><td>학생 답안</td><td>문항별 <code>student_answer</code></td><td>학생은 답안 list를 저장하지만 builder는 question ID key map으로 읽어 값이 <code>null</code>이 될 수 있음</td></tr>
+          <tr><td>채점 기준</td><td>submission의 <code>grading_schema_json</code>, rubric hash</td><td>제출 저장 때 mutable template에서 다시 생성되므로 발행 시점 기준이 아님</td></tr>
+          <tr><td>첨부</td><td>ID·block·status·file ID·<code>file_url</code>·이름·MIME</td><td>scan·OCR·text extraction·content hash 없이 URL과 metadata만 전달</td></tr>
+          <tr><td>개인정보</td><td>직접 <code>student_user_id</code></td><td>평가에 불필요한 식별자를 provider 입력에 포함할 수 있음</td></tr>
+          <tr><td>실행 설정</td><td>요청자 제공 <code>model_key</code>·<code>policy_version</code></td><td>플랫폼 routing snapshot·prompt·input/output schema version과 연결되지 않음</td></tr>
+          <tr><td>fingerprint</td><td>질문·첨부·rubric·세 ID·model·policy</td><td>prompt, projector·extractor, schema, routing revision, provider 응답 source가 없음</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>답안 결합 오류:</strong> 학생 클라이언트는 <code>answers:[{question_id,...}]</code>를 저장하지만 <code>Grading_Input_Builder</code>는 <code>answers[question_id]</code>를 조회한다. 현재 fallback은 실제 답안이 있어도 빈 답안으로 0점을 만들 수 있으며, 동일 오류가 filter 기반 외부 채점 입력에도 전달된다.</div>
+
+      <h2 id="output">현재 출력·정규화·저장</h2>
+      <table>
+        <thead><tr><th>항목</th><th>현재 보장</th><th>현재 누락</th></tr></thead>
+        <tbody>
+          <tr><td>문항 binding</td><td>grading input의 question ID만 순회, unknown 결과 문항 무시</td><td>중복 ID는 마지막 값이 승리하고 명시 오류가 없음</td></tr>
+          <tr><td>점수</td><td>0~문항 배점 clamp, total·max를 서버 계산</td><td>criterion별 점수·반올림 정책 version·수동 조정 provenance</td></tr>
+          <tr><td>누락·범위 초과</td><td>0점으로 정규화하고 review 필요 표시</td><td>schema validation 실패와 정상적인 0점이 구분되지 않음</td></tr>
+          <tr><td>설명</td><td><code>reason_text</code>·<code>review_comment</code> 문자열 저장</td><td>길이·형식·근거 reference·신뢰도·불확실성·abstain·safety flag</td></tr>
+          <tr><td>원문</td><td><code>raw_ai_response</code>와 normalized 내부 <code>raw</code>에 저장</td><td>동일 raw 중복, 암호화·redaction·보존·삭제·access audit</td></tr>
+          <tr><td>동일 결과</td><td>문항 점수와 합계가 같으면 accepted 결과 재사용</td><td>이유·근거·신뢰도·feedback 변화는 버리고 새 실행 결과를 보존하지 않음</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>유지할 자산:</strong> AI가 보낸 total을 신뢰하지 않고 canonical question·max score를 기준으로 서버가 점수를 clamp하고 합계를 다시 계산하는 원칙은 유지한다. 단, schema 오류는 0점으로 조용히 바꾸지 않고 <code>normalization_failed</code>로 분리한다.</div>
+
+      <h2 id="runtime">현재 실행 안정성과 목표 분리</h2>
+      <table>
+        <thead><tr><th>실행 요소</th><th>현재</th><th>목표</th></tr></thead>
+        <tbody>
+          <tr><td>요청 수명</td><td>HTTP 요청 안에서 run 생성부터 결과 저장까지 완료</td><td>REST는 job을 enqueue하고 즉시 job ID·상태 반환</td></tr>
+          <tr><td>일괄 실행</td><td>브라우저 <code>for...of</code>가 submission별 요청을 순차 호출</td><td>서버 batch·item queue, pagination·checkpoint·부분 재개</td></tr>
+          <tr><td>run 시작</td><td><code>queued</code>를 거치지 않고 즉시 <code>running</code></td><td>queued → leased/running → retry_wait 또는 terminal 전이</td></tr>
+          <tr><td>재시도</td><td>attempt·next retry·오류 분류 없음</td><td>안정 오류 코드별 retryable 판정, 지수 backoff·jitter·최대 횟수</td></tr>
+          <tr><td>중단 복구</td><td>heartbeat·lease·stale run 회수 없음</td><td>lease owner·expires·heartbeat, 만료 worker 회수와 중복 실행 방지</td></tr>
+          <tr><td>취소·timeout</td><td>DB enum만 있고 명령·deadline 없음</td><td>queued/retry_wait 취소, 실행 deadline, provider timeout과 사용자 취소 구분</td></tr>
+          <tr><td>관찰성</td><td>시작·종료·단일 error text</td><td>correlation ID, attempt event, duration, provider/model fingerprint, token·cost, 안전한 오류 코드</td></tr>
+          <tr><td>플랫폼 결합</td><td>2026-08-10 조사 시 runtime source 구현 0개. 2026-08-12 C28-I01~I05·AM-01 구현 확인, I06 실제 소비자 인수 대기</td><td>애드온 worker가 <code>onReady()</code>로 받은 Runtime Context의 AI Gateway에서 <code>snapshot</code>을 기록한 뒤 <code>execute</code> 호출</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>실패 원칙:</strong> platform task가 미배정·비활성·timeout·provider 오류이면 해당 평가를 미확정으로 남긴다. request 결과, 정답 일치, filter 또는 마지막 성공 결과로 AI 성공을 위조하지 않고 학생 공개를 막는다.</div>
+
+      <h2 id="review">현재 검토·재평가·학생 공개</h2>
+      <table>
+        <thead><tr><th>흐름</th><th>현재 사실</th><th>목표 규칙</th></tr></thead>
+        <tbody>
+          <tr><td>최초 결과</td><td><code>draft</code> 또는 <code>review_required</code></td><td>AI·rule·human 출처를 분리하고 모든 AI 결과는 교사 검토 전 미확정</td></tr>
+          <tr><td>점수 확정</td><td><code>accepted</code>가 되면 학생 dashboard SQL에 즉시 노출</td><td>교사 확정과 학생 공개를 별도 revision·명령·시각으로 분리</td></tr>
+          <tr><td>재평가</td><td>기존·제안 result와 review를 순차 update, transaction 없음</td><td>기존 공식 결과 유지 → 새 결과 검토 → 원자 교체 → 연관 공개 artifact stale 처리</td></tr>
+          <tr><td>피드백 승인</td><td>approve 한 번에 <code>published</code>, approve·publish event 두 개 기록</td><td>pending → approved → published를 별도 권한·명령으로 전이</td></tr>
+          <tr><td>피드백 조회</td><td>service method는 있으나 학생 REST·UI 연결이 없고 화면은 “공개됨”만 표시</td><td>본인 scope의 published 본문과 revision·공개 시각을 안전하게 조회</td></tr>
+          <tr><td>특기사항</td><td>항상 <code>draft</code>로 생성, reviewed·approved·included 명령 0개</td><td>교사 검토·승인·보고서 포함을 각각 기록하거나 기능을 노출하지 않음</td></tr>
+          <tr><td>재평가 후 피드백</td><td>기존 result가 rejected되면 기존 published feedback이 query에서 조용히 사라짐</td><td>자동 비공개 금지, stale 알림 뒤 recall·재승인·유지 중 명시 결정</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="target-tasks">목표 플랫폼 AI task 2종</h2>
+      <table>
+        <thead><tr><th>Manifest task key</th><th>플랫폼 운영 화면</th><th>애드온 실행</th></tr></thead>
+        <tbody>
+          <tr><td><code>addon.oj_ai_dashboard.worksheet_quality_assessment</code></td><td><code>AI 활동지 · 활동지 자체 평가</code>의 주·대체 profile과 model 배정</td><td>worksheet revision의 목표 정합성·명료성·답변 가능성·난이도·루브릭 품질·안전성 진단</td></tr>
+          <tr><td><code>addon.oj_ai_dashboard.student_submission_assessment</code></td><td><code>AI 활동지 · 학생 제출 평가</code>의 주·대체 profile과 model 배정</td><td>제출 점수·근거 평가와 승인 결과에 종속된 feedback·special-note draft operation</td></tr>
+        </tbody>
+      </table>
+      <section class="panel">
+        <p><strong>두 행이 의미하는 것:</strong> 플랫폼에는 평가 실행 버튼이나 학생 제출 평가 목록이 추가되는 것이 아니다. 두 행은 어떤 AI 연결을 사용할지만 결정한다. 활동지 자체 평가, 학생 제출 평가, 피드백·특기사항 검토 화면과 데이터는 모두 애드온 OJ Console에 남는다.</p>
+        <p><strong>후속 operation:</strong> C28에서 확정한 task 수 2개를 유지한다. 학생 task의 versioned input contract가 <code>score</code>, <code>feedback_draft</code>, <code>special_note_draft</code> operation을 구분하며 각 호출은 별도 job·attempt·output schema를 가진다. 독립 routing이 필요해 task를 늘릴 때는 플랫폼 C-28 수량·manifest·검증 문서를 먼저 같은 변경 집합으로 갱신한다.</p>
+      </section>
+
+      <h2 id="target-flow">목표 평가 실행 흐름</h2>
+      <h3>활동지 자체 평가</h3>
+      <pre><code>교사: immutable worksheet revision 선택
+  --&gt; worksheet scope + platform teaching context authorize
+  --&gt; WorksheetEvaluationInputBuilder
+       canonical content + response schema + answer/rubric + curriculum/target snapshot
+  --&gt; policy·prompt·input/output schema version 고정
+  --&gt; platform canRoute + routing snapshot
+  --&gt; addon evaluation job enqueue
+  --&gt; addon worker lease
+  --&gt; platform execute(worksheet_quality_assessment)
+  --&gt; output schema validate + WorksheetEvaluationNormalizer
+  --&gt; immutable evaluation result revision
+  --&gt; 교사 검토·수용·반려
+  --&gt; 개선안은 편집기에 참고로만 표시, 자동 수정·발행 금지</code></pre>
+      <h3>학생 제출 평가</h3>
+      <pre><code>교사: ready assessment plan revision 실행
+  --&gt; assignment·student scope + platform context authorize
+  --&gt; published grading snapshot + immutable submission revision 고정
+  --&gt; attachment scan·extraction 완료 확인
+  --&gt; SubmissionEvaluationInputBuilder
+  --&gt; platform canRoute + routing snapshot
+  --&gt; addon batch/item job enqueue
+  --&gt; addon worker --&gt; platform execute(student_submission_assessment, operation=score)
+  --&gt; strict output validation + server score calculation
+  --&gt; AI result pending teacher review
+  --&gt; 교사 확정 또는 human adjustment revision
+  --&gt; 별도 release command로 점수 공개
+  --&gt; feedback_draft job --&gt; 승인 --&gt; 별도 publish
+  --&gt; 필요 시 special_note_draft job --&gt; 검토 --&gt; 보고서 포함 결정</code></pre>
+      <div class="callout"><strong>수동·규칙 평가:</strong> 교사 점수 입력은 <code>human</code>, 객관식 정답 비교는 <code>rule</code>, platform gateway 성공 결과만 <code>ai</code> source다. 세 경로는 공통 결과 보기에서 비교할 수 있지만 실행 기록과 provenance를 합치지 않는다.</div>
+
+      <h2 id="contracts">목표 입력·출력·idempotency 계약</h2>
+      <table>
+        <thead><tr><th>공통 요청 항목</th><th>규칙</th></tr></thead>
+        <tbody>
+          <tr><td>task·operation</td><td>manifest에 승인된 task key와 contract가 허용하는 operation만 사용</td></tr>
+          <tr><td>subject</td><td><code>subject_type</code>, stable ID, immutable revision ID, canonical hash를 모두 고정</td></tr>
+          <tr><td>input contract</td><td>schema ID·version, builder·projector·extractor version, canonical input hash 저장</td></tr>
+          <tr><td>evaluation policy</td><td>정책·rubric·review threshold의 immutable snapshot ID·version·hash 저장</td></tr>
+          <tr><td>prompt profile</td><td>system·instruction template ID·version·hash를 기록하되 비밀값과 내부 prompt 원문은 학생 응답에 노출하지 않음</td></tr>
+          <tr><td>routing</td><td>platform <code>snapshot</code>의 routing revision·profile fingerprint를 저장하고 provider secret·endpoint는 받지 않음</td></tr>
+          <tr><td>actor·context</td><td>요청자, 승인된 teaching context snapshot·revision, 목적을 기록. provider payload에는 불필요한 사용자 ID 제거</td></tr>
+          <tr><td>idempotency</td><td>task + operation + subject revision/hash + input/policy/prompt/output schema + routing revision으로 결정적 key 생성</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>출력 종류</th><th>필수 구조</th><th>서버 검증</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 품질</td><td>dimension key, rating, severity, evidence reference, rationale, recommendation, confidence, blocking flag</td><td>알려진 dimension·revision evidence만 허용, 자동 문서 patch 금지</td></tr>
+          <tr><td>제출 점수</td><td>question ID, criterion scores, proposed score, evidence reference, rationale, confidence, review flags</td><td>canonical 문항·배점 기준 clamp, total 재계산, 누락·중복·unknown 거부</td></tr>
+          <tr><td>피드백 초안</td><td>학생용 message blocks, 연결 question·criterion, tone/safety flag</td><td>교사용 정답·rubric 원문·내부 reasoning·다른 학생 정보 forbidden-key 검사</td></tr>
+          <tr><td>특기사항 초안</td><td>관찰 사실, 교육과정 근거, 제한된 문장, uncertainty</td><td>민감 속성 추론·진단·과장 금지, 교사 승인 전 보고서 포함 금지</td></tr>
+          <tr><td>공통 실패</td><td><code>abstained</code>, reason code, retryable, 안전한 message</td><td>schema mismatch와 provider 실패를 점수 0점으로 변환하지 않음</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>Raw response 정책:</strong> 원문은 진단에 필요한 제한 기간만 암호화·접근 통제해 한 번 저장하고, 정규화 결과에 다시 중복 삽입하지 않는다. 보존 기간 만료 뒤 raw를 지워도 subject·input·policy·routing·normalized hash와 감사 이력은 유지한다.</div>
+
+      <h2>목표 job·attempt 상태</h2>
+      <table>
+        <thead><tr><th>상태 계층</th><th>목표 상태</th><th>소유</th></tr></thead>
+        <tbody>
+          <tr><td>batch plan</td><td><code>draft → ready → running → completed | completed_with_errors | cancelled</code></td><td>애드온 평가 계획</td></tr>
+          <tr><td>job item</td><td><code>queued → running → retry_wait → succeeded | failed | cancelled | expired</code></td><td>애드온 queue·worker</td></tr>
+          <tr><td>attempt</td><td><code>started → gateway_succeeded | gateway_failed | output_invalid</code></td><td>애드온 기록 + 플랫폼 안전 응답</td></tr>
+          <tr><td>evaluation result</td><td><code>pending_review → accepted | rejected | superseded</code></td><td>애드온 평가 도메인</td></tr>
+          <tr><td>release</td><td><code>private → approved → published → withdrawn | stale</code></td><td>애드온 공개 도메인</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>재시도 상황</th><th>처리</th></tr></thead>
+        <tbody>
+          <tr><td>미배정·비활성 profile·source 불일치</td><td>즉시 non-retryable 실패, 운영자가 플랫폼 AI 작업 배정을 고친 뒤 명시 재실행</td></tr>
+          <tr><td>rate limit·일시 provider 장애</td><td>retryable, backoff·jitter와 최대 attempt 적용, 같은 idempotency key 유지</td></tr>
+          <tr><td>timeout·worker 중단</td><td>lease 만료 뒤 회수하되 이미 저장된 gateway/result hash를 확인해 중복 result 방지</td></tr>
+          <tr><td>output schema 불일치</td><td>원문을 학생에게 공개하지 않고 <code>output_invalid</code>; 정책상 허용한 횟수만 새 attempt</td></tr>
+          <tr><td>입력·policy·routing 변경</td><td>retry가 아니라 새 job·새 evaluation revision, 이전 결과는 이력으로 보존</td></tr>
+          <tr><td>사용자 취소</td><td>대기 job은 취소, 실행 중 call은 결과가 와도 publish하지 않고 cancelled audit와 orphan result 처리</td></tr>
+        </tbody>
+      </table>
+
+      <h2>목표 평가 계획 preflight</h2>
+      <table>
+        <thead><tr><th>검사 범주</th><th>필수 확인</th></tr></thead>
+        <tbody>
+          <tr><td>대상</td><td>platform context authorization, 애드온 assignment·student 범위, 삭제·stale context 거부</td></tr>
+          <tr><td>불변 원본</td><td>worksheet published snapshot, grading schema, submission revision과 모든 source hash 존재</td></tr>
+          <tr><td>평가 계약</td><td>policy·rubric·prompt·input/output schema version과 review threshold 지원</td></tr>
+          <tr><td>AI route</td><td>등록 task, <code>canRoute</code>, routing snapshot, submission source 조건</td></tr>
+          <tr><td>첨부</td><td>upload 완료, malware scan, 허용 MIME·byte, extraction 완료·hash와 실패 항목 분류</td></tr>
+          <tr><td>운영 한도</td><td>item 수, 예상 token·비용, 동시성·rate limit, 실행 가능 시간과 승인 한도</td></tr>
+          <tr><td>공개</td><td>검토자·공개 권한, 점수·feedback release 정책, 실패 시 학생 비공개 기본값</td></tr>
+        </tbody>
+      </table>
+      <p>ready는 위 증거를 담은 불변 plan revision에만 부여한다. 실행 시작 때 중요한 revision이 달라지면 plan을 자동 실행하지 않고 <code>stale</code>로 돌려 새 preflight를 요구한다.</p>
+
+      <h2 id="security">보안·개인정보·신뢰 경계</h2>
+      <table>
+        <thead><tr><th>위험</th><th>목표 통제</th></tr></thead>
+        <tbody>
+          <tr><td>학생 답안의 prompt injection</td><td>학생 content를 명시적 untrusted data block으로 분리하고 system·policy 변경 명령으로 해석하지 않음</td></tr>
+          <tr><td>개인정보 과다 전송</td><td>provider payload에서 이름·직접 user ID·학급 명칭을 제거하고 목적상 필요한 익명 subject reference만 사용</td></tr>
+          <tr><td>첨부 URL·외부 fetch</td><td>public <code>file_url</code> 전달 금지, private asset을 격리 추출한 text/image representation과 hash만 전달</td></tr>
+          <tr><td>비밀·provider 결합</td><td>애드온 DB·브라우저에 API key·endpoint·raw client 없음. 플랫폼 gateway의 안전 DTO만 사용</td></tr>
+          <tr><td>임의 AI 결과 주입</td><td>REST가 <code>ai_result</code>·provider/model을 받지 않고 job command와 허용 policy 선택만 받음</td></tr>
+          <tr><td>다른 학급·학생 접근</td><td>capability + platform context + 애드온 객체 ownership을 enqueue·조회·검토·공개마다 재검사</td></tr>
+          <tr><td>AI 자동 결정</td><td>활동지 수정·발행, 학생 점수 확정·공개, feedback 공개, 특기사항 포함은 교사 명령만 허용</td></tr>
+          <tr><td>보존·감사</td><td>raw·PII 보존 기간, redaction, download/access audit, 삭제·legal hold 정책을 artifact 종류별 적용</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="findings">발견 격차와 후속 소유</h2>
+      <table>
+        <thead><tr><th>ID</th><th>중요도</th><th>현재 사실과 위험</th><th>후속</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-D006-F01</code></td><td><span class="badge danger">Critical</span></td><td>활동지 자체 평가 화면·route·service·입력·결과가 전혀 없어 활동지 자체를 AI로 평가할 수 없음</td><td>A-DS-08·10</td></tr>
+          <tr><td><code>A-D006-F02</code></td><td><span class="badge danger">Critical</span></td><td>실제 provider transport 없이 request·manual·filter·정답 규칙 결과를 모두 AI 응답으로 저장</td><td>A-DS-04·07·12</td></tr>
+          <tr><td><code>A-D006-F03</code></td><td><span class="badge danger">Critical</span></td><td>score REST payload의 임의 <code>ai_result</code>가 검증된 provider 결과처럼 저장되고 fingerprint에도 반영되지 않음</td><td>A-DS-03·08·12</td></tr>
+          <tr><td><code>A-D006-F04</code></td><td><span class="badge danger">Critical</span></td><td>학생 답안 list와 grading builder의 ID map 기대가 달라 실제 답안이 null·0점으로 평가될 수 있음</td><td><code>A-DS-11</code>·<code>A-DS-12</code>·<code>A-DS-16</code></td></tr>
+          <tr><td><code>A-D006-F05</code></td><td><span class="badge danger">Critical</span></td><td>평가 REST가 capability·nonce만 검사하고 assignment·submission·student 객체 scope를 확인하지 않음</td><td>A-D003-F07, A-DS-03·08</td></tr>
+          <tr><td><code>A-D006-F06</code></td><td><span class="badge danger">High</span></td><td>plan ready·preflight와 실제 score 실행이 분리되어 plan 없이도 실행되고 plan rubric·target·routing을 사용하지 않음</td><td>A-DS-07·08·12</td></tr>
+          <tr><td><code>A-D006-F07</code></td><td><span class="badge danger">High</span></td><td>애드온의 provider/model 설정과 요청자 model key가 플랫폼 소유 routing과 중복되며 실제 실행에는 연결되지 않음</td><td>A-DS-02·04</td></tr>
+          <tr><td><code>A-D006-F08</code></td><td><span class="badge danger">High</span></td><td>브라우저 요청 수명과 순차 반복에 장기 평가·일괄 실행을 맡겨 timeout·중단·재개·cancel을 관리할 수 없음</td><td>A-DS-07·08</td></tr>
+          <tr><td><code>A-D006-F09</code></td><td><span class="badge danger">High</span></td><td>run은 곧바로 running이며 attempt·lease·heartbeat·retry_wait·deadline·rate limit·비용 기록이 없음</td><td>A-DS-05·07</td></tr>
+          <tr><td><code>A-D006-F10</code></td><td><span class="badge danger">High</span></td><td>채점 입력에 직접 학생 ID와 file URL을 넣고 첨부 scan·추출·redaction·hash 없이 metadata만 전달</td><td>A-DS-03·07·11·12</td></tr>
+          <tr><td><code>A-D006-F11</code></td><td><span class="badge danger">High</span></td><td>fingerprint가 published/submission revision, prompt, schema, projector·extractor, routing revision을 고정하지 않아 실행 재현성이 부족</td><td><code>A-DS-05</code>·<code>A-DS-07</code>·<code>A-DS-10</code>·<code>A-DS-12</code></td></tr>
+          <tr><td><code>A-D006-F12</code></td><td><span class="badge danger">High</span></td><td>normalizer에 JSON schema, byte·text 한도, 근거·confidence·abstain·safety와 중복 문항 오류가 없음</td><td><code>A-DS-10</code>·<code>A-DS-12</code>·<code>A-DS-16</code></td></tr>
+          <tr><td><code>A-D006-F13</code></td><td><span class="badge danger">High</span></td><td>raw 응답을 두 JSON 위치에 중복 저장하고 encryption·보존·redaction·access audit 계약이 없음</td><td>A-DS-05·07·15</td></tr>
+          <tr><td><code>A-D006-F14</code></td><td><span class="badge danger">High</span></td><td>동일 점수 판정이 이유·근거 변화를 무시해 새 실행의 중요한 설명 변경을 버림</td><td>A-DS-12·13</td></tr>
+          <tr><td><code>A-D006-F15</code></td><td><span class="badge danger">High</span></td><td>result 승인·regrade 교체·feedback event가 transaction 없이 순차 저장되고 허용 source state 검사가 불완전</td><td>A-DS-05·13</td></tr>
+          <tr><td><code>A-D006-F16</code></td><td><span class="badge danger">High</span></td><td>feedback이 실제 AI run 없이 생성되고 approve가 publish를 겸하며 학생 화면에는 본문이 연결되지 않음</td><td>A-DS-07·08·13</td></tr>
+          <tr><td><code>A-D006-F17</code></td><td><span class="badge danger">High</span></td><td>특기사항은 draft 생성 뒤 reviewed·approved·included 전이 명령이 없어 보고서가 기대하는 상태에 도달할 수 없음</td><td>A-DS-08·13·14</td></tr>
+          <tr><td><code>A-D006-F18</code></td><td><span class="badge danger">High</span></td><td>accepted 결과가 별도 release 없이 학생 점수로 즉시 노출되고 재평가 교체 시 기존 feedback이 명시 recall 없이 사라짐</td><td>A-DS-11·13</td></tr>
+          <tr><td><code>A-D006-F19</code></td><td><span class="badge danger">High</span></td><td>plan이 애드온 로컬 학생 매핑을 preflight 원장으로 사용하고 성취기준 sync가 mutable template를 변경</td><td>A-DS-06·09·12</td></tr>
+          <tr><td><code>A-D006-F20</code></td><td><span class="badge danger">High</span></td><td>평가 입력·출력·상태·재시도·권한·공개에 대한 자동 테스트가 0개</td><td><code>A-DS-10</code>·<code>A-DS-12</code>·<code>A-DS-16</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="target">목표 구성요소와 책임</h2>
+      <table>
+        <thead><tr><th>구성요소</th><th>책임</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td><code>EvaluationSubjectResolver</code></td><td>worksheet revision 또는 submission revision과 scope·hash를 고정</td><td>latest template·submission 암묵 재조회</td></tr>
+          <tr><td><code>WorksheetEvaluationInputBuilder</code></td><td>canonical worksheet·문항·rubric·교육과정·target snapshot의 최소 입력 생성</td><td>학생 제출 필수 의존</td></tr>
+          <tr><td><code>SubmissionEvaluationInputBuilder</code></td><td>published grading snapshot·정규화 답안·안전한 artifact 추출물 생성</td><td>직접 student ID·public file URL·미검사 첨부 전달</td></tr>
+          <tr><td><code>EvaluationPolicySnapshotService</code></td><td>정책·rubric·prompt·review threshold version·hash 고정</td><td>실행 중 mutable 설정 재조회</td></tr>
+          <tr><td><code>PlatformAiTaskPort</code></td><td>C28 gateway의 canRoute·snapshot·execute만 감싸고 안전 오류로 변환</td><td>platform Container·Settings repository·provider client 직접 접근</td></tr>
+          <tr><td><code>EvaluationJobService</code></td><td>batch·item·attempt, lease·retry·cancel·idempotency·event 관리</td><td>브라우저 반복을 queue로 간주</td></tr>
+          <tr><td><code>WorksheetEvaluationNormalizer</code></td><td>진단 dimension·evidence·recommendation·confidence 검증</td><td>AI 문서 patch·자동 publish</td></tr>
+          <tr><td><code>SubmissionEvaluationNormalizer</code></td><td>문항·criterion binding, 점수 clamp·합계, 근거·불확실성 검증</td><td>provider total 신뢰·schema 오류의 0점 변환</td></tr>
+          <tr><td><code>EvaluationReviewService</code></td><td>AI 결과 수용·반려·human adjustment와 원자 재평가 교체</td><td>AI 자동 확정</td></tr>
+          <tr><td><code>EvaluationReleaseService</code></td><td>점수·feedback 공개·철회·stale·재승인 이력</td><td>accepted와 published 동일시</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>저장·플랫폼 경계:</strong> 실제 table·column은 A-DS-05에서 동결하지만 모든 애드온 물리 테이블은 WordPress prefix 없이 <code>oj_ai_*</code> 고정 이름을 사용한다. 애드온 설치·업데이트·런타임은 OJ Platform 파일·migration을 수정하지 않으며 C28 gateway 구현은 별도 플랫폼 개발 절차에서만 진행한다.</div>
+
+      <h2 id="decision">확정한 목표 결정</h2>
+      <section class="panel">
+        <ol>
+          <li>활동지 자체 평가와 학생 제출 평가를 서로 다른 first-class subject·input builder·output schema·normalizer·result aggregate로 구현한다. 활동지 자체 평가는 특정 immutable worksheet revision 전체를 실제 AI가 평가할 수 있어야 한다.</li>
+          <li>플랫폼 manifest에는 C28에서 정한 <code>worksheet_quality_assessment</code>와 <code>student_submission_assessment</code> task 2종만 등록한다. OJ Platform은 연결·model routing만, 애드온은 queue·worker·평가·검토 화면과 데이터를 소유한다.</li>
+          <li>실제 AI 결과는 플랫폼 <code>AddonAiTaskGatewayV1</code> 성공 응답만 인정한다. request <code>ai_result</code>, WordPress AI filter, direct provider 호출, 정답 규칙·Faker fallback을 AI 성공으로 저장하지 않고 gateway 부재·실패 시 미확정으로 닫는다.</li>
+          <li><code>ai</code>, <code>human</code>, <code>rule</code> 평가 출처와 provenance를 분리한다. 공통 review UI에서 비교할 수 있지만 raw 응답·fingerprint·실행 상태를 혼합하지 않는다.</li>
+          <li>모든 실행은 immutable subject, input·policy·rubric·prompt·output schema, projector·extractor와 platform routing snapshot의 ID·version·hash를 고정하고 결정적 idempotency key를 사용한다.</li>
+          <li>REST는 평가를 enqueue하고 애드온 job worker가 lease·attempt·retry·cancel·timeout·rate limit·비용을 관리한다. 브라우저 순차 반복이나 장기 HTTP 요청을 실행환경으로 사용하지 않는다.</li>
+          <li>AI 출력은 versioned JSON schema로 먼저 검증하고 evidence·confidence·abstain·safety flag를 요구한다. 점수는 canonical 배점으로 서버가 다시 계산하며 schema 오류를 0점으로 바꾸지 않는다.</li>
+          <li>평가 계획을 불변 batch definition으로 바꾸고 ready plan revision만 실행한다. platform context·canRoute, published/submission snapshot, 정책·rubric, 첨부 추출, 비용 한도와 공개 정책을 preflight에서 확인한다.</li>
+          <li>교사 검토·공식 확정·학생 공개를 분리한다. 재평가는 기존 공식 결과를 유지한 채 원자 교체하고, 연결된 feedback은 stale·recall·재승인을 명시적으로 처리한다. AI가 활동지를 자동 수정·발행하거나 점수·피드백을 자동 공개하지 않는다.</li>
+          <li>학생 task의 <code>score</code>, <code>feedback_draft</code>, <code>special_note_draft</code>는 각각 별도 job·output schema·검토 상태를 사용하되 플랫폼 routing 행은 1개를 공유한다. 직접 학생 ID·public file URL·비밀값은 AI payload에 넣지 않는다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>사용자 확정·동결:</strong> 2026-08-10 위 열 항목을 모두 목표 기준으로 확인했다. A-D-006 평가·AI 실행 기준선을 동결했으며, 다음 조사는 <a href="a-d-007-user-workflow-risks.html"><code>A-D-007 사용자 업무 흐름과 위험</code></a>에서 진행한다.</div>
+
+      <h2 id="completion">A-D-006 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>결과</th><th>증거</th></tr></thead>
+        <tbody>
+          <tr><td>활동지·제출 평가 경로 분리 조사</td><td>충족</td><td>활동지 자체 평가 0개, 제출 score·feedback·special note 경로와 Plate authoring mock 분리</td></tr>
+          <tr><td>prompt·provider·routing 조사</td><td>충족</td><td>실제 prompt builder·provider transport 0개, filter 3개, 별도 provider 설정의 미사용 확인</td></tr>
+          <tr><td>평가 REST·화면 실행 조사</td><td>충족</td><td>16경로·17작업, 동기 score와 브라우저 순차 일괄 실행 기록</td></tr>
+          <tr><td>계획·preflight·실행 연결 조사</td><td>충족</td><td>plan ready와 score의 plan ID·rubric·target·routing 단절 확인</td></tr>
+          <tr><td>입력·fingerprint·첨부 조사</td><td>충족</td><td>답안 list/map 불일치, live grading schema, 직접 PII·file URL과 version 누락 기록</td></tr>
+          <tr><td>출력·normalizer·저장 조사</td><td>충족</td><td>점수 clamp·서버 합계 유지 자산과 schema·evidence·retention 격차 기록</td></tr>
+          <tr><td>job·retry·실패 복구 조사</td><td>충족</td><td>run enum과 실제 전이, attempt·lease·retry·cancel·timeout·비용 누락 기록</td></tr>
+          <tr><td>검토·공개·재평가 조사</td><td>충족</td><td>비원자 교체, approve=publish, 학생 본문 미연결, 특기사항 terminal path 부재 기록</td></tr>
+          <tr><td>플랫폼 C28-D11 정합성</td><td>충족</td><td>task 2종과 canRoute·snapshot·execute, 애드온 실행환경·플랫폼 routing 경계 연결</td></tr>
+          <tr><td>자동 검사 현황 조사</td><td>충족</td><td>평가 logic·권한·상태·AI contract 자동 테스트 0개</td></tr>
+          <tr><td>실행 코드·플랫폼 코드 변경 금지</td><td>충족</td><td>HTML 설계 문서만 작성, PHP·JS·schema·플랫폼 runtime 변경 0건</td></tr>
+          <tr><td>사용자 목표 기준 확인</td><td>충족</td><td>2026-08-10 열 목표 결정을 사용자 확인으로 동결</td></tr>
+        </tbody>
+      </table>
+
+      <p class="footer">A-D-006 평가·AI 실행 기준선을 사용자 확인으로 동결했다. 다음 단계: <a href="a-d-007-user-workflow-risks.html"><code>A-D-007 사용자 업무 흐름과 위험</code></a></p>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,520 @@
+.wp-block-edu-games-ai-model-lab,
+.ai-model-lab-block {
+    width: min(var(--shell-width, 1120px), calc(100% - (var(--shell-padding-x, 1rem) * 2)));
+    max-width: none;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.oj-aiml-shell {
+    --aiml-bg: #f6f8fb;
+    --aiml-ink: #172033;
+    --aiml-muted: #657186;
+    --aiml-line: #d7dee9;
+    --aiml-panel: #ffffff;
+    --aiml-primary: #1d6fd8;
+    --aiml-primary-dark: #154a90;
+    --aiml-red: #e65d4f;
+    --aiml-green: #1f8a55;
+    --aiml-yellow: #f2b830;
+    width: 100%;
+    color: var(--aiml-ink);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.oj-aiml-shell * {
+    box-sizing: border-box;
+}
+
+.oj-aiml-shell .is-hidden {
+    display: none !important;
+}
+
+.oj-aiml-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0 14px;
+}
+
+.oj-aiml-kicker {
+    margin: 0 0 4px;
+    color: var(--aiml-green);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.oj-aiml-topbar h2 {
+    margin: 0;
+    font-size: clamp(1.7rem, 3vw, 2.6rem);
+    line-height: 1.05;
+}
+
+.oj-aiml-stage {
+    padding: 8px 14px;
+    border: 1px solid var(--aiml-line);
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--aiml-muted);
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+}
+
+.oj-aiml-feedback {
+    min-height: 1.2em;
+    margin: 0 0 10px;
+    color: var(--aiml-green);
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.oj-aiml-feedback.is-error {
+    color: var(--aiml-red);
+}
+
+.oj-aiml-panel {
+    min-width: 0;
+    margin-bottom: 14px;
+    border: 1px solid var(--aiml-line);
+    border-radius: 8px;
+    background: var(--aiml-panel);
+    overflow: hidden;
+}
+
+.oj-aiml-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 52px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--aiml-line);
+    background: #f9fbfe;
+}
+
+.oj-aiml-panel-head span {
+    color: var(--aiml-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.oj-aiml-panel-head h3 {
+    margin: 3px 0 0;
+    font-size: 1.1rem;
+    line-height: 1.25;
+}
+
+.oj-aiml-context {
+    margin: 0;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--aiml-line);
+    background: #fff8e5;
+    color: #6e4b00;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.oj-aiml-activity-list {
+    display: grid;
+    gap: 10px;
+    padding: 14px 16px;
+}
+
+.oj-aiml-activity-card {
+    display: grid;
+    gap: 6px;
+    padding: 14px;
+    border: 1px solid var(--aiml-line);
+    border-radius: 8px;
+    background: #ffffff;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+
+.oj-aiml-activity-card:hover {
+    border-color: var(--aiml-primary);
+}
+
+.oj-aiml-activity-card strong {
+    font-size: 1.02rem;
+}
+
+.oj-aiml-activity-card span {
+    color: var(--aiml-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.oj-aiml-activity-card .oj-aiml-badge {
+    justify-self: start;
+}
+
+.oj-aiml-badge {
+    display: inline-flex;
+    width: fit-content;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: #eef4ff;
+    color: var(--aiml-primary-dark);
+    font-size: 0.72rem;
+    font-weight: 1000;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.oj-aiml-badge.is-hard {
+    background: #ffe6e2;
+    color: #a8271d;
+}
+
+.oj-aiml-setup-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px 16px 0;
+}
+
+.oj-aiml-setup-grid h4 {
+    margin: 0 0 10px;
+    font-size: 0.92rem;
+}
+
+.oj-aiml-model-cards {
+    display: grid;
+    gap: 8px;
+}
+
+.oj-aiml-model-card {
+    display: grid;
+    gap: 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--aiml-line);
+    border-radius: 8px;
+    background: #ffffff;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+
+.oj-aiml-model-card strong {
+    font-size: 0.92rem;
+}
+
+.oj-aiml-model-card span {
+    color: var(--aiml-muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.oj-aiml-model-card.is-selected {
+    border-color: var(--aiml-yellow);
+    background: #fff7d8;
+}
+
+.oj-aiml-labeling-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 16px 0;
+}
+
+.oj-aiml-labeling-head h4 {
+    margin: 0;
+    font-size: 0.92rem;
+}
+
+.oj-aiml-progress {
+    color: var(--aiml-muted);
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+
+.oj-aiml-labeling-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+    padding: 12px 16px;
+}
+
+.oj-aiml-sample-card {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--aiml-line);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.oj-aiml-sample-card.is-labeled {
+    border-color: var(--aiml-yellow);
+}
+
+.oj-aiml-sample-card.is-readonly.is-correct {
+    border-color: var(--aiml-green);
+    background: #f2fbf6;
+}
+
+.oj-aiml-sample-card.is-readonly.is-incorrect {
+    border-color: var(--aiml-red);
+    background: #fef4f2;
+}
+
+.oj-aiml-sample-features {
+    display: grid;
+    gap: 2px;
+}
+
+.oj-aiml-feature-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.78rem;
+}
+
+.oj-aiml-feature-row span {
+    color: var(--aiml-muted);
+    font-weight: 700;
+}
+
+.oj-aiml-feature-row strong {
+    font-weight: 900;
+}
+
+.oj-aiml-pixel-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 1px;
+    width: 112px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto 6px;
+    border: 1px solid var(--aiml-line);
+    background: #ffffff;
+    padding: 2px;
+}
+
+.oj-aiml-pixel {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.oj-aiml-sample-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.oj-aiml-label-button {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--aiml-line);
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--aiml-ink);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.oj-aiml-label-button.is-selected {
+    border-color: var(--aiml-primary);
+    background: var(--aiml-primary);
+    color: #ffffff;
+}
+
+.oj-aiml-sample-verdict {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 4px;
+    border-top: 1px solid var(--aiml-line);
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.oj-aiml-sample-card.is-correct .oj-aiml-sample-verdict strong {
+    color: var(--aiml-green);
+}
+
+.oj-aiml-sample-card.is-incorrect .oj-aiml-sample-verdict strong {
+    color: var(--aiml-red);
+}
+
+.oj-aiml-train {
+    padding: 4px 16px 0;
+}
+
+.oj-aiml-train h4 {
+    margin: 0 0 6px;
+}
+
+.oj-aiml-train p {
+    margin: 0;
+    color: var(--aiml-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.oj-aiml-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 16px 16px;
+}
+
+.oj-aiml-button {
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid var(--aiml-line);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--aiml-ink);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 900;
+}
+
+.oj-aiml-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.oj-aiml-button-primary {
+    border-color: var(--aiml-primary);
+    background: var(--aiml-primary);
+    color: #ffffff;
+}
+
+.oj-aiml-button-ghost {
+    background: #ffffff;
+}
+
+.oj-aiml-result-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    padding: 16px;
+}
+
+.oj-aiml-metrics {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+}
+
+.oj-aiml-metric-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border: 1px solid var(--aiml-line);
+    border-radius: 8px;
+    background: #fbfcff;
+}
+
+.oj-aiml-metric-row span {
+    color: var(--aiml-muted);
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.oj-aiml-metric-row strong {
+    font-size: 1rem;
+}
+
+.oj-aiml-confusion table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.oj-aiml-confusion caption {
+    margin-bottom: 6px;
+    color: var(--aiml-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.oj-aiml-confusion th,
+.oj-aiml-confusion td {
+    padding: 6px 8px;
+    border: 1px solid var(--aiml-line);
+    text-align: center;
+}
+
+.oj-aiml-confusion th {
+    background: #f9fbfe;
+    font-weight: 900;
+}
+
+.oj-aiml-confusion td.is-diagonal {
+    background: #dff5e6;
+    font-weight: 900;
+}
+
+.oj-aiml-score-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-top: 1px solid var(--aiml-line);
+}
+
+.oj-aiml-score-row span {
+    color: var(--aiml-muted);
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.oj-aiml-score-row strong {
+    font-size: 1.4rem;
+    color: var(--aiml-primary-dark);
+}
+
+.oj-aiml-score-total strong {
+    color: var(--aiml-green);
+}
+
+@media (max-width: 900px) {
+    .oj-aiml-topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .oj-aiml-setup-grid,
+    .oj-aiml-result-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 680px) {
+    .wp-block-edu-games-ai-model-lab,
+    .ai-model-lab-block {
+        width: calc(100% - 12px);
+    }
+
+    .oj-aiml-submit-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}

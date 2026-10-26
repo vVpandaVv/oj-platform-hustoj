@@ -1,0 +1,246 @@
+{
+    "permission": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Permission\\Module",
+        "enabled": true,
+        "priority": 5,
+        "required": true
+    },
+    "settings": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Settings\\Module",
+        "enabled": true,
+        "priority": 10,
+        "required": true,
+        "requires": [
+            "permission"
+        ]
+    },
+    "platform_db": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\PlatformDb\\Module",
+        "enabled": true,
+        "priority": 15,
+        "required": true,
+        "requires": [
+            "settings"
+        ]
+    },
+    "judge_db": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\JudgeDb\\Module",
+        "enabled": true,
+        "priority": 16,
+        "required": true,
+        "requires": [
+            "settings"
+        ]
+    },
+    "access_router": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\AccessRouter\\Module",
+        "enabled": true,
+        "priority": 20,
+        "required": true,
+        "requires": [
+            "permission",
+            "settings"
+        ]
+    },
+    "auth": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Auth\\Module",
+        "enabled": true,
+        "priority": 25,
+        "required": true,
+        "requires": [
+            "permission",
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router"
+        ]
+    },
+    "public_ui": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\PublicUi\\Module",
+        "enabled": true,
+        "priority": 30,
+        "required": true,
+        "requires": [
+            "access_router",
+            "auth"
+        ]
+    },
+    "problems": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Problems\\Module",
+        "enabled": true,
+        "priority": 35,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router",
+            "auth"
+        ]
+    },
+    "ranking": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Ranking\\Module",
+        "enabled": true,
+        "priority": 36,
+        "required": false,
+        "requires": [
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router",
+            "auth"
+        ]
+    },
+    "submissions": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Submissions\\Module",
+        "enabled": true,
+        "priority": 37,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router",
+            "auth",
+            "problems"
+        ]
+    },
+    "blockly": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Blockly\\Module",
+        "enabled": true,
+        "priority": 38,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "access_router",
+            "problems",
+            "submissions"
+        ]
+    },
+    "ai_feedback": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\AI\\Module",
+        "enabled": true,
+        "priority": 39,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router",
+            "auth",
+            "problems",
+            "submissions"
+        ]
+    },
+    "learning_dashboard": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\LearningDashboard\\Module",
+        "enabled": true,
+        "priority": 40,
+        "required": false,
+        "requires": [
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router",
+            "auth",
+            "problems",
+            "submissions"
+        ],
+        "optional_requires": [
+            "ai_feedback"
+        ]
+    },
+    "groups": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Groups\\Module",
+        "enabled": true,
+        "priority": 41,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router",
+            "auth",
+            "submissions"
+        ]
+    },
+    "board": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Board\\Module",
+        "enabled": true,
+        "priority": 42,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "access_router",
+            "auth"
+        ]
+    },
+    "contests": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Contests\\Module",
+        "enabled": true,
+        "priority": 43,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router",
+            "auth",
+            "problems",
+            "submissions"
+        ],
+        "optional_requires": [
+            "groups"
+        ]
+    },
+    "classes": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Classes\\Module",
+        "enabled": true,
+        "priority": 44,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router",
+            "auth",
+            "problems",
+            "submissions"
+        ],
+        "optional_requires": [
+            "groups"
+        ]
+    },
+    "migration": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\Migration\\Module",
+        "enabled": true,
+        "priority": 45,
+        "required": false,
+        "requires": [
+            "permission",
+            "settings",
+            "platform_db",
+            "judge_db",
+            "access_router"
+        ]
+    },
+    "admin_console": {
+        "class": "CodingPanda\\OjPlatform\\Modules\\AdminConsole\\Module",
+        "enabled": true,
+        "priority": 46,
+        "required": true,
+        "requires": [
+            "access_router",
+            "permission",
+            "settings"
+        ]
+    }
+}

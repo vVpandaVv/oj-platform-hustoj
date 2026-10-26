@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-D-004 데이터 저장 구조</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-D-004 데이터 저장 구조</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html" aria-current="page">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">판정</a>
+          <a href="#evidence">조사 근거</a>
+          <a href="#counts">수량</a>
+          <a href="#catalog">테이블 목록</a>
+          <a href="#relationships">관계·불변성</a>
+          <a href="#json">JSON 저장</a>
+          <a href="#options">옵션·캐시</a>
+          <a href="#migrations">Migration</a>
+          <a href="#files">파일 저장</a>
+          <a href="#retention">보존·삭제</a>
+          <a href="#imports">가져오기</a>
+          <a href="#findings">발견 격차</a>
+          <a href="#target">목표 분류</a>
+          <a href="#decision">확정 결정</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <p class="notice">이 문서는 당시 구현의 조사 기록입니다. 아래에서 제거됨으로 표시한 구형 소스는 현재 사용되지 않아 정리했습니다. <a href="retired-runtime-removal-2026-10-20.html">제거 범위와 유지한 호환 기능</a>을 참고하세요.</p>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-D-004 · Data and Storage Baseline</p>
+        <h2>데이터 저장 구조</h2>
+        <p>현재 애드온의 사용자 정의 테이블, 컬럼·인덱스·관계, JSON payload, WordPress option, migration, 첨부·ZIP·내보내기 파일, 가져오기와 삭제 동작을 실제 코드에서 전수 조사했다. 현행을 목표 스키마로 승인하는 문서가 아니라 유지·제거·재설계 대상을 가르는 기준선이다.</p>
+        <div class="meta">
+          <span class="badge">조사일 2026-08-10</span>
+          <span class="badge">상태 사용자 확인·기준선 확정</span>
+          <span class="badge">고정 oj_ai_* 테이블 35개</span>
+          <span class="badge">컬럼 586개</span>
+          <span class="badge">보조·고유 인덱스 86개</span>
+          <span class="badge">JSON longtext 27개</span>
+          <span class="badge">외래 키 0개</span>
+          <span class="badge">실행 코드 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 판정</h2>
+      <section class="panel">
+        <p>물리 테이블 이름은 모두 요구대로 <code>oj_ai_*</code>이며 <code>$wpdb-&gt;prefix</code>를 사용하지 않는다. 그러나 플랫폼 원장과 중복되는 학사 테이블 6개, 제출물에만 묶인 평가 구조, 활동지 발행 revision 부재, 변경 가능한 과거 migration, 공개 URL 파일과 보존·삭제 정책 부재 때문에 현재 35개를 그대로 목표 스키마로 채택할 수 없다.</p>
+        <div class="warning callout"><strong>활동지 자체 평가 기준:</strong> AI가 평가할 활동지는 편집 중인 최신 template가 아니라 특정 worksheet revision 또는 발행 snapshot이어야 한다. 이 평가는 <code>submission_id</code>가 필요한 학생 제출 평가와 별도 subject·입력 snapshot·결과·검토 이력을 가져야 한다.</div>
+      </section>
+
+      <h2 id="evidence">조사 근거</h2>
+      <table>
+        <thead><tr><th>근거 코드</th><th>확인 범위</th><th>결과</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../../src/Database/Table_Names.php"><code>Table_Names.php</code></a></td><td>논리·물리 테이블 이름과 prefix 처리</td><td>35개 모두 고정 <code>oj_ai_*</code>, <code>prefix()</code>는 빈 문자열</td></tr>
+          <tr><td><a href="../../src/Database/Schema.php"><code>Schema.php</code></a></td><td>컬럼, key, 공통 컬럼, JSON, 관계</td><td>586컬럼, 보조·고유 key 86개, JSON longtext 27개, 외래 키 0개</td></tr>
+          <tr><td><span title="2026-10-23 제거된 구형 소스"><code>Abstract_Repository.php</code> (제거됨)</span>와 32개 concrete repository</td><td>CRUD, soft delete, 관계 교체</td><td>기본은 <code>deleted_at</code> soft delete지만 일부 child 교체는 hard delete</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Migrator.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스">초기 migration (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스">평가 migration (제거됨)</span></td><td>설치·업그레이드와 이력 기록</td><td>migration 2개가 모두 현재 <code>Schema::sql()</code> 전체를 다시 실행</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스">일반 첨부 (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스">ZIP 업로드 (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스">내보내기 (제거됨)</span></td><td>물리 파일 위치, URL, 검증, 만료</td><td>WordPress uploads 아래 저장, 직접 URL 가능, 만료 후 정리 worker 없음</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Legacy_Import_Service.php</code> (제거됨)</span></td><td>legacy 입력, preview·commit, 부분 실패</td><td>정규화 payload를 받지만 실제 legacy table 탐지·transaction·rollback 없음</td></tr>
+          <tr><td><a href="../../src/Core/Activation.php">Activation</a><br><a href="../../src/Core/Deactivation.php">Deactivation</a></td><td>설치·비활성화·삭제</td><td>비활성화는 cron만 정리하며 uninstall hook과 데이터·파일 삭제 정책이 없음</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>조사 방법:</strong> schema 정의와 table registry를 구조적으로 집계하고, 각 table 상수·option key·파일 API·migration 호출의 runtime 참조를 역추적했다. <code>node_modules</code>와 생성 자산은 저장소 소유권 집계에서 제외했다.</div>
+
+      <h2 id="counts">수량 기준선</h2>
+      <table>
+        <thead><tr><th>항목</th><th>현재 수량</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td>물리 테이블</td><td>35</td><td>전부 고정 <code>oj_ai_*</code>, WordPress table prefix 0건</td></tr>
+          <tr><td>컬럼</td><td>586</td><td>모든 테이블에 공통 10컬럼을 반복</td></tr>
+          <tr><td>보조·고유 인덱스</td><td>86</td><td>관계·상태 조회 key는 있으나 실제 query plan 검증 없음</td></tr>
+          <tr><td>외래 키</td><td>0</td><td>모든 관계 무결성을 application code에 의존</td></tr>
+          <tr><td>JSON longtext</td><td>27</td><td>대부분 schema version·검증·upgrade 계약 없음</td></tr>
+          <tr><td>Concrete repository</td><td>32</td><td><code>activity_events</code>, <code>audit_logs</code>는 runtime writer가 없음</td></tr>
+          <tr><td>Migration</td><td>2</td><td>과거 migration이 immutable하지 않음</td></tr>
+          <tr><td>애드온 소유 option</td><td>5</td><td>설정·버전·migration·legacy role flag가 한 계층에 섞임</td></tr>
+          <tr><td>Transient·object cache·CPT·post meta</td><td>0</td><td>현재 별도 저장 없음</td></tr>
+          <tr><td>파일 저장 계열</td><td>3</td><td>학생 첨부, ZIP 제출, 보고서 내보내기</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="catalog">35개 테이블 전수 목록</h2>
+      <table>
+        <thead><tr><th>현재 영역</th><th>수량</th><th>물리 테이블</th><th>목표 판정</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>로컬 학사 원장</td><td>6</td>
+            <td><code>oj_ai_academic_years</code>, <code>oj_ai_classes</code>, <code>oj_ai_groups</code>, <code>oj_ai_group_members</code>, <code>oj_ai_academic_context_mappings</code>, <code>oj_ai_student_mappings</code></td>
+            <td><strong>제거 대상.</strong> OJ Platform user·class·group stable ID와 context snapshot 참조로 전환</td>
+          </tr>
+          <tr>
+            <td>활동·감사</td><td>2</td>
+            <td><code>oj_ai_activity_events</code>, <code>oj_ai_audit_logs</code></td>
+            <td><strong>재설계.</strong> 목적이 겹치며 현재 writer 0건. append-only 감사와 선택적 outbox 책임을 분명히 함</td>
+          </tr>
+          <tr>
+            <td>활동지·배정·제출</td><td>6</td>
+            <td><code>oj_ai_worksheet_templates</code>, <code>oj_ai_worksheet_questions</code>, <code>oj_ai_worksheet_assignments</code>, <code>oj_ai_worksheet_submissions</code>, <code>oj_ai_submission_revisions</code>, <code>oj_ai_submission_attachments</code></td>
+            <td><strong>유지·분해.</strong> template revision·발행 snapshot·assignment 참조와 file registry를 보완</td>
+          </tr>
+          <tr>
+            <td>ZIP 제출</td><td>2</td>
+            <td><code>oj_ai_zip_uploads</code>, <code>oj_ai_zip_upload_items</code></td>
+            <td><strong>유지·보호.</strong> 비공개 blob, 검사 상태, 정리 상태와 idempotent 처리 필요</td>
+          </tr>
+          <tr>
+            <td>교육과정</td><td>4</td>
+            <td><code>oj_ai_curriculums</code>, <code>oj_ai_achievement_standards</code>, <code>oj_ai_worksheet_achievement_links</code>, <code>oj_ai_question_achievement_links</code></td>
+            <td><strong>소유권 재확인.</strong> 애드온 기준 자료인지 플랫폼 원장인지 A-D-005 활동지 연결과 A-D-008 모듈 소유권 조사 뒤 확정</td>
+          </tr>
+          <tr>
+            <td>평가·피드백</td><td>10</td>
+            <td><code>oj_ai_assessment_plans</code>, <code>oj_ai_assessment_runs</code>, <code>oj_ai_grading_inputs</code>, <code>oj_ai_rubric_snapshots</code>, <code>oj_ai_grading_items</code>, <code>oj_ai_assessment_results</code>, <code>oj_ai_regrade_reviews</code>, <code>oj_ai_feedback</code>, <code>oj_ai_feedback_approvals</code>, <code>oj_ai_special_notes</code></td>
+            <td><strong>재설계.</strong> 학생 제출 중심 구조를 공통 실행 이력과 활동지·제출물별 subject 저장으로 분리</td>
+          </tr>
+          <tr>
+            <td>보고서·내보내기</td><td>3</td>
+            <td><code>oj_ai_reports</code>, <code>oj_ai_export_jobs</code>, <code>oj_ai_export_files</code></td>
+            <td><strong>유지·보호.</strong> snapshot·요청자 scope·private file·실제 만료 삭제를 보완</td>
+          </tr>
+          <tr>
+            <td>가져오기</td><td>2</td>
+            <td><code>oj_ai_import_runs</code>, <code>oj_ai_import_items</code></td>
+            <td><strong>유지·강화.</strong> source adapter, checksum, preview 승인, checkpoint·rollback과 재시작 계약 필요</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>무접두어 규칙:</strong> 목표 테이블도 <code>oj_ai_*</code>를 사용하며 <code>wp_</code>, 사이트별 prefix와 <code>$wpdb-&gt;prefix</code>를 붙이지 않는다. OJ Platform 자체가 <a href="../../../oj-integration-rebuild/oj-platform/src/Kernel/Environment/RequirementChecker.php">무접두어 테이블 때문에 Multisite 설치를 거부</a>하므로 애드온도 같은 단일 사이트 전제와 동명 테이블 owner preflight를 적용해야 한다.</div>
+
+      <h2>공통 컬럼</h2>
+      <table>
+        <thead><tr><th>현재 공통 컬럼</th><th>현재 용도</th><th>목표 판정</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>unsigned bigint 식별자</td><td>유지하되 외부에 노출할 stable public ID 정책은 별도 결정</td></tr>
+          <tr><td><code>tenant_context</code></td><td>모든 insert가 사실상 <code>default</code></td><td>격리 기능이 아니다. 플랫폼의 단일 사이트 전제에서는 제거 권고</td></tr>
+          <tr><td><code>created_by</code>, <code>updated_by</code></td><td>WordPress user ID 추정</td><td>플랫폼 user ID 의미·삭제 사용자 표시 규칙과 함께 명시</td></tr>
+          <tr><td><code>created_at</code>, <code>updated_at</code>, <code>deleted_at</code></td><td>soft delete와 시간 기록</td><td>UTC 저장·표시 시 timezone 변환으로 통일</td></tr>
+          <tr><td><code>source_type</code>, <code>source_key</code>, <code>source_id</code></td><td>가져오기·외부 출처 추적</td><td>모든 테이블 공통 반복 대신 source가 필요한 aggregate에 versioned provenance로 배치</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="relationships">관계와 불변성</h2>
+      <pre><code>현재
+worksheet_template --template_id--&gt; assignment --assignment_id--&gt; submission
+        |                                      |
+        +-- mutable Plate JSON                 +-- submission revision / attachment
+                                               +-- assessment plan / run / result
+                                                    +-- review / feedback / approval
+
+목표
+worksheet definition --&gt; immutable worksheet revision --&gt; published snapshot
+                                  |                         |
+                                  |                         +-- assignment --&gt; submission revision
+                                  |                                              |
+                                  +-- worksheet quality evaluation               +-- student submission evaluation
+                                      --&gt; teacher review                             --&gt; teacher review
+                                                 \                               /
+                                                  +-- release·audit policy -------+</code></pre>
+      <table>
+        <thead><tr><th>현재 관계 문제</th><th>증거</th><th>목표 규칙</th></tr></thead>
+        <tbody>
+          <tr><td>발행 후 활동지 내용이 고정되지 않음</td><td><code>worksheet_assignments.template_id</code>만 있고 worksheet revision·발행 snapshot 없음</td><td>배정은 immutable 발행 snapshot을 참조하고 template 최신 편집과 분리</td></tr>
+          <tr><td>활동지 자체 평가 subject 없음</td><td><code>assessment_results.submission_id</code>가 필수이며 제출 중심 repository만 존재</td><td>worksheet revision 평가와 submission revision 평가를 별도 subject·schema로 저장</td></tr>
+          <tr><td>관계 무결성 0건</td><td>schema 전체에 foreign key 없음</td><td>애드온 내부 aggregate에는 FK·unique·check 또는 동등한 postcondition을 적용하고 플랫폼 외부 ID에는 FK를 걸지 않음</td></tr>
+          <tr><td>삭제 방식 혼합</td><td>기본 repository는 soft delete, grading item·attachment·ZIP item·link 교체는 hard delete</td><td>aggregate별 보존·cascade·purge 정책을 먼저 정하고 repository가 같은 규칙을 사용</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>두 평가의 공통점과 차이:</strong> 실행 상태·AI routing snapshot·교사 검토·감사 형식은 공유할 수 있다. 평가 대상 snapshot, 입력 schema, 결과 schema, rubric 적용 방식과 공개 정책은 활동지 자체 평가와 학생 제출 평가가 분리되어야 한다.</div>
+
+      <h2 id="json">JSON longtext 27개</h2>
+      <table>
+        <thead><tr><th>영역</th><th>JSON 컬럼</th><th>위험</th></tr></thead>
+        <tbody>
+          <tr><td>활동·감사</td><td><code>payload_json</code> 2개</td><td>writer·schema·retention 없음</td></tr>
+          <tr><td>활동지</td><td><code>plate_value_json</code>, <code>form_schema_json</code>, <code>worksheet_rubric_json</code>, <code>curriculum_links_json</code>, <code>settings_json</code>, <code>question_schema_json</code></td><td>편집·발행 version 경계와 schema migration 없음</td></tr>
+          <tr><td>배정·제출</td><td>assignment <code>settings_json</code>, submission <code>content_json</code>·<code>grading_schema_json</code>, revision <code>content_json</code>, attachment <code>meta_json</code></td><td>어느 시점의 활동지 schema로 작성했는지 검증하기 어려움</td></tr>
+          <tr><td>ZIP</td><td><code>summary_json</code>, <code>mapping_json</code></td><td>대용량·부분 실패·재실행 schema 없음</td></tr>
+          <tr><td>교육과정</td><td><code>metadata_json</code></td><td>출처 version과 필드 계약 없음</td></tr>
+          <tr><td>평가</td><td>plan <code>rubric_json</code>·<code>standard_links_json</code>·<code>target_json</code>, grading input <code>input_json</code>, rubric snapshot <code>rubric_json</code>, grading item <code>normalized_json</code></td><td>민감 원문·prompt 입력과 결과 재현성·보존 기간이 섞임</td></tr>
+          <tr><td>보고·내보내기</td><td><code>options_json</code>, <code>payload_json</code></td><td>요청 시점 scope·filter snapshot과 schema version 없음</td></tr>
+          <tr><td>가져오기</td><td><code>preview_json</code>, <code>commit_summary_json</code>, item <code>payload_json</code></td><td>source contract·checksum·재시작 기준 없음</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>목표 JSON 계약:</strong> 각 JSON 컬럼은 owner aggregate, JSON schema ID·version, 최대 byte, 필수·허용 field, canonical encoding, validation 시점, upgrade adapter, redaction·retention을 함께 정의한다. 검증되지 않은 arbitrary array를 repository에 직접 넘기지 않는다.</div>
+
+      <h2 id="options">Option·캐시·WordPress 저장</h2>
+      <table>
+        <thead><tr><th>Option</th><th>현재 용도</th><th>목표 처리</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_dashboard_version</code></td><td>설치 plugin version</td><td>설치 상태 snapshot으로 유지 여부 결정</td></tr>
+          <tr><td><code>oj_ai_dashboard_settings</code></td><td>provider·model·queue·기능 설정 혼합</td><td>provider·model 제거. 애드온 평가 정책과 진단 가능한 운영 설정만 versioned schema로 저장</td></tr>
+          <tr><td><code>oj_ai_dashboard_enable_assistant_role</code></td><td>선택 애드온 역할 설치 flag</td><td>A-D-003 결정에 따라 제거·migration 대상</td></tr>
+          <tr><td><code>oj_ai_dashboard_db_version</code></td><td>현재 schema version</td><td>검증된 migration ledger와 일치할 때만 갱신</td></tr>
+          <tr><td><code>oj_ai_dashboard_installed_migrations</code></td><td>적용 migration ID 배열</td><td>checksum·시작·완료·실패·repair 상태가 있는 immutable ledger로 대체 권고</td></tr>
+        </tbody>
+      </table>
+      <p>현재 애드온 소유 transient, object cache, custom post type, post meta는 없다. WordPress <code>active_plugins</code>는 외부 상태를 읽는 것이며 애드온 소유 option 수량에 포함하지 않는다.</p>
+
+      <h2 id="migrations">설치·Migration</h2>
+      <pre><code>현재
+Activation
+  --&gt; Migrator가 option의 ID 배열 읽기
+  --&gt; 각 migration이 최신 Schema::sql() 전체 호출
+  --&gt; 35개 CREATE 문에 dbDelta 실행
+  --&gt; DDL postcondition 확인 없이 migration ID·db version 기록
+
+목표
+환경·platform·multisite·동명 table owner preflight
+  --&gt; migration lock 획득
+  --&gt; immutable migration checksum 검증
+  --&gt; 한 migration 실행
+  --&gt; table·column·index·FK postcondition 검증
+  --&gt; success 또는 recoverable failure checkpoint 기록
+  --&gt; 다음 migration
+  --&gt; 전체 schema contract 검산 후 version 전진</code></pre>
+      <table>
+        <thead><tr><th>현재 문제</th><th>영향</th><th>목표 관문</th></tr></thead>
+        <tbody>
+          <tr><td>두 과거 migration이 모두 현재 <code>Schema::sql()</code> 호출</td><td>Schema 변경 시 과거 설치 경로의 의미도 바뀜</td><td>migration별 SQL·postcondition·checksum immutable</td></tr>
+          <tr><td>두 번째 migration도 전체 테이블 반복</td><td>실제 delta와 migration ID가 일치하지 않음</td><td>한 migration은 한 목적의 delta만 소유</td></tr>
+          <tr><td><code>dbDelta</code> 결과·DDL 상태 미검증</td><td>일부 테이블 실패 뒤에도 완료로 기록될 수 있음</td><td>예상 table·column·index·constraint 전수 postcondition</td></tr>
+          <tr><td>lock·동시 실행·repair checkpoint 없음</td><td>활성화 요청이 겹치면 이력·schema가 어긋날 수 있음</td><td>단일 lock, timeout, 실패 상태, 재시작과 운영자 repair 절차</td></tr>
+          <tr><td>동명 무접두어 table owner 확인 없음</td><td>다른 설치의 <code>oj_ai_*</code>를 오인·변경할 수 있음</td><td>owner marker와 schema fingerprint가 없거나 다르면 설치 중단, 자동 adoption 금지</td></tr>
+          <tr><td>Multisite 사전 차단 없음</td><td><code>tenant_context=default</code>로 사이트 간 충돌</td><td>필수 OJ Platform과 같은 방식으로 Multisite 설치 거부</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>0.1.5 제한 복구 보정:</strong> 자동 adoption 금지 원칙은 유지한다. 예외는 첫 CREATE 뒤 중단된 <code>oj_ai_installations</code> 하나만 존재하고 0행이며 immutable baseline과 exact 일치하는 경우다. 잠금 전후와 기록 직전에 다시 확인해 누락된 addon owner row만 복원하고, 행 존재·복수 table·drift는 쓰기 전에 차단한다.</div>
+      <div class="callout"><strong>0.1.6 DB metadata 호환:</strong> MariaDB가 nullable 열의 SQL <code>NULL</code>을 문자열 <code>NULL</code>로 전달하는 차이만 의미 기준으로 정규화한다. quoted literal <code>'NULL'</code>과 실제 column·index·FK·engine·collation drift는 계속 구분하고 차단한다.</div>
+      <div class="callout"><strong>DDL 현실성:</strong> MySQL DDL 전체를 하나의 transaction으로 되돌릴 수 있다고 가정하지 않는다. 각 migration을 재실행 가능하게 만들고 실행 전후 schema postcondition과 repair checkpoint로 복구한다. 데이터 backfill은 작은 batch·checkpoint·검산 합계로 별도 수행한다.</div>
+
+      <h2 id="files">첨부·ZIP·내보내기 파일</h2>
+      <table>
+        <thead><tr><th>계열</th><th>현재 저장·검증</th><th>현재 격차</th><th>목표</th></tr></thead>
+        <tbody>
+          <tr><td>학생 일반 첨부</td><td><code>wp_handle_upload</code> 뒤 WordPress attachment post와 애드온 metadata 저장</td><td>애드온별 크기·MIME allowlist, 검사 상태, 원자 metadata/file commit 없음</td><td>확장자+실제 MIME+크기 검증, hash, 격리 검사 상태, scope가 있는 file registry</td></tr>
+          <tr><td>ZIP 제출</td><td>최대 500항목, 항목 50MB, 전체 500MB, 확장자와 traversal 검사 후 <code>uploads/oj-ai-dashboard/zip-submissions/{id}</code> 추출</td><td>public uploads 아래 원본·추출 파일, 중단 후 잔여물과 정리 job 없음</td><td>비공개 quarantine, 원자 promotion, 항목별 hash·status, 실패·만료 cleanup</td></tr>
+          <tr><td>보고서 내보내기</td><td><code>uploads/oj-ai-dashboard/exports</code>, 실패 시 plugin directory, public <code>file_url</code>, 1주 <code>expires_at</code></td><td>보호 REST가 있어도 직접 URL 접근 가능, 만료 시 실제 삭제 없음, plugin dir fallback</td><td>private storage만 허용, opaque file key와 권한 streaming, 만료 cleanup·download audit</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>목표 파일 경계:</strong> DB에는 절대 경로·공개 URL 대신 opaque storage key, owner, hash, MIME, byte, lifecycle·scan·retention 상태만 저장한다. private storage probe가 실패하면 업로드·내보내기를 이용 불가로 표시하며 plugin directory에 조용히 저장하지 않는다.</div>
+
+      <h2 id="retention">보존·삭제·감사</h2>
+      <table>
+        <thead><tr><th>데이터 등급</th><th>권고 기준</th><th>삭제 방식</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 definition·revision·발행 snapshot</td><td>배정·평가·감사 참조가 존재하는 동안 보존</td><td>사용 중 revision은 수정·hard delete 금지, retired 상태와 명시적 purge</td></tr>
+          <tr><td>학생 제출·첨부</td><td>학교 정책으로 기간을 설정하고 legal hold·정정 중에는 연장</td><td>DB row·blob·파생 text·AI input을 하나의 purge job으로 처리</td></tr>
+          <tr><td>AI input·raw response</td><td>최종 구조화 결과보다 짧은 최소 기간, 기본 redaction 적용</td><td>검토·분쟁에 필요한 digest와 routing snapshot만 남기는 단계적 purge</td></tr>
+          <tr><td>평가 결과·교사 검토·공개 이력</td><td>성적·피드백 보존 정책과 정정 기간에 맞춤</td><td>append-only revision과 tombstone, 공개 취소 이력 유지</td></tr>
+          <tr><td>내보내기·가져오기 preview·ZIP 임시물</td><td>짧은 만료 시간과 자동 cleanup</td><td>만료 worker가 blob과 metadata를 함께 지우고 실패를 재시도</td></tr>
+          <tr><td>감사 로그</td><td>운영 정책으로 고정하고 일반 soft delete 대상에서 제외</td><td>권한 있는 purge 절차와 별도 감사 사건을 남김</td></tr>
+        </tbody>
+      </table>
+      <p>현재 <code>activity_events</code>와 <code>audit_logs</code>에는 runtime writer가 없고, 일반 repository soft delete와 child hard delete가 섞여 있다. 목표에서는 privileged command, AI 실행·재실행, 교사 조정·승인·공개, 내보내기·다운로드, import·purge를 correlation ID가 있는 append-only 감사 사건으로 기록한다.</p>
+
+      <h2 id="imports">가져오기 데이터</h2>
+      <table>
+        <thead><tr><th>가져오기 종류</th><th>목표 위치</th><th>대상 데이터</th><th>제외</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 template 가져오기</td><td><code>AI 활동지 &gt; 활동지</code></td><td>Plate 문서, 문항·rubric·교육과정 link의 versioned package</td><td>학생 roster와 AI provider 비밀값</td></tr>
+          <tr><td>Legacy 애드온 데이터 이전</td><td><code>AI 활동지 &gt; 설정 &gt; 데이터 이전</code></td><td>기존 활동지, 제출, 평가 결과, 피드백, 특이사항, 보고서의 명시적으로 지원된 source version</td><td>로컬 학년·학급·그룹 원장 생성</td></tr>
+          <tr><td>학급·그룹·학생</td><td>가져오기 없음</td><td>OJ Platform context gateway의 stable ID와 membership을 사용</td><td>현재 roster import와 <code>oj_ai_*_mappings</code> 대상</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>접두어형 레거시 테이블의 의미:</strong> 과거 버전이 생성했을 수 있는 <code>{당시 WordPress prefix}oj_ai_*</code> 변형을 뜻한다. 기본 <code>wp_oj_ai_*</code>뿐 아니라 멀티사이트·사용자 정의 prefix도 포함하며 운영자가 선택한 읽기 전용 legacy source일 뿐이다. 새 target table을 만들거나 자동 탐지·자동 commit하지 않는다. source adapter가 version과 owner를 확인하고 preview·mapping·checksum을 보여 준 뒤 명시 승인된 batch만 <code>oj_ai_*</code>로 이전한다.</div>
+      <p>현재 legacy service는 정규화 payload bundle을 받지만 실제 source table을 찾지 않으며, commit 중 뒤 항목이 실패해도 앞선 write를 rollback하지 않는다. 목표 import run은 source fingerprint, preview revision, 승인자, idempotency key, batch checkpoint, 성공·실패 합계와 재개 지점을 저장해야 한다.</p>
+
+      <h2 id="findings">발견 격차와 후속 소유</h2>
+      <table>
+        <thead><tr><th>ID</th><th>중요도</th><th>현재 사실과 위험</th><th>후속</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-D004-F01</code></td><td><span class="badge danger">Critical</span></td><td>학사 원장 6개가 플랫폼 user·class·group source와 중복되어 권한·배정 대상이 갈라짐</td><td><code>A-D-008</code>, <code>A-DS-03</code>·<code>A-DS-05</code>·<code>A-DS-06</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D004-F02</code></td><td><span class="badge danger">Critical</span></td><td>평가 결과가 필수 <code>submission_id</code>에 묶여 활동지 자체 평가를 저장할 subject가 없음</td><td>A-DS-05·10</td></tr>
+          <tr><td><code>A-D004-F03</code></td><td><span class="badge danger">High</span></td><td>mutable template와 assignment 사이에 immutable worksheet revision·발행 snapshot이 없어 평가·제출 재현 불가</td><td>A-DS-05·09·11</td></tr>
+          <tr><td><code>A-D004-F04</code></td><td><span class="badge danger">High</span></td><td><code>tenant_context</code>가 항상 default이며 격리하지 못하고 Multisite 차단도 없음</td><td><code>A-DS-00</code>·<code>A-DS-02</code>·<code>A-DS-05</code></td></tr>
+          <tr><td><code>A-D004-F05</code></td><td><span class="badge danger">High</span></td><td>과거 migration 2개가 mutable 최신 Schema 전체를 호출하고 delta 의미가 없음</td><td>A-DS-05</td></tr>
+          <tr><td><code>A-D004-F06</code></td><td><span class="badge danger">High</span></td><td>DDL 결과·lock·checkpoint·repair·owner collision 검사가 없어 부분 설치를 완료로 기록할 수 있음</td><td><code>A-DS-02</code>·<code>A-DS-05</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D004-F07</code></td><td><span class="badge danger">High</span></td><td>외래 키 0개와 혼합 삭제 정책으로 orphan·부분 aggregate를 방지·정리할 계약이 없음</td><td><code>A-DS-05</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D004-F08</code></td><td><span class="badge danger">High</span></td><td>JSON 27개 대부분에 schema ID·version·크기·upgrade·redaction 계약이 없음</td><td><code>A-DS-05</code>·<code>A-DS-06</code>·<code>A-DS-09</code>·<code>A-DS-10</code>·<code>A-DS-12</code></td></tr>
+          <tr><td><code>A-D004-F09</code></td><td><span class="badge danger">High</span></td><td>AI plan·run이 자체 <code>model_key</code>를 저장하고 raw input·response 보존 기한이 없어 플랫폼 routing 소유권·개인정보 최소화와 충돌</td><td><code>C28-D11</code>, <code>A-DS-04</code>·<code>A-DS-05</code>·<code>A-DS-07</code></td></tr>
+          <tr><td><code>A-D004-F10</code></td><td><span class="badge danger">High</span></td><td>ZIP·export가 public uploads에 있고 export 만료가 물리 삭제로 이어지지 않음</td><td><code>A-D-007</code>, <code>A-DS-05</code>·<code>A-DS-14</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D004-F11</code></td><td><span class="badge wait">Medium</span></td><td>일반 첨부에 애드온 크기·MIME allowlist·scan과 DB/blob 원자 상태가 없음</td><td><code>A-D-007</code>, <code>A-DS-05</code>·<code>A-DS-11</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D004-F12</code></td><td><span class="badge wait">Medium</span></td><td>activity·audit 테이블은 runtime 사용 0건이라 실제 감사 증거가 남지 않음</td><td><code>A-D-008</code>, <code>A-DS-05</code>·<code>A-DS-07</code>·<code>A-DS-13</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D004-F13</code></td><td><span class="badge danger">High</span></td><td>legacy commit이 transaction·rollback 없이 부분 write를 남기고 roster import가 목표 소유권과 충돌</td><td><code>A-DS-05</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D004-F14</code></td><td><span class="badge wait">Medium</span></td><td>uninstall·retention·purge·blob cleanup 정책이 없어 삭제 사용자·비활성 plugin 데이터가 무기한 잔존</td><td><code>A-D-008</code>, <code>A-DS-05</code>·<code>A-DS-15</code>·<code>A-DS-16</code></td></tr>
+          <tr><td><code>A-D004-F15</code></td><td><span class="badge wait">Medium</span></td><td><code>current_time('mysql')</code>과 <code>gmdate</code>가 섞여 datetime timezone 의미가 다름</td><td>A-DS-05</td></tr>
+          <tr><td><code>A-D004-F16</code></td><td><span class="badge wait">Medium</span></td><td>schema test가 문자열 존재 위주이며 idempotency·부분 실패·복구·orphan·retention 실행 검사가 없음</td><td><code>A-DS-05</code>·<code>A-DS-15</code>·<code>A-DS-16</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="target">목표 저장 책임 분류</h2>
+      <table>
+        <thead><tr><th>분류</th><th>목표 저장 책임</th><th>이번 단계에서 고정하지 않는 것</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼 참조</td><td>user·class·group·membership은 로컬 master 없이 platform stable ID와 최소 context snapshot만 저장</td><td>플랫폼 내부 table·repository 이름</td></tr>
+          <tr><td>활동지</td><td>Plate definition, immutable revision, 발행 snapshot, 문항·rubric·교육과정 snapshot</td><td>최종 table 개수와 JSON 정규화 수준</td></tr>
+          <tr><td>배정·제출</td><td>발행 snapshot을 참조하는 assignment, 학생별 submission과 immutable revision, private attachment registry</td><td>제출 autosave의 세부 retention 주기</td></tr>
+          <tr><td>AI 평가</td><td>공통 run 상태·routing snapshot·오류 이력과 worksheet revision·submission revision별 입력·결과·검토 저장</td><td>공통 base table과 subject별 table의 정확한 분할</td></tr>
+          <tr><td>검토·공개</td><td>교사 조정, 승인·반려, 공개·회수 revision과 append-only audit</td><td>학교별 보존 기간 기본값</td></tr>
+          <tr><td>파일·작업</td><td>private blob registry, upload·ZIP·export·import job, checksum·checkpoint·cleanup 상태</td><td>실제 private storage adapter 구현</td></tr>
+          <tr><td>Schema 관리</td><td>고정 <code>oj_ai_*</code>, immutable migration, owner preflight, FK·postcondition, UTC, recoverable ledger</td><td>A-DS-05 전의 최종 table·column 이름과 수량</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>다음 설계 입력:</strong> A-D-005는 활동지·Plate 문서의 현재 node·원문·공개 schema·version 흐름을 조사한다. 모듈·repository 소유권은 A-D-008에서 연결하고, 최종 table 수와 column 계약은 A-DS-05에서 aggregate·transaction 경계를 먼저 정한 뒤 확정한다.</div>
+
+      <h2 id="decision">A-D-004 확정 결정</h2>
+      <section class="panel">
+        <ol>
+          <li>목표 물리 테이블은 계속 고정 <code>oj_ai_*</code>를 사용하고, OJ Platform과 동일하게 Multisite를 거부하며 동명 table owner·schema preflight가 실패하면 설치를 중단한다.</li>
+          <li>로컬 학사 원장 6개와 roster import를 제거하고 플랫폼 user·class·group stable ID와 context authorization snapshot만 참조한다.</li>
+          <li>활동지는 immutable revision·발행 snapshot을 도입하고, 활동지 자체 평가와 학생 제출 평가는 별도 subject·입력·결과를 저장하되 실행·검토 공통 계약만 공유한다.</li>
+          <li>학생 첨부·ZIP·내보내기는 private storage와 권한 streaming만 허용하고, JSON·AI raw 데이터·파일의 schema version·redaction·보존·cleanup 정책을 필수화한다.</li>
+          <li>Migration은 immutable delta·checksum·lock·postcondition·repair checkpoint를 사용하며 legacy import는 preview·명시 승인·idempotency·batch rollback 또는 보상 절차를 갖춘다.</li>
+          <li>비활성화는 데이터를 보존한다. uninstall도 기본 보존하며, 관리자에게 범위·수량을 보여 주는 별도 2단계 삭제 승인을 받은 경우에만 애드온 table·option·private blob을 purge한다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>승인 기록:</strong> 2026-08-10 사용자가 위 여섯 목표 저장 결정을 확정하고 다음 단계 진행을 승인했다. A-D-004 기준선을 동결하며 현재 실행 schema나 migration은 수정하지 않는다.</div>
+
+      <h2 id="completion">A-D-004 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>결과</th><th>증거</th></tr></thead>
+        <tbody>
+          <tr><td>모든 사용자 정의 테이블·컬럼·인덱스 목록</td><td>충족</td><td>35 table, 586 column, 86 secondary·unique index</td></tr>
+          <tr><td>무접두어 규칙 확인</td><td>충족</td><td>모든 물리 이름 <code>oj_ai_*</code>, <code>$wpdb-&gt;prefix</code> 0건</td></tr>
+          <tr><td>관계·JSON·삭제 방식 조사</td><td>충족</td><td>FK 0, JSON longtext 27, soft·hard delete 혼합 기록</td></tr>
+          <tr><td>Option·cache·WordPress 저장 조사</td><td>충족</td><td>애드온 option 5, transient·cache·CPT·post meta 0</td></tr>
+          <tr><td>Migration·설치·복구 조사</td><td>충족</td><td>migration 2개, mutable Schema 호출과 검증·lock·repair 부재 기록</td></tr>
+          <tr><td>파일·보존·uninstall 조사</td><td>충족</td><td>첨부·ZIP·export 위치와 public URL·cleanup·uninstall 격차 기록</td></tr>
+          <tr><td>가져오기 source·부분 실패 조사</td><td>충족</td><td>template·legacy·roster 분류와 preview·commit 격차 기록</td></tr>
+          <tr><td>활동지 자체 평가 저장 가능성</td><td>미충족 확인</td><td>현행은 필수 <code>submission_id</code> 중심, 목표 별도 subject 설계 제안</td></tr>
+          <tr><td>실행 코드·플랫폼 코드 변경 금지</td><td>충족</td><td>HTML 설계 문서만 작성, PHP·JS·schema 변경 0건</td></tr>
+          <tr><td>사용자 목표 기준 확인</td><td>충족</td><td>2026-08-10 여섯 목표 저장 결정을 확정하고 <code>A-D-005</code> 시작</td></tr>
+        </tbody>
+      </table>
+
+      <p class="footer">A-D-004 저장소 기준선을 사용자 확인으로 동결했다. 다음 단계는 <a href="a-d-005-worksheet-plate.html"><code>A-D-005 활동지와 Plate 문서</code></a> 전수 조사다.</p>
+    </main>
+  </div>
+</body>
+</html>

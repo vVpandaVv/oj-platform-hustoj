@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-10 문제 상세 설계 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/ds10-design.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 설계</strong></a>
+      <span class="topbar-label">문제 은행과 학습 콘텐츠</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="문서 목차">
+      <strong>DS-10 개요</strong>
+      <ul>
+        <li><a href="#baseline">설계 기준</a></li>
+        <li><a href="#documents">상세 문서 지도</a></li>
+        <li><a href="#scope">기능 분류</a></li>
+        <li><a href="#ownership">소유 경계</a></li>
+        <li><a href="#ui">화면 시안</a></li>
+        <li><a href="#approval">확정 사항</a></li>
+        <li><a href="#next">구현 연결</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header">
+        <p class="eyebrow">DS-10 · 메뉴 기반 상세 설계</p>
+        <h1>문제 상세 설계</h1>
+        <p class="lede">Problems의 기능·화면·권한·데이터·구현 경계를 확인하는 시작 문서다. 큰 표와 세부 동작은 기능별 문서로 분리하고 이 문서에는 전체 기준과 확정 결과만 유지한다.</p>
+        <div class="meta">
+          <span>정리일: 2026-07-24</span>
+          <span>최종 확정일: 2026-07-26</span>
+          <span>사용자 확정 · 기능·UI 설계 동결</span>
+          <span>구현: I-03 코드·자동 검사 완료 · 사용자 확인 대기</span>
+        </div>
+        <div class="doc-nav" aria-label="DS-10 상세 문서">
+          <a href="development-ds-10-problems.html" aria-current="page">개요</a>
+          <a href="development-ds-10-page-contracts.html">페이지 계약</a>
+          <a href="development-ds-10-problem-content.html">문제 콘텐츠</a>
+          <a href="development-ds-10-quiz-design.html">퀴즈</a>
+          <a href="development-ds-10-operations.html">관리 도구·구현</a>
+        </div>
+      </header>
+
+      <section class="section" id="baseline">
+        <div class="section-heading">
+          <div><h2>설계 기준</h2><p>이 수치는 후속 문서에서 반복 결정하지 않는다.</p></div>
+          <span class="badge good">고정 기준</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>10</strong><span>사용자 화면</span></div>
+          <div class="metric"><strong>13</strong><span>관리자 화면</span></div>
+          <div class="metric"><strong>12</strong><span>Problems 플랫폼 테이블</span></div>
+          <div class="metric"><strong>10</strong><span>목표 Controller</span></div>
+        </div>
+        <div class="summary"><strong>목표 경험:</strong> 학습자는 난이도와 주제로 문제를 찾고, 본문·예시를 이해한 뒤 제출·퀴즈·질문·문제집으로 자연스럽게 이동한다. 강사는 담당 범위 안에서 문제·메타데이터·테스트데이터·퀴즈·공용 문제집을 관리한다.</div>
+        <div class="warning"><strong>범위 경계:</strong> Problems는 문제 콘텐츠, 전체 코드·빈칸 완성 작성 방식과 학습 콘텐츠 구성을 소유한다. 전체 코드·코드 빈칸 완성·Blockly 제출과 빈칸 답안 복원, 채점 결과 상세와 재채점은 DS-11, 게시글·댓글·첨부 원본은 DS-14가 소유한다.</div>
+      </section>
+
+      <section class="section" id="documents">
+        <div class="section-heading">
+          <div><h2>상세 문서 지도</h2><p>같은 규칙은 한 문서만 원본으로 갖고 다른 문서는 링크한다.</p></div>
+          <span class="badge info">4개 상세 문서</span>
+        </div>
+        <div class="document-grid">
+          <article class="document-card">
+            <h3>페이지 계약</h3>
+            <p>23개 화면의 대표 주소, 접근 권한, 사용 테이블과 상태 변경 액션</p>
+            <a href="development-ds-10-page-contracts.html">문서 열기</a>
+          </article>
+          <article class="document-card">
+            <h3>문제 콘텐츠</h3>
+            <p>목록·상세, LaTeX·예시, 난이도·주제, 문제별 질문과 문제집</p>
+            <a href="development-ds-10-problem-content.html">문서 열기</a>
+          </article>
+          <article class="document-card">
+            <h3>퀴즈</h3>
+            <p>공유 불변 버전, 응시·제출, 게시 보호, 일괄 재적용과 저장 부하</p>
+            <a href="development-ds-10-quiz-design.html">문서 열기</a>
+          </article>
+          <article class="document-card">
+            <h3>관리 도구·구현</h3>
+            <p>담당 범위, AI Jobs, 테스트데이터, 번호·XML·보관, 코드 구조와 구현 순서</p>
+            <a href="development-ds-10-operations.html">문서 열기</a>
+          </article>
+        </div>
+        <div class="callout"><strong>읽는 순서:</strong> 화면 수와 권한 확인은 페이지 계약, 학습자·강사 기능 확인은 문제 콘텐츠와 퀴즈, 실제 구현 준비는 관리 도구·구현 문서를 사용한다.</div>
+      </section>
+
+      <section class="section" id="scope">
+        <div class="section-heading">
+          <div><h2>기능 분류</h2><p>사용자 경험과 운영 책임을 기준으로 일곱 묶음으로 나눈다.</p></div>
+          <span class="badge good">7개 기능 묶음</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>기능</th><th>핵심 경험</th><th>세부 기준</th></tr></thead>
+            <tbody>
+              <tr><td>문제 탐색·상세</td><td>난이도·주제로 찾고 본문·예시·제출 코드 규칙을 읽은 뒤 제출로 이동</td><td><a href="development-ds-10-problem-content.html#catalog">목록·상세 설계</a> · <a href="development-ds-10-problem-content.html#submission-code-policy">제출 코드 규칙</a></td></tr>
+              <tr><td>문제별 질문</td><td>상세에서 최근 질문을 보고 질문하기·전체 질문으로 이동</td><td><a href="development-ds-10-problem-content.html#question-board">Board 연계</a></td></tr>
+              <tr><td>메타데이터</td><td>난이도 1~5와 선택 사항인 분야별 세부 주제 0~3개를 단건·선택·필터 전체 생성·검토</td><td><a href="development-ds-10-problem-content.html#metadata">메타데이터 계약</a></td></tr>
+              <tr><td>문제 작성·테스트데이터</td><td>AI 초안을 비교·검증하고 사람이 명시적으로 적용. 전체 코드 또는 단일 언어 빈칸 완성 작성 방식, 제출 금지 코드와 채점용 앞·뒤 코드를 설정하며 문제별 파일 편집기에서 생성·편집·이름 변경·ZIP·다중 삭제·다운로드와 SPJ 컴파일을 수행</td><td><a href="development-ds-10-problem-content.html#submission-code-policy">제출 코드 규칙</a> · <a href="development-ds-10-operations.html#ai-jobs">AI Jobs</a> · <a href="development-ds-10-operations.html#test-data">파일 편집기</a></td></tr>
+              <tr><td>퀴즈</td><td>목록 → 상세 → 응시 → 결과·통계, 관리자는 초안 → 게시 → 분석</td><td><a href="development-ds-10-quiz-design.html">퀴즈 설계</a></td></tr>
+              <tr><td>문제집</td><td>공용 문제집 탐색과 개인 문제 저장</td><td><a href="development-ds-10-problem-content.html#problem-books">문제집 설계</a></td></tr>
+              <tr><td>운영 도구</td><td>연속 범위·임의 집합의 문제 번호를 일괄 변경하고 Judge·플랫폼·WordPress·파일 전체 영향과 결과를 별도 화면에서 확인</td><td><a href="development-ds-10-operations.html#tools">고위험 도구</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="ownership">
+        <div class="section-heading">
+          <div><h2>데이터와 모듈 소유</h2><p>연결은 허용하지만 다른 저장소의 원본을 복제하거나 직접 소유하지 않는다.</p></div>
+          <span class="badge good">원본 분리</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>소유자</th><th>원본</th><th>Problems 사용 방식</th></tr></thead>
+            <tbody>
+              <tr><td>JudgeDb</td><td><code>problem</code>의 원문·<code>bann</code>·<code>front</code>·<code>body</code>·<code>rear</code>, 제한된 <code>solution</code> 집계</td><td>전용 Gateway로 문제 원문·제출 코드 정책·통계·순위·참조만 조회·명령</td></tr>
+              <tr><td>Problems</td><td>담당·메타데이터·빈칸 스키마·퀴즈·문제집 12개 무접두어 테이블</td><td>전용 Repository가 읽고 쓴다.</td></tr>
+              <tr><td>문제 데이터 파일</td><td>설정된 Judge 문제 디렉터리</td><td>Test Data Gateway가 문제별 단일 폴더의 루트 파일만 처리하며 하위 폴더는 허용하지 않는다.</td></tr>
+              <tr><td>Jobs Core</td><td>공통 Jobs 4개 테이블과 암호화 Form Draft</td><td>AI·번호 변경·퀴즈 재적용의 실행 상태와 초안을 참조한다.</td></tr>
+              <tr><td>WordPress</td><td><code>wp_users.ID</code>, <code>user_login</code>, capability</td><td>플랫폼 사용자 참조 열은 숫자 ID, Judge 제출 연결은 <code>user_login</code>을 사용한다.</td></tr>
+              <tr><td>Board·Submissions</td><td>게시글·댓글·첨부, 제출·채점 결과</td><td>선택 Provider와 대표 주소만 사용하고 원본 테이블을 직접 조회하지 않는다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout"><strong>플랫폼 테이블 수:</strong> 담당·메타데이터 4개, 퀴즈 5개, 문제집 3개로 총 12개다. Judge <code>problem</code>에 메타데이터 열을 추가하지 않으며 학습자별 퀴즈 원문 스냅샷 테이블도 만들지 않는다.</div>
+      </section>
+
+      <section class="section" id="ui">
+        <div class="section-heading">
+          <div><h2>전체 화면 시안</h2><p>한 문서에 화면을 길게 쌓지 않고 사용자·관리자 업무별 시안으로 나눴다.</p></div>
+          <span class="badge good">사용자 확정</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>시안 문서</th><th>포함 화면</th><th>수</th></tr></thead>
+            <tbody>
+              <tr><td><a href="development-ds-10-problem-detail-ui.html">문제 상세 화면 시안</a></td><td>일반·평가 중·게시판 꺼짐·관리자 상태 비교</td><td>1</td></tr>
+              <tr><td><a href="development-ds-10-user-problems-ui.html">사용자 문제·문제집 시안</a></td><td>문제 목록, 문제 통계, 문제별 순위, 문제집</td><td>4</td></tr>
+              <tr><td><a href="development-ds-10-user-quizzes-ui.html">사용자 퀴즈 시안</a></td><td>퀴즈 목록, 상세, 응시, 결과, 통계</td><td>5</td></tr>
+              <tr><td><a href="development-ds-10-admin-problems-ui.html">관리자 문제 시안</a></td><td>목록, 추가, 편집, 보관, 테스트데이터, 번호 변경, XML</td><td>7</td></tr>
+              <tr><td><a href="development-ds-10-admin-quizzes-ui.html">관리자 퀴즈·문제집 시안</a></td><td>퀴즈 목록, 생성, 편집, 통계, 공용 문제집 관리</td><td>5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="summary"><strong>합계:</strong> 사용자 10개와 관리자 13개, 총 23개 Problems 화면이다. 관리자 문제 시안에는 최고 관리자 전용 주제 관리 화면을 포함하며 각 시안 상단 탭은 한 번에 한 화면만 표시한다.</div>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading">
+          <div><h2>확정 사항</h2><p>사용자가 확정한 기준을 요약하고 세부 근거는 원본 문서로 연결한다.</p></div>
+          <span class="badge good">DS10-Q01~Q09</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>번호</th><th>확정 내용</th><th>세부 문서</th></tr></thead>
+            <tbody>
+              <tr><td>DS10-Q01</td><td>Problems는 문제 콘텐츠·퀴즈·문제집을 소유하고 사용자 10개·관리자 13개 최신 주소만 제공한다. 주제 관리 화면은 최고 관리자만 접근한다.</td><td><a href="development-ds-10-page-contracts.html">페이지 계약</a></td></tr>
+              <tr><td>DS10-Q02</td><td>전역 capability와 문제 소유자·공동 편집자·테스트 담당자 범위를 모든 진입점에서 같은 Policy로 검사한다.</td><td><a href="development-ds-10-operations.html#permissions">담당 범위</a></td></tr>
+              <tr><td>DS10-Q03</td><td>문제 상세의 제한·제출·관리 명령과 문제별 전체 코드/빈칸 완성 작성 방식, 제출 금지 코드·자동 앞·뒤 코드, 문제별 질문, 퀴즈 5단계 화면과 게시 보호·재적용 UI를 사용한다.</td><td><a href="development-ds-10-problem-content.html#catalog">문제 UI</a> · <a href="development-ds-10-problem-content.html#submission-code-policy">제출 코드 규칙</a> · <a href="development-ds-10-quiz-design.html#ui">퀴즈 UI</a></td></tr>
+              <tr><td>DS10-Q04</td><td>난이도는 AI 요청부터 DB까지 정수 1~5로 제한한다. 주제 사전은 <strong>분야 → 세부 주제</strong>의 정확히 2단계이며 문제에는 정확히 맞는 활성 세부 주제 키만 선택 사항으로 최대 3개 저장한다. 해당 항목이 없으면 주제 없이 저장하며 새 분야와 세부 주제는 최고 관리자만 추가한다.</td><td><a href="development-ds-10-problem-content.html#metadata">메타데이터</a></td></tr>
+              <tr><td>DS10-Q05</td><td>메타데이터·문제 작성·테스트케이스 AI는 Jobs로 실행하고 수동값·원본을 자동 덮어쓰지 않는다.</td><td><a href="development-ds-10-operations.html#ai-jobs">AI Jobs</a></td></tr>
+              <tr><td>DS10-Q06</td><td>Problems가 문제별 테스트데이터 편집기와 파일 경계를 소유한다. ZIP 해제는 미리보기와 한도 검사를 거치고 SPJ 컴파일은 격리 Job으로 실행한다. 문제 번호는 연속 범위·임의 집합을 하나의 매핑으로 만들어 모든 등록 참조와 파일을 단계 변경하며 삭제는 복원 가능한 보관으로 처리한다.</td><td><a href="development-ds-10-operations.html#test-data">테스트데이터</a> · <a href="development-ds-10-operations.html#tools">도구</a></td></tr>
+              <tr><td>DS10-Q07</td><td>Judge 원본·Problems 12개 테이블·파일·Jobs를 분리한다. 제출 코드 규칙은 새 테이블 없이 Judge <code>problem.bann</code>·<code>front</code>·<code>body</code>·<code>rear</code>와 기존 <code>problem_metadata</code>의 작성 방식·빈칸 스키마·해시를 사용하고, 퀴즈는 공유 불변 버전과 사용자 답안만 저장한다.</td><td><a href="development-ds-10-problem-content.html#submission-code-policy">제출 코드 저장</a> · <a href="development-ds-10-quiz-design.html#model">퀴즈 저장</a> · <a href="development-ds-10-operations.html#data-boundary">데이터 경계</a></td></tr>
+              <tr><td>DS10-Q08</td><td>문제 목록·메타데이터를 첫 수직 기능으로 구현한 뒤 작성·파일 도구·사용자 콘텐츠 순서로 확장한다.</td><td><a href="development-ds-10-operations.html#implementation">구현 순서</a></td></tr>
+              <tr><td>DS10-Q09</td><td>설명·입력·출력·힌트는 MathJax 3 LaTeX, 예시 입력·출력은 서식 없는 원문으로 저장·표시한다.</td><td><a href="development-ds-10-problem-content.html#format">LaTeX·예시</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout"><strong>후속 연계:</strong> DS-14 요구로 문제 상세에 최근 문제별 질문 최대 5개를 추가했다. Problems의 Route·Controller·테이블 수는 늘리지 않고 Board 선택 Provider의 ViewModel만 사용한다.</div>
+      </section>
+
+      <section class="section" id="next">
+        <div class="section-heading">
+          <div><h2>구현 연결</h2><p>설계 문서와 실행 코드 상태를 섞지 않는다.</p></div>
+          <span class="badge wait">I-03 사용자 확인 대기</span>
+        </div>
+        <div class="flow">
+          <article><span>설계 기준</span><strong>이 문서와 상세 4종</strong><p>기능·페이지·데이터·코드 계약을 구현 전 기준선으로 사용한다.</p></article>
+          <article><span>시각 기준</span><strong>화면 시안 5종</strong><p>사용자 확정된 데스크톱·태블릿·모바일 배치와 문구를 구현 기준으로 사용한다.</p></article>
+          <article><span>실제 구현</span><strong>I-03 Problems</strong><p>P-1부터 P-5까지 코드와 자동 검사를 완료했다. 실제 WordPress 화면의 시각·작업 흐름은 사용자 확인 전까지 완료로 확정하지 않는다.</p></article>
+        </div>
+        <div class="summary"><strong>다음 단계:</strong> DS-10 사용자 시각 확인 뒤 <a href="development-ds-11-submissions-blockly.html">DS-11 제출</a> 구현으로 이동한다. DS-10 구현 절차와 검사 근거는 <a href="development-ds-10-operations.html#implementation">관리 도구·구현 문서</a>가 단일 원본이다.</div>
+      </section>
+
+      <footer>OJ Platform 개발 설계 · DS-10 문제 · 기능·UI 설계 사용자 확정 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

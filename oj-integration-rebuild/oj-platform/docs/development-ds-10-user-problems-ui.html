@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-10 사용자 문제·문제집 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 5.5A3.5 3.5 0 0 1 5.5 2H11v18H5.5A3.5 3.5 0 0 0 2 23z"/><path d="M22 5.5A3.5 3.5 0 0 0 18.5 2H13v18h5.5A3.5 3.5 0 0 1 22 23z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H3v2a4 4 0 0 0 5 4M17 6h4v2a4 4 0 0 1-5 4"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 5h7l2 2h9v12H3z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title">
+        <strong>DS-10 사용자 문제 시안</strong>
+        <span>상단 탭으로 화면을 전환합니다.</span>
+      </div>
+      <div class="screen-switcher" role="tablist" aria-label="화면 선택">
+        <button type="button" role="tab" data-screen-target="problems-list" aria-selected="true">문제 목록</button>
+        <button type="button" role="tab" data-screen-target="problem-statistics" aria-selected="false">문제 통계</button>
+        <button type="button" role="tab" data-screen-target="problem-ranking" aria-selected="false">문제별 순위</button>
+        <button type="button" role="tab" data-screen-target="problem-books" aria-selected="false">문제집</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-10-problems.html" aria-label="DS-10 설계 문서로 이동">
+        <span class="brand-mark">OJ</span>
+        <span>OJ Platform</span>
+      </a>
+      <nav class="primary-nav" aria-label="주 메뉴">
+        <a href="#home">홈</a>
+        <a href="#problems-list" aria-current="page">문제</a>
+        <a href="#submissions">제출</a>
+        <a href="#learning">학습</a>
+        <a href="#community">커뮤니티</a>
+      </nav>
+      <button class="account-button" type="button" aria-label="내 계정" title="내 계정">
+        <svg><use href="#i-user"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="page" id="main">
+      <section class="screen" data-screen="problems-list">
+        <div class="breadcrumb"><span>문제</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">문제 은행</p>
+            <h1>문제</h1>
+            <p>난이도와 주제를 기준으로 지금 풀 문제를 찾습니다.</p>
+          </div>
+          <div class="heading-actions">
+            <button class="button" type="button" data-open-screen="problem-books">
+              <svg><use href="#i-bookmark"/></svg>
+              내 문제집
+            </button>
+          </div>
+        </header>
+
+        <div class="filter-bar">
+          <div class="field">
+            <label for="problem-search">문제 검색</label>
+            <div class="input-wrap">
+              <svg><use href="#i-search"/></svg>
+              <input class="input" id="problem-search" type="search" placeholder="번호 또는 제목">
+            </div>
+          </div>
+          <div class="field">
+            <label for="difficulty-filter">난이도</label>
+            <select class="select" id="difficulty-filter">
+              <option>전체 난이도</option>
+              <option>1 · 매우 쉬움</option>
+              <option>2 · 쉬움</option>
+              <option>3 · 보통</option>
+              <option>4 · 어려움</option>
+              <option>5 · 매우 어려움</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="topic-filter">주제</label>
+            <select class="select" id="topic-filter">
+              <option>전체 주제</option>
+              <option>배열</option>
+              <option>정렬</option>
+              <option>동적 계획법</option>
+              <option>그래프</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="solve-filter">풀이 상태</label>
+            <select class="select" id="solve-filter">
+              <option>전체 상태</option>
+              <option>미도전</option>
+              <option>도전 중</option>
+              <option>해결</option>
+            </select>
+          </div>
+          <div class="filter-actions">
+            <button class="icon-button" type="button" title="필터 초기화" aria-label="필터 초기화" data-toast="필터를 초기화했습니다.">
+              <svg><use href="#i-reset"/></svg>
+            </button>
+            <button class="button primary" type="button" data-toast="검색 조건을 적용했습니다.">
+              <svg><use href="#i-filter"/></svg>
+              적용
+            </button>
+          </div>
+        </div>
+
+        <div class="summary-line">
+          <span>총 428문제</span>
+          <span>정답률은 전체 공개 제출 기준입니다.</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>상태</th><th>번호</th><th class="wrap">제목</th><th>난이도</th><th>주제</th><th>정답률</th><th>제출</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge good"><svg width="13" height="13"><use href="#i-check"/></svg>해결</span></td>
+                <td>1024</td>
+                <td class="wrap"><a class="row-link" href="development-ds-10-problem-detail-ui.html">구간 합 구하기</a></td>
+                <td><span class="difficulty level-2"><span class="difficulty-dots"><i></i><i></i><i></i><i></i><i></i></span>2</span></td>
+                <td><span class="badge">배열</span></td>
+                <td>61.8%</td><td>1,284</td>
+              </tr>
+              <tr>
+                <td><span class="badge wait">도전 중</span></td><td>1031</td>
+                <td class="wrap"><a class="row-link" href="development-ds-10-problem-detail-ui.html">회의실 배정</a> <span class="badge info" title="전용 채점 프로그램으로 정답을 검사합니다.">특수 채점</span></td>
+                <td><span class="difficulty level-3"><span class="difficulty-dots"><i></i><i></i><i></i><i></i><i></i></span>3</span></td>
+                <td><span class="badge">그리디</span></td><td>48.2%</td><td>938</td>
+              </tr>
+              <tr>
+                <td><span class="badge">미도전</span></td><td>1048</td>
+                <td class="wrap"><a class="row-link" href="development-ds-10-problem-detail-ui.html">최단 경로 탐색</a></td>
+                <td><span class="difficulty level-4"><span class="difficulty-dots"><i></i><i></i><i></i><i></i><i></i></span>4</span></td>
+                <td><span class="badge">그래프</span></td><td>36.5%</td><td>612</td>
+              </tr>
+              <tr>
+                <td><span class="badge good"><svg width="13" height="13"><use href="#i-check"/></svg>해결</span></td><td>1056</td>
+                <td class="wrap"><a class="row-link" href="development-ds-10-problem-detail-ui.html">문자열 압축</a></td>
+                <td><span class="difficulty level-2"><span class="difficulty-dots"><i></i><i></i><i></i><i></i><i></i></span>2</span></td>
+                <td><span class="badge">문자열</span></td><td>70.1%</td><td>1,018</td>
+              </tr>
+              <tr>
+                <td><span class="badge">미도전</span></td><td>1072</td>
+                <td class="wrap"><a class="row-link" href="development-ds-10-problem-detail-ui.html">배낭 채우기</a></td>
+                <td><span class="difficulty level-5"><span class="difficulty-dots"><i></i><i></i><i></i><i></i><i></i></span>5</span></td>
+                <td><span class="badge">동적 계획법</span></td><td>24.9%</td><td>487</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="problem-statistics" hidden>
+        <div class="breadcrumb">
+          <button class="button ghost" type="button" data-open-screen="problems-list">문제</button>
+          <svg><use href="#i-chevron-right"/></svg><span>1024</span><svg><use href="#i-chevron-right"/></svg><span>통계</span>
+        </div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">문제 1024</p>
+            <h1>구간 합 구하기</h1>
+            <p>공개 제출의 채점 결과를 집계한 통계입니다.</p>
+          </div>
+          <div class="heading-actions">
+            <a class="button" href="development-ds-10-problem-detail-ui.html"><svg><use href="#i-book"/></svg>문제 보기</a>
+            <button class="button primary" type="button" data-toast="제출 화면으로 이동합니다."><svg><use href="#i-send"/></svg>제출하기</button>
+          </div>
+        </header>
+        <nav class="subnav" aria-label="문제 하위 메뉴">
+          <a href="development-ds-10-problem-detail-ui.html">문제</a>
+          <a href="#problem-statistics" aria-current="page">통계</a>
+          <button class="button ghost" type="button" data-open-screen="problem-ranking">순위</button>
+        </nav>
+
+        <div class="metric-grid">
+          <div class="metric"><span>전체 제출</span><strong>1,284</strong><small>최근 30일 +112</small></div>
+          <div class="metric"><span>정답 제출</span><strong>794</strong><small>61.8%</small></div>
+          <div class="metric"><span>도전 사용자</span><strong>526</strong><small>사용자 기준</small></div>
+          <div class="metric"><span>해결 사용자</span><strong>418</strong><small>79.5%</small></div>
+        </div>
+
+        <div class="two-column">
+          <section class="section">
+            <div class="section-heading"><div><h2>채점 결과 분포</h2><p>중복 제출을 포함한 결과 비율</p></div></div>
+            <div class="bar-list">
+              <div class="bar-row"><span>정답</span><div class="progress-track"><div class="progress-bar" style="width:61.8%"></div></div><strong>61.8%</strong></div>
+              <div class="bar-row"><span>오답</span><div class="progress-track"><div class="progress-bar" style="width:20.4%;background:#b13b3b"></div></div><strong>20.4%</strong></div>
+              <div class="bar-row"><span>시간 초과</span><div class="progress-track"><div class="progress-bar" style="width:9.7%;background:#9b6500"></div></div><strong>9.7%</strong></div>
+              <div class="bar-row"><span>런타임 오류</span><div class="progress-track"><div class="progress-bar" style="width:5.3%;background:#3367a8"></div></div><strong>5.3%</strong></div>
+              <div class="bar-row"><span>컴파일 오류</span><div class="progress-track"><div class="progress-bar" style="width:2.8%;background:#647078"></div></div><strong>2.8%</strong></div>
+            </div>
+          </section>
+          <aside class="panel soft">
+            <h2>언어별 정답률</h2>
+            <div class="bar-list">
+              <div class="bar-row"><span>Python</span><div class="progress-track"><div class="progress-bar" style="width:70%"></div></div><strong>70%</strong></div>
+              <div class="bar-row"><span>C++</span><div class="progress-track"><div class="progress-bar" style="width:65%"></div></div><strong>65%</strong></div>
+              <div class="bar-row"><span>Java</span><div class="progress-track"><div class="progress-bar" style="width:57%"></div></div><strong>57%</strong></div>
+            </div>
+            <p class="help">제출 수가 10건 미만인 언어는 표시하지 않습니다.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="problem-ranking" hidden>
+        <div class="breadcrumb">
+          <button class="button ghost" type="button" data-open-screen="problems-list">문제</button>
+          <svg><use href="#i-chevron-right"/></svg><span>1024</span><svg><use href="#i-chevron-right"/></svg><span>순위</span>
+        </div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">문제 1024</p>
+            <h1>문제별 순위</h1>
+            <p>정답 제출 중 실행 시간과 메모리 사용량을 기준으로 정렬합니다.</p>
+          </div>
+          <div class="heading-actions">
+            <a class="button" href="development-ds-10-problem-detail-ui.html"><svg><use href="#i-book"/></svg>문제 보기</a>
+            <button class="button primary" type="button" data-toast="제출 화면으로 이동합니다."><svg><use href="#i-send"/></svg>제출하기</button>
+          </div>
+        </header>
+        <nav class="subnav" aria-label="문제 하위 메뉴">
+          <a href="development-ds-10-problem-detail-ui.html">문제</a>
+          <button class="button ghost" type="button" data-open-screen="problem-statistics">통계</button>
+          <a href="#problem-ranking" aria-current="page">순위</a>
+        </nav>
+
+        <div class="filter-bar compact">
+          <div class="field">
+            <label for="ranking-search">사용자 검색</label>
+            <div class="input-wrap"><svg><use href="#i-search"/></svg><input class="input" id="ranking-search" type="search" placeholder="이름 또는 로그인 아이디"></div>
+          </div>
+          <div class="field"><label for="ranking-language">언어</label><select class="select" id="ranking-language"><option>전체 언어</option><option>Python</option><option>C++</option><option>Java</option></select></div>
+          <div class="field"><label for="ranking-order">정렬</label><select class="select" id="ranking-order"><option>실행 시간</option><option>메모리</option><option>제출 시각</option></select></div>
+          <div class="filter-actions"><button class="button primary" type="button" data-toast="순위 조건을 적용했습니다."><svg><use href="#i-filter"/></svg>적용</button></div>
+        </div>
+        <div class="summary-line"><span>내 순위 18위 · 82ms · Python</span><span>정답 제출만 표시</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>순위</th><th>사용자</th><th>실행 시간</th><th>메모리</th><th>언어</th><th>코드 길이</th><th>제출 시각</th></tr></thead>
+            <tbody>
+              <tr><td><span class="rank top">1</span></td><td><strong>김서준</strong></td><td>44ms</td><td>14.2MB</td><td>C++</td><td>812B</td><td>07-23 10:18</td></tr>
+              <tr><td><span class="rank top">2</span></td><td><strong>박지우</strong></td><td>51ms</td><td>14.1MB</td><td>C++</td><td>906B</td><td>07-21 14:03</td></tr>
+              <tr><td><span class="rank top">3</span></td><td><strong>이하윤</strong></td><td>57ms</td><td>17.6MB</td><td>Java</td><td>1.4KB</td><td>07-22 09:44</td></tr>
+              <tr class="highlight-row"><td><span class="rank">18</span></td><td><strong>나</strong> <span class="badge info">내 기록</span></td><td>82ms</td><td>18.8MB</td><td>Python</td><td>438B</td><td>07-24 08:31</td></tr>
+              <tr><td><span class="rank">19</span></td><td><strong>정민재</strong></td><td>84ms</td><td>18.6MB</td><td>Python</td><td>507B</td><td>07-20 16:12</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="problem-books" hidden>
+        <div class="breadcrumb"><span>문제</span><svg><use href="#i-chevron-right"/></svg><span>문제집</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main">
+            <p class="eyebrow">학습 모음</p>
+            <h1>문제집</h1>
+            <p>학습 서비스에서 제공하는 문제집과 내가 저장한 문제를 한곳에서 확인합니다.</p>
+          </div>
+          <div class="heading-actions">
+            <button class="button" type="button" data-toast="새 개인 분류를 추가합니다."><svg><use href="#i-plus"/></svg>분류 추가</button>
+            <button class="button primary" type="button" data-open-screen="problems-list"><svg><use href="#i-search"/></svg>문제 찾기</button>
+          </div>
+        </header>
+
+        <section class="section">
+          <div class="section-heading"><div><h2>추천 문제집</h2><p>수업과 학습 단계에 맞춘 공개 문제집</p></div><button class="button ghost" type="button" data-toast="전체 문제집 목록을 엽니다.">전체 보기 <svg><use href="#i-arrow-right"/></svg></button></div>
+          <div class="card-grid">
+            <article class="card">
+              <div class="card-top"><span class="badge info">입문</span><svg><use href="#i-folder"/></svg></div>
+              <h3>배열과 반복문 기초</h3><p>입출력부터 구간 합까지 순서대로 연습합니다.</p>
+              <div class="progress-track"><div class="progress-bar" style="width:70%"></div></div>
+              <div class="card-meta"><span>10문제</span><span>7문제 해결</span></div>
+            </article>
+            <article class="card">
+              <div class="card-top"><span class="badge wait">중급</span><svg><use href="#i-folder"/></svg></div>
+              <h3>정렬과 탐색</h3><p>정렬 기준과 이분 탐색의 핵심 문제를 묶었습니다.</p>
+              <div class="progress-track"><div class="progress-bar" style="width:35%"></div></div>
+              <div class="card-meta"><span>14문제</span><span>5문제 해결</span></div>
+            </article>
+            <article class="card">
+              <div class="card-top"><span class="badge danger">심화</span><svg><use href="#i-folder"/></svg></div>
+              <h3>동적 계획법 집중</h3><p>상태 정의부터 최적화까지 단계적으로 구성했습니다.</p>
+              <div class="progress-track"><div class="progress-bar" style="width:8%"></div></div>
+              <div class="card-meta"><span>12문제</span><span>1문제 해결</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading"><div><h2>내 문제집</h2><p>저장한 문제 8개</p></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>상태</th><th>번호</th><th class="wrap">문제</th><th>분류</th><th>난이도</th><th>저장일</th><th>명령</th></tr></thead>
+              <tbody>
+                <tr><td><span class="badge wait">도전 중</span></td><td>1031</td><td class="wrap"><a class="row-link" href="development-ds-10-problem-detail-ui.html">회의실 배정</a></td><td>다시 풀기</td><td>3</td><td>07-22</td><td><button class="button ghost" type="button" data-toast="내 문제집에서 제거했습니다.">제거</button></td></tr>
+                <tr><td><span class="badge">미도전</span></td><td>1048</td><td class="wrap"><a class="row-link" href="development-ds-10-problem-detail-ui.html">최단 경로 탐색</a></td><td>집중 학습 학습</td><td>4</td><td>07-20</td><td><button class="button ghost" type="button" data-toast="내 문제집에서 제거했습니다.">제거</button></td></tr>
+                <tr><td><span class="badge good">해결</span></td><td>1056</td><td class="wrap"><a class="row-link" href="development-ds-10-problem-detail-ui.html">문자열 압축</a></td><td>다시 풀기</td><td>2</td><td>07-18</td><td><button class="button ghost" type="button" data-toast="내 문제집에서 제거했습니다.">제거</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴">
+    <a href="#home"><svg><use href="#i-home"/></svg><span>홈</span></a>
+    <a href="#problems-list" aria-current="page"><svg><use href="#i-book"/></svg><span>문제</span></a>
+    <a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a>
+    <a href="#learning"><svg><use href="#i-learn"/></svg><span>학습</span></a>
+    <a href="#community"><svg><use href="#i-message"/></svg><span>더보기</span></a>
+  </nav>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+</body>
+</html>

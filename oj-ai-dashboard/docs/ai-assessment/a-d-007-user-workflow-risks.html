@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-D-007 사용자 업무 흐름과 위험</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-D-007 사용자 업무 흐름과 위험</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html" aria-current="page">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">판정</a>
+          <a href="#scope">범위·방법</a>
+          <a href="#evidence">조사 근거</a>
+          <a href="#topology">현재 흐름 지도</a>
+          <a href="#teacher-current">현재 교사 흐름</a>
+          <a href="#student-current">현재 학생 흐름</a>
+          <a href="#assessment-current">평가·공개 흐름</a>
+          <a href="#operations-current">운영·출력 흐름</a>
+          <a href="#states-current">현재 화면 상태</a>
+          <a href="#recovery">실패·복구 시나리오</a>
+          <a href="#teacher-target">목표 교사 흐름</a>
+          <a href="#student-target">목표 학생 흐름</a>
+          <a href="#operator-target">목표 운영 흐름</a>
+          <a href="#state-contract">목표 상태 계약</a>
+          <a href="#notifications">알림·작업함</a>
+          <a href="#findings">발견 격차</a>
+          <a href="#decision">확인할 결정</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <p class="notice">이 문서는 당시 구현의 조사 기록입니다. 아래에서 제거됨으로 표시한 구형 소스는 현재 사용되지 않아 정리했습니다. <a href="retired-runtime-removal-2026-10-20.html">제거 범위와 유지한 호환 기능</a>을 참고하세요.</p>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-D-007 · User Workflow and Recovery Baseline</p>
+        <h2>사용자 업무 흐름과 위험</h2>
+        <p>교사의 활동지 제작·자체 평가·발행·배포·제출 관리·AI 평가·검토·공개·출력과 학생의 조회·작성·저장·제출·피드백 흐름을 실제 화면 명령부터 저장소까지 추적했다. 정상 흐름뿐 아니라 빈 상태, 오류, 브라우저 중단, 재실행과 수동 복구가 가능한지도 함께 판정한다.</p>
+        <div class="meta">
+          <span class="badge">조사일 2026-08-10</span>
+          <span class="badge">상태 사용자 확인·기준선 확정</span>
+          <span class="badge">관리 화면 11개</span>
+          <span class="badge">활동지 로컬 단계 4개</span>
+          <span class="badge">학생 목록 기본 50개·후보 150개</span>
+          <span class="badge">자동 저장 1.5초</span>
+          <span class="badge">자동 제출 5분·회당 100과제</span>
+          <span class="badge">제출 상태 7개</span>
+          <span class="badge">교사→학생 전체 E2E 0개</span>
+          <span class="badge">실행 코드 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 판정</h2>
+      <section class="panel">
+        <p>현재 구현에는 제작, 배포, 제출, 평가, 보고서 기능이 각각 존재하지만 하나의 책임 있는 업무 흐름으로 이어지지 않는다. 발행 snapshot과 시간 관문이 없고 저장 충돌·부분 업로드·브라우저 중단을 사용자가 복구할 수 없으며, 일괄 AI 평가와 PDF 생성도 요청 수명 안에서 실행된다. 기존 화면을 그대로 연결하기보다 불변 revision, 서버 상태 전이, 지속 작업함과 명시적 복구 명령을 중심으로 사용자 여정을 다시 설계해야 한다.</p>
+        <div class="warning callout"><strong>가장 큰 사용자 위험:</strong> 학생은 마감 뒤에도 현재 활동지를 열고 저장·제출할 수 있지만, 자동 제출은 이미 초안을 만든 학생만 처리한다. 저장 충돌 응답에는 서버 최신 답안이 들어 있어도 화면은 이를 보여 주거나 병합하지 않아 이후 저장이 계속 충돌할 수 있다.</div>
+      </section>
+
+      <h2 id="scope">조사 범위와 방법</h2>
+      <table>
+        <thead><tr><th>관점</th><th>추적 범위</th><th>완료 질문</th></tr></thead>
+        <tbody>
+          <tr><td>교사</td><td>학사 context → 활동지 초안 → 자체 평가 → 발행 → 대상 선택 → 배포 → 제출 확인 → 평가 → 검토 → 공개 → PDF</td><td>각 단계의 시작 조건, 완료 증거, 다음 행동과 되돌리기 경로가 보이는가</td></tr>
+          <tr><td>학생</td><td>메뉴 발견 → 활동지 열기 → 답안·첨부 → 자동 저장 → 제출 → 재개방 → 점수·피드백 → 결과물 PDF</td><td>데이터 손실 없이 중단·재접속·충돌·마감·오류를 처리할 수 있는가</td></tr>
+          <tr><td>운영자</td><td>플랫폼 AI route → 애드온 job → 실패 분류 → 재시도·취소 → 감사 → export 보존</td><td>브라우저를 떠나도 작업이 지속되고 실패 항목을 찾아 복구할 수 있는가</td></tr>
+          <tr><td>상태</td><td>loading, empty, error, partial, stale, offline, permission denied, unavailable, success, destructive action</td><td>빈 데이터와 장애를 구분하고 사용자가 다음 행동을 알 수 있는가</td></tr>
+          <tr><td>검증</td><td>클라이언트 상태, REST, service, repository, scheduler, file, 검사 스크립트</td><td>화면 문구가 아니라 실제 서버 관문과 영속 상태로 보장되는가</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>변경 경계:</strong> 이 단계는 HTML 설계 문서만 갱신한다. <code>oj-ai-dashboard</code>의 PHP·JavaScript·schema와 <code>oj-platform</code> 실행 코드는 수정하지 않는다. 후속 구현에서도 애드온 설치·업데이트·런타임이 플랫폼 파일이나 migration을 패치해서는 안 되며, 모든 애드온 물리 테이블은 WordPress prefix 없이 <code>oj_ai_*</code>를 사용한다.</div>
+
+      <h2 id="evidence">조사 근거</h2>
+      <table>
+        <thead><tr><th>근거 코드·문서</th><th>확인 범위</th><th>확인 결과</th></tr></thead>
+        <tbody>
+          <tr><td><code>Worksheet_Admin_Page.php (이전)</code> → <a href="../../src/Platform/Worksheet_Workbench_Page_Handler.php"><code>Worksheet_Workbench_Page_Handler.php</code></a><br><span title="2026-10-20 제거된 구형 소스"><code>worksheet-editor.js</code> (제거됨)</span></td><td>교사 활동지·배포·제출·업로드 화면</td><td>한 페이지의 4개 로컬 단계, 직접 배포, context 오류의 빈 목록 대체, ZIP·PDF·재개방 명령 확인</td></tr>
+          <tr><td><span title="2026-10-23 제거된 구형 소스"><code>Worksheet_Template_Service.php</code> (제거됨)</span></td><td>초안·활성·보관, 복제·삭제·가져오기</td><td>명시적 publish revision 없이 <code>active</code> 직접 저장, template·문항·link 순차 저장과 배포 의존성 확인 부재</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Worksheet_Assignment_Service.php</code> (제거됨)</span><br><span title="2026-10-23 제거된 구형 소스"><code>Worksheet_Assignment_Repository.php</code> (제거됨)</span></td><td>대상·학생 목록·시작·마감 접근</td><td>현재 template 배포, 플랫폼이 아닌 로컬 roster 결합, 시작·마감 미강제, 전역 후보 150개를 먼저 자른 뒤 학생별 필터</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>student-worksheet.js</code> (제거됨)</span><br><span title="2026-10-23 제거된 구형 소스"><code>Submission_Service.php</code> (제거됨)</span></td><td>학생 작성·자동 저장·충돌·제출</td><td>1.5초 debounce, 매 요청 새 idempotency key, 충돌 복구 UI·로컬 사본·오프라인 queue 부재, content 검증·다중 저장 원자성 부재</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Submission_Rest_Controller.php</code> (제거됨)</span></td><td>학생·교사 API와 첨부</td><td>현재 assignment 접근 검사를 재사용하지만 시간 관문 없음, 일반 업로드 정책·격리·scan·정리와 학생 결과물 PDF 명령 부재</td></tr>
+          <tr><td><span title="2026-10-23 제거된 구형 소스"><code>Submission_Scheduler.php</code> (제거됨)</span><br><span title="2026-10-23 제거된 구형 소스"><code>Submission_Repository.php</code> (제거됨)</span></td><td>마감 자동 제출</td><td>WP-Cron 5분, 회당 과제 100개, 기존 <code>draft|autosave_conflict</code> 행만 제출하며 lock·checkpoint·감사·실패 작업함 없음</td></tr>
+          <tr><td><code>Admin_Workflow_Page.php (이전)</code> → <a href="../../src/Platform/Worksheet_Evaluation_Workbench_Page_Handler.php"><code>Worksheet_Evaluation_Workbench_Page_Handler.php</code></a><br><span title="2026-10-20 제거된 구형 소스"><code>admin-actions.js</code> (제거됨)</span></td><td>평가 계획·명단·AI 채점·검토·피드백</td><td>별도 관리 화면, 제출별 순차 HTTP 실행, 메모리 선택·결과 상태, 일부 context 오류 은폐와 지속 batch·재개 UI 부재</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Zip_Upload_Service.php</code> (제거됨)</span></td><td>ZIP 미리보기·매핑·확정</td><td>항목별 순차 proxy 제출, 부분 성공 가능, 한 건만 성공해도 upload 성공 상태가 될 수 있고 목록·재개 조회 route 없음</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>Report_Export_Service.php</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>Export_Job_Repository.php</code> (제거됨)</span></td><td>학생·학급·제출 PDF/ZIP·CSV</td><td>job 행은 만들지만 같은 HTTP 요청에서 파일을 생성하며 진행률·poll·resume UI 없이 public uploads URL과 1주 만료 metadata 사용</td></tr>
+          <tr><td><span title="2026-10-20 제거된 구형 소스"><code>e2e-plate-editor.mjs</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>check-submissions.mjs</code> (제거됨)</span><br><span title="2026-10-20 제거된 구형 소스"><code>check-assessment-feedback.mjs</code> (제거됨)</span></td><td>자동 사용자 흐름 검증</td><td>Plate fixture의 제한된 브라우저 확인과 문자열 존재 검사이며 제작부터 학생 피드백까지 실제 REST·DB를 지나는 역할 기반 E2E는 0개</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="topology">현재 화면과 업무 흐름 지도</h2>
+      <pre><code>교사 WordPress 관리 shell
+  활동지 화면: 활동지 → 배포 → 제출 → 업로드
+        │               │       └─ ZIP·개별·대리 제출
+        │               └─ 제출 상세·재개방·보고서 PDF
+        ├─ 활동지 자체 AI 평가: 없음
+        └─ 다음 단계 직접 링크·업무 상태: 없음
+
+  평가·채점 화면: 평가 계획 → preflight → 제출 불러오기
+                              → 선택/학급 채점 → 승인/반려
+                              → 피드백 생성 → 공개/취소
+
+  보고서 화면: 조건 입력 → 동기 PDF/ZIP/CSV 생성 → 링크
+
+학생 WordPress shortcode 화면
+  활동지 목록 → 현재 template 열기 → 자동 저장 → 제출
+  점수·피드백 본문·결과물 PDF로 이어지는 완성된 화면: 없음
+
+목표 진입
+  교사: OJ Console &gt; 학습 공간 &gt; AI 활동지
+  학생: PublicUI &gt; 학습 &gt; 활동지</code></pre>
+      <table>
+        <thead><tr><th>단절 지점</th><th>현재 사용자의 수동 행동</th><th>잃는 문맥</th></tr></thead>
+        <tbody>
+          <tr><td>제작 → 자체 평가</td><td>이동할 화면이 없음</td><td>활동지 revision, 평가 결과, 해결되지 않은 진단</td></tr>
+          <tr><td>발행 → 배포</td><td>같은 화면에서 status를 직접 바꾸고 별도 배포 폼 입력</td><td>발행 snapshot, 사전 검사, 대상 기준 시각</td></tr>
+          <tr><td>제출 관리 → 평가</td><td>상단의 별도 평가 화면으로 이동해 과제·계획·명단을 다시 선택</td><td>현재 과제, 필터, 선택 학생, 검토 우선순위</td></tr>
+          <tr><td>평가 → 공개</td><td>현재 브라우저 메모리에 생성된 결과와 피드백으로 후속 버튼 실행</td><td>새로고침 뒤 선택, 일괄 실패 항목, 생성된 피드백 참조</td></tr>
+          <tr><td>제출 → 학생 결과</td><td>학생용 활동지와 대시보드 shortcode를 별도로 배치해야 함</td><td>공식 결과·피드백 본문·정확한 제출 snapshot·다운로드</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>현재 통합 상태:</strong> 실제 OJ Console 메뉴 기여와 PublicUI 메뉴 기여는 모두 0개다. 교사와 학생 기능은 각각 WordPress 관리 페이지와 shortcode에 머물러 있어 플랫폼 shell의 현재 context, 탐색, 활성 상태와 객체 권한을 자동 상속하지 않는다.</div>
+
+      <h2 id="teacher-current">현재 교사 업무 흐름</h2>
+      <table>
+        <thead><tr><th>단계</th><th>현재 동작</th><th>완료로 보이는 신호</th><th>사용자 위험</th></tr></thead>
+        <tbody>
+          <tr><td>1. context 준비</td><td>학사 상태·그룹 200·학생 500을 동시에 조회</td><td>드롭다운과 학생 목록 표시</td><td>각 조회 오류를 빈 객체·빈 목록으로 바꾸므로 실제 빈 학급과 연결 장애를 구분할 수 없음</td></tr>
+          <tr><td>2. 활동지 제작</td><td>Plate 편집 후 제목·status·rubric mode와 schema 저장</td><td>공용 메시지에 저장 성공</td><td>unsaved 표시·로컬 복구·이탈 경고가 없고 malformed hidden JSON은 기본 문서로 대체될 수 있음</td></tr>
+          <tr><td>3. 자체 평가</td><td>화면·명령 없음</td><td>없음</td><td>활동지의 명확성·정답성·난이도·안전·루브릭 정합성을 AI로 검사할 수 없음</td></tr>
+          <tr><td>4. 발행</td><td><code>draft|active|archived</code>를 저장 폼에서 직접 선택</td><td><code>active</code> 문자열</td><td>review·publish 명령, 불변 revision, 학생/PDF preview와 발행 전 관문이 없음</td></tr>
+          <tr><td>5. 배포</td><td>template·학년·반·그룹·학생·시작·마감을 입력하고 즉시 <code>assigned</code> 저장</td><td>“배포되었습니다” 메시지</td><td>대상 수·제외자·중복·시간대·발행 revision 확인 없이 mutable template를 바로 배포</td></tr>
+          <tr><td>6. 모니터링</td><td>제출 화면에서 과제·학년·반·상태로 현재 submission 행 조회</td><td>제출 행 목록</td><td>한 번도 시작하지 않은 학생은 submission 행이 없어 기대 명단과 실제 제출을 같은 화면에서 안정적으로 비교하지 못함</td></tr>
+          <tr><td>7. 평가</td><td>별도 평가 화면에서 계획 저장·preflight 후 제출을 다시 불러와 순차 채점</td><td>현재 화면의 요약 카드</td><td>계획과 실행이 서버에서 연결되지 않고 브라우저 이탈 시 남은 작업과 선택이 사라짐</td></tr>
+          <tr><td>8. 검토·공개</td><td>결과 승인·반려, 재평가 검토, 피드백 생성·공개</td><td>현재 메모리의 result·feedback 상태</td><td>accepted 점수와 학생 공개가 분리되지 않으며 reload 뒤 기존 피드백 일괄 공개가 현재 state에서 복구되지 않음</td></tr>
+          <tr><td>9. 출력</td><td>제출 PDF 또는 일괄 PDF 버튼으로 보고서 생성</td><td>다운로드 링크</td><td>정확한 발행·제출 revision이 아니라 현재 조회를 동기 출력하고 실패 작업을 다시 여는 목록이 없음</td></tr>
+        </tbody>
+      </table>
+
+      <h3>현재 제작·배포의 상태 전이</h3>
+      <pre><code>Plate 편집 중 메모리
+  → 저장 클릭
+  → mutable template update
+  → status를 draft/active/archived 중 직접 저장
+  → 배포 폼에서 현재 template ID 선택
+  → assignment status=assigned 즉시 저장
+  → 학생 상세 요청 때마다 현재 teacher template 재조회·학생 projection
+
+누락: draft revision → 자체 평가 → 교사 해결 → preview → publish snapshot
+누락: target preview → 확인 → scheduled/open → server-time close</code></pre>
+      <div class="warning callout"><strong>발행 뒤 변경 위험:</strong> 과제는 published snapshot이 아니라 template ID를 보유하고 학생 상세와 제출 grading schema가 현재 template을 다시 읽는다. 교사가 나중에 template을 수정·보관·삭제하면 이미 배포한 학생 화면과 채점 기준도 달라지거나 열리지 않을 수 있다.</div>
+
+      <h2 id="student-current">현재 학생 업무 흐름</h2>
+      <table>
+        <thead><tr><th>단계</th><th>현재 정상 흐름</th><th>빈 상태·오류</th><th>중단·복구</th></tr></thead>
+        <tbody>
+          <tr><td>1. 발견</td><td><code>/student/assignments?limit=50</code> 목록 조회</td><td>0건이면 “활동지 없음”, 오류면 공용 오류 메시지</td><td>전역 후보 150개를 먼저 제한해 오래되거나 뒤쪽인 본인 과제가 누락될 수 있음</td></tr>
+          <tr><td>2. 열기</td><td>assigned 또는 closed 과제의 현재 학생 projection과 현재 submission 조회</td><td>403·404를 일반 “열지 못했습니다”로 표시</td><td><code>starts_at</code>·<code>due_at</code>을 서버 접근 관문으로 사용하지 않아 예정·마감 의미가 불일치</td></tr>
+          <tr><td>3. 작성</td><td>응답 input마다 답안을 메모리에 모으고 1.5초 뒤 자동 저장</td><td>필수·형식·선택지·표 구조 검증 없음</td><td>로컬 영속 draft, offline 감지, 이탈 경고와 재전송 queue 없음</td></tr>
+          <tr><td>4. 첨부</td><td>파일을 하나씩 먼저 업로드한 뒤 답안에 URL을 넣어 자동 저장</td><td>중간 파일 실패 시 일반 오류</td><td>앞서 성공한 파일은 orphan이 될 수 있고 삭제·재시도·scan 진행 상태가 없음</td></tr>
+          <tr><td>5. 저장 충돌</td><td><code>base_revision</code>이 같으면 새 revision 저장</td><td>다르면 서버가 409와 <code>latest_content</code> 반환</td><td>클라이언트가 최신 내용을 사용하지 않아 base가 계속 오래된 채로 남고 반복 저장도 충돌 가능</td></tr>
+          <tr><td>6. 제출</td><td>현재 답안을 한 번 더 저장한 뒤 submitted·locked 처리</td><td>사전 검증·문항 누락 요약 없이 요청 오류만 표시</td><td>서버 저장 뒤 응답이 끊기면 새 idempotency key로 재시도해 결과 확인 대신 충돌할 수 있음</td></tr>
+          <tr><td>7. 마감</td><td>WP-Cron이 기존 draft/conflict 행을 자동 제출</td><td>미작성 학생은 행이 없어 처리되지 않음</td><td>마감 뒤에도 과제가 assigned/closed이면 학생이 새 답안을 시작·제출할 수 있음</td></tr>
+          <tr><td>8. 결과</td><td>제출 상태는 잠기며 별도 대시보드가 accepted 점수·feedback 상태를 조회</td><td>피드백 본문과 결과물 PDF 화면 없음</td><td>재개방 이유·새 마감·교정 공지와 공식 공개 revision을 학생이 확인할 수 없음</td></tr>
+        </tbody>
+      </table>
+
+      <h3>현재 자동 저장과 충돌</h3>
+      <pre><code>답안 변경
+  → 1.5초 debounce
+  → client_revision + 1
+  → idempotency_key = session + revision + Date.now()
+  → POST autosave(base_revision)
+
+성공: server_revision 갱신
+응답 유실: 서버는 저장했지만 클라이언트는 이전 base 유지
+재시도: 새 idempotency key + 이전 base → 409 conflict
+409 응답: server_revision + latest_content 포함
+현재 UI: 메시지만 표시, 비교·병합·서버본 열기·내 사본 다운로드 없음</code></pre>
+
+      <h3>현재 마감과 자동 제출</h3>
+      <pre><code>assignment.starts_at / due_at
+  → 목록 표시용 데이터
+  → student_can_access: status assigned|closed + 대상 여부만 검사
+
+5분 WP-Cron
+  → due_at 지난 assigned 과제 최대 100개
+  → auto_submit_enabled 검사
+  → 이미 존재하는 draft|autosave_conflict submission만 auto_submitted
+  → assignment는 assigned로 남아 다음 cron에서도 다시 후보
+
+결과: 미시작 학생은 자동 제출되지 않고, 서버 마감도 강제되지 않음</code></pre>
+
+      <h2 id="assessment-current">현재 평가·검토·공개 흐름</h2>
+      <table>
+        <thead><tr><th>업무</th><th>현재 사용자 동작</th><th>영속성</th><th>복구 위험</th></tr></thead>
+        <tbody>
+          <tr><td>계획</td><td>과제·평가 요소·루브릭·성취기준을 저장하고 preflight 실행</td><td>plan 행은 저장</td><td>초기 plan 목록 오류는 무시되고, ready plan과 실제 score 명령이 연결되지 않음</td></tr>
+          <tr><td>명단</td><td>제출 100건과 학사 학생 500명을 불러와 브라우저에서 합성</td><td>합성 명단은 메모리</td><td>학생 조회 오류를 빈 배열로 바꿔 미제출 학생이 통째로 사라질 수 있음</td></tr>
+          <tr><td>선택 채점</td><td>체크한 submission ID를 브라우저가 한 건씩 순차 POST</td><td>각 결과만 DB 저장</td><td>브라우저 종료 시 남은 항목 중단, batch·checkpoint·resume 없음</td></tr>
+          <tr><td>학급 채점</td><td>현재 불러온 submission ID 전체를 같은 방식으로 순차 실행</td><td>서버 batch 없음</td><td>미제출 학생·현재 100건 밖 항목은 대상이 아니며 개별 오류 상세를 결과 요약에서 찾기 어려움</td></tr>
+          <tr><td>수동 점수</td><td>브라우저 메모리의 rubric 선택을 모두 채운 뒤 저장</td><td>저장 전 선택은 메모리</td><td>새로고침·화면 이동 시 미저장 선택 손실</td></tr>
+          <tr><td>결과 검토</td><td>승인·반려 또는 재평가 변경안을 비교 후 반영·미반영</td><td>결과·review 행 저장</td><td>공식 결과 교체와 연결 feedback 정리가 원자적이지 않고 공개 상태가 별도 사용자 언어로 보이지 않음</td></tr>
+          <tr><td>피드백</td><td>생성 후 현재 결과 카드에서 공개하거나 선택 공개</td><td>feedback 행 저장</td><td>선택 공개는 현재 <code>latestFeedback</code> 메모리에 의존해 reload 뒤 기존 feedback을 바로 이어서 처리하지 못함</td></tr>
+          <tr><td>학생 공개</td><td>accepted 점수는 대시보드 조회, published feedback은 제한된 상태 정보</td><td>별도 release aggregate 없음</td><td>교사 승인과 학생 공개 시점이 섞이고 correction·withdrawal 통지가 없음</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>일괄 실행은 작업이 아니다:</strong> 현재 <code>runForSubmissionIds()</code>는 브라우저의 <code>for...of</code> 반복이다. 처리 중 창을 닫거나 nonce가 만료되면 남은 제출은 실행되지 않으며, 다음 접속에서 어떤 항목까지 완료됐는지 이어서 실행할 batch ID가 없다.</div>
+
+      <h2 id="operations-current">현재 수동 운영·ZIP·PDF 흐름</h2>
+      <table>
+        <thead><tr><th>명령</th><th>현재 처리</th><th>부분 실패·재실행</th><th>감사·안전</th></tr></thead>
+        <tbody>
+          <tr><td>제출 재개방</td><td>확인창 뒤 status를 draft로, 제출·잠금 시간을 null로 변경</td><td>항상 같은 submission 행을 다시 사용</td><td>사유·새 마감·누가·언제·공식 결과/feedback 영향 기록 없음</td></tr>
+          <tr><td>대리 제출</td><td>교사가 학생 ID와 raw JSON 또는 파일을 지정</td><td>이미 제출된 답안도 overwrite 허용</td><td>대리 사유·원본 보존·학생 통지와 세분화된 객체 scope 부족</td></tr>
+          <tr><td>결시 처리</td><td>proxy submission에 manual status 저장, 미참여면 0점 결과 생성·승인</td><td>제출 저장 뒤 채점 실패 시 중간 상태가 남을 수 있음</td><td>여러 저장을 묶는 transaction·복구 command 없음</td></tr>
+          <tr><td>ZIP 제출</td><td>preview → 수동 mapping → 항목별 proxy submit → imported 표시</td><td>성공·실패가 섞일 수 있고, 일부 성공이면 upload 상태가 succeeded</td><td>현재 upload ID가 페이지 메모리·hidden input에 있어 reload 뒤 목록에서 재개 불가</td></tr>
+          <tr><td>개별/일괄 PDF</td><td>job을 running으로 만든 같은 요청에서 PDF/ZIP을 작성하고 링크 반환</td><td>실패 job은 기록되지만 UI에 작업 목록·retry 명령 없음</td><td>public uploads URL, 다운로드 object scope·물리 만료 정리 격차</td></tr>
+          <tr><td>학생 결과물 PDF</td><td>교사 화면의 “PDF”는 student report를 생성</td><td>학생 작성 화면에는 직접 명령 없음</td><td>발행 worksheet snapshot과 제출 revision을 고정한 전용 결과물 계약이 아님</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="states-current">현재 화면 상태 판정</h2>
+      <table>
+        <thead><tr><th>상태</th><th>현재 표현</th><th>판정</th><th>목표 요구</th></tr></thead>
+        <tbody>
+          <tr><td>loading</td><td>페이지 전체 busy class 또는 “처리 중”</td><td><span class="badge wait">부분</span></td><td>목록·상세·명령 단위 skeleton/progress, 기존 내용 유지</td></tr>
+          <tr><td>empty</td><td>“활동지 없음”, “학생 없음”, “제출 없음”</td><td><span class="badge wait">원인 불명</span></td><td>정상 0건, filter 0건, context 없음, 연결 오류를 서로 구분</td></tr>
+          <tr><td>error</td><td>공용 메시지 한 곳에 서버 message</td><td><span class="badge danger">복구 약함</span></td><td>오류 코드, 영향 범위, 재시도·설정 이동·지원 참조와 입력 보존</td></tr>
+          <tr><td>partial</td><td>ZIP committed/skipped 개수만 표시</td><td><span class="badge danger">재개 없음</span></td><td>성공·실패 항목 목록, 이유, 선택 재시도, checkpoint</td></tr>
+          <tr><td>conflict</td><td>“저장 실패”와 서버 message</td><td><span class="badge danger">해결 불가</span></td><td>내 사본·서버 사본·기준 revision 비교, 병합/대체/다운로드</td></tr>
+          <tr><td>offline</td><td>구분 없음</td><td><span class="badge danger">데이터 손실</span></td><td>로컬 draft, offline 배지, queue와 재연결 동기화</td></tr>
+          <tr><td>stale</td><td>template·roster·plan 변경 감지 없음</td><td><span class="badge danger">오실행</span></td><td>source hash 비교, stale 이유와 re-preflight</td></tr>
+          <tr><td>permission</td><td>일반 REST 오류</td><td><span class="badge wait">행동 불명</span></td><td>권한 부족과 범위 밖을 안전하게 구분하고 관리자 요청 경로 제공</td></tr>
+          <tr><td>success</td><td>짧은 공용 메시지·현재 카드</td><td><span class="badge wait">증거 약함</span></td><td>revision·receipt·batch·release ID, 완료 시각과 다음 행동</td></tr>
+          <tr><td>destructive</td><td>일부 generic confirm, 일부 즉시 실행</td><td><span class="badge danger">영향 불명</span></td><td>대상·영향·복구 가능성·사유를 확인하고 audit event 생성</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="recovery">실패·복구 시나리오</h2>
+      <table>
+        <thead><tr><th>상황</th><th>현재 결과</th><th>목표 자동 처리</th><th>사용자 복구 명령</th></tr></thead>
+        <tbody>
+          <tr><td>학사 context 없음</td><td>빈 그룹·학생처럼 보이거나 수동 입력 가능</td><td>배포 command 차단, 플랫폼 context 진단 표시</td><td>context 다시 불러오기·플랫폼 설정으로 이동</td></tr>
+          <tr><td>Plate 미저장 후 이탈</td><td>브라우저 메모리 손실</td><td>사용자·활동지별 encrypted local recovery draft</td><td>복구본 비교 후 복원·폐기</td></tr>
+          <tr><td>잘못된 editor schema</td><td>기본 schema로 조용히 대체될 수 있음</td><td>원문 보존, 편집·발행 차단, 진단 ID</td><td>마지막 정상 revision 복원·원문 다운로드</td></tr>
+          <tr><td>자체 평가 route 불가</td><td>기능 자체 없음</td><td>발행은 정책에 따라 차단하거나 명시 override 요구</td><td>routing 진단·재실행·권한 있는 override 사유</td></tr>
+          <tr><td>발행 뒤 template 변경</td><td>학생·채점이 현재 template을 다시 읽음</td><td>기존 assignment는 published snapshot 고정</td><td>새 revision 발행 후 새 배포 또는 명시적 교체 workflow</td></tr>
+          <tr><td>배포 대상 0명·stale roster</td><td>서버의 느슨한 대상 조건에 따라 저장 가능</td><td>대상 snapshot·수·제외·중복 preflight, stale 시 commit 차단</td><td>대상 새로고침·차이 검토·재확인</td></tr>
+          <tr><td>학생 목록 누락</td><td>전역 후보 제한 뒤 필터로 본인 과제 미노출 가능</td><td>학생·context 인덱스 기반 server pagination</td><td>직접 링크 조회·목록 새로고침·지원 참조 ID</td></tr>
+          <tr><td>시작 전·마감 후 접근</td><td>assigned/closed면 열기·저장 가능</td><td>서버 시각·grace policy로 command마다 상태 강제</td><td>예정 안내, 교사 연장·재개방 요청</td></tr>
+          <tr><td>네트워크 단절 중 작성</td><td>메모리만 유지, 이탈 시 손실</td><td>로컬 draft·offline queue·재연결 시 revision 확인</td><td>동기화 재시도·내 사본 다운로드</td></tr>
+          <tr><td>저장 응답 유실</td><td>새 key 재시도로 conflict 가능</td><td>stable operation key와 receipt 조회로 idempotent replay</td><td>저장 상태 확인·최근 서버 revision 열기</td></tr>
+          <tr><td>동시 편집 충돌</td><td>서버 최신 답안을 받지만 UI가 버림</td><td>두 사본을 보존하고 충돌 상태 잠금</td><td>문항별 비교·내 것/서버 것 선택·병합 저장</td></tr>
+          <tr><td>첨부 일부 업로드 실패</td><td>성공 파일 orphan 가능, 답안 저장 불명</td><td>attachment session·격리·개별 상태와 자동 정리</td><td>실패 파일 재시도·성공 파일 제거·제출 제외 확인</td></tr>
+          <tr><td>제출 응답 유실</td><td>제출됐는지 불명확, 재시도 conflict 가능</td><td>submit receipt를 결정적으로 재조회</td><td>제출 상태 확인·같은 명령 재전송</td></tr>
+          <tr><td>WP-Cron 지연·중단</td><td>자동 제출이 늦고 미시작 학생 제외</td><td>지속 worker가 due item을 lease하고 catch-up, 기대 명단 전체 상태 생성</td><td>과제별 자동 제출 재실행·누락 비교</td></tr>
+          <tr><td>AI provider 일시 장애</td><td>브라우저 요청 실패, 남은 일괄 처리 중단</td><td>batch item별 retry_wait·backoff·attempt</td><td>실패만 재시도·일시 정지·취소</td></tr>
+          <tr><td>AI output schema 오류</td><td>현재는 일부 값을 0점으로 흡수 가능</td><td><code>normalization_failed</code>, 공식 결과·학생 공개 없음</td><td>원인 확인·새 attempt·수동 평가로 전환</td></tr>
+          <tr><td>재평가로 점수 변경</td><td>비원자 교체와 feedback 메모리 초기화</td><td>기존 공식 결과 유지, 새 결과 승인 때 원자 교체·feedback stale</td><td>변경 비교·반영/미반영·재공개 확인</td></tr>
+          <tr><td>ZIP·PDF 부분 실패</td><td>개수/일반 오류 뒤 현재 화면을 떠나면 재개 어려움</td><td>지속 job·item·artifact와 checkpoint, private 임시 파일 정리</td><td>작업함에서 실패만 재실행·결과 다운로드·취소</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="teacher-target">목표 교사 업무 흐름</h2>
+      <div class="flow">
+        <div class="step"><div><strong>업무 context 선택</strong><br>OJ Console의 현재 학년도·학년·반·수업 context를 플랫폼에서 받고 권한·roster·AI route 상태를 한 번에 preflight한다.</div></div>
+        <div class="step"><div><strong>활동지 초안과 revision</strong><br>Plate에서 자동 draft와 명시 저장 revision을 만들고 저장 상태·복구본·validation을 항상 표시한다.</div></div>
+        <div class="step"><div><strong>활동지 자체 AI 평가</strong><br>특정 draft revision을 대상으로 명확성·정답성·난이도·포용성·안전·루브릭 정합성을 평가하고 교사가 항목별 해결·보류·기각한다.</div></div>
+        <div class="step"><div><strong>미리보기와 발행</strong><br>교사용·학생용·채점용 projection 및 활동지 PDF를 같은 revision에서 비교하고 unresolved blocker가 없을 때 불변 published snapshot을 만든다.</div></div>
+        <div class="step"><div><strong>대상 확인과 배포</strong><br>published snapshot, 플랫폼 수업 context, 대상 roster snapshot, 시작·마감·grace·자동 제출 정책을 미리 보고 확인한 뒤 scheduled 또는 open assignment를 생성한다.</div></div>
+        <div class="step"><div><strong>제출 모니터링</strong><br>대상 학생 전원을 not_started부터 표시하고 draft·conflict·upload_failed·submitted·late·auto_submitted·reopened 상태와 필요한 행동을 한 표에서 본다.</div></div>
+        <div class="step"><div><strong>평가 작업 생성</strong><br>ready plan revision으로 batch를 enqueue하고 진행률·비용·실패·재시도·취소를 작업함에서 관리한다. 브라우저는 worker가 아니다.</div></div>
+        <div class="step"><div><strong>검토와 공식 확정</strong><br>AI 근거·confidence·abstain, 학생 답안, rubric과 기존 결과를 비교해 수용·조정·반려하며 모든 변경에 이유를 남긴다.</div></div>
+        <div class="step"><div><strong>학생 공개</strong><br>공식 점수 확정과 공개, feedback 승인과 공개를 분리하고 대상·시점·교정 영향을 확인한 뒤 release revision을 만든다.</div></div>
+        <div class="step"><div><strong>출력과 후속 조치</strong><br>정확한 worksheet·submission·result·feedback revision으로 PDF/ZIP을 비동기 생성하고 작업함에서 만료·재생성·감사를 관리한다.</div></div>
+      </div>
+      <div class="callout"><strong>정보 구조 원칙:</strong> Console의 “AI 활동지”는 하나의 생명주기 작업대다. 목록에서 활동지를 선택하면 <code>제작 · 자체 평가 · 발행 · 배포 · 제출 · 평가 · 공개 · 출력</code> 탭이 같은 worksheet/assignment context를 유지한다. 독립된 전역 작업함은 모든 활동지의 실패·검토 대기·출력을 모아 보여 준다.</div>
+
+      <h2 id="student-target">목표 학생 업무 흐름</h2>
+      <div class="flow">
+        <div class="step"><div><strong>PublicUI 목록</strong><br><code>학습 &gt; 활동지</code>에서 예정, 진행 중, 제출 완료, 피드백 도착, 종료로 구분하고 마감·저장·새 알림을 함께 표시한다.</div></div>
+        <div class="step"><div><strong>불변 활동지 열기</strong><br>assignment의 published student snapshot만 열고 시작 전·마감 후·권한 밖 상태를 서버와 화면에서 동일하게 처리한다.</div></div>
+        <div class="step"><div><strong>안전한 작성</strong><br>문항별 응답과 첨부를 로컬 recovery draft와 서버 revision에 저장하고 온라인·오프라인·저장 중·저장됨·충돌 상태를 구체적으로 표시한다.</div></div>
+        <div class="step"><div><strong>첨부 완료</strong><br>파일별 업로드·scan·추출 상태, 실패 이유, 재시도와 삭제를 제공하고 정책상 준비되지 않은 파일은 제출 전에 해결한다.</div></div>
+        <div class="step"><div><strong>제출 전 확인</strong><br>필수 문항·형식·누락 첨부를 검증하고 답안 요약, 제출 후 잠금, 마감 시각을 확인한 뒤 한 번의 idempotent submit command를 보낸다.</div></div>
+        <div class="step"><div><strong>제출 영수증</strong><br>submission revision·접수 시각·상태·첨부 개수와 PDF 준비 상태를 보여 주며 새로고침 뒤에도 같은 영수증을 조회한다.</div></div>
+        <div class="step"><div><strong>재개방·교정</strong><br>교사가 재개방하면 이유·새 마감·기존 공식 결과 영향을 알리고 새 draft revision에서 다시 작성한다.</div></div>
+        <div class="step"><div><strong>결과와 피드백</strong><br>교사가 공개한 release만 점수·문항별 feedback·종합 feedback으로 보여 주고 변경·철회 알림과 활동지/제출 결과물 PDF를 제공한다.</div></div>
+      </div>
+
+      <h2 id="operator-target">목표 운영자 업무 흐름</h2>
+      <table>
+        <thead><tr><th>화면</th><th>플랫폼 소유</th><th>애드온 소유</th><th>운영 명령</th></tr></thead>
+        <tbody>
+          <tr><td>OJ Platform 운영 &gt; AI 연결 프로필</td><td>provider secret, endpoint, model catalog, 상태 진단</td><td>없음</td><td>연결 시험·비활성화·rotation</td></tr>
+          <tr><td>OJ Platform 운영 &gt; AI 작업 배정</td><td>addon task별 primary/fallback routing</td><td>task manifest 선언만</td><td>route 변경·canRoute 진단</td></tr>
+          <tr><td>AI 활동지 &gt; 작업함</td><td>안전한 routing snapshot·gateway 결과</td><td>평가 batch/item/attempt, export, auto-submit, attachment extraction</td><td>재시도·일시 정지·취소·실패만 재실행</td></tr>
+          <tr><td>AI 활동지 &gt; 검토함</td><td>없음</td><td>활동지 진단, 제출 평가, feedback, release 대기</td><td>담당 지정·수용·조정·반려·공개</td></tr>
+          <tr><td>AI 활동지 &gt; 진단</td><td>플랫폼 API 호환·route 가용성</td><td>worker heartbeat, backlog, stale lease, storage, private file, cron catch-up</td><td>read-only 진단·안전한 복구 command</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>실행환경:</strong> AI 연결과 model routing은 OJ Platform 설정이다. 평가 batch·worker·검토·공개·복구는 애드온 실행환경이다. 애드온은 플랫폼 gateway를 호출할 뿐 provider secret이나 플랫폼 내부 저장소를 직접 읽지 않는다.</div>
+
+      <h2 id="state-contract">목표 생명주기와 화면 상태 계약</h2>
+      <table>
+        <thead><tr><th>대상</th><th>목표 사용자 상태</th><th>핵심 관문</th></tr></thead>
+        <tbody>
+          <tr><td>worksheet revision</td><td><code>draft → evaluating → review_needed|publishable → published → retired</code></td><td>AI는 진단만, 교사가 해결·발행, published는 불변</td></tr>
+          <tr><td>assignment</td><td><code>draft → scheduled → open → closed → archived</code></td><td>published snapshot·target snapshot·서버 시각·grace</td></tr>
+          <tr><td>student response</td><td><code>not_started → local_only|saving|draft|conflict → submit_pending → submitted|auto_submitted → reopened|locked</code></td><td>revision·stable idempotency·receipt·서버 시간</td></tr>
+          <tr><td>attachment</td><td><code>selected → uploading → quarantined → scanning|extracting → ready|failed|rejected → removed</code></td><td>private storage·allowlist·hash·scan·정리</td></tr>
+          <tr><td>evaluation batch</td><td><code>draft → preflight → queued → running|paused → partial|succeeded|failed|cancelled</code></td><td>item checkpoint·lease·retry·비용·cancel</td></tr>
+          <tr><td>evaluation result</td><td><code>private_draft → review_required → accepted|rejected|superseded</code></td><td>AI provenance·human adjustment·원자 교체</td></tr>
+          <tr><td>release</td><td><code>private → approved → published → withdrawn|stale</code></td><td>공식 확정과 학생 공개 분리·교정 알림</td></tr>
+          <tr><td>export</td><td><code>queued → generating → ready → expired|failed|cancelled</code></td><td>정확한 source revision·private download·재생성</td></tr>
+        </tbody>
+      </table>
+      <p>위 상태명은 사용자 언어와 domain 의미를 먼저 고정한 기준안이며 실제 enum·table은 A-DS-05에서 확정한다. loading·offline 같은 일시적 UI 상태를 영속 domain status로 섞지 않고, 사용자가 볼 상태와 내부 attempt 상태도 분리한다.</p>
+
+      <h3>공통 화면 계약</h3>
+      <table>
+        <thead><tr><th>화면 상태</th><th>반드시 보여 줄 것</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>loading</td><td>대상 명령, 경과·진행률, 취소 가능 여부, 기존 데이터</td><td>페이지 전체를 빈 화면으로 교체</td></tr>
+          <tr><td>empty</td><td>0건인 이유, 적용 filter/context, 가능한 첫 행동</td><td>연결 오류를 “없음”으로 표시</td></tr>
+          <tr><td>error</td><td>안전한 설명, 영향 항목, retryable 여부, 참조 ID와 다음 행동</td><td>provider 원문·비밀값·stack trace 노출</td></tr>
+          <tr><td>partial</td><td>전체·성공·실패·대기 수, 항목별 이유, 실패만 재실행</td><td>일부 성공을 전체 성공으로 표시</td></tr>
+          <tr><td>conflict</td><td>내 revision·서버 revision·기준 revision과 비교/복구 도구</td><td>한 사본을 조용히 덮어쓰기</td></tr>
+          <tr><td>stale</td><td>바뀐 source와 시각, 기존 실행 영향, re-preflight</td><td>오래된 계획을 자동 실행</td></tr>
+          <tr><td>success</td><td>영수증 ID·시각·대상·revision과 다음 단계</td><td>잠깐 보이는 toast만 완료 증거로 사용</td></tr>
+          <tr><td>destructive</td><td>정확한 대상·영향·복구 가능성·사유·권한</td><td>generic confirm만으로 제출·공개·이력 변경</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="notifications">알림과 지속 작업함</h2>
+      <table>
+        <thead><tr><th>수신자</th><th>알림 사건</th><th>기본 화면 행동</th><th>중복·감사</th></tr></thead>
+        <tbody>
+          <tr><td>교사</td><td>자체 평가 완료·실패, 배포 대상 변경, 저장 충돌 학생, 자동 제출 누락, batch 완료·부분 실패</td><td>관련 worksheet·assignment·batch의 해결 탭으로 직접 이동</td><td>event ID로 중복 억제, 읽음과 처리 완료 분리</td></tr>
+          <tr><td>검토자</td><td>활동지 blocker, 제출 review_required, 재평가 변경안, feedback 공개 대기</td><td>검토함의 우선순위 queue와 다음 항목</td><td>담당·기한·결정 이유 기록</td></tr>
+          <tr><td>학생</td><td>새 활동지, 마감 임박, 저장 충돌, 제출 접수, 재개방, 결과·피드백 공개·철회</td><td>PublicUI의 해당 활동지·영수증·결과로 이동</td><td>점수·PII를 알림 제목에 과다 노출하지 않음</td></tr>
+          <tr><td>운영자</td><td>route 불가, worker heartbeat 중단, stale lease, 반복 실패, private storage·cleanup 장애</td><td>진단 또는 작업함에서 안전한 복구 명령</td><td>threshold·묶음 알림, 모든 명령 audit</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="findings">발견 격차와 후속 소유</h2>
+      <table>
+        <thead><tr><th>ID</th><th>중요도</th><th>현재 사실과 사용자 위험</th><th>후속</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-D007-F01</code></td><td><span class="badge danger">Critical</span></td><td>활동지 자체 평가 단계가 없어 교사가 활동지 품질을 AI로 검사·검토한 뒤 발행하는 여정을 시작할 수 없음</td><td>A-DS-08·10</td></tr>
+          <tr><td><code>A-D007-F02</code></td><td><span class="badge danger">Critical</span></td><td>명시적 publish command·불변 snapshot·preflight 없이 template status를 active로 바꾸고 현재 mutable template을 즉시 배포</td><td>A-DS-05·09·10</td></tr>
+          <tr><td><code>A-D007-F03</code></td><td><span class="badge danger">Critical</span></td><td>학생 접근·저장·제출에서 시작·마감을 서버가 강제하지 않고 closed 과제도 접근 가능해 일정 의미가 무너짐</td><td><code>A-DS-03</code>·<code>A-DS-08</code>·<code>A-DS-11</code></td></tr>
+          <tr><td><code>A-D007-F04</code></td><td><span class="badge danger">Critical</span></td><td>충돌 응답의 최신 답안을 클라이언트가 버리고 재시도마다 idempotency key를 바꿔 응답 유실과 동시 편집을 복구할 수 없음</td><td>A-DS-05·11</td></tr>
+          <tr><td><code>A-D007-F05</code></td><td><span class="badge danger">Critical</span></td><td>학생 content가 response schema 검증 없이 저장되고 submission·revision·attachment 교체가 transaction 없이 이어져 손상·부분 저장 가능</td><td><code>A-DS-05</code>·<code>A-DS-08</code>·<code>A-DS-11</code></td></tr>
+          <tr><td><code>A-D007-F06</code></td><td><span class="badge danger">High</span></td><td>학생 과제 목록은 전역 후보 150개를 먼저 자른 뒤 본인 대상 여부를 필터해 유효한 활동지가 목록에서 사라질 수 있음</td><td><code>A-DS-06</code>·<code>A-DS-11</code>·<code>A-DS-14</code></td></tr>
+          <tr><td><code>A-D007-F07</code></td><td><span class="badge danger">High</span></td><td>자동 제출은 기존 draft/conflict만 처리하고 traffic 의존 WP-Cron·회당 100과제·반복 후보에 lock·checkpoint·감사가 없음</td><td>A-DS-07·11·15</td></tr>
+          <tr><td><code>A-D007-F08</code></td><td><span class="badge danger">High</span></td><td>학생 작성에 local recovery, offline queue, 이탈 경고, 저장 receipt가 없어 네트워크·탭 종료 시 데이터 손실 가능</td><td>A-DS-01·11</td></tr>
+          <tr><td><code>A-D007-F09</code></td><td><span class="badge danger">High</span></td><td>첨부를 답안 저장 전에 순차 업로드하고 private 격리·scan·정리·삭제 UI가 없어 실패 시 orphan과 불명확한 제출 상태 발생</td><td><code>A-DS-05</code>·<code>A-DS-11</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D007-F10</code></td><td><span class="badge danger">High</span></td><td>교사 배포 context 요청 실패와 assignment 목록 오류를 정상 빈 상태로 숨겨 잘못된 수동 대상 배포를 유도할 수 있음</td><td><code>A-DS-01</code>·<code>A-DS-03</code>·<code>A-DS-06</code>·<code>A-DS-11</code></td></tr>
+          <tr><td><code>A-D007-F11</code></td><td><span class="badge danger">High</span></td><td>template 보관·삭제가 기존 assignment 영향을 검사하지 않고 학생 상세가 현재 template을 다시 읽어 이미 배포한 활동지가 변하거나 열리지 않을 수 있음</td><td><code>A-DS-05</code>·<code>A-DS-09</code>·<code>A-DS-11</code></td></tr>
+          <tr><td><code>A-D007-F12</code></td><td><span class="badge danger">High</span></td><td>제작·제출·평가·보고서가 별도 화면이고 worksheet/assignment/학생 선택을 전달하는 route context가 없어 수동 재선택과 오대상 작업 위험</td><td>A-DS-01·08·14</td></tr>
+          <tr><td><code>A-D007-F13</code></td><td><span class="badge danger">High</span></td><td>선택·학급 채점은 브라우저 순차 HTTP이고 batch·item·checkpoint·resume이 없어 창을 닫으면 남은 작업이 사라짐</td><td>A-DS-07·08·12</td></tr>
+          <tr><td><code>A-D007-F14</code></td><td><span class="badge danger">High</span></td><td>accepted 점수가 별도 release 없이 학생 조회에 들어가 교사 확정과 학생 공개를 독립적으로 통제할 수 없음</td><td>A-DS-11·13</td></tr>
+          <tr><td><code>A-D007-F15</code></td><td><span class="badge danger">High</span></td><td>선택 피드백 공개가 현재 브라우저의 latest feedback state에 의존해 reload 뒤 이미 생성한 피드백을 이어서 일괄 처리할 수 없음</td><td>A-DS-08·13</td></tr>
+          <tr><td><code>A-D007-F16</code></td><td><span class="badge danger">High</span></td><td>평가 명단의 미제출 행은 로컬 학사 조회를 브라우저에서 합성하고 오류를 숨겨 실제 target roster와 제출률이 달라질 수 있음</td><td><code>A-DS-03</code>·<code>A-DS-06</code>·<code>A-DS-11</code>·<code>A-DS-12</code></td></tr>
+          <tr><td><code>A-D007-F17</code></td><td><span class="badge danger">High</span></td><td>재개방·대리 제출·결시 처리가 사유·새 마감·원본 보존·학생 통지·결과 영향과 원자 복구 없이 현재 submission을 변경</td><td>A-DS-05·11·13·15</td></tr>
+          <tr><td><code>A-D007-F18</code></td><td><span class="badge danger">High</span></td><td>ZIP commit은 부분 실패를 허용하면서 전체 upload를 succeeded로 표시할 수 있고 reload 뒤 작업을 목록에서 재개할 경로가 없음</td><td>A-DS-05·07·11·15</td></tr>
+          <tr><td><code>A-D007-F19</code></td><td><span class="badge danger">High</span></td><td>export job이 실제로는 동기 실행되고 public uploads에 저장되며 작업 목록·progress·retry·물리 만료 정리와 정확한 snapshot 계약이 없음</td><td><code>A-DS-05</code>·<code>A-DS-07</code>·<code>A-DS-14</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D007-F20</code></td><td><span class="badge danger">High</span></td><td>학생 화면에 공개 feedback 본문·교정 이력·활동지와 제출 결과물 PDF가 연결되지 않아 제출 이후 학습 환류가 끊김</td><td><code>A-DS-01</code>·<code>A-DS-11</code>·<code>A-DS-13</code>·<code>A-DS-14</code></td></tr>
+          <tr><td><code>A-D007-F21</code></td><td><span class="badge danger">High</span></td><td>교사 명령 다수가 capability만 보고 assignment·submission·student context scope를 재검사하지 않아 잘못된 대상 조작 가능</td><td>A-DS-03·08</td></tr>
+          <tr><td><code>A-D007-F22</code></td><td><span class="badge wait">Medium</span></td><td>활동지 편집에 dirty 표시·자동 복구·이탈 경고가 없고 잘못된 hidden schema를 기본 문서로 바꾸어 덮어쓸 수 있음</td><td>A-DS-01·09</td></tr>
+          <tr><td><code>A-D007-F23</code></td><td><span class="badge wait">Medium</span></td><td>공용 busy·message와 단순 empty만 사용해 loading·정상 0건·권한·연결·partial·stale를 사용자가 구분할 수 없음</td><td><code>A-DS-01</code>·<code>A-DS-16</code></td></tr>
+          <tr><td><code>A-D007-F24</code></td><td><span class="badge danger">High</span></td><td>교사 제작부터 학생 작성·평가·공개·PDF까지 실제 권한·REST·DB·브라우저를 관통하는 역할 기반 E2E가 0개</td><td>A-DS-14·16</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decision">확인할 목표 결정</h2>
+      <section class="panel">
+        <ol>
+          <li>교사 기능은 OJ Console의 <code>학습 공간 &gt; AI 활동지</code>에서 활동지 생명주기 작업대로 통합한다. 제작·자체 평가·발행·배포·제출·평가·공개·출력 탭이 worksheet/assignment context를 유지하고, 학생 기능은 별도 PublicUI <code>학습 &gt; 활동지</code>에 둔다.</li>
+          <li>활동지는 자동 복구 가능한 draft revision으로 작성하고, 특정 revision의 활동지 자체 AI 평가·교사 해결·학생/교사/PDF 미리보기를 거친 뒤에만 불변 published snapshot을 만든다. AI는 활동지를 자동 수정하거나 발행하지 않는다.</li>
+          <li>배포는 published snapshot만 선택하고 OJ Platform의 수업 context·roster를 원장으로 target snapshot을 만든다. 대상 수·제외·중복·변경·시간대를 preflight와 확인 화면에서 검토한 뒤 <code>scheduled|open</code>으로 전환한다.</li>
+          <li>시작·마감·grace·재개방은 서버 시각과 command policy로 강제한다. 대상 학생 전원을 <code>not_started</code>부터 추적하고 자동 제출은 지속 worker가 기대 명단 전체를 대상으로 idempotent하게 처리한다.</li>
+          <li>학생 작성은 로컬 recovery draft와 서버 revision을 함께 사용한다. operation 동안 같은 idempotency key를 유지하고 저장 영수증, offline queue, 충돌 비교·병합, 제출 전 schema 검증과 제출 영수증을 제공한다.</li>
+          <li>첨부는 private quarantine에서 파일별 upload·scan·extraction·ready/failed 상태를 관리한다. 학생은 실패 재시도·삭제가 가능하고, 정책상 준비되지 않은 첨부를 포함한 제출은 명확히 차단하거나 검토 상태로 분리한다.</li>
+          <li>활동지·제출 AI 평가는 ready plan revision에서 애드온 batch를 enqueue한다. 작업함이 item 진행률·attempt·partial failure·pause·resume·cancel·실패만 재시도를 제공하며 브라우저 반복을 실행환경으로 사용하지 않는다.</li>
+          <li>AI 결과 검토, 공식 점수 확정, 점수 공개, feedback 승인, feedback 공개를 분리한다. 재평가 교체는 기존 공식 결과를 유지한 채 원자적으로 수행하고 관련 release를 stale·withdrawn으로 명시해 학생에게 교정을 알린다.</li>
+          <li>재개방·대리 제출·결시·ZIP·자동 제출·export는 지속 작업 또는 보호된 command로 만들고 대상·영향·사유·실행자·시각·idempotency·복구 결과를 감사한다. 부분 성공은 성공으로 뭉개지 않고 항목별 재개가 가능해야 한다.</li>
+          <li>모든 화면은 loading·empty·error·partial·conflict·offline·stale·permission·success·destructive 상태 계약을 공유하고 객체 scope·접근성·반응형·역할 기반 E2E로 검증한다. 애드온은 플랫폼 파일을 수정하지 않고 모든 애드온 물리 테이블에 <code>oj_ai_*</code> 무접두어 규칙을 유지한다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>사용자 확정·동결:</strong> 2026-08-10 위 열 항목을 모두 목표 기준으로 확인했다. A-D-007 사용자 업무 흐름·위험 기준선을 동결했으며, 다음 조사는 <a href="a-d-008-module-data-ownership.html"><code>A-D-008 모듈·데이터 소유권</code></a>에서 진행한다.</div>
+
+      <h2 id="completion">A-D-007 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>결과</th><th>증거</th></tr></thead>
+        <tbody>
+          <tr><td>교사 정상 흐름 기록</td><td>충족</td><td>context·제작·자체 평가·발행·배포·제출·평가·검토·공개·출력의 현재와 목표 10단계</td></tr>
+          <tr><td>학생 정상 흐름 기록</td><td>충족</td><td>목록·열기·작성·첨부·저장·제출·재개방·결과·PDF의 현재와 목표 8단계</td></tr>
+          <tr><td>운영자 흐름 기록</td><td>충족</td><td>플랫폼 연결·routing과 애드온 작업함·검토함·진단 소유권 분리</td></tr>
+          <tr><td>빈 상태 조사</td><td>충족</td><td>활동지·학생·과제·제출·명단 0건과 오류가 현재 혼합되는 경로 기록</td></tr>
+          <tr><td>오류 상태 조사</td><td>충족</td><td>context·schema·권한·네트워크·첨부·AI·ZIP·export 오류와 사용자 행동 기록</td></tr>
+          <tr><td>중단 상태 조사</td><td>충족</td><td>미저장 editor, offline 작성, autosave/submit 응답 유실, 브라우저 일괄 실행 중단 기록</td></tr>
+          <tr><td>재실행 상태 조사</td><td>충족</td><td>idempotency, conflict, auto-submit, AI item, ZIP·export 재실행의 현재 격차와 목표 command 기록</td></tr>
+          <tr><td>수동 검토·복구 조사</td><td>충족</td><td>활동지 진단, 점수·재평가·feedback, 재개방·대리·결시·부분 실패 검토 기록</td></tr>
+          <tr><td>발견 격차와 후속 연결</td><td>충족</td><td>Critical 5건, High 17건, Medium 2건을 A-DS-01·03·05~16에 배정</td></tr>
+          <tr><td>자동 검증 범위 조사</td><td>충족</td><td>Plate fixture·문자열 harness와 역할 기반 전체 업무 E2E 0개를 구분</td></tr>
+          <tr><td>실행 코드·플랫폼 코드 변경 금지</td><td>충족</td><td>HTML 설계 문서만 작성, PHP·JS·schema·플랫폼 runtime 변경 0건</td></tr>
+          <tr><td>사용자 목표 기준 확인</td><td>충족</td><td>2026-08-10 열 목표 결정을 사용자 확인으로 동결</td></tr>
+        </tbody>
+      </table>
+
+      <p class="footer">A-D-007 사용자 업무 흐름·위험 기준선을 사용자 확인으로 동결했다. 다음 단계: <a href="a-d-008-module-data-ownership.html"><code>A-D-008 모듈·데이터 소유권</code></a></p>
+    </main>
+  </div>
+</body>
+</html>

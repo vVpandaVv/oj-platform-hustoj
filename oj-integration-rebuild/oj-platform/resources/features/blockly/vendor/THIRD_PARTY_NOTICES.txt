@@ -1,0 +1,23 @@
+THIRD-PARTY SOFTWARE NOTICE
+
+Blockly
+Version: 12.5.1
+Package: https://www.npmjs.com/package/blockly/v/12.5.1
+Source repository: https://github.com/RaspberryPiFoundation/blockly
+Source commit: 6f7d50552ee658299de16c139673c2d126ac9b16
+License: Apache License 2.0 (Apache-2.0)
+License text: LICENSE.txt
+
+The following files are unmodified copies from the official blockly@12.5.1
+npm package:
+
+- blockly_compressed.js
+  SHA-256: 2496815c27b415707c98c808489cdeddf27b45431af35d275f67e8c2c36c903a
+- blocks_compressed.js
+  SHA-256: d81768b75d6557da6d6e5604d27ee13ef791ac45b87478e8cfa2cb0df319a2c6
+- python_compressed.js
+  SHA-256: 5799539eb44e470425f4b2a184405520abd3ce41d89307eda6cafe587cd91894
+- msg/ko.js
+  SHA-256: ba71d9a8aee7796c115381e595707ed96033ba2123b3adb68ecb664e510e6831
+
+The official npm package archive does not contain a separate NOTICE file.

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<ruleset name="OJ AI Dashboard">
+	<description>PHP_CodeSniffer rules for the OJ AI Dashboard plugin.</description>
+
+	<file>oj-ai-dashboard.php</file>
+	<file>src</file>
+	<file>tests</file>
+
+	<exclude-pattern>vendor/*</exclude-pattern>
+	<exclude-pattern>node_modules/*</exclude-pattern>
+	<exclude-pattern>build/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="p"/>
+	<arg name="bootstrap" value="./scripts/phpcs/bootstrap.php"/>
+
+	<config name="minimum_supported_wp_version" value="6.5"/>
+	<config name="testVersion" value="8.1-"/>
+
+	<rule ref="WordPress"/>
+	<rule ref="WordPress-Docs"/>
+	<rule ref="WordPress-Extra"/>
+	<!-- OJ Platform registers this capability in config/capabilities.php. -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="oj_manage_roles"/>
+			</property>
+		</properties>
+	</rule>
+	<!-- Native types and exception factories are validated by PHPStan. Avoid the
+	     legacy throw-token counter and avoid reordering two evaluated expressions. -->
+	<rule ref="Squiz.Commenting.FunctionCommentThrowTag"><severity>0</severity></rule>
+	<rule ref="WordPress.PHP.YodaConditions"><severity>0</severity></rule>
+	<rule ref="./scripts/phpcs/OJAI/Sniffs/Commenting/ThrowsContractSniff.php"/>
+	<rule ref="./scripts/phpcs/OJAI/Sniffs/ControlStructures/LiteralComparisonSniff.php"/>
+
+	<!-- PSR-4 is enforced by the loader-aware replacement, not by class- filenames. -->
+	<rule ref="./scripts/phpcs/OJAI/Sniffs/Files/AutoloadPathSniff.php"/>
+
+	<!-- The bootstrap scopes CLI exceptions to this checkout's exact tests root. -->
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="oj_ai_dashboard"/>
+				<element value="OJ_AI_DASHBOARD"/>
+				<element value="OJAI"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

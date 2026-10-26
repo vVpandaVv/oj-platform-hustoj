@@ -1,0 +1,617 @@
+{
+    "capabilities": {
+        "oj_access_console": {
+            "module": "core",
+            "label": "Access Console",
+            "description": "Access the OJ Platform console.",
+            "scope": "global",
+            "feature_key": "admin_console"
+        },
+        "oj_manage_settings": {
+            "module": "settings",
+            "label": "Manage Settings",
+            "description": "Manage site and feature settings.",
+            "scope": "global",
+            "feature_key": "settings"
+        },
+        "oj_manage_system": {
+            "module": "settings",
+            "label": "Manage System",
+            "description": "Manage system status and destructive system options.",
+            "scope": "global",
+            "feature_key": "settings"
+        },
+        "oj_manage_migration": {
+            "module": "migration",
+            "label": "Manage Migration",
+            "description": "Manage import and cleanup tools.",
+            "scope": "global",
+            "feature_key": "migration"
+        },
+        "oj_view_system_status": {
+            "module": "settings",
+            "label": "View System Status",
+            "description": "View system health and diagnostics.",
+            "scope": "global",
+            "feature_key": "settings"
+        },
+        "oj_manage_users": {
+            "module": "auth",
+            "label": "Manage Users",
+            "description": "Manage user lists and account states.",
+            "scope": "global",
+            "feature_key": "auth"
+        },
+        "oj_create_users": {
+            "module": "auth",
+            "label": "Create Users",
+            "description": "Create users and run bulk registration.",
+            "scope": "global",
+            "feature_key": "auth"
+        },
+        "oj_edit_users": {
+            "module": "auth",
+            "label": "Edit Users",
+            "description": "Edit user profile and account data.",
+            "scope": "global",
+            "feature_key": "auth"
+        },
+        "oj_deactivate_users": {
+            "module": "auth",
+            "label": "Deactivate Users",
+            "description": "Deactivate or restore user accounts.",
+            "scope": "global",
+            "feature_key": "auth"
+        },
+        "oj_manage_roles": {
+            "module": "permission",
+            "label": "Manage Roles",
+            "description": "Assign roles and capabilities.",
+            "scope": "global",
+            "feature_key": "permission"
+        },
+        "oj_manage_agreements": {
+            "module": "auth",
+            "label": "Manage Agreements",
+            "description": "Manage required terms and consent documents.",
+            "scope": "global",
+            "feature_key": "auth"
+        },
+        "oj_manage_registration_settings": {
+            "module": "auth",
+            "label": "Manage Registration Settings",
+            "description": "Manage registration, protection, and consent settings.",
+            "scope": "global",
+            "feature_key": "registration"
+        },
+        "oj_manage_smtp": {
+            "module": "settings",
+            "label": "Manage SMTP",
+            "description": "Manage mail delivery settings.",
+            "scope": "global",
+            "feature_key": "settings"
+        },
+        "oj_view_deleted_users": {
+            "module": "auth",
+            "label": "View Deleted Users",
+            "description": "View deleted or deactivated users.",
+            "scope": "global",
+            "feature_key": "auth"
+        },
+        "oj_permanently_delete_users": {
+            "module": "auth",
+            "label": "Permanently Delete Users",
+            "description": "Permanently anonymize user accounts while preserving judge records.",
+            "scope": "global",
+            "feature_key": "auth"
+        },
+        "oj_view_hidden_problems": {
+            "module": "problems",
+            "label": "View Hidden Problems",
+            "description": "View hidden problems.",
+            "scope": "global",
+            "feature_key": "problems"
+        },
+        "oj_manage_problems": {
+            "module": "problems",
+            "label": "Manage Problems",
+            "description": "Access problem management.",
+            "scope": "global",
+            "feature_key": "problems"
+        },
+        "oj_create_problems": {
+            "module": "problems",
+            "label": "Create Problems",
+            "description": "Create problems.",
+            "scope": "global",
+            "feature_key": "problems"
+        },
+        "oj_edit_problems": {
+            "module": "problems",
+            "label": "Edit Problems",
+            "description": "Edit problems.",
+            "scope": "global",
+            "feature_key": "problems"
+        },
+        "oj_delete_problems": {
+            "module": "problems",
+            "label": "Delete Problems",
+            "description": "Delete problems.",
+            "scope": "global",
+            "feature_key": "problems"
+        },
+        "oj_change_problem_ids": {
+            "module": "problems",
+            "label": "Change Problem IDs",
+            "description": "Change problem identifiers.",
+            "scope": "global",
+            "feature_key": "problems"
+        },
+        "oj_manage_problem_xml": {
+            "module": "problems",
+            "label": "Manage Problem XML",
+            "description": "Import and export problem XML.",
+            "scope": "global",
+            "feature_key": "problems"
+        },
+        "oj_manage_testcases": {
+            "module": "problems",
+            "label": "Manage Testcases",
+            "description": "Manage testcase files and tools.",
+            "scope": "global",
+            "feature_key": "problems"
+        },
+        "oj_manage_quizzes": {
+            "module": "problems",
+            "label": "Manage Quizzes",
+            "description": "Manage quizzes.",
+            "scope": "global",
+            "feature_key": "quizzes"
+        },
+        "oj_manage_problem_books": {
+            "module": "problems",
+            "label": "Manage Problem Books",
+            "description": "Manage problem books.",
+            "scope": "global",
+            "feature_key": "problem_books"
+        },
+        "oj_manage_problem_ai_assist": {
+            "module": "problems",
+            "label": "Manage Problem AI Assist",
+            "description": "Use AI assistance for problem and testcase authoring.",
+            "scope": "global",
+            "feature_key": "problem_ai_assist"
+        },
+        "oj_manage_submissions": {
+            "module": "submissions",
+            "label": "Manage Submissions",
+            "description": "Manage submissions.",
+            "scope": "global",
+            "feature_key": "submissions"
+        },
+        "oj_view_submission_code": {
+            "module": "submissions",
+            "label": "View Submission Code",
+            "description": "View submitted source code.",
+            "scope": "global",
+            "feature_key": "submissions"
+        },
+        "oj_view_submission_detail": {
+            "module": "submissions",
+            "label": "View Submission Detail",
+            "description": "View submission result details.",
+            "scope": "global",
+            "feature_key": "submissions"
+        },
+        "oj_rejudge_submissions": {
+            "module": "submissions",
+            "label": "Rejudge Submissions",
+            "description": "Run rejudge actions.",
+            "scope": "global",
+            "feature_key": "submissions"
+        },
+        "oj_delete_submissions": {
+            "module": "submissions",
+            "label": "Delete Submissions",
+            "description": "Delete submissions.",
+            "scope": "global",
+            "feature_key": "submissions"
+        },
+        "oj_manage_submission_settings": {
+            "module": "submissions",
+            "label": "Manage Submission Settings",
+            "description": "Manage language, status, and submission settings.",
+            "scope": "global",
+            "feature_key": "submissions"
+        },
+        "oj_manage_ai_feedback": {
+            "module": "ai_feedback",
+            "label": "Manage AI Feedback",
+            "description": "Manage wrong-answer AI feedback settings.",
+            "scope": "global",
+            "feature_key": "ai_feedback"
+        },
+        "oj_manage_contests": {
+            "module": "contests",
+            "label": "Manage Contests",
+            "description": "Access contest management.",
+            "scope": "global",
+            "feature_key": "contests"
+        },
+        "oj_create_contests": {
+            "module": "contests",
+            "label": "Create Contests",
+            "description": "Create contests.",
+            "scope": "global",
+            "feature_key": "contests"
+        },
+        "oj_edit_contests": {
+            "module": "contests",
+            "label": "Edit Contests",
+            "description": "Edit contests.",
+            "scope": "global",
+            "feature_key": "contests"
+        },
+        "oj_delete_contests": {
+            "module": "contests",
+            "label": "Delete Contests",
+            "description": "Delete contests.",
+            "scope": "global",
+            "feature_key": "contests"
+        },
+        "oj_manage_contest_participants": {
+            "module": "contests",
+            "label": "Manage Contest Participants",
+            "description": "Manage contest participants.",
+            "scope": "global",
+            "feature_key": "contests"
+        },
+        "oj_manage_contest_ip": {
+            "module": "contests",
+            "label": "Manage Contest IP",
+            "description": "Manage contest IP restrictions.",
+            "scope": "global",
+            "feature_key": "contests"
+        },
+        "oj_view_contest_reports": {
+            "module": "contests",
+            "label": "View Contest Reports",
+            "description": "View contest reports and statistics.",
+            "scope": "global",
+            "feature_key": "contests"
+        },
+        "oj_export_contests": {
+            "module": "contests",
+            "label": "Export Contests",
+            "description": "Export contest data.",
+            "scope": "global",
+            "feature_key": "contests"
+        },
+        "oj_manage_classes": {
+            "module": "classes",
+            "label": "Manage Classes",
+            "description": "Access class management.",
+            "scope": "global",
+            "feature_key": "classes"
+        },
+        "oj_create_classes": {
+            "module": "classes",
+            "label": "Create Classes",
+            "description": "Create classes.",
+            "scope": "global",
+            "feature_key": "classes"
+        },
+        "oj_edit_classes": {
+            "module": "classes",
+            "label": "Edit Classes",
+            "description": "Edit classes.",
+            "scope": "global",
+            "feature_key": "classes"
+        },
+        "oj_delete_classes": {
+            "module": "classes",
+            "label": "Delete Classes",
+            "description": "Delete classes.",
+            "scope": "global",
+            "feature_key": "classes"
+        },
+        "oj_manage_class_members": {
+            "module": "classes",
+            "label": "Manage Class Members",
+            "description": "Manage class participants.",
+            "scope": "global",
+            "feature_key": "classes"
+        },
+        "oj_view_class_reports": {
+            "module": "classes",
+            "label": "View Class Reports",
+            "description": "View class progress and reports.",
+            "scope": "global",
+            "feature_key": "classes"
+        },
+        "oj_export_classes": {
+            "module": "classes",
+            "label": "Export Classes",
+            "description": "Export class data.",
+            "scope": "global",
+            "feature_key": "classes"
+        },
+        "oj_manage_groups": {
+            "module": "groups",
+            "label": "Manage All Groups",
+            "description": "Manage every group globally.",
+            "scope": "global",
+            "feature_key": "groups"
+        },
+        "oj_create_groups": {
+            "module": "groups",
+            "label": "Create Groups",
+            "description": "Create groups.",
+            "scope": "owned",
+            "feature_key": "groups"
+        },
+        "oj_manage_own_groups": {
+            "module": "groups",
+            "label": "Manage Own Groups",
+            "description": "Manage groups owned by the current user.",
+            "scope": "owned",
+            "feature_key": "groups"
+        },
+        "oj_manage_group_managers": {
+            "module": "groups",
+            "label": "Manage Group Managers",
+            "description": "Manage delegated managers globally or for an allowed group.",
+            "scope": "global_or_context",
+            "feature_key": "groups"
+        },
+        "oj_edit_groups": {
+            "module": "groups",
+            "label": "Edit Groups",
+            "description": "Edit groups globally or within an allowed group.",
+            "scope": "global_or_context",
+            "feature_key": "groups"
+        },
+        "oj_delete_groups": {
+            "module": "groups",
+            "label": "Delete Groups",
+            "description": "Archive groups globally or within an allowed group.",
+            "scope": "global_or_context",
+            "feature_key": "groups"
+        },
+        "oj_manage_group_members": {
+            "module": "groups",
+            "label": "Manage Group Members",
+            "description": "Manage members globally or within an allowed group.",
+            "scope": "global_or_context",
+            "feature_key": "groups"
+        },
+        "oj_view_group_reports": {
+            "module": "groups",
+            "label": "View Group Reports",
+            "description": "View group status and ranking reports.",
+            "scope": "global_or_context",
+            "feature_key": "groups"
+        },
+        "oj_bulk_register_group_members": {
+            "module": "groups",
+            "label": "Bulk Register Group Members",
+            "description": "Bulk register users globally or within an allowed group.",
+            "scope": "global_or_context",
+            "feature_key": "groups"
+        },
+        "oj_reset_group_member_password": {
+            "module": "groups",
+            "label": "Reset Group Member Password",
+            "description": "Reset member passwords globally or within an allowed group.",
+            "scope": "global_or_context",
+            "feature_key": "groups"
+        },
+        "oj_manage_board": {
+            "module": "board",
+            "label": "Manage Board",
+            "description": "Moderate board posts and comments.",
+            "scope": "global",
+            "feature_key": "board"
+        },
+        "oj_manage_notices": {
+            "module": "notices",
+            "label": "Manage Notices",
+            "description": "Create and manage notices.",
+            "scope": "global",
+            "feature_key": "notices"
+        }
+    },
+    "roles": {
+        "oj_user_manager": {
+            "label": "OJ 사용자 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_users",
+                "oj_create_users",
+                "oj_edit_users",
+                "oj_deactivate_users",
+                "oj_view_deleted_users"
+            ]
+        },
+        "oj_role_manager": {
+            "label": "OJ 역할 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_roles"
+            ]
+        },
+        "oj_problem_manager": {
+            "label": "OJ 문제 관리자",
+            "capabilities": [
+                "read",
+                "upload_files",
+                "oj_access_console",
+                "oj_view_hidden_problems",
+                "oj_manage_problems",
+                "oj_create_problems",
+                "oj_edit_problems",
+                "oj_delete_problems",
+                "oj_change_problem_ids",
+                "oj_manage_problem_xml",
+                "oj_manage_testcases",
+                "oj_manage_quizzes",
+                "oj_manage_problem_books",
+                "oj_manage_problem_ai_assist"
+            ]
+        },
+        "oj_testcase_manager": {
+            "label": "OJ 테스트케이스 관리자",
+            "capabilities": [
+                "read",
+                "upload_files",
+                "oj_access_console",
+                "oj_manage_testcases",
+                "oj_manage_problem_ai_assist"
+            ]
+        },
+        "oj_submission_manager": {
+            "label": "OJ 제출 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_submissions",
+                "oj_view_submission_code",
+                "oj_view_submission_detail",
+                "oj_rejudge_submissions"
+            ]
+        },
+        "oj_contest_manager": {
+            "label": "OJ 대회 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_contests",
+                "oj_create_contests",
+                "oj_edit_contests",
+                "oj_manage_contest_participants",
+                "oj_manage_contest_ip",
+                "oj_view_contest_reports",
+                "oj_export_contests"
+            ]
+        },
+        "oj_class_manager": {
+            "label": "OJ 수업 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_classes",
+                "oj_create_classes",
+                "oj_edit_classes",
+                "oj_manage_class_members",
+                "oj_view_class_reports",
+                "oj_export_classes"
+            ]
+        },
+        "oj_group_manager": {
+            "label": "OJ 그룹 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_create_groups",
+                "oj_manage_own_groups"
+            ]
+        },
+        "oj_board_manager": {
+            "label": "OJ 게시판 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_board"
+            ]
+        },
+        "oj_notice_manager": {
+            "label": "OJ 공지 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_notices"
+            ]
+        },
+        "oj_settings_manager": {
+            "label": "OJ 설정 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_settings",
+                "oj_view_system_status"
+            ]
+        },
+        "oj_registration_policy_manager": {
+            "label": "OJ 가입 정책 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_agreements",
+                "oj_manage_registration_settings"
+            ]
+        },
+        "oj_submission_settings_manager": {
+            "label": "OJ 제출 설정 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_submission_settings"
+            ]
+        },
+        "oj_ai_feedback_manager": {
+            "label": "OJ AI 피드백 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_ai_feedback"
+            ]
+        },
+        "oj_mail_manager": {
+            "label": "OJ 메일 설정 관리자",
+            "capabilities": [
+                "read",
+                "oj_access_console",
+                "oj_manage_smtp"
+            ]
+        }
+    },
+    "presets": {
+        "user_manager": [
+            "oj_manage_users",
+            "oj_create_users",
+            "oj_edit_users",
+            "oj_deactivate_users"
+        ],
+        "role_manager": [
+            "oj_manage_roles"
+        ],
+        "submission_manager": [
+            "oj_manage_submissions",
+            "oj_view_submission_code",
+            "oj_view_submission_detail",
+            "oj_rejudge_submissions"
+        ],
+        "settings_manager": [
+            "oj_manage_settings",
+            "oj_view_system_status"
+        ],
+        "notice_manager": [
+            "oj_manage_notices"
+        ],
+        "registration_policy_manager": [
+            "oj_manage_agreements",
+            "oj_manage_registration_settings"
+        ],
+        "submission_settings_manager": [
+            "oj_manage_submission_settings"
+        ],
+        "ai_feedback_manager": [
+            "oj_manage_ai_feedback"
+        ],
+        "mail_manager": [
+            "oj_manage_smtp"
+        ]
+    }
+}

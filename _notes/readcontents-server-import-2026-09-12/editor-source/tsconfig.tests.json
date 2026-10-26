@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["assets/src/admin", "assets/src/public", "tests"]
+}

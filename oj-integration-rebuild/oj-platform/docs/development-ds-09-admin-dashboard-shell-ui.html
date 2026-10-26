@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-09 관리자 대시보드·셸 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds09-prototype.css">
+</head>
+<body class="console">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 22a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M17 15a7 7 0 0 1 5 7"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 5.5A3.5 3.5 0 0 1 5.5 2H11v18H5.5A3.5 3.5 0 0 0 2 23z"/><path d="M22 5.5A3.5 3.5 0 0 0 18.5 2H13v18h5.5A3.5 3.5 0 0 1 22 23z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1z"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 21h20z"/><path d="M12 9v5M12 18h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9"/><path d="M18 13v8H3V6h8"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-09 관리자 대시보드·셸 시안</strong><span>역할별 메뉴와 대시보드 범위를 비교합니다.</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="역할·상태 선택">
+        <button type="button" role="tab" data-screen-target="admin-dashboard" aria-selected="true">전역 관리자</button>
+        <button type="button" role="tab" data-screen-target="instructor-dashboard" aria-selected="false">담당 강사</button>
+        <button type="button" role="tab" data-screen-target="approval-dashboard" aria-selected="false">가입 승인 담당자</button>
+        <button type="button" role="tab" data-screen-target="partial-dashboard" aria-selected="false">부분 실패</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-09-home-dashboard-shell.html"><span class="brand-mark">OJ</span><span>관리자 콘솔</span></a>
+      <div class="heading-actions" style="margin-left:auto">
+        <a class="button ghost" href="development-ds-09-user-home-shell-ui.html"><svg><use href="#i-external"/></svg>사용자 화면</a>
+        <button class="account-button" type="button" aria-label="관리자 계정" title="관리자 계정"><svg><use href="#i-user"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="workspace console-workspace">
+    <aside class="console-sidebar" data-admin-sidebar="admin-dashboard" aria-label="전역 관리자 메뉴">
+      <strong>관리자 메뉴</strong>
+      <div class="sidebar-role">플랫폼 관리자 · 전체 범위</div>
+      <a href="#admin-dashboard" aria-current="page"><svg><use href="#i-grid"/></svg>대시보드</a>
+      <a href="#users"><svg><use href="#i-users"/></svg>사용자</a>
+      <a href="#problems"><svg><use href="#i-book"/></svg>문제</a>
+      <a href="#submissions"><svg><use href="#i-send"/></svg>제출</a>
+      <a href="#learning"><svg><use href="#i-learn"/></svg>학습 공간</a>
+      <a href="#community"><svg><use href="#i-message"/></svg>커뮤니티</a>
+      <a href="#operations"><svg><use href="#i-settings"/></svg>운영</a>
+    </aside>
+
+    <aside class="console-sidebar" data-admin-sidebar="instructor-dashboard" aria-label="담당 강사 메뉴" hidden>
+      <strong>관리자 메뉴</strong>
+      <div class="sidebar-role">강사 · 담당 범위</div>
+      <a href="#instructor-dashboard" aria-current="page"><svg><use href="#i-grid"/></svg>대시보드</a>
+      <a href="#problems"><svg><use href="#i-book"/></svg>문제</a>
+      <a href="#submissions"><svg><use href="#i-send"/></svg>제출</a>
+      <a href="#learning"><svg><use href="#i-learn"/></svg>학습 공간</a>
+      <a href="#community"><svg><use href="#i-message"/></svg>커뮤니티</a>
+    </aside>
+
+    <aside class="console-sidebar" data-admin-sidebar="approval-dashboard" aria-label="가입 승인 담당자 메뉴" hidden>
+      <strong>관리자 메뉴</strong>
+      <div class="sidebar-role">가입 승인 담당자 · 최소 범위</div>
+      <a href="#approval-dashboard" aria-current="page"><svg><use href="#i-grid"/></svg>대시보드</a>
+      <a href="#pending-users"><svg><use href="#i-users"/></svg>가입 승인 대기</a>
+    </aside>
+
+    <aside class="console-sidebar" data-admin-sidebar="partial-dashboard" aria-label="전역 관리자 메뉴" hidden>
+      <strong>관리자 메뉴</strong>
+      <div class="sidebar-role">플랫폼 관리자 · 일부 Provider 실패</div>
+      <a href="#partial-dashboard" aria-current="page"><svg><use href="#i-grid"/></svg>대시보드</a>
+      <a href="#users"><svg><use href="#i-users"/></svg>사용자</a>
+      <a href="#problems"><svg><use href="#i-book"/></svg>문제</a>
+      <a href="#submissions"><svg><use href="#i-send"/></svg>제출</a>
+      <a href="#learning"><svg><use href="#i-learn"/></svg>학습 공간</a>
+      <a href="#community"><svg><use href="#i-message"/></svg>커뮤니티</a>
+      <a href="#operations"><svg><use href="#i-settings"/></svg>운영</a>
+    </aside>
+
+    <main class="page" id="main">
+      <section class="screen" data-screen="admin-dashboard">
+        <div class="breadcrumb"><span>관리자</span><span>/</span><span>대시보드</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">전체 운영</p><h1>대시보드</h1><p>내가 확인할 운영 업무와 최근 작업을 봅니다.</p></div><span class="badge info">플랫폼 관리자</span></header>
+        <div class="notice warning"><svg><use href="#i-alert"/></svg><div><strong>채점 데이터 연결 응답이 느립니다.</strong><br>업무 화면은 사용할 수 있으며 상세 진단은 시스템 상태에서 확인합니다.</div><button class="button" type="button" data-toast="시스템 상태 화면으로 이동합니다.">시스템 상태</button></div>
+        <div class="metric-grid">
+          <div class="metric"><span>내 할 일</span><strong>19</strong><small>오늘 처리 7건</small></div>
+          <div class="metric"><span>확인 필요 작업</span><strong>3</strong><small>실패 1 · 충돌 2</small></div>
+          <div class="metric"><span>진행 중 학습 공간</span><strong>12</strong><small>수업 7 · 대회 3 · 그룹 2</small></div>
+          <div class="metric"><span>운영 알림</span><strong>1</strong><small>시스템 상태 권한 적용</small></div>
+        </div>
+        <div class="dashboard-layout">
+          <div>
+            <section class="dashboard-section">
+              <div class="section-heading"><div><h2>내 할 일</h2><p>원본 화면에서 처리할 항목만 표시합니다.</p></div><button class="button ghost" type="button">전체 보기</button></div>
+              <div class="task-list">
+                <div class="task-row"><span class="task-count">12</span><div class="task-main"><strong>가입 승인 대기</strong><span>필수 동의와 법정대리인 확인이 완료된 신청</span></div><button class="button" type="button" data-toast="가입 승인 대기 목록으로 이동합니다.">확인</button></div>
+                <div class="task-row"><span class="task-count">3</span><div class="task-main"><strong>확인 필요 작업</strong><span>문제 메타데이터 충돌 2건 · 사용자 등록 실패 1건</span></div><button class="button" type="button" data-toast="조회 가능한 작업 목록으로 이동합니다.">작업 보기</button></div>
+                <div class="task-row"><span class="task-count">2</span><div class="task-main"><strong>오늘 종료되는 대회·평가</strong><span>담당자 확인이 필요한 운영 항목</span></div><button class="button" type="button" data-toast="대회·평가 목록으로 이동합니다.">확인</button></div>
+                <div class="task-row"><span class="task-count">2</span><div class="task-main"><strong>게시 대기 공지</strong><span>예약 시각과 공개 범위를 검토합니다.</span></div><button class="button" type="button" data-toast="공지 관리 화면으로 이동합니다.">확인</button></div>
+              </div>
+            </section>
+            <section class="dashboard-section">
+              <div class="section-heading"><div><h2>최근 작업</h2><p>현재 조회 권한이 있는 작업 최대 8건입니다.</p></div><button class="button ghost" type="button">작업 현황</button></div>
+              <div class="job-list">
+                <div class="job-row"><div><strong>문제 메타데이터 생성</strong><span>문제 18개 · 김관리자 · 10:20</span></div><div><div class="progress-track"><span class="progress-bar" style="width:72%"></span></div><span>13 / 18 처리</span></div><span class="badge info">진행 중</span></div>
+                <div class="job-row"><div><strong>사용자 CSV 등록</strong><span>사용자 32명 · 이강사 · 09:42</span></div><div><div class="progress-track"><span class="progress-bar" style="width:100%"></span></div><span>31 성공 · 1 확인</span></div><span class="badge wait">확인 필요</span></div>
+                <div class="job-row"><div><strong>제출 AI 피드백</strong><span>제출 4281 · 김하늘 · 09:18</span></div><div><div class="progress-track"><span class="progress-bar" style="width:100%"></span></div><span>완료</span></div><span class="badge good">완료</span></div>
+              </div>
+            </section>
+          </div>
+          <aside>
+            <section class="dashboard-section">
+              <h2>담당 바로가기</h2>
+              <div class="quick-list">
+                <div class="quick-row"><svg><use href="#i-users"/></svg><div class="quick-main"><strong>사용자 관리</strong><span>승인·계정 상태·일괄 등록</span></div><svg><use href="#i-arrow-right"/></svg></div>
+                <div class="quick-row"><svg><use href="#i-book"/></svg><div class="quick-main"><strong>문제 관리</strong><span>문제·퀴즈·문제집</span></div><svg><use href="#i-arrow-right"/></svg></div>
+                <div class="quick-row"><svg><use href="#i-learn"/></svg><div class="quick-main"><strong>학습 공간</strong><span>수업·대회·평가·그룹</span></div><svg><use href="#i-arrow-right"/></svg></div>
+                <div class="quick-row"><svg><use href="#i-message"/></svg><div class="quick-main"><strong>커뮤니티</strong><span>게시판·공지 운영</span></div><svg><use href="#i-arrow-right"/></svg></div>
+              </div>
+            </section>
+            <section class="dashboard-section">
+              <h2>운영 알림</h2>
+              <div class="notice warning"><svg><use href="#i-alert"/></svg><div><strong>JudgeDb 응답 지연</strong><br>07-24 10:26 · 상세 정보는 시스템 상태에서 확인</div></div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="instructor-dashboard" hidden>
+        <div class="breadcrumb"><span>관리자</span><span>/</span><span>대시보드</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">담당 범위</p><h1>대시보드</h1><p>내 수업·대회·문제에서 확인할 일을 봅니다.</p></div><span class="badge info">강사</span></header>
+        <div class="metric-grid">
+          <div class="metric"><span>담당 수업</span><strong>3</strong><small>진행 중 2</small></div>
+          <div class="metric"><span>진행 중 평가</span><strong>1</strong><small>오늘 17:00 종료</small></div>
+          <div class="metric"><span>담당 문제</span><strong>42</strong><small>확인 필요 2</small></div>
+          <div class="metric"><span>확인할 제출</span><strong>4</strong><small>담당 범위만</small></div>
+        </div>
+        <div class="dashboard-layout">
+          <div>
+            <section class="dashboard-section"><h2>내 할 일</h2><div class="task-list">
+              <div class="task-row"><span class="task-count">2</span><div class="task-main"><strong>오늘 종료되는 시간 제한 평가</strong><span>참가 현황과 미제출 학습자를 확인합니다.</span></div><button class="button" type="button">확인</button></div>
+              <div class="task-row"><span class="task-count">2</span><div class="task-main"><strong>문제 메타데이터 확인</strong><span>AI 결과와 수동값 충돌을 비교합니다.</span></div><button class="button" type="button">확인</button></div>
+              <div class="task-row"><span class="task-count">4</span><div class="task-main"><strong>담당 제출 검토</strong><span>무효 처리 요청과 재채점 결과를 확인합니다.</span></div><button class="button" type="button">확인</button></div>
+            </div></section>
+            <section class="dashboard-section"><h2>최근 작업</h2><div class="job-list">
+              <div class="job-row"><div><strong>테스트케이스 생성</strong><span>문제 1142 · 이강사 · 10:04</span></div><div><div class="progress-track"><span class="progress-bar" style="width:100%"></span></div><span>초안 생성 완료</span></div><span class="badge wait">검토 대기</span></div>
+              <div class="job-row"><div><strong>문제 메타데이터 생성</strong><span>담당 문제 5개 · 09:34</span></div><div><div class="progress-track"><span class="progress-bar" style="width:60%"></span></div><span>3 / 5 처리</span></div><span class="badge info">진행 중</span></div>
+            </div></section>
+          </div>
+          <aside><section class="dashboard-section"><h2>담당 바로가기</h2><div class="quick-list">
+            <div class="quick-row"><svg><use href="#i-learn"/></svg><div class="quick-main"><strong>파이썬 알고리즘 기초</strong><span>수업 · 수강 28명</span></div><svg><use href="#i-arrow-right"/></svg></div>
+            <div class="quick-row"><svg><use href="#i-learn"/></svg><div class="quick-main"><strong>여름 알고리즘 평가</strong><span>대회·평가 · 진행 중</span></div><svg><use href="#i-arrow-right"/></svg></div>
+            <div class="quick-row"><svg><use href="#i-book"/></svg><div class="quick-main"><strong>담당 문제</strong><span>42개</span></div><svg><use href="#i-arrow-right"/></svg></div>
+          </div></section></aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="approval-dashboard" hidden>
+        <div class="breadcrumb"><span>관리자</span><span>/</span><span>대시보드</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">가입 승인 범위</p><h1>대시보드</h1><p>승인 대기 계정의 필수 확인 정보만 봅니다.</p></div><span class="badge wait">가입 승인 담당자</span></header>
+        <div class="notice"><svg><use href="#i-users"/></svg><div><strong>가입 승인 외의 사용자 관리 권한은 없습니다.</strong><br>역할·비밀번호·제출·학습 기록·전체 프로필은 표시하지 않습니다.</div></div>
+        <div class="metric-grid">
+          <div class="metric"><span>승인 대기</span><strong>12</strong><small>오늘 신청 4명</small></div>
+          <div class="metric"><span>법정대리인 확인 완료</span><strong>9</strong><small>확인 대기 3명</small></div>
+          <div class="metric"><span>필수 동의 완료</span><strong>12</strong><small>현재 문서 버전</small></div>
+          <div class="metric"><span>오늘 승인</span><strong>7</strong><small>반려 1명</small></div>
+        </div>
+        <section class="dashboard-section">
+          <div class="section-heading"><div><h2>가입 승인 대기</h2><p>승인 실행은 사용자별 전용 화면에서 현재 상태를 다시 검사합니다.</p></div><button class="button" type="button">전체 12명 보기</button></div>
+          <div class="table-wrap"><table><thead><tr><th>로그인 아이디</th><th>표시 이름</th><th>이메일</th><th>서비스</th><th>필수 동의</th><th>법정대리인</th><th>신청</th><th></th></tr></thead><tbody>
+            <tr><td>seoyeon12</td><td>박서연</td><td>seoyeon12@example.com</td><td>개인 학습자</td><td><span class="badge good">완료</span></td><td><span class="badge good">완료</span></td><td>오늘 09:48</td><td><button class="button primary" type="button" data-toast="승인 전용 사용자 화면으로 이동합니다.">확인</button></td></tr>
+            <tr><td>minjun15</td><td>최민준</td><td>minjun15@example.com</td><td>개인 학습자</td><td><span class="badge good">완료</span></td><td><span class="badge wait">대기</span></td><td>오늘 09:31</td><td><button class="button" type="button" data-toast="법정대리인 확인이 끝나야 승인할 수 있습니다.">확인</button></td></tr>
+            <tr><td>yujin09</td><td>한유진</td><td>yujin09@example.com</td><td>알고리즘 학습 모임</td><td><span class="badge good">완료</span></td><td>대상 아님</td><td>어제 16:20</td><td><button class="button primary" type="button">확인</button></td></tr>
+          </tbody></table></div>
+        </section>
+      </section>
+
+      <section class="screen" data-screen="partial-dashboard" hidden>
+        <div class="breadcrumb"><span>관리자</span><span>/</span><span>대시보드</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">전체 운영</p><h1>대시보드</h1><p>일부 Provider가 실패해도 사용할 수 있는 운영 정보는 계속 표시합니다.</p></div><span class="badge info">플랫폼 관리자</span></header>
+        <div class="notice warning"><svg><use href="#i-alert"/></svg><div><strong>최근 작업 정보를 불러오지 못했습니다.</strong><br>내 할 일과 담당 바로가기는 정상적으로 사용할 수 있습니다. 추적 정보는 운영 로그에만 기록됩니다.</div></div>
+        <div class="dashboard-layout">
+          <div>
+            <section class="dashboard-section"><h2>내 할 일</h2><div class="task-list">
+              <div class="task-row"><span class="task-count">12</span><div class="task-main"><strong>가입 승인 대기</strong><span>필수 동의와 법정대리인 확인이 완료된 신청</span></div><button class="button" type="button">확인</button></div>
+              <div class="task-row"><span class="task-count">2</span><div class="task-main"><strong>오늘 종료되는 대회·평가</strong><span>담당자 확인이 필요한 운영 항목</span></div><button class="button" type="button">확인</button></div>
+            </div></section>
+            <section class="dashboard-section"><h2>최근 작업</h2><div class="provider-fallback"><div><svg><use href="#i-alert"/></svg><strong>작업 현황을 불러오지 못했습니다.</strong><p>이 블록만 실패 상태로 격리했습니다.</p><button class="button" type="button" data-toast="최근 작업 Provider만 다시 요청합니다."><svg><use href="#i-refresh"/></svg>다시 시도</button></div></div></section>
+          </div>
+          <aside><section class="dashboard-section"><h2>담당 바로가기</h2><div class="quick-list">
+            <div class="quick-row"><svg><use href="#i-users"/></svg><div class="quick-main"><strong>사용자 관리</strong><span>승인·계정 상태</span></div><svg><use href="#i-arrow-right"/></svg></div>
+            <div class="quick-row"><svg><use href="#i-book"/></svg><div class="quick-main"><strong>문제 관리</strong><span>문제·퀴즈·문제집</span></div><svg><use href="#i-arrow-right"/></svg></div>
+            <div class="quick-row"><svg><use href="#i-learn"/></svg><div class="quick-main"><strong>학습 공간</strong><span>수업·대회·그룹</span></div><svg><use href="#i-arrow-right"/></svg></div>
+          </div></section></aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds09-prototype.js"></script>
+</body>
+</html>

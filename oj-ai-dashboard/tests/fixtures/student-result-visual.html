@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>활동지 결과</title>
+  <link rel="stylesheet" href="../../resources/css/student-assignments.css">
+  <link rel="stylesheet" href="../../resources/css/student-results.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 20px; background: #fff; color: #202124; font-family: Arial, "Malgun Gothic", sans-serif; }
+    @media (max-width: 700px) { body { padding: 14px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="oj-ai-student-page oj-ai-student-result-page" data-oj-ai-route="addon.oj_ai_dashboard.public.results.show">
+      <a class="oj-ai-student-back" href="#worksheets">활동지 목록</a>
+      <header class="oj-ai-student-page__header"><h1>활동지 결과</h1></header>
+      <div
+        id="oj-ai-student-result-app"
+        data-release-id="1A040G2081040G2081040G2081"
+        data-locale="ko-KR"
+        data-rest-root="https://fixture.local/oj-ai/v1"
+        data-rest-nonce="nonce-g4-result"
+        aria-busy="true"
+      >
+        <p class="oj-ai-student-page__status" role="status" aria-live="polite">불러오는 중...</p>
+      </div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      const releaseId = '1A040G2081040G2081040G2081';
+      const hash = 'a'.repeat(64);
+      const jobId = '1A040G2081040G2081040G2082';
+      const artifactId = '1A040G2081040G2081040G2083';
+      const pdfBytes = new TextEncoder().encode('%PDF-1.4\n% fixture student result PDF\n%%EOF');
+      window.__studentResultMode = params.get('state') || 'released';
+      window.__studentPdfMode = params.get('pdf') || 'ready';
+      window.__studentResultRequests = [];
+      window.__studentPdfPolls = 0;
+      window.__setStudentResultMode = (mode) => { window.__studentResultMode = mode; };
+      window.__setStudentPdfMode = (mode) => { window.__studentPdfMode = mode; window.__studentPdfPolls = 0; };
+
+      const projection = (state = 'released', scoreVisibility = 'total_and_criteria', feedbackVisibility = 'shown') => ({
+        feedback: feedbackVisibility === 'shown' ? {
+          criteria: [
+            { label: '근거 찾기', next_step: '답과 근거를 한 문장으로 연결해 보세요.', strength: '표에서 필요한 값을 정확히 찾았습니다.' },
+            { label: '설명하기', next_step: '단위를 함께 쓰면 설명이 더 분명해집니다.', strength: '비교 과정을 순서대로 설명했습니다.' },
+          ],
+          next_steps: ['비슷한 표를 하나 더 비교해 보기', '답에 단위를 붙여 다시 읽어 보기'],
+          overall_feedback: '자료를 정확히 읽고 자신의 말로 설명했습니다.',
+          visibility: 'shown',
+        } : { criteria: [], next_steps: [], overall_feedback: null, visibility: 'hidden' },
+        release: { released_at_utc: state === 'corrected' ? '2026-08-24 15:20:00' : '2026-08-24 14:10:00', state },
+        schema_id: 'oj_ai.student_release_projection',
+        schema_version: '1.0.0',
+        score: scoreVisibility === 'hidden' ? { criteria: [], total: null, visibility: 'hidden' } : {
+          criteria: scoreVisibility === 'total_and_criteria' ? [
+            { label: '근거 찾기', maximum_points: '4.0000', points: '4.0000' },
+            { label: '설명하기', maximum_points: '6.0000', points: '4.0000' },
+          ] : [],
+          total: '8.0000',
+          visibility: scoreVisibility,
+        },
+        worksheet: { title: '자료 해석 활동지' },
+      });
+
+      const envelope = (result) => ({ data: { result }, meta: { correlation_id: 'g4-s04-fixture' } });
+      const jsonResponse = (ok, status, body) => ({ ok, status, headers: new Headers({ 'Content-Type': 'application/json' }), async json() { return body; } });
+      const responseFor = (mode) => {
+        if (mode === 'forbidden') return { ok: false, status: 403, body: { message: 'forbidden fixture' } };
+        if (mode === 'not_found') return { ok: false, status: 404, body: { message: 'not found fixture' } };
+        if (mode === 'conflict') return { ok: false, status: 409, body: { message: 'conflict fixture' } };
+        if (mode === 'error') return { ok: false, status: 503, body: { message: 'unavailable fixture' } };
+        if (mode === 'invalid') {
+          const invalidProjection = projection();
+          invalidProjection.teacher_memo = 'must never render';
+          return { ok: true, status: 200, body: envelope({ notice: null, projection: invalidProjection, release: { hash, id: releaseId, released_at_utc: '2026-08-24 14:10:00', state: 'released' } }) };
+        }
+        if (mode === 'stale') return { ok: true, status: 200, body: envelope({ notice: { code: 'result_updating', message: '결과를 수정하고 있습니다.' }, projection: null, release: { hash, id: releaseId, released_at_utc: '2026-08-24 15:00:00', state: 'stale' } }) };
+        if (mode === 'withdrawn') return { ok: true, status: 200, body: envelope({ notice: { code: 'result_withdrawn', message: '공개된 결과가 회수되었습니다.' }, projection: null, release: { hash, id: releaseId, released_at_utc: '2026-08-24 15:10:00', state: 'withdrawn' } }) };
+
+        const corrected = mode === 'corrected';
+        const scoreOnly = mode === 'score_only';
+        const feedbackOnly = mode === 'feedback_only';
+        const state = corrected ? 'corrected' : 'released';
+        const value = projection(state, feedbackOnly ? 'hidden' : (scoreOnly ? 'total' : 'total_and_criteria'), scoreOnly ? 'hidden' : 'shown');
+        return { ok: true, status: 200, body: envelope({ notice: null, projection: value, release: { hash, id: releaseId, released_at_utc: value.release.released_at_utc, state } }) };
+      };
+
+      window.fetch = async (input, options = {}) => {
+        const url = String(input);
+        const method = String(options.method || 'GET').toUpperCase();
+        let body = null;
+        if (typeof options.body === 'string') {
+          try { body = JSON.parse(options.body); } catch (error) { body = { parse_error: error.message }; }
+        }
+        window.__studentResultRequests.push({ url, method, headers: { ...(options.headers || {}) }, body });
+
+        if (url.endsWith(`/me/results/${releaseId}`) && method === 'GET') {
+          const fixture = responseFor(window.__studentResultMode);
+          return jsonResponse(fixture.ok, fixture.status, fixture.body);
+        }
+        if (url.endsWith(`/me/results/${releaseId}/commands/export-pdf`) && method === 'POST') {
+          if (window.__studentPdfMode === 'enqueue_conflict') {
+            window.__studentResultMode = 'corrected';
+            return jsonResponse(false, 409, { message: '최신 결과를 다시 확인해 주세요.' });
+          }
+          if (window.__studentPdfMode === 'enqueue_forbidden') return jsonResponse(false, 403, { message: '권한을 확인해 주세요.' });
+          return jsonResponse(true, 202, {
+            data: { export_job: { id: jobId, state: 'queued', artifact_kind: 'result_pdf', source_type: 'submission_release', source_id: releaseId, source_hash: hash } },
+            meta: { correlation_id: 'g4-s04-enqueue', idempotent_replay: false, queued_at_utc: '2026-08-24 16:00:00' },
+          });
+        }
+        if (url.endsWith(`/export-jobs/${jobId}`) && method === 'GET') {
+          window.__studentPdfPolls += 1;
+          if (window.__studentPdfMode === 'job_revoked') {
+            window.__studentResultMode = 'withdrawn';
+            return jsonResponse(false, 403, { message: '권한을 확인해 주세요.' });
+          }
+          const state = window.__studentPdfMode === 'expired'
+            ? 'expired'
+            : (window.__studentPdfMode === 'failed' ? 'failed' : (window.__studentPdfMode === 'slow' || window.__studentPdfPolls === 1 ? 'running' : 'ready'));
+          const ready = state === 'ready';
+          return jsonResponse(true, 200, {
+            data: { export_job: {
+              job_id: jobId,
+              state,
+              artifact_kind: 'result_pdf',
+              source_type: 'submission_release',
+              source_id: releaseId,
+              source_hash: hash,
+              profile_version: 'result_print.v1',
+              queued_at_utc: '2026-08-24 16:00:00',
+              started_at_utc: '2026-08-24 16:00:01',
+              finished_at_utc: ready || state === 'failed' ? '2026-08-24 16:00:02' : null,
+              error_code: state === 'failed' ? 'result_pdf_render_failed' : null,
+              artifact_id: ready ? artifactId : null,
+              expires_at_utc: ready || state === 'expired' ? '2026-08-25 16:00:02' : null,
+            } },
+            meta: { correlation_id: 'g4-s04-job' },
+          });
+        }
+        if (url.endsWith(`/artifacts/${artifactId}/download`) && method === 'GET') {
+          if (window.__studentPdfMode === 'download_expired') return jsonResponse(false, 410, { message: '파일 유효기간이 끝났습니다.' });
+          if (window.__studentPdfMode === 'download_revoked') {
+            window.__studentResultMode = 'withdrawn';
+            return jsonResponse(false, 403, { message: '권한을 확인해 주세요.' });
+          }
+          return new Response(pdfBytes, { status: 200, headers: {
+            'Content-Type': 'application/pdf',
+            'Content-Length': String(pdfBytes.byteLength),
+            'X-OJ-Artifact-Kind': 'result_pdf',
+            'X-OJ-Content-SHA256': 'c'.repeat(64),
+          } });
+        }
+        return jsonResponse(false, 404, {});
+      };
+    })();
+  </script>
+  <script src="../../resources/js/student-results.js"></script>
+</body>
+</html>

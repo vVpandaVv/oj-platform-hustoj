@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "edu-games/character-code",
+  "title": "문자 코드",
+  "category": "widgets",
+  "icon": "editor-code",
+  "description": "알파벳, 공백, 숫자를 코드표로 암호화하고 복호화하는 퍼즐 게임.",
+  "textdomain": "edu-games",
+  "style": "file:./style.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "supports": {
+    "html": false
+  }
+}

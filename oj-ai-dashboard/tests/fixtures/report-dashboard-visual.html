@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>활동지 보고서</title>
+  <link rel="stylesheet" href="../../resources/css/admin-shell.css">
+  <link rel="stylesheet" href="../../resources/css/report-dashboard.css">
+  <link rel="stylesheet" href="../../resources/css/worksheet-workflow.css">
+  <style>
+    body { margin: 0; background: #f3f5f6; color: #182230; font-family: Arial, "Malgun Gothic", sans-serif; }
+    .fixture-shell { min-height: 100vh; background: #fff; }
+  </style>
+  <style data-fixture-icon-style>.oj-ai-icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}</style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+  </svg>
+  <main class="fixture-shell">
+    <section
+      id="oj-ai-report-app"
+      class="oj-ai-report"
+      data-rest-root="https://example.test/wp-json/oj-ai/v1"
+      data-rest-nonce="visual-rest-nonce"
+      data-locale="ko-KR"
+      data-can-export="1"
+    >
+      <header class="oj-ai-report__header">
+        <div><h1>보고서</h1><p data-role="summary">수업을 선택하세요.</p></div>
+        <p class="oj-ai-report__baseline" data-role="baseline" hidden></p>
+      </header>
+      <div class="oj-ai-report__lenses" role="tablist" aria-label="보고서 보기">
+        <button type="button" role="tab" data-lens="worksheet" aria-selected="true">활동지별</button>
+          <button type="button" role="tab" data-lens="group" aria-selected="false">배포 대상별</button>
+        <button type="button" role="tab" data-lens="student" aria-selected="false">학생별</button>
+      </div>
+      <form class="oj-ai-report__filters" data-role="filters" novalidate>
+        <label class="oj-ai-report__context"><span>수업</span><select data-field="context"><option value="">수업 선택</option></select></label>
+        <label><span>시작 날짜</span><input type="date" data-field="period-from"></label>
+        <label><span>마지막 날짜</span><input type="date" data-field="period-through"></label>
+        <details class="oj-ai-report__state-filter">
+          <summary>상태 필터</summary>
+          <div class="oj-ai-report__state-groups">
+            <fieldset>
+              <legend>배포</legend>
+              <label><input type="checkbox" data-filter="assignment" value="scheduled" checked><span>예약</span></label>
+              <label><input type="checkbox" data-filter="assignment" value="open" checked><span>진행</span></label>
+              <label><input type="checkbox" data-filter="assignment" value="closed" checked><span>종료</span></label>
+            </fieldset>
+            <fieldset>
+              <legend>제출</legend>
+              <label><input type="checkbox" data-filter="submission" value="not_started" checked><span>미시작</span></label>
+              <label><input type="checkbox" data-filter="submission" value="in_progress" checked><span>작성 중</span></label>
+              <label><input type="checkbox" data-filter="submission" value="official" checked><span>제출 완료</span></label>
+            </fieldset>
+          </div>
+        </details>
+        <div class="oj-ai-report__filter-actions">
+          <button type="button" data-action="reset-filters">초기화</button>
+          <button type="submit" class="oj-ai-report__primary">조회</button>
+        </div>
+      </form>
+      <p class="oj-ai-report__notice" data-role="notice" role="status">수업을 불러오는 중입니다.</p>
+      <section class="oj-ai-report__content" data-role="content" hidden aria-busy="false">
+        <nav class="oj-ai-report__trail" aria-label="보고서 위치">
+          <button type="button" data-action="back" hidden>이전</button>
+          <ol data-role="breadcrumbs"></ol>
+        </nav>
+        <header class="oj-ai-report__view-header">
+          <div><p data-role="view-eyebrow"></p><h2 data-role="view-title">활동지별</h2></div>
+          <p data-role="view-count"></p>
+        </header>
+        <dl class="oj-ai-report__metrics" data-role="metrics"></dl>
+        <div class="oj-ai-report__list" data-role="list"></div>
+        <div class="oj-ai-report__more" data-role="more" hidden><button type="button" data-action="load-more">더 보기</button></div>
+      </section>
+      <section class="oj-ai-report__export" data-role="export-controls">
+        <div><strong>파일</strong><span data-role="export-status" role="status">활동지별 보고서</span></div>
+        <fieldset><legend class="screen-reader-text">파일 형식</legend>
+          <label><input type="radio" name="oj-ai-report-format" value="pdf" checked><span>PDF</span></label>
+          <label><input type="radio" name="oj-ai-report-format" value="csv"><span>CSV</span></label>
+          <label><input type="radio" name="oj-ai-report-format" value="zip"><span>ZIP</span></label>
+        </fieldset>
+        <button type="button" class="oj-ai-report__primary" data-action="export-report">파일 만들기</button>
+      </section>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const worksheetId = 'worksheet-report-10';
+      const publicationId = 'publication-report-10';
+      const publicationHash = 'a'.repeat(64);
+      const assignmentId = 'assignment-report-1';
+      const ratio = (numerator, denominator) => ({ numerator, denominator, value: ((numerator / denominator) * 100).toFixed(2) });
+      const progress = (offset = 0) => ({
+        target_count: 30,
+        submission_rate: ratio(24 - (offset % 3), 30),
+        assessment_rate: ratio(21 - (offset % 2), 30),
+        release_rate: ratio(18, 30),
+        average_score: { value: (82 - (offset % 4)).toFixed(2), n: 21, suppressed: false },
+        review_required_count: offset % 4,
+      });
+      const worksheets = Array.from({ length: 18 }, (_, index) => {
+        const number = index + 1;
+        return {
+          worksheet: {
+            id: number === 10 ? worksheetId : `worksheet-report-${number}`,
+            title: number === 10 ? '분수 비교 활동지' : `수학 탐구 활동지 ${String(number).padStart(2, '0')}`,
+            subject_label: number % 2 ? '수학' : '통합',
+          },
+          publication: {
+            id: number === 10 ? publicationId : `publication-report-${number}`,
+            hash: number === 10 ? publicationHash : String(number % 10).repeat(64),
+          },
+          rubric: { id: `rubric-report-${number}`, title: '기본 평가 기준' },
+          progress: progress(number),
+        };
+      });
+      const assignments = [
+        {
+          id: assignmentId,
+          title: '2학년 1반 8월 배포',
+          state: 'open',
+          schedule: { opens_at_utc: '2026-08-12 00:00:00', due_at_utc: '2026-08-31 09:00:00', closes_at_utc: '2026-09-01 00:00:00' },
+          progress: progress(1),
+        },
+        {
+          id: 'assignment-report-2',
+          title: '2학년 1반 보충 배포',
+          state: 'closed',
+          schedule: { opens_at_utc: '2026-08-03 00:00:00', due_at_utc: '2026-08-10 09:00:00', closes_at_utc: '2026-08-11 00:00:00' },
+          progress: progress(2),
+        },
+      ];
+      const students = [
+        {
+          target: { id: 'student-report-1', display_name: '김하늘' },
+          status: 'review_required',
+          submission: { id: 'submission-report-1', submitted_at_utc: '2026-08-20 05:20:00' },
+          official_assessment: {
+            score: { value: '88.00', scale: '100.00' },
+            criteria: [{ value: '92.00' }, { value: '84.00' }],
+            review: { state: 'review_required', reviewed_at_utc: '2026-08-20 06:00:00' },
+            release: { state: 'released', released_at_utc: '2026-08-20 07:00:00' },
+          },
+        },
+        {
+          target: { id: 'student-report-2', display_name: '박도윤' },
+          status: 'released',
+          submission: { id: 'submission-report-2', submitted_at_utc: '2026-08-19 04:30:00' },
+          official_assessment: { score: { value: '81.00', scale: '100.00' }, criteria: [], review: { reviewed_at_utc: '2026-08-19 05:00:00' }, release: { state: 'released' } },
+        },
+        {
+          target: { id: 'student-report-3', display_name: '이서준' },
+          status: 'not_submitted',
+          submission: null,
+          official_assessment: null,
+        },
+      ];
+      const baseline = '2026-08-24 02:00:00';
+      const envelope = (data) => ({ data, meta: { correlation_id: 'report-visual', next_cursor: '', has_more: false, limit: 25 }, links: {}, actions: [] });
+      const jsonResponse = (payload, status = 200) => Promise.resolve({ ok: status >= 200 && status < 300, status, json: async () => payload });
+
+      window.__reportRequests = [];
+      window.__reportSnapshotRequests = [];
+      window.__reportExportRequests = [];
+      window.__reportDownloads = [];
+      window.__reportPermissionRevoked = false;
+      const snapshotId = '1E040G2081040G2081040G2081';
+      const snapshotHash = 'd'.repeat(64);
+      const exportJobId = '1F040G2081040G2081040G2081';
+      const artifactId = '1G040G2081040G2081040G2081';
+      const filterFor = (requestUrl) => {
+        const from = requestUrl.searchParams.get('period_from');
+        const to = requestUrl.searchParams.get('period_to');
+        return {
+          assignment_states: (requestUrl.searchParams.get('assignment_states') || 'scheduled,open,closed').split(','),
+          submission_states: (requestUrl.searchParams.get('submission_states') || 'not_started,in_progress,official').split(','),
+          timezone: 'UTC',
+          period: from && to ? {
+            from,
+            to,
+            boundary: '[from,to)',
+            from_utc: from + ' 00:00:00',
+            to_utc: to + ' 00:00:00',
+          } : null,
+        };
+      };
+      const reportContract = (requestUrl) => ({
+        lens: 'worksheet',
+        baseline_at_utc: baseline,
+        filters: { applied: filterFor(requestUrl) },
+        filter_hash: 'f'.repeat(64),
+        source_manifest_hash: 'b'.repeat(64),
+        projection_hash: 'c'.repeat(64),
+      });
+      window.fetch = async (url, options = {}) => {
+        const value = String(url);
+        const method = options.method || 'GET';
+        if (value.includes('/contexts?')) {
+          return jsonResponse(envelope({ items: [{ type: 'class', id: 'class-a', revision: 'context-r7', label: '2학년 1반', selectable: true }] }));
+        }
+        if (value.endsWith('/reports/commands/create-snapshot') && method === 'POST') {
+          window.__reportSnapshotRequests.push({ body: JSON.parse(options.body || '{}'), headers: { ...(options.headers || {}) } });
+          return jsonResponse(envelope({ report_snapshot: {
+            id: snapshotId,
+            state: 'ready',
+            snapshot_hash: snapshotHash,
+            filter_hash: 'f'.repeat(64),
+            source_manifest_hash: 'b'.repeat(64),
+            projection_hash: 'c'.repeat(64),
+            row_count: worksheets.length,
+            generated_at_utc: baseline,
+          } }), 201);
+        }
+        if (value.includes('/report-snapshots/' + snapshotId + '/commands/') && method === 'POST') {
+          const route = value.split('/commands/').pop();
+          window.__reportExportRequests.push({ route, body: JSON.parse(options.body || '{}'), headers: { ...(options.headers || {}) } });
+          return jsonResponse(envelope({ export_job: { id: exportJobId, state: 'queued', source_id: snapshotId, source_hash: snapshotHash } }), 202);
+        }
+        if (value.endsWith('/export-jobs/' + exportJobId) && method === 'GET') {
+          return jsonResponse(envelope({ export_job: { job_id: exportJobId, state: 'ready', artifact_id: artifactId } }));
+        }
+        if (value.endsWith('/artifacts/' + artifactId + '/download') && method === 'GET') {
+          window.__reportDownloads.push({ headers: { ...(options.headers || {}) } });
+          return {
+            ok: true,
+            status: 200,
+            async blob() { return new Blob(['report fixture'], { type: options.headers?.Accept || 'application/octet-stream' }); },
+            async json() { return {}; },
+          };
+        }
+        if (value.includes('/reports') && method === 'GET') {
+          window.__reportRequests.push({ url: value, options });
+          if (window.__reportPermissionRevoked) {
+            return jsonResponse({ code: 'oj_ai_report_forbidden', message: '권한이 없습니다.', data: { status: 403 } }, 403);
+          }
+          const requestUrl = new URL(value);
+          const contract = reportContract(requestUrl);
+          if (requestUrl.pathname.endsWith('/reports/worksheets/' + worksheetId)) {
+            const level = requestUrl.searchParams.has('assignment_id') ? 'students' : 'assignments';
+            return jsonResponse(envelope({
+              ...contract,
+              level,
+              worksheet: { id: worksheetId, title: '분수 비교 활동지' },
+              publication: { id: publicationId, hash: publicationHash },
+              detail: level === 'assignments'
+                ? { summary: progress(0), assignments }
+                : { summary: progress(0), students },
+            }));
+          }
+          return jsonResponse(envelope({ ...contract, items: worksheets }));
+        }
+        return jsonResponse({ code: 'oj_ai_not_found', message: '대상을 찾을 수 없습니다.', data: { status: 404 } }, 404);
+      };
+    })();
+  </script>
+  <script src="../../resources/js/worksheet-workflow.js"></script>
+  <script src="../../resources/js/report-dashboard.js"></script>
+</body>
+</html>

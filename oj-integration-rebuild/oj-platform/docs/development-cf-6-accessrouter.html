@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CF-6 AccessRouter 상세 설계 | OJ Platform</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-soft: #eef3f7;
+      --text: #17212b;
+      --muted: #5f6b76;
+      --line: #d5dde5;
+      --brand: #1769aa;
+      --brand-soft: #e8f2fb;
+      --good: #18794e;
+      --good-soft: #e9f6ef;
+      --warn: #9a5a00;
+      --warn-soft: #fff4dc;
+      --risk: #b42318;
+      --risk-soft: #fdecea;
+      --code: #edf1f4;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--text); background: var(--bg); font-family: "Noto Sans KR", "Malgun Gothic", sans-serif; line-height: 1.65; letter-spacing: 0; }
+    a { color: var(--brand); }
+    code { padding: 2px 5px; border-radius: 4px; background: var(--code); font-family: Consolas, monospace; font-size: .92em; }
+    .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); max-width: 1520px; margin: 0 auto; }
+    .toc { position: sticky; top: 0; height: 100vh; padding: 24px 18px; border-right: 1px solid var(--line); background: #f8fafb; overflow: auto; }
+    .toc strong { display: block; margin-bottom: 12px; font-size: 14px; }
+    .toc ul { margin: 0; padding: 0; list-style: none; }
+    .toc li + li { margin-top: 4px; }
+    .toc a { display: block; padding: 7px 8px; border-radius: 4px; color: var(--muted); text-decoration: none; font-size: 13px; }
+    .toc a:hover, .toc a:focus-visible { color: var(--brand); background: var(--brand-soft); outline: none; }
+    main { min-width: 0; padding: 34px clamp(22px, 4vw, 62px) 60px; }
+    .report-header { padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 8px; color: var(--brand); font-size: 13px; font-weight: 800; }
+    h1, h2, h3 { margin-top: 0; line-height: 1.3; }
+    h1 { margin-bottom: 12px; font-size: clamp(30px, 4vw, 46px); }
+    h2 { margin-bottom: 5px; font-size: 24px; }
+    h3 { margin: 20px 0 8px; font-size: 17px; }
+    .lede { max-width: 920px; margin: 0; color: var(--muted); font-size: 17px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+    .meta span, .badge { display: inline-flex; align-items: center; min-height: 26px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 700; }
+    .badge.info { color: var(--brand); border-color: #bdd6eb; background: var(--brand-soft); }
+    .badge.good { color: var(--good); border-color: #b9dec9; background: var(--good-soft); }
+    .badge.warn { color: var(--warn); border-color: #efd49a; background: var(--warn-soft); }
+    .badge.risk { color: var(--risk); border-color: #efb7b2; background: var(--risk-soft); }
+    .section { margin-top: 34px; }
+    .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .section-heading p { margin: 0; color: var(--muted); }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
+    .metric { min-height: 92px; padding: 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .metric strong { display: block; color: var(--brand); font-size: 27px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--surface-soft); font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .summary, .callout, .warning, .risk { margin-top: 14px; padding: 14px 16px; border-left: 4px solid var(--brand); background: var(--brand-soft); }
+    .summary { border-left-color: var(--good); background: var(--good-soft); }
+    .warning { border-left-color: var(--warn); background: var(--warn-soft); }
+    .risk { border-left-color: var(--risk); background: var(--risk-soft); }
+    .rule-list, .check-list { margin: 12px 0 0; padding-left: 22px; }
+    .rule-list li + li, .check-list li + li { margin-top: 8px; }
+    .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .flow article { padding: 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .flow span { color: var(--brand); font-size: 12px; font-weight: 800; }
+    .flow h3 { margin: 5px 0; font-size: 16px; }
+    .flow p { margin: 0; color: var(--muted); font-size: 13px; }
+    .tree { margin: 0; padding: 16px; overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: #101820; color: #e8edf2; font: 13px/1.65 Consolas, monospace; }
+    .gate { display: grid; grid-template-columns: 130px minmax(0, 1fr) 180px; border: 1px solid var(--line); border-bottom: 0; background: var(--surface); }
+    .gate:last-of-type { border-bottom: 1px solid var(--line); }
+    .gate > div { padding: 11px 12px; }
+    .gate > div + div { border-left: 1px solid var(--line); }
+    .gate > div:last-child { color: var(--muted); font-size: 13px; }
+    footer { margin-top: 26px; padding: 16px 4px; color: var(--muted); font-size: 13px; text-align: center; }
+    @media (max-width: 1040px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .toc ul { display: flex; flex-wrap: wrap; gap: 4px; }
+      .metrics, .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px) {
+      main { padding: 24px 15px 44px; }
+      .metrics, .flow { grid-template-columns: 1fr; }
+      .section-heading { display: block; }
+      .section-heading .badge { margin-top: 8px; }
+      .gate { grid-template-columns: 1fr; }
+      .gate > div + div { border-left: 0; border-top: 1px solid var(--line); }
+      th, td { min-width: 150px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav class="toc" aria-label="DS-07 목차">
+      <strong>DS-07 목차</strong>
+      <ul>
+        <li><a href="#baseline">현재 기준</a></li>
+        <li><a href="#boundary">모듈 경계</a></li>
+        <li><a href="#definition">경로 정의</a></li>
+        <li><a href="#registry">등록 검증</a></li>
+        <li><a href="#input">매개변수·쿼리</a></li>
+        <li><a href="#pipeline">접근 순서</a></li>
+        <li><a href="#compatibility">호환 경로 제거</a></li>
+        <li><a href="#wordpress">WordPress 연결</a></li>
+        <li><a href="#url">URL·메뉴</a></li>
+        <li><a href="#structure">코드 구조</a></li>
+        <li><a href="#verification">완료 관문</a></li>
+        <li><a href="#approval">확인 항목</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header">
+        <p class="eyebrow">DS-07 · 공통 기반 CF-6</p>
+        <h1>AccessRouter 상세 설계</h1>
+        <p class="lede">152개 GET 경로를 타입이 있는 단일 Registry로 고정하고, 직접 주소와 메뉴가 같은 로그인·기능·대상 권한을 사용하도록 매칭·URL 생성·WordPress rewrite 수명주기를 정한다.</p>
+        <div class="meta"><span>작성일: 2026-07-23</span><span>확정일: 2026-07-23</span><span>전체 설계 확정일: 2026-07-26</span><span>상태: 사용자 확정 · 설계 동결</span><span>선행 설계: DS-00~DS-06 확정</span><span>실행: I-00 뒤 I-01</span><span>근거: D-002·D-003·D-005·D-006·D-007·D-009·DS-02·DS-06·DS-16</span></div>
+<div class="callout"><strong>전체 순서에서의 위치:</strong> 이 문서는 <a href="development-sequence.html">전체 설계·개발 순서</a>의 DS-07이며 DS07-Q01~Q08과 최종 Registry 152개를 사용자 확정으로 동결했다. Router·로그인 우선 접근 Policy·Action Dispatcher를 재구축 코드에 구현했으며 운영 WordPress rewrite는 설치 승인 전까지 반영하지 않는다.</div>
+      </header>
+
+      <section class="section" id="baseline">
+        <div class="section-heading"><div><h2>현재 기준과 해결 대상</h2><p>D-002의 확정 수량과 현재 코드의 구현 차이를 구분한다.</p></div><span class="badge risk">코드 감사</span></div>
+        <div class="metrics">
+          <div class="metric"><strong>176</strong><span>현재 GET 경로<br>화면 137 + 이동 39</span></div>
+          <div class="metric"><strong>152</strong><span>목표 GET 경로</span></div>
+          <div class="metric"><strong>150 + 2</strong><span>렌더링 화면 + 파일 응답</span></div>
+          <div class="metric"><strong>0</strong><span>목표 호환 경로</span></div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>현재 코드</th><th>확인된 한계</th><th>목표</th></tr></thead>
+          <tbody>
+            <tr><td><code>Route_Registry</code></td><td>소유자와 중복 키는 검사하지만 중복 이름·HTTP 메서드+경로·동일 모양의 동적 경로는 등록 시 막지 않음</td><td>전체 정의를 모은 뒤 한 번 검증하고 불변 Snapshot으로 동결</td></tr>
+            <tr><td><code>Route_Matcher</code></td><td><code>*_id</code> 접미사로 타입을 추정하고 값 0과 누락 매개변수의 의미가 경로마다 다름</td><td>경로별 명시적 매개변수 타입·범위·정규화 계약</td></tr>
+            <tr><td><code>Url_Generator</code></td><td>알 수 없는 경로 이름은 홈으로, 필수 매개변수 누락은 빈 문자열로 바꿔 오류를 숨김</td><td>알 수 없는 이름·누락·잘못된 타입은 생성 실패로 즉시 반환</td></tr>
+            <tr><td><code>Router</code></td><td>Container 조회, 기능별 <code>groups_console</code> 규칙과 셸·문서 렌더링이 한 클래스에 섞임</td><td>생성자 의존, 공통 접근 파이프라인, 기능별 등록 Policy, 별도 Responder</td></tr>
+            <tr><td><code>Page_Resolver</code></td><td>여러 WordPress 페이지와 대체 slug를 자동 생성해 대표 경로와 페이지 원본이 이중화됨</td><td>대표 경로는 직접 rewrite 하나로 고정하고 경로별 페이지 자동 생성과 이전 페이지 자동 이동을 제거</td></tr>
+            <tr><td>현재 호환 이동 39개</td><td>현재 코드에 이전 단수형·설정·제출 주소가 별도 Route로 등록됨</td><td>재정비 목표 Registry에 이관하지 않고 호환 전용 Provider·Resolver·Redirector를 제거</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>수량 원본:</strong> 사용자 화면 51개 + 관리자 화면 99개 + Jobs 내보내기·커뮤니티 보호 첨부 파일 응답 2개 = 정상 운영 152개다. AI 연결 프로필과 작업별 배정은 서로 다른 대표 경로를 사용하고 호환 경로는 목표 Registry에 등록하지 않는다. 경로 상세 목록은 D-002가 소유하고 이 문서는 실행 계약만 소유한다.</div>
+        <div class="callout"><strong>설치 중 화면은 범위 밖:</strong> 설치 미완료 동안의 WordPress 관리자 setup 화면 1개는 Kernel SetupBootstrap이 <code>admin.php?page=oj-platform-setup</code>로 일시 등록한다. 플랫폼 역할·rewrite가 준비되기 전의 bootstrap 진입점이므로 152개 Route Registry, URL Generator, 사용자·관리자 메뉴에 넣지 않으며 설치 완료 뒤 Hook 등록은 0개다.</div>
+      </section>
+
+      <section class="section" id="boundary">
+        <div class="section-heading"><div><h2>모듈 범위와 의존 방향</h2><p>AccessRouter는 업무 데이터를 직접 읽지 않고 등록된 계약을 조정한다.</p></div><span class="badge info">단방향 의존</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>구성</th><th>직접 의존</th><th>소유 책임</th><th>금지</th></tr></thead>
+          <tbody>
+            <tr><td>AccessRouter Core</td><td>Settings, Permission, Feature Registry</td><td>정의 검증·동결, 매칭, 접근 파이프라인, URL 생성, rewrite</td><td>문제·제출·수업·대회 Repository 직접 조회</td></tr>
+            <tr><td>기능 Route Provider</td><td>자기 Controller·접근 Policy</td><td>대표 경로·매개변수·기능·접근·응답 종류 등록</td><td>다른 기능 경로 소유</td></tr>
+            <tr><td>기능 Access Policy</td><td>Permission Context와 자기 읽기 Port</td><td>대상 존재·행 범위·수행모드·숨김 여부 판정</td><td>HTML 출력, 리디렉션 실행</td></tr>
+            <tr><td>Response Adapter</td><td>PublicUi·AdminConsole Shell, Flash Store</td><td>HTML·파일·리디렉션·오류 응답</td><td>접근 권한 재판정과 업무 저장</td></tr>
+          </tbody>
+        </table></div>
+        <ol class="rule-list">
+          <li>기능 모듈이 대표 화면을 소유하고 AccessRouter는 공통 실행기만 소유한다.</li>
+          <li>메뉴·본문 링크·직접 주소는 모두 동결된 같은 Route Definition과 Access Policy를 사용한다.</li>
+          <li>AccessRouter는 Container를 실행 중 조회하지 않는다. Module 조립 시 필요한 Registry·Policy·Responder를 생성자로 전달한다.</li>
+          <li>GET·HEAD는 조회와 파일 응답만 허용한다. 상태 변경은 D-003의 <code>admin_post</code>·AJAX 계약을 사용한다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="definition">
+        <div class="section-heading"><div><h2>Route Definition 계약</h2><p>배열의 선택 필드가 아니라 검증 가능한 값 객체로 등록한다.</p></div><span class="badge good">단일 원본</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>필드</th><th>허용값·형식</th><th>필수 규칙</th></tr></thead>
+          <tbody>
+            <tr><td><code>name</code></td><td><code>owner.resource.operation</code> 형식의 영문 키</td><td>전체 152개에서 고유하며 변경은 명시적인 호환성 파괴 변경으로 관리</td></tr>
+            <tr><td><code>owner_module</code></td><td>등록된 모듈 키</td><td>대표 화면의 기능 소유자와 일치</td></tr>
+            <tr><td><code>path</code></td><td>루트 또는 소문자 복수형·하이픈 경로</td><td>루트 외 끝 슬래시 없음, 쿼리·fragment 없음, 메서드+정규 경로 모양 고유</td></tr>
+            <tr><td><code>area</code></td><td><code>public</code>, <code>console</code>, <code>response</code></td><td>영역별 Shell·오류·인증 기본값을 결정</td></tr>
+            <tr><td><code>auth_policy</code></td><td><code>guest_only</code>, <code>authenticated</code>, <code>optional</code></td><td>console·response는 authenticated만 허용</td></tr>
+            <tr><td><code>feature_policy</code></td><td>없음, <code>all</code>, <code>any</code> + 등록 기능 키</td><td>문자열과 배열을 같은 필드에 섞지 않음</td></tr>
+            <tr><td><code>access_policy</code></td><td>Policy 키, operation, 거부 노출 방식</td><td>capability OR 목록과 기능별 하드코딩 규칙을 대체</td></tr>
+            <tr><td><code>path_params</code></td><td>이름·타입·필수·범위</td><td>경로 placeholder와 이름이 정확히 일치</td></tr>
+            <tr><td><code>query_params</code></td><td>허용 이름·타입·기본값·반복 여부</td><td>미등록 쿼리는 업무 입력으로 전달하지 않음</td></tr>
+            <tr><td><code>response_kind</code></td><td><code>html</code>, <code>file</code></td><td>html은 Controller, file은 Stream Handler가 담당</td></tr>
+            <tr><td><code>handler_key</code></td><td>등록된 Controller·Stream Handler 키</td><td>항상 필수이며 callable·화면 placeholder 사용 금지</td></tr>
+            <tr><td><code>maintenance_policy</code></td><td><code>block</code>, <code>allow</code></td><td>기본 block. 로그인·필수 법적 문서·권한 있는 시스템 상태만 allow</td></tr>
+          </tbody>
+        </table></div>
+        <div class="warning"><strong>사용자 문구:</strong> 경로 이름·Policy 키·추적 코드는 화면에 노출하지 않는다. Route Definition의 화면 제목은 한글 원문 메시지 키를 가리키고, 오류 화면은 PublicUi·AdminConsole의 공통 사용자 문구를 사용한다.</div>
+      </section>
+
+      <section class="section" id="registry">
+        <div class="section-heading"><div><h2>등록·검증·동결</h2><p>일부 경로만 등록된 상태에서 rewrite나 메뉴를 만들지 않는다.</p></div><span class="badge risk">부팅 관문</span></div>
+        <div class="flow">
+          <article><span>1 · 수집</span><h3>기능별 등록</h3><p>모든 모듈이 자기 대표 경로와 Policy를 등록한다.</p></article>
+          <article><span>2 · 참조 검사</span><h3>키와 대상 확인</h3><p>모듈·기능·Policy·Handler가 실제 Registry에 존재하는지 확인한다.</p></article>
+          <article><span>3 · 충돌 검사</span><h3>이름과 경로 고유성</h3><p>이름, 메서드+경로, placeholder 이름만 다른 동일 경로 모양과 정적·동적 우선순위를 검사한다.</p></article>
+          <article><span>4 · 동결</span><h3>불변 Registry</h3><p>152개 수량과 영역별 합계를 검산한 뒤 Matcher·URL·메뉴·rewrite가 같은 읽기 전용 Registry를 사용한다.</p></article>
+        </div>
+        <ol class="rule-list">
+          <li>검증 실패 시 잘못된 정의만 건너뛰고 부분 실행하지 않는다. OJ 라우팅은 닫고 WordPress 일반 페이지는 유지하며 시스템 상태에 소유 모듈·오류 코드를 남긴다.</li>
+          <li>동적 경로보다 같은 깊이의 정적 경로를 먼저 매칭하고 등록 순서로 결과가 바뀌지 않게 한다.</li>
+          <li>목표 수량 151은 배포 기준 Manifest와 자동 검사에서 확인한다. 선택 기능 OFF는 정의를 삭제하지 않고 접근 시 404로 처리한다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="input">
+        <div class="section-heading"><div><h2>경로 매개변수와 쿼리</h2><p>접미사 추정과 임의 문자열 전달을 없애고 타입별 거부 규칙을 고정한다.</p></div><span class="badge info">입력 계약</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>타입</th><th>사용 예</th><th>정규화·거부</th></tr></thead>
+          <tbody>
+            <tr><td><code>positive_int</code></td><td><code>user_id</code>, <code>problem_id</code>, <code>submission_id</code>, 작업·수업·대회·그룹 ID</td><td>10진수 1 이상만 허용. 부호·소수·지수·빈 값·0 거부</td></tr>
+            <tr><td><code>slug</code></td><td>게시판·문서 식별 slug</td><td>UTF-8 decode 뒤 승인 문자와 최대 길이 적용, 경로 구분자 거부</td></tr>
+            <tr><td><code>file_token</code></td><td>AI 답변 지침 파일 키</td><td>basename 하나와 허용 확장자만 허용, <code>..</code>·슬래시·역슬래시 거부</td></tr>
+            <tr><td><code>enum</code></td><td>결과·언어·상태·정렬</td><td>경로별 허용 목록의 정확한 값만 전달</td></tr>
+            <tr><td><code>internal_url</code></td><td>로그인 뒤 <code>redirect_to</code></td><td>현재 사이트의 상대·동일 출처 GET 주소만 허용, 사용자 정보·외부 host·스킴 변경 거부</td></tr>
+          </tbody>
+        </table></div>
+        <div class="summary"><strong>사용자 식별자:</strong> 대표 경로와 허용 쿼리의 <code>user_id</code>는 WordPress 숫자 사용자 ID만 받는다. 로그인 아이디를 경로 ID로 변환하거나 Judge 사용자 ID를 조회하는 호환 해석은 제공하지 않는다.</div>
+      </section>
+
+      <section class="section" id="pipeline">
+        <div class="section-heading"><div><h2>매칭과 접근 판정 순서</h2><p>메뉴와 직접 주소가 같은 결과를 내도록 한 파이프라인을 사용한다.</p></div><span class="badge good">단일 판정</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>순서</th><th>검사</th><th>실패 응답</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>GET·HEAD 정규 경로와 WordPress rewrite가 내부 전달한 <code>oj_route</code> 매칭</td><td>OJ 경로가 아니면 WordPress에 반환, 등록된 모양인데 값이 잘못되면 404</td></tr>
+            <tr><td>2</td><td>경로·쿼리 타입 검사와 canonical 주소 비교</td><td>잘못된 값 404, 끝 슬래시와 브라우저에 남은 <code>?oj_route=...</code> 요청은 정식 직접 주소로 이동</td></tr>
+            <tr><td>3</td><td>유지보수 정책</td><td>기본 503 + <code>Retry-After</code>, 허용 경로만 계속</td></tr>
+            <tr><td>4</td><td>기본 <code>authenticated</code> 로그인 정책과 명시적 <code>guest_only</code>·<code>public</code> 예외, <code>user_profiles.access_status</code></td><td>비로그인 HTML은 302로 로그인 화면, API·파일은 401/403, <code>pending</code>·<code>suspended</code>는 업무 화면 차단</td></tr>
+            <tr><td>5</td><td>기능 <code>all</code>·<code>any</code> 상태</td><td>기능 존재를 숨기는 404</td></tr>
+            <tr><td>6</td><td>Access Policy의 capability·대상 존재·소유·담당·참여·수행모드 판정</td><td>Policy 결정에 따라 403, 존재를 숨기는 404, 안전한 내부 경로 이동</td></tr>
+            <tr><td>7</td><td>대표 Controller·Stream Handler 실행과 응답 종류 검사</td><td>사용자용 500 화면과 추적 ID, 원시 예외·경로 정의 비노출</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>로그인 우선 진입:</strong> 모든 OJ Route는 기본 <code>authenticated</code>다. <code>auth.login</code>, 가입 기능이 켜진 <code>auth.register</code>, <code>auth.guardian_consent</code>와 법적 문서 4개만 비로그인 예외로 명시한다. 비밀번호 복구·재설정은 로그인 Route의 상태다. 비로그인 HTML은 <code>/login</code>으로 이동하고, 성공 후 검증된 내부 <code>redirect_to</code>가 없으면 메인 홈 <code>/</code>으로 이동한다.</div>
+        <div class="warning"><strong>수행모드:</strong> 제출 상세 Policy가 <code>result_only</code>를 반환하면 그룹 밖 제출을 포함한 본인의 모든 상세·코드·AI 피드백을 차단한다. HTML은 제출 목록으로 이동해 일회성 안내를 표시하고 파일·데이터 응답은 본문 없이 403을 반환한다.</div>
+      </section>
+
+      <section class="section" id="compatibility">
+        <div class="section-heading"><div><h2>호환 경로 제거</h2><p>새 구조는 최신 대표 주소만 등록하며 이전 주소를 변환하지 않는다.</p></div><span class="badge good">목표 0개</span></div>
+        <ol class="rule-list">
+          <li>현재 코드의 호환 경로 39개와 설계 중 제안했던 <code>status</code> 주소 8개·이전 관리자 퀴즈 주소 1개는 목표 Registry에 등록하지 않는다.</li>
+          <li><code>/problems/quizzes</code>와 <code>/oj-console/problems/quiz</code>도 만들지 않는다. 사용자 퀴즈는 <code>/quizzes</code>, 관리자 퀴즈는 <code>/oj-console/quizzes</code>만 사용한다.</li>
+          <li>이전 주소 요청은 OJ가 가로채거나 식별자를 변환하지 않는다. 다른 WordPress 원본이 없으면 WordPress의 일반 404로 끝난다.</li>
+          <li>끝 슬래시·permalink 표현을 하나로 맞추는 canonical 이동과 로그인 화면 이동은 동일 Route의 정규화·접근 제어이며 호환 경로가 아니다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="wordpress">
+        <div class="section-heading"><div><h2>WordPress 연결과 rewrite</h2><p>학습용 채점 서비스의 대표 주소와 WordPress 페이지 원본을 이중으로 만들지 않는다.</p></div><span class="badge info">직접 경로 권장</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>항목</th><th>목표 계약</th></tr></thead>
+          <tbody>
+            <tr><td>루트</td><td>서비스 OJ는 <code>home_routing_mode=direct</code>를 사용하고 <code>/</code>를 <code>home</code> Route로 직접 매칭한다.</td></tr>
+            <tr><td>WordPress 페이지</td><td>경로마다 새 페이지를 자동 생성하지 않는다. OJ Route가 아닌 기존 WordPress 글·페이지는 그대로 WordPress가 처리한다.</td></tr>
+            <tr><td>기존 OJ 생성 페이지</td><td><code>_oj_platform_route</code> 표식과 이전 상태는 전환 보고서에서만 확인한다. 자동 이동·삭제·slug 변경·본문 교체를 하지 않으며 충돌이 있으면 재정비 활성화를 차단한다.</td></tr>
+            <tr><td>slug 충돌</td><td>기존 사용자 페이지를 보존한다. OJ 대표 경로와 충돌하면 활성화·전환 사전 검사에서 차단하고 사용자가 충돌 해결안을 승인한다.</td></tr>
+            <tr><td>rewrite 생성</td><td>전체 Route Registry 동결 뒤 한 번 생성하며 정적 경로를 동적 경로보다 앞에 둔다.</td></tr>
+            <tr><td>flush</td><td>활성화·승인된 경로 Signature 변경·비활성화에서만 잠금 후 한 번 실행한다. 일반 화면 요청에서는 실행하지 않는다.</td></tr>
+            <tr><td>정식 경로 전제</td><td>비어 있는 WordPress 고유주소는 최초 동기화에서 <code>/%postname%/</code>로 준비하고 숫자 등 이미 선택한 구조는 보존한다. 공개 링크는 항상 <code>/login</code> 같은 직접 주소만 생성한다. Nginx는 알 수 없는 경로를 <code>/index.php?$args</code>로 전달해야 하며 플러그인이 서버 설정을 대신 쓸 수 없다.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout"><strong>설정형 1차·2차 메뉴:</strong> 내부 메뉴는 단계나 부모가 바뀌어도 Public Menu Manifest에 등록된 Route 키만 사용하고 <code>Route_Link_Service</code>가 기능·권한을 판정해 URL을 생성한다. 표시 이름·순서·부모는 접근 Policy를 바꾸지 않는다. 외부 메뉴의 <code>parent_menu_key</code>는 배치 키일 뿐 Route가 아니며 rewrite·Controller·Policy·URL Generator에 등록하지 않는다. PublicUi는 검증된 절대 <code>https://</code> URL에 외부 아이콘·정규화 호스트·새 창·<code>noopener noreferrer</code>를 강제하므로 Route 수와 Signature는 변하지 않는다.</div>
+        <div class="risk"><strong>전환 안전:</strong> 현재 <code>Page_Resolver</code> 상태와 자동 생성 페이지를 먼저 읽기 전용 보고서로 만든다. 소유 표식이 없는 페이지는 OJ가 수정하지 않으며 기존 생성 페이지 정리는 DS-15 Migration 승인 전까지 수행하지 않는다.</div>
+      </section>
+
+      <section class="section" id="url">
+        <div class="section-heading"><div><h2>URL 생성과 메뉴 연결</h2><p>화면 코드의 하드코딩 주소와 권한이 없는 링크 생성을 분리한다.</p></div><span class="badge good">대표 주소만 생성</span></div>
+        <ol class="rule-list">
+          <li><code>Url_Generator</code>는 대표 Route 이름과 정확한 매개변수만 받아 canonical 직접 URL을 만든다. 브라우저용 <code>?oj_route=...</code> 주소는 생성하지 않는다.</li>
+          <li>알 수 없는 Route, 누락·초과 매개변수, 타입 오류는 홈 URL로 대체하지 않고 명시적 오류 결과를 반환한다.</li>
+          <li>Controller·Presenter·View는 공개 주소를 문자열로 조립하지 않고 대표 Route 이름만 사용한다. 이전 주소 문자열은 목표 코드에 두지 않는다.</li>
+          <li><code>Route_Link_Service</code>가 현재 기능·로그인·Policy를 통과한 명령과 메뉴만 반환한다. 링크 숨김은 직접 주소 권한을 대신하지 않는다.</li>
+          <li>관리자 상위 메뉴의 <code>first_accessible_child</code>는 정적 하위 Route의 접근 결과와 순서로 계산하고 접근 가능한 하위 화면이 없으면 상위 메뉴도 숨긴다.</li>
+          <li>Jobs 상태·제출 피드백처럼 현재 페이지에 포함된 AJAX 명령은 D-003 Action Registry가 소유하며 AccessRouter URL과 혼합하지 않는다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="structure">
+        <div class="section-heading"><div><h2>목표 코드 구조</h2><p>정의·매칭·접근·WordPress 연결·응답을 파일 경계로 나눈다.</p></div><span class="badge info">구현 인계</span></div>
+        <pre class="tree">modules/AccessRouter/
+|-- Contract/
+|   |-- Route_Access_Policy_Interface.php
+|   `-- Route_Handler_Interface.php
+|-- Domain/
+|   |-- Route_Definition.php
+|   |-- Route_Parameter_Definition.php
+|   |-- Route_Match.php
+|   |-- Access_Decision.php
+|   `-- Route_Response.php
+|-- Registry/
+|   |-- Route_Registry.php
+|   |-- Route_Registry_Validator.php
+|   `-- Route_Snapshot.php
+|-- Application/
+|   |-- Route_Dispatcher.php
+|   |-- Route_Access_Pipeline.php
+|   `-- Route_Link_Service.php
+|-- Routing/
+|   |-- Route_Matcher.php
+|   |-- Url_Generator.php
+|   |-- Canonical_Url_Service.php
+|   `-- Rewrite_Manager.php
+|-- WordPress/
+|   |-- Wp_Request_Adapter.php
+|   `-- Wp_Response_Adapter.php
+`-- Module.php</pre>
+        <div class="summary"><strong>기능 코드 위치:</strong> 문제·제출·수업·대회·그룹의 Route Provider와 Access Policy는 각 기능 모듈에 둔다. AccessRouter에는 기능명을 조건문으로 추가하지 않는다.</div>
+      </section>
+
+      <section class="section" id="verification">
+        <div class="section-heading"><div><h2>DS-07 완료 관문</h2><p>확정 뒤 구현 단계에서 통과해야 할 검증 기준이다.</p></div><span class="badge warn">미래 인수 기준</span></div>
+        <div class="gate"><div><strong>Registry</strong></div><div>152개 정의와 51·99·2 영역 합계, 이름·경로 모양·소유자·참조·placeholder 고유성이 일치한다.</div><div>정적 계약 검사</div></div>
+        <div class="gate"><div><strong>매칭</strong></div><div>정적·동적 경로, 끝 슬래시, 하위 설치 경로, 숫자·글 이름 고유주소와 GET·HEAD가 같은 Route를 찾고 공개 링크에는 <code>oj_route</code>가 없다.</div><div>Matcher 단위·WP 통합</div></div>
+        <div class="gate"><div><strong>입력</strong></div><div>0·음수·소수·과대 ID, 인코딩 경로 구분자, 배열 쿼리, 외부 return URL과 미등록 enum을 거부한다.</div><div>경계값·보안 검사</div></div>
+        <div class="gate"><div><strong>접근</strong></div><div>로그인·기능·전역 capability·소유·담당·참여·수행모드와 권한 회수가 메뉴·직접 주소·파일 응답에서 동일하다.</div><div>역할 조합·E2E</div></div>
+        <div class="gate"><div><strong>이전 주소</strong></div><div>현재 호환 주소와 제안되었던 이전 주소가 Registry·rewrite·URL 생성기에 없고 다른 WordPress 원본이 없으면 404로 끝난다.</div><div>부재 계약·통합 검사</div></div>
+        <div class="gate"><div><strong>URL</strong></div><div>필수 매개변수 누락·오류 Route가 홈 링크로 숨겨지지 않고 화면 코드에 이전·하드코딩 주소가 없다.</div><div>구조·단위 검사</div></div>
+        <div class="gate"><div><strong>WordPress</strong></div><div>기존 일반 페이지는 보존되고 경로 Signature 변경당 flush 한 번, 일반 요청 flush 0회, 충돌 보고와 복구가 동작한다.</div><div>wp-env·실패 주입</div></div>
+        <div class="gate"><div><strong>UI</strong></div><div>비로그인 첫 접근은 로그인 화면만, 성공 뒤 홈, 403·404·503·제한 이동은 한글 사용자 문구와 올바른 상태 코드를 제공한다.</div><div>Playwright 데스크톱·모바일</div></div>
+        <div class="gate"><div><strong>인코딩</strong></div><div>수정한 PHP·HTML·CSS·JavaScript는 UTF-8 한글 원문을 사용하고 한글 <code>\uXXXX</code> 표현이 없다.</div><div>엄격 UTF-8·문자열 검사</div></div>
+      </section>
+
+      <section class="section" id="approval">
+        <div class="section-heading"><div><h2>확정 항목</h2><p>아래 여덟 항목은 2026-07-23 사용자 확인으로 동결했다.</p></div><span class="badge good">사용자 확정</span></div>
+        <ol class="check-list">
+          <li><strong>DS07-Q01 · 수량·소유 · 최종 보완:</strong> DS-10 퀴즈 화면 분리, 최고 관리자 주제 관리, DS-15 작업별 AI 배정과 DS-14 보호 첨부 응답을 반영한 D-002의 152개를 사용하고 모든 대표 경로는 기능 모듈이 소유한다. 호환 경로는 등록하지 않는다.</li>
+          <li><strong>DS07-Q02 · 타입 정의:</strong> Route를 값 객체로 등록하고 이름·메서드+경로 모양·placeholder·참조를 전체 수집 뒤 검증·동결한다.</li>
+          <li><strong>DS07-Q03 · 입력·URL:</strong> ID·slug·파일·로그인·enum·내부 URL 타입을 명시하고 URL 생성 오류를 홈으로 대체하지 않는다.</li>
+          <li><strong>DS07-Q04 · 접근 순서:</strong> canonical·유지보수·기본 로그인 필수와 7개 비로그인 예외·플랫폼 이용 상태·기능·대상 Policy·Handler 순서를 사용하고 메뉴와 직접 주소가 같은 Policy를 사용한다.</li>
+          <li><strong>DS07-Q05 · 호환 경로:</strong> 목표 호환 경로는 0개다. 이전 주소·식별자·필터 변환 코드는 만들지 않고 대표 주소만 생성한다.</li>
+          <li><strong>DS07-Q06 · 루트·페이지:</strong> 서비스 OJ 루트는 직접 Router를 사용하고 경로별 WordPress 페이지 자동 생성을 중단한다. 기존 생성 페이지는 자동 이동·삭제 없이 전환 보고서와 충돌 검사 대상으로만 둔다.</li>
+          <li><strong>DS07-Q07 · rewrite:</strong> Registry 동결 뒤 rules를 만들고 활성화·Signature 변경·비활성화에서 잠금 후 한 번만 flush한다.</li>
+          <li><strong>DS07-Q08 · UI·검증:</strong> 로그인 첫 화면·홈 복귀, 수행모드, 403·404·503, 숫자·글 이름 고유주소, Nginx front-controller 준비, 이전 주소 부재와 기존 WordPress 페이지 보존을 자동·브라우저 검사한다.</li>
+        </ol>
+        <div class="summary"><strong>확정·구현:</strong> DS07-Q01~Q08을 유지한다. R-04에서 Auth·PublicUi·AdminConsole Route Handler와 비로그인 예외·로그인 리디렉션을 연결했으며 나머지 Handler는 R-05~R-10에서 소유 모듈별로 등록한다.</div>
+      </section>
+
+      <footer>OJ Platform 개발 설계 · DS-07 CF-6 AccessRouter · 사용자 확정 · 설계 동결 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

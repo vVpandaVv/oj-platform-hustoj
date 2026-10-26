@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-13 관리자 AI 지원 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds11-prototype.css">
+  <link rel="stylesheet" href="assets/ds13-prototype.css">
+</head>
+<body class="console">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M17 14a7 7 0 0 1 5 7"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4M20 4h-7v16h7"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a2 2 0 0 0 .4 2.2l.1.1-2.6 2.6-.1-.1a2 2 0 0 0-2.2-.4 2 2 0 0 0-1.2 1.8V21h-3.6v-.2A2 2 0 0 0 9 19a2 2 0 0 0-2.2.4l-.1.1-2.6-2.6.1-.1A2 2 0 0 0 4.6 15a2 2 0 0 0-1.8-1.2H2v-3.6h.8A2 2 0 0 0 4.6 9a2 2 0 0 0-.4-2.2l-.1-.1 2.6-2.6.1.1A2 2 0 0 0 9 4.6a2 2 0 0 0 1.2-1.8V2h3.6v.8A2 2 0 0 0 15 4.6a2 2 0 0 0 2.2-.4l.1-.1 2.6 2.6-.1.1A2 2 0 0 0 19.4 9a2 2 0 0 0 1.8 1.2H22v3.6h-.8a2 2 0 0 0-1.8 1.2z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-13 관리자 AI 지원 시안</strong><span>확정된 직접 화면 7개</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="관리자 AI 지원 화면 선택">
+        <button type="button" role="tab" data-screen-target="ai-feedback-settings" aria-selected="true">피드백 설정</button>
+        <button type="button" role="tab" data-screen-target="ai-guides" aria-selected="false">답변 지침</button>
+        <button type="button" role="tab" data-screen-target="ai-guide-new" aria-selected="false">지침 추가</button>
+        <button type="button" role="tab" data-screen-target="ai-guide-edit" aria-selected="false">지침 수정</button>
+        <button type="button" role="tab" data-screen-target="ai-guide-preview" aria-selected="false">미리보기</button>
+        <button type="button" role="tab" data-screen-target="ai-guide-revisions" aria-selected="false">변경 기록</button>
+        <button type="button" role="tab" data-screen-target="learner-levels" aria-selected="false">학습 수준</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-13-learning-support.html"><span class="brand-mark">OJ</span><span>관리자 콘솔</span></a>
+      <a class="button ghost header-utility" href="development-ds-13-user-learning-ui.html">사용자 학습 지원</a>
+    </div>
+  </header>
+
+  <div class="workspace console-workspace">
+    <aside class="console-sidebar" aria-label="관리자 메뉴">
+      <strong>관리자 메뉴</strong>
+      <div class="sidebar-role">AI 피드백 관리자 · 전역 정책 범위</div>
+      <a href="development-ds-09-admin-dashboard-shell-ui.html"><svg><use href="#i-grid"/></svg>대시보드</a>
+      <a href="#users"><svg><use href="#i-users"/></svg>사용자</a>
+      <a href="development-ds-10-admin-problems-ui.html"><svg><use href="#i-book"/></svg>문제</a>
+      <a href="#ai-feedback-settings" aria-current="page"><svg><use href="#i-send"/></svg>제출</a>
+      <a href="development-ds-12-admin-learning-hub-ui.html"><svg><use href="#i-learn"/></svg>학습 공간</a>
+      <a href="development-ds-14-community.html"><svg><use href="#i-message"/></svg>커뮤니티</a>
+      <a href="#operations"><svg><use href="#i-settings"/></svg>운영</a>
+    </aside>
+
+    <main class="page" id="main">
+      <nav class="ai-nav" aria-label="제출 AI 지원 메뉴">
+        <a href="#ai-feedback-settings" data-sidebar-for="ai-feedback-settings" aria-current="page">AI 피드백</a>
+        <a href="#ai-guides" data-sidebar-for="ai-guides ai-guide-new ai-guide-edit ai-guide-preview ai-guide-revisions">AI 답변 지침</a>
+        <a href="#learner-levels" data-sidebar-for="learner-levels">학습 수준 분석</a>
+      </nav>
+
+      <section class="screen" id="ai-feedback-settings" data-screen="ai-feedback-settings">
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>AI 지원</span><span>/</span><span>AI 피드백</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">AI 지원 정책</p><h1>AI 피드백 설정</h1><p>제출 결과에서 제공할 풀이 도움의 운영 범위와 기본 지침을 설정합니다.</p></div>
+          <button class="button primary" type="button" data-toast="AI 피드백 설정을 저장했습니다.">설정 저장</button>
+        </header>
+        <p class="route-caption">/oj-console/submissions/ai-feedback</p>
+
+        <div class="settings-layout">
+          <div>
+            <section class="settings-group">
+              <h2>사용 설정</h2>
+              <p>AI 피드백 기능만 끄며 제출, 내 학습과 전체 랭킹에는 영향을 주지 않습니다.</p>
+              <div class="setting-row">
+                <div class="setting-copy"><strong>제출 AI 피드백</strong><span>채점 완료 뒤 사용자가 명시적으로 요청할 때만 Jobs에 등록합니다.</span></div>
+                <label class="switch-control"><input type="checkbox" checked><span class="switch-track"></span><span class="sr-only">AI 피드백 사용</span></label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-copy"><strong>요청 가능 결과</strong><span>채점이 완료되고 상세 접근이 허용된 제출에만 버튼을 표시합니다.</span></div>
+                <label class="field setting-control"><span class="field-label">결과 범위</span><select class="select"><option>정답·오답·오류 모두</option><option>오답·오류만</option></select></label>
+              </div>
+            </section>
+
+            <section class="settings-group">
+              <h2>답변 정책</h2>
+              <p>각 수준에 등록된 활성 지침 중 하나를 선택합니다. 선택하지 않은 활성 지침은 보존되며 언제든 교체할 수 있습니다.</p>
+              <div class="setting-row">
+                <div class="setting-copy"><strong>자료 부족 기본 지침</strong><span>수준을 추정하지 않고 결과 이해와 자기 점검 질문만 제공합니다.</span></div>
+                <label class="field setting-control"><span class="field-label">사용 지침</span><select class="select"><option>기본 학습 안내</option><option>기본 개념 확인</option></select></label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-copy"><strong>초급 지침</strong><span>오류 위치와 다음 확인 행동을 구체적으로 좁혀 줍니다.</span></div>
+                <label class="field setting-control"><span class="field-label">사용 지침</span><select class="select"><option>초급 단계 안내</option><option>초급 오류 좁히기</option></select></label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-copy"><strong>중급 지침</strong><span>변수 값과 실행 흐름을 스스로 추적하도록 돕습니다.</span></div>
+                <label class="field setting-control"><span class="field-label">사용 지침</span><select class="select"><option>중급 실행 추적</option><option>중급 조건 비교</option></select></label>
+              </div>
+              <div class="setting-row">
+                <div class="setting-copy"><strong>고급 지침</strong><span>경계값, 예외 입력과 복잡도를 질문 중심으로 확인합니다.</span></div>
+                <label class="field setting-control"><span class="field-label">사용 지침</span><select class="select"><option>고급 자기 점검</option><option>고급 복잡도 검토</option></select></label>
+              </div>
+            </section>
+
+            <section class="settings-group">
+              <h2>응답 보호</h2>
+              <div class="setting-row">
+                <div class="setting-copy"><strong>정답 코드 전체 제외</strong><span>완성된 정답 코드나 그대로 적용할 수정문을 생성하지 않습니다.</span></div>
+                <span class="badge good">필수 적용</span>
+              </div>
+              <div class="setting-row">
+                <div class="setting-copy"><strong>개인 식별 정보 제외</strong><span>이름, 로그인 아이디, 이메일과 소속 정보를 외부 요청에 포함하지 않습니다.</span></div>
+                <span class="badge good">필수 적용</span>
+              </div>
+            </section>
+          </div>
+
+          <aside class="status-panel">
+            <h2>운영 상태</h2>
+            <ul class="status-list">
+              <li><span>공통 AI 연결</span><span class="badge good">정상</span></li>
+              <li><span>Jobs Worker</span><span class="badge good">실행 중</span></li>
+              <li><span>활성 답변 지침</span><strong>8개</strong></li>
+              <li><span>오늘 완료</span><strong>128건</strong></li>
+              <li><span>오늘 실패</span><strong>2건</strong></li>
+            </ul>
+            <div class="notice"><div><strong>설정 소유 분리</strong><br>공급자 키와 모델 연결은 운영의 공통 AI 설정에서 관리합니다.</div></div>
+            <button class="button" type="button" data-toast="공통 AI 설정으로 이동합니다.">공통 AI 설정</button>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="ai-guides" data-screen="ai-guides" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>AI 지원</span><span>/</span><span>AI 답변 지침</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">수준별 답변 정책</p><h1>AI 답변 지침</h1><p>학습자에게 보일 풀이 도움의 방향을 한글 이름과 적용 범위로 관리합니다.</p></div>
+          <button class="button primary" type="button" data-open-screen="ai-guide-new"><svg><use href="#i-plus"/></svg>지침 추가</button>
+        </header>
+        <p class="route-caption">/oj-console/submissions/ai-guides</p>
+
+        <div class="filter-bar compact">
+          <label class="field"><span class="field-label">지침 검색</span><input class="input" type="search" placeholder="지침 이름"></label>
+          <label class="field"><span class="field-label">적용 수준</span><select class="select"><option>전체 수준</option><option>자료 부족</option><option>초급</option><option>중급</option><option>고급</option></select></label>
+          <label class="field"><span class="field-label">상태</span><select class="select"><option>활성</option><option>보관</option></select></label>
+          <div class="filter-actions"><button class="button primary" type="button">조회</button></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>지침 이름</th><th>적용 대상</th><th>상태</th><th>현재 개정</th><th>수정 시각</th><th>작업</th></tr></thead>
+            <tbody>
+              <tr><td><div class="row-title"><strong>기본 학습 안내</strong><span>자료 부족 사용자에게 수준을 단정하지 않음</span></div></td><td>분석 보류·임시 분석</td><td><span class="badge good">사용 중</span></td><td>v3</td><td>07-23 14:20</td><td><div class="inline-actions"><button class="icon-button" type="button" data-open-screen="ai-guide-edit" aria-label="수정" title="수정"><svg><use href="#i-settings"/></svg></button><button class="icon-button" type="button" data-open-screen="ai-guide-revisions" aria-label="변경 기록" title="변경 기록"><svg><use href="#i-history"/></svg></button></div></td></tr>
+              <tr><td><div class="row-title"><strong>기본 개념 확인</strong><span>결과와 관련된 핵심 개념 하나를 먼저 확인</span></div></td><td>분석 보류·임시 분석</td><td><span class="badge info">선택 가능</span></td><td>v1</td><td>07-20 10:11</td><td><div class="inline-actions"><button class="icon-button" type="button" data-open-screen="ai-guide-edit" aria-label="수정" title="수정"><svg><use href="#i-settings"/></svg></button><button class="icon-button" type="button" data-open-screen="ai-guide-preview" aria-label="미리보기" title="미리보기"><svg><use href="#i-eye"/></svg></button></div></td></tr>
+              <tr><td><div class="row-title"><strong>초급 단계 안내</strong><span>확인할 코드 위치와 행동을 한 단계씩 제시</span></div></td><td>초급</td><td><span class="badge good">사용 중</span></td><td>v5</td><td>07-22 09:08</td><td><div class="inline-actions"><button class="icon-button" type="button" data-open-screen="ai-guide-edit" aria-label="수정" title="수정"><svg><use href="#i-settings"/></svg></button><button class="icon-button" type="button" data-open-screen="ai-guide-preview" aria-label="미리보기" title="미리보기"><svg><use href="#i-eye"/></svg></button></div></td></tr>
+              <tr><td><div class="row-title"><strong>초급 오류 좁히기</strong><span>오류 가능성이 높은 코드 범위를 순서대로 확인</span></div></td><td>초급</td><td><span class="badge info">선택 가능</span></td><td>v2</td><td>07-19 15:26</td><td><div class="inline-actions"><button class="icon-button" type="button" data-open-screen="ai-guide-edit" aria-label="수정" title="수정"><svg><use href="#i-settings"/></svg></button><button class="icon-button" type="button" data-open-screen="ai-guide-preview" aria-label="미리보기" title="미리보기"><svg><use href="#i-eye"/></svg></button></div></td></tr>
+              <tr><td><div class="row-title"><strong>중급 실행 추적</strong><span>특정 입력의 변수 값과 실행 흐름을 질문</span></div></td><td>중급</td><td><span class="badge good">사용 중</span></td><td>v2</td><td>07-21 16:35</td><td><div class="inline-actions"><button class="icon-button" type="button" data-open-screen="ai-guide-edit" aria-label="수정" title="수정"><svg><use href="#i-settings"/></svg></button><button class="icon-button" type="button" data-open-screen="ai-guide-preview" aria-label="미리보기" title="미리보기"><svg><use href="#i-eye"/></svg></button></div></td></tr>
+              <tr><td><div class="row-title"><strong>중급 조건 비교</strong><span>문제 조건과 코드의 분기·종료 조건을 비교</span></div></td><td>중급</td><td><span class="badge info">선택 가능</span></td><td>v1</td><td>07-17 13:52</td><td><div class="inline-actions"><button class="icon-button" type="button" data-open-screen="ai-guide-edit" aria-label="수정" title="수정"><svg><use href="#i-settings"/></svg></button><button class="icon-button" type="button" data-open-screen="ai-guide-preview" aria-label="미리보기" title="미리보기"><svg><use href="#i-eye"/></svg></button></div></td></tr>
+              <tr><td><div class="row-title"><strong>고급 자기 점검</strong><span>경계값·예외 입력·복잡도를 스스로 검토</span></div></td><td>고급</td><td><span class="badge good">사용 중</span></td><td>v4</td><td>07-18 11:42</td><td><div class="inline-actions"><button class="icon-button" type="button" data-open-screen="ai-guide-edit" aria-label="수정" title="수정"><svg><use href="#i-settings"/></svg></button><button class="icon-button" type="button" data-open-screen="ai-guide-revisions" aria-label="변경 기록" title="변경 기록"><svg><use href="#i-history"/></svg></button></div></td></tr>
+              <tr><td><div class="row-title"><strong>고급 복잡도 검토</strong><span>입력 크기와 시간·메모리 복잡도를 중심으로 점검</span></div></td><td>고급</td><td><span class="badge info">선택 가능</span></td><td>v2</td><td>07-16 09:31</td><td><div class="inline-actions"><button class="icon-button" type="button" data-open-screen="ai-guide-edit" aria-label="수정" title="수정"><svg><use href="#i-settings"/></svg></button><button class="icon-button" type="button" data-open-screen="ai-guide-preview" aria-label="미리보기" title="미리보기"><svg><use href="#i-eye"/></svg></button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="screen" id="ai-guide-new" data-screen="ai-guide-new" hidden>
+        <div class="breadcrumb"><span>AI 답변 지침</span><span>/</span><span>추가</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><h1>AI 답변 지침 추가</h1><p>새 지침은 저장 뒤 비활성 상태로 만들어 검토 후 적용합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="ai-guides">취소</button><button class="button primary" type="button" data-toast="새 지침을 비활성 상태로 저장했습니다.">지침 저장</button></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/ai-guides/new</p>
+
+        <form class="guide-form">
+          <div class="form-grid">
+            <label class="field"><span class="field-label">지침 이름</span><input class="input" value="" placeholder="강사가 이해할 수 있는 한글 이름"></label>
+            <label class="field"><span class="field-label">적용 수준</span><select class="select"><option>자료 부족</option><option>초급</option><option>중급</option><option>고급</option></select></label>
+            <label class="field wide"><span class="field-label">사용 목적</span><input class="input" value="" placeholder="목록에서 구분할 짧은 설명"></label>
+            <label class="field wide"><span class="field-label">답변 지침</span><textarea class="textarea guide-textarea" placeholder="학습자가 스스로 다음 단계를 찾도록 안내할 원칙을 작성합니다."></textarea></label>
+          </div>
+          <p class="form-note">정답 코드 전체, 개인정보 요청, 수준을 학습자에게 직접 호명하는 표현은 저장 전에 검사합니다.</p>
+        </form>
+      </section>
+
+      <section class="screen" id="ai-guide-edit" data-screen="ai-guide-edit" hidden>
+        <div class="breadcrumb"><span>AI 답변 지침</span><span>/</span><span>중급 실행 추적</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">현재 개정 v2 · 사용 중</p><h1>중급 실행 추적</h1><p>사용 중인 지침은 덮어쓰지 않고 새 개정으로 저장합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-open-screen="ai-guide-preview"><svg><use href="#i-eye"/></svg>미리보기</button><button class="button primary" type="button" data-toast="새 개정 v3으로 저장했습니다.">새 개정 저장</button></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/ai-guides/{prompt_file}</p>
+
+        <form class="guide-form">
+          <div class="form-grid">
+            <label class="field"><span class="field-label">지침 이름</span><input class="input" value="중급 실행 추적"></label>
+            <label class="field"><span class="field-label">적용 수준</span><select class="select"><option>중급</option></select></label>
+            <label class="field wide"><span class="field-label">사용 목적</span><input class="input" value="특정 입력의 변수 값과 실행 흐름을 질문"></label>
+            <label class="field wide"><span class="field-label">답변 지침</span><textarea class="textarea guide-textarea">결과가 왜 나왔는지 사용자가 직접 추적하도록 돕는다.
+
+1. 오류 위치를 바로 알려 주지 말고 작은 입력 하나를 고르게 한다.
+2. 반복문마다 핵심 변수의 값을 표로 적어 보도록 질문한다.
+3. 문제 조건과 코드의 종료 조건을 비교하게 한다.
+4. 바로 적용할 수정문이나 완성된 정답 코드는 제공하지 않는다.</textarea></label>
+            <label class="field wide"><span class="field-label">변경 사유</span><input class="input" placeholder="새 개정을 만드는 이유를 기록합니다."></label>
+          </div>
+        </form>
+      </section>
+
+      <section class="screen" id="ai-guide-preview" data-screen="ai-guide-preview" hidden>
+        <div class="breadcrumb"><span>AI 답변 지침</span><span>/</span><span>중급 실행 추적</span><span>/</span><span>미리보기</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><h1>답변 지침 미리보기</h1><p>실제 학습자 자료나 외부 AI 호출 없이 화면 구조와 문구를 확인합니다.</p></div>
+          <button class="button" type="button" data-open-screen="ai-guide-edit">수정으로 돌아가기</button>
+        </header>
+        <p class="route-caption">/oj-console/submissions/ai-guides/{prompt_file}/preview</p>
+
+        <div class="preview-layout">
+          <aside class="preview-input">
+            <h2>가상 입력</h2>
+            <label class="field"><span class="field-label">결과</span><select class="select"><option>틀렸습니다</option><option>시간 초과</option><option>런타임 오류</option></select></label>
+            <label class="field"><span class="field-label">문제 주제</span><select class="select"><option>누적 합</option><option>그래프</option></select></label>
+            <label class="field"><span class="field-label">오류 상황</span><textarea class="textarea">구간의 왼쪽 경계가 1일 때 결과가 다릅니다.</textarea></label>
+            <p class="form-note">결과 문구는 <a class="row-link" href="development-ds-11-submissions-blockly.html#result">DS-11 HUSTOJ 결과 코드 표</a>를 공통 사용합니다.</p>
+            <button class="button primary" type="button" data-toast="가상 입력으로 미리보기를 갱신했습니다.">미리보기 갱신</button>
+          </aside>
+          <section class="preview-output">
+            <div class="section-heading"><div><h2>학습자에게 보일 구조</h2><p>중급 · 실행 흐름 추적</p></div><span class="badge info">외부 호출 없음</span></div>
+            <div class="feedback-block"><h3>결과 이해</h3><p>구간의 시작 위치를 누적 합 배열에서 어떻게 바꾸었는지 확인해 보세요.</p></div>
+            <div class="feedback-block"><h3>탐색 단서</h3><ol><li><code>left = 1</code>인 작은 입력을 하나 만듭니다.</li><li>반복문이 끝난 뒤 누적 합 배열의 각 위치를 적습니다.</li><li>빼는 두 위치가 어떤 구간을 나타내는지 비교합니다.</li></ol></div>
+            <div class="feedback-block"><h3>다시 확인할 질문</h3><p>왼쪽 경계 바로 전까지의 합은 배열의 어느 위치에 있나요?</p></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="ai-guide-revisions" data-screen="ai-guide-revisions" hidden>
+        <div class="breadcrumb"><span>AI 답변 지침</span><span>/</span><span>중급 실행 추적</span><span>/</span><span>변경 기록</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><h1>답변 지침 변경 기록</h1><p>현재 작업이 참조하는 개정을 보존하면서 이전 문구와 변경 사유를 확인합니다.</p></div>
+          <button class="button" type="button" data-open-screen="ai-guides">지침 목록</button>
+        </header>
+        <p class="route-caption">/oj-console/submissions/ai-guides/{prompt_file}/revisions</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>개정</th><th>상태</th><th>변경 내용</th><th>변경자</th><th>변경 시각</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><strong>v2</strong></td><td><span class="badge good">현재 사용</span></td><td class="revision-change">문제 조건과 반복문 종료 조건을 비교하는 질문을 추가했습니다.</td><td>이민준</td><td>07-21 16:35</td><td><button class="button" type="button" data-open-screen="ai-guide-preview">보기</button></td></tr>
+              <tr><td><strong>v1</strong></td><td><span class="badge">이전 개정</span></td><td class="revision-change">중급 사용자의 실행 흐름 추적을 위한 최초 지침입니다.</td><td>관리자</td><td>07-10 09:12</td><td><button class="button" type="button" data-toast="이전 개정 내용을 읽기 전용으로 엽니다.">보기</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="notice warning"><div><strong>복원 원칙</strong><br>이전 개정을 다시 사용하면 과거 내용을 덮어쓰지 않고 새 개정을 만듭니다.</div></div>
+      </section>
+
+      <section class="screen" id="learner-levels" data-screen="learner-levels" hidden>
+        <div class="breadcrumb"><span>제출</span><span>/</span><span>AI 지원</span><span>/</span><span>학습 수준 분석</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">피드백 조절 기준</p><h1>학습 수준 분석</h1><p>학습자 수준과 산정 근거를 확인하되 성적·순위·권한에는 사용하지 않습니다.</p></div>
+        </header>
+        <p class="route-caption">/oj-console/submissions/learner-levels</p>
+
+        <div class="metric-grid">
+          <div class="metric"><span>분석 대상</span><strong>284</strong><small>유효 제출 보유 사용자</small></div>
+          <div class="metric"><span>수준 판정</span><strong>196</strong><small>20회·8문제 이상</small></div>
+          <div class="metric"><span>신뢰 자료 충족</span><strong>122</strong><small>30회·10문제 이상</small></div>
+          <div class="metric"><span>분석 보류</span><strong>48</strong><small>최소 자료 미충족</small></div>
+        </div>
+
+        <div class="filter-bar">
+          <label class="field"><span class="field-label">사용자</span><input class="input" type="search" placeholder="표시 이름 또는 로그인 아이디"></label>
+          <label class="field"><span class="field-label">분석 상태</span><select class="select"><option>전체 상태</option><option>분석 보류</option><option>임시 분석</option><option>수준 판정</option><option>신뢰 수준</option></select></label>
+          <label class="field"><span class="field-label">학습 수준</span><select class="select"><option>전체 수준</option><option>초급</option><option>중급</option><option>고급</option></select></label>
+          <label class="field"><span class="field-label">정책 버전</span><select class="select"><option>learner-level-v1</option></select></label>
+          <div class="filter-actions"><button class="button primary" type="button">조회</button></div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="level-table">
+            <thead><tr><th>사용자</th><th>분석 상태</th><th>수준·점수</th><th>세부 지표</th><th>자료 품질</th><th>최근 분석</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div class="row-title"><strong>김하늘</strong><span>sky2026</span></div></td><td><span class="badge good">신뢰 자료 충족</span><br><small>34회 · 18문제</small></td><td><strong>중급 · 58.4</strong><br><small>증명 난이도 3</small></td><td><div class="metric-values"><span>난이도 <strong>60</strong></span><span>범위 <strong>62.5</strong></span><span>도전 <strong>54</strong></span><span>안정성 <strong>48</strong></span></div></td><td>난이도 94%<br>주제 89%</td><td>오늘 10:19<br><small>#58396 반영</small></td><td><button class="button" type="button" data-toast="아래에 김하늘의 분석 근거를 표시했습니다.">근거 보기</button></td></tr>
+              <tr><td><div class="row-title"><strong>박서연</strong><span>seoyeon26</span></div></td><td><span class="badge good">신뢰 자료 충족</span><br><small>61회 · 31문제</small></td><td><strong>고급 · 74.8</strong><br><small>증명 난이도 4</small></td><td><div class="metric-values"><span>난이도 <strong>80</strong></span><span>범위 <strong>75</strong></span><span>도전 <strong>69</strong></span><span>안정성 <strong>68</strong></span></div></td><td>난이도 98%<br>주제 96%</td><td>오늘 10:33<br><small>#58427 반영</small></td><td><button class="button" type="button">근거 보기</button></td></tr>
+              <tr><td><div class="row-title"><strong>한유진</strong><span>yujin22</span></div></td><td><span class="badge wait">임시 분석</span><br><small>12회 · 6문제</small></td><td><strong>42.1</strong><br><small>수준 명칭 미표시</small></td><td><div class="metric-values"><span>난이도 <strong>40</strong></span><span>범위 <strong>37.5</strong></span><span>도전 <strong>46</strong></span><span>안정성 <strong>51</strong></span></div></td><td>난이도 83%<br>주제 75%</td><td>어제 16:05<br><small>#58102 반영</small></td><td><button class="button" type="button">근거 보기</button></td></tr>
+              <tr><td><div class="row-title"><strong>윤지호</strong><span>jiho27</span></div></td><td><span class="badge">분석 보류</span><br><small>7회 · 4문제</small></td><td>표시 안 함</td><td>자료 부족</td><td>난이도 71%<br>주제 50%</td><td>07-22 13:10</td><td><button class="button" type="button">근거 보기</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <section class="level-detail">
+          <div class="section-heading">
+            <div><h2>김하늘 분석 근거</h2><p>원본 제출 코드나 AI 피드백 내용은 이 권한만으로 열지 않습니다.</p></div>
+            <span class="badge info">learner-level-v1</span>
+          </div>
+          <div class="level-detail-grid">
+            <div><span>유효 제출</span><strong>34회</strong></div>
+            <div><span>시도한 문제</span><strong>18개</strong></div>
+            <div><span>해결한 고유 주제</span><strong>5개</strong></div>
+            <div><span>최근 표본</span><strong>18 / 20문제</strong></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds13-prototype.js"></script>
+</body>
+</html>

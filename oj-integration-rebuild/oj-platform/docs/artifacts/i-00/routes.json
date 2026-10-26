@@ -1,0 +1,1410 @@
+[
+    {
+        "name": "home",
+        "path": "/",
+        "area": "public",
+        "owner": "public_ui",
+        "file": "modules/PublicUi/Module.php",
+        "line": 47
+    },
+    {
+        "name": "board.index",
+        "path": "/board",
+        "area": "public",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 89
+    },
+    {
+        "name": "board.new",
+        "path": "/board/new",
+        "area": "public",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 90
+    },
+    {
+        "name": "board.thread",
+        "path": "/board/thread/{board_thread_id}",
+        "area": "public",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 91
+    },
+    {
+        "name": "board.edit",
+        "path": "/board/thread/{board_thread_id}/edit",
+        "area": "public",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 92
+    },
+    {
+        "name": "classes.redirect_show",
+        "path": "/class/{class_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 25
+    },
+    {
+        "name": "classes.redirect_progress",
+        "path": "/class/{class_id}/progress",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 27
+    },
+    {
+        "name": "classes.redirect_status",
+        "path": "/class/{class_id}/status",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 26
+    },
+    {
+        "name": "classes.index",
+        "path": "/classes",
+        "area": "public",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 79
+    },
+    {
+        "name": "classes.show",
+        "path": "/classes/{class_id}",
+        "area": "public",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 80
+    },
+    {
+        "name": "classes.progress",
+        "path": "/classes/{class_id}/progress",
+        "area": "public",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 82
+    },
+    {
+        "name": "classes.status",
+        "path": "/classes/{class_id}/status",
+        "area": "public",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 81
+    },
+    {
+        "name": "contests.redirect_show",
+        "path": "/contest/{contest_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 19
+    },
+    {
+        "name": "contests.redirect_ip_change",
+        "path": "/contest/{contest_id}/ip-change",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 24
+    },
+    {
+        "name": "contests.redirect_ip_check",
+        "path": "/contest/{contest_id}/ip-check",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 23
+    },
+    {
+        "name": "contests.redirect_ranking",
+        "path": "/contest/{contest_id}/ranking",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 21
+    },
+    {
+        "name": "contests.redirect_statistics",
+        "path": "/contest/{contest_id}/statistics",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 22
+    },
+    {
+        "name": "contests.redirect_status",
+        "path": "/contest/{contest_id}/status",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 20
+    },
+    {
+        "name": "contests.index",
+        "path": "/contests",
+        "area": "public",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 82
+    },
+    {
+        "name": "contests.show",
+        "path": "/contests/{contest_id}",
+        "area": "public",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 83
+    },
+    {
+        "name": "contests.ip_change",
+        "path": "/contests/{contest_id}/ip-change",
+        "area": "public",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 88
+    },
+    {
+        "name": "contests.ip_check",
+        "path": "/contests/{contest_id}/ip-check",
+        "area": "public",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 87
+    },
+    {
+        "name": "contests.ranking",
+        "path": "/contests/{contest_id}/ranking",
+        "area": "public",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 85
+    },
+    {
+        "name": "contests.statistics",
+        "path": "/contests/{contest_id}/statistics",
+        "area": "public",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 86
+    },
+    {
+        "name": "contests.status",
+        "path": "/contests/{contest_id}/status",
+        "area": "public",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 84
+    },
+    {
+        "name": "legal.copyright",
+        "path": "/copyright",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 158
+    },
+    {
+        "name": "learning_dashboard.index",
+        "path": "/dashboard",
+        "area": "public",
+        "owner": "learning_dashboard",
+        "file": "modules/LearningDashboard/Module.php",
+        "line": 42
+    },
+    {
+        "name": "legal.email_collection_refusal",
+        "path": "/email-collection-refusal",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 159
+    },
+    {
+        "name": "groups.redirect_show",
+        "path": "/group/{group_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 28
+    },
+    {
+        "name": "groups.redirect_members",
+        "path": "/group/{group_id}/members",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 29
+    },
+    {
+        "name": "groups.redirect_ranking",
+        "path": "/group/{group_id}/ranking",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 31
+    },
+    {
+        "name": "groups.redirect_status",
+        "path": "/group/{group_id}/status",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 30
+    },
+    {
+        "name": "groups.index",
+        "path": "/groups",
+        "area": "public",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 88
+    },
+    {
+        "name": "groups.show",
+        "path": "/groups/{group_id}",
+        "area": "public",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 89
+    },
+    {
+        "name": "groups.members",
+        "path": "/groups/{group_id}/members",
+        "area": "public",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 90
+    },
+    {
+        "name": "groups.ranking",
+        "path": "/groups/{group_id}/ranking",
+        "area": "public",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 92
+    },
+    {
+        "name": "groups.status",
+        "path": "/groups/{group_id}/status",
+        "area": "public",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 91
+    },
+    {
+        "name": "auth.guardian_consent",
+        "path": "/guardian-consent/{token}",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 155
+    },
+    {
+        "name": "auth.login",
+        "path": "/login",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 150
+    },
+    {
+        "name": "notices.redirect_new",
+        "path": "/notice/new",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 32
+    },
+    {
+        "name": "notices.redirect_show",
+        "path": "/notice/{notice_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 33
+    },
+    {
+        "name": "notices.index",
+        "path": "/notices",
+        "area": "public",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 93
+    },
+    {
+        "name": "notices.new",
+        "path": "/notices/new",
+        "area": "public",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 94
+    },
+    {
+        "name": "notices.show",
+        "path": "/notices/{notice_id}",
+        "area": "public",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 95
+    },
+    {
+        "name": "console.dashboard",
+        "path": "/oj-console",
+        "area": "console",
+        "owner": "admin_console",
+        "file": "modules/AdminConsole/Module.php",
+        "line": 142
+    },
+    {
+        "name": "console.agreements.index",
+        "path": "/oj-console/agreements",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 169
+    },
+    {
+        "name": "console.board.index",
+        "path": "/oj-console/board",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 97
+    },
+    {
+        "name": "console.board.new",
+        "path": "/oj-console/board/new",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 98
+    },
+    {
+        "name": "console.board.thread",
+        "path": "/oj-console/board/thread/{board_thread_id}",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 99
+    },
+    {
+        "name": "console.board.comments",
+        "path": "/oj-console/board/thread/{board_thread_id}/comments",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 101
+    },
+    {
+        "name": "console.board.edit",
+        "path": "/oj-console/board/thread/{board_thread_id}/edit",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 100
+    },
+    {
+        "name": "console.board.trash_thread",
+        "path": "/oj-console/board/thread/{board_thread_id}/trash",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 102
+    },
+    {
+        "name": "console.board.trash",
+        "path": "/oj-console/board/trash",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 103
+    },
+    {
+        "name": "console.classes.index",
+        "path": "/oj-console/classes",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 83
+    },
+    {
+        "name": "console.classes.deleted",
+        "path": "/oj-console/classes/deleted",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 90
+    },
+    {
+        "name": "console.classes.deleted_progress",
+        "path": "/oj-console/classes/deleted/{class_id}/progress",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 92
+    },
+    {
+        "name": "console.classes.deleted_status",
+        "path": "/oj-console/classes/deleted/{class_id}/status",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 91
+    },
+    {
+        "name": "console.classes.new",
+        "path": "/oj-console/classes/new",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 84
+    },
+    {
+        "name": "console.classes.delete",
+        "path": "/oj-console/classes/{class_id}/delete",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 89
+    },
+    {
+        "name": "console.classes.edit",
+        "path": "/oj-console/classes/{class_id}/edit",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 85
+    },
+    {
+        "name": "console.classes.participants",
+        "path": "/oj-console/classes/{class_id}/participants",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 86
+    },
+    {
+        "name": "console.classes.progress",
+        "path": "/oj-console/classes/{class_id}/progress",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 88
+    },
+    {
+        "name": "console.classes.status",
+        "path": "/oj-console/classes/{class_id}/status",
+        "area": "console",
+        "owner": "classes",
+        "file": "modules/Classes/Module.php",
+        "line": 87
+    },
+    {
+        "name": "console.community.settings",
+        "path": "/oj-console/community/settings",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 146
+    },
+    {
+        "name": "console.contests.index",
+        "path": "/oj-console/contests",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 90
+    },
+    {
+        "name": "console.contests.deleted_submissions",
+        "path": "/oj-console/contests/deleted-submissions",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 98
+    },
+    {
+        "name": "console.contests.new",
+        "path": "/oj-console/contests/new",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 91
+    },
+    {
+        "name": "console.contests.delete",
+        "path": "/oj-console/contests/{contest_id}/delete",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 97
+    },
+    {
+        "name": "console.contests.edit",
+        "path": "/oj-console/contests/{contest_id}/edit",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 92
+    },
+    {
+        "name": "console.contests.ip_check",
+        "path": "/oj-console/contests/{contest_id}/ip-check",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 96
+    },
+    {
+        "name": "console.contests.ranking",
+        "path": "/oj-console/contests/{contest_id}/ranking",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 94
+    },
+    {
+        "name": "console.contests.statistics",
+        "path": "/oj-console/contests/{contest_id}/statistics",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 95
+    },
+    {
+        "name": "console.contests.status",
+        "path": "/oj-console/contests/{contest_id}/status",
+        "area": "console",
+        "owner": "contests",
+        "file": "modules/Contests/Module.php",
+        "line": 93
+    },
+    {
+        "name": "console.groups.index",
+        "path": "/oj-console/groups",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 93
+    },
+    {
+        "name": "console.groups.deleted",
+        "path": "/oj-console/groups/deleted",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 95
+    },
+    {
+        "name": "console.groups.deleted_status",
+        "path": "/oj-console/groups/deleted/{group_id}/status",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 96
+    },
+    {
+        "name": "console.groups.new",
+        "path": "/oj-console/groups/new",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 94
+    },
+    {
+        "name": "console.groups.approvals",
+        "path": "/oj-console/groups/{group_id}/approvals",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 99
+    },
+    {
+        "name": "console.groups.bulk_members",
+        "path": "/oj-console/groups/{group_id}/bulk-members",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 101
+    },
+    {
+        "name": "console.groups.delete",
+        "path": "/oj-console/groups/{group_id}/delete",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 102
+    },
+    {
+        "name": "console.groups.edit",
+        "path": "/oj-console/groups/{group_id}/edit",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 97
+    },
+    {
+        "name": "console.groups.managers",
+        "path": "/oj-console/groups/{group_id}/managers",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 100
+    },
+    {
+        "name": "console.groups.members",
+        "path": "/oj-console/groups/{group_id}/members",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 98
+    },
+    {
+        "name": "console.groups.ranking",
+        "path": "/oj-console/groups/{group_id}/ranking",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 104
+    },
+    {
+        "name": "console.groups.status",
+        "path": "/oj-console/groups/{group_id}/status",
+        "area": "console",
+        "owner": "groups",
+        "file": "modules/Groups/Module.php",
+        "line": 103
+    },
+    {
+        "name": "console.notices.index",
+        "path": "/oj-console/notices",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 105
+    },
+    {
+        "name": "console.notices.new",
+        "path": "/oj-console/notices/new",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 106
+    },
+    {
+        "name": "console.notices.trash",
+        "path": "/oj-console/notices/trash",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 110
+    },
+    {
+        "name": "console.notices.comments",
+        "path": "/oj-console/notices/{notice_id}/comments",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 108
+    },
+    {
+        "name": "console.notices.edit",
+        "path": "/oj-console/notices/{notice_id}/edit",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 107
+    },
+    {
+        "name": "console.notices.trash_notice",
+        "path": "/oj-console/notices/{notice_id}/trash",
+        "area": "console",
+        "owner": "board",
+        "file": "modules/Board/Module.php",
+        "line": 109
+    },
+    {
+        "name": "console.problem_books.index",
+        "path": "/oj-console/problem-books",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 115
+    },
+    {
+        "name": "console.problems.index",
+        "path": "/oj-console/problems",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 107
+    },
+    {
+        "name": "console.problems.change_id",
+        "path": "/oj-console/problems/change-id",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 112
+    },
+    {
+        "name": "console.problems.new",
+        "path": "/oj-console/problems/new",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 108
+    },
+    {
+        "name": "console.problems.quiz",
+        "path": "/oj-console/problems/quiz",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 114
+    },
+    {
+        "name": "console.problems.xml",
+        "path": "/oj-console/problems/xml",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 113
+    },
+    {
+        "name": "console.problems.delete",
+        "path": "/oj-console/problems/{problem_id}/delete",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 110
+    },
+    {
+        "name": "console.problems.edit",
+        "path": "/oj-console/problems/{problem_id}/edit",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 109
+    },
+    {
+        "name": "console.problems.test_data",
+        "path": "/oj-console/problems/{problem_id}/test-data",
+        "area": "console",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 111
+    },
+    {
+        "name": "console.roles.index",
+        "path": "/oj-console/roles",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 168
+    },
+    {
+        "name": "console.settings.index",
+        "path": "/oj-console/settings",
+        "area": "console",
+        "owner": "settings",
+        "file": "modules/Settings/Module.php",
+        "line": 570
+    },
+    {
+        "name": "console.submissions.redirect_ai_feedback",
+        "path": "/oj-console/settings/ai-feedback",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 48
+    },
+    {
+        "name": "console.submissions.redirect_ai_guides",
+        "path": "/oj-console/settings/ai-personas",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 49
+    },
+    {
+        "name": "console.submissions.redirect_ai_guides_new",
+        "path": "/oj-console/settings/ai-personas/new",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 50
+    },
+    {
+        "name": "console.submissions.redirect_ai_guides_edit",
+        "path": "/oj-console/settings/ai-personas/{prompt_file}",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 53
+    },
+    {
+        "name": "console.submissions.redirect_ai_guides_preview",
+        "path": "/oj-console/settings/ai-personas/{prompt_file}/preview",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 51
+    },
+    {
+        "name": "console.submissions.redirect_ai_guides_revisions",
+        "path": "/oj-console/settings/ai-personas/{prompt_file}/revisions",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 52
+    },
+    {
+        "name": "console.settings.ai_provider",
+        "path": "/oj-console/settings/ai-provider",
+        "area": "console",
+        "owner": "settings",
+        "file": "modules/Settings/Module.php",
+        "line": 576
+    },
+    {
+        "name": "console.submissions.redirect_block_coding",
+        "path": "/oj-console/settings/blockly",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 46
+    },
+    {
+        "name": "console.community.redirect_settings",
+        "path": "/oj-console/settings/board",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 47
+    },
+    {
+        "name": "console.settings.database",
+        "path": "/oj-console/settings/database",
+        "area": "console",
+        "owner": "judge_db",
+        "file": "modules/JudgeDb/Module.php",
+        "line": 58
+    },
+    {
+        "name": "console.settings.features",
+        "path": "/oj-console/settings/features",
+        "area": "console",
+        "owner": "settings",
+        "file": "modules/Settings/Module.php",
+        "line": 571
+    },
+    {
+        "name": "console.settings.home",
+        "path": "/oj-console/settings/home",
+        "area": "console",
+        "owner": "settings",
+        "file": "modules/Settings/Module.php",
+        "line": 574
+    },
+    {
+        "name": "console.settings.menu",
+        "path": "/oj-console/settings/menu",
+        "area": "console",
+        "owner": "settings",
+        "file": "modules/Settings/Module.php",
+        "line": 573
+    },
+    {
+        "name": "console.settings.migration",
+        "path": "/oj-console/settings/migration",
+        "area": "console",
+        "owner": "migration",
+        "file": "modules/Migration/Module.php",
+        "line": 110
+    },
+    {
+        "name": "console.users.redirect_registration",
+        "path": "/oj-console/settings/registration",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 43
+    },
+    {
+        "name": "console.settings.site",
+        "path": "/oj-console/settings/site",
+        "area": "console",
+        "owner": "settings",
+        "file": "modules/Settings/Module.php",
+        "line": 572
+    },
+    {
+        "name": "console.settings.smtp",
+        "path": "/oj-console/settings/smtp",
+        "area": "console",
+        "owner": "settings",
+        "file": "modules/Settings/Module.php",
+        "line": 575
+    },
+    {
+        "name": "console.settings.redirect_submissions_display",
+        "path": "/oj-console/settings/status",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 42
+    },
+    {
+        "name": "console.submissions.redirect_settings",
+        "path": "/oj-console/settings/submissions",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 44
+    },
+    {
+        "name": "console.submissions.redirect_display_settings",
+        "path": "/oj-console/settings/submissions/display",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 45
+    },
+    {
+        "name": "console.settings.system",
+        "path": "/oj-console/settings/system",
+        "area": "console",
+        "owner": "settings",
+        "file": "modules/Settings/Module.php",
+        "line": 577
+    },
+    {
+        "name": "console.submissions.redirect_index",
+        "path": "/oj-console/status",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 38
+    },
+    {
+        "name": "console.submissions.redirect_deleted",
+        "path": "/oj-console/status/deleted",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 41
+    },
+    {
+        "name": "console.submissions.redirect_rejudge",
+        "path": "/oj-console/status/rejudge",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 40
+    },
+    {
+        "name": "console.submissions.redirect_detail",
+        "path": "/oj-console/status/solution/{solution_id}",
+        "area": "console",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 39
+    },
+    {
+        "name": "console.submissions.index",
+        "path": "/oj-console/submissions",
+        "area": "console",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 91
+    },
+    {
+        "name": "console.submissions.ai_feedback",
+        "path": "/oj-console/submissions/ai-feedback",
+        "area": "console",
+        "owner": "ai_feedback",
+        "file": "modules/AI/Module.php",
+        "line": 149
+    },
+    {
+        "name": "console.submissions.ai_guides",
+        "path": "/oj-console/submissions/ai-guides",
+        "area": "console",
+        "owner": "ai_feedback",
+        "file": "modules/AI/Module.php",
+        "line": 151
+    },
+    {
+        "name": "console.submissions.ai_guides.new",
+        "path": "/oj-console/submissions/ai-guides/new",
+        "area": "console",
+        "owner": "ai_feedback",
+        "file": "modules/AI/Module.php",
+        "line": 152
+    },
+    {
+        "name": "console.submissions.ai_guides.edit",
+        "path": "/oj-console/submissions/ai-guides/{prompt_file}",
+        "area": "console",
+        "owner": "ai_feedback",
+        "file": "modules/AI/Module.php",
+        "line": 155
+    },
+    {
+        "name": "console.submissions.ai_guides.preview",
+        "path": "/oj-console/submissions/ai-guides/{prompt_file}/preview",
+        "area": "console",
+        "owner": "ai_feedback",
+        "file": "modules/AI/Module.php",
+        "line": 153
+    },
+    {
+        "name": "console.submissions.ai_guides.revisions",
+        "path": "/oj-console/submissions/ai-guides/{prompt_file}/revisions",
+        "area": "console",
+        "owner": "ai_feedback",
+        "file": "modules/AI/Module.php",
+        "line": 154
+    },
+    {
+        "name": "console.submissions.block_coding",
+        "path": "/oj-console/submissions/block-coding",
+        "area": "console",
+        "owner": "blockly",
+        "file": "modules/Blockly/Module.php",
+        "line": 46
+    },
+    {
+        "name": "console.submissions.deleted",
+        "path": "/oj-console/submissions/deleted",
+        "area": "console",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 94
+    },
+    {
+        "name": "console.submissions.events",
+        "path": "/oj-console/submissions/events",
+        "area": "console",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 95
+    },
+    {
+        "name": "console.submissions.rejudge",
+        "path": "/oj-console/submissions/rejudge",
+        "area": "console",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 93
+    },
+    {
+        "name": "console.submissions.settings",
+        "path": "/oj-console/submissions/settings",
+        "area": "console",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 96
+    },
+    {
+        "name": "console.submissions.student_levels",
+        "path": "/oj-console/submissions/student-levels",
+        "area": "console",
+        "owner": "ai_feedback",
+        "file": "modules/AI/Module.php",
+        "line": 150
+    },
+    {
+        "name": "console.submissions.detail",
+        "path": "/oj-console/submissions/{submission_id}",
+        "area": "console",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 92
+    },
+    {
+        "name": "console.system_status",
+        "path": "/oj-console/system-status",
+        "area": "console",
+        "owner": "admin_console",
+        "file": "modules/AdminConsole/Module.php",
+        "line": 158
+    },
+    {
+        "name": "console.users.index",
+        "path": "/oj-console/users",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 161
+    },
+    {
+        "name": "console.users.bulk_import",
+        "path": "/oj-console/users/bulk-import",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 166
+    },
+    {
+        "name": "console.users.deleted",
+        "path": "/oj-console/users/deleted",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 167
+    },
+    {
+        "name": "console.users.new",
+        "path": "/oj-console/users/new",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 162
+    },
+    {
+        "name": "console.users.registration",
+        "path": "/oj-console/users/registration",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 170
+    },
+    {
+        "name": "console.users.detail",
+        "path": "/oj-console/users/{oj_user}",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 163
+    },
+    {
+        "name": "console.users.edit",
+        "path": "/oj-console/users/{oj_user}/edit",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 164
+    },
+    {
+        "name": "console.users.roles",
+        "path": "/oj-console/users/{wp_user_id}/roles",
+        "area": "console",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 165
+    },
+    {
+        "name": "legal.privacy",
+        "path": "/privacy",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 157
+    },
+    {
+        "name": "problem_books.index",
+        "path": "/problem-books",
+        "area": "public",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 105
+    },
+    {
+        "name": "problems.redirect_show",
+        "path": "/problem/{problem_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 15
+    },
+    {
+        "name": "problems.index",
+        "path": "/problems",
+        "area": "public",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 100
+    },
+    {
+        "name": "problems.show",
+        "path": "/problems/{problem_id}",
+        "area": "public",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 101
+    },
+    {
+        "name": "problems.ranking",
+        "path": "/problems/{problem_id}/ranking",
+        "area": "public",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 103
+    },
+    {
+        "name": "problems.statistics",
+        "path": "/problems/{problem_id}/statistics",
+        "area": "public",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 102
+    },
+    {
+        "name": "submissions.problem",
+        "path": "/problems/{problem_id}/submissions",
+        "area": "public",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 89
+    },
+    {
+        "name": "quizzes.index",
+        "path": "/quizzes",
+        "area": "public",
+        "owner": "problems",
+        "file": "modules/Problems/Module.php",
+        "line": 104
+    },
+    {
+        "name": "ranking.index",
+        "path": "/ranking",
+        "area": "public",
+        "owner": "ranking",
+        "file": "modules/Ranking/Module.php",
+        "line": 29
+    },
+    {
+        "name": "auth.register",
+        "path": "/register",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 151
+    },
+    {
+        "name": "submissions.redirect_index",
+        "path": "/status",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 35
+    },
+    {
+        "name": "status.class",
+        "path": "/status/class/{class_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 17
+    },
+    {
+        "name": "status.contest_redirect",
+        "path": "/status/contest/{contest_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 16
+    },
+    {
+        "name": "status.group",
+        "path": "/status/group/{group_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 18
+    },
+    {
+        "name": "submissions.redirect_problem",
+        "path": "/status/problem/{problem_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 37
+    },
+    {
+        "name": "submissions.redirect_detail",
+        "path": "/status/solution/{solution_id}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 36
+    },
+    {
+        "name": "submissions.index",
+        "path": "/submissions",
+        "area": "public",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 87
+    },
+    {
+        "name": "submissions.detail",
+        "path": "/submissions/{submission_id}",
+        "area": "public",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 88
+    },
+    {
+        "name": "submissions.form",
+        "path": "/submit",
+        "area": "public",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 85
+    },
+    {
+        "name": "submissions.form.problem",
+        "path": "/submit/{problem_id}",
+        "area": "public",
+        "owner": "submissions",
+        "file": "modules/Submissions/Module.php",
+        "line": 86
+    },
+    {
+        "name": "legal.terms",
+        "path": "/terms",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 156
+    },
+    {
+        "name": "auth.agreements",
+        "path": "/user-agreements",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 154
+    },
+    {
+        "name": "auth.settings",
+        "path": "/user-settings",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 153
+    },
+    {
+        "name": "auth.redirect_profile",
+        "path": "/user_profile/{oj_user}",
+        "area": "public",
+        "owner": "access_router",
+        "file": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "line": 34
+    },
+    {
+        "name": "auth.profile",
+        "path": "/users/{oj_user}",
+        "area": "public",
+        "owner": "auth",
+        "file": "modules/Auth/Module.php",
+        "line": 152
+    }
+]

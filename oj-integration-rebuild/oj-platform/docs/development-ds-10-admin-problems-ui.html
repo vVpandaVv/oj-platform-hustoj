@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-10 관리자 문제 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+</head>
+<body class="console">
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 5.5A3.5 3.5 0 0 1 5.5 2H11v18H5.5A3.5 3.5 0 0 0 2 23z"/><path d="M22 5.5A3.5 3.5 0 0 0 18.5 2H13v18h5.5A3.5 3.5 0 0 1 22 23z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m4 20 4.5-1 10-10-3.5-3.5-10 10z"/><path d="m14 6 3.5 3.5"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24"><path d="M3 6h18M5 6v14h14V6M2 3h20v3H2z"/><path d="M9 11h6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M5 2h9l5 5v15H5z"/><path d="M14 2v6h6"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5"/><path d="M4 20h16"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 21h20z"/><path d="M12 9v5M12 18h.01"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20 13 11 22l-9-9V2h11z"/><circle cx="7" cy="7" r="1"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 5h7l2 2h9v12H3z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 3h6l1 4H8zM7 7l1 14h8l1-14"/><path d="M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m4 7 8-4 8 4-8 4z"/><path d="M4 7v10l8 4 8-4V7M12 11v10"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 9-3 3 3 3M16 9l3 3-3 3M14 5l-4 14"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-10 관리자 문제 시안</strong><span>권한별 관리 화면을 확인합니다.</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="화면 선택">
+        <button type="button" role="tab" data-screen-target="admin-problems" aria-selected="true">목록</button>
+        <button type="button" role="tab" data-screen-target="admin-problem-new" aria-selected="false">추가</button>
+        <button type="button" role="tab" data-screen-target="admin-problem-edit" aria-selected="false">편집</button>
+        <button type="button" role="tab" data-screen-target="admin-problem-archive" aria-selected="false">보관</button>
+        <button type="button" role="tab" data-screen-target="admin-test-data" aria-selected="false">테스트데이터</button>
+        <button type="button" role="tab" data-screen-target="admin-change-id" aria-selected="false">번호 변경</button>
+        <button type="button" role="tab" data-screen-target="admin-xml" aria-selected="false">XML</button>
+        <button type="button" role="tab" data-screen-target="admin-topics" aria-selected="false">주제 관리</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-10-problems.html" aria-label="DS-10 설계 문서로 이동"><span class="brand-mark">OJ</span><span>관리자 콘솔</span></a>
+      <nav class="primary-nav" aria-label="관리자 주 메뉴">
+        <a href="#dashboard">대시보드</a><a href="#admin-problems" aria-current="page">문제</a><a href="#users">사용자</a><a href="#learning">학습 운영</a><a href="#system">시스템</a>
+      </nav>
+      <button class="account-button" type="button" aria-label="내 계정" title="내 계정"><svg><use href="#i-user"/></svg></button>
+    </div>
+  </header>
+
+  <div class="workspace console-workspace">
+    <aside class="console-sidebar" aria-label="문제 관리 메뉴">
+      <strong>문제 관리</strong>
+      <a href="#admin-problems" aria-current="page"><svg><use href="#i-book"/></svg>문제</a>
+      <a href="development-ds-10-admin-quizzes-ui.html"><svg><use href="#i-check"/></svg>퀴즈</a>
+      <a href="development-ds-10-admin-quizzes-ui.html#admin-books"><svg><use href="#i-archive"/></svg>문제집</a>
+      <a href="#admin-topics"><svg><use href="#i-tag"/></svg>주제 관리</a>
+      <a href="#jobs"><svg><use href="#i-briefcase"/></svg>작업 현황</a>
+    </aside>
+
+    <main class="page" id="main">
+      <section class="screen" data-screen="admin-problems">
+        <div class="breadcrumb"><span>관리자</span><span>/</span><span>문제</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">문제 운영</p><h1>문제 관리</h1><p>담당 범위의 문제, 공개 상태와 메타데이터 작업을 관리합니다.</p></div>
+          <div class="heading-actions">
+            <button class="button" type="button" data-open-screen="admin-topics"><svg><use href="#i-tag"/></svg>주제 관리</button>
+            <button class="button" type="button" data-toast="XML 도구 화면으로 이동합니다." data-open-screen="admin-xml"><svg><use href="#i-file"/></svg>XML</button>
+            <button class="button primary" type="button" data-open-screen="admin-problem-new"><svg><use href="#i-plus"/></svg>문제 추가</button>
+          </div>
+        </header>
+
+        <div class="filter-bar">
+          <div class="field"><label for="admin-problem-search">문제 검색</label><div class="input-wrap"><svg><use href="#i-search"/></svg><input class="input" id="admin-problem-search" type="search" placeholder="번호 또는 제목"></div></div>
+          <div class="field"><label for="visibility-filter">공개 상태</label><select class="select" id="visibility-filter"><option>전체 상태</option><option>공개</option><option>비공개</option><option>보관</option></select></div>
+          <div class="field"><label for="judging-filter">채점 방식</label><select class="select" id="judging-filter"><option>전체</option><option>일반 채점</option><option>특수 채점</option></select></div>
+          <div class="field"><label for="admin-difficulty-filter">난이도</label><select class="select" id="admin-difficulty-filter"><option>전체 난이도</option><option>1 · 매우 쉬움</option><option>2 · 쉬움</option><option>3 · 보통</option><option>4 · 어려움</option><option>5 · 매우 어려움</option></select></div>
+          <div class="field"><label for="admin-topic-filter">주제</label><select class="select" id="admin-topic-filter"><option>전체 주제</option><option>배열</option><option>정렬</option><option>그래프</option><option>동적 계획법</option></select></div>
+          <div class="field"><label for="metadata-filter">메타데이터</label><select class="select" id="metadata-filter"><option>전체 상태</option><option>완료</option><option>생성 필요</option><option>확인 필요</option><option>작업 중</option></select></div>
+          <div class="field"><label for="owner-filter">담당 범위</label><select class="select" id="owner-filter"><option>내 담당 문제</option><option>전체 문제</option><option>미배정 문제</option></select></div>
+          <div class="filter-actions"><button class="button primary" type="button" data-toast="필터를 적용했습니다."><svg><use href="#i-filter"/></svg>적용</button></div>
+        </div>
+
+        <div class="summary-line">
+          <span>내 담당 42개 · 검색 결과 18개</span>
+          <button class="button ghost" type="button" data-toast="현재 검색 결과 18개를 고정한 뒤 메타데이터 작업 확인으로 이동합니다."><svg><use href="#i-sparkle"/></svg>검색 결과 전체 메타데이터 생성</button>
+        </div>
+        <div class="table-wrap">
+          <table data-selection-table="problems">
+            <thead><tr><th><input type="checkbox" aria-label="전체 선택"></th><th>번호</th><th class="wrap">제목</th><th>난이도·주제</th><th>공개</th><th>담당</th><th>메타데이터</th><th>수정</th><th>명령</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" aria-label="1024번 선택"></td><td>1024</td>
+                <td class="wrap"><span class="row-title"><strong>구간 합 구하기</strong><span>제출 1,284 · 퀴즈 게시</span></span></td>
+                <td><span class="badge">2 · 배열</span></td><td><span class="badge good">공개</span></td><td>김강사</td><td><span class="badge good">완료</span></td><td>07-24</td>
+                <td><div class="inline-actions"><button class="icon-button" type="button" aria-label="문제 수정" title="문제 수정" data-open-screen="admin-problem-edit"><svg><use href="#i-pencil"/></svg></button><button class="icon-button" type="button" aria-label="테스트데이터 수정" title="테스트데이터 수정" data-open-screen="admin-test-data"><svg><use href="#i-database"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" aria-label="1031번 선택"></td><td>1031</td>
+                <td class="wrap"><span class="row-title"><span><strong>회의실 배정</strong> <span class="badge info" title="전용 채점 프로그램으로 정답을 검사합니다.">특수 채점</span></span><span>제출 938 · 퀴즈 초안</span></span></td>
+                <td><span class="badge">3 · 그리디</span></td><td><span class="badge good">공개</span></td><td>김강사</td><td><span class="badge wait">확인 필요</span></td><td>07-23</td>
+                <td><div class="inline-actions"><button class="icon-button" type="button" aria-label="문제 수정" title="문제 수정" data-open-screen="admin-problem-edit"><svg><use href="#i-pencil"/></svg></button><button class="icon-button" type="button" aria-label="메타데이터 확인" title="메타데이터 확인" data-toast="생성 결과 비교 화면을 엽니다."><svg><use href="#i-sparkle"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" aria-label="1048번 선택"></td><td>1048</td>
+                <td class="wrap"><span class="row-title"><strong>최단 경로 탐색</strong><span>제출 612 · 테스트 14개</span></span></td>
+                <td><span class="badge">미설정</span></td><td><span class="badge">비공개</span></td><td>이강사</td><td><span class="badge info">작업 중 60%</span></td><td>07-22</td>
+                <td><div class="inline-actions"><button class="icon-button" type="button" aria-label="문제 수정" title="문제 수정" data-open-screen="admin-problem-edit"><svg><use href="#i-pencil"/></svg></button><button class="icon-button" type="button" aria-label="작업 현황" title="작업 현황" data-toast="공통 작업 상세를 엽니다."><svg><use href="#i-refresh"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" aria-label="1084번 선택"></td><td>1084</td>
+                <td class="wrap"><span class="row-title"><strong>이분 탐색</strong><span>제출 544 · 테스트 10개</span></span></td>
+                <td><span class="badge">미설정</span></td><td><span class="badge good">공개</span></td><td>김강사</td><td><span class="badge danger">생성 필요</span></td><td>07-19</td>
+                <td><div class="inline-actions"><button class="icon-button" type="button" aria-label="문제 수정" title="문제 수정" data-open-screen="admin-problem-edit"><svg><use href="#i-pencil"/></svg></button><button class="icon-button" type="button" aria-label="메타데이터 생성" title="메타데이터 생성" data-toast="1084번 문제의 메타데이터 생성 확인으로 이동합니다."><svg><use href="#i-sparkle"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" aria-label="1056번 선택"></td><td>1056</td>
+                <td class="wrap"><span class="row-title"><strong>문자열 압축</strong><span>제출 1,018 · 참조 없음</span></span></td>
+                <td><span class="badge">2 · 문자열</span></td><td><span class="badge danger">보관</span></td><td>김강사</td><td><span class="badge good">완료</span></td><td>07-18</td>
+                <td><button class="button ghost" type="button" data-toast="문제를 복원했습니다.">복원</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bulk-bar" data-bulk-bar="problems" hidden>
+          <strong data-selection-count>0개 선택</strong>
+          <div class="inline-actions">
+            <button class="button" type="button" data-toast="선택한 문제의 메타데이터 생성 확인으로 이동합니다."><svg><use href="#i-sparkle"/></svg>메타데이터 생성</button>
+            <button class="button" type="button" data-toast="선택한 문제의 공개 상태 변경 화면을 엽니다."><svg><use href="#i-eye"/></svg>공개 상태</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="admin-problem-new" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="admin-problems">문제</button><span>/</span><span>추가</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">새 문제</p><h1>문제 추가</h1><p>직접 작성하거나 AI 초안을 받아 필드별로 검토합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-toast="임시 저장했습니다.">임시 저장</button><button class="button primary" type="button" data-toast="필수 항목과 테스트데이터를 검증한 뒤 저장합니다."><svg><use href="#i-check"/></svg>문제 저장</button></div>
+        </header>
+        <div class="two-column">
+          <div class="form-sections">
+            <section class="form-section">
+              <div class="section-heading"><div><h2>기본 정보</h2><p>문제 제목과 공개 범위</p></div></div>
+              <div class="form-grid">
+                <div class="field wide"><label for="new-title">제목</label><input class="input" id="new-title" type="text" placeholder="문제 제목"></div>
+                <div class="field"><label for="new-visibility">공개 상태</label><select class="select" id="new-visibility"><option>비공개로 저장</option><option>공개</option></select></div>
+                <div class="field"><label for="new-owner">소유자</label><select class="select" id="new-owner"><option>김강사</option></select></div>
+              </div>
+            </section>
+            <section class="form-section">
+              <div class="section-heading"><div><h2>문제 내용</h2><p>문제 설명·입력·출력·힌트에서 <code>\(...\)</code>, <code>\[...\]</code>, <code>$$...$$</code> 형식의 LaTeX 수식을 사용할 수 있습니다.</p></div></div>
+              <div class="form-grid">
+                <div class="field wide"><div class="field-label-row"><label for="new-description">문제 설명</label><span class="badge info">LaTeX</span></div><textarea class="textarea" id="new-description" data-latex-source placeholder="예: 길이가 \(N\)인 수열이 주어집니다."></textarea></div>
+                <div class="field"><div class="field-label-row"><label for="new-input">입력</label><span class="badge info">LaTeX</span></div><textarea class="textarea" id="new-input" data-latex-source placeholder="예: \(1 \le N \le 100000\)"></textarea></div>
+                <div class="field"><div class="field-label-row"><label for="new-output">출력</label><span class="badge info">LaTeX</span></div><textarea class="textarea" id="new-output" data-latex-source></textarea></div>
+                <div class="field wide"><div class="field-label-row"><label for="new-hint">힌트</label><span class="badge info">LaTeX</span></div><textarea class="textarea" id="new-hint" data-latex-source></textarea></div>
+              </div>
+            </section>
+            <section class="form-section">
+              <div class="section-heading"><div><h2>예시</h2><p>LaTeX와 HTML을 처리하지 않으며 공백·탭·줄바꿈을 포함한 입력 원문 그대로 표시합니다.</p></div><button class="button" type="button" data-toast="입출력 예시 한 쌍을 추가했습니다."><svg><use href="#i-plus"/></svg>예시 추가</button></div>
+              <div class="form-grid">
+                <div class="field"><div class="field-label-row"><label for="new-sample-input">예시 입력 1</label><span class="badge">원문</span></div><textarea class="textarea" id="new-sample-input" data-raw-example spellcheck="false"></textarea></div>
+                <div class="field"><div class="field-label-row"><label for="new-sample-output">예시 출력 1</label><span class="badge">원문</span></div><textarea class="textarea" id="new-sample-output" data-raw-example spellcheck="false"></textarea></div>
+              </div>
+            </section>
+            <section class="form-section" id="new-submission-code-policy">
+              <div class="section-heading"><div><h2>제출 코드 규칙</h2><p>문제에 허용한 모든 언어에 같은 규칙을 적용합니다.</p></div><span class="badge info">서버 검증</span></div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="new-code-entry-mode">코드 작성 방식</label>
+                  <select class="select" id="new-code-entry-mode">
+                    <option>전체 코드 작성</option>
+                    <option selected>코드 빈칸 완성</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="new-completion-language">빈칸 코드 언어</label>
+                  <select class="select" id="new-completion-language"><option>Python 3</option></select>
+                </div>
+                <div class="field wide">
+                  <div class="field-label-row"><span class="field-label">빈칸 코드 작성기</span><span class="badge wait">빈칸 2개</span></div>
+                  <p class="help">완성된 코드를 작성한 뒤 영역을 선택해 빈칸으로 지정합니다. 학생에게 정답 원문이나 내부 빈칸 ID를 보여 주지 않습니다.</p>
+                  <div class="code-completion-authoring">
+                    <div class="inline-actions">
+                      <button class="button" type="button" data-toast="선택한 코드 영역을 새 빈칸으로 지정합니다."><svg><use href="#i-plus"/></svg>선택 영역을 빈칸으로 지정</button>
+                      <button class="button ghost" type="button" data-toast="학생 화면과 같은 빈칸 미리보기를 표시합니다."><svg><use href="#i-eye"/></svg>학생 화면 미리보기</button>
+                    </div>
+                    <div class="code-completion-shell" data-code-completion data-code-completion-example="prefix-sum-v1" data-code-completion-mode="preview">
+                      <div class="code-completion-toolbar"><strong>Python 3 시작 코드</strong><span data-code-completion-progress></span></div>
+                      <div class="code-completion-canvas" data-code-completion-canvas aria-label="빈칸 코드 미리보기"></div>
+                      <div class="code-completion-legend"><span><i class="code-completion-swatch"></i>학생 입력 영역</span><span>빈칸 밖 코드는 수정할 수 없음</span></div>
+                    </div>
+                  </div>
+                  <div class="table-wrap space-top">
+                    <table><thead><tr><th>빈칸</th><th>표시 문구</th><th>입력 형식</th><th>최대 길이</th></tr></thead><tbody>
+                      <tr><td>1</td><td>누적 연산</td><td>한 줄</td><td>8자</td></tr>
+                      <tr><td>2</td><td>구간 합 식</td><td>한 줄</td><td>80자</td></tr>
+                    </tbody></table>
+                  </div>
+                </div>
+                <div class="field wide">
+                  <label for="new-banned-code">제출 금지 코드</label>
+                  <textarea class="textarea" id="new-banned-code" data-code-source spellcheck="false" placeholder="한 줄에 하나씩 입력&#10;예: eval(&#10;예: exec("></textarea>
+                  <p class="help">대소문자를 구분하는 코드 조각입니다. 하나라도 사용자 코드에 포함되면 제출하지 않습니다.</p>
+                </div>
+                <div class="field">
+                  <label for="new-front-code">제출 코드 앞에 붙일 코드</label>
+                  <textarea class="textarea" id="new-front-code" data-code-source spellcheck="false" placeholder="사용자 코드보다 먼저 채점할 코드"></textarea>
+                </div>
+                <div class="field">
+                  <label for="new-rear-code">제출 코드 뒤에 붙일 코드</label>
+                  <textarea class="textarea" id="new-rear-code" data-code-source spellcheck="false" placeholder="사용자 코드 다음에 채점할 코드"></textarea>
+                </div>
+              </div>
+              <p class="help">빈칸 완성 문제와 앞·뒤 코드를 사용하는 문제는 허용 언어를 하나만 선택합니다. 학생은 일반 코드나 Blockly로 전환할 수 없으며, 서버가 현재 템플릿과 빈칸 답안을 복원·검증한 뒤 앞·뒤 코드를 채점용 소스에만 결합합니다.</p>
+            </section>
+            <section class="form-section">
+              <h2>채점 제한·메타데이터</h2>
+              <div class="form-grid">
+                <div class="field"><label for="new-time">시간 제한(초)</label><input class="input" id="new-time" type="number" value="1"></div>
+                <div class="field"><label for="new-memory">메모리 제한(MB)</label><input class="input" id="new-memory" type="number" value="256"></div>
+                <div class="field"><label for="new-difficulty">난이도</label><select class="select" id="new-difficulty"><option>미설정</option><option>1 · 매우 쉬움</option><option>2 · 쉬움</option><option>3 · 보통</option><option>4 · 어려움</option><option>5 · 매우 어려움</option></select></div>
+                <div class="field wide">
+                  <span class="field-label">주제(선택)</span>
+                  <div class="topic-picker topic-hierarchy-picker" data-topic-browser>
+                    <div class="topic-selection" aria-label="선택된 세부 주제">
+                      <span class="topic-chip primary" data-topic-chip="배열"><span class="topic-chip-path"><small>자료구조</small><strong>배열</strong></span><span class="topic-chip-role">대표</span><button type="button" data-topic-chip-remove aria-label="배열 주제 제거" title="배열 주제 제거">×</button></span>
+                      <span class="topic-chip" data-topic-chip="누적 합"><span class="topic-chip-path"><small>알고리즘</small><strong>누적 합</strong></span><button type="button" data-topic-chip-remove aria-label="누적 합 주제 제거" title="누적 합 주제 제거">×</button></span>
+                    </div>
+                    <div class="topic-browser-grid">
+                      <div class="topic-area-list"><span class="topic-browser-label">1. 분야</span><button type="button" data-topic-area="data-structure" aria-selected="true"><strong>자료구조</strong><small>8개</small></button><button type="button" data-topic-area="algorithm" aria-selected="false"><strong>알고리즘</strong><small>12개</small></button><button type="button" data-topic-area="graph" aria-selected="false"><strong>그래프</strong><small>6개</small></button><button type="button" data-topic-area="math" aria-selected="false"><strong>수학</strong><small>6개</small></button></div>
+                      <div class="topic-detail-list"><span class="topic-browser-label">2. 세부 주제</span>
+                        <div class="topic-choice-grid" data-topic-detail-panel="data-structure"><button type="button" data-topic-choice="배열" data-topic-area-label="자료구조"><strong>배열</strong><small>array</small></button><button type="button" data-topic-choice="스택" data-topic-area-label="자료구조"><strong>스택</strong><small>stack</small></button><button type="button" data-topic-choice="큐" data-topic-area-label="자료구조"><strong>큐</strong><small>queue</small></button><button type="button" data-topic-choice="힙" data-topic-area-label="자료구조"><strong>힙</strong><small>heap</small></button></div>
+                        <div class="topic-choice-grid" data-topic-detail-panel="algorithm" hidden><button type="button" data-topic-choice="누적 합" data-topic-area-label="알고리즘"><strong>누적 합</strong><small>prefix-sum</small></button><button type="button" data-topic-choice="정렬" data-topic-area-label="알고리즘"><strong>정렬</strong><small>sorting</small></button><button type="button" data-topic-choice="투 포인터" data-topic-area-label="알고리즘"><strong>투 포인터</strong><small>two-pointers</small></button><button type="button" data-topic-choice="동적 계획법" data-topic-area-label="알고리즘"><strong>동적 계획법</strong><small>dynamic-programming</small></button></div>
+                        <div class="topic-choice-grid" data-topic-detail-panel="graph" hidden><button type="button" data-topic-choice="그래프 탐색" data-topic-area-label="그래프"><strong>그래프 탐색</strong><small>graph-traversal</small></button><button type="button" data-topic-choice="최단 경로" data-topic-area-label="그래프"><strong>최단 경로</strong><small>shortest-path</small></button><button type="button" data-topic-choice="최소 신장 트리" data-topic-area-label="그래프"><strong>최소 신장 트리</strong><small>minimum-spanning-tree</small></button></div>
+                        <div class="topic-choice-grid" data-topic-detail-panel="math" hidden><button type="button" data-topic-choice="정수론" data-topic-area-label="수학"><strong>정수론</strong><small>number-theory</small></button><button type="button" data-topic-choice="조합론" data-topic-area-label="수학"><strong>조합론</strong><small>combinatorics</small></button><button type="button" data-topic-choice="기하" data-topic-area-label="수학"><strong>기하</strong><small>geometry</small></button></div>
+                      </div>
+                    </div>
+                    <p class="help">분야는 탐색에만 사용합니다. 정확히 맞는 세부 주제가 없으면 선택하지 않아도 되며 최대 3개까지 저장합니다.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+          <aside>
+            <div class="panel teal">
+              <h2>AI 문제 초안</h2>
+              <p>학습 목표와 난이도를 입력하면 Jobs가 초안을 만듭니다. 생성 결과는 자동 저장되지 않습니다.</p>
+              <div class="field"><label for="ai-goal">학습 목표</label><textarea class="textarea" id="ai-goal" placeholder="예: 반복문과 배열을 사용해 누적 합을 계산한다."></textarea></div>
+              <div class="field" style="margin-top:12px"><label for="ai-level">목표 난이도</label><select class="select" id="ai-level"><option>2 · 쉬움</option><option>1 · 매우 쉬움</option><option>3 · 보통</option><option>4 · 어려움</option><option>5 · 매우 어려움</option></select></div>
+              <button class="button primary" style="width:100%;margin-top:14px" type="button" data-toast="문제 초안 생성 작업을 등록했습니다."><svg><use href="#i-sparkle"/></svg>초안 생성</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="admin-problem-edit" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="admin-problems">문제</button><span>/</span><span>1024</span><span>/</span><span>편집</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">문제 1024</p><h1>구간 합 구하기 수정</h1><p>문제 원문, 메타데이터와 담당 범위를 수정합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-toast="사용자 문제 화면을 새 창으로 엽니다."><svg><use href="#i-eye"/></svg>미리보기</button><button class="button primary" type="button" data-toast="변경 내용을 검증하고 저장했습니다."><svg><use href="#i-check"/></svg>변경 저장</button></div>
+        </header>
+        <nav class="subnav" aria-label="문제 편집 메뉴"><a href="#content" aria-current="page">문제 내용</a><a href="#edit-submission-code-policy">제출 코드</a><a href="#metadata">난이도·주제</a><a href="#owners">담당자</a><button class="button ghost" type="button" data-open-screen="admin-test-data">테스트데이터</button></nav>
+        <div class="two-column">
+          <div class="form-sections">
+            <section class="form-section" id="content">
+              <div class="section-heading"><div><h2>문제 내용</h2><p>문제 설명·입력·출력·힌트에서 <code>\(...\)</code>, <code>\[...\]</code>, <code>$$...$$</code> 형식의 LaTeX 수식을 사용할 수 있습니다.</p></div></div>
+              <div class="form-grid">
+                <div class="field wide"><label for="edit-title">제목</label><input class="input" id="edit-title" value="구간 합 구하기"></div>
+                <div class="field wide"><div class="field-label-row"><label for="edit-description">문제 설명</label><span class="badge info">LaTeX</span></div><textarea class="textarea" id="edit-description" data-latex-source>길이가 \(N\)인 수열에서 여러 구간의 합을 구하세요.</textarea></div>
+                <div class="field"><div class="field-label-row"><label for="edit-input">입력</label><span class="badge info">LaTeX</span></div><textarea class="textarea" id="edit-input" data-latex-source>첫째 줄에 수의 개수 \(N\)과 질의 개수 \(M\)이 주어집니다.</textarea></div>
+                <div class="field"><div class="field-label-row"><label for="edit-output">출력</label><span class="badge info">LaTeX</span></div><textarea class="textarea" id="edit-output" data-latex-source>각 질의 \((i, j)\)의 구간 합을 한 줄에 하나씩 출력합니다.</textarea></div>
+                <div class="field wide"><div class="field-label-row"><label for="edit-hint">힌트</label><span class="badge info">LaTeX</span></div><textarea class="textarea" id="edit-hint" data-latex-source>누적 합 \(P_i = P_{i-1} + A_i\)를 먼저 만들어 보세요.</textarea></div>
+              </div>
+            </section>
+            <section class="form-section">
+              <div class="section-heading"><div><h2>예시</h2><p>LaTeX와 HTML을 처리하지 않으며 공백·탭·줄바꿈을 포함한 입력 원문 그대로 표시합니다.</p></div><button class="button" type="button" data-toast="입출력 예시 한 쌍을 추가했습니다."><svg><use href="#i-plus"/></svg>예시 추가</button></div>
+              <div class="form-grid">
+                <div class="field"><div class="field-label-row"><label for="edit-sample-input">예시 입력 1</label><span class="badge">원문</span></div><textarea class="textarea" id="edit-sample-input" data-raw-example spellcheck="false">5 3
+1 2 3 4 5
+1 3
+2 5
+4 4</textarea></div>
+                <div class="field"><div class="field-label-row"><label for="edit-sample-output">예시 출력 1</label><span class="badge">원문</span></div><textarea class="textarea" id="edit-sample-output" data-raw-example spellcheck="false">6
+14
+4</textarea></div>
+              </div>
+            </section>
+            <section class="form-section" id="edit-submission-code-policy">
+              <div class="section-heading"><div><h2>제출 코드 규칙</h2><p>이 문제는 Python 3 코드 빈칸 완성 전용이며 일반 코드·Blockly 전환을 허용하지 않습니다.</p></div><span class="badge good">사용 중</span></div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="edit-code-entry-mode">코드 작성 방식</label>
+                  <select class="select" id="edit-code-entry-mode"><option selected>코드 빈칸 완성</option><option>전체 코드 작성</option></select>
+                </div>
+                <div class="field">
+                  <label for="edit-completion-language">빈칸 코드 언어</label>
+                  <select class="select" id="edit-completion-language"><option>Python 3</option></select>
+                </div>
+                <div class="field wide">
+                  <div class="field-label-row"><span class="field-label">빈칸 코드 작성기</span><span class="badge wait">빈칸 2개</span></div>
+                  <p class="help">고정 코드는 직접 편집하고, 코드 영역을 선택해 빈칸으로 지정하거나 기존 빈칸을 해제합니다.</p>
+                  <div class="code-completion-authoring">
+                    <div class="inline-actions">
+                      <button class="button" type="button" data-toast="선택한 코드 영역을 새 빈칸으로 지정합니다."><svg><use href="#i-plus"/></svg>선택 영역을 빈칸으로 지정</button>
+                      <button class="button ghost" type="button" data-toast="선택한 빈칸을 고정 코드로 되돌립니다.">빈칸 해제</button>
+                      <button class="button ghost" type="button" data-toast="학생 화면과 같은 빈칸 미리보기를 표시합니다."><svg><use href="#i-eye"/></svg>학생 화면 미리보기</button>
+                    </div>
+                    <div class="code-completion-shell" data-code-completion data-code-completion-example="prefix-sum-v1" data-code-completion-mode="preview">
+                      <div class="code-completion-toolbar"><strong>Python 3 시작 코드</strong><span data-code-completion-progress></span></div>
+                      <div class="code-completion-canvas" data-code-completion-canvas aria-label="빈칸 코드 미리보기"></div>
+                      <div class="code-completion-legend"><span><i class="code-completion-swatch"></i>학생 입력 영역</span><span>빈칸 밖 코드는 수정할 수 없음</span></div>
+                    </div>
+                  </div>
+                  <div class="table-wrap space-top">
+                    <table><thead><tr><th>빈칸</th><th>표시 문구</th><th>입력 형식</th><th>최대 길이</th><th>명령</th></tr></thead><tbody>
+                      <tr><td>1</td><td>누적 연산</td><td>한 줄</td><td>8자</td><td><button class="button ghost" type="button" data-toast="누적 연산 빈칸 설정을 엽니다.">설정</button></td></tr>
+                      <tr><td>2</td><td>구간 합 식</td><td>한 줄</td><td>80자</td><td><button class="button ghost" type="button" data-toast="구간 합 식 빈칸 설정을 엽니다.">설정</button></td></tr>
+                    </tbody></table>
+                  </div>
+                </div>
+                <div class="field wide">
+                  <label for="edit-banned-code">제출 금지 코드</label>
+                  <textarea class="textarea" id="edit-banned-code" data-code-source spellcheck="false">eval(
+exec(
+open(</textarea>
+                  <p class="help">한 줄에 하나씩 입력합니다. 정규식이 아니라 대소문자를 구분하는 문자열 포함 검사입니다.</p>
+                </div>
+                <div class="field">
+                  <label for="edit-front-code">제출 코드 앞에 붙일 코드</label>
+                  <textarea class="textarea" id="edit-front-code" data-code-source spellcheck="false">from sys import stdin
+input = stdin.readline</textarea>
+                </div>
+                <div class="field">
+                  <label for="edit-rear-code">제출 코드 뒤에 붙일 코드</label>
+                  <textarea class="textarea" id="edit-rear-code" data-code-source spellcheck="false"># 제출 코드 끝</textarea>
+                </div>
+              </div>
+              <p class="help">학생에게는 문제 상세와 제출 화면에서 동일한 작성 방식을 보여 줍니다. 서버는 템플릿 해시, 빈칸 ID·누락·길이와 금지 코드를 검사하고, 완성한 사용자 원본과 앞·뒤 코드를 결합한 채점용 소스를 분리해 저장합니다.</p>
+            </section>
+            <section class="form-section" id="metadata">
+              <h2>채점 제한·난이도·주제</h2>
+              <div class="form-grid">
+                <div class="field"><label for="edit-time">시간 제한(초)</label><input class="input" id="edit-time" type="number" value="1"></div>
+                <div class="field"><label for="edit-memory">메모리 제한(MB)</label><input class="input" id="edit-memory" type="number" value="256"></div>
+                <div class="field"><label for="edit-difficulty">난이도</label><select class="select" id="edit-difficulty"><option>2 · 쉬움</option></select></div>
+                <div class="field wide">
+                  <span class="field-label">주제(선택)</span>
+                  <div class="topic-picker topic-hierarchy-picker" data-topic-browser>
+                    <div class="topic-selection" aria-label="선택된 세부 주제">
+                      <span class="topic-chip primary" data-topic-chip="배열"><span class="topic-chip-path"><small>자료구조</small><strong>배열</strong></span><span class="topic-chip-role">대표</span><button type="button" data-topic-chip-remove aria-label="배열 주제 제거" title="배열 주제 제거">×</button></span>
+                      <span class="topic-chip" data-topic-chip="누적 합"><span class="topic-chip-path"><small>알고리즘</small><strong>누적 합</strong></span><button type="button" data-topic-chip-remove aria-label="누적 합 주제 제거" title="누적 합 주제 제거">×</button></span>
+                    </div>
+                    <div class="topic-browser-grid">
+                      <div class="topic-area-list"><span class="topic-browser-label">1. 분야</span><button type="button" data-topic-area="data-structure" aria-selected="true"><strong>자료구조</strong><small>8개</small></button><button type="button" data-topic-area="algorithm" aria-selected="false"><strong>알고리즘</strong><small>12개</small></button><button type="button" data-topic-area="graph" aria-selected="false"><strong>그래프</strong><small>6개</small></button><button type="button" data-topic-area="math" aria-selected="false"><strong>수학</strong><small>6개</small></button></div>
+                      <div class="topic-detail-list"><span class="topic-browser-label">2. 세부 주제</span>
+                        <div class="topic-choice-grid" data-topic-detail-panel="data-structure"><button type="button" data-topic-choice="배열" data-topic-area-label="자료구조"><strong>배열</strong><small>array</small></button><button type="button" data-topic-choice="스택" data-topic-area-label="자료구조"><strong>스택</strong><small>stack</small></button><button type="button" data-topic-choice="큐" data-topic-area-label="자료구조"><strong>큐</strong><small>queue</small></button><button type="button" data-topic-choice="힙" data-topic-area-label="자료구조"><strong>힙</strong><small>heap</small></button></div>
+                        <div class="topic-choice-grid" data-topic-detail-panel="algorithm" hidden><button type="button" data-topic-choice="누적 합" data-topic-area-label="알고리즘"><strong>누적 합</strong><small>prefix-sum</small></button><button type="button" data-topic-choice="정렬" data-topic-area-label="알고리즘"><strong>정렬</strong><small>sorting</small></button><button type="button" data-topic-choice="투 포인터" data-topic-area-label="알고리즘"><strong>투 포인터</strong><small>two-pointers</small></button><button type="button" data-topic-choice="동적 계획법" data-topic-area-label="알고리즘"><strong>동적 계획법</strong><small>dynamic-programming</small></button></div>
+                        <div class="topic-choice-grid" data-topic-detail-panel="graph" hidden><button type="button" data-topic-choice="그래프 탐색" data-topic-area-label="그래프"><strong>그래프 탐색</strong><small>graph-traversal</small></button><button type="button" data-topic-choice="최단 경로" data-topic-area-label="그래프"><strong>최단 경로</strong><small>shortest-path</small></button><button type="button" data-topic-choice="최소 신장 트리" data-topic-area-label="그래프"><strong>최소 신장 트리</strong><small>minimum-spanning-tree</small></button></div>
+                        <div class="topic-choice-grid" data-topic-detail-panel="math" hidden><button type="button" data-topic-choice="정수론" data-topic-area-label="수학"><strong>정수론</strong><small>number-theory</small></button><button type="button" data-topic-choice="조합론" data-topic-area-label="수학"><strong>조합론</strong><small>combinatorics</small></button><button type="button" data-topic-choice="기하" data-topic-area-label="수학"><strong>기하</strong><small>geometry</small></button></div>
+                      </div>
+                    </div>
+                    <p class="help">분야는 탐색에만 사용합니다. 정확히 맞는 세부 주제가 없으면 선택하지 않아도 되며 최대 3개까지 저장합니다.</p>
+                  </div>
+                </div>
+              </div>
+              <p class="help">수동으로 수정한 값은 AI 메타데이터 작업이 자동으로 덮어쓰지 않습니다.</p>
+            </section>
+            <section class="form-section" id="owners">
+              <h2>담당자</h2>
+              <div class="table-wrap">
+                <table><thead><tr><th>사용자</th><th>역할</th><th>상태</th><th>명령</th></tr></thead><tbody>
+                  <tr><td>김강사</td><td>소유자</td><td><span class="badge good">활성</span></td><td>-</td></tr>
+                  <tr><td>이강사</td><td>공동 편집자</td><td><span class="badge good">활성</span></td><td><button class="button ghost" type="button" data-toast="공동 편집자 제거 확인을 엽니다.">제거</button></td></tr>
+                  <tr><td>박강사</td><td>테스트데이터 담당자</td><td><span class="badge good">활성</span></td><td><button class="button ghost" type="button" data-toast="담당자 제거 확인을 엽니다.">제거</button></td></tr>
+                </tbody></table>
+              </div>
+            </section>
+          </div>
+          <aside>
+            <div class="panel soft">
+              <h2>현재 상태</h2>
+              <div class="check-list">
+                <div class="summary-line"><span>공개 상태</span><strong>공개</strong></div>
+                <div class="summary-line"><span>최근 수정</span><strong>07-24 09:12</strong></div>
+                <div class="summary-line"><span>테스트 파일</span><strong>12개</strong></div>
+                <div class="summary-line"><span>퀴즈</span><strong>게시 버전 3</strong></div>
+              </div>
+              <button class="button danger" style="width:100%;margin-top:14px" type="button" data-open-screen="admin-problem-archive"><svg><use href="#i-archive"/></svg>문제 보관</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="admin-problem-archive" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="admin-problems">문제</button><span>/</span><span>1024</span><span>/</span><span>보관</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">공개 중지</p><h1>문제 보관</h1><p>문제 행과 파일을 삭제하지 않고 사용자 목록에서 숨깁니다.</p></div>
+        </header>
+        <div class="two-column">
+          <section class="panel danger">
+            <h2>구간 합 구하기를 보관할까요?</h2>
+            <p>보관 후에도 관리자 목록에서 복원할 수 있습니다. 기존 제출과 채점 결과는 유지됩니다.</p>
+            <div class="field"><label for="archive-reason">보관 사유</label><textarea class="textarea" id="archive-reason" placeholder="운영 기록에 남길 사유"></textarea></div>
+            <label class="check-row" style="margin-top:12px"><input type="checkbox">영향과 복원 방법을 확인했습니다.</label>
+            <div class="inline-actions" style="margin-top:16px"><button class="button" type="button" data-open-screen="admin-problem-edit">취소</button><button class="button danger" type="button" data-toast="문제를 보관하고 목록으로 이동합니다."><svg><use href="#i-archive"/></svg>문제 보관</button></div>
+          </section>
+          <aside class="panel">
+            <h2>참조 현황</h2>
+            <div class="summary-line"><span>제출</span><strong>1,284건 · 유지</strong></div>
+            <div class="summary-line"><span>퀴즈</span><strong>게시 1개 · 비활성</strong></div>
+            <div class="summary-line"><span>수업</span><strong>진행 중 0개</strong></div>
+            <div class="summary-line"><span>문제집</span><strong>3개 · 숨김</strong></div>
+            <div class="notice warning" style="margin:14px 0 0"><svg><use href="#i-alert"/></svg><span>진행 중인 대회·평가에 포함된 문제는 보관할 수 없습니다.</span></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="admin-test-data" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="admin-problems">문제</button><span>/</span><span>1024</span><span>/</span><span>테스트데이터</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">문제 1024</p><h1>테스트데이터 편집기</h1><p>이 문제의 채점 파일만 만들고 편집하며 압축하거나 복원합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-toast="테스트케이스 생성 작업을 등록했습니다."><svg><use href="#i-sparkle"/></svg>AI 초안</button><button class="button primary" type="button" data-toast="업로드할 파일을 선택합니다."><svg><use href="#i-upload"/></svg>업로드</button></div>
+        </header>
+        <div class="data-root-strip">
+          <div><span>채점 데이터 루트</span><strong>/home/judge/data</strong></div>
+          <svg><use href="#i-arrow-right"/></svg>
+          <div><span>현재 문제 폴더</span><strong>/home/judge/data/1024</strong></div>
+          <span class="badge good">문제 폴더로 제한</span>
+        </div>
+        <div class="notice"><svg><use href="#i-check"/></svg><div><strong>최근 검증 통과</strong><br>입출력 쌍 6개, SPJ 실행 파일 1개, 경로·파일명·크기·해시가 정상입니다. 07-25 09:20</div></div>
+
+        <div class="file-workbench">
+          <section class="panel file-browser">
+            <div class="file-toolbar" aria-label="파일 명령">
+              <div class="inline-actions">
+                <button class="button" type="button" data-toast="새 파일 이름을 입력합니다."><svg><use href="#i-file"/></svg>새 파일</button>
+                <button class="button" type="button" data-toast="선택한 파일을 ZIP으로 압축합니다."><svg><use href="#i-package"/></svg>ZIP 만들기</button>
+              </div>
+              <button class="button" type="button" data-toast="파일 목록을 새로 확인했습니다."><svg><use href="#i-refresh"/></svg>새로고침</button>
+            </div>
+            <div class="folder-path" aria-label="현재 문제 폴더"><svg><use href="#i-folder"/></svg><strong>/1024</strong><span>이 문제 폴더의 파일만 관리하며 하위 폴더는 사용하지 않습니다.</span></div>
+            <div class="bulk-bar file-bulk-bar" data-bulk-bar="test-files" hidden>
+              <strong data-selection-count>0개 선택</strong>
+              <div class="inline-actions">
+                <button class="button" type="button" data-toast="선택한 항목의 이름을 변경합니다.">이름 변경</button>
+                <button class="button" type="button" data-archive-preview>압축 풀기</button>
+                <button class="button danger" type="button" data-toast="삭제 전 영향 확인 창을 엽니다."><svg><use href="#i-trash"/></svg>삭제</button>
+              </div>
+            </div>
+            <div class="table-wrap file-table-wrap">
+              <table data-selection-table="test-files">
+                <thead><tr><th><input type="checkbox" aria-label="전체 파일 선택"></th><th>이름</th><th>유형</th><th>크기</th><th>수정</th><th>쌍 상태</th><th>명령</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox" aria-label="1.in 선택"></td><td><span class="file-name"><svg><use href="#i-file"/></svg>1.in</span></td><td>입력</td><td>1.2KB</td><td>08:44</td><td><span class="badge good">1.out 연결</span></td><td><button class="button ghost" type="button" data-file-edit="1.in" data-file-content="5 3&#10;1 2 3 4 5&#10;1 3&#10;2 5&#10;4 4">편집</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="1.out 선택"></td><td><span class="file-name"><svg><use href="#i-file"/></svg>1.out</span></td><td>출력</td><td>84B</td><td>08:44</td><td><span class="badge good">1.in 연결</span></td><td><button class="button ghost" type="button" data-file-edit="1.out" data-file-content="6&#10;14&#10;4">편집</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="2.in 선택"></td><td><span class="file-name"><svg><use href="#i-file"/></svg>2.in</span></td><td>입력</td><td>4.1KB</td><td>08:51</td><td><span class="badge good">2.out 연결</span></td><td><button class="button ghost" type="button" data-file-edit="2.in" data-file-content="100 1&#10;1 2 3 4 5 ...">편집</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="spj.cpp 선택"></td><td><span class="file-name"><svg><use href="#i-code"/></svg>spj.cpp</span></td><td>SPJ 소스</td><td>3.8KB</td><td>09:04</td><td><span class="badge info">컴파일됨</span></td><td><button class="button ghost" type="button" data-file-edit="spj.cpp" data-file-content="#include &lt;cstdio&gt;&#10;&#10;int main(int argc, char** argv) {&#10;    return 0;&#10;}">편집</button></td></tr>
+                  <tr><td><input type="checkbox" aria-label="cases.zip 선택"></td><td><span class="file-name"><svg><use href="#i-package"/></svg>cases.zip</span></td><td>ZIP</td><td>18.4KB</td><td>09:12</td><td><span class="badge wait">미리보기 필요</span></td><td><button class="button ghost" type="button" data-archive-preview>내용 확인</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <aside class="file-side">
+            <section class="panel file-editor-panel">
+              <div class="section-heading"><div><h2 data-editor-name>1.in</h2><p>UTF-8 텍스트 · 저장 전 해시 충돌 검사</p></div><span class="badge info">편집 중</span></div>
+              <textarea class="textarea code-editor" data-file-editor spellcheck="false">5 3
+1 2 3 4 5
+1 3
+2 5
+4 4</textarea>
+              <div class="section-actions">
+                <button class="button" type="button" data-toast="원본 내용을 다시 불러왔습니다.">되돌리기</button>
+                <button class="button primary" type="button" data-toast="임시 파일에 기록한 뒤 원자적으로 저장했습니다.">저장</button>
+              </div>
+            </section>
+            <section class="panel soft spj-panel">
+              <div class="section-heading"><div><h2>특수 채점기</h2><p>문제 설정의 SPJ 사용이 켜져 있습니다.</p></div><span class="badge good">사용</span></div>
+              <div class="summary-line"><span>소스</span><strong>spj.cpp · C++17</strong></div>
+              <div class="summary-line"><span>현재 실행 파일</span><strong>spj · 24.6KB</strong></div>
+              <div class="summary-line"><span>최근 빌드</span><strong>성공 · 09:05</strong></div>
+              <button class="button primary full-button" type="button" data-toast="기존 실행 파일을 유지한 채 SPJ 컴파일 작업을 등록했습니다."><svg><use href="#i-code"/></svg>SPJ 컴파일</button>
+              <button class="button full-button" type="button" data-toast="최근 컴파일 로그를 엽니다.">컴파일 로그</button>
+            </section>
+          </aside>
+        </div>
+        <div class="notice warning" style="margin-top:16px"><svg><use href="#i-alert"/></svg><span>데이터 루트는 “문제 &gt; 테스트데이터 설정”에서만 바꿉니다. 이 화면은 <strong>/1024</strong> 밖의 경로, 심볼릭 링크, 실행 명령, 권한 변경과 다른 문제로의 복사를 허용하지 않습니다.</span></div>
+
+        <div class="prototype-dialog" data-archive-dialog hidden role="dialog" aria-modal="true" aria-labelledby="archive-title">
+          <div class="prototype-dialog-panel">
+            <div class="section-heading">
+              <div><p class="eyebrow">cases.zip</p><h2 id="archive-title">압축 풀기 전 확인</h2><p>안전 검사를 통과한 항목만 문제 폴더의 임시 영역에 풉니다.</p></div>
+              <button class="icon-button" type="button" data-archive-close aria-label="닫기" title="닫기"><svg><use href="#i-x"/></svg></button>
+            </div>
+            <div class="metric-grid compact-metrics">
+              <div class="metric"><strong>12</strong><span>파일</span></div><div class="metric"><strong>44KB</strong><span>해제 크기</span></div><div class="metric"><strong>2</strong><span>이름 충돌</span></div><div class="metric"><strong>0</strong><span>차단 항목</span></div>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>경로</th><th>크기</th><th>검사</th><th>충돌 처리</th></tr></thead><tbody>
+              <tr><td><code>1.in</code></td><td>1.2KB</td><td><span class="badge good">안전</span></td><td><span class="badge wait">건너뜀</span></td></tr>
+              <tr><td><code>1.out</code></td><td>84B</td><td><span class="badge good">안전</span></td><td><span class="badge wait">건너뜀</span></td></tr>
+              <tr><td><code>3.in</code></td><td>2.7KB</td><td><span class="badge good">안전</span></td><td>새 파일</td></tr>
+            </tbody></table></div>
+            <label class="check-row"><input type="checkbox">같은 이름의 파일 2개 덮어쓰기</label>
+            <div class="section-actions"><button class="button" type="button" data-archive-close>취소</button><button class="button primary" type="button" data-archive-close data-toast="임시 영역 검증 후 안전한 파일만 적용했습니다.">검증 후 압축 풀기</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="admin-change-id" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="admin-problems">문제</button><span>/</span><span>번호 변경</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">전역 관리자 전용</p><h1>문제 번호 변경</h1><p>변경 전 영향을 검사하고 승인된 계획만 Jobs로 실행합니다.</p></div>
+        </header>
+        <ol class="steps" aria-label="번호 변경 단계"><li class="active" data-step="1">대상 입력</li><li class="active" data-step="2">영향 확인</li><li data-step="3">작업 실행</li></ol>
+        <section class="panel">
+          <div class="section-heading"><div><h2>변경할 문제 집합</h2><p>연속 범위 또는 서로 떨어진 문제 번호를 한 작업으로 구성합니다.</p></div><span class="badge info">3개 매핑</span></div>
+          <div class="segmented-control" role="tablist" aria-label="번호 입력 방식">
+            <button type="button" role="tab" data-renumber-tab="range" aria-selected="true">연속 범위</button>
+            <button type="button" role="tab" data-renumber-tab="set" aria-selected="false">임의 집합</button>
+          </div>
+          <div data-renumber-panel="range">
+            <div class="form-grid three-fields">
+              <div class="field"><label for="source-start">현재 시작 번호</label><input class="input" id="source-start" type="number" value="1024"></div>
+              <div class="field"><label for="source-end">현재 끝 번호</label><input class="input" id="source-end" type="number" value="1026"></div>
+              <div class="field"><label for="target-start">새 시작 번호</label><input class="input" id="target-start" type="number" value="1204"></div>
+            </div>
+            <p class="help">1024~1026을 같은 순서로 1204~1206에 연결합니다.</p>
+          </div>
+          <div data-renumber-panel="set" hidden>
+            <div class="mapping-input-grid">
+              <div class="field"><label for="mapping-paste">번호 쌍 붙여넣기</label><textarea class="textarea code-editor" id="mapping-paste">1024,1204
+1040,1210
+1099,1300</textarea></div>
+              <div class="panel soft mapping-format"><strong>입력 형식</strong><p>한 줄에 <code>현재 번호,새 번호</code>를 입력합니다. 쉼표와 탭을 모두 인식하며 중복 번호는 검사에서 차단합니다.</p><button class="button" type="button" data-toast="붙여넣은 번호 쌍 3개를 분석했습니다.">번호 쌍 분석</button></div>
+            </div>
+          </div>
+          <div class="table-wrap mapping-preview"><table><thead><tr><th>순서</th><th>현재 번호</th><th>새 번호</th><th>제목</th><th>검사</th></tr></thead><tbody>
+            <tr><td>1</td><td><code>1024</code></td><td><code>1204</code></td><td>구간 합 구하기</td><td><span class="badge good">가능</span></td></tr>
+            <tr><td>2</td><td><code>1025</code></td><td><code>1205</code></td><td>최단 경로</td><td><span class="badge good">가능</span></td></tr>
+            <tr><td>3</td><td><code>1026</code></td><td><code>1206</code></td><td>문자열 압축</td><td><span class="badge good">가능</span></td></tr>
+          </tbody></table></div>
+          <div class="section-actions"><button class="button" type="button" data-toast="교환·순환 번호를 포함해 충돌을 다시 검사했습니다."><svg><use href="#i-refresh"/></svg>영향 다시 검사</button></div>
+        </section>
+        <div class="preflight-grid">
+          <div class="notice"><svg><use href="#i-check"/></svg><div><strong>번호 매핑 정상</strong><br>원본 3개가 모두 존재하고 외부 대상 번호와 충돌하지 않습니다.</div></div>
+          <div class="notice"><svg><use href="#i-check"/></svg><div><strong>실행 가능</strong><br>진행 중 채점 0건, 충돌 작업 0건, 파일 경로 3개를 이동할 수 있습니다.</div></div>
+        </div>
+        <section class="section">
+          <div class="section-heading"><div><h2>전체 변경 영향</h2><p>직접 번호를 저장하는 원본만 바꾸고, 파생 화면은 캐시를 비운 뒤 새 번호로 다시 조회합니다.</p></div><span class="badge risk">고위험 작업</span></div>
+          <div class="table-wrap"><table><thead><tr><th>저장소</th><th>대상</th><th>예상 변경</th><th>복구 기준</th></tr></thead><tbody>
+            <tr><td>JudgeDb</td><td><code>problem</code>·<code>solution</code>·<code>contest_problem</code>·등록된 직접 참조</td><td>문제 3 · 제출 2,914 · 대회 연결 7</td><td>행 수·결과·대회 순서 불변</td></tr>
+            <tr><td>PlatformDb</td><td>수업 연결 1개 + Problems 직접 참조 8개</td><td>관련 행 46건</td><td>테이블별 원본 키·행 수 일치</td></tr>
+            <tr><td>추천 연결</td><td><code>problem_metadata.recommendation_links</code> 내부 문제 번호</td><td>추천 8건</td><td>JSON Schema·연결 대상 검증</td></tr>
+            <tr><td>게시판</td><td><code>context_type=problem</code>인 WordPress 글 메타</td><td>질문 글 11건</td><td>문맥 종류·글 수 불변</td></tr>
+            <tr><td>설정</td><td>문제별 제출 방식의 타입이 있는 키</td><td>설정 3건</td><td>값·버전 불변</td></tr>
+            <tr><td>파일</td><td><code>/home/judge/data/{problem_id}</code></td><td>폴더 3 · 파일 34 · 9.6MB</td><td>상대 경로·크기·해시 일치</td></tr>
+            <tr><td>진행 작업</td><td>채점 대기·실행과 문제 대상 Jobs</td><td>0건 · 실행 중 변경 없음</td><td>새 접수 차단·기존 작업 소진</td></tr>
+            <tr><td>파생 캐시</td><td>문제·수업·대회·제출·추천 조회 캐시</td><td>관련 키 무효화</td><td>새 번호 조회·이전 번호 미조회</td></tr>
+          </tbody></table></div>
+          <div class="notice warning" style="margin-top:16px"><svg><use href="#i-alert"/></svg><span>교환·순환 매핑은 임시 번호를 거치는 2단계 전환으로 처리합니다. 실행 중에는 대상 문제의 새 제출·편집을 잠그고, 완료된 감사 이력과 <code>solution_id</code> 기반 소스·컴파일·런타임 정보는 다시 쓰지 않습니다.</span></div>
+          <label class="check-row renumber-confirm"><input type="checkbox">영향 8개 저장소와 문제 3개의 번호 매핑을 확인했습니다.</label>
+          <div class="section-actions" style="justify-content:flex-end"><button class="button primary" type="button" data-toast="문제 3개의 일괄 번호 변경 작업을 등록했습니다."><svg><use href="#i-arrow-right"/></svg>일괄 작업 등록</button></div>
+        </section>
+      </section>
+
+      <section class="screen" data-screen="admin-xml" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="admin-problems">문제</button><span>/</span><span>XML</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">전역 관리자 전용</p><h1>문제 XML</h1><p>문제와 테스트데이터를 검증 가능한 범위로 가져오거나 내보냅니다.</p></div>
+        </header>
+        <div class="equal-columns">
+          <section class="panel">
+            <div class="card-top"><div><h2>XML 가져오기</h2><p>파일을 분석한 뒤 적용할 항목만 선택합니다.</p></div><svg><use href="#i-upload"/></svg></div>
+            <div class="field"><label for="xml-file">XML 파일</label><input class="input" id="xml-file" type="text" value="algorithm-set.xml" readonly></div>
+            <div class="field"><label for="xml-fallback-topic">메타데이터가 없을 때 사용할 주제(선택)</label><select class="select" id="xml-fallback-topic"><option selected>주제 지정 안 함</option><option>자료구조 &gt; 배열</option><option>알고리즘 &gt; 구현</option></select><p class="help">정확한 주제가 없으면 미지정 상태로 가져옵니다.</p></div>
+            <div class="summary-line" style="margin-top:14px"><span>예상 문제</span><strong>12개</strong></div>
+            <div class="summary-line"><span>테스트 파일</span><strong>84개 · 18.2MB</strong></div>
+            <button class="button primary" style="width:100%;margin-top:14px" type="button" data-toast="XML 구조와 충돌을 검사합니다."><svg><use href="#i-check"/></svg>분석 및 미리보기</button>
+          </section>
+          <section class="panel">
+            <div class="card-top"><div><h2>XML 내보내기</h2><p>권한 있는 문제만 선택해 파일로 만듭니다.</p></div><svg><use href="#i-download"/></svg></div>
+            <div class="field"><label for="export-range">내보낼 범위</label><select class="select" id="export-range"><option>선택한 문제 3개</option><option>현재 검색 결과 18개</option><option>내 담당 문제 42개</option></select></div>
+            <label class="check-row" style="margin-top:14px"><input type="checkbox" checked>테스트데이터 포함</label>
+            <label class="check-row" style="margin-top:8px"><input type="checkbox" checked>메타데이터 포함</label>
+            <button class="button primary" style="width:100%;margin-top:18px" type="button" data-toast="내보내기 범위와 크기를 검사했습니다."><svg><use href="#i-download"/></svg>내보내기 준비</button>
+          </section>
+        </div>
+        <div class="notice warning" style="margin-top:20px"><svg><use href="#i-alert"/></svg><span>번호 충돌, 허용되지 않은 파일명, 크기 제한 위반 항목은 적용하지 않고 항목별 사유를 표시합니다.</span></div>
+      </section>
+
+      <section class="screen" data-screen="admin-topics" hidden>
+        <div class="breadcrumb"><button class="button ghost" type="button" data-open-screen="admin-problems">문제</button><span>/</span><span>주제 관리</span></div>
+        <header class="page-heading">
+          <div class="page-heading-main"><p class="eyebrow">최고 관리자 전용</p><h1>문제 주제 관리</h1><p>넓은 분야 아래에 문제에 지정할 세부 주제를 구성합니다.</p></div>
+          <div class="heading-actions"><button class="button" type="button" data-toast="새 분야 입력 화면을 엽니다."><svg><use href="#i-plus"/></svg>분야 추가</button><span class="badge danger">위임 불가</span></div>
+        </header>
+        <p class="route-caption">/oj-console/problems/topics</p>
+        <div class="topic-level-guide">
+          <div><span class="topic-level-number">1</span><div><strong>분야</strong><p>자료구조·알고리즘처럼 세부 주제를 묶습니다. 문제에는 직접 저장하지 않습니다.</p></div></div>
+          <svg><use href="#i-arrow-right"/></svg>
+          <div><span class="topic-level-number">2</span><div><strong>세부 주제</strong><p>배열·누적 합처럼 문제에 실제로 지정하고 검색·AI에 사용하는 값입니다.</p></div></div>
+        </div>
+        <div class="notice warning"><svg><use href="#i-alert"/></svg><span>일반 문제 관리자와 문제 담당자는 기존 세부 주제만 선택할 수 있습니다. 분야와 세부 주제의 추가는 최고 관리자만 할 수 있습니다.</span></div>
+        <div class="topic-admin-layout">
+          <div>
+            <div class="filter-bar compact">
+              <div class="field"><label for="topic-search">주제 검색</label><div class="input-wrap"><svg><use href="#i-search"/></svg><input class="input" id="topic-search" type="search" placeholder="키·이름·별칭"></div></div>
+              <div class="field"><label for="topic-parent-filter">분야</label><select class="select" id="topic-parent-filter"><option>전체 분야</option><option>자료구조</option><option>알고리즘</option><option>그래프</option><option>수학</option></select></div>
+              <div class="filter-actions"><button class="button primary" type="button">조회</button></div>
+            </div>
+            <div class="topic-count-strip"><div><span>분야</span><strong>4개</strong></div><div><span>활성 세부 주제</span><strong data-topic-count>32개</strong></div><div><span>주제 지정 문제</span><strong>148개</strong></div></div>
+            <div class="topic-tree" data-topic-tree>
+              <section class="topic-tree-group" data-topic-group-name="자료구조">
+                <header><div class="topic-tree-title"><span class="topic-level-number">1</span><div><strong>자료구조</strong><small>data-structure · 세부 주제 8개</small></div></div><span class="badge info">분야</span></header>
+                <div class="topic-tree-children" data-topic-children>
+                  <article class="topic-tree-item" data-topic-row="array"><span class="topic-branch" aria-hidden="true"></span><div><strong>배열</strong><small><span class="topic-key">array</span> · AI 별칭: 리스트, 배열 처리</small></div><span>84문제</span><span class="badge good">활성</span></article>
+                  <article class="topic-tree-item" data-topic-row="stack"><span class="topic-branch" aria-hidden="true"></span><div><strong>스택</strong><small><span class="topic-key">stack</span> · AI 별칭: LIFO</small></div><span>31문제</span><span class="badge good">활성</span></article>
+                  <article class="topic-tree-item" data-topic-row="queue"><span class="topic-branch" aria-hidden="true"></span><div><strong>큐</strong><small><span class="topic-key">queue</span> · AI 별칭: FIFO</small></div><span>26문제</span><span class="badge good">활성</span></article>
+                </div>
+              </section>
+              <section class="topic-tree-group" data-topic-group-name="알고리즘">
+                <header><div class="topic-tree-title"><span class="topic-level-number">1</span><div><strong>알고리즘</strong><small>algorithm · 세부 주제 12개</small></div></div><span class="badge info">분야</span></header>
+                <div class="topic-tree-children" data-topic-children>
+                  <article class="topic-tree-item" data-topic-row="prefix-sum"><span class="topic-branch" aria-hidden="true"></span><div><strong>누적 합</strong><small><span class="topic-key">prefix-sum</span> · AI 별칭: 구간 합, prefix sum</small></div><span>18문제</span><span class="badge good">활성</span></article>
+                  <article class="topic-tree-item" data-topic-row="two-pointers"><span class="topic-branch" aria-hidden="true"></span><div><strong>투 포인터</strong><small><span class="topic-key">two-pointers</span> · AI 별칭: 양끝 탐색</small></div><span>21문제</span><span class="badge good">활성</span></article>
+                  <article class="topic-tree-item" data-topic-row="dynamic-programming"><span class="topic-branch" aria-hidden="true"></span><div><strong>동적 계획법</strong><small><span class="topic-key">dynamic-programming</span> · AI 별칭: DP, 메모이제이션</small></div><span>46문제</span><span class="badge good">활성</span></article>
+                </div>
+              </section>
+              <section class="topic-tree-group" data-topic-group-name="그래프">
+                <header><div class="topic-tree-title"><span class="topic-level-number">1</span><div><strong>그래프</strong><small>graph · 세부 주제 6개</small></div></div><span class="badge info">분야</span></header>
+                <div class="topic-tree-children" data-topic-children>
+                  <article class="topic-tree-item" data-topic-row="graph-traversal"><span class="topic-branch" aria-hidden="true"></span><div><strong>그래프 탐색</strong><small><span class="topic-key">graph-traversal</span> · AI 별칭: DFS, BFS</small></div><span>37문제</span><span class="badge good">활성</span></article>
+                  <article class="topic-tree-item" data-topic-row="shortest-path"><span class="topic-branch" aria-hidden="true"></span><div><strong>최단 경로</strong><small><span class="topic-key">shortest-path</span> · AI 별칭: 다익스트라</small></div><span>24문제</span><span class="badge good">활성</span></article>
+                </div>
+              </section>
+              <section class="topic-tree-group" data-topic-group-name="수학">
+                <header><div class="topic-tree-title"><span class="topic-level-number">1</span><div><strong>수학</strong><small>mathematics · 세부 주제 6개</small></div></div><span class="badge info">분야</span></header>
+                <div class="topic-tree-children" data-topic-children>
+                  <article class="topic-tree-item" data-topic-row="number-theory"><span class="topic-branch" aria-hidden="true"></span><div><strong>정수론</strong><small><span class="topic-key">number-theory</span> · AI 별칭: 소수, 약수</small></div><span>29문제</span><span class="badge good">활성</span></article>
+                  <article class="topic-tree-item" data-topic-row="combinatorics"><span class="topic-branch" aria-hidden="true"></span><div><strong>조합론</strong><small><span class="topic-key">combinatorics</span> · AI 별칭: 경우의 수, 조합</small></div><span>17문제</span><span class="badge good">활성</span></article>
+                </div>
+              </section>
+            </div>
+          </div>
+          <aside class="panel topic-create-panel">
+            <div class="section-heading"><div><p class="eyebrow">2단계</p><h2>새 세부 주제</h2><p>먼저 소속 분야를 선택합니다.</p></div></div>
+            <div class="field"><label for="topic-parent">분야</label><select class="select" id="topic-parent" data-topic-parent><option>자료구조</option><option selected>알고리즘</option><option>그래프</option><option>수학</option></select></div>
+            <div class="field"><label for="topic-key">영문 세부 주제 키</label><input class="input" id="topic-key" type="text" data-topic-key placeholder="예: binary-search"></div>
+            <div class="field"><label for="topic-name">세부 주제 이름</label><input class="input" id="topic-name" type="text" data-topic-name placeholder="예: 이분 탐색"></div>
+            <div class="field"><label for="topic-aliases">AI 입력 별칭</label><input class="input" id="topic-aliases" type="text" data-topic-aliases placeholder="쉼표로 구분"></div>
+            <div class="topic-save-preview"><span>문제 선택 화면 표시</span><strong data-topic-preview>알고리즘 &gt; 이분 탐색</strong><small>문제에는 세부 주제 키 <code>binary-search</code>만 저장</small></div>
+            <div class="notice" style="margin-top:14px"><svg><use href="#i-alert"/></svg><span>세 번째 단계는 만들 수 없습니다. 추가하면 사전 버전 해시가 갱신되며 기존 문제의 주제는 자동으로 바뀌지 않습니다.</span></div>
+            <button class="button primary" style="width:100%;margin-top:14px" type="button" data-topic-create><svg><use href="#i-plus"/></svg>세부 주제 추가</button>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/oj-code-completion-prototype.js"></script>
+</body>
+</html>

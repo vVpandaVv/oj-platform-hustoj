@@ -1,0 +1,162 @@
+/*
+ * 집중도 평가 콘솔 화면. 버튼·표·입력·알림·배지는 OJ Platform 공용 부품(ojp-*)을 쓰고,
+ * 여기에는 배치와 타임라인 그래프 색만 둔다. 색은 --ojp-* 토큰만 쓰므로 어두운 화면도 따라간다.
+ */
+.ftk-console {
+    max-width: 960px;
+}
+
+.ftk-console .ftk-section {
+    margin-top: var(--ojp-space-6, 32px);
+}
+
+.ftk-console .ftk-section h2 {
+    margin: 0 0 var(--ojp-space-3, 12px);
+    font-size: var(--ojp-text-title3, 18px);
+}
+
+.ftk-console .ftk-messages:empty {
+    display: none;
+}
+
+.ftk-console .ftk-form {
+    max-width: 720px;
+}
+
+.ftk-console .ftk-weights {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--ojp-space-3, 12px);
+}
+
+.ftk-console .ftk-activity-window {
+    display: block;
+    color: var(--ojp-color-muted);
+    font-size: var(--ojp-text-footnote, 12px);
+}
+
+.ftk-console .ftk-activity-context {
+    display: block;
+    color: var(--ojp-color-ink-2);
+    font-size: var(--ojp-text-footnote, 12px);
+}
+
+.ftk-console .ftk-schedule-filter {
+    max-width: 360px;
+    margin-bottom: var(--ojp-space-3, 12px);
+}
+
+.ftk-console .ftk-schedule-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--ojp-space-2, 8px);
+}
+
+.ftk-console .ftk-end-confirmation,
+.ftk-console .ftk-delete-confirmation {
+    white-space: normal;
+}
+
+.ftk-console .ftk-end-confirmation .ojp-button,
+.ftk-console .ftk-delete-confirmation .ojp-button {
+    margin-right: var(--ojp-space-2, 8px);
+}
+
+.ftk-console .ftk-delete-confirmation {
+    box-sizing: border-box;
+    max-width: calc(100vw - var(--ojp-space-6, 32px));
+    overflow-wrap: anywhere;
+}
+
+.ftk-console .ftk-row-actions {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.ftk-console .ftk-needs-review td {
+    background: var(--ojp-color-warning-bg);
+}
+
+.ftk-console .ftk-review-badge {
+    margin-left: var(--ojp-space-2, 8px);
+}
+
+/* 타임라인 그래프: 상태 토큰으로 칠해 밝은 화면과 어두운 화면 모두에서 읽힌다. */
+.ftk-console .ftk-timeline-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--ojp-color-line);
+    border-radius: var(--ojp-radius-sm, 8px);
+    background: var(--ojp-color-surface);
+}
+
+.ftk-console .ftk-tl-away {
+    fill: var(--ojp-color-danger);
+    fill-opacity: 0.3;
+}
+
+.ftk-console .ftk-tl-active {
+    fill: var(--ojp-color-success);
+}
+
+.ftk-console .ftk-tl-submit {
+    fill: var(--ojp-color-info);
+}
+
+.ftk-console .ftk-tl-run {
+    fill: var(--ojp-color-warning);
+}
+
+.ftk-console .ftk-tl-other {
+    fill: var(--ojp-color-muted);
+}
+
+.ftk-console .ftk-timeline-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ojp-space-4, 16px);
+    align-items: center;
+    margin: var(--ojp-space-3, 12px) 0 0;
+    color: var(--ojp-color-ink-2);
+    font-size: var(--ojp-text-footnote, 12px);
+}
+
+.ftk-console .ftk-legend-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: var(--ojp-space-1, 4px);
+    vertical-align: middle;
+}
+
+.ftk-console .ftk-legend-swatch--dot {
+    border-radius: 50%;
+}
+
+.ftk-console .ftk-legend-swatch--active {
+    background: var(--ojp-color-success);
+}
+
+.ftk-console .ftk-legend-swatch--away {
+    background: var(--ojp-color-danger);
+    opacity: 0.3;
+}
+
+.ftk-console .ftk-legend-swatch--submit {
+    background: var(--ojp-color-info);
+}
+
+.ftk-console .ftk-legend-swatch--run {
+    background: var(--ojp-color-warning);
+}
+
+@media (max-width: 640px) {
+    .ftk-console .ftk-weights {
+        grid-template-columns: 1fr;
+    }
+}
+.ftk-console [hidden] {
+    display: none !important;
+}

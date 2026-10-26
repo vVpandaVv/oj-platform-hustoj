@@ -1,0 +1,603 @@
+/*
+ * Teaching tools on the OJ Platform shared UI (D-010). The --htt-* names the
+ * tool stylesheets use are mapped onto the platform --ojp-* tokens here, on
+ * the addon containers only, so every colour follows the platform light and
+ * dark display modes. Fallback values only keep contrast on platforms that
+ * predate the tokens.
+ */
+[data-htt-host],
+[data-htt-join] {
+    --htt-bg: var(--ojp-color-surface, #ffffff);
+    --htt-fg: var(--ojp-color-ink, #1d1d1f);
+    --htt-muted: var(--ojp-color-muted, #6e6e73);
+    --htt-border: var(--ojp-color-line, #d2d2d7);
+    --htt-card-bg: var(--ojp-color-surface, #ffffff);
+    --htt-warning-bg: var(--ojp-color-warning-bg, #fff4e5);
+    --htt-warning-fg: var(--ojp-color-warning, #8f4a00);
+    --htt-info-bg: var(--ojp-color-info-bg, #e8f1fc);
+    --htt-info-fg: var(--ojp-color-info, #0066cc);
+    --htt-error-fg: var(--ojp-color-danger, #c4001a);
+    --htt-disabled-bg: var(--ojp-color-fill, #f2f2f4);
+    --htt-disabled-fg: var(--ojp-color-tertiary, #86868b);
+    --htt-accent: var(--ojp-color-primary, #087d78);
+    --htt-highlight-bg: var(--ojp-color-warning-bg, #fff4e5);
+    --htt-highlight-border: var(--ojp-color-warning, #8f4a00);
+    --htt-primary: var(--ojp-color-primary, #087d78);
+    --htt-primary-hover: var(--ojp-color-primary-hover, #066a66);
+    --htt-primary-fg: var(--ojp-color-on-accent, #ffffff);
+    --htt-primary-tint: var(--ojp-color-accent-bg, #e7f3f2);
+    --htt-success: var(--ojp-color-success, #1f7a37);
+    --htt-success-bg: var(--ojp-color-success-bg, #e8f5ec);
+    --htt-danger: var(--ojp-color-danger, #c4001a);
+    --htt-danger-tint: var(--ojp-color-danger-bg, #fdecee);
+    --htt-radius-sm: var(--ojp-radius-sm, 8px);
+    --htt-radius: var(--ojp-radius-md, 12px);
+    --htt-radius-lg: var(--ojp-radius-lg, 16px);
+    --htt-shadow: var(--ojp-shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+    --htt-shadow-lift: var(--ojp-shadow, 0 10px 28px rgba(0, 0, 0, 0.14));
+}
+
+[data-htt-host] {
+    color: var(--htt-fg);
+}
+
+.htt-realtime-versions {
+    display: grid;
+    grid-template-columns: minmax(150px, 1fr) minmax(0, 3fr);
+    gap: 10px 16px;
+}
+
+.htt-realtime-versions dt { font-weight: 600; }
+.htt-realtime-versions dd { margin: 0; overflow-wrap: anywhere; }
+
+@media (max-width: 640px) {
+    .htt-realtime-versions { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .htt-realtime-versions dt:not(:first-child) { margin-top: 8px; }
+}
+
+/* Platform parts such as ojp-status-badge set display themselves; keep the
+   hidden attribute the tool scripts toggle in charge. */
+[data-htt-host] [hidden],
+[data-htt-join] [hidden] {
+    display: none;
+}
+
+.htt-icon {
+    display: block;
+    flex-shrink: 0;
+}
+
+/*
+ * Buttons the tool scripts build without a platform class (seat cells,
+ * ladder columns, whiteboard tools) get a quiet token-based look. Buttons
+ * with ojp-button use the platform styles untouched. :where() keeps this at
+ * class weight so the tool stylesheets (.htt-seat and so on) still win.
+ */
+[data-htt-host] :where(button:not(.ojp-button)) {
+    background: var(--htt-card-bg);
+    color: var(--htt-fg);
+    border: 1px solid var(--htt-border);
+    border-radius: var(--htt-radius-sm);
+    padding: 8px 14px;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color var(--ojp-duration, 0.15s) var(--ojp-ease, ease), background var(--ojp-duration, 0.15s) var(--ojp-ease, ease);
+}
+
+[data-htt-host] :where(button:not(.ojp-button)):hover {
+    border-color: var(--htt-accent);
+}
+
+[data-htt-host] button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* The one action that moves the teacher forward (시작, 실행, 만들기). */
+[data-htt-host] .htt-primary-action {
+    margin-top: var(--ojp-space-2, 8px);
+}
+
+[data-htt-host] .htt-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    padding-inline: 10px;
+}
+
+[data-htt-host] .htt-icon-button--danger {
+    color: var(--htt-danger);
+}
+
+[data-htt-host] input[type="text"],
+[data-htt-host] input[type="number"],
+[data-htt-host] select,
+[data-htt-host] textarea {
+    background: var(--htt-card-bg);
+    color: var(--htt-fg);
+    border: 1px solid var(--ojp-color-line-strong, #b8b8bf);
+    border-radius: var(--htt-radius-sm);
+    padding: 7px 10px;
+    font: inherit;
+}
+
+[data-htt-host] input[type="text"]:focus,
+[data-htt-host] input[type="number"]:focus,
+[data-htt-host] select:focus,
+[data-htt-host] textarea:focus {
+    border-color: var(--htt-primary);
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--htt-primary-tint);
+}
+
+[data-htt-host] fieldset {
+    border: 1px solid var(--htt-border);
+    border-radius: var(--htt-radius-sm);
+    padding: 8px 12px;
+}
+
+[data-htt-host] legend {
+    padding: 0 6px;
+    color: var(--htt-muted);
+}
+
+/*
+ * Collapsed by default (no [open] in the markup) so fields that can name
+ * specific students — e.g. seating's "떨어뜨려 앉히기" pairs — stay off a
+ * projected screen while the teacher is still typing, not just after.
+ */
+[data-htt-host] details.htt-collapsible {
+    border: 1px solid var(--htt-border);
+    border-radius: var(--htt-radius-sm);
+    padding: 8px 12px;
+    margin-bottom: 12px;
+}
+
+[data-htt-host] details.htt-collapsible summary {
+    cursor: pointer;
+    color: var(--htt-muted);
+    font-weight: 600;
+}
+
+[data-htt-host] details.htt-collapsible[open] summary {
+    margin-bottom: 8px;
+}
+
+/* Tool page header: ojp-page-header with a little room below it. */
+[data-htt-host] .htt-page-header {
+    margin-bottom: var(--ojp-space-5, 24px);
+}
+
+/*
+ * Numbered steps break a long setup form into a scannable sequence
+ * ("1. 명단 준비, 2. 진행 방식, 3. 시작") instead of one undifferentiated
+ * wall of labels and inputs. Each step is a grouped card.
+ */
+.htt-step {
+    display: flex;
+    gap: var(--ojp-space-3, 12px);
+    margin-bottom: var(--ojp-space-3, 12px);
+    padding: var(--ojp-space-4, 16px);
+    border-radius: var(--htt-radius-lg);
+    background: var(--ojp-color-subtle, #f5f5f7);
+}
+
+.htt-step-badge {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--ojp-radius-pill, 999px);
+    background: var(--htt-primary);
+    color: var(--htt-primary-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--ojp-text-subhead, 13px);
+    font-variant-numeric: tabular-nums;
+}
+
+.htt-step-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.htt-step-title {
+    font-weight: 650;
+    margin: 2px 0 10px;
+    font-size: var(--ojp-text-body, 15px);
+}
+
+/*
+ * Each "진행 방식" option is a clickable card with its own icon; :has()
+ * highlights whichever card's radio is checked (no JS needed).
+ */
+.htt-mode-toggle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* [data-htt-host] outranks the per-tool ".htt-*-setup label { display: block }". */
+[data-htt-host] .htt-mode-toggle label {
+    flex: 1;
+    margin: 0;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--htt-border);
+    border-radius: var(--htt-radius);
+    padding: 12px 14px;
+    cursor: pointer;
+    background: var(--htt-card-bg);
+    transition: border-color var(--ojp-duration, 0.15s) var(--ojp-ease, ease), background var(--ojp-duration, 0.15s) var(--ojp-ease, ease);
+}
+
+[data-htt-host] .htt-mode-toggle label:has(input:checked) {
+    border-color: var(--htt-primary);
+    background: var(--htt-primary-tint);
+}
+
+[data-htt-host] .htt-mode-toggle label:has(input:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.htt-mode-toggle input[type="radio"] {
+    flex-shrink: 0;
+    margin: 0;
+    accent-color: var(--htt-primary);
+}
+
+.htt-mode-toggle-icon {
+    flex-shrink: 0;
+    color: var(--htt-primary);
+}
+
+.htt-mode-toggle-text strong {
+    display: block;
+    font-size: var(--ojp-text-callout, 14px);
+}
+
+.htt-mode-toggle-text span {
+    display: block;
+    font-size: var(--ojp-text-footnote, 12px);
+    color: var(--htt-muted);
+}
+
+.htt-progress {
+    height: 10px;
+    border-radius: var(--ojp-radius-pill, 999px);
+    background: var(--htt-disabled-bg);
+    overflow: hidden;
+    margin: 8px 0;
+}
+
+.htt-progress-fill {
+    height: 100%;
+    background: var(--htt-primary);
+    border-radius: var(--ojp-radius-pill, 999px);
+    transition: width 0.3s ease;
+}
+
+.htt-hint {
+    font-size: var(--ojp-text-footnote, 12px);
+    color: var(--htt-muted);
+    margin: 4px 0 0;
+}
+
+/*
+ * Usage guide sheet. It is appended to <body>, outside the tool container,
+ * so it uses the --ojp-* tokens directly. On OJ Platform 2.1+ it also picks
+ * up the platform ojp-sheet look; these rules only add what a long guide
+ * needs (width, scrolling body, close button).
+ */
+.htt-usage-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: var(--ojp-color-scrim, rgba(0, 0, 0, 0.4));
+}
+
+/* The UA [hidden] rule loses to the display set above, so restate it. */
+.htt-usage-scrim[hidden] {
+    display: none;
+}
+
+.htt-usage-sheet {
+    width: min(520px, 100%);
+    max-height: min(80vh, 640px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ojp-space-3, 12px);
+    padding: 22px;
+    border-radius: var(--ojp-radius-xl, 22px);
+    background: var(--ojp-color-elevated, #ffffff);
+    box-shadow: var(--ojp-shadow-3, 0 20px 50px rgba(0, 0, 0, 0.25));
+    color: var(--ojp-color-ink, #1d1d1f);
+    font-family: var(--ojp-font-sans, inherit);
+}
+
+.htt-usage-sheet h2 {
+    margin: 0;
+    font-size: var(--ojp-text-title3, 18px);
+    font-weight: 650;
+}
+
+.htt-usage-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    color: var(--ojp-color-ink-2, #424245);
+    font-size: var(--ojp-text-callout, 14px);
+    line-height: 1.6;
+}
+
+.htt-usage-body ul {
+    margin: 0;
+    padding-left: 1.2em;
+}
+
+.htt-usage-body li {
+    margin-bottom: 6px;
+}
+
+.htt-usage-sheet .ojp-sheet__actions {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Hub: app tiles, one rounded coloured square per tool. */
+.htt-app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--ojp-space-4, 16px);
+    margin: var(--ojp-space-5, 24px) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.htt-app-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    padding: var(--ojp-space-4, 16px) var(--ojp-space-3, 12px);
+    border-radius: var(--htt-radius-lg);
+    color: inherit;
+    text-align: center;
+    text-decoration: none;
+    transition: background var(--ojp-duration, 0.15s) var(--ojp-ease, ease);
+}
+
+a.htt-app-tile:hover {
+    background: var(--ojp-color-fill, #f2f2f4);
+}
+
+a.htt-app-tile:focus-visible {
+    outline: 3px solid var(--ojp-color-focus, #0071e3);
+    outline-offset: 2px;
+}
+
+.htt-app-tile__icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    color: var(--ojp-color-on-accent, #ffffff);
+    box-shadow: var(--htt-shadow);
+    transition: transform var(--ojp-duration, 0.15s) var(--ojp-ease-spring, ease);
+}
+
+a.htt-app-tile:hover .htt-app-tile__icon {
+    transform: scale(1.05);
+}
+
+.htt-app-tile.is-closed .htt-app-tile__icon {
+    opacity: 0.45;
+}
+
+/* The fixed tile colour set, defined once and taken from the status tokens. */
+.htt-tone--red { background: var(--ojp-color-danger, #c4001a); }
+.htt-tone--orange { background: var(--ojp-color-caution, #a2400c); }
+.htt-tone--amber { background: var(--ojp-color-warning, #8f4a00); }
+.htt-tone--green { background: var(--ojp-color-success, #1f7a37); }
+.htt-tone--teal { background: var(--ojp-color-primary, #087d78); }
+.htt-tone--blue { background: var(--ojp-color-info, #0066cc); }
+.htt-tone--graphite { background: rgb(66 66 69); }
+
+.htt-app-tile__name {
+    font-size: var(--ojp-text-callout, 14px);
+    font-weight: 650;
+}
+
+.htt-app-tile__description {
+    font-size: var(--ojp-text-footnote, 12px);
+    color: var(--ojp-color-muted, #6e6e73);
+    line-height: 1.4;
+}
+
+/* Timer */
+.htt-timer-host {
+    max-width: 680px;
+}
+
+.htt-timer-setup label {
+    display: block;
+    margin-bottom: 12px;
+}
+
+[data-htt-host] .htt-timer-sound-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.htt-timer-clock {
+    font-size: 5rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 24px 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.htt-timer-clock.is-ended {
+    color: var(--htt-error-fg);
+}
+
+.htt-timer-ended {
+    color: var(--htt-error-fg);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: -8px;
+    margin-bottom: 16px;
+    animation: htt-timer-blink 1s step-start infinite;
+}
+
+@keyframes htt-timer-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+.htt-timer-code {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.htt-timer-code p {
+    margin: 0;
+    color: var(--htt-muted);
+    font-size: var(--ojp-text-subhead, 13px);
+}
+
+.htt-timer-code strong {
+    display: block;
+    font-size: 2rem;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.htt-join-qr {
+    width: min(176px, 100%);
+    margin: 10px auto 0;
+    padding: 6px;
+    border: 1px solid var(--htt-border);
+    border-radius: 6px;
+    background: var(--ojp-color-surface, #fff);
+    line-height: 0;
+}
+
+.htt-join-qr canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.htt-timer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.htt-join-link {
+    margin-top: 8px;
+}
+
+.htt-realtime-settings {
+    max-width: 840px;
+}
+
+.htt-realtime-settings .htt-section {
+    margin-top: var(--ojp-space-6, 24px);
+    padding-top: var(--ojp-space-5, 20px);
+    border-top: 1px solid var(--ojp-color-separator, #d2d2d7);
+}
+
+.htt-realtime-settings .htt-section h2 {
+    margin: 0 0 var(--ojp-space-3, 12px);
+    font-size: var(--ojp-text-title-3, 20px);
+}
+
+.htt-realtime-settings .htt-setup-command {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    overflow-wrap: anywhere;
+}
+
+.htt-realtime-settings [data-htt-realtime-result] {
+    margin-top: var(--ojp-space-3, 12px);
+}
+
+/*
+ * Platform 2.2.0 stacks ojp-page-header below 783px but keeps the DS-10
+ * align-items: flex-end, which pushes the title block to the right edge on
+ * phones. Keep it left-aligned inside this addon until the platform fixes it.
+ */
+@media (max-width: 782px) {
+    [data-htt-host] .ojp-page-header,
+    [data-htt-join] .ojp-page-header {
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 600px) {
+    .htt-step {
+        padding: var(--ojp-space-3, 12px);
+    }
+
+    [data-htt-host] .htt-mode-toggle label {
+        min-width: 100%;
+    }
+
+    .htt-timer-clock {
+        font-size: 3.5rem;
+    }
+}
+[data-htt-host] .htt-audience {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--ojp-color-line);
+}
+
+[data-htt-host] .htt-audience label {
+    display: grid;
+    gap: 4px;
+    min-width: 180px;
+    max-width: 100%;
+}
+
+[data-htt-host] .htt-audience [hidden] {
+    display: none;
+}
+
+[data-htt-host] .htt-auto-open-choice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+[data-htt-host] .htt-auto-open-choice input {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+}
+
+[data-htt-host][data-config] [hidden] {
+    display: none;
+}

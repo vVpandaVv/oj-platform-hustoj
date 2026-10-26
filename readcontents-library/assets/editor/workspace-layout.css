@@ -1,0 +1,14 @@
+/* Scope console integration to the editor; library/outline pages keep page scrolling. */
+#contents-editor-admin-root.rcis-editor-root {
+  --rcis-workspace-top: var(--ojp-header-height, var(--wp-admin--admin-bar--height, 0px));
+  min-height: 0;
+}
+
+#contents-editor-admin-root [data-contents-workspace]:not([data-contents-workspace="lesson"]) > header {
+  top: var(--rcis-workspace-top);
+}
+
+#contents-editor-admin-root [data-contents-editor-priority-toolbar] > div:first-child {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}

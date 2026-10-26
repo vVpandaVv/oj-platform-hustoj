@@ -1,0 +1,294 @@
+.edu-games-block-game-hub {
+    --shell-width: 1120px;
+    --shell-padding-x: 1rem;
+    --shell-padding-y: 0;
+    width: min(1120px, calc(100% - 24px));
+    max-width: 1120px;
+    margin: 0 auto;
+    color: #172033;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.edu-games-block-game-hub.is-game-page {
+    width: min(1120px, calc(100% - 24px));
+    max-width: 1120px;
+}
+
+.eg-hub-header {
+    margin-bottom: 18px;
+}
+
+.eg-hub-header p {
+    margin: 0 0 6px;
+    color: #1d6fd8;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.eg-hub-header h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    line-height: 1.05;
+}
+
+.eg-hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.eg-hub-card {
+    display: grid;
+    gap: 16px;
+    align-content: space-between;
+    min-height: 230px;
+    padding: 16px;
+    border: 1px solid #d7dee9;
+    border-radius: 8px;
+    background: #ffffff;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+a.eg-hub-card {
+    cursor: pointer;
+}
+
+a.eg-hub-card:hover,
+a.eg-hub-card:focus-visible {
+    border-color: #78aeea;
+    box-shadow: 0 10px 24px rgba(23, 32, 51, 0.12);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+.eg-hub-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.eg-hub-category {
+    display: inline-flex;
+    color: #e65d4f;
+    font-size: 0.74rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.eg-hub-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 0 9px;
+    border-radius: 6px;
+    background: #e9f7ee;
+    color: #207a3f;
+    font-size: 0.75rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.eg-hub-card.is-planned {
+    background: #f8fafc;
+}
+
+.eg-hub-card.is-closed {
+    background: #fbfcff;
+}
+
+.eg-hub-card.is-planned .eg-hub-status {
+    background: #eef2f7;
+    color: #69758a;
+}
+
+.eg-hub-card.is-closed .eg-hub-status {
+    background: #fff0ee;
+    color: #b7382d;
+}
+
+.eg-hub-card h3 {
+    margin: 0 0 8px;
+    font-size: 1.24rem;
+}
+
+.eg-hub-card p {
+    margin: 0;
+    color: #69758a;
+    line-height: 1.5;
+}
+
+.eg-hub-card dl {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.eg-hub-card dl div {
+    display: grid;
+    gap: 4px;
+    padding-top: 8px;
+    border-top: 1px solid #eef2f7;
+}
+
+.eg-hub-card dt,
+.eg-hub-card dd {
+    margin: 0;
+}
+
+.eg-hub-card dt {
+    color: #69758a;
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+
+.eg-hub-card dd {
+    font-family: Consolas, "SFMono-Regular", monospace;
+    font-size: 0.9rem;
+    overflow-wrap: anywhere;
+}
+
+.eg-hub-open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 12px;
+    border-radius: 6px;
+    background: #172033;
+    color: #ffffff;
+    font-weight: 900;
+}
+
+.eg-hub-card.is-planned .eg-hub-open {
+    background: #eef2f7;
+    color: #69758a;
+}
+
+.eg-hub-card.is-closed .eg-hub-open {
+    background: #fff0ee;
+    color: #b7382d;
+}
+
+.eg-game-page-header {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.eg-game-back {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 34px;
+    align-items: center;
+    padding: 0 10px;
+    border: 1px solid #d7dee9;
+    border-radius: 6px;
+    color: #1d6fd8;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.eg-game-back:hover,
+.eg-game-back:focus-visible {
+    border-color: #1d6fd8;
+    outline: none;
+}
+
+.eg-game-page-header h2 {
+    margin: 0;
+    font-size: clamp(1.7rem, 2.6vw, 2.5rem);
+    line-height: 1.08;
+}
+
+.eg-game-page-header p {
+    max-width: 720px;
+    margin: 0;
+    color: #69758a;
+    line-height: 1.5;
+}
+
+.eg-game-page-stage {
+    margin-top: 12px;
+    width: 100%;
+    --shell-width: 1120px;
+    --shell-padding-x: 0px;
+}
+
+.eg-game-page-stage > .wp-block-edu-games-ai-classifier-lab,
+.eg-game-page-stage > .ai-classifier-lab-block,
+.eg-game-page-stage > .wp-block-edu-games-binary-arcade,
+.eg-game-page-stage > .binary-arcade-block,
+.eg-game-page-stage > .wp-block-edu-games-character-code,
+.eg-game-page-stage > .character-code-block,
+.eg-game-page-stage > .wp-block-edu-games-data-extraction,
+.eg-game-page-stage > .data-extraction-block,
+.eg-game-page-stage > .wp-block-edu-games-data-visualization,
+.eg-game-page-stage > .data-visualization-block,
+.eg-game-page-stage > .wp-block-edu-games-data-structure-lab,
+.eg-game-page-stage > .data-structure-lab-block,
+.eg-game-page-stage > .wp-block-edu-games-device-matching,
+.eg-game-page-stage > .device-matching-block,
+.eg-game-page-stage > .wp-block-edu-games-keyword-rain,
+.eg-game-page-stage > .keyword-rain-block,
+.eg-game-page-stage > .wp-block-edu-games-missing-values,
+.eg-game-page-stage > .missing-values-block,
+.eg-game-page-stage > .wp-block-edu-games-outlier-detection,
+.eg-game-page-stage > .outlier-detection-block {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-binary-shell {
+    max-width: none;
+}
+
+.eg-game-page-stage .oj-code-shell {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-ai-shell {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-visual-shell {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-structure-shell {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-device-shell {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-rain-shell {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-missing-shell {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-outlier-shell {
+    width: 100%;
+}
+
+.eg-game-page-stage .oj-extract-shell {
+    width: 100%;
+}
+
+.eg-empty {
+    padding: 18px;
+    border: 1px solid #d7dee9;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #69758a;
+    font-weight: 800;
+}

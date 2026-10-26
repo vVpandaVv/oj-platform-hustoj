@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-12 사용자 수업 화면 시안 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/oj-ui-system.css">
+  <link rel="stylesheet" href="assets/ds12-prototype.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <svg class="icon-symbols" aria-hidden="true">
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h7v16H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM20 4h-7v16h7a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-learn" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  </svg>
+
+  <div class="prototype-bar">
+    <div class="prototype-inner">
+      <div class="prototype-title"><strong>DS-12 사용자 수업 시안</strong><span>수업의 네 직접 화면을 비교합니다.</span></div>
+      <div class="screen-switcher" role="tablist" aria-label="수업 화면 선택">
+        <button type="button" role="tab" data-screen-target="class-list" aria-selected="true">수업 목록</button>
+        <button type="button" role="tab" data-screen-target="class-detail" aria-selected="false">수업 상세</button>
+        <button type="button" role="tab" data-screen-target="class-submissions" aria-selected="false">내 제출</button>
+        <button type="button" role="tab" data-screen-target="class-progress" aria-selected="false">내 진도</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a class="brand" href="development-ds-12-learning-spaces.html"><span class="brand-mark">OJ</span><span>OJ Platform</span></a>
+      <nav class="primary-nav" aria-label="주 메뉴"><a href="#home">홈</a><a href="#problems">문제</a><a href="#submissions">제출</a><a href="#learning" aria-current="page">학습</a><a href="#community">커뮤니티</a></nav>
+      <a class="account-button header-utility" href="#profile" aria-label="내 정보" title="내 정보"><svg><use href="#i-user"/></svg></a>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="page" id="main">
+      <nav class="learning-nav" aria-label="학습 메뉴"><a href="development-ds-12-user-classes-ui.html" aria-current="page">수업</a><a href="development-ds-12-user-contests-ui.html">대회·평가</a><a href="development-ds-12-user-groups-ui.html">그룹</a></nav>
+
+      <section class="screen" data-screen="class-list">
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">학습 · 수업</p><h1>수업</h1><p>참여 중인 수업과 신청할 수 있는 수업을 확인합니다.</p></div></header>
+        <p class="route-caption">/classes</p>
+        <div class="filter-bar compact"><label class="field"><span>수업 검색</span><input type="search" value="" placeholder="수업 이름 또는 담당 강사"></label><label class="field"><span>상태</span><select><option>참여 중</option><option>신청 가능</option><option>종료</option></select></label><div class="filter-actions"><button class="button primary" type="button" data-toast="조건에 맞는 수업을 찾았습니다.">검색</button></div></div>
+        <section class="content-section"><div class="section-heading"><div><h2>참여 중인 수업</h2><p>현재 활성 참여 관계가 있는 수업입니다.</p></div><span class="badge info">2개</span></div>
+          <div class="space-list">
+            <div class="space-row"><div class="space-main"><strong>파이썬 알고리즘 기초</strong><span>이민준 강사 · 2026.07.01~08.28</span></div><div class="space-meta"><strong>진도 67%</strong><span>공개 문제 2 / 3 완료</span></div><span class="badge good">학습 중</span><button class="button primary" type="button" data-open-screen="class-detail">이어서 하기</button></div>
+            <div class="space-row"><div class="space-main"><strong>알고리즘 심화</strong><span>박서현 강사 · 월·목 운영</span></div><div class="space-meta"><strong>진도 25%</strong><span>2 / 8문제 완료</span></div><span class="badge">학습 중</span><button class="button" type="button" data-open-screen="class-detail">수업 보기</button></div>
+          </div>
+        </section>
+        <section class="content-section"><div class="section-heading"><div><h2>신청할 수 있는 수업</h2><p>공개 또는 비밀번호 방식의 수업만 표시합니다.</p></div></div>
+          <div class="space-list"><div class="space-row"><div class="space-main"><strong>자료구조 첫걸음</strong><span>최윤아 강사 · 신청 즉시 참여</span></div><div class="space-meta"><strong>공개 수업</strong><span>Blockly 표준</span></div><span class="badge info">신청 가능</span><button class="button" type="button" data-toast="참여 확인 화면을 엽니다.">참여 신청</button></div></div>
+        </section>
+      </section>
+
+      <section class="screen" data-screen="class-detail" hidden>
+        <div class="breadcrumb"><span>수업</span><span>/</span><span>파이썬 알고리즘 기초</span></div>
+        <header class="page-heading"><div class="page-heading-main"><p class="eyebrow">참여 중</p><h1>파이썬 알고리즘 기초</h1><p>기초 문법을 활용해 문제 해결 과정을 익힙니다.</p></div><div class="heading-actions"><button class="button" type="button" data-open-screen="class-progress">내 진도</button><button class="button" type="button" data-open-screen="class-submissions">내 제출</button></div></header>
+        <p class="route-caption">/classes/{class_id}</p>
+        <div class="context-strip"><div><h2>수업 정보</h2><p>담당 강사 이민준 · 2026.07.01~08.28 · Blockly 표준</p></div><div class="context-meta"><span class="badge good">참여 승인</span><button class="button ghost" type="button" data-toast="수업 나가기 확인 화면을 엽니다.">수업 나가기</button></div></div>
+        <div class="overview-grid"><div class="overview-item"><strong>전체 문제</strong><span>4개</span></div><div class="overview-item"><strong>완료</strong><span>3개</span></div><div class="overview-item"><strong>다음 공개</strong><span>7월 27일 09:00</span></div></div>
+        <section class="content-section"><div class="section-heading"><div><h2>수업 문제</h2><p>공개된 문제만 풀 수 있습니다.</p></div></div>
+          <div class="problem-list">
+            <div class="problem-row"><span class="problem-order">1</span><div class="problem-main"><strong>1001 · 두 수의 합</strong><span>입출력 · 난이도 1</span></div><span class="badge good">완료</span><button class="button" type="button">다시 풀기</button></div>
+            <div class="problem-row"><span class="problem-order">2</span><div class="problem-main"><strong>1014 · 조건에 맞는 수 찾기</strong><span>조건문 · 난이도 2</span></div><span class="badge good">완료</span><button class="button" type="button">다시 풀기</button></div>
+            <div class="problem-row"><span class="problem-order">3</span><div class="problem-main"><strong>1024 · 구간 합 구하기</strong><span>리스트 · 난이도 3</span></div><span class="badge wait">틀렸습니다</span><button class="button primary" type="button">이어서 풀기</button></div>
+            <div class="problem-row"><span class="problem-order">4</span><div class="problem-main"><strong>다음 문제</strong><span>7월 27일 09:00 공개</span></div><span class="badge">공개 예정</span><button class="button" type="button" disabled>대기</button></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="screen" data-screen="class-submissions" hidden>
+        <div class="breadcrumb"><span>수업</span><span>/</span><span>파이썬 알고리즘 기초</span><span>/</span><span>내 제출</span></div>
+        <header class="page-heading"><div class="page-heading-main"><h1>내 제출</h1><p>이 수업 문제에 제출한 본인의 결과만 표시합니다.</p></div><button class="button" type="button" data-open-screen="class-detail">수업으로</button></header>
+        <p class="route-caption">/classes/{class_id}/submissions</p>
+        <div class="filter-bar compact"><label class="field"><span>문제</span><select><option>전체 문제</option><option>1024 · 구간 합 구하기</option></select></label><label class="field"><span>결과</span><select><option>전체 결과</option><option>맞았습니다</option><option>틀렸습니다</option></select></label><div class="filter-actions"><button class="button primary" type="button">조회</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>문제</th><th>언어</th><th>결과</th><th>실행 시간</th><th>제출 시각</th><th></th></tr></thead><tbody>
+          <tr><td>1024 · 구간 합 구하기</td><td>Python 3</td><td><span class="badge wait">틀렸습니다</span></td><td>12ms</td><td>오늘 10:18</td><td><button class="button" type="button" data-toast="본인 제출 상세로 이동합니다.">상세</button></td></tr>
+          <tr><td>1014 · 조건에 맞는 수 찾기</td><td>Blockly</td><td><span class="badge good">맞았습니다</span></td><td>8ms</td><td>어제 15:42</td><td><button class="button" type="button">상세</button></td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="screen" data-screen="class-progress" hidden>
+        <div class="breadcrumb"><span>수업</span><span>/</span><span>파이썬 알고리즘 기초</span><span>/</span><span>내 진도</span></div>
+        <header class="page-heading"><div class="page-heading-main"><h1>내 진도와 수업 풀이 현황</h1><p>나의 문제별 상태와 공개된 수업 전체의 실시간 풀이 현황을 확인합니다.</p></div><button class="button" type="button" data-open-screen="class-detail">수업으로</button></header>
+        <p class="route-caption">/classes/{class_id}/progress</p>
+        <div class="metric-grid"><div class="metric"><span>전체 문제</span><strong>4</strong><small>공개 예정 포함</small></div><div class="metric"><span>해결</span><strong>2</strong><small>정답 제출 기준</small></div><div class="metric"><span>시도 중</span><strong>1</strong><small>최근 오답 있음</small></div><div class="metric"><span>진도</span><strong>67%</strong><small>공개 문제 기준</small></div></div>
+        <div class="table-wrap"><table><thead><tr><th>순서</th><th>문제</th><th>상태</th><th>제출</th><th>최근 학습</th><th></th></tr></thead><tbody>
+          <tr><td>1</td><td>1001 · 두 수의 합</td><td><span class="badge good">완료</span></td><td>1회</td><td>07-20</td><td><button class="button" type="button">문제 보기</button></td></tr>
+          <tr><td>2</td><td>1014 · 조건에 맞는 수 찾기</td><td><span class="badge good">완료</span></td><td>2회</td><td>07-23</td><td><button class="button" type="button">문제 보기</button></td></tr>
+          <tr><td>3</td><td>1024 · 구간 합 구하기</td><td><span class="badge wait">시도 중</span></td><td>3회</td><td>오늘</td><td><button class="button primary" type="button">이어서 풀기</button></td></tr>
+          <tr><td>4</td><td>다음 문제</td><td><span class="badge">공개 예정</span></td><td>0회</td><td>-</td><td></td></tr>
+        </tbody></table></div>
+        <div class="visibility-summary"><div><strong>수업 전체 풀이 현황이 실시간 공개되었습니다.</strong><span>참여자의 해결 상태와 문제별 최초 해결자만 표시하며 다른 사람의 제출 상세·코드는 제공하지 않습니다.</span></div><span class="badge good">실시간 공개</span></div>
+        <div data-sort-matrix>
+          <div class="matrix-toolbar">
+            <div class="matrix-legend"><span><i class="legend-mark solved"></i>해결</span><span><i class="legend-mark trying"></i>시도 중</span><span><i class="legend-mark empty"></i>미시도</span><span>테두리 표시: 문제별 최초 해결</span></div>
+            <label class="field matrix-sort"><span>정렬</span><select data-sort-select><option value="progress-desc">해결 수 높은 순</option><option value="progress-asc">해결 수 낮은 순</option><option value="name-asc">이름 순</option></select></label>
+          </div>
+          <p class="sr-only" aria-live="polite" data-sort-status></p>
+          <div class="matrix-wrap"><table><thead><tr><th class="matrix-rank">순번</th><th class="matrix-person">참여자</th><th class="matrix-problem"><strong>1 · 두 수의 합</strong><span>최초 박서연</span></th><th class="matrix-problem"><strong>2 · 조건 수 찾기</strong><span>최초 김하늘</span></th><th class="matrix-problem"><strong>3 · 구간 합</strong><span>최초 박서연</span></th><th class="matrix-problem"><strong>4 · 그래프 탐색</strong><span>최초 김하늘</span></th><th>해결</th><th>진도</th></tr></thead><tbody>
+            <tr data-name="박서연" data-progress="4"><td class="matrix-rank">1</td><td class="matrix-person"><strong>박서연</strong><span>최근 오늘 10:32</span></td><td class="matrix-cell solved first-solve"><strong>해결</strong><span class="first-label">최초</span></td><td class="matrix-cell solved"><strong>해결</strong></td><td class="matrix-cell solved first-solve"><strong>해결</strong><span class="first-label">최초</span></td><td class="matrix-cell solved"><strong>해결</strong></td><td>4 / 4</td><td class="score-cell">100%</td></tr>
+            <tr class="selected-row" data-name="김하늘" data-progress="3"><td class="matrix-rank">2</td><td class="matrix-person"><strong>김하늘 (나)</strong><span>최근 오늘 10:18</span></td><td class="matrix-cell solved"><strong>해결</strong></td><td class="matrix-cell solved first-solve"><strong>해결</strong><span class="first-label">최초</span></td><td class="matrix-cell trying"><strong>시도 중</strong></td><td class="matrix-cell solved first-solve"><strong>해결</strong><span class="first-label">최초</span></td><td>3 / 4</td><td class="score-cell">75%</td></tr>
+            <tr data-name="한유진" data-progress="0"><td class="matrix-rank">3</td><td class="matrix-person"><strong>한유진</strong><span>최근 학습 없음</span></td><td class="matrix-cell empty">-</td><td class="matrix-cell empty">-</td><td class="matrix-cell empty">-</td><td class="matrix-cell empty">-</td><td>0 / 4</td><td class="score-cell">0%</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="scope-note"><strong>비공개로 전환되면:</strong> 이 전체 행렬은 숨기고 위의 본인 문제별 진도만 유지합니다. 공개 여부와 관계없이 다른 참여자의 제출 상세·코드는 열 수 없습니다.</div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-bottom-nav" aria-label="모바일 주 메뉴"><a href="#home"><svg><use href="#i-home"/></svg><span>홈</span></a><a href="#problems"><svg><use href="#i-book"/></svg><span>문제</span></a><a href="#submissions"><svg><use href="#i-send"/></svg><span>제출</span></a><a href="#learning" aria-current="page"><svg><use href="#i-learn"/></svg><span>학습</span></a><a href="#more"><svg><use href="#i-more"/></svg><span>더보기</span></a></nav>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="assets/oj-ui-prototype.js"></script>
+  <script src="assets/ds12-prototype.js"></script>
+</body>
+</html>

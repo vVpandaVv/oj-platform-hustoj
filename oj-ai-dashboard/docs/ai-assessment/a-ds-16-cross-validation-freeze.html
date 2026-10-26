@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-16 전체 연결·교차 검증·동결</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-16 연결·동결</p>
+      <nav><div class="nav-group"><strong>문서</strong>
+        <a href="index.html">허브</a>
+        <a href="design-procedure.html">전체 설계 순서</a>
+        <a href="implementation-roadmap.html">상세 구현 진행표</a>
+        <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+        <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+        <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+        <a href="a-d-004-data-storage.html">A-D-004 데이터·저장</a>
+        <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+        <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+        <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+        <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+        <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+        <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+        <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+        <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+        <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+        <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+        <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+        <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+        <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+        <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+        <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+        <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html" aria-current="page">A-DS-16 연결·동결</a>
+        <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+        <a href="g6-imp-05-boundary-final-package.html">G6-IMP-05 경계·최종 package</a>
+        <a href="release-changelog.html">릴리스 변경 기록</a>
+        <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+        <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+        <a href="redesign.html">재설계 기준</a>
+        <a href="code-consistency.html">코드 일관성</a>
+      </div><div class="nav-group"><strong>섹션</strong>
+        <a href="#result">결론</a><a href="#scope">범위·입력</a><a href="#baseline">검증 기준선</a><a href="#ledger">동결 원장</a><a href="#stages">단계 검산</a><a href="#entrypoints">화면 추적</a><a href="#owners">소유권 추적</a><a href="#ai">AI 계약</a><a href="#scenarios">업무 시나리오</a><a href="#amendment-09">G6 업무 인수</a><a href="#amendment-10">G6 보안·접근성</a><a href="#amendment-11">G6 성능·복원력</a><a href="#amendment-12">G6 업그레이드·롤백</a><a href="#amendment-13">G6 경계·package</a><a href="#amendment-14">0.1.52 제출 작업함</a><a href="#amendment-15">0.1.53 점검 루브릭</a><a href="#amendment-16">0.1.54 재점검 복구</a><a href="#amendment-17">0.1.55 하드코딩 제거</a><a href="#amendment-18">0.1.56 제출 순서 복구</a><a href="#amendment-19">0.1.57 자동 제출 복구</a><a href="#amendment-20">0.1.58 활동지별 평가 연결</a><a href="#security">보안·개인정보</a><a href="#platform">플랫폼 관문</a><a href="#verification">검증 명령</a><a href="#implementation">구현 전환</a><a href="#change-control">변경 통제</a><a href="#acceptance">수용 기준</a><a href="#decisions">결정 기록</a><a href="#completion">완료 판정</a>
+      </div></nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">Detailed Design 17 / 17</p>
+        <h2>전체 연결·교차 검증·동결</h2>
+        <p>A-DS-00~15에서 확정한 화면, 권한, REST, AI 계약, 저장소와 운영 절차를 한 방향으로 추적한다. 설계 안의 미정 계약은 남기지 않고, 현재 OJ Platform 구현에서 닫혀야 할 외부 관문은 별도 플랫폼 작업으로 분리한다.</p>
+        <div class="meta"><span class="badge">작성일 2026-08-14</span><span class="badge good">상태 Amendment 20 반영</span><span class="badge good">A-DS-00~16 사용자 확인·동결</span><span class="badge">결정 24개</span><span class="badge">Page 9</span><span class="badge">Asset 5</span><span class="badge">REST GET 40 · POST 79</span><span class="badge">Capability 15</span><span class="badge">Table 45 · Owner 10</span><span class="badge">AI task 2</span><span class="badge">응답칸 10종</span><span class="badge good">C28-I06 G0 코드 관문 통과</span>
+          <span class="badge good">검증 릴리스 증거 기록</span><span class="badge good">G6-IMP-05 S01~S05 통과</span><span class="badge good">G6 5/5 완료</span><span class="badge">Platform API change: 0</span></div>
+      </section>
+
+      <h2 id="scope">목적·범위·동결 입력</h2>
+      <section class="panel">
+        <p>이 단계는 새 기능 계약을 늘리는 단계가 아니다. 앞 단계의 정본을 수량과 ID로 검산하고, 사용자 화면에서 시작한 한 작업이 권한·Controller·Application Port·AI contract·Repository·table 또는 공개 Connector까지 끊김없이 이어지는지 확인한다.</p>
+        <table><thead><tr><th>입력</th><th>동결 사실</th><th>A-DS-16 확인</th></tr></thead><tbody>
+          <tr><td>A-D-001~009</td><td>현재 코드·데이터·화면의 131개 격차</td><td>유지·교체·제거 대상이 구현 backlog에 빠짐없이 연결되는가</td></tr>
+          <tr><td>A-DS-00~15</td><td>범위·UI·생명주기·권한·DB·Connector·AI·REST·업무·운영 계약</td><td>서로 다른 문서의 수량·ID·상태·소유권이 같은가</td></tr>
+          <tr><td>API-AUD-2026-08-14-R5</td><td>동결 당시 dev.32·API 1.0.0·공개 symbol 30개·fixture 4개</td><td>G0 이전 기준선 이력</td></tr>
+          <tr><td>API-AUD-2026-08-14-R6</td><td>현재 dev.33·API 1.1.0·공개 symbol 37개·fixture 6개</td><td>G0 구현 결과와 소비자 가정의 일치</td></tr>
+          <tr><td>플랫폼 C-28 HTML</td><td>C28-I01~I06 dev.33·API 1.1 코드·검증 ZIP 통과, clean package·G1 미완료</td><td>플랫폼 변경은 별도 변경 집합과 SemVer·fixture·릴리스 증거로만 진행하는가</td></tr>
+        </tbody></table>
+        <div class="warning callout"><strong>구현 중단선:</strong> <code>A-DS16-D01~D24</code>를 사용자 확인하기 전에는 애드온 업무 PHP·JavaScript·DDL·REST를 구현하지 않는다. 이 문서 승인 뒤에도 OJ Platform 수정은 애드온 코드나 설치 과정에 섞지 않고 별도 플랫폼 작업으로 수행한다.</div>
+      </section>
+
+      <h2 id="baseline">교차 검증 기준선</h2>
+      <table><thead><tr><th>ID</th><th>검증 사실</th><th>판정</th></tr></thead><tbody>
+        <tr><td><code>A-DS16-B01</code></td><td>A-D-001~009의 발견 ID 131개와 심각도 Critical 36·High 79·Medium 16이 자동 검증기에 고정돼 있다.</td><td>유지</td></tr>
+        <tr><td><code>A-DS16-B02</code></td><td>A-DS-00~15와 AM-01의 사용자 결정은 모두 동결 상태이며 A-DS-15 CA01·DBA01·RA01도 선행 정본에 반영됐다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B03</code></td><td>OJ Console C01~C06과 PublicUI P01~P03, Console menu 1개와 Public menu 1개가 Manifest 정본과 일치한다.</td><td>Page 9</td></tr>
+        <tr><td><code>A-DS16-B04</code></td><td>애드온 capability는 operator·educator·learner audience의 15개이며 별도 역할·자동 grant는 0개다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B05</code></td><td><code>oj-ai/v1</code>은 GET Q01~Q40과 POST C01~C79를 가지며 Page handler는 읽기 전용이다.</td><td>119 endpoints</td></tr>
+        <tr><td><code>A-DS16-B06</code></td><td>목표 schema는 literal 무접두어 <code>oj_ai_*</code> 45개 table과 10개 owner다. <code>$wpdb-&gt;prefix</code> 결합은 금지한다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B07</code></td><td>Plate 53.1.2 기준선, 콘텐츠 node 16종, 응답칸 10종, 교사·학생·AI·print·package projection 5종이 고정됐다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B08</code></td><td>활동지 자체 평가와 학생 제출 평가는 서로 다른 task이며 제출 task의 score·feedback·special note는 outer 하나와 inner 계약으로 분리된다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B09</code></td><td>평가·보고서·PDF·ZIP·이전·purge는 비동기 job과 멱등·lease·checkpoint를 사용한다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B10</code></td><td>배포는 exact roster revision, 학생 제출은 exact worksheet·submission revision과 receipt를 고정한다.</td><td>CG11 선행</td></tr>
+        <tr><td><code>A-DS16-B11</code></td><td>보고서는 활동지별이 기본이며 수업·그룹별·학생별 관점은 같은 source manifest를 사용한다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B12</code></td><td>활동지·작성 결과·학생 결과·보고서 PDF는 exact source의 private artifact이며 다운로드마다 재인가한다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B13</code></td><td>신규 설치·forward repair·legacy package·보존 uninstall·2단계 purge가 분리됐고 자동 adoption·rename·삭제·이중 쓰기는 없다.</td><td>일치</td></tr>
+        <tr><td><code>A-DS16-B14</code></td><td>G0 구현 뒤 API fixture 6개가 interface 8개·DTO 28개·권한 utility 1개·공개 symbol 37개 기준으로 통과했고, R6 source 91개 fingerprint는 <code>61a7252239d11d94329458bbefd77bb625962b6b645e782df476baf0fc4ed751</code>다.</td><td>현재 구현 확인</td></tr>
+        <tr><td><code>A-DS16-B15</code></td><td>A-DS-08 표제에 남아 있던 과거 수량 34를 실제 catalog와 같은 36으로 교정했다. endpoint 추가는 승인된 A-DS-15 Amendment 05뿐이다.</td><td>문서 결함 수정</td></tr>
+        <tr><td><code>A-DS16-B16</code></td><td>이번 교차 검증은 HTML 정본·검증기만 변경하며 애드온과 플랫폼 업무 Runtime 변경은 0건이다.</td><td>경계 준수</td></tr>
+        <tr><td><code>A-DS16-B17</code></td><td>G5-IMP-05-S04에서 공개 <code>AddonAssetBundleDefinitionV1</code>의 CSS·JS 각 최대 8개 제한을 확인하고 설정 C06 전용 bundle을 분리했다. Page·Menu·REST·capability는 그대로다.</td><td>Amendment 08</td></tr>
+      </tbody></table>
+
+      <h2 id="ledger">동결 수량 원장</h2>
+      <table><thead><tr><th>항목</th><th>정본</th><th>수량·버전</th><th>변경 시 다시 열 문서</th></tr></thead><tbody>
+        <tr><td>사용자 화면</td><td>A-DS-01·02·08</td><td>Console 6 + PublicUI 3 = 9</td><td>A-DS-01·02·03·08·16</td></tr>
+        <tr><td>메뉴·자산</td><td>A-DS-02 Amendment 08</td><td>Console menu 1, Public menu 1, asset bundle 5</td><td>A-DS-01·02·16 + 플랫폼 C-28</td></tr>
+        <tr><td>권한</td><td>A-DS-03</td><td>15 capability, addon role 0</td><td>A-DS-02·03·08·16 + 플랫폼 C-28</td></tr>
+        <tr><td>REST</td><td>A-DS-08 Amendment 01~26</td><td>GET 40, POST 79</td><td>A-DS-08과 원인 단계·16</td></tr>
+        <tr><td>Database</td><td>A-DS-05 Amendment 01~08</td><td>45 table, 10 owner</td><td>A-DS-05와 원인 단계·15·16</td></tr>
+        <tr><td>Plate</td><td>A-DS-09</td><td>53.1.2, node 16, response 10, projection 5</td><td>A-DS-01·09·10·11·12·14·16</td></tr>
+        <tr><td>AI</td><td>A-DS-07·10·12~14</td><td>task 2, outer 2, 제출 inner 3</td><td>A-DS-02·04·07·10·12~14·16 + 플랫폼 C-28</td></tr>
+        <tr><td>PDF·내보내기</td><td>A-DS-14</td><td>print profile 4, CSV·JSON·PDF·ZIP</td><td>A-DS-03·08·09·11·14·16</td></tr>
+        <tr><td>운영</td><td>A-DS-15</td><td>CA01·DBA01·RA01, schema 45 유지</td><td>A-DS-02·03·05·08·15·16</td></tr>
+        <tr><td>플랫폼 공개 표면</td><td>C-28·API Audit R5</td><td>현재 1.0.0, public 30</td><td>플랫폼 C-28 양쪽 HTML·fixture·소비자 프로필·A-DS-16</td></tr>
+      </tbody></table>
+
+      <h2 id="stages">A-DS-00~15 단계 검산</h2>
+      <table><thead><tr><th>단계</th><th>동결 산출물</th><th>교차 연결</th></tr></thead><tbody>
+        <tr><td><code>A-DS-00</code></td><td>활동지 중심 범위·플랫폼 무수정·무접두어</td><td>모든 후속 단계의 금지선</td></tr>
+        <tr><td><code>A-DS-01</code></td><td>교사 6·학생 3 화면, 직관적 메뉴와 UI 시안</td><td>Page 9·REST projection·반응형 검증</td></tr>
+        <tr><td><code>A-DS-02</code></td><td>Manifest·<code>onReady()</code>·두 shell 기여</td><td>플랫폼 C-28 등록·Runtime·생명주기</td></tr>
+        <tr><td><code>A-DS-03</code></td><td>capability 15·복합 Policy·purge 추가 gate</td><td>Menu·Page·REST·Job·download 공통</td></tr>
+        <tr><td><code>A-DS-04</code></td><td>플랫폼 AI 연결과 애드온 평가 설정 분리</td><td>AI routing snapshot·진단·정책 revision</td></tr>
+        <tr><td><code>A-DS-05</code></td><td>table 45·owner 10·Amendment 01~08</td><td>Repository·transaction·migration·retention</td></tr>
+        <tr><td><code>A-DS-06</code></td><td>공개 Context API 전용 Connector</td><td>학사 원장·CG01·CG02·CG11</td></tr>
+        <tr><td><code>A-DS-07</code></td><td>queue·lease·retry·postflight routing 검증</td><td>두 AI task·worker·결과 commit</td></tr>
+        <tr><td><code>A-DS-08</code></td><td>Page 9·GET 40·POST 79</td><td>모든 화면과 Application Port 진입점</td></tr>
+        <tr><td><code>A-DS-09</code></td><td>Plate 문서·revision·publication·projection</td><td>학생 작성·AI input·PDF source</td></tr>
+        <tr><td><code>A-DS-10</code></td><td>활동지 자체 평가 6개 품질 차원</td><td>worksheet task·교사 검토·발행 차단</td></tr>
+        <tr><td><code>A-DS-11</code></td><td>exact roster 배포·응답 10종·제출·PDF</td><td>Context·Submission·Storage·CG11</td></tr>
+        <tr><td><code>A-DS-12</code></td><td>제출 score·근거·abstain</td><td>공식 제출 revision·rubric·AI task</td></tr>
+        <tr><td><code>A-DS-13</code></td><td>교사 review·feedback·release·회수</td><td>공식 결과와 학생 공개 projection 분리</td></tr>
+        <tr><td><code>A-DS-14</code></td><td>보고서·특기사항·CSV·JSON·PDF·ZIP</td><td>source manifest·private artifact·CG11</td></tr>
+        <tr><td><code>A-DS-15</code></td><td>설치·update·이전·repair·보존·purge</td><td>생명주기·권한·DB·REST·플랫폼 상태</td></tr>
+      </tbody></table>
+
+      <h2 id="entrypoints">Page → Policy → Use Case → Data 추적</h2>
+      <table><thead><tr><th>Page</th><th>권한·Context</th><th>REST</th><th>Application·Data</th></tr></thead><tbody>
+        <tr><td><code>C01</code> AI 활동지</td><td><code>oj_access_console + view_workspace</code></td><td><code>Q01</code>과 업무별 summary projection</td><td>WorkspaceQuery → Context Gateway + owner별 read projection</td></tr>
+        <tr><td><code>C02</code> 활동지</td><td><code>view|manage|assess_worksheets</code> + worksheet 관계</td><td><code>Q02~Q10·Q34</code>, <code>C01~C12·C64~C66</code></td><td>Curriculum·Worksheet·Storage·Assessment owner</td></tr>
+        <tr><td><code>C03</code> 배포·제출</td><td><code>assign_worksheets|manage_submissions</code> + class|group</td><td><code>Q11~Q15·Q35</code>, <code>C13~C21·C27~C28·C68</code></td><td>Roster Gateway(CG11) + Submission·Storage owner</td></tr>
+        <tr><td><code>C04</code> 평가</td><td><code>assess|review|publish|manage_student_notes</code></td><td><code>Q16~Q19</code>, <code>C29~C44</code></td><td>Assessment owner + AI Gateway(AJ08) + official CAS</td></tr>
+        <tr><td><code>C05</code> 보고서</td><td><code>view_reports|export_reports</code> + report Context</td><td><code>Q20~Q24</code>, <code>C45~C50·C53~C54·C69</code></td><td>Reporting projection + Storage + PDF adapter</td></tr>
+        <tr><td><code>C06</code> 설정</td><td><code>manage_policies|manage_migrations</code>; purge는 <code>delete_plugins</code> 추가</td><td><code>Q25~Q29·Q36~Q38</code>, <code>C55~C63·C70~C79</code></td><td>AssessmentConfiguration·Database·Operations·Import owner</td></tr>
+        <tr><td><code>P01</code> 할 일</td><td><code>participate</code> + self active Context</td><td><code>Q30</code></td><td>Learning Context(CG01·CG02) + own assignment projection</td></tr>
+        <tr><td><code>P02</code> 작성·제출함</td><td><code>participate</code> + own assignment/submission</td><td><code>Q31~Q32·Q34</code>, <code>C22~C26·C51·C67</code></td><td>Worksheet student projection + Submission·Storage owner</td></tr>
+        <tr><td><code>P03</code> 결과</td><td><code>participate</code> + own current release</td><td><code>Q33</code>, <code>C52</code></td><td>Release student projection + private result PDF</td></tr>
+      </tbody></table>
+      <div class="callout"><strong>전수 검산:</strong> 위 표는 Q01~Q38과 C01~C79를 적어도 한 Page에 정확한 목적으로 연결한다. Q37·C76·C77은 활동지 자체 평가 동의, Q38·C78·C79는 학생 제출 평가 동의이며 같은 설정 Page 안에서 분리된 원장과 탭을 사용한다. 공유 binary 조회 Q34는 교사·학생 원본 Policy를 각각 재검사한다.</div>
+
+      <h2 id="owners">모듈·저장소 소유권 추적</h2>
+      <table><thead><tr><th>Owner</th><th>소유 정보</th><th>외부 연결</th><th>금지</th></tr></thead><tbody>
+        <tr><td>Database</td><td>installation owner·schema migration</td><td>WordPress DB abstraction</td><td>플랫폼 migration 실행</td></tr>
+        <tr><td>Operations</td><td>audit·outbox·purge</td><td>schedule·system status projection</td><td>업무 aggregate 직접 수정</td></tr>
+        <tr><td>Curriculum</td><td>worksheet의 성취기준 연결</td><td>versioned curriculum read contract</td><td>학사 원장 복제</td></tr>
+        <tr><td>Worksheet</td><td>root·revision·question·publication</td><td>Plate·private asset receipt</td><td>Submission table 직접 조회</td></tr>
+        <tr><td>AssessmentConfiguration</td><td>정책·루브릭·검토 규칙 revision</td><td>AI input builder</td><td>플랫폼 profile·secret 저장</td></tr>
+        <tr><td>Submission</td><td>assignment·target·submission·receipt·feedback release pointer</td><td>Context·Roster Gateway</td><td>로컬 class·group·student master</td></tr>
+        <tr><td>Assessment</td><td>두 평가 root·run·attempt·result·review·학생 기록</td><td>AI Task Gateway</td><td>AI 성공을 공식 결과로 자동 승격</td></tr>
+        <tr><td>Storage</td><td>private file·attachment·artifact</td><td>scanner·PDF renderer</td><td>공개 upload URL</td></tr>
+        <tr><td>Reporting</td><td>report snapshot·export job·PDF artifact</td><td>owner별 versioned projection</td><td>다른 owner table 직접 join</td></tr>
+        <tr><td>Import</td><td>legacy import run·item</td><td>검증된 encrypted package</td><td>source ALTER·rename·delete·이중 쓰기</td></tr>
+      </tbody></table>
+
+      <h2 id="ai">두 AI task 계약 추적</h2>
+      <table><thead><tr><th>Task</th><th>입력</th><th>출력·공식화</th><th>플랫폼 관문</th></tr></thead><tbody>
+        <tr><td><code>addon.oj_ai_dashboard.worksheet_quality_assessment</code></td><td><code>worksheet_quality.v1</code>, 교사용 exact revision의 AI projection</td><td>6개 품질 차원·근거·개선안; 교사 review 전 발행 변경 없음</td><td><code>AJ08</code> task instruction</td></tr>
+        <tr><td><code>addon.oj_ai_dashboard.student_submission_assessment</code></td><td><code>student_submission_assessment.v1</code> outer + <code>score|feedback_draft|special_note_draft</code> inner</td><td><code>submission_score.v1</code>·<code>submission_feedback.v1</code>·<code>student_special_note.v1</code>; 교사 review·승인·release 분리</td><td><code>AJ08</code> task instruction</td></tr>
+      </tbody></table>
+      <p>두 task는 plan·enqueue·execute result·commit 전 fresh snapshot의 revision과 fingerprint를 비교한다. worksheet text·학생 답안·REST 입력을 높은 우선순위 instruction으로 승격하지 않고, raw provider response·secret·endpoint는 저장하거나 사용자에게 노출하지 않는다.</p>
+
+      <h2 id="scenarios">종단 업무 시나리오</h2>
+      <table><thead><tr><th>ID</th><th>시작 → 완료</th><th>필수 증거</th><th>실패 처리</th></tr></thead><tbody>
+        <tr><td><code>A-DS16-S01</code></td><td>설치 → preflight → 45-table schema → 다음 boot accepted → Bridge ready</td><td>platform hash 불변·schema fingerprint·callback trace</td><td>DDL 전 차단 또는 503 fail closed</td></tr>
+        <tr><td><code>A-DS16-S02</code></td><td>Plate 작성 → 검증 → 승인 → 불변 publication</td><td>node 16·response 10·document/publication hash</td><td>invalid node·stale revision 422|409</td></tr>
+        <tr><td><code>A-DS16-S03</code></td><td>활동지 자체 평가 → 교사 finding 검토 → 개선 revision</td><td>task instruction·routing snapshot·finding decision</td><td>AJ08·routing drift에서 결과 미반영</td></tr>
+        <tr><td><code>A-DS16-S04</code></td><td>publication 선택 → class|group roster 고정 → assignment open</td><td>context·roster·membership revision·target count</td><td>CG11·race에서 assignment 생성 전체 취소</td></tr>
+        <tr><td><code>A-DS16-S05</code></td><td>학생 할 일 → 작성 → autosave → 첨부 → 제출 receipt</td><td>self Context·exact revision·content hash·receipt</td><td>CG01·CG02·권한 철회에서 즉시 deny</td></tr>
+        <tr><td><code>A-DS16-S06</code></td><td>공식 제출 → score AI → normalized result</td><td>rubric·response binding·첨부 extraction manifest</td><td>abstain·invalid output·AJ08에서 검토 대기</td></tr>
+        <tr><td><code>A-DS16-S07</code></td><td>교사 review → feedback → 승인 → 학생 release</td><td>official CAS·feedback chain·release pointer</td><td>stale source 409·기존 공개본 stale 전환</td></tr>
+        <tr><td><code>A-DS16-S08</code></td><td>활동지별 보고서 → 수업·그룹·학생 drill-down → export</td><td>filter·source manifest·projection hash·분자/분모</td><td>CG11·권한 변경에서 snapshot 또는 download 거부</td></tr>
+        <tr><td><code>A-DS16-S09</code></td><td>활동지·작성 결과·학생 결과·보고서 → PDF</td><td>print profile·renderer version·private artifact</td><td>remote resource·권한·만료 실패</td></tr>
+        <tr><td><code>A-DS16-S10</code></td><td>legacy source 검사 → package → preview → approve → import → 검산</td><td>source/package/plan hash·item checkpoint</td><td>source 변화·token 만료·충돌에서 중단</td></tr>
+        <tr><td><code>A-DS16-S11</code></td><td>update·repair → 비활성화 → 재활성화</td><td>migration checksum·postcondition·data 보존</td><td>down migration 없이 forward repair</td></tr>
+        <tr><td><code>A-DS16-S12</code></td><td>purge preview → backup·hold 확인 → approve → execute → 0건 검산</td><td>Idempotency-Key·token·approval·checkpoint</td><td>uninstall은 보존, 조건 불일치면 삭제 0건</td></tr>
+      </tbody></table>
+
+      <h2 id="amendment-09">Amendment 09 · G6-IMP-01 업무 시나리오 최종 인수</h2>
+      <section class="panel">
+        <p><a href="g6-imp-01-business-scenario-acceptance.html">G6-IMP-01 인수 기록</a>은 위 S01~S12를 새 하위 단계로 나누지 않고 기존 구현 관문 22개와 전체 회귀에 연결한다.</p>
+        <table><thead><tr><th>범위</th><th>인수 증거</th><th>판정</th></tr></thead><tbody>
+          <tr><td>S01~S03</td><td>Addon API·fresh install, Plate 승인·발행, 활동지 자체 평가 통합</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td>S04~S06</td><td>exact roster 배포, 학생 작성·제출, 공식 제출 AI 평가</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td>S07~S09</td><td>교사 검토·피드백·학생 공개, 보고서·내보내기, 네 PDF 흐름</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td>S10~S12</td><td>legacy 이전·rollback, 순차 upgrade·forward repair, 보존·purge</td><td><span class="badge good">통과</span></td></tr>
+        </tbody></table>
+        <ul>
+          <li><code>check:business-scenarios-g6</code>가 전체 회귀 뒤 12개 ID와 22개 기존 증거의 실행 순서를 검산한다.</li>
+          <li>Page 9·GET 38·POST 79·capability 15·table 45·owner 10·schema 1.0.2는 변하지 않았다.</li>
+          <li>런타임의 WordPress prefix 결합과 OJ Platform 내부 namespace 의존은 0건이다.</li>
+          <li>플랫폼은 dev.74·Addon API 1.1.0·공개 symbol 37개를 유지하며 source write는 0건이다.</li>
+        </ul>
+        <div class="good callout"><strong>완료:</strong> G6-IMP-01과 G6 1/5를 완료했다. 다음은 기존 계획의 <code>G6-IMP-02</code> 보안·개인정보·접근성 최종 인수다.</div>
+      </section>
+      <h2 id="amendment-10">Amendment 10 · G6-IMP-02 보안·개인정보·접근성 최종 인수</h2>
+      <section class="panel">
+        <p><a href="g6-imp-02-security-privacy-accessibility.html">G6-IMP-02 인수 기록</a>은 새 기능 단계를 추가하지 않고 보안·개인정보·접근성 다섯 범위를 기존 관문 33개와 브라우저 12종에 연결한다.</p>
+        <table><thead><tr><th>ID</th><th>최종 검산</th><th>판정</th></tr></thead><tbody>
+          <tr><td><code>G6-IMP-02-S01</code></td><td>CSRF·shell·capability·Context·객체·상태와 direct URL·타인 ID 음수</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-02-S02</code></td><td>정답·PII·교사 메모·AI raw response·secret 비노출</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-02-S03</code></td><td>private upload·download, scan·hash·만료·재인가·ZIP·PDF·CSV 경계</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-02-S04</code></td><td>keyboard·focus·screen reader, 탭·패널 관계와 dialog focus 복귀</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-02-S05</code></td><td>desktop·mobile screenshot, 겹침·잘림·가로 overflow</td><td><span class="badge good">통과</span></td></tr>
+        </tbody></table>
+        <ul>
+          <li><code>check:security-privacy-accessibility-g6</code>가 기존 관문 33개를 실행 순서대로 재사용한다.</li>
+          <li>브라우저 12종에서 desktop·mobile 화면과 대표 keyboard·focus 동작을 검산했다.</li>
+          <li>Page 9·GET 38·POST 79·table 45·schema 1.0.2와 Addon API 1.1.0은 바뀌지 않았다.</li>
+        </ul>
+        <div class="good callout"><strong>완료:</strong> 중대 미해결 결함 0건으로 G6-IMP-02와 G6 2/5를 완료했다. 다음은 기존 계획의 <code>G6-IMP-03</code> 성능·복원력 최종 인수다.</div>
+      </section>
+      <h2 id="amendment-11">Amendment 11 · G6-IMP-03 성능·복원력 최종 인수</h2>
+      <section class="panel">
+        <p><a href="g6-imp-03-performance-resilience.html">G6-IMP-03 인수 기록</a>은 새 기능 단계를 추가하지 않고 성능·복원력 다섯 범위를 28 existing gates와 실제 Runtime 숫자 한도에 연결한다.</p>
+        <table><thead><tr><th>ID</th><th>최종 검산</th><th>판정</th></tr></thead><tbody>
+          <tr><td><code>G6-IMP-03-S01</code></td><td>exact roster 5,000명, 100명 단위 최대 50페이지 실행</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-03-S02</code></td><td>AI worker lease 300초, 최대 3회, 60·300초 backoff와 worker 재점유</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-03-S03</code></td><td>Plate 2 MiB·5,000 node, ZIP 100 MiB·500개·비압축 500 MiB 경계</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-03-S04</code></td><td>보고서 page 100, snapshot 10,000행, export 50,000행·50 MiB 경계</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-03-S05</code></td><td>schema repair, migration·purge 250행 checkpoint, queue·export 재시작</td><td><span class="badge good">통과</span></td></tr>
+        </tbody></table>
+        <ul>
+          <li><code>check:performance-resilience-g6</code>가 기존 28개 관문을 실행 순서대로 재사용한다.</li>
+          <li>호스트 성능에 좌우되는 임의 시간 SLA 대신 production 상한·lease·retry·checkpoint와 5,000명 실제 계약 실행을 동결했다.</li>
+          <li>Page 9·GET 38·POST 79·table 45·schema 1.0.2와 Addon API 1.1.0·37 symbol은 바뀌지 않았다.</li>
+        </ul>
+        <div class="good callout"><strong>완료:</strong> G6-IMP-03과 G6 3/5를 완료했다. 다음은 기존 계획의 <code>G6-IMP-04</code> 업그레이드·롤백 최종 인수다.</div>
+      </section>
+
+      <h2 id="amendment-12">Amendment 12 · G6-IMP-04 업그레이드·롤백 최종 인수</h2>
+      <section class="panel">
+        <p><a href="g6-imp-04-upgrade-rollback.html">G6-IMP-04 인수 기록</a>은 새 기능 단계를 추가하지 않고 설치·업그레이드·롤백·재활성화·증거 다섯 범위를 13 existing gates에 연결한다.</p>
+        <table><thead><tr><th>ID</th><th>최종 검산</th><th>판정</th></tr></thead><tbody>
+          <tr><td><code>G6-IMP-04-S01</code></td><td>clean install, 45개 table과 기본 설정 준비 뒤 version 기록</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-04-S02</code></td><td>schema 1.0.0·1.0.1에서 1.0.2로 순차 upgrade와 forward repair</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-04-S03</code></td><td>미래 schema 1.0.3·알 수 없는 migration을 lock·DDL·mutation 전에 차단</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-04-S04</code></td><td>데이터·설정 보존, active worker 16개 재등록과 recurring sweep 14개 복원</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-04-S05</code></td><td>13개 관문 SHA-256과 운영 순서를 canonical evidence manifest로 재검증</td><td><span class="badge good">통과</span></td></tr>
+        </tbody></table>
+        <ul>
+          <li><code>check:upgrade-rollback-g6</code>가 기존 13개 관문을 실행 순서대로 재사용한다.</li>
+          <li>code rollback은 schema down이 아니라 미래 schema fail-closed와 호환 릴리스·forward repair로 고정한다.</li>
+          <li>Page 9·GET 38·POST 79·table 45·schema 1.0.2와 Addon API 1.1.0·37 symbol은 바뀌지 않았다.</li>
+        </ul>
+        <div class="good callout"><strong>완료:</strong> G6-IMP-04와 G6 4/5를 완료했다. 다음은 기존 계획의 마지막 관문 <code>G6-IMP-05</code> 경계·최종 package다.</div>
+      </section>
+
+
+      <h2 id="amendment-13">Amendment 13 · G6-IMP-05 경계·최종 package</h2>
+      <section class="panel">
+        <p><a href="g6-imp-05-boundary-final-package.html">G6-IMP-05 인수 기록</a>은 새 기능이나 하위 단계를 추가하지 않고, 기존 로드맵의 S01~S05만 최종 경계와 배포 조건으로 검증한다.</p>
+        <table><thead><tr><th>ID</th><th>최종 검산</th><th>판정</th></tr></thead><tbody>
+          <tr><td><code>G6-IMP-05-S01</code></td><td>Runtime의 플랫폼 내부 namespace·source 경로 의존 0건, 공개 Addon API V1만 소비</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-05-S02</code></td><td>플랫폼 <code>src/AddonApi/V1</code> 변경 0건과 애드온 작업의 플랫폼 source write 0건</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-05-S03</code></td><td>API 29·schema 41·route 80·platform API source 38파일의 canonical SHA-256 고정</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-05-S04</code></td><td>인수 HTML·진행표·교차 검증·API 감사·<a href="release-changelog.html">릴리스 changelog</a> 상태 일치</td><td><span class="badge good">통과</span></td></tr>
+          <tr><td><code>G6-IMP-05-S05</code></td><td><code>source_dirty=false</code>인 승인 commit에서 manifest·checksum이 있는 clean production ZIP 생성</td><td><span class="badge good">통과</span></td></tr>
+        </tbody></table>
+        <ul>
+          <li><code>check:boundary-final-package-g6</code>가 S01~S04를 재검증하고 dirty 소스에서는 S05를 실패 폐쇄하며 clean 승인 commit에서 package를 생성했다.</li>
+          <li>경계 정본은 <code>resources/contracts/release-boundary-fingerprint-v1.json</code>이며 플랫폼 Addon API는 <code>1.1.0</code>을 유지한다.</li>
+          <li>생산 ZIP 안에는 source commit·<code>source_dirty=false</code>·파일별 SHA-256이 있는 <code>release-manifest.json</code>을 넣고 외부 <code>.zip.sha256</code>도 생성한다.</li>
+        </ul>
+        <div class="good callout"><strong>완료:</strong> 임시 clean 저장소로 우회하지 않고 승인 commit의 <code>source_dirty=false</code>에서 <code>G6-IMP-05-S05</code> production ZIP·manifest·checksum을 생성했다.</div>
+      </section>
+
+
+      <h2 id="amendment-14">Amendment 14 · 0.1.52 학생 제출 평가 작업함 복구</h2>
+      <section class="panel">
+        <p><a href="submission-evaluation-inbox-recovery-2026-09-02.html">운영 복구 보고서</a>와 A-DS-08 Amendment 26을 교차 검증했다. 공식 제출이 평가 생성 전 작업함에서 누락되던 단절을 Q39·Q40으로 닫고 기존 C29·Q16·Q17 흐름을 유지한다.</p>
+        <table><thead><tr><th>검산</th><th>결과</th></tr></thead><tbody>
+          <tr><td>화면→REST</td><td>학생 제출 평가 Page가 Q16과 Q39를 합치고 Q40 답안 상세 뒤 C29를 호출한다.</td></tr>
+          <tr><td>권한</td><td><code>assess_submissions</code>·evaluate Context·submission evaluate 객체 권한이 일치한다.</td></tr>
+          <tr><td>데이터</td><td>공식 revision ID·hash exact 제외, literal <code>oj_ai_*</code> 조회, table·column·migration 추가 0건</td></tr>
+          <tr><td>공개 경계</td><td>애드온 Page 9·GET 40·POST 79, OJ Platform Addon API 1.1.0·37 symbol 유지</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>API 고지:</strong> Add-on REST API는 Q39·Q40 두 GET이 추가됐다. OJ Platform source write와 Platform API change는 0건이다.</div>
+      </section>
+
+
+      <h2 id="amendment-15">Amendment 15 · 0.1.53 활동지 자체 점검 루브릭 복구</h2>
+      <section class="panel">
+        <p><a href="worksheet-evaluation-rubric-recovery-2026-09-02.html">운영 복구 보고서</a>를 교차 검증했다. package-owned 구형 학생 루브릭과 정책의 고정 참조를 append-only revision으로 복구하고 사용자 작성 기준은 보존한다.</p>
+        <table><thead><tr><th>검산</th><th>결과</th></tr></thead><tbody>
+          <tr><td>설치→설정</td><td>정확한 구형 기본 hash만 자동 승격하고 현재 활성 운영자 루브릭이 있으면 정책만 해당 ID로 재고정한다.</td></tr>
+          <tr><td>설정→P04</td><td>정책에 고정된 rubric의 설명·등급·배점을 검증하며 configuration path 실패를 활동지 오류와 분리한다.</td></tr>
+          <tr><td>이력·재실행</td><td>기존 revision retired 보존, 단일 transaction·감사, 설치 재실행 no-op</td></tr>
+          <tr><td>공개 경계</td><td>Page 9·GET 40·POST 79·table 45와 OJ Platform Addon API 1.1.0 유지</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>API 고지:</strong> Add-on REST API·DB schema·OJ Platform source와 Platform API change는 모두 0건이다.</div>
+      </section>
+
+      <h2 id="amendment-16">Amendment 16 · 0.1.54 활동지 재점검·출력 한도 복구</h2>
+      <section class="panel">
+        <p><a href="worksheet-evaluation-retry-token-recovery-2026-09-02.html">운영 복구 보고서</a>를 교차 검증했다. prompt v4의 bounded output, package-owned v3 정책 승격, 최신 run 기반 C11과 source·configuration 변경 시 새 evaluation 전환을 하나의 복구 흐름으로 고정한다.</p>
+        <table><thead><tr><th>검산</th><th>결과</th></tr></thead><tbody>
+          <tr><td>설정→prompt</td><td>exact v3 descriptor·hash만 append-only v4 정책으로 승격하고 v1~v3 이력을 보존한다.</td></tr>
+          <tr><td>provider 실패→안내</td><td><code>addon_ai_task_failed</code> 안정 코드를 사용해 활동지 자체 평가 작업 설정과 실행 상태 확인을 안내한다. 공급자별 문구와 고정 토큰 수치는 판정하지 않는다.</td></tr>
+          <tr><td>상세→C11</td><td>명령 직전 Q10을 다시 읽어 최신 run ID·run 번호로 CAS 요청한다.</td></tr>
+          <tr><td>409→복구</td><td>상태 변경, source 변경, configuration 변경을 구분하고 변경된 입력·기준은 현재 활동지가 선택된 새 점검으로 전환한다.</td></tr>
+          <tr><td>공개 경계</td><td>Page 9·GET 40·POST 79·table 45와 OJ Platform Addon API 1.1.0 유지</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>API 고지:</strong> Add-on REST API·DB schema·OJ Platform source와 Platform API change는 모두 0건이다.</div>
+      </section>
+
+      <h2 id="amendment-17">Amendment 17 · 0.1.55 실행환경·계약 하드코딩 제거</h2>
+      <section class="panel">
+        <p>운영 UI와 검증 도구의 환경 종속값을 제거하고 prompt v4 메타데이터를 단일 계약으로 모았다. 기능 흐름·데이터 구조·공개 API는 바꾸지 않는다.</p>
+        <table><thead><tr><th>검산</th><th>결과</th></tr></thead><tbody>
+          <tr><td>실패 코드→안내</td><td><code>addon_ai_task_failed</code>만 판정하고 공급자 자연어·<code>MAX_TOKENS</code> 문자열·고정 토큰 수치를 해석하지 않는다.</td></tr>
+          <tr><td>prompt 무결성</td><td><code>Worksheet_Quality_Prompt_Contract</code>가 버전·파일명·SHA-256을 소유하고 Manifest가 정규화된 파일 해시를 검증한다.</td></tr>
+          <tr><td>E2E 실행환경</td><td>14개 브라우저 검사는 공통 로더와 <code>OJAI_PLAYWRIGHT_MODULE</code>·<code>OJAI_BROWSER_EXECUTABLE</code>을 사용하며 개인 PC 절대 경로를 포함하지 않는다.</td></tr>
+          <tr><td>버전·패키지</td><td><code>package.json</code> 버전을 플러그인 헤더·상수·경계 지문·G6 계약과 교차 검증하고 <code>source_dirty=false</code>에서만 패키징한다.</td></tr>
+          <tr><td>공개 경계</td><td>Page 9·GET 40·POST 79·table 45와 OJ Platform Addon API 1.1.0을 유지한다.</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>API 고지:</strong> Add-on REST API·DB schema·OJ Platform source와 Platform API change는 모두 0건이다.</div>
+      </section>
+
+      <h2 id="amendment-18">Amendment 18 · 0.1.56 학생 제출 저장·제출 순서 복구</h2>
+      <section class="panel">
+        <p><a href="student-submission-save-submit-recovery-2026-09-02.html">학생 제출 저장·제출 순서 복구 보고서</a>를 교차 검증했다. C23 자동 저장과 C26 제출 사이의 최신 스냅샷 순서를 보장하고 기존 계약 경계를 유지한다.</p>
+        <table><thead><tr><th>검산</th><th>결과</th></tr></thead><tbody>
+          <tr><td>입력→C23</td><td>예약 타이머와 진행 중 저장이 하나의 Promise로 합쳐지고 제출이 그 완료를 기다린다.</td></tr>
+          <tr><td>C23→C26</td><td>현재 화면 답안과 서버 답안이 일치한 뒤 최신 lock version·revision ID·save token으로 제출한다.</td></tr>
+          <tr><td>실패 안전</td><td>오프라인·미저장·충돌·action 회수에서는 C26 0건이며 화면에 해결 안내를 표시한다.</td></tr>
+          <tr><td>완료 UI</td><td>중복 클릭을 잠그고 성공 응답 뒤 입력을 읽기 전용으로 전환하며 제출 완료 상태를 알린다.</td></tr>
+          <tr><td>공개 경계</td><td>Page 9·GET 40·POST 79·table 45와 OJ Platform Addon API 1.1.0을 유지한다.</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>API 고지:</strong> C23·C26 body, Add-on REST API·DB schema·OJ Platform source와 Platform API change는 모두 0건이다.</div>
+      </section>
+      <h2 id="amendment-19">Amendment 19 · 0.1.57 활동지 마감 자동 제출 복구</h2>
+      <section class="panel">
+        <p><a href="automatic-submission-worker-recovery-2026-09-02.html">활동지 마감 자동 제출 복구 보고서</a>를 교차 검증했다. 설계에 있던 due event·60초 trigger·lease·재시도·보상 탐색을 실제 현대 제출 Runtime에 연결한다.</p>
+        <table><thead><tr><th>검산</th><th>결과</th></tr></thead><tbody>
+          <tr><td>마감→worker</td><td><code>assignment.auto_submit_due</code>를 claim하고 event가 누락된 기존 마감 과제는 같은 idempotency key로 보상 생성한다.</td></tr>
+          <tr><td>초안→공식 제출</td><td>작성된 유효 초안만 현재 revision으로 <code>auto_submitted</code> 처리하고 system receipt·audit를 원자 기록한다.</td></tr>
+          <tr><td>실패 안전</td><td>첨부 검사 대기·응답 불완전은 초안을 유지하며 오류 코드와 다음 시각을 기록해 재시도한다.</td></tr>
+          <tr><td>빈 제출 방지</td><td>시작하지 않은 대상은 submission root와 receipt를 생성하지 않는다.</td></tr>
+          <tr><td>공개 경계</td><td>Page 9·GET 40·POST 79·table 45와 OJ Platform Addon API 1.1.0을 유지한다.</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>API 고지:</strong> Add-on REST API·DB schema·OJ Platform source와 Platform API change는 모두 0건이다.</div>
+      </section>
+      <h2 id="amendment-20">Amendment 20 · 0.1.58 활동지별 평가 요소·학습목표 연결</h2>
+      <section class="panel">
+        <p><a href="worksheet-scoped-assessment-learning-goals-2026-09-02.html">활동지별 평가 요소·학습목표 연결 구현 보고서</a>를 교차 검증했다. 공통 평가 요소와 성취기준은 재사용하되 실제 평가 연결은 revision의 <code>assessment_bindings</code>, 목표 연결은 <code>achievement_links</code>가 소유한다.</p>
+        <table><thead><tr><th>검산</th><th>결과</th></tr></thead><tbody>
+          <tr><td>평가 요소 선택</td><td>활동지마다 사용할 평가 요소를 선택하고 각 요소를 활동지 전체 또는 특정 문항 응답에 연결한다.</td></tr>
+          <tr><td>학습목표 선택</td><td>성취기준 연결 전에 활동지 전체 또는 문항 응답 대상을 명시하며 revision의 기존 <code>achievement_links</code>에 저장한다.</td></tr>
+          <tr><td>평가 입력</td><td>P03·P04·학생 제출 평가 입력은 선택된 요소와 선택 합계만 사용하고 선택하지 않은 공통 요소는 제외한다.</td></tr>
+          <tr><td>호환·안정성</td><td>기존 문서는 선택 필드가 없을 때 종전 연결을 읽고, 새 Plate 응답은 독립 node ID·response ID를 즉시 받아 후속 편집에서 연결을 유지한다.</td></tr>
+          <tr><td>공개 경계</td><td>Page 9·GET 40·POST 79·table 45와 OJ Platform Addon API 1.1.0을 유지한다.</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>API 고지:</strong> Add-on REST API·DB schema·OJ Platform source와 Platform API change는 모두 0건이다.</div>
+      </section>      <h2 id="security">보안·개인정보·접근성 관문</h2>
+      <table><thead><tr><th>영역</th><th>필수 관문</th><th>음수 검증</th></tr></thead><tbody>
+        <tr><td>인증·CSRF</td><td>로그인 + 표준 <code>wp_rest</code> nonce</td><td>nonce 없음·만료·다른 사용자</td></tr>
+        <tr><td>권한</td><td>shell gate + addon capability + Context + 객체 + state</td><td>메뉴 숨김 뒤 direct URL·ID 추측·담당 해제</td></tr>
+        <tr><td>학생 privacy</td><td>본인 배정·제출·current release만</td><td>정답·배점·루브릭·교사 메모·타 학생 0건</td></tr>
+        <tr><td>AI</td><td>bounded instruction·allowlisted projection·normalized output</td><td>prompt injection·raw response·secret·binary 전송</td></tr>
+        <tr><td>파일</td><td>private storage·MIME/size/hash/scan·매번 재인가</td><td>path traversal·ZIP bomb·공개 URL·만료 artifact</td></tr>
+        <tr><td>PDF</td><td>local font·chroot·remote/PHP/JavaScript off</td><td>remote URL·file URI·script·raw SVG</td></tr>
+        <tr><td>내보내기</td><td>CSV formula neutralization·server filename·source checksum</td><td>CRLF·중복 path·다른 snapshot</td></tr>
+        <tr><td>운영</td><td>backup evidence·legal hold·preview token·감사</td><td>uninstall 자동 삭제·token 재사용·source drift</td></tr>
+        <tr><td>접근성</td><td>키보드·focus·label·상태 텍스트·모바일 가시성</td><td>색상만으로 상태 표시·가로 overflow·dialog 잘림</td></tr>
+      </tbody></table>
+
+      <h2 id="platform">OJ Platform 선행 관문과 작업 분리</h2>
+      <table><thead><tr><th>관문</th><th>현재 상태</th><th>닫는 조건</th><th>영향</th></tr></thead><tbody>
+        <tr><td><code>C28-I06-LC01</code></td><td>catalog와 Runtime readiness 분리</td><td>pending·ready·failed·not_required와 안전 code fixture 통과</td><td><span class="badge good">G0 구현 완료</span></td></tr>
+        <tr><td><code>C28-I06-CG01</code></td><td>학생 자기 active participation</td><td>자기 양수·타인 대리 음수 fixture 통과</td><td><span class="badge good">G0 구현 완료</span></td></tr>
+        <tr><td><code>C28-I06-CG02</code></td><td>학생 learning Context extension</td><td>bounded pagination·탈퇴·roster 비노출 fixture 통과</td><td><span class="badge good">API 1.1 구현</span></td></tr>
+        <tr><td><code>C28-I06-CG11</code></td><td>exact assignment roster·revision extension</td><td>race·5,000명·PII 비노출 fixture 통과</td><td><span class="badge good">API 1.1 구현</span></td></tr>
+        <tr><td><code>C28-I06-AJ08</code></td><td>task별 불변 instruction</td><td>hash·prompt order·adapter 격리·fingerprint fixture 통과</td><td><span class="badge good">API 1.1 구현</span></td></tr>
+        <tr><td><code>C28-I06-RC01</code></td><td>Console core+addon capability AND</td><td>menu·route·handler·direct URL 음수 fixture 통과</td><td><span class="badge good">G0 구현 완료</span></td></tr>
+        <tr><td><code>C28-I06-RC02</code></td><td>Public menu 선언 capability 판정</td><td>scope·capability 조합과 direct route fixture 통과</td><td><span class="badge good">G0 구현 완료</span></td></tr>
+        <tr><td><code>CG03·RC04·RC05</code></td><td>학년은 optional·비보장, capability는 역할 단위, Page는 GET 전용</td><td>제공자·소비자 HTML과 fixture를 실제 구현에 일치</td><td><span class="badge good">정합화 완료</span></td></tr>
+        <tr><td>소비자 버전 범위</td><td><code>&gt;=2.0.0-dev.33 &lt;3.0.0</code>, Addon API <code>&gt;=1.1.0 &lt;2.0.0</code></td><td><a href="g0-c28-i06-release-gate.html">upgrade·rollback·package fingerprint 증거</a></td><td><span class="badge good">검증 증거 기록</span> · clean build 대기</td></tr>
+      </tbody></table>
+      <div class="callout"><strong>확정 릴리스 경계:</strong> Addon API <code>1.1.0</code>은 기존 30 symbol을 유지하면서 CG02·CG11·AJ08용 7 symbol을 additive로 추가했다. G1 소비자는 <code>&gt;=1.1.0 &lt;2.0.0</code>만 허용하며 공개 signature가 다시 바뀌면 새 Amendment와 사용자 고지를 먼저 기록한다.</div>
+      <div class="callout"><strong>G0 구현 인수:</strong> RC03 공개 capability mapper, dev.33 catalog·Runtime readiness, Context·roster·instruction extension과 두 shell 권한 합성이 fixture에서 통과했다. 애드온은 이 구현을 복제하거나 내부 class로 우회하지 않는다.</div>
+
+      <h2 id="verification">검증 명령과 필수 증거</h2>
+      <table><thead><tr><th>단계</th><th>명령·검증</th><th>통과 증거</th></tr></thead><tbody>
+        <tr><td>설계 정본</td><td><code>npm.cmd run check:design</code></td><td>HTML 링크·ID·수량·플랫폼 fingerprint·UI 계약 통과</td></tr>
+        <tr><td>플랫폼 공개 API</td><td><code>D:\php\php.exe tests/Contract/addon-api-v1.php</code></td><td>현재 public 30 또는 승인된 새 SemVer allowlist</td></tr>
+        <tr><td>Runtime 격리</td><td><code>addon-runtime-dispatch.php</code>, <code>addon-i05-runtime.php</code></td><td>callback·Context·AI·비밀 비노출·교차 addon 차단</td></tr>
+        <tr><td>기여 합성</td><td><code>addon-contribution-composition.php</code></td><td>두 shell·권한·AI task·status와 음수 gate</td></tr>
+        <tr><td>애드온 정적</td><td><code>npm.cmd run check</code> + PHP lint·architecture 검사</td><td>forbidden connector·prefix 결합·service locator 0건</td></tr>
+        <tr><td>Plate</td><td><code>npm.cmd run check:plate</code>, <code>npm.cmd run e2e:plate</code></td><td>node 16·response 10·projection·desktop/mobile 편집</td></tr>
+        <tr><td>업무</td><td><code>check:submissions</code>, <code>check:assessment</code>, <code>check:dashboard</code>, <code>check:compat</code></td><td>S04~S12 양수·음수·재실행</td></tr>
+        <tr><td>경계</td><td><code>npm.cmd run audit:boundary</code></td><td>애드온 설치 전후 OJ Platform source·config·schema·migration hash 동일</td></tr>
+        <tr><td>시각·접근성</td><td>Playwright desktop·mobile screenshot, keyboard·focus·overflow 검사</td><td>겹침·잘림·가로 overflow 0건</td></tr>
+      </tbody></table>
+
+      <h2 id="implementation">승인 뒤 수직 구현 순서</h2>
+      <div class="flow">
+        <div class="step"><div><strong>G0 · 플랫폼 C28-I06</strong><br>dev.33·API 1.1 코드·47개 회귀·검증 ZIP과 upgrade·rollback·fingerprint 증거를 기록했다. clean production package를 남긴다.</div></div>
+        <div class="step"><div><strong>G1 · 애드온 기반</strong><br>Manifest·onReady Bridge·CompositionRoot·15개 capability·45-table migration·공통 Policy·REST envelope를 완성한다.</div></div>
+        <div class="step"><div><strong>G2 · 활동지</strong><br>Plate 작성·revision·publication·private asset·활동지 자체 평가·활동지 PDF를 한 흐름으로 완료한다.</div></div>
+        <div class="step"><div><strong>G3 · 배포·학생</strong><br>exact roster 배포·학생 10종 응답·autosave·첨부·제출·작성 결과 PDF를 완료한다.</div></div>
+        <div class="step"><div><strong>G4 · 평가·공개</strong><br>제출 AI 평가·교사 review·feedback·학생 release·정정·회수를 완료한다.</div></div>
+        <div class="step"><div><strong>G5 · 보고서·운영</strong><br>세 보고서 관점·특기사항·CSV·JSON·PDF·ZIP·설치·이전·repair·purge를 완료한다.</div></div>
+        <div class="step"><div><strong>G6 · 최종 인수</strong><br>S01~S12, 보안·접근성·성능·upgrade/rollback·boundary fingerprint를 통과한 package만 배포한다.</div></div>
+      </div>
+      <p>각 gate는 UI·Application·Repository·schema·test·문서를 함께 끝낸다. G0의 OJ Platform 변경은 독립 commit·changelog·fixture·rollback을 가지며 애드온 설치 프로그램이 적용하지 않는다.</p>
+      <div class="callout good"><strong>진행 추적:</strong> 위 G0~G6 관문의 하위 구현 ID, 상태, 선행 조건과 완료 증거는 <a href="implementation-roadmap.html">상세 구현 진행표</a>를 정본으로 사용한다. 현재 <code>G6-IMP-05-S01~S05</code>와 G6 5/5를 모두 완료했다.</div>
+
+      <h2 id="change-control">동결 후 변경 통제</h2>
+      <ul>
+        <li>Page·menu·capability·REST·table·owner·task·schema 수량이 바뀌면 원인 단계와 A-DS-16을 함께 다시 연다.</li>
+        <li>OJ Platform 공개 이름·signature·DTO·오류·SemVer가 바뀌면 플랫폼 C-28 양쪽 HTML, reflection fixture, 애드온 소비자 프로필과 이 문서를 같은 변경 집합으로 갱신한다.</li>
+        <li>애드온 DB는 literal <code>oj_ai_*</code>만 사용하며 WordPress prefix 결합, 플랫폼 table FK·JOIN·write가 발견되면 구현을 중단한다.</li>
+        <li>동결 뒤 새 UI 문구는 짧은 사용자 언어를 유지하고 schema·table·stack·비밀값을 제품 화면에 노출하지 않는다.</li>
+        <li>구현 중 설계와 다른 합리적 요구가 생기면 코드로 우회하지 않고 해당 A-DS amendment와 검증기를 먼저 승인한다.</li>
+      </ul>
+
+      <h2 id="acceptance">A-DS-16 수용 기준</h2>
+      <table><thead><tr><th>ID</th><th>검증</th><th>통과 조건</th></tr></thead><tbody>
+        <tr><td><code>A-DS16-A01</code></td><td>단계 상태</td><td>A-DS-00~15가 모두 사용자 확인·동결이며 승인 amendment가 선행 정본에 반영됨</td></tr>
+        <tr><td><code>A-DS16-A02</code></td><td>화면</td><td>Console 6·PublicUI 3·menu 2·asset 5가 Manifest와 UI 시안에 일치하고 각 bundle의 CSS·JS가 최대 8개임</td></tr>
+        <tr><td><code>A-DS16-A03</code></td><td>권한</td><td>15 capability와 shell·Context·object·state 복합 Policy가 모든 surface에서 같음</td></tr>
+        <tr><td><code>A-DS16-A04</code></td><td>REST</td><td>Q01~Q38·C01~C79가 중복 없이 Page·Use Case에 전수 연결됨</td></tr>
+        <tr><td><code>A-DS16-A05</code></td><td>Database</td><td>45 table·10 owner·Amendment 01~08이 schema catalog와 일치함</td></tr>
+        <tr><td><code>A-DS16-A06</code></td><td>무접두어</td><td>target 이름의 <code>$wpdb-&gt;prefix</code>·<code>wp_</code> 결합과 플랫폼 table write가 0건임</td></tr>
+        <tr><td><code>A-DS16-A07</code></td><td>소유권</td><td>cross-owner Repository·table 직접 접근과 순환 의존이 0건임</td></tr>
+        <tr><td><code>A-DS16-A08</code></td><td>Plate</td><td>node 16·response 10·projection 5와 exact revision hash가 일치함</td></tr>
+        <tr><td><code>A-DS16-A09</code></td><td>활동지 평가</td><td>활동지 자체 평가가 별도 task·root·review이며 자동 수정·발행 0건임</td></tr>
+        <tr><td><code>A-DS16-A10</code></td><td>제출 평가</td><td>outer·operation·inner·rubric·response binding 불일치가 AI 호출 전에 거부됨</td></tr>
+        <tr><td><code>A-DS16-A11</code></td><td>배포</td><td>CG11 exact roster 없이는 전체 assignment와 보고서 분모를 만들지 않음</td></tr>
+        <tr><td><code>A-DS16-A12</code></td><td>학생 privacy</td><td>P01~P03과 PDF에 정답·루브릭·교사 메모·타 학생 정보가 0건임</td></tr>
+        <tr><td><code>A-DS16-A13</code></td><td>교사 공식화</td><td>AI 결과는 review·feedback 승인·release 없이 공식 학생 결과가 되지 않음</td></tr>
+        <tr><td><code>A-DS16-A14</code></td><td>보고서</td><td>활동지·수업/그룹·학생 관점이 같은 source와 분자·분모를 사용함</td></tr>
+        <tr><td><code>A-DS16-A15</code></td><td>PDF·파일</td><td>exact source·private storage·생성/다운로드 재인가·보안 profile이 통과함</td></tr>
+        <tr><td><code>A-DS16-A16</code></td><td>이전·purge</td><td>preview·승인·실행·보상이 분리되고 token·멱등·backup·hold 음수 fixture가 통과함</td></tr>
+        <tr><td><code>A-DS16-A17</code></td><td>생명주기</td><td>활성화·update·비활성화·재활성화·uninstall에서 보존·fail closed가 일치함</td></tr>
+        <tr><td><code>A-DS16-A18</code></td><td>플랫폼 API</td><td>공개 allowlist·Runtime·기여 fixture와 source fingerprint가 문서 기준과 일치함</td></tr>
+        <tr><td><code>A-DS16-A19</code></td><td>플랫폼 관문</td><td>C28-I06 코드·계약·검증 package·upgrade·rollback 증거 기록, clean production package·G1 대기</td></tr>
+        <tr><td><code>A-DS16-A20</code></td><td>실패 안전</td><td>Bridge·Context·AI·storage·queue·renderer 실패가 쓰기·공개를 fail closed함</td></tr>
+        <tr><td><code>A-DS16-A21</code></td><td>보안</td><td>CSRF·권한·ID 추측·upload·ZIP·CSV·PDF·prompt injection 음수 검증이 통과함</td></tr>
+        <tr><td><code>A-DS16-A22</code></td><td>UI·접근성</td><td>desktop·mobile·keyboard에서 겹침·잘림·overflow·focus 손실이 0건임</td></tr>
+        <tr><td><code>A-DS16-A23</code></td><td>문서·자동 검증</td><td>HTML 탐색·정본 수량·플랫폼 양쪽 문서·검증 명령이 같은 값을 가짐</td></tr>
+        <tr><td><code>A-DS16-A24</code></td><td>변경 경계</td><td>사용자 최종 승인 전 애드온·플랫폼 업무 Runtime 변경이 0건임</td></tr>
+      </tbody></table>
+
+      <h2 id="decisions">사용자 확인·동결 결정</h2>
+      <table><thead><tr><th>ID</th><th>확정 제안</th><th>상태</th></tr></thead><tbody>
+        <tr><td><code>A-DS16-D01</code></td><td>A-D-001~009와 A-DS-00~15 HTML을 구현의 유일한 설계 정본으로 사용한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D02</code></td><td>화면은 Console 6·PublicUI 3, 메뉴는 각 shell 1개, asset bundle은 5개로 고정한다. 설정 C06은 전용 bundle을 사용한다.</td><td>Amendment 08 구현 동결</td></tr>
+        <tr><td><code>A-DS16-D03</code></td><td>capability 15개와 addon role 0개를 고정하고 모든 surface가 같은 복합 Policy를 사용한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D04</code></td><td><code>oj-ai/v1</code> 외부 표면을 A-DS-08 Amendment 26 기준 GET 40·POST 79로 고정한다.</td><td>Amendment 26 구현 동결</td></tr>
+        <tr><td><code>A-DS16-D05</code></td><td>Database 정본을 table 45개·owner 10개·Amendment 01~08로 고정한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D06</code></td><td>모든 target table은 literal 무접두어 <code>oj_ai_*</code>이며 WordPress prefix 결합을 금지한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D07</code></td><td>owner별 Repository와 versioned projection만 사용하고 cross-owner table join을 금지한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D08</code></td><td>Plate 53.1.2·node 16·응답칸 10·projection 5를 첫 구현 기준선으로 사용한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D09</code></td><td>활동지 자체 평가와 학생 제출 평가를 별도 task·aggregate·review 흐름으로 유지한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D10</code></td><td>제출 task는 outer 하나와 score·feedback·special note inner 세 계약을 사용한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D11</code></td><td>AI 결과는 교사 검토·승인 전 공식 점수·피드백·특기사항·학생 공개본이 아니다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D12</code></td><td>활동지·작성 결과·학생 결과·보고서 PDF는 exact source의 private artifact로만 만든다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D13</code></td><td>보고서 기본 관점은 활동지별이며 수업·그룹별·학생별은 같은 source의 다른 projection이다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D14</code></td><td>비활성화·uninstall은 보존을 기본으로 하고 자동 데이터 삭제를 금지한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D15</code></td><td>legacy 이전은 CA01 plan/package와 offline cutover, 명시 preview·승인만 사용한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D16</code></td><td>migration·purge preview는 원장 변경 0건이며 approve에서 run/job을 처음 만든다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D17</code></td><td>동결 당시 dev.32·Addon API 1.0.0·public 30을 감사 기준선으로만 사용하고 완전 기능 release로 간주하지 않는다. 현재 기준선은 R6로 대체했다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D18</code></td><td>CG02·CG11·AJ08 extension을 포함한 C28-I06은 additive Addon API 1.1.0 별도 플랫폼 릴리스로 확정하며 G0 구현으로 이행했다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D19</code></td><td>LC01·CG01·CG02·CG11·AJ08·RC01·RC02와 CG03·RC04·RC05 정합화를 G0 관문으로 둔다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D20</code></td><td>CG06~CG10·AJ06~AJ07의 소비자 보상 정책을 자동 fixture로 고정한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D21</code></td><td>구현은 G0~G6 수직 흐름 순서로 진행하고 UI·서비스·DB·테스트·문서를 함께 완료한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D22</code></td><td>수량·API·schema drift가 생기면 검증기를 실패시키고 원인 A-DS와 A-DS-16을 다시 연다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D23</code></td><td>OJ Platform 변경은 별도 플랫폼 변경 집합에서만 하고 애드온 설치·업데이트가 플랫폼을 patch하지 않는다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS16-D24</code></td><td>사용자 최종 승인 뒤에만 설계를 동결하고 G0 플랫폼 작업부터 구현 단계로 전환한다.</td><td>사용자 확인·동결</td></tr>
+      </tbody></table>
+
+      <h2 id="completion">완료 판정과 다음 단계</h2>
+      <section class="panel">
+        <p><strong>A-DS-16의 교차 추적과 결정 24개를 유지하고 Amendment 20까지 반영했다.</strong> 0.1.58에서 평가 요소와 학습목표를 활동지 전체 또는 문항 응답에 선택 연결하고 같은 선택을 자체 점검·학생 제출 평가에 투영했으며 신규 Page·Menu·capability·REST·DB·플랫폼 API는 추가하지 않았다.</p>
+        <ul>
+          <li>내부 정본: Page 9·Menu 6·Asset 5·GET 40·POST 79·capability 15·table 45·owner 10·AI task 2·응답칸 10종으로 연결</li>
+          <li>현재 플랫폼 기준선: dev.90 clean commit <code>b5a139dd…fe7138c</code>·Addon API 1.1.0·공개 symbol 37개·Gateway signature 유지</li>
+          <li>G2 R01 Amendment 06: 활동지 Q37·C76·C77과 literal 원장·감사·worker exact routing 연계</li>
+          <li>G4 R01 Amendment 07: 학생 제출 Q38·C78·C79, 분리 원장·OJ Console 이중 탭·명시적 worker loader와 deactivation 연계</li>
+          <li>G5 S04 Amendment 08: 설정 전용 Asset Bundle 분리, 각 CSS·JS 최대 8개, Platform API change: 0</li>
+          <li>외부 선행: <a href="g0-c28-i06-release-gate.html">G0 검증 package·upgrade·rollback·91-file fingerprint 증거</a> 기록, clean production package 대기</li>
+          <li>Runtime 변경: 접근성 보완을 위한 애드온 파일 5건, OJ Platform 0건</li>
+          <li>G6 IMP-01 Amendment 09: A-DS16-S01~S12·기존 증거 22개·전체 회귀 인수, Platform API change: 0</li>
+          <li>G6 IMP-02 Amendment 10: 기존 관문 33개·브라우저 12종·접근성 Runtime 보완 5건, Platform API change: 0</li>
+          <li>G6 IMP-03 Amendment 11: 기존 관문 28개·production 상한·lease·retry·checkpoint·재시작 인수, Platform API change: 0</li>
+          <li>G6 IMP-04 Amendment 12: 기존 관문 13개·rollback fail-closed·worker 재등록·SHA-256 증거 인수, Platform API change: 0</li>
+          <li>G6 IMP-05 Amendment 13: S01~S05 경계·fingerprint·HTML changelog·<code>source_dirty=false</code> clean production ZIP 인수, Platform API change: 0</li>
+          <li>0.1.52 Amendment 14: Q39·Q40 평가 전 제출, 답안 상세, C29→Q16 전환과 desktop·mobile 인수, Platform API change: 0</li>
+          <li>0.1.53 Amendment 15: package-owned 구형 루브릭 승격, 활성 운영자 기준 정책 재고정, 설정 오류 분리와 replay 인수, Platform API change: 0</li>
+          <li>0.1.58 Amendment 20: 활동지별 평가 요소·학습목표의 전체·문항 응답 연결, P03·P04·학생 평가 입력 선택 투영과 기존 문서 호환 인수, Platform API change: 0</li>
+        </ul>
+        <p><code>A-DS16-D01~D24</code> 동결 뒤 G1~G5와 <a href="g6-imp-05-boundary-final-package.html">G6-IMP-01~05</a>를 모두 완료했다. 이행 기록은 <a href="implementation-roadmap.html">상세 구현 진행표</a>를 정본으로 한다. 공개 API가 1.1.0·37 symbol 또는 Gateway signature에서 달라지면 구현을 멈추고 변경 원인·SemVer·소비자 영향을 사용자에게 먼저 알린다.</p>
+      </section>
+      <p class="footer">A-DS-16 전체 연결·교차 검증·동결 · Amendment 01~20 · Page 9·Menu 6·Asset 5·GET 40·POST 79 · G6-IMP-05 S01~S05 통과 · API 27·schema 42·route 81·platform API source 38파일 fingerprint · G6 5/5 · clean production ZIP·manifest·checksum 검증</p>
+    </main>
+  </div>
+</body>
+</html>

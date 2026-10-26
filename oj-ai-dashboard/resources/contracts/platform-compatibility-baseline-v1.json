@@ -1,0 +1,15 @@
+{
+  "contract": "oj_ai.platform_compatibility_baseline@1",
+  "review_id": "API-AUD-2026-10-25-R173",
+  "review_document": "docs/ai-assessment/worksheet-toolbar-stacking-2026-10-25.html",
+  "platform_version": "2.4.3",
+  "addon_api_version": "1.7.0",
+  "public_interfaces": 29,
+  "public_final_classes": 62,
+  "public_files": 91,
+  "implementation_audit": {
+    "file_count": 179,
+    "sha256": "462e8076ded19f0f8c02614cb8492eaf1c33bd1a235a28be700818d19f4aca77"
+  },
+  "scope": "Reviewed local provider source and consumer contracts; not a server installation or rollback result."
+}

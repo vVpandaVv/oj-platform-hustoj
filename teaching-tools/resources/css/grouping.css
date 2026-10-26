@@ -1,0 +1,56 @@
+.htt-grouping-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.htt-grouping-card {
+    border: 1px solid var(--htt-border);
+    border-radius: 8px;
+    padding: 12px;
+    background: var(--htt-card-bg);
+}
+
+.htt-grouping-card.is-me {
+    background: var(--htt-highlight-bg);
+    border-color: var(--htt-highlight-border);
+    box-shadow: 0 0 0 3px var(--htt-highlight-border);
+}
+
+.htt-grouping-card h3 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.htt-grouping-card ul {
+    margin: 0;
+    padding-left: 1.2em;
+}
+
+.htt-grouping-card li {
+    margin-bottom: 4px;
+}
+
+.htt-grouping-setup textarea {
+    width: 100%;
+    min-height: 100px;
+    box-sizing: border-box;
+}
+
+.htt-grouping-messages .message {
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+.htt-grouping-messages .message.warning {
+    background: var(--htt-warning-bg);
+    color: var(--htt-warning-fg);
+}
+
+.htt-grouping-messages .message.info {
+    background: var(--htt-info-bg);
+    color: var(--htt-info-fg);
+}

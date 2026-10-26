@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-05 애드온 데이터베이스</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-05 애드온 데이터베이스</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html" aria-current="page">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">결론</a>
+          <a href="#scope">범위·입력</a>
+          <a href="#rules">물리 규칙</a>
+          <a href="#topology">목표 구조</a>
+          <a href="#profiles">컬럼 프로필</a>
+          <a href="#system-tables">시스템·운영</a>
+          <a href="#content-tables">교육과정·활동지</a>
+          <a href="#submission-tables">설정·제출</a>
+          <a href="#assessment-tables">두 평가</a>
+          <a href="#artifact-tables">파일·보고·이전</a>
+          <a href="#ownership">소유권</a>
+          <a href="#relations">관계·FK</a>
+          <a href="#states">상태·불변성</a>
+          <a href="#json">JSON·민감정보</a>
+          <a href="#repository">Repository</a>
+          <a href="#transactions">Transaction</a>
+          <a href="#migration">설치·Migration</a>
+          <a href="#legacy">35개 기준선 이관</a>
+          <a href="#retention">보존·Purge</a>
+          <a href="#options">Option</a>
+          <a href="#acceptance">수용 기준</a>
+          <a href="#decisions">결정 기록</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">A-DS-05 · Add-on Database Contract</p>
+        <h2>애드온 데이터베이스</h2>
+        <p>현재 35개 테이블을 그대로 유지하지 않고 불변 revision, 두 평가 subject, private artifact와 복구 가능한 migration을 기준으로 목표 스키마를 다시 구성한다. 모든 물리 테이블은 WordPress 사이트 prefix를 붙이지 않은 고정 <code>oj_ai_*</code> 이름이며, 플랫폼 원장과 플랫폼 데이터베이스는 읽거나 수정하지 않는다.</p>
+        <div class="meta">
+          <span class="badge">작성일 2026-08-12</span>
+          <span class="badge good">A-DS-04 사용자 확인·동결</span>
+          <span class="badge good">상태 사용자 확정·동결</span>
+          <span class="badge">확정일 2026-08-13</span>
+          <span class="badge">상세 설계 6/17</span>
+          <span class="badge">목표 table 45개</span>
+          <span class="badge good">A-DS-08 DBA01~DBA04 승인 반영</span>
+          <span class="badge good">A-DS-09 DBA01~DBA03 승인 반영</span>
+          <span class="badge good">A-DS-10 DBA01 승인 반영</span>
+          <span class="badge good">A-DS-11 DBA01~DBA02 승인 반영</span>
+          <span class="badge good">A-DS-12 DBA01 승인 반영</span>
+          <span class="badge">owner 10개</span>
+          <span class="badge">Runtime 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 결론</h2>
+      <section class="panel">
+        <p>목표 스키마는 45개 table을 10개 owner에 하나씩 배정한다. 활동지 자체 평가는 <code>oj_ai_worksheet_evaluation_*</code>, 학생 제출 평가는 <code>oj_ai_submission_evaluation_*</code> 계열에 별도로 저장하며 공통 실행 이력만 <code>oj_ai_evaluation_runs</code>와 <code>oj_ai_evaluation_attempts</code>에서 공유한다.</p>
+        <div class="warning callout"><strong>학사 원장 복제 금지:</strong> 학년·학급·그룹·학생·담당 관계를 저장하는 로컬 master table은 목표 스키마에 없다. assignment에는 플랫폼 stable context ID, context revision과 배정 당시 최소 표시 snapshot만 저장하며 플랫폼 내부 table에는 FK나 write를 만들지 않는다.</div>
+      </section>
+
+      <h2 id="scope">결정 범위와 동결 입력</h2>
+      <table>
+        <thead><tr><th>입력</th><th>A-DS-05에서 계승하는 결정</th></tr></thead>
+        <tbody>
+          <tr><td><a href="a-d-004-data-storage.html">A-D-004 데이터 저장 기준선</a></td><td>현재 35 table·586 column·86 index·JSON 27·FK 0, 무접두어 이름, legacy와 파일·migration 격차</td></tr>
+          <tr><td><a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a></td><td>definition, immutable revision, publication, assignment, submission revision과 PDF source 분리</td></tr>
+          <tr><td><a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 흐름</a></td><td>활동지 자체 평가와 학생 제출 평가의 입력·출력·검토 이력 분리, 비동기 실행·idempotency</td></tr>
+          <tr><td><a href="a-d-008-module-data-ownership.html">A-D-008 모듈·데이터 소유권</a></td><td>table owner 1개, foreign Repository·table 접근 금지, Reporting projection과 Operations 감사 책임</td></tr>
+          <tr><td><a href="a-ds-00-scope-baseline.html">A-DS-00 목적·용어</a></td><td><code>WorksheetTemplate</code>, <code>PublishedWorksheetRevision</code>, <code>WorksheetEvaluation</code>, <code>OfficialSubmissionRevision</code>, <code>SubmissionEvaluation</code>, <code>ReleaseRevision</code>, <code>PdfArtifact</code></td></tr>
+          <tr><td><a href="a-ds-03-access-policy.html">A-DS-03 접근 정책</a></td><td>actor·context·object scope를 Repository filter가 아니라 application Policy에서 판정하고 Jobs도 실행 직전 재인가</td></tr>
+          <tr><td><a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a></td><td>정책·rubric·review revision, 두 task, routing 안전 snapshot, provider 비밀값·endpoint 비저장</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>구현 차단:</strong> 이 문서는 목표 DDL 계약이다. <code>A-DS-16</code> 사용자 승인 전 PHP·JavaScript·table·option·migration을 구현하지 않으며 <code>oj-platform</code> source·config·schema·migration을 수정하지 않는다.</div>
+
+      <h2 id="rules">물리 스키마 고정 규칙</h2>
+      <table>
+        <thead><tr><th>항목</th><th>고정 계약</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>이름</td><td>registry에 선언한 소문자 <code>oj_ai_*</code> literal만 사용</td><td><code>$wpdb-&gt;prefix</code>, <code>$wpdb-&gt;base_prefix</code>, <code>wp_</code> 결합, 자동 후보 탐색</td></tr>
+          <tr><td>설치 범위</td><td>단일 WordPress site와 필수 OJ Platform 환경</td><td>Multisite에서 blog별 같은 무접두어 table 공유</td></tr>
+          <tr><td>Engine·문자</td><td><code>ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci</code></td><td>owner별 engine·collation 차이, MyISAM</td></tr>
+          <tr><td>식별자</td><td>내부 PK는 <code>BIGINT UNSIGNED</code>, 외부 route·DTO에는 정렬 가능한 <code>CHAR(26)</code> public ID</td><td>연속 PK 외부 노출, 제목·배열 index를 ID로 사용</td></tr>
+          <tr><td>시간</td><td>모든 물리 시간은 UTC <code>DATETIME</code>, 표시할 때만 site timezone 적용</td><td><code>current_time('mysql')</code>과 UTC 혼용</td></tr>
+          <tr><td>금액·점수</td><td>점수는 <code>DECIMAL(12,4)</code>, confidence는 <code>DECIMAL(5,4)</code></td><td>float 누적, 문자열 점수</td></tr>
+          <tr><td>상태</td><td><code>VARCHAR(32)</code> allowlist와 Service 상태 전이, migration fixture로 검증</td><td>DB에 저장된 임의 상태를 화면에서 추측</td></tr>
+          <tr><td>삭제</td><td>root archive, append-only revision, 승인된 purge를 구분하고 모든 FK는 기본 <code>RESTRICT</code></td><td>공통 <code>deleted_at</code> 반복, 암묵 cascade</td></tr>
+          <tr><td>플랫폼 참조</td><td>actor는 WordPress user ID, context는 C28 stable string ID·revision을 저장하되 물리 FK 없음</td><td>플랫폼·WordPress table JOIN, 로컬 roster master</td></tr>
+          <tr><td>비밀값</td><td>routing revision·profile fingerprint·provider/model key의 안전 projection만 저장</td><td>API key, endpoint, Authorization header, secret reference, raw client</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="topology">목표 aggregate와 45개 table</h2>
+      <pre><code>Database 2 + Operations 3
+  ├─ 설치 owner·schema migration
+  └─ audit·outbox·승인 purge
+
+Curriculum 2 ── Contract ──&gt; Worksheet 6
+                                  ├─ definition → immutable revision → publication
+                                  └─ question·achievement snapshot
+
+AssessmentConfiguration 3
+  ├─ worksheet_quality policy·rubric·review revision
+  └─ student_submission policy·rubric·review revision
+
+Submission 8
+  publication ID ──&gt; assignment → target snapshot → submission → immutable revision·receipt
+                                                        └─ attachment·ZIP → Storage file ID
+
+Assessment 15
+  worksheet revision ──&gt; worksheet evaluation input → result·item → teacher review
+  official submission ─&gt; submission evaluation input → result·item → review → feedback → release
+                               \                    /
+                                evaluation run → attempt
+
+Storage 1 + Reporting 3 + Import 2
+  private file registry · report snapshot · export job · PDF artifact · import run/item</code></pre>
+      <table>
+        <thead><tr><th>Owner</th><th>수량</th><th>핵심 aggregate</th></tr></thead>
+        <tbody>
+          <tr><td>Database</td><td>2</td><td>installation owner marker·migration ledger</td></tr>
+          <tr><td>Operations</td><td>3</td><td>append-only audit·outbox·2단계 purge job</td></tr>
+          <tr><td>Curriculum</td><td>2</td><td>교육과정·성취기준 catalog</td></tr>
+          <tr><td>Worksheet</td><td>6</td><td>활동지 definition·revision·문항·link·publication</td></tr>
+          <tr><td>AssessmentConfiguration</td><td>3</td><td>평가 정책·rubric·review rule revision</td></tr>
+          <tr><td>Submission</td><td>8</td><td>배정·대상·제출·receipt·첨부·ZIP</td></tr>
+          <tr><td>Assessment</td><td>15</td><td>활동지 평가 5·제출 평가 7·특기사항 1·공통 실행 2</td></tr>
+          <tr><td>Storage</td><td>1</td><td>private file metadata</td></tr>
+          <tr><td>Reporting</td><td>3</td><td>read snapshot·export·PDF artifact</td></tr>
+          <tr><td>Import</td><td>2</td><td>preview·승인·checkpoint 이전</td></tr>
+          <tr><td><strong>합계</strong></td><td><strong>45</strong></td><td>각 물리 table owner 정확히 1개</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="profiles">컬럼·key 표기 프로필</h2>
+      <p>아래 table 전수 목록에서 프로필 문자는 다음 컬럼을 정확히 포함한다. 각 행에는 프로필 외의 업무 컬럼과 key만 추가한다.</p>
+      <table>
+        <thead><tr><th>프로필</th><th>고정 컬럼</th><th>적용</th></tr></thead>
+        <tbody>
+          <tr><td><code>PK</code></td><td><code>id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY</code></td><td>모든 table</td></tr>
+          <tr><td><code>PID</code></td><td><code>public_id CHAR(26) NOT NULL</code> + unique key</td><td>외부 참조 가능한 root·revision·artifact</td></tr>
+          <tr><td><code>MUT</code></td><td><code>lock_version BIGINT UNSIGNED NOT NULL DEFAULT 0</code>, <code>created_by_user_id BIGINT UNSIGNED</code>, <code>created_at_utc DATETIME</code>, <code>updated_by_user_id BIGINT UNSIGNED</code>, <code>updated_at_utc DATETIME</code></td><td>명시적으로 변경 가능한 root·draft·job</td></tr>
+          <tr><td><code>IMM</code></td><td><code>content_hash CHAR(64) NOT NULL</code>, <code>created_by_user_id BIGINT UNSIGNED</code>, <code>created_at_utc DATETIME</code></td><td>불변 revision·snapshot·decision</td></tr>
+          <tr><td><code>SYS</code></td><td><code>created_at_utc DATETIME NOT NULL</code>, 필요 시 <code>updated_at_utc DATETIME</code></td><td>actor가 없는 schema·worker 기록</td></tr>
+          <tr><td><code>JSON(name)</code></td><td><code>name_schema VARCHAR(100)</code>, <code>name_version SMALLINT UNSIGNED</code>, <code>name_json LONGTEXT</code>, <code>name_hash CHAR(64)</code></td><td>모든 구조화 payload</td></tr>
+          <tr><td><code>CTX</code></td><td><code>context_type VARCHAR(16)</code>, <code>context_id VARCHAR(191)</code>, <code>context_revision VARCHAR(191)</code></td><td>플랫폼 context snapshot 참조</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>NULL 원칙:</strong> 표에서 <code>nullable</code>로 쓰지 않은 업무 컬럼은 <code>NOT NULL</code>이다. optional 관계는 <code>NULL</code> 한 가지로 표현하며 0·빈 문자열·빈 JSON을 “없음”으로 혼용하지 않는다.</div>
+
+      <h2 id="system-tables">Database·Operations 5개</h2>
+      <table>
+        <thead><tr><th>Table</th><th>프로필 + 업무 컬럼</th><th>Unique·Index</th><th>FK</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_installations</code></td><td><code>PK, MUT</code>, <code>addon_id VARCHAR(100)</code>, <code>owner_marker CHAR(64)</code>, <code>schema_version VARCHAR(32)</code>, <code>schema_fingerprint CHAR(64)</code>, <code>state VARCHAR(32)</code>, <code>last_verified_at_utc DATETIME nullable</code></td><td><code>uq_installation_addon(addon_id)</code></td><td>없음</td></tr>
+          <tr><td><code>oj_ai_schema_migrations</code></td><td><code>PK, SYS</code>, <code>migration_id VARCHAR(100)</code>, <code>checksum CHAR(64)</code>, <code>state VARCHAR(32)</code>, <code>attempt_count INT UNSIGNED</code>, <code>started_at_utc DATETIME</code>, <code>completed_at_utc DATETIME nullable</code>, <code>error_code VARCHAR(100) nullable</code>, <code>JSON(checkpoint) nullable</code></td><td><code>uq_migration_id(migration_id)</code>, <code>ix_migration_state(state,id)</code></td><td>없음</td></tr>
+          <tr><td><code>oj_ai_audit_events</code></td><td><code>PK, PID</code>, <code>occurred_at_utc DATETIME</code>, <code>actor_user_id BIGINT UNSIGNED nullable</code>, <code>action_key VARCHAR(100)</code>, <code>object_type VARCHAR(64)</code>, <code>object_public_id CHAR(26) nullable</code>, <code>CTX nullable</code>, <code>correlation_id VARCHAR(100)</code>, <code>before_digest CHAR(64) nullable</code>, <code>after_digest CHAR(64) nullable</code>, <code>JSON(metadata)</code>, <code>previous_event_hash CHAR(64) nullable</code>, <code>event_hash CHAR(64)</code></td><td><code>uq_audit_public(public_id)</code>, <code>uq_audit_event_hash(event_hash)</code>, <code>ix_audit_object(object_type,object_public_id,occurred_at_utc)</code>, <code>ix_audit_actor(actor_user_id,occurred_at_utc)</code>, <code>ix_audit_correlation(correlation_id)</code></td><td>없음, append-only</td></tr>
+          <tr><td><code>oj_ai_outbox_events</code></td><td><code>PK, PID, MUT</code>, <code>aggregate_type VARCHAR(64)</code>, <code>aggregate_public_id CHAR(26)</code>, <code>event_type VARCHAR(100)</code>, <code>idempotency_key VARCHAR(191)</code>, <code>JSON(payload)</code>, <code>available_at_utc DATETIME</code>, <code>published_at_utc DATETIME nullable</code>, <code>lease_token CHAR(36) nullable</code>, <code>lease_expires_at_utc DATETIME nullable</code>, <code>attempt_count INT UNSIGNED</code>, <code>last_error_code VARCHAR(100) nullable</code></td><td><code>uq_outbox_public(public_id)</code>, <code>uq_outbox_idempotency(idempotency_key)</code>, <code>ix_outbox_ready(published_at_utc,available_at_utc,id)</code></td><td>없음</td></tr>
+          <tr><td><code>oj_ai_purge_jobs</code></td><td><code>PK, PID, MUT</code>, <code>scope_type VARCHAR(64)</code>, <code>scope_public_id CHAR(26) nullable</code>, <code>state VARCHAR(32)</code>, <code>idempotency_key VARCHAR(191)</code>, <code>JSON(preview)</code>, <code>approved_by_user_id BIGINT UNSIGNED nullable</code>, <code>approved_at_utc DATETIME nullable</code>, <code>approval_token_hash CHAR(64) nullable</code>, <code>JSON(checkpoint) nullable</code>, <code>completed_at_utc DATETIME nullable</code>, <code>error_code VARCHAR(100) nullable</code></td><td><code>uq_purge_public(public_id)</code>, <code>uq_purge_idempotency(idempotency_key)</code>, <code>uq_purge_approval_token(approval_token_hash)</code>, <code>ix_purge_state(state,updated_at_utc)</code>, <code>ix_purge_scope(scope_type,scope_public_id)</code></td><td>없음</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="content-tables">Curriculum·Worksheet 8개</h2>
+      <table>
+        <thead><tr><th>Table</th><th>프로필 + 업무 컬럼</th><th>Unique·Index</th><th>FK</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_curriculums</code></td><td><code>PK, PID, MUT</code>, <code>source_kind VARCHAR(32)</code>, <code>source_key VARCHAR(191)</code>, <code>source_version VARCHAR(64)</code>, <code>title VARCHAR(255)</code>, <code>locale VARCHAR(16)</code>, <code>state VARCHAR(32)</code>, <code>JSON(metadata)</code>, <code>content_hash CHAR(64)</code></td><td><code>uq_curriculum_public(public_id)</code>, <code>uq_curriculum_source(source_kind,source_key,source_version)</code>, <code>ix_curriculum_state(state,title)</code></td><td>없음</td></tr>
+          <tr><td><code>oj_ai_achievement_standards</code></td><td><code>PK, PID, MUT</code>, <code>curriculum_id BIGINT UNSIGNED</code>, <code>stable_key VARCHAR(191)</code>, <code>code VARCHAR(100)</code>, <code>title VARCHAR(255)</code>, <code>description TEXT</code>, <code>grade_label VARCHAR(100) nullable</code>, <code>JSON(metadata)</code>, <code>content_hash CHAR(64)</code></td><td><code>uq_standard_public(public_id)</code>, <code>uq_standard_key(curriculum_id,stable_key)</code>, <code>ix_standard_code(curriculum_id,code)</code></td><td><code>fk_standard_curriculum → curriculums.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_worksheets</code></td><td><code>PK, PID, MUT</code>, <code>title VARCHAR(255)</code>, <code>owner_user_id BIGINT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>current_revision_public_id CHAR(26) nullable</code>, <code>latest_publication_public_id CHAR(26) nullable</code>, <code>archived_at_utc DATETIME nullable</code></td><td><code>uq_worksheet_public(public_id)</code>, <code>ix_worksheet_owner(owner_user_id,state,updated_at_utc)</code></td><td>플랫폼 user와 pointer public ID에 물리 FK 없음</td></tr>
+          <tr><td><code>oj_ai_worksheet_revisions</code></td><td><code>PK, PID, IMM</code>, <code>worksheet_id BIGINT UNSIGNED</code>, <code>revision_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>source_revision_id BIGINT UNSIGNED nullable</code>, <code>editor_profile_version VARCHAR(32)</code>, <code>document_schema_version VARCHAR(32)</code>, <code>JSON(teacher_document)</code>, <code>document_hash CHAR(64)</code>, <code>validation_schema_version VARCHAR(32)</code>, <code>validation_hash CHAR(64)</code>, <code>approved_by_user_id BIGINT UNSIGNED nullable</code>, <code>approved_at_utc DATETIME nullable</code></td><td><code>uq_worksheet_revision_public(public_id)</code>, <code>uq_worksheet_revision_no(worksheet_id,revision_no)</code>, <code>ix_worksheet_revision_state(worksheet_id,state,revision_no)</code></td><td><code>fk_revision_worksheet → worksheets.id RESTRICT</code>, <code>fk_revision_source → worksheet_revisions.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_worksheet_revision_questions</code></td><td><code>PK, PID, IMM</code>, <code>worksheet_revision_id BIGINT UNSIGNED</code>, <code>question_key VARCHAR(100)</code>, <code>position INT UNSIGNED</code>, <code>response_type VARCHAR(32)</code>, <code>JSON(question)</code>, <code>JSON(private_metadata) nullable</code></td><td><code>uq_question_public(public_id)</code>, <code>uq_question_key(worksheet_revision_id,question_key)</code>, <code>uq_question_position(worksheet_revision_id,position)</code></td><td><code>fk_question_revision → worksheet_revisions.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_worksheet_achievement_links</code></td><td><code>PK, IMM</code>, <code>worksheet_revision_id BIGINT UNSIGNED</code>, <code>standard_public_id CHAR(26)</code>, <code>standard_source_version VARCHAR(64)</code>, <code>standard_code_snapshot VARCHAR(100)</code>, <code>standard_label_snapshot VARCHAR(255)</code>, <code>alignment_type VARCHAR(32)</code>, <code>position INT UNSIGNED</code></td><td><code>uq_worksheet_standard(worksheet_revision_id,standard_public_id,alignment_type)</code>, <code>ix_worksheet_standard_lookup(standard_public_id,worksheet_revision_id)</code></td><td><code>fk_worksheet_link_revision → worksheet_revisions.id RESTRICT</code>; Curriculum cross-owner FK 없음</td></tr>
+          <tr><td><code>oj_ai_question_achievement_links</code></td><td><code>PK, IMM</code>, <code>question_id BIGINT UNSIGNED</code>, <code>standard_public_id CHAR(26)</code>, <code>standard_source_version VARCHAR(64)</code>, <code>standard_code_snapshot VARCHAR(100)</code>, <code>standard_label_snapshot VARCHAR(255)</code>, <code>alignment_type VARCHAR(32)</code>, <code>position INT UNSIGNED</code></td><td><code>uq_question_standard(question_id,standard_public_id,alignment_type)</code>, <code>ix_question_standard_lookup(standard_public_id,question_id)</code></td><td><code>fk_question_link_question → worksheet_revision_questions.id RESTRICT</code>; Curriculum cross-owner FK 없음</td></tr>
+          <tr><td><code>oj_ai_worksheet_publications</code></td><td><code>PK, PID, IMM</code>, <code>worksheet_id BIGINT UNSIGNED</code>, <code>worksheet_revision_id BIGINT UNSIGNED</code>, <code>publication_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>JSON(student_document)</code>, <code>JSON(response_schema)</code>, <code>JSON(grading_schema)</code>, <code>JSON(print_projection)</code>, <code>projection_manifest_version VARCHAR(32)</code>, <code>publication_hash CHAR(64)</code>, <code>published_at_utc DATETIME</code>, <code>retired_by_user_id BIGINT UNSIGNED nullable</code>, <code>retired_at_utc DATETIME nullable</code></td><td><code>uq_publication_public(public_id)</code>, <code>uq_publication_no(worksheet_id,publication_no)</code>, <code>uq_publication_revision(worksheet_revision_id)</code>, <code>ix_publication_state(worksheet_id,state,published_at_utc)</code></td><td><code>fk_publication_worksheet → worksheets.id RESTRICT</code>, <code>fk_publication_revision → worksheet_revisions.id RESTRICT</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="submission-tables">AssessmentConfiguration·Submission 11개</h2>
+      <table>
+        <thead><tr><th>Table</th><th>프로필 + 업무 컬럼</th><th>Unique·Index</th><th>FK</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_evaluation_policy_revisions</code></td><td><code>PK, PID, MUT</code>, <code>subject_type VARCHAR(32)</code>, <code>revision_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>JSON(policy)</code>, <code>content_hash CHAR(64)</code>, <code>activated_by_user_id BIGINT UNSIGNED nullable</code>, <code>activated_at_utc DATETIME nullable</code>, <code>retired_by_user_id BIGINT UNSIGNED nullable</code>, <code>retired_at_utc DATETIME nullable</code></td><td><code>uq_policy_public(public_id)</code>, <code>uq_policy_revision(subject_type,revision_no)</code>, <code>ix_policy_active(subject_type,state,revision_no)</code></td><td>없음</td></tr>
+          <tr><td><code>oj_ai_rubric_revisions</code></td><td><code>PK, PID, MUT</code>, <code>subject_type VARCHAR(32)</code>, <code>revision_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>JSON(criteria)</code>, <code>total_points DECIMAL(12,4) nullable</code>, <code>content_hash CHAR(64)</code>, <code>activated_by_user_id BIGINT UNSIGNED nullable</code>, <code>activated_at_utc DATETIME nullable</code>, <code>retired_by_user_id BIGINT UNSIGNED nullable</code>, <code>retired_at_utc DATETIME nullable</code></td><td><code>uq_rubric_public(public_id)</code>, <code>uq_rubric_revision(subject_type,revision_no)</code>, <code>ix_rubric_active(subject_type,state,revision_no)</code></td><td>없음</td></tr>
+          <tr><td><code>oj_ai_review_rule_revisions</code></td><td><code>PK, PID, MUT</code>, <code>subject_type VARCHAR(32)</code>, <code>revision_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>review_required TINYINT UNSIGNED DEFAULT 1</code>, <code>explicit_release_required TINYINT UNSIGNED DEFAULT 1</code>, <code>confidence_threshold DECIMAL(5,4)</code>, <code>JSON(rules)</code>, <code>content_hash CHAR(64)</code>, <code>activated_by_user_id BIGINT UNSIGNED nullable</code>, <code>activated_at_utc DATETIME nullable</code>, <code>retired_by_user_id BIGINT UNSIGNED nullable</code>, <code>retired_at_utc DATETIME nullable</code></td><td><code>uq_review_rule_public(public_id)</code>, <code>uq_review_rule_revision(subject_type,revision_no)</code>, <code>ix_review_rule_active(subject_type,state,revision_no)</code></td><td>없음</td></tr>
+          <tr><td><code>oj_ai_assignments</code></td><td><code>PK, PID, MUT, CTX</code>, <code>worksheet_publication_public_id CHAR(26)</code>, <code>publication_hash CHAR(64)</code>, <code>title_snapshot VARCHAR(255)</code>, <code>state VARCHAR(32)</code>, <code>opens_at_utc DATETIME nullable</code>, <code>due_at_utc DATETIME nullable</code>, <code>closes_at_utc DATETIME nullable</code>, <code>target_roster_revision VARCHAR(191)</code>, <code>schedule_version INT UNSIGNED</code>, <code>schedule_hash CHAR(64)</code>, <code>auto_submit_enabled TINYINT UNSIGNED</code>, <code>auto_submit_completed_at_utc DATETIME nullable</code>, <code>JSON(resubmission_policy)</code>, <code>target_snapshot_hash CHAR(64)</code></td><td><code>uq_assignment_public(public_id)</code>, <code>ix_assignment_context(context_type,context_id,state,due_at_utc)</code>, <code>ix_assignment_publication(worksheet_publication_public_id,state)</code></td><td>Worksheet·Platform cross-owner FK 없음</td></tr>
+          <tr><td><code>oj_ai_assignment_targets</code></td><td><code>PK, PID, IMM</code>, <code>assignment_id BIGINT UNSIGNED</code>, <code>target_type VARCHAR(16)</code>, <code>target_context_id VARCHAR(191)</code>, <code>target_context_revision VARCHAR(191)</code>, <code>membership_revision VARCHAR(191)</code>, <code>learner_user_id BIGINT UNSIGNED nullable</code>, <code>JSON(display_snapshot)</code>, <code>snapshot_hash CHAR(64)</code>, <code>state VARCHAR(32)</code></td><td><code>uq_assignment_target_public(public_id)</code>, <code>uq_assignment_target(assignment_id,target_type,target_context_id,learner_user_id)</code>, <code>ix_target_learner(learner_user_id,assignment_id)</code></td><td><code>fk_target_assignment → assignments.id RESTRICT</code>; Platform FK 없음</td></tr>
+          <tr><td><code>oj_ai_submissions</code></td><td><code>PK, PID, MUT</code>, <code>assignment_id BIGINT UNSIGNED</code>, <code>learner_user_id BIGINT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>current_revision_public_id CHAR(26) nullable</code>, <code>official_revision_public_id CHAR(26) nullable</code>, <code>official_attempt_no INT UNSIGNED DEFAULT 0</code>, <code>official_review_public_id CHAR(26) nullable</code>, <code>official_review_hash CHAR(64) nullable</code>, <code>current_release_public_id CHAR(26) nullable</code>, <code>current_release_hash CHAR(64) nullable</code>, <code>started_at_utc DATETIME nullable</code>, <code>submitted_at_utc DATETIME nullable</code>, <code>closed_at_utc DATETIME nullable</code></td><td><code>uq_submission_public(public_id)</code>, <code>uq_submission_learner(assignment_id,learner_user_id)</code>, <code>ix_submission_state(assignment_id,state,submitted_at_utc)</code>, <code>ix_submission_learner(learner_user_id,state)</code></td><td><code>fk_submission_assignment → assignments.id RESTRICT</code>; user·Assessment cross-owner FK 없음</td></tr>
+          <tr><td><code>oj_ai_submission_revisions</code></td><td><code>PK, PID, IMM</code>, <code>submission_id BIGINT UNSIGNED</code>, <code>revision_no INT UNSIGNED</code>, <code>base_revision_no INT UNSIGNED nullable</code>, <code>state VARCHAR(32)</code>, <code>response_schema_version VARCHAR(32)</code>, <code>JSON(response)</code>, <code>attachment_set_hash CHAR(64)</code></td><td><code>uq_submission_revision_public(public_id)</code>, <code>uq_submission_revision_no(submission_id,revision_no)</code>, <code>ix_submission_revision_state(submission_id,state,revision_no)</code></td><td><code>fk_submission_revision_root → submissions.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_submission_receipts</code></td><td><code>PK, PID, SYS</code>, <code>content_hash CHAR(64)</code>, <code>submission_id BIGINT UNSIGNED</code>, <code>submission_revision_id BIGINT UNSIGNED</code>, <code>receipt_no INT UNSIGNED</code>, <code>action VARCHAR(32)</code>, <code>idempotency_key VARCHAR(191)</code>, <code>context_revision VARCHAR(191)</code>, <code>actor_type VARCHAR(16)</code>, <code>actor_user_id BIGINT UNSIGNED nullable</code>, <code>reason VARCHAR(500) nullable</code>, <code>attempt_no INT UNSIGNED</code>, <code>submission_revision_hash CHAR(64)</code>, <code>publication_hash CHAR(64)</code>, <code>attachment_set_hash CHAR(64)</code>, <code>assignment_schedule_version INT UNSIGNED</code>, <code>assignment_schedule_hash CHAR(64)</code>, <code>resubmission_policy_hash CHAR(64)</code>, <code>timeliness VARCHAR(16)</code>, <code>received_at_utc DATETIME</code></td><td><code>uq_receipt_public(public_id)</code>, <code>uq_receipt_no(submission_id,receipt_no)</code>, <code>uq_receipt_idempotency(idempotency_key)</code></td><td><code>fk_receipt_submission → submissions.id RESTRICT</code>, <code>fk_receipt_revision → submission_revisions.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_submission_attachments</code></td><td><code>PK, PID, MUT</code>, <code>submission_id BIGINT UNSIGNED</code>, <code>submission_revision_id BIGINT UNSIGNED nullable</code>, <code>response_key VARCHAR(100)</code>, <code>file_public_id CHAR(26)</code>, <code>state VARCHAR(32)</code>, <code>original_name VARCHAR(255)</code>, <code>mime_type VARCHAR(191)</code>, <code>byte_size BIGINT UNSIGNED</code>, <code>sha256 CHAR(64)</code>, <code>bound_at_utc DATETIME nullable</code>, <code>JSON(ai_representation) nullable</code></td><td><code>uq_attachment_public(public_id)</code>, <code>uq_attachment_file(file_public_id)</code>, <code>ix_attachment_submission(submission_id,state)</code>, <code>ix_attachment_revision(submission_revision_id,response_key)</code></td><td><code>fk_attachment_submission → submissions.id RESTRICT</code>, <code>fk_attachment_revision → submission_revisions.id RESTRICT</code>; Storage cross-owner FK 없음</td></tr>
+          <tr><td><code>oj_ai_zip_uploads</code></td><td><code>PK, PID, MUT</code>, <code>assignment_id BIGINT UNSIGNED</code>, <code>uploaded_by_user_id BIGINT UNSIGNED</code>, <code>file_public_id CHAR(26)</code>, <code>state VARCHAR(32)</code>, <code>idempotency_key VARCHAR(191)</code>, <code>JSON(mapping)</code>, <code>item_total INT UNSIGNED</code>, <code>success_total INT UNSIGNED</code>, <code>failure_total INT UNSIGNED</code>, <code>cleanup_after_utc DATETIME nullable</code></td><td><code>uq_zip_public(public_id)</code>, <code>uq_zip_idempotency(idempotency_key)</code>, <code>ix_zip_assignment(assignment_id,state)</code>, <code>ix_zip_cleanup(state,cleanup_after_utc)</code></td><td><code>fk_zip_assignment → assignments.id RESTRICT</code>; Storage FK 없음</td></tr>
+          <tr><td><code>oj_ai_zip_upload_items</code></td><td><code>PK, MUT</code>, <code>zip_upload_id BIGINT UNSIGNED</code>, <code>item_no INT UNSIGNED</code>, <code>relative_path VARCHAR(512)</code>, <code>file_public_id CHAR(26) nullable</code>, <code>learner_user_id BIGINT UNSIGNED nullable</code>, <code>state VARCHAR(32)</code>, <code>byte_size BIGINT UNSIGNED</code>, <code>sha256 CHAR(64)</code>, <code>result_submission_public_id CHAR(26) nullable</code>, <code>error_code VARCHAR(100) nullable</code></td><td><code>uq_zip_item_no(zip_upload_id,item_no)</code>, <code>uq_zip_item_path(zip_upload_id,relative_path(191))</code>, <code>ix_zip_item_state(zip_upload_id,state,item_no)</code></td><td><code>fk_zip_item_upload → zip_uploads.id RESTRICT</code>; user·Storage FK 없음</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="assessment-tables">Assessment 15개</h2>
+      <div class="warning callout"><strong>평가 subject 분리:</strong> 아래에서 worksheet와 submission은 각각 root·input·result·item·review table을 가진다. 학생 제출 흐름에만 feedback·release가 추가된다. 공통 run table의 <code>subject_type</code>은 두 aggregate를 합치는 도메인 root가 아니라 worker 실행 추적용 discriminant다.</div>
+      <table>
+        <thead><tr><th>Table</th><th>프로필 + 업무 컬럼</th><th>Unique·Index</th><th>FK</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_worksheet_evaluations</code></td><td><code>PK, PID, MUT</code>, <code>worksheet_revision_public_id CHAR(26)</code>, <code>worksheet_revision_hash CHAR(64)</code>, <code>policy_revision_public_id CHAR(26)</code>, <code>policy_hash CHAR(64)</code>, <code>rubric_revision_public_id CHAR(26)</code>, <code>rubric_hash CHAR(64)</code>, <code>review_rule_revision_public_id CHAR(26)</code>, <code>review_rule_hash CHAR(64)</code>, <code>prompt_contract_version VARCHAR(32)</code>, <code>input_schema_version VARCHAR(32)</code>, <code>output_schema_version VARCHAR(32)</code>, <code>state VARCHAR(32)</code>, <code>idempotency_key VARCHAR(191)</code>, <code>requested_at_utc DATETIME</code>, <code>authorization_envelope_version VARCHAR(32)</code>, <code>JSON(authorization_envelope)</code>, <code>authorization_envelope_hash CHAR(64)</code>, <code>enqueue_correlation_id VARCHAR(100)</code></td><td><code>uq_worksheet_eval_public(public_id)</code>, <code>uq_worksheet_eval_idempotency(idempotency_key)</code>, <code>ix_worksheet_eval_source(worksheet_revision_public_id,state,created_at_utc)</code></td><td>Worksheet cross-owner FK 없음; configuration은 public ID+hash로 고정</td></tr>
+          <tr><td><code>oj_ai_worksheet_evaluation_inputs</code></td><td><code>PK, PID, IMM</code>, <code>worksheet_evaluation_id BIGINT UNSIGNED</code>, <code>projection_schema_version VARCHAR(32)</code>, <code>JSON(input)</code>, <code>input_byte_size INT UNSIGNED</code>, <code>redaction_version VARCHAR(32)</code></td><td><code>uq_worksheet_input_public(public_id)</code>, <code>uq_worksheet_input_eval(worksheet_evaluation_id)</code></td><td><code>fk_worksheet_input_eval → worksheet_evaluations.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_worksheet_evaluation_results</code></td><td><code>PK, PID, IMM</code>, <code>worksheet_evaluation_id BIGINT UNSIGNED</code>, <code>evaluation_run_id BIGINT UNSIGNED</code>, <code>output_schema_version VARCHAR(32)</code>, <code>overall_status VARCHAR(32)</code>, <code>overall_confidence DECIMAL(5,4)</code>, <code>summary TEXT</code>, <code>JSON(normalized_result)</code>, <code>provider_output_digest CHAR(64)</code></td><td><code>uq_worksheet_result_public(public_id)</code>, <code>uq_worksheet_result_run(evaluation_run_id)</code>, <code>ix_worksheet_result_eval(worksheet_evaluation_id,created_at_utc)</code></td><td><code>fk_worksheet_result_eval → worksheet_evaluations.id RESTRICT</code>, <code>fk_worksheet_result_run → evaluation_runs.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_worksheet_evaluation_items</code></td><td><code>PK, IMM</code>, <code>worksheet_evaluation_result_id BIGINT UNSIGNED</code>, <code>dimension_key VARCHAR(100)</code>, <code>position INT UNSIGNED</code>, <code>severity VARCHAR(32)</code>, <code>confidence DECIMAL(5,4)</code>, <code>JSON(evidence)</code>, <code>recommendation TEXT</code></td><td><code>uq_worksheet_item(worksheet_evaluation_result_id,dimension_key,position)</code>, <code>ix_worksheet_item_severity(worksheet_evaluation_result_id,severity)</code></td><td><code>fk_worksheet_item_result → worksheet_evaluation_results.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_worksheet_evaluation_reviews</code></td><td><code>PK, PID, IMM</code>, <code>worksheet_evaluation_id BIGINT UNSIGNED</code>, <code>worksheet_evaluation_result_id BIGINT UNSIGNED</code>, <code>review_no INT UNSIGNED</code>, <code>decision VARCHAR(32)</code>, <code>note TEXT nullable</code>, <code>JSON(item_decisions)</code>, <code>previous_review_id BIGINT UNSIGNED nullable</code></td><td><code>uq_worksheet_review_public(public_id)</code>, <code>uq_worksheet_review_no(worksheet_evaluation_id,review_no)</code>, <code>ix_worksheet_review_decision(worksheet_evaluation_id,decision,created_at_utc)</code></td><td><code>fk_worksheet_review_eval → worksheet_evaluations.id RESTRICT</code>, <code>fk_worksheet_review_result → worksheet_evaluation_results.id RESTRICT</code>, <code>fk_worksheet_review_previous → worksheet_evaluation_reviews.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_submission_evaluations</code></td><td><code>PK, PID, MUT</code>, <code>submission_revision_public_id CHAR(26)</code>, <code>submission_revision_hash CHAR(64)</code>, <code>worksheet_publication_public_id CHAR(26)</code>, <code>publication_hash CHAR(64)</code>, <code>policy_revision_public_id CHAR(26)</code>, <code>policy_hash CHAR(64)</code>, <code>rubric_revision_public_id CHAR(26)</code>, <code>rubric_hash CHAR(64)</code>, <code>review_rule_revision_public_id CHAR(26)</code>, <code>review_rule_hash CHAR(64)</code>, <code>prompt_contract_version VARCHAR(32)</code>, <code>input_schema_version VARCHAR(32)</code>, <code>output_schema_version VARCHAR(32)</code>, <code>state VARCHAR(32)</code>, <code>idempotency_key VARCHAR(191)</code>, <code>requested_at_utc DATETIME</code>, <code>authorization_envelope_version VARCHAR(32)</code>, <code>JSON(authorization_envelope)</code>, <code>authorization_envelope_hash CHAR(64)</code>, <code>enqueue_correlation_id VARCHAR(100)</code></td><td><code>uq_submission_eval_public(public_id)</code>, <code>uq_submission_eval_idempotency(idempotency_key)</code>, <code>ix_submission_eval_source(submission_revision_public_id,state,created_at_utc)</code></td><td>Submission·Worksheet cross-owner FK 없음; configuration snapshot 고정</td></tr>
+          <tr><td><code>oj_ai_submission_evaluation_inputs</code></td><td><code>PK, PID, IMM</code>, <code>submission_evaluation_id BIGINT UNSIGNED</code>, <code>projection_schema_version VARCHAR(32)</code>, <code>JSON(input)</code>, <code>JSON(artifact_references)</code>, <code>input_byte_size INT UNSIGNED</code>, <code>redaction_version VARCHAR(32)</code></td><td><code>uq_submission_input_public(public_id)</code>, <code>uq_submission_input_eval(submission_evaluation_id)</code></td><td><code>fk_submission_input_eval → submission_evaluations.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_submission_evaluation_results</code></td><td><code>PK, PID, IMM</code>, <code>submission_evaluation_id BIGINT UNSIGNED</code>, <code>evaluation_run_id BIGINT UNSIGNED</code>, <code>output_schema_version VARCHAR(32)</code>, <code>candidate_score DECIMAL(12,4) nullable</code>, <code>maximum_score DECIMAL(12,4)</code>, <code>overall_confidence DECIMAL(5,4)</code>, <code>abstained TINYINT UNSIGNED</code>, <code>safety_flagged TINYINT UNSIGNED</code>, <code>summary TEXT</code>, <code>JSON(normalized_result)</code>, <code>provider_output_digest CHAR(64)</code></td><td><code>uq_submission_result_public(public_id)</code>, <code>uq_submission_result_run(evaluation_run_id)</code>, <code>ix_submission_result_eval(submission_evaluation_id,created_at_utc)</code></td><td><code>fk_submission_result_eval → submission_evaluations.id RESTRICT</code>, <code>fk_submission_result_run → evaluation_runs.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_submission_evaluation_items</code></td><td><code>PK, IMM</code>, <code>submission_evaluation_result_id BIGINT UNSIGNED</code>, <code>criterion_key VARCHAR(100)</code>, <code>question_key VARCHAR(100) nullable</code>, <code>position INT UNSIGNED</code>, <code>candidate_points DECIMAL(12,4) nullable</code>, <code>maximum_points DECIMAL(12,4)</code>, <code>confidence DECIMAL(5,4)</code>, <code>JSON(evidence)</code>, <code>flags VARCHAR(191) nullable</code></td><td><code>uq_submission_item(submission_evaluation_result_id,criterion_key,position)</code>, <code>ix_submission_item_question(submission_evaluation_result_id,question_key)</code></td><td><code>fk_submission_item_result → submission_evaluation_results.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_submission_evaluation_reviews</code></td><td><code>PK, PID, IMM</code>, <code>submission_evaluation_id BIGINT UNSIGNED</code>, <code>submission_evaluation_result_id BIGINT UNSIGNED</code>, <code>review_no INT UNSIGNED</code>, <code>decision VARCHAR(32)</code>, <code>official_score DECIMAL(12,4) nullable</code>, <code>JSON(score_overrides) nullable</code>, <code>reason TEXT nullable</code>, <code>previous_review_id BIGINT UNSIGNED nullable</code></td><td><code>uq_submission_review_public(public_id)</code>, <code>uq_submission_review_no(submission_evaluation_id,review_no)</code>, <code>ix_submission_review_decision(submission_evaluation_id,decision,created_at_utc)</code></td><td><code>fk_submission_review_eval → submission_evaluations.id RESTRICT</code>, <code>fk_submission_review_result → submission_evaluation_results.id RESTRICT</code>, <code>fk_submission_review_previous → submission_evaluation_reviews.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_submission_feedback_revisions</code></td><td><code>PK, PID, IMM</code>, <code>submission_evaluation_id BIGINT UNSIGNED</code>, <code>submission_review_id BIGINT UNSIGNED</code>, <code>revision_no INT UNSIGNED</code>, <code>audience VARCHAR(32)</code>, <code>JSON(feedback)</code>, <code>state VARCHAR(32)</code>, <code>previous_revision_id BIGINT UNSIGNED nullable</code>, <code>source_evaluation_run_public_id CHAR(26) nullable</code></td><td><code>uq_feedback_public(public_id)</code>, <code>uq_feedback_revision(submission_evaluation_id,revision_no)</code>, <code>ix_feedback_review(submission_review_id,state)</code></td><td><code>fk_feedback_eval → submission_evaluations.id RESTRICT</code>, <code>fk_feedback_review → submission_evaluation_reviews.id RESTRICT</code>, <code>fk_feedback_previous → submission_feedback_revisions.id RESTRICT</code>; run은 public ID 참조</td></tr>
+          <tr><td><code>oj_ai_submission_release_revisions</code></td><td><code>PK, PID, IMM</code>, <code>submission_evaluation_id BIGINT UNSIGNED</code>, <code>submission_review_id BIGINT UNSIGNED</code>, <code>feedback_revision_id BIGINT UNSIGNED nullable</code>, <code>release_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>visible_score DECIMAL(12,4) nullable</code>, <code>JSON(student_projection)</code>, <code>previous_release_id BIGINT UNSIGNED nullable</code>, <code>release_reason_code VARCHAR(64) nullable</code>, <code>release_reason_note TEXT nullable</code>, <code>released_at_utc DATETIME</code></td><td><code>uq_release_public(public_id)</code>, <code>uq_release_no(submission_evaluation_id,release_no)</code>, <code>ix_release_current(submission_evaluation_id,state,released_at_utc)</code></td><td><code>fk_release_eval → submission_evaluations.id RESTRICT</code>, <code>fk_release_review → submission_evaluation_reviews.id RESTRICT</code>, <code>fk_release_feedback → submission_feedback_revisions.id RESTRICT</code>, <code>fk_release_previous → submission_release_revisions.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_student_note_revisions</code></td><td><code>PK, PID, IMM</code>, <code>student_note_public_id CHAR(26)</code>, <code>submission_evaluation_id BIGINT UNSIGNED</code>, <code>submission_review_id BIGINT UNSIGNED nullable</code>, <code>source_evaluation_run_public_id CHAR(26) nullable</code>, <code>revision_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>include_in_reports TINYINT UNSIGNED</code>, <code>JSON(note)</code>, <code>previous_revision_id BIGINT UNSIGNED nullable</code>, <code>approved_by_user_id BIGINT UNSIGNED nullable</code>, <code>approved_at_utc DATETIME nullable</code></td><td><code>uq_student_note_revision_public(public_id)</code>, <code>uq_student_note_revision(student_note_public_id,revision_no)</code>, <code>ix_student_note_eval(submission_evaluation_id,state,created_at_utc)</code>, <code>ix_student_note_reports(include_in_reports,state,created_at_utc)</code></td><td><code>fk_student_note_eval → submission_evaluations.id RESTRICT</code>, <code>fk_student_note_review → submission_evaluation_reviews.id RESTRICT</code>, <code>fk_student_note_previous → student_note_revisions.id RESTRICT</code></td></tr>
+          <tr><td><code>oj_ai_evaluation_runs</code></td><td><code>PK, PID, MUT</code>, <code>subject_type VARCHAR(32)</code>, <code>evaluation_public_id CHAR(26)</code>, <code>run_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>task_key VARCHAR(191)</code>, <code>contract_version VARCHAR(32)</code>, <code>operation_key VARCHAR(64)</code>, <code>input_schema_version VARCHAR(32)</code>, <code>output_schema_version VARCHAR(32)</code>, <code>input_digest CHAR(64)</code>, <code>result_type VARCHAR(64) nullable</code>, <code>result_public_id CHAR(26) nullable</code>, <code>idempotency_key VARCHAR(191)</code>, <code>correlation_id VARCHAR(100)</code>, <code>provider_key VARCHAR(100) nullable</code>, <code>model_key VARCHAR(100) nullable</code>, <code>profile_fingerprint CHAR(64) nullable</code>, <code>routing_revision VARCHAR(191) nullable</code>, <code>available_at_utc DATETIME</code>, <code>queued_at_utc DATETIME</code>, <code>lease_token CHAR(36) nullable</code>, <code>lease_expires_at_utc DATETIME nullable</code>, <code>started_at_utc DATETIME nullable</code>, <code>finished_at_utc DATETIME nullable</code>, <code>last_error_code VARCHAR(100) nullable</code></td><td><code>uq_eval_run_public(public_id)</code>, <code>uq_eval_run_no(subject_type,evaluation_public_id,run_no)</code>, <code>uq_eval_run_idempotency(idempotency_key)</code>, <code>ix_eval_run_queue(state,available_at_utc,id)</code>, <code>ix_eval_run_lease(state,lease_expires_at_utc)</code></td><td>subject root polymorphic FK 없음; Service postcondition 필수</td></tr>
+          <tr><td><code>oj_ai_evaluation_attempts</code></td><td><code>PK, PID, SYS</code>, <code>evaluation_run_id BIGINT UNSIGNED</code>, <code>attempt_no INT UNSIGNED</code>, <code>state VARCHAR(32)</code>, <code>request_hash CHAR(64)</code>, <code>provider_output_digest CHAR(64) nullable</code>, <code>JSON(usage) nullable</code>, <code>gateway_correlation_id VARCHAR(100) nullable</code>, <code>duration_ms INT UNSIGNED nullable</code>, <code>error_code VARCHAR(100) nullable</code>, <code>started_at_utc DATETIME</code>, <code>finished_at_utc DATETIME nullable</code></td><td><code>uq_eval_attempt_public(public_id)</code>, <code>uq_eval_attempt_no(evaluation_run_id,attempt_no)</code>, <code>ix_eval_attempt_state(state,started_at_utc)</code>, <code>ix_eval_attempt_gateway(gateway_correlation_id)</code></td><td><code>fk_eval_attempt_run → evaluation_runs.id RESTRICT</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="artifact-tables">Storage·Reporting·Import 6개</h2>
+      <table>
+        <thead><tr><th>Table</th><th>프로필 + 업무 컬럼</th><th>Unique·Index</th><th>FK</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_private_files</code></td><td><code>PK, PID, MUT</code>, <code>owner_type VARCHAR(64)</code>, <code>owner_public_id CHAR(26)</code>, <code>purpose VARCHAR(64)</code>, <code>storage_key VARCHAR(512)</code>, <code>original_name VARCHAR(255) nullable</code>, <code>mime_type VARCHAR(191)</code>, <code>byte_size BIGINT UNSIGNED</code>, <code>sha256 CHAR(64)</code>, <code>state VARCHAR(32)</code>, <code>scan_state VARCHAR(32)</code>, <code>retention_class VARCHAR(64)</code>, <code>expires_at_utc DATETIME nullable</code>, <code>legal_hold_until_utc DATETIME nullable</code>, <code>purged_at_utc DATETIME nullable</code></td><td><code>uq_private_file_public(public_id)</code>, <code>uq_private_storage_key(storage_key(191))</code>, <code>ix_private_file_owner(owner_type,owner_public_id,state)</code>, <code>ix_private_file_cleanup(state,expires_at_utc)</code></td><td>업무 owner cross-owner FK 없음</td></tr>
+          <tr><td><code>oj_ai_report_snapshots</code></td><td><code>PK, PID, MUT, CTX</code>, <code>report_type VARCHAR(64)</code>, <code>subject_type VARCHAR(64)</code>, <code>subject_public_id CHAR(26) nullable</code>, <code>state VARCHAR(32)</code>, <code>JSON(filter)</code>, <code>source_watermark VARCHAR(191)</code>, <code>JSON(projection)</code>, <code>generated_by_user_id BIGINT UNSIGNED</code>, <code>generated_at_utc DATETIME nullable</code>, <code>expires_at_utc DATETIME nullable</code></td><td><code>uq_report_public(public_id)</code>, <code>ix_report_subject(report_type,subject_type,subject_public_id,generated_at_utc)</code>, <code>ix_report_context(context_type,context_id,state)</code></td><td>source domain·Platform FK 없음</td></tr>
+          <tr><td><code>oj_ai_export_jobs</code></td><td><code>PK, PID, MUT</code>, optional <code>CTX</code>, <code>report_snapshot_id BIGINT UNSIGNED nullable</code>, <code>artifact_kind VARCHAR(32)</code>, <code>source_type VARCHAR(64)</code>, <code>source_public_id CHAR(26)</code>, <code>source_hash CHAR(64)</code>, <code>request_contract_version VARCHAR(32)</code>, <code>JSON(request_snapshot)</code>, <code>request_hash CHAR(64)</code>, <code>state VARCHAR(32)</code>, <code>requested_by_user_id BIGINT UNSIGNED</code>, <code>idempotency_key VARCHAR(191)</code>, <code>active_identity_key VARCHAR(191) nullable</code>, <code>print_profile_version VARCHAR(32) nullable</code>, <code>available_at_utc DATETIME</code>, <code>queued_at_utc DATETIME</code>, <code>lease_token CHAR(36) nullable</code>, <code>lease_expires_at_utc DATETIME nullable</code>, <code>started_at_utc DATETIME nullable</code>, <code>finished_at_utc DATETIME nullable</code>, <code>result_file_public_id CHAR(26) nullable</code>, <code>error_code VARCHAR(100) nullable</code></td><td><code>uq_export_public(public_id)</code>, <code>uq_export_idempotency(idempotency_key)</code>, <code>uq_export_active_identity(active_identity_key)</code>, <code>ix_export_queue(state,available_at_utc,id)</code>, <code>ix_export_requester(requested_by_user_id,state,created_at_utc)</code></td><td><code>fk_export_report → report_snapshots.id RESTRICT</code>; Storage FK 없음</td></tr>
+          <tr><td><code>oj_ai_pdf_artifacts</code></td><td><code>PK, PID, IMM</code>, <code>export_job_id BIGINT UNSIGNED</code>, <code>file_public_id CHAR(26)</code>, <code>source_type VARCHAR(64)</code>, <code>source_public_id CHAR(26)</code>, <code>source_hash CHAR(64)</code>, <code>print_profile_version VARCHAR(32)</code>, <code>renderer_version VARCHAR(32)</code>, <code>page_count INT UNSIGNED nullable</code>, <code>state VARCHAR(32)</code>, <code>expires_at_utc DATETIME nullable</code></td><td><code>uq_pdf_public(public_id)</code>, <code>uq_pdf_export(export_job_id)</code>, <code>ix_pdf_source(source_type,source_public_id,created_at_utc)</code></td><td><code>fk_pdf_export → export_jobs.id RESTRICT</code>; Storage·source domain FK 없음</td></tr>
+          <tr><td><code>oj_ai_import_runs</code></td><td><code>PK, PID, MUT</code>, <code>source_kind VARCHAR(64)</code>, <code>source_version VARCHAR(64)</code>, <code>source_fingerprint CHAR(64)</code>, <code>state VARCHAR(32)</code>, <code>JSON(preview)</code>, <code>approved_by_user_id BIGINT UNSIGNED nullable</code>, <code>approved_at_utc DATETIME nullable</code>, <code>idempotency_key VARCHAR(191)</code>, <code>JSON(checkpoint) nullable</code>, <code>item_total INT UNSIGNED</code>, <code>success_total INT UNSIGNED</code>, <code>failure_total INT UNSIGNED</code>, <code>skipped_total INT UNSIGNED</code>, <code>error_code VARCHAR(100) nullable</code></td><td><code>uq_import_public(public_id)</code>, <code>uq_import_idempotency(idempotency_key)</code>, <code>ix_import_source(source_kind,source_fingerprint)</code>, <code>ix_import_state(state,updated_at_utc)</code></td><td>source에 FK 없음</td></tr>
+          <tr><td><code>oj_ai_import_items</code></td><td><code>PK, MUT</code>, <code>import_run_id BIGINT UNSIGNED</code>, <code>item_no INT UNSIGNED</code>, <code>source_type VARCHAR(64)</code>, <code>source_key VARCHAR(191)</code>, <code>source_checksum CHAR(64)</code>, <code>state VARCHAR(32)</code>, <code>JSON(payload)</code>, <code>target_type VARCHAR(64) nullable</code>, <code>target_public_id CHAR(26) nullable</code>, <code>error_code VARCHAR(100) nullable</code></td><td><code>uq_import_item_no(import_run_id,item_no)</code>, <code>uq_import_item_source(import_run_id,source_type,source_key)</code>, <code>ix_import_item_state(import_run_id,state,item_no)</code></td><td><code>fk_import_item_run → import_runs.id RESTRICT</code>; target domain FK 없음</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="ownership">Table owner와 Repository 묶음</h2>
+      <table>
+        <thead><tr><th>Owner</th><th>쓰기 가능한 Repository</th><th>소유 table</th><th>외부 제공 Contract</th></tr></thead>
+        <tbody>
+          <tr><td>Database</td><td><code>SchemaStateRepository</code></td><td>installation·schema migration 2개</td><td><code>SchemaStatusQuery</code>, <code>MigrationRunner</code></td></tr>
+          <tr><td>Operations</td><td><code>AuditEventStore</code>, <code>OutboxRepository</code>, <code>PurgeJobRepository</code></td><td>audit·outbox·purge 3개</td><td><code>AuditRecorder</code>, <code>OutboxPublisher</code>, <code>PurgeApplication</code></td></tr>
+          <tr><td>Curriculum</td><td><code>CurriculumCatalogRepository</code></td><td>curriculum 2개</td><td><code>AchievementCatalogQuery</code></td></tr>
+          <tr><td>Worksheet</td><td><code>WorksheetRepository</code></td><td>worksheet 6개</td><td><code>WorksheetApplication</code>, <code>PublishedWorksheetQuery</code>, <code>WorksheetEvaluationSource</code></td></tr>
+          <tr><td>AssessmentConfiguration</td><td><code>EvaluationConfigurationRepository</code></td><td>policy·rubric·review 3개</td><td><code>ActiveEvaluationConfigurationQuery</code></td></tr>
+          <tr><td>Submission</td><td><code>AssignmentRepository</code>, <code>SubmissionRepository</code>, <code>ZipUploadRepository</code></td><td>assignment 2·submission 4·ZIP 2</td><td><code>AssignmentApplication</code>, <code>SubmissionApplication</code>, <code>SubmissionEvaluationSource</code></td></tr>
+          <tr><td>Assessment</td><td><code>WorksheetEvaluationRepository</code>, <code>SubmissionEvaluationRepository</code>, <code>EvaluationRunRepository</code></td><td>두 평가 12·특기사항 1·공통 실행 2</td><td>두 평가 Application·Result·Review Query를 별도 제공</td></tr>
+          <tr><td>Storage</td><td><code>PrivateFileRepository</code></td><td>private file 1개</td><td><code>PrivateFileApplication</code>, <code>AuthorizedDownloadQuery</code></td></tr>
+          <tr><td>Reporting</td><td><code>ReportSnapshotRepository</code>, <code>ExportRepository</code></td><td>report·export·PDF 3개</td><td><code>ReportApplication</code>, <code>PdfArtifactQuery</code></td></tr>
+          <tr><td>Import</td><td><code>ImportRepository</code></td><td>import 2개</td><td><code>ImportApplication</code></td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>금지 import:</strong> 다른 owner의 concrete Repository·TableNames·SQL fragment를 import하지 않는다. 교차 조회는 versioned DTO Contract로 수행하고 Reporting은 원천 domain table을 JOIN하지 않는다.</div>
+
+      <h2 id="relations">FK·참조·무결성 정책</h2>
+      <table>
+        <thead><tr><th>관계</th><th>물리 보장</th><th>Application 보장</th></tr></thead>
+        <tbody>
+          <tr><td>같은 owner·같은 aggregate parent-child</td><td>명시 FK, <code>ON DELETE RESTRICT ON UPDATE RESTRICT</code></td><td>Repository가 parent lock과 child 합계를 검증</td></tr>
+          <tr><td>같은 owner의 current pointer</td><td>DDL cycle을 피하려고 public ID + unique lookup</td><td>transaction commit 전 대상 존재·상태·hash 확인</td></tr>
+          <tr><td>다른 owner의 aggregate</td><td>물리 FK 없음, public ID·source hash 저장</td><td>공개 Query Contract로 존재·revision·권한 확인</td></tr>
+          <tr><td>OJ Platform context·user</td><td>물리 FK·복제 table 없음</td><td>C28 Context Gateway와 A-DS-03 Policy를 command 시점·Job 실행 직전 재검증</td></tr>
+          <tr><td>공통 evaluation run의 subject</td><td><code>subject_type + evaluation_public_id</code>, polymorphic FK 없음</td><td>허용 두 subject와 root 상태를 <code>EvaluationRunRepository</code>가 postcondition으로 검증</td></tr>
+          <tr><td>private file owner</td><td><code>owner_type + owner_public_id</code>, cross-owner FK 없음</td><td>Storage command receipt와 owner command를 보상 가능한 두 단계로 연결</td></tr>
+        </tbody>
+      </table>
+      <p>FK 수는 구현 시 schema descriptor에서 구조적으로 집계한다. 선언되지 않은 FK, <code>CASCADE</code>, platform·WordPress table reference가 하나라도 있으면 migration postcondition이 실패한다.</p>
+
+      <h2 id="states">상태 전이와 불변성</h2>
+      <table>
+        <thead><tr><th>Aggregate</th><th>허용 전이</th><th>불변 경계</th></tr></thead>
+        <tbody>
+          <tr><td>Installation</td><td><code>installing → ready</code>, 실패 시 <code>repair_required|blocked</code></td><td>schema fingerprint 불일치 상태에서 업무 boot 차단</td></tr>
+          <tr><td>Worksheet revision</td><td><code>draft → approved → retired</code></td><td>document row는 생성 후 불변, 상태·승인 metadata만 전이</td></tr>
+          <tr><td>Publication</td><td><code>published → retired</code></td><td>학생·response·grading·print projection과 hash 수정 금지</td></tr>
+          <tr><td>설정 revision</td><td><code>draft → active → retired</code></td><td>active 이후 payload 수정 금지, subject별 active 1개를 transaction lock으로 보장</td></tr>
+          <tr><td>Assignment</td><td><code>draft → scheduled|open → closed → archived</code>, 별도 <code>cancelled</code></td><td>open 뒤 publication·target snapshot 교체 금지</td></tr>
+          <tr><td>Submission</td><td><code>in_progress → submitted → resubmitted|closed</code></td><td>official revision은 수정하지 않고 새 revision·receipt로 재제출</td></tr>
+          <tr><td>Attachment·file</td><td><code>quarantined → ready|rejected → expired|purged</code></td><td>ready 뒤 hash·byte·MIME·storage key 변경 금지</td></tr>
+          <tr><td>Evaluation</td><td><code>requested → queued → running → review_required → reviewed</code>, 실패·취소 분기</td><td>source·policy·rubric·review·prompt·schema hash 수정 금지</td></tr>
+          <tr><td>Evaluation run</td><td><code>queued → leased → running → succeeded|retry_wait|failed|cancelled</code></td><td>성공 run 하나만 result를 소유, idempotency key 중복 결과 금지</td></tr>
+          <tr><td>Review</td><td>결정 row를 append하고 정정은 다음 <code>review_no</code></td><td>기존 결정·점수 override 수정 금지</td></tr>
+          <tr><td>Student note</td><td><code>draft → reviewed → approved</code>, 포함·제외·정정은 새 <code>revision_no</code></td><td>기존 특기사항 문구·승인·보고서 포함 판단 수정 금지</td></tr>
+          <tr><td>Release</td><td><code>released → corrected|withdrawn</code>를 새 revision으로 표현</td><td>공개 당시 student projection과 source hash 보존</td></tr>
+          <tr><td>Purge</td><td><code>previewed → awaiting_approval → approved → running → completed|failed|cancelled</code>, <code>approved → cancelled</code></td><td>preview hash가 달라지면 승인 무효, 자동 재승인 금지, 부분 삭제 뒤 maintenance 유지</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="json">JSON·AI payload·민감정보</h2>
+      <table>
+        <thead><tr><th>계약</th><th>고정 규칙</th><th>검증</th></tr></thead>
+        <tbody>
+          <tr><td>Schema</td><td>모든 JSON은 schema ID·version·canonical JSON·SHA-256을 함께 저장</td><td>Repository write 전 server validator와 read 후 hash 검사</td></tr>
+          <tr><td>크기</td><td>table별 최대 byte는 A-DS-09·10·11·12 input/output 계약이 정하고 DDL 전 구현 manifest에 합산</td><td>HTTP·Use Case·Repository 세 경계에서 같은 상한 적용</td></tr>
+          <tr><td>Upgrade</td><td>저장 payload를 제자리 수정하지 않고 upcaster 출력으로 새 revision 생성</td><td>모든 지원 version round-trip·golden fixture</td></tr>
+          <tr><td>학생 비공개</td><td>student projection은 allowlist 생성물만 저장하며 정답·rubric 원문·배점·교사 메모가 없음</td><td>forbidden key·nested leak 검사</td></tr>
+          <tr><td>AI input</td><td>이름·비밀값을 제거한 평가용 canonical snapshot만 저장하고 원문 provider request body는 저장하지 않음</td><td>redaction version·input hash·byte 기록</td></tr>
+          <tr><td>AI output</td><td>schema 검증을 통과한 normalized result와 provider output digest만 저장</td><td>raw provider response·stack trace·Authorization header 0건</td></tr>
+          <tr><td>Routing</td><td>provider key·model key·profile fingerprint·routing revision의 안전 projection만 run에 기록</td><td>endpoint·secret reference·API key 정적·동적 누출 검사</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="repository">Repository·Query 규칙</h2>
+      <table>
+        <thead><tr><th>규칙</th><th>허용</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td>SQL 위치</td><td>owner Infrastructure Repository와 migration compiler</td><td>Controller·Page·Service·renderer의 SQL</td></tr>
+          <tr><td>식별자</td><td>TableRegistry allowlist literal과 prepared value parameter</td><td>request·filter로 table/column/order SQL 조립</td></tr>
+          <tr><td>동시성</td><td><code>lock_version</code> compare-and-swap, 명시 row lock, unique idempotency</td><td>마지막 저장 우선과 중복 insert 후 정리</td></tr>
+          <tr><td>조회</td><td>owner Query Contract, cursor pagination, 안정 정렬 <code>(time,id)</code></td><td>무제한 목록, offset만 있는 대량 조회</td></tr>
+          <tr><td>Projection</td><td>원천 event·versioned DTO로 Reporting owner가 생성</td><td>Reporting·PDF에서 11개 domain table 직접 JOIN</td></tr>
+          <tr><td>오류</td><td>stable domain error code와 correlation ID</td><td>SQL·table명·row payload·stack trace 사용자 노출</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="transactions">원자 처리 단위</h2>
+      <table>
+        <thead><tr><th>명령</th><th>한 transaction에 포함</th><th>외부 실패 처리</th></tr></thead>
+        <tbody>
+          <tr><td>활동지 revision 생성</td><td>revision·questions·두 achievement link·audit·outbox</td><td>Curriculum 존재 확인은 transaction 전 Contract 조회, stale이면 전체 중단</td></tr>
+          <tr><td>활동지 발행</td><td>publication 네 projection·worksheet pointer·audit·outbox</td><td>renderer·validator 실패 시 publication row 0개</td></tr>
+          <tr><td>배정 열기</td><td>assignment·target snapshots·target hash·audit·outbox</td><td>Platform context revision 불일치면 전체 중단</td></tr>
+          <tr><td>제출·재제출</td><td>immutable revision·receipt·submission official pointer·audit·outbox</td><td>첨부 ready 확인 실패 시 official 전환 0개</td></tr>
+          <tr><td>평가 요청</td><td>subject root·input snapshot·첫 run·audit·outbox</td><td>AI 호출은 commit 뒤 worker에서만 수행</td></tr>
+          <tr><td>평가 성공</td><td>attempt 완료·result·items·evaluation state·audit·outbox</td><td>schema 검증 실패는 result 0개, safe error attempt만 기록</td></tr>
+          <tr><td>교사 검토</td><td>review decision·선택 feedback revision·state·audit·outbox</td><td>stale result/review_no면 충돌 응답</td></tr>
+          <tr><td>특기사항 검토·승인</td><td>새 student note revision·승인 또는 보고서 포함 판단·audit·outbox</td><td>이전 revision을 덮지 않고 stale note revision이면 충돌 응답</td></tr>
+          <tr><td>학생 공개·정정·철회</td><td>release revision·audit·outbox</td><td>Platform 재인가 실패 시 공개 row 0개</td></tr>
+          <tr><td>파일 promotion</td><td>Storage registry 상태 전이와 owner receipt는 각 owner transaction</td><td>blob move 실패 시 quarantine 유지, owner bind 실패 시 보상 cleanup</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>DB 경계:</strong> OJ Platform Context·AI Gateway, private blob store와 renderer는 애드온 DB transaction에 포함되지 않는다. 외부 호출은 transaction 밖에서 수행하고 idempotency·outbox·보상 명령으로 일관성을 회복한다.</div>
+
+      <h2 id="migration">설치·업그레이드·복구 계약</h2>
+      <pre><code>환경·OJ Platform·single-site 확인
+  → DB named lock "oj_ai_dashboard_schema" 획득
+  → 45개 literal table 이름의 owner comment·fingerprint 사전 검사
+  → bootstrap immutable SQL로 installation·migration ledger 생성
+  → owner 순서의 immutable delta 1개 실행
+  → table·column·index·FK·engine·collation postcondition
+  → checksum·checkpoint·상태 기록
+  → 전체 schema fingerprint 일치 후 installation=ready
+  → lock 해제
+
+실패
+  → 업무 boot 차단
+  → repair_required와 안전 오류 code 기록
+  → 운영자 진단·명시 repair 재실행
+  → 데이터 자동 삭제·table 자동 adoption 없음</code></pre>
+      <table>
+        <thead><tr><th>관문</th><th>통과 조건</th><th>중단 조건</th></tr></thead>
+        <tbody>
+          <tr><td>환경</td><td>필수 OJ Platform 호환, PHP·WordPress 기준, single-site</td><td>Multisite·플랫폼 비호환·필수 API 부재</td></tr>
+          <tr><td>충돌</td><td>table 없음 또는 같은 owner marker·알려진 fingerprint</td><td>동명 <code>oj_ai_*</code>의 owner 미상·다른 schema</td></tr>
+          <tr><td>Migration</td><td>고정 ID·checksum·한 목적 delta·재실행 가능 postcondition</td><td>과거 migration이 최신 Schema generator 호출</td></tr>
+          <tr><td>DDL</td><td>명시 SQL 실행 뒤 expected table·column·index·FK 전수 일치</td><td><code>dbDelta</code> 호출 성공만으로 완료 처리</td></tr>
+          <tr><td>Backfill</td><td>작은 batch·checkpoint·source/target 합계·hash 검산</td><td>한 요청에서 전체 변환·부분 성공 은폐</td></tr>
+          <tr><td>Version</td><td>ledger 전부 applied와 fingerprint 일치 뒤에만 version 전진</td><td>DDL 부분 실패 뒤 option만 갱신</td></tr>
+          <tr><td>복구</td><td>실패 migration의 재실행 또는 문서화된 forward repair</td><td>자동 DROP·자동 rollback을 가장한 데이터 손실</td></tr>
+          <tr><td>경계</td><td>애드온 table·option·private root만 대상</td><td>OJ Platform 파일·table·option·migration 수정</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="legacy">현재 35개 table과 목표 mapping</h2>
+      <table>
+        <thead><tr><th>현재 35개 분류</th><th>목표 처리</th><th>A-DS-15 이전 규칙</th></tr></thead>
+        <tbody>
+          <tr><td>Academic 6개</td><td>목표 table 0개, 정상 업무에서 제거</td><td>read-only legacy source로만 탐지하고 Platform stable ID 매핑 불가 행은 격리</td></tr>
+          <tr><td><code>activity_events</code>·<code>audit_logs</code></td><td><code>outbox_events</code>와 append-only <code>audit_events</code>로 책임 분리</td><td>증거 가치와 schema가 확인된 행만 redacted event로 변환</td></tr>
+          <tr><td>worksheet template·question 2개</td><td>worksheet·revision·question·publication 4개와 link 2개로 revision 경계 재구성</td><td>canonical Plate validation을 통과한 template만 첫 revision으로 생성</td></tr>
+          <tr><td>assignment·submission·revision·attachment 4개</td><td>assignment target·submission receipt를 더한 6개</td><td>발행 snapshot을 만들 수 없는 배정은 미리보기에서 차단</td></tr>
+          <tr><td>ZIP 2개</td><td>동일 업무 2개 + private file registry 참조</td><td>public path를 복사하지 않고 검사·hash 뒤 private blob으로 이전</td></tr>
+          <tr><td>Curriculum·achievement·link 4개</td><td>catalog 2개 + revision 소유 link 2개</td><td>source version과 worksheet revision을 결정할 수 있어야 commit</td></tr>
+          <tr><td>Assessment·feedback 10개</td><td>configuration 3개, 두 subject 12개, 공통 run 2개로 분해</td><td>submission 중심 결과는 SubmissionEvaluation로만 이전하며 WorksheetEvaluation로 추정 변환하지 않음</td></tr>
+          <tr><td>Report·export 3개</td><td>report snapshot·export job·PDF artifact 3개 + private file</td><td>공개 URL은 폐기하고 source revision·권한을 증명할 수 있는 artifact만 이전</td></tr>
+          <tr><td>Import 2개</td><td>import run·item 2개 유지, preview·approval·checkpoint 강화</td><td>기존 incomplete run은 완료로 승격하지 않고 새 import run의 source로만 참조</td></tr>
+          <tr><td>신규 시스템</td><td>installation·migration·purge 3개 추가</td><td>기존 option은 정본 ledger로 자동 승격하지 않고 검산 입력으로만 사용</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>자동 전환 금지:</strong> 기존 무접두어 table이나 과거 버전이 생성했을 수 있는 <code>{당시 WordPress prefix}oj_ai_*</code> 레거시 테이블을 새 owner로 자동 채택·rename·delete하지 않는다. 기본 prefix의 <code>wp_oj_ai_*</code>, 멀티사이트의 <code>wp_2_oj_ai_*</code>, 사용자 정의 prefix 변형을 모두 포함한다. A-DS-15가 source fingerprint, 수량, mapping, 충돌과 제외 사유를 미리 보여 준 뒤 별도 사용자 승인을 받은 run만 target 45개 table에 쓴다.</div>
+
+      <h2 id="retention">보존·Purge·감사</h2>
+      <table>
+        <thead><tr><th>데이터</th><th>보존 기준</th><th>Purge 순서</th></tr></thead>
+        <tbody>
+          <tr><td>Worksheet revision·publication</td><td>assignment·evaluation·PDF reference가 존재하는 동안 보존</td><td>artifact → evaluation → assignment reference 해제 뒤 명시 purge</td></tr>
+          <tr><td>Submission revision·attachment</td><td>학교 보존 정책·정정·분쟁·legal hold</td><td>release·evaluation input/result → attachment bind → private blob → revision</td></tr>
+          <tr><td>AI input·normalized result</td><td>공식 결과보다 짧은 최소 기간, raw provider response는 저장하지 않음</td><td>input JSON과 evidence를 먼저 지우고 digest·routing snapshot·review audit만 정책 범위 보존</td></tr>
+          <tr><td>Review·feedback·release</td><td>성적·피드백 정정 기간과 학교 정책</td><td>일반 soft delete 금지, 승인 purge에도 tombstone·audit 사건 유지</td></tr>
+          <tr><td>ZIP·import preview·export·PDF</td><td>짧은 <code>expires_at_utc</code>와 cleanup worker</td><td>download lease 종료 → blob purge → artifact metadata state 전이</td></tr>
+          <tr><td>Audit</td><td>운영 정책으로 별도 고정, 일반 purge 범위에서 제외</td><td>특권 purge와 새 audit event, hash chain checkpoint 보존</td></tr>
+          <tr><td>Uninstall</td><td>기본 전체 보존</td><td>수량·blob byte·legal hold를 보여 주는 2단계 승인 purge만 허용</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="options">WordPress option 계약</h2>
+      <table>
+        <thead><tr><th>Option</th><th>목표 역할</th><th>정본 여부</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_dashboard_version</code></td><td>설치된 plugin code version 표시, <code>autoload=no</code></td><td>아니오</td></tr>
+          <tr><td><code>oj_ai_dashboard_db_version</code></td><td><code>oj_ai_installations</code>의 검산된 schema version을 반영하는 호환 cache, <code>autoload=no</code></td><td>아니오. ledger·fingerprint가 정본</td></tr>
+          <tr><td><code>oj_ai_dashboard_settings</code></td><td>A-DS-15 이전 단계에서만 읽는 legacy source</td><td>신규 업무 쓰기 금지</td></tr>
+          <tr><td><code>oj_ai_dashboard_installed_migrations</code></td><td>이전 설치 검산 입력</td><td>신규 migration 완료 근거로 사용 금지</td></tr>
+          <tr><td><code>oj_ai_dashboard_enable_assistant_role</code></td><td>A-DS-03에 따라 폐기·legacy 기록</td><td>신규 권한 결정에 사용 금지</td></tr>
+        </tbody>
+      </table>
+      <p>평가 정책·rubric·review rule, provider·model, queue·worker 상태와 파일 경로는 WordPress option에 저장하지 않는다.</p>
+
+      <h2 id="acceptance">A-DS-05 수용 기준</h2>
+      <table>
+        <thead><tr><th>ID</th><th>검증 가능한 완료 조건</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS05-A01</code></td><td>TableRegistry가 정확히 45개 고정 <code>oj_ai_*</code> literal을 반환하고 prefix 결합 호출이 0건임</td></tr>
+          <tr><td><code>A-DS05-A02</code></td><td>45개 table이 10개 owner에 정확히 한 번 배정되고 미소유·중복 owner가 0건임</td></tr>
+          <tr><td><code>A-DS05-A03</code></td><td>학년·학급·그룹·학생·담당 master table과 플랫폼·WordPress table FK·JOIN·write가 0건임</td></tr>
+          <tr><td><code>A-DS05-A04</code></td><td>worksheet definition·revision·question·publication과 assignment 참조가 immutable source hash로 재현됨</td></tr>
+          <tr><td><code>A-DS05-A05</code></td><td>WorksheetEvaluation 5개·SubmissionEvaluation 7개·StudentNote 1개 table의 이력이 섞이지 않음</td></tr>
+          <tr><td><code>A-DS05-A06</code></td><td>공통 evaluation run·attempt가 두 허용 subject만 받고 잘못된 root·run·result 연결을 fail closed함</td></tr>
+          <tr><td><code>A-DS05-A07</code></td><td>모든 JSON에 schema ID·version·byte limit·canonical hash·validator·upcaster·retention owner가 있음</td></tr>
+          <tr><td><code>A-DS05-A08</code></td><td>provider 비밀값·endpoint·raw request·raw response가 table·option·audit·export에 저장되지 않음</td></tr>
+          <tr><td><code>A-DS05-A09</code></td><td>모든 내부 aggregate FK가 <code>RESTRICT</code>이고 cross-owner·platform FK와 암묵 cascade가 0건임</td></tr>
+          <tr><td><code>A-DS05-A10</code></td><td>owner Repository만 자기 table SQL을 가지며 foreign Repository·TableRegistry import와 cross-domain SQL이 0건임</td></tr>
+          <tr><td><code>A-DS05-A11</code></td><td>revision·publication·receipt·review·release·audit row의 update·hard delete가 정상 업무에서 0건임</td></tr>
+          <tr><td><code>A-DS05-A12</code></td><td>private file에 공개 URL·절대 경로가 없고 hash·MIME·byte·scan·retention·owner 상태가 모두 기록됨</td></tr>
+          <tr><td><code>A-DS05-A13</code></td><td>각 주요 명령의 failure injection에서 부분 child·orphan·중복 official result가 0건임</td></tr>
+          <tr><td><code>A-DS05-A14</code></td><td>migration ID·SQL·checksum이 immutable하고 lock·postcondition·checkpoint·forward repair가 재실행 가능함</td></tr>
+          <tr><td><code>A-DS05-A15</code></td><td>동명 table owner·fingerprint 불일치, Multisite, 부분 schema에서 설치·업그레이드와 업무 boot가 차단됨</td></tr>
+          <tr><td><code>A-DS05-A16</code></td><td>현재 35개와 접두어 legacy 후보는 preview·mapping·명시 승인 없이 target에 쓰이거나 삭제되지 않음</td></tr>
+          <tr><td><code>A-DS05-A17</code></td><td>retention·legal hold·2단계 purge·blob/metadata cleanup·append-only audit를 자동 검사함</td></tr>
+          <tr><td><code>A-DS05-A18</code></td><td>애드온 설치·migration 전후 OJ Platform source·schema·option fingerprint가 동일하고 Runtime 변경이 0건임</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decisions">사용자 확인 결정 기록</h2>
+      <table>
+        <thead><tr><th>ID</th><th>확정 제안</th><th>영향</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-DS05-D01</code></td><td>목표 물리 schema를 45개 고정 무접두어 <code>oj_ai_*</code> table로 구성한다.</td><td>TableRegistry·DDL·검산 수량 고정</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D02</code></td><td>45개 table을 Database·Operations·Curriculum·Worksheet·AssessmentConfiguration·Submission·Assessment·Storage·Reporting·Import 10 owner에 하나씩 배정한다.</td><td>Repository·migration descriptor 소유권 고정</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D03</code></td><td>로컬 학년·학급·그룹·학생·담당 master 6개는 목표 schema에서 제거한다.</td><td>OJ Platform 원장 단일화</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D04</code></td><td>플랫폼 context는 stable ID·revision·최소 표시 snapshot만 저장하고 플랫폼 table FK·JOIN·write를 만들지 않는다.</td><td>플랫폼 비수정·권한 일치</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D05</code></td><td>worksheet definition·immutable revision·question·achievement link·publication을 별도 table로 둔다.</td><td>Plate 편집과 발행·평가 재현 분리</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D06</code></td><td>assignment는 publication ID·hash와 platform target snapshot을 고정하고 open 뒤 교체하지 않는다.</td><td>배포 내용·대상 불변성</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D07</code></td><td>submission은 mutable root와 immutable revision·receipt를 분리하고 공식 제출은 pointer 전이로만 표현한다.</td><td>자동 저장·제출·재제출 충돌 방지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D08</code></td><td>활동지 자체 평가는 worksheet 전용 5개 table에 독립 저장한다.</td><td>submission 없는 활동지 평가 가능</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D09</code></td><td>학생 제출 평가는 submission 전용 7개 table에 독립 저장한다.</td><td>점수·feedback·release 이력 분리</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D10</code></td><td>두 평가가 공유하는 물리 storage는 run·attempt 2개뿐이며 subject root는 합치지 않는다.</td><td>공통 worker와 도메인 분리 동시 유지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D11</code></td><td>평가 정책·rubric·review rule은 subject별 revision table 3개로 관리한다.</td><td>A-DS-04 설정 계약 물리화</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D12</code></td><td>AI raw request·raw response는 저장하지 않고 canonical input·normalized output·digest·안전 routing snapshot만 보존한다.</td><td>재현성과 민감정보 최소화 균형</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D13</code></td><td>모든 구조화 JSON은 schema·version·canonical hash·상한·upcaster·retention 계약을 갖는다.</td><td>임의 배열·schema drift 차단</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D14</code></td><td>same-owner aggregate에만 FK를 두고 모두 <code>RESTRICT</code>하며 cross-owner·platform 관계는 Contract와 source hash로 검증한다.</td><td>소유권 결합·암묵 삭제 방지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D15</code></td><td>revision·publication·receipt·review·release·audit는 append-only이며 정정은 새 row로 남긴다.</td><td>감사·공개 이력 보존</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D16</code></td><td>파일은 private storage key와 metadata만 DB에 두고 공개 URL·절대 경로를 저장하지 않는다.</td><td>첨부·ZIP·PDF 직접 접근 차단</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D17</code></td><td>Reporting은 versioned event·DTO로 projection을 만들며 원천 domain table을 직접 JOIN하지 않는다.</td><td>보고서와 업무 schema 결합 제거</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D18</code></td><td>schema migration은 named lock·immutable delta·checksum·전후 postcondition·checkpoint·forward repair를 사용한다.</td><td>부분 설치와 mutable migration 방지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D19</code></td><td>동명 table의 owner marker·schema fingerprint를 확인할 수 없으면 설치·업그레이드를 중단하고 자동 adoption하지 않는다. 2026-08-27 승인한 예외는 exact·empty <code>oj_ai_installations</code> 하나에서 누락된 owner row를 복원하는 0.1.5 bootstrap 재시작뿐이다. 0.1.6은 MariaDB의 nullable SQL <code>NULL</code> metadata 표현만 정규화하며 물리 schema 계약은 변경하지 않는다.</td><td>무접두어 충돌 보호와 초기 중단 복구</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D20</code></td><td>기존 35개와 과거 버전이 생성했을 수 있는 <code>{당시 WordPress prefix}oj_ai_*</code> 변형은 A-DS-15 preview·명시 승인 이전의 read-only legacy source로만 취급한다.</td><td>자동 rename·delete·이중 쓰기 금지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D21</code></td><td>uninstall은 기본 보존하며 수량·blob byte·legal hold를 보여 주는 2단계 승인 purge만 허용한다.</td><td>운영자 실수로 인한 데이터 손실 방지</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D22</code></td><td>WordPress option은 code/db version 호환 cache와 legacy 입력에 한정하고 업무 정본으로 사용하지 않는다.</td><td>설정·migration 정본 혼합 제거</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D23</code></td><td>A-DS-16 승인 전 target DDL·Repository·migration을 구현하지 않는다.</td><td>설계 동결 전 Runtime 변경 차단</td><td>사용자 확정</td></tr>
+          <tr><td><code>A-DS05-D24</code></td><td>애드온 설치·업데이트·복구 과정은 OJ Platform 파일·table·option·migration을 수정하지 않는다.</td><td>독립 애드온 경계 유지</td><td>사용자 확정</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="completion">A-DS-05 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>현재 판정</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td>목표 table 전수 목록·수량</td><td>충족</td><td>10 owner·45 table과 현재 35개 mapping</td></tr>
+          <tr><td>물리 이름·engine·식별자·시간</td><td>충족</td><td>무접두어 literal, InnoDB·utf8mb4, PK·public ID·UTC 규칙</td></tr>
+          <tr><td>column·index·FK 계약</td><td>충족</td><td>공통 프로필과 45개 table별 업무 column·key·FK</td></tr>
+          <tr><td>두 평가 저장 분리</td><td>충족</td><td>WorksheetEvaluation 5·SubmissionEvaluation 7·공통 run 2</td></tr>
+          <tr><td>Repository·transaction·조회 경계</td><td>충족</td><td>owner별 repository와 9개 원자 명령</td></tr>
+          <tr><td>JSON·민감정보·private file</td><td>충족</td><td>schema·hash·redaction·raw 비저장·private storage 계약</td></tr>
+          <tr><td>설치·migration·충돌·복구</td><td>충족</td><td>lock·owner marker·checksum·postcondition·repair</td></tr>
+          <tr><td>보존·legacy·uninstall</td><td>충족</td><td>명시 이전, 2단계 purge, legal hold·감사</td></tr>
+          <tr><td>수용 기준</td><td>충족</td><td><code>A-DS05-A01~A18</code></td></tr>
+          <tr><td>사용자 결정 확인</td><td>충족·동결</td><td>2026-08-13 <code>A-DS05-D01~D24</code> 사용자 확정</td></tr>
+          <tr><td>애드온·플랫폼 Runtime 변경</td><td>0건</td><td>HTML 설계·검증 문서만 변경</td></tr>
+        </tbody>
+      </table>
+
+      <section class="panel">
+        <h2>확정 결과와 다음 단계</h2>
+        <p><code>A-DS05-D01~D24</code>의 최초 44개 기준은 2026-08-13 <code>A-DS08-D22~D23</code>과 <code>A-DS08-DBA01~DBA04</code> 승인으로 table 45개로 개정됐다. owner 10개, 두 평가 storage 분리, 무접두어·migration·legacy·private file·purge 계약은 유지한다.</p>
+        <ol>
+          <li>현재 35개를 그대로 유지하지 않고 목표 45개로 재구성하는 방향을 확인한다.</li>
+          <li>활동지 자체 평가 5개와 학생 제출 평가 7개의 물리 이력을 분리하는 방향을 확인한다.</li>
+          <li>동일 owner aggregate에만 RESTRICT FK를 두고 교차 owner·플랫폼은 Contract로 연결하는 방향을 확인한다.</li>
+          <li>기존 데이터 자동 전환·uninstall 자동 삭제 없이 preview와 명시 승인을 요구하는 방향을 확인한다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>동결:</strong> 2026-08-13 <code>A-DS05-D01~D24</code>를 사용자 확정했다. 다음 단계는 <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 플랫폼 원장 Connector</a> 상세 설계이며 target DDL 구현은 A-DS-16 최종 승인 뒤에만 시작한다.</div>
+      <div class="callout"><strong>A-DS-05 Amendment 01 · 사용자 확정·동결:</strong> 최초 44-table 설계는 2026-08-13 A-DS-08 사용자 승인으로 45-table 정본이 됐다. <code>A-DS07-DB01~DB03</code>의 공백을 <code>A-DS08-DBA01~DBA03</code> 컬럼으로 보강하고 <code>A-DS08-DBA04</code>의 <code>oj_ai_student_note_revisions</code>를 추가했다.
+        <ul><li><code>A-DS05-AM01-01</code> evaluation root에 권한 envelope version·안전 JSON·hash·enqueue correlation을 저장한다.</li><li><code>A-DS05-AM01-02</code> evaluation run에 operation·input/output schema·input digest·result reference를 저장한다.</li><li><code>A-DS05-AM01-03</code> attempt에 gateway correlation ID와 조회 index를 저장한다.</li><li><code>A-DS05-AM01-04</code> 특기사항은 별도 immutable revision table에서 검토·승인·보고서 포함 이력을 보존한다.</li></ul>
+        이 amendment도 target DDL 구현은 A-DS-16 최종 승인 뒤에만 시작하며 WordPress prefix는 붙이지 않는다.</div>
+
+      <div class="callout"><strong>A-DS-05 Amendment 02 · 사용자 확인·동결:</strong> 2026-08-13 <code>A-DS09-DBA01~DBA03</code> 승인으로 신규 table 없이 기존 3개 table에 10개 column을 추가했다.
+        <ul><li><code>A-DS05-AM02-01</code> <code>oj_ai_worksheet_revisions</code>에 <code>document_schema_version</code>·<code>document_hash</code>를 두고 기존 <code>validation_hash</code>는 validator 결과 hash로 유지한다.</li><li><code>A-DS05-AM02-02</code> <code>oj_ai_worksheet_publications</code>에 <code>projection_manifest_version</code>·<code>publication_hash</code>를 둔다.</li><li><code>A-DS05-AM02-03</code> <code>oj_ai_export_jobs</code>에 source 3개와 request contract·snapshot·hash 3개 column을 둔다.</li></ul>
+        Table 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code> 원칙은 유지하며 target DDL 구현은 A-DS-16 최종 승인 뒤에만 시작한다.</div>
+
+            <div class="callout"><strong>A-DS-05 Amendment 03 · 사용자 확인·동결:</strong> 2026-08-13 <code>A-DS10-DBA01</code> 승인으로 신규 table 없이 <code>oj_ai_worksheet_evaluation_reviews</code>에 <code>JSON(item_decisions)</code> profile 4개 column을 추가했다.
+        <ul><li><code>A-DS05-AM03-01</code> <code>item_decisions_schema VARCHAR(100)</code>, <code>item_decisions_version SMALLINT UNSIGNED</code>, <code>item_decisions_json LONGTEXT</code>, <code>item_decisions_hash CHAR(64)</code>를 둔다.</li><li><code>A-DS05-AM03-02</code> finding stable key별 <code>resolved|deferred|dismissed</code>, reason과 resolution revision을 append-only review에 고정하고 <code>note</code>에 구조화 JSON을 숨기지 않는다.</li></ul>
+        Table 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code> 원칙은 유지하며 target DDL 구현은 A-DS-16 최종 승인 뒤에만 시작한다.</div>
+
+
+
+      <div class="callout"><strong>A-DS-05 Amendment 04 · 사용자 확인·동결:</strong> 2026-08-13 <code>A-DS11-DBA01~DBA02</code> 승인으로 신규 table 없이 기존 3개 table에 17개 column을 추가하고 receipt profile 1건을 전환했다.
+        <ul><li><code>A-DS05-AM04-01</code> <code>oj_ai_assignments</code>에 exact roster revision, 일정 version·hash, 자동 제출 설정·완료 시각 5개 column을 둔다.</li><li><code>A-DS05-AM04-02</code> <code>oj_ai_assignment_targets</code>에 학생별 <code>membership_revision</code> 1개 column을 둔다.</li><li><code>A-DS05-AM04-03</code> <code>oj_ai_submission_receipts</code>를 <code>PK, PID, SYS + content_hash</code>로 전환하고 actor·사유·attempt·source·일정·정책·정시 판정 11개 column을 둔다.</li></ul>
+        Table 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code> 원칙은 유지하며 target DDL 구현은 A-DS-16 최종 승인 뒤에만 시작한다.</div>
+
+
+      <div class="callout"><strong>A-DS-05 Amendment 05 · 사용자 확인·동결:</strong> 2026-08-13 <code>A-DS12-DBA01</code> 승인으로 신규 table 없이 <code>oj_ai_submission_attachments</code>에 <code>JSON(ai_representation) nullable</code> profile을 추가했다.
+        <ul>
+          <li>물리 column은 <code>ai_representation_schema VARCHAR(100)</code>, <code>ai_representation_version SMALLINT UNSIGNED</code>, <code>ai_representation_json LONGTEXT</code>, <code>ai_representation_hash CHAR(64)</code> 4개다.</li>
+          <li>원본·extractor·파생 private file·text hash·상태만 기록하며 추출 text와 storage key는 JSON에 넣지 않는다.</li>
+          <li>파생 text는 <code>oj_ai_private_files</code>의 <code>ai_text_representation</code> purpose로 보존하고 attachment Policy·retention을 계승한다.</li>
+          <li>table 수 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code> 원칙은 변하지 않는다.</li>
+        </ul>
+      </div>
+      <div class="callout"><strong>A-DS-05 Amendment 06 · 사용자 확인·동결:</strong> 2026-08-13 <code>A-DS13-DBA01</code> 승인으로 신규 table 없이 기존 3개 table에 8개 column을 추가했다.
+        <ul><li><code>A-DS05-AM06-01</code> <code>oj_ai_submissions</code>에 공식 review ID·hash와 current release ID·hash 4개 CAS pointer column을 둔다.</li><li><code>A-DS05-AM06-02</code> <code>oj_ai_submission_feedback_revisions</code>에 이전 revision ID와 source evaluation run public ID 2개를 둔다.</li><li><code>A-DS05-AM06-03</code> <code>oj_ai_submission_release_revisions</code>에 구조화 release reason code·note 2개를 둔다.</li><li><code>A-DS05-AM06-04</code> table 수 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code>를 유지하고 target DDL은 A-DS-16 승인 전 구현하지 않는다.</li></ul>
+      </div>
+      <div class="callout"><strong>A-DS-05 Amendment 07 · 사용자 확인·동결:</strong> 2026-08-14 <code>A-DS14-DBA01</code> 승인으로 신규 table 없이 <code>oj_ai_report_snapshots</code>에 source manifest profile 4개 column을 추가했다.
+        <ul><li><code>source_manifest_schema VARCHAR(100)</code>은 <code>oj_ai.report_source_manifest</code>로 고정한다.</li><li><code>source_manifest_version SMALLINT UNSIGNED</code>은 <code>1</code>부터 시작한다.</li><li><code>source_manifest_json LONGTEXT</code>에는 canonical JSON을 저장한다.</li><li><code>source_manifest_hash CHAR(64)</code>에는 UTF-8 canonical bytes의 SHA-256 lowercase hex를 저장한다.</li><li>table 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code>를 유지하고 target DDL은 A-DS-16 승인 전 구현하지 않는다.</li></ul>
+      </div>
+      <div class="callout"><strong>A-DS-05 Amendment 08 · 사용자 확인·동결:</strong> 2026-08-14 <code>A-DS15-DBA01</code> 승인으로 운영 원장의 <code>JSON(name)</code> 물리 profile을 정확히 적용하고 purge 멱등·승인 token 고유성을 보강했다.
+        <ul><li><code>A-DS05-AM08-01</code> <code>oj_ai_import_runs</code>와 <code>oj_ai_purge_jobs</code>의 <code>JSON(preview)</code>는 <code>preview_schema</code>·<code>preview_version</code>·<code>preview_json</code>·<code>preview_hash</code> 네 column이므로 별도 <code>preview_hash</code> 중복 표기를 제거한다.</li><li><code>A-DS05-AM08-02</code> <code>oj_ai_purge_jobs</code>에 <code>idempotency_key VARCHAR(191)</code>과 <code>uq_purge_idempotency(idempotency_key)</code>을 둔다.</li><li><code>A-DS05-AM08-03</code> 같은 preview token의 승인 원장 재사용을 막도록 <code>uq_purge_approval_token(approval_token_hash)</code>을 둔다.</li><li><code>A-DS05-AM08-04</code> table 45개·owner 10개·고정 무접두어 <code>oj_ai_*</code>를 유지하고 target DDL은 A-DS-16 승인 전 구현하지 않는다.</li></ul>
+      </div>
+      <div class="callout" id="amendment-09"><strong>A-DS-05 Amendment 09 · 구현 확정:</strong> 2026-08-22 <code>G2-IMP-07-S02</code>의 Context 없는 활동지 PDF와 동시 semantic job 고유성 요구를 기존 이력을 덮어쓰지 않는 전진 마이그레이션으로 반영했다.
+        <ul><li><code>A-DS05-AM09-01</code> <code>oj_ai_export_jobs.context_type</code>·<code>context_id</code>·<code>context_revision</code>을 nullable로 바꾼다.</li><li><code>A-DS05-AM09-02</code> nullable <code>active_identity_key VARCHAR(191)</code>과 <code>uq_export_active_identity</code>를 추가하고 ready·failed terminal 전이에서 값을 NULL로 해제한다.</li><li><code>A-DS05-AM09-03</code> schema <code>1.0.0</code> fingerprint <code>c55b775563273920fef127142e99e64321a07699e6a3f081579714dfb4a526c1</code>와 기존 두 migration checksum은 불변으로 보존한다. <code>202608220001_export_job_context_identity</code>만 append해 target <code>1.0.1</code> fingerprint <code>31cee35952177177a1b36bd483f43ea1d6c1880c7d2a1e1ad891f896a41e32b1</code>로 전진한다.</li><li><code>A-DS05-AM09-04</code> 새 설치는 45 CREATE 뒤 같은 ALTER를 적용하고, 검증된 1.0.0 설치는 ALTER 한 건만 실행한다. table 45개·owner 10개·literal 무접두어 <code>oj_ai_*</code>·플랫폼 API는 변하지 않는다.</li></ul>
+      </div>
+      <div class="callout" id="amendment-10"><strong>A-DS-05 Amendment 10 · 구현 확정:</strong> 2026-08-23 <code>G4-IMP-02-S03</code> 계약 검증 중 학생 제출 평가 prompt contract 열의 길이 불일치를 발견해 append-only schema <code>1.0.2</code>로 교정했다.
+        <ul>
+          <li><code>A-DS05-AM10-01</code> <code>student_submission_assessment_prompt.v2</code>는 39자이므로 <code>oj_ai_submission_evaluations.prompt_contract_version</code>을 <code>VARCHAR(32)</code>에서 <code>VARCHAR(64) NOT NULL</code>로 확장한다.</li>
+          <li><code>A-DS05-AM10-02</code> <code>202608230001_expand_submission_prompt_contract</code>만 append하며 target <code>1.0.2</code> fingerprint는 <code>e49cb1fbcd726f4aae44fe4cb0ad952eabda49971420a7a2a398eee037fd6ee6</code>다.</li>
+          <li><code>A-DS05-AM10-03</code> 1.0.0·1.0.1 fingerprint와 기존 세 migration checksum은 불변으로 보존한다. 새 migration checksum은 <code>1ac53bf10fd16145608882d8a4e958e53b11ff8e58307e5ba03207a75cab92ce</code>다.</li>
+          <li><code>A-DS05-AM10-04</code> 새 설치는 45 CREATE + 2 ALTER, 검증된 1.0.0은 ALTER 2건, 검증된 1.0.1은 ALTER 1건만 실행한다.</li>
+          <li><code>A-DS05-AM10-05</code> table 45개·owner 10개·literal 무접두어 <code>oj_ai_*</code>와 플랫폼 API·table·migration은 변하지 않는다.</li>
+        </ul>
+      </div>
+      <div class="callout" id="amendment-11"><strong>A-DS-05 Amendment 11 · G5-IMP-08-S04 구현 확정:</strong> C73·C74는 기존 <code>oj_ai_purge_jobs</code>의 <code>state</code>·<code>JSON(checkpoint)</code>·완료 시각·오류 코드와 기존 installation·audit·outbox 원장만 사용한다.
+        <ul><li><code>A-DS05-AM11-01</code> purge terminal 상태는 <code>completed|failed|cancelled</code>이며 승인 상태에서도 삭제 전 취소할 수 있다.</li><li><code>A-DS05-AM11-02</code> C73은 5개 control ledger를 보존하고 나머지 40개 data table만 역의존 순서로 정리한다.</li><li><code>A-DS05-AM11-03</code> 새 table·column·index·migration 없이 schema <code>1.0.2</code>를 유지한다. <strong>schema 변경 0</strong>.</li></ul>
+      </div>
+      <div class="callout" id="amendment-12"><strong>A-DS-05 Amendment 12 · G5-IMP-08-S05 Q36 구현 확정:</strong> Q36은 기존 <code>oj_ai_purge_jobs</code>와 현재 <code>oj_ai_private_files</code> legal hold 수만 한 SELECT로 읽는다.
+        <ul><li><code>A-DS05-AM12-01</code> stored preview·checkpoint JSON과 각 SHA-256, profile/version, scope, 예상 행·파일·바이트를 재검산한다.</li><li><code>A-DS05-AM12-02</code> 승인 당시 legal hold와 현재 legal hold를 분리해 안전 projection하며 내부 actor·token·storage 값은 제외한다.</li><li><code>A-DS05-AM12-03</code> 새 table·column·index·migration 없이 schema <code>1.0.2</code>를 유지한다. <strong>schema 변경 0</strong>.</li></ul>
+      </div>
+      <div class="callout" id="amendment-13"><strong>A-DS-05 Amendment 13 · G5-IMP-08-S06 통합 동결 확정:</strong> <a href="g5-imp-08-s06-purge-integration-freeze.html">purge 통합 관문</a>은 기존 45개 table과 private storage 계약만 사용한다.
+        <ul><li><code>A-DS05-AM13-01</code> 삭제 대상은 40개 업무 table이며 installation·schema migration·audit·outbox·purge job의 5개 control ledger를 보존한다.</li><li><code>A-DS05-AM13-02</code> private byte를 metadata와 업무 table보다 먼저 삭제하고 retry-safe checkpoint를 유지한다.</li><li><code>A-DS05-AM13-03</code> 남은 행·파일·바이트 0과 승인 예상 수량 일치 때만 완료한다. 새 table·column·index·migration 없이 schema <code>1.0.2</code>를 유지한다.</li></ul>
+      </div>
+      <div class="warning callout"><strong>A-DS05-IC01 · 구현 명확화:</strong> 2026-08-14 target catalog 구현 중 두 evaluation root의 <code>authorization_envelope_version</code>·<code>authorization_envelope_hash</code> 별도 선언과 일반 <code>JSON(authorization_envelope)</code> profile이 같은 물리 이름을 중복 생성하는 모순을 확인했다.
+        <ul>
+          <li>A-DS-08의 “version·안전 JSON·hash” 계약을 우선해 <code>authorization_envelope_version VARCHAR(32)</code>, <code>authorization_envelope_json LONGTEXT</code>, <code>authorization_envelope_hash CHAR(64)</code> 세 column으로 구현한다.</li>
+          <li>이 contract envelope에는 일반 JSON profile의 <code>authorization_envelope_schema</code>와 <code>SMALLINT</code> version을 추가하지 않는다.</li>
+          <li>table 45개·owner 10개·고정 무접두어 이름·플랫폼 Addon API에는 변화가 없다. 구현 증거는 <a href="g1-database-foundation-implementation.html#clarification">G1 Database Foundation</a>에서 확인한다.</li>
+        </ul>
+      </div>
+      <div class="good callout" id="g2-implementation"><strong>G2 구현 증거 2026-08-14:</strong> <a href="g2-worksheet-authoring-vertical-slice.html"><code>G2-IMP-01</code></a> C01이 literal <code>oj_ai_worksheets</code>·<code>oj_ai_worksheet_revisions</code>·<code>oj_ai_audit_events</code>·<code>oj_ai_outbox_events</code>를 한 트랜잭션으로 저장한다. 읽기 join까지 포함한 여섯 table은 모두 무접두어이며 실패 주입 rollback 계약을 통과했다.</div>
+      <div class="good callout" id="g4-c30-receipt"><strong>G4 C30 저장 명확화 2026-08-23:</strong> <a href="g4-imp-01-s04-assignment-evaluation-enqueue.html">배포 제출 일괄 평가</a>는 batch master table을 추가하지 않는다. 페이지 결과는 기존 <code>oj_ai_outbox_events</code>에 <code>assignment_evaluations.enqueue_receipt</code>로 저장하고 <code>published_at_utc</code>를 처리 시각으로 채워 dispatch 대상에서 제외한다. 제출별 evaluation 자원은 C29 transaction이 계속 소유한다.</div>
+      <div class="warning callout"><strong>Schema 후속:</strong> Worksheet editor·viewer 공유 관계를 표현할 table이나 column은 현재 정본에 없다. 임시 JSON 저장 없이 owner-only로 구현했으며 공동 작업 확장 전 A-DS-05 amendment가 필요하다.</div>
+      <div class="good callout"><strong>G5-IMP-02-S01 snapshot 저장 구현 증거 2026-08-25:</strong> <a href="g5-imp-02-s01-report-snapshot-create.html">C45 보고서 스냅샷 생성</a>은 기존 literal <code>oj_ai_report_snapshots</code>에 불변 row를 한 번 INSERT하고 <code>oj_ai_audit_events</code>·<code>oj_ai_outbox_events</code>와 같은 transaction으로 확정한다. snapshot UPDATE·신규 table·DDL·migration·WordPress prefix 사용은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-02-S02 snapshot 조회 구현 증거 2026-08-25:</strong> <a href="g5-imp-02-s02-report-snapshot-query.html">Q22 보고서 스냅샷 조회</a>는 literal <code>oj_ai_report_snapshots</code>를 SELECT만 하고 저장 profile·canonical hash·snapshot identity를 검산한다. 신규 table·DDL·migration·UPDATE·WordPress prefix 사용은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-02-S03 source manifest 구현 증거 2026-08-25:</strong> <a href="g5-imp-02-s03-report-source-manifest.html">보고서 원본 계보</a>는 기존 snapshot row의 canonical <code>source_manifest_json</code>과 hash를 Q22 공통 검산·현재 권한 뒤 내부에 전달한다. 신규 table·column·DDL·migration·UPDATE·WordPress prefix 사용은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-02-S04 snapshot 통합 동결 증거 2026-08-25:</strong> <a href="g5-imp-02-s04-report-snapshot-integration-freeze.html">보고서 스냅샷 통합 동결</a>은 생성 중 stale이면 persistence 0건, 완료 뒤 source가 바뀌어도 기존 row 불변, 저장 bytes·hash·link 손상은 fail-closed임을 검증한다. snapshot UPDATE·DELETE·신규 table·column·DDL·migration은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-03-S01 export job 구현 증거 2026-08-25:</strong> <a href="g5-imp-03-s01-report-export-enqueue.html">C46·C47 보고서 CSV·PDF 작업</a>은 기존 literal <code>oj_ai_export_jobs</code>에 report snapshot FK와 exact request를 저장하고 audit·outbox와 같은 transaction으로 확정한다. 신규 table·DDL·migration·WordPress prefix 사용은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-03-S02 C50 저장 구현 증거 2026-08-25:</strong> <a href="g5-imp-03-s02-submission-bundle-enqueue.html">학생 결과물 ZIP 작업</a>은 같은 <code>oj_ai_export_jobs</code>를 <code>report_snapshot_id=NULL</code>, <code>source_type=assignment</code>, <code>artifact_kind=submission_bundle</code>로 사용하고 literal <code>oj_ai_audit_events</code>·<code>oj_ai_outbox_events</code>와 한 transaction으로 저장한다. 신규 table·column·DDL·migration·WordPress prefix 사용은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-03-S03 C69 저장 구현 증거 2026-08-25:</strong> <a href="g5-imp-03-s03-report-json-package-enqueue.html">보고서 JSON package 작업</a>은 기존 <code>oj_ai_export_jobs</code>에 exact report snapshot FK, <code>source_type=report_snapshot</code>, <code>artifact_kind=report_json_package</code>와 불변 request를 저장하고 literal audit·outbox와 한 transaction으로 확정한다. 신규 table·column·DDL·migration·WordPress prefix 사용은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-03-S04 artifact 저장 구현 증거 2026-08-25:</strong> <a href="g5-imp-03-s04-report-export-job-download.html">Q23·Q24 내보내기 작업·다운로드</a>는 기존 <code>oj_ai_export_jobs</code>를 300초 lease로 점유하고 실제 CSV·PDF·JSON ZIP·학생 결과물 ZIP을 기존 <code>oj_ai_pdf_artifacts</code>·<code>oj_ai_private_files</code>에 ready CAS로 연결한다. 새 table·column·DDL·migration·WordPress prefix 사용은 0건이며 24시간 만료 뒤 private file을 제공하지 않는다.</div>
+      <div class="good callout"><strong>G5-IMP-03-S05 작업 제어 저장 증거 2026-08-25:</strong> <a href="g5-imp-03-s05-report-export-control.html">C53·C54 내보내기 제어</a>는 기존 literal <code>oj_ai_export_jobs</code>·<code>oj_ai_audit_events</code>·<code>oj_ai_outbox_events</code>만 사용한다. 취소는 queued 행을 조건부 갱신하고 재시도는 failed 원본을 보존한 채 새 queued 행을 추가하며 신규 table·column·DDL·migration·WordPress prefix 사용은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-03-S06 저장 통합 동결 증거 2026-08-25:</strong> <a href="g5-imp-03-s06-report-export-integration-freeze.html">checksum·권한 통합 동결</a>이 기존 job·private file metadata의 owner·purpose·MIME·byte size·SHA-256와 C53·C54 계보를 교차 검증했다. 신규 table·column·DDL·migration은 0건이다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S03 저장소 진단 증거 2026-08-25:</strong> <a href="g5-imp-05-s03-storage-secret-diagnostics.html">Q28 storage</a>는 literal <code>oj_ai_private_files</code>에서 scan·cleanup 지연과 상태 일관성 개수만 한 번 집계한다. <code>storage_key</code>·<code>original_name</code>·<code>sha256</code>는 SELECT·응답에서 제외하며 신규 table·column·DDL·migration·write는 0건이다.</div>
+      <p class="footer">A-DS-05 애드온 데이터베이스 · Amendment 01~10 반영 이력·Amendment 11~13 반영 · schema 1.0.2 append-only 전진 · C45·Q22 snapshot·IMP-02 4/4 완료 · G5-IMP-08-S06 purge 통합 동결·IMP-08 6/6·G5 8/8 · 40개 대상·5개 보호 원장·남은 행·파일·바이트 0 · schema 변경 0 · table 45개·owner 10개·무접두어 유지</p>
+    </main>
+  </div>
+</body>
+</html>

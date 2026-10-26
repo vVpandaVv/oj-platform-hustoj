@@ -1,0 +1,7 @@
+# Lines in this file are checked against src/, templates/, and resources/.
+# Keep this file UTF-8 encoded.
+개발자용 설명
+교사용 긴 안내
+기능 설명 문단
+대시보드 의미를 설명
+사용 방법은 다음과 같습니다

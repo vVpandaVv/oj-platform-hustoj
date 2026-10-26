@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 활동지 UI 시안</title>
+  <link rel="stylesheet" href="ui-prototype.css">
+</head>
+<body>
+  <svg class="icon-sprite" aria-hidden="true">
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"></path><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"></path><path d="M7 3v4a1 1 0 0 0 1 1h7"></path></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"></path></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"></path><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5 5.5 5.5 0 0 0 9.5 20H13"></path></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M3 5h.01"></path><path d="M3 12h.01"></path><path d="M3 19h.01"></path><path d="M8 5h13"></path><path d="M8 12h13"></path><path d="M8 19h13"></path></symbol>
+    <symbol id="i-list-ordered" viewBox="0 0 24 24"><path d="M11 5h10"></path><path d="M11 12h10"></path><path d="M11 19h10"></path><path d="M4 4h1v5"></path><path d="M4 9h2"></path><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"></path></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></symbol>
+    <symbol id="i-table" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></symbol>
+    <symbol id="i-sigma" viewBox="0 0 24 24"><path d="M18 7V5a1 1 0 0 0-1-1H6.5a.5.5 0 0 0-.4.8l4.5 6a2 2 0 0 1 0 2.4l-4.5 6a.5.5 0 0 0 .4.8H17a1 1 0 0 0 1-1v-2"></path></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m18 16 4-4-4-4"></path><path d="m6 8-4 4 4 4"></path><path d="m14.5 4-5 16"></path></symbol>
+    <symbol id="i-quote" viewBox="0 0 24 24"><path d="M14 14a2 2 0 0 0 2-2V8h-2"></path><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path><path d="M8 14a2 2 0 0 0 2-2V8H8"></path></symbol>
+    <symbol id="i-columns" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M12 3v18"></path></symbol>
+    <symbol id="i-align-left" viewBox="0 0 24 24"><path d="M21 5H3"></path><path d="M15 12H3"></path><path d="M17 19H3"></path></symbol>
+    <symbol id="i-response" viewBox="0 0 24 24"><path d="M12 20h-1a2 2 0 0 1-2-2 2 2 0 0 1-2 2H6"></path><path d="M13 8h7a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-7"></path><path d="M5 16H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h1"></path><path d="M6 4h1a2 2 0 0 1 2 2 2 2 0 0 1 2-2h1"></path><path d="M9 6v12"></path></symbol>
+    <symbol id="i-separator" viewBox="0 0 24 24"><path d="m16 16-4 4-4-4"></path><path d="M3 12h18"></path><path d="m8 8 4-4 4 4"></path></symbol>
+    <symbol id="i-file-up" viewBox="0 0 24 24"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M12 12v6"></path><path d="m15 15-3-3-3 3"></path></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></symbol>
+    <symbol id="i-refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.6-6.1L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 15.6 6.1L21 16"></path><path d="M16 16h5v5"></path></symbol>
+  </svg>
+
+  <header class="preview-bar">
+    <a class="preview-back" href="a-ds-01-ui-system.html">
+      <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+      <span>설계 문서</span>
+    </a>
+    <div class="role-switch" role="group" aria-label="화면 전환">
+      <button type="button" data-role="teacher" aria-pressed="true">교사</button>
+      <button type="button" data-role="student" aria-pressed="false">학생</button>
+    </div>
+    <span class="prototype-label">UI 시안</span>
+  </header>
+
+  <section class="prototype-screen is-active" id="teacher-preview" aria-label="교사 화면">
+    <header class="platform-header console-header">
+      <div class="brand-row">
+        <button class="icon-button mobile-menu-button" type="button" aria-label="메뉴 열기" title="메뉴">
+          <svg class="icon" aria-hidden="true"><use href="#i-menu"></use></svg>
+        </button>
+        <strong class="platform-brand">OJ Console</strong>
+      </div>
+      <div class="header-actions">
+        <label class="context-select">
+          <span class="sr-only">수업 선택</span>
+          <select>
+            <option>2026 · 2학년 3반</option>
+            <option>2026 · 2학년 4반</option>
+          </select>
+        </label>
+        <button class="icon-button" type="button" data-teacher-tab="assessment" aria-label="검토 대기" title="검토 대기">
+          <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
+          <span class="notification-dot">3</span>
+        </button>
+        <button class="icon-button" type="button" data-open-settings aria-label="AI 평가 설정" title="AI 평가 설정">
+          <svg class="icon" aria-hidden="true"><use href="#i-settings"></use></svg>
+        </button>
+        <span class="avatar" aria-label="김교사">김</span>
+      </div>
+    </header>
+
+    <div class="console-shell">
+      <aside class="console-sidebar" aria-label="OJ Console 메뉴">
+        <a href="#">홈</a>
+        <div class="sidebar-group">
+          <strong>학습 공간</strong>
+          <a href="#">수업</a>
+          <a href="#teacher-main" class="is-current" data-teacher-tab="worksheets">AI 활동지</a>
+          <a href="#teacher-main" data-teacher-tab="assignments">활동지 배포</a>
+          <a href="#teacher-main" data-teacher-tab="assessment">AI 평가</a>
+          <a href="#teacher-main" data-teacher-tab="reports">활동지 보고서</a>
+          <a href="#teacher-main" data-teacher-tab="settings">AI 평가 설정</a>
+        </div>
+        <div class="sidebar-group">
+          <strong>운영</strong>
+          <a href="#">사용자</a>
+          <a href="#">AI 연결</a>
+        </div>
+      </aside>
+
+      <main class="product-main teacher-main" id="teacher-main">
+        <div class="page-heading">
+          <div>
+            <p class="breadcrumb">학습 공간 / AI 활동지</p>
+            <h1>AI 활동지</h1>
+          </div>
+          <button class="button primary" type="button" data-open-worksheet>
+            <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>
+            새 활동지
+          </button>
+        </div>
+
+        <nav class="work-nav" aria-label="AI 활동지 메뉴">
+          <button type="button" class="is-active" data-teacher-tab="worksheets">활동지</button>
+          <button type="button" data-teacher-tab="assignments">배포·제출</button>
+          <button type="button" data-teacher-tab="assessment">평가</button>
+          <button type="button" data-teacher-tab="reports">보고서</button>
+          <button type="button" data-teacher-tab="settings">평가 설정</button>
+        </nav>
+
+        <section class="teacher-panel is-active" data-teacher-panel="worksheets">
+          <div class="summary-strip" aria-label="활동지 현황">
+            <button type="button"><span>초안</span><strong>4</strong></button>
+            <button type="button"><span>발행</span><strong>7</strong></button>
+            <button type="button"><span>점검 필요</span><strong>2</strong></button>
+            <button type="button"><span>마감 임박</span><strong>2</strong></button>
+          </div>
+
+          <div class="list-toolbar">
+            <label class="search-field">
+              <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+              <span class="sr-only">활동지 검색</span>
+              <input type="search" placeholder="활동지 검색">
+            </label>
+            <select aria-label="활동지 상태">
+              <option>전체 상태</option>
+              <option>초안</option>
+              <option>발행</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table class="work-table">
+              <thead>
+                <tr><th>활동지</th><th>상태</th><th>배포</th><th>최근 수정</th><th><span class="sr-only">행동</span></th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><button class="row-title" type="button" data-open-worksheet>우리 지역의 기후 변화</button><span>과학 · 2학년</span></td>
+                  <td><span class="status warning">점검 필요</span></td>
+                  <td>2개 반</td>
+                  <td>10분 전</td>
+                  <td><button class="icon-button quiet" type="button" aria-label="우리 지역의 기후 변화 더보기" title="더보기"><svg class="icon" aria-hidden="true"><use href="#i-more"></use></svg></button></td>
+                </tr>
+                <tr>
+                  <td><button class="row-title" type="button" data-open-worksheet>설득하는 글쓰기</button><span>국어 · 2학년</span></td>
+                  <td><span class="status success">발행</span></td>
+                  <td>1개 반</td>
+                  <td>어제</td>
+                  <td><button class="icon-button quiet" type="button" aria-label="설득하는 글쓰기 더보기" title="더보기"><svg class="icon" aria-hidden="true"><use href="#i-more"></use></svg></button></td>
+                </tr>
+                <tr>
+                  <td><button class="row-title" type="button" data-open-worksheet>자료를 읽고 비교하기</button><span>사회 · 1학년</span></td>
+                  <td><span class="status neutral">초안</span></td>
+                  <td>없음</td>
+                  <td>8월 8일</td>
+                  <td><button class="icon-button quiet" type="button" aria-label="자료를 읽고 비교하기 더보기" title="더보기"><svg class="icon" aria-hidden="true"><use href="#i-more"></use></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="teacher-panel" data-teacher-panel="assignments" hidden>
+          <div class="section-heading-row">
+            <div><h2>배포·제출</h2><p id="assignment-summary">진행 중인 활동지 3개</p></div>
+            <div class="heading-actions"><button class="button secondary" type="button" data-open-submission-import><svg class="icon" aria-hidden="true"><use href="#i-upload"></use></svg>제출 가져오기</button><button class="button primary" type="button" data-open-distribution>새 배포</button></div>
+          </div>
+          <ol class="workflow-strip" aria-label="배포 순서">
+            <li class="is-current"><span>1</span><div><strong>활동지</strong><small>발행본 선택</small></div></li>
+            <li><span>2</span><div><strong>대상</strong><small>수업·그룹 선택</small></div></li>
+            <li><span>3</span><div><strong>일정</strong><small>마감·제출 설정</small></div></li>
+            <li><span>4</span><div><strong>확인</strong><small>대상 고정 후 시작</small></div></li>
+          </ol>
+          <div class="table-wrap">
+            <table class="work-table">
+              <thead><tr><th>활동지</th><th>대상</th><th>제출</th><th>마감</th><th>상태</th></tr></thead>
+              <tbody>
+                <tr><td><button class="row-title" type="button" data-open-distribution>우리 지역의 기후 변화</button><span>발행본 3</span></td><td>2학년 3반</td><td>21 / 28</td><td>오늘 18:00</td><td><span class="status warning">마감 임박</span></td></tr>
+                <tr><td><strong>설득하는 글쓰기</strong></td><td>2학년 3반</td><td>28 / 28</td><td>8월 9일</td><td><span class="status success">제출 완료</span></td></tr>
+                <tr><td><strong>설득하는 글쓰기</strong></td><td>2학년 4반</td><td>19 / 27</td><td>8월 12일</td><td><span class="status info">진행 중</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="teacher-panel" data-teacher-panel="assessment" hidden>
+          <div class="section-heading-row">
+            <div><h2>평가</h2><p id="evaluation-summary">검토할 제출 3건</p></div>
+            <button class="button primary" type="button" data-open-review>검토 시작</button>
+          </div>
+          <ol class="workflow-strip evaluation-flow" aria-label="학생 제출 평가 순서">
+            <li class="is-complete"><span><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><div><strong>제출 확인</strong><small>21건</small></div></li>
+            <li class="is-complete"><span><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><div><strong>AI 평가</strong><small>18건 완료</small></div></li>
+            <li class="is-current" data-evaluation-step="review"><span>3</span><div><strong>교사 검토</strong><small>3건 대기</small></div></li>
+            <li data-evaluation-step="feedback"><span>4</span><div><strong>피드백</strong><small>승인 후 공개</small></div></li>
+            <li data-evaluation-step="release"><span>5</span><div><strong>결과 공개</strong><small>확정 결과만</small></div></li>
+          </ol>
+          <div class="assessment-source-bar">
+            <div><span>활동지 자체 점검</span><strong>점검 필요 2개</strong></div>
+            <button class="button secondary" type="button" data-open-worksheet>편집 화면 열기</button>
+          </div>
+          <div class="review-list">
+            <button type="button" class="review-row" data-open-review><span class="status danger">검토 필요</span><strong>박하늘 · 우리 지역의 기후 변화</strong><span>근거 부족 2개</span><time>5분 전</time></button>
+            <button type="button" class="review-row" data-open-review><span class="status warning">점수 확인</span><strong>이준서 · 우리 지역의 기후 변화</strong><span>점수 차이 8점</span><time>12분 전</time></button>
+            <button type="button" class="review-row" data-open-release data-feedback-ready="true" data-score="90 / 100"><span class="status neutral">공개 대기</span><strong>최서윤 · 설득하는 글쓰기</strong><span>90점 · 피드백 승인</span><time>어제</time></button>
+          </div>
+        </section>
+
+        <section class="teacher-panel" data-teacher-panel="reports" hidden>
+          <div class="section-heading-row report-heading">
+            <div><h2>보고서</h2><p id="report-context">우리 지역의 기후 변화 · 전체 배포</p></div>
+            <div class="heading-actions"><button class="button secondary" type="button" data-refresh-report><svg class="icon" aria-hidden="true"><use href="#i-refresh-cw"></use></svg>새로고침</button><button class="button primary" type="button" data-open-report-export><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>내보내기</button></div>
+          </div>
+          <div class="report-baseline"><span id="report-baseline-time">기준 8월 13일 10:42</span><span id="report-baseline-state">제출 40 · 평가 37 · 공개 35</span></div>
+          <div class="report-lens" role="group" aria-label="보고서 기준">
+            <button type="button" class="is-active" data-report-lens="worksheet" aria-pressed="true">활동지별</button>
+            <button type="button" data-report-lens="group" aria-pressed="false">수업·그룹별</button>
+            <button type="button" data-report-lens="student" aria-pressed="false">학생별</button>
+          </div>
+
+          <div class="report-panel is-active" data-report-panel="worksheet">
+            <div class="report-filter-bar">
+              <label class="field-control"><span>활동지</span><select><option>우리 지역의 기후 변화</option><option>설득하는 글쓰기</option></select></label>
+              <label class="field-control"><span>배포</span><select><option>전체 배포</option><option>2학년 3반 · 8월 10일</option><option>2학년 4반 · 8월 10일</option></select></label>
+              <label class="field-control"><span>기간</span><select><option>이번 학기</option><option>최근 30일</option></select></label>
+            </div>
+            <div class="report-grid">
+              <div class="report-stat"><span>대상</span><strong>55</strong><small>배포 2건</small></div>
+              <div class="report-stat"><span>제출률</span><strong>73%</strong><small>40 / 55명</small></div>
+              <div class="report-stat"><span>평가 완료</span><strong>93%</strong><small>37 / 40건</small></div>
+              <div class="report-stat"><span>평균 점수</span><strong>79.2</strong><small>평가 37건</small></div>
+            </div>
+            <div class="report-detail-grid">
+              <section class="criterion-chart" aria-label="평가 기준별 평균">
+                <h3>평가 기준</h3>
+                <div class="criterion-row"><span>자료 이해</span><i><b style="--score:86%"></b></i><strong>86</strong></div>
+                <div class="criterion-row"><span>근거 사용</span><i><b style="--score:74%"></b></i><strong>74</strong></div>
+                <div class="criterion-row"><span>표현</span><i><b style="--score:78%"></b></i><strong>78</strong></div>
+              </section>
+              <div class="table-wrap">
+                <table class="work-table report-table">
+                  <thead><tr><th>배포</th><th>제출</th><th>평균</th><th>검토</th></tr></thead>
+                  <tbody><tr><td><button class="row-title" type="button" data-report-drilldown>2학년 3반</button></td><td>21 / 28</td><td>78.1</td><td><span class="status warning">2</span></td></tr><tr><td><button class="row-title" type="button" data-report-drilldown>2학년 4반</button></td><td>19 / 27</td><td>80.4</td><td><span class="status warning">1</span></td></tr></tbody>
+                </table>
+              </div>
+            </div>
+            <section class="report-drilldown" id="report-drilldown" hidden>
+              <header><div><span>배포 상세</span><h3>2학년 3반</h3></div><button class="icon-button quiet" type="button" data-close-report-drilldown aria-label="배포 상세 닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></header>
+              <div class="drilldown-summary"><span>대상 28</span><span>제출 21</span><span>평가 19</span><span>공개 18</span></div>
+              <div class="table-wrap"><table class="work-table"><thead><tr><th>학생</th><th>제출</th><th>평가</th><th>결과</th></tr></thead><tbody><tr><td>박하늘</td><td>오늘 10:18</td><td><span class="status warning">검토</span></td><td>대기</td></tr><tr><td>이준서</td><td>어제 17:20</td><td>82</td><td><span class="status success">공개</span></td></tr><tr><td>최서윤</td><td>어제 16:54</td><td>90</td><td><span class="status success">공개</span></td></tr></tbody></table></div>
+            </section>
+          </div>
+
+          <div class="report-panel" data-report-panel="group" hidden>
+            <div class="report-filter-bar">
+              <label class="field-control"><span>수업·그룹</span><select><option>2026 · 2학년 3반</option><option>2026 · 2학년 4반</option></select></label>
+              <label class="field-control"><span>기간</span><select><option>이번 학기</option><option>최근 30일</option></select></label>
+            </div>
+            <div class="report-grid">
+              <div class="report-stat"><span>활동지</span><strong>7</strong><small>진행 중 2개</small></div>
+              <div class="report-stat"><span>제출률</span><strong>92%</strong><small>161 / 175건</small></div>
+              <div class="report-stat"><span>평가 완료</span><strong>95%</strong><small>153 / 161건</small></div>
+              <div class="report-stat"><span>평균 점수</span><strong>81.0</strong><small>평가 153건</small></div>
+            </div>
+            <div class="table-wrap report-list-table"><table class="work-table"><thead><tr><th>활동지</th><th>제출률</th><th>평균</th><th>상태</th></tr></thead><tbody><tr><td><button class="row-title" type="button" data-report-drilldown>우리 지역의 기후 변화</button></td><td>75%</td><td>78.1</td><td><span class="status warning">검토 2</span></td></tr><tr><td>설득하는 글쓰기</td><td>100%</td><td>84.0</td><td><span class="status success">공개</span></td></tr><tr><td>자료를 읽고 비교하기</td><td>96%</td><td>82.3</td><td><span class="status success">공개</span></td></tr></tbody></table></div>
+          </div>
+
+          <div class="report-panel" data-report-panel="student" hidden>
+            <div class="report-filter-bar">
+              <label class="field-control"><span>학생</span><select><option>박하늘 · 2학년 3반</option><option>이준서 · 2학년 3반</option></select></label>
+              <label class="field-control"><span>기간</span><select><option>이번 학기</option><option>최근 30일</option></select></label>
+            </div>
+            <div class="report-grid">
+              <div class="report-stat"><span>활동지</span><strong>7</strong><small>진행 중 1개</small></div>
+              <div class="report-stat"><span>제출</span><strong>6 / 7</strong><small>미제출 1개</small></div>
+              <div class="report-stat"><span>평균 점수</span><strong>83.0</strong><small>평가 6건</small></div>
+              <div class="report-stat"><span>공개 결과</span><strong>5</strong><small>검토 중 1개</small></div>
+            </div>
+            <section class="teacher-note-summary"><div><span>교사 기록</span><strong>승인 1개 · 보고서 포함</strong></div><button class="button secondary" type="button" data-open-student-note>기록 보기</button></section>
+            <div class="table-wrap report-list-table"><table class="work-table"><thead><tr><th>활동지</th><th>제출</th><th>점수</th><th>결과</th></tr></thead><tbody><tr><td>우리 지역의 기후 변화</td><td>8월 10일</td><td>검토 중</td><td><span class="status warning">대기</span></td></tr><tr><td>설득하는 글쓰기</td><td>8월 9일</td><td>86</td><td><span class="status success">공개</span></td></tr><tr><td>자료를 읽고 비교하기</td><td>8월 3일</td><td>82</td><td><span class="status success">공개</span></td></tr></tbody></table></div>
+          </div>
+        </section>
+
+        <section class="teacher-panel settings-panel" data-teacher-panel="settings" hidden>
+          <div class="section-heading-row">
+            <div><h2>설정</h2><p>AI 활동지</p></div>
+            <button class="button primary" type="button" data-save-settings>저장</button>
+          </div>
+          <nav class="settings-nav" aria-label="설정 메뉴">
+            <button type="button" class="is-active" data-settings-tab="policy" aria-selected="true">평가 정책</button>
+            <button type="button" data-settings-tab="rubric" aria-selected="false">기본 루브릭</button>
+            <button type="button" data-settings-tab="review" aria-selected="false">검토·공개</button>
+            <button type="button" data-settings-tab="connection" aria-selected="false">AI 연결</button>
+            <button type="button" data-settings-tab="system" aria-selected="false">시스템 상태</button>
+          </nav>
+
+          <section class="settings-view" data-settings-panel="policy">
+            <div class="settings-form">
+              <label><span>AI 평가 사용</span><input type="checkbox" checked></label>
+              <label><span>교사 검토 후 공개</span><input type="checkbox" checked disabled></label>
+              <label><span>낮은 확신 결과</span><select><option>항상 검토</option></select></label>
+            </div>
+          </section>
+
+          <section class="settings-view" data-settings-panel="rubric" hidden>
+            <div class="settings-form">
+              <label><span>활동지 점검 기준</span><select><option>기본 품질 기준</option></select></label>
+              <label><span>학생 제출 평가 기준</span><select><option>과목별 기본 기준</option></select></label>
+              <label><span>배점이 맞지 않을 때</span><select><option>저장 전 확인</option></select></label>
+            </div>
+          </section>
+
+          <section class="settings-view" data-settings-panel="review" hidden>
+            <div class="settings-form">
+              <label><span>AI 결과 교사 확인</span><input type="checkbox" checked disabled></label>
+              <label><span>학생 공개</span><select><option>교사가 직접 공개</option></select></label>
+              <label><span>민감 표현 감지</span><select><option>항상 보류</option></select></label>
+            </div>
+          </section>
+
+          <section class="settings-view" data-settings-panel="connection" hidden>
+            <div class="connection-status-list">
+              <div><span>활동지 자체 평가</span><strong><span class="status success">연결됨</span></strong></div>
+              <div><span>학생 제출 평가</span><strong><span class="status success">연결됨</span></strong></div>
+              <div><span>마지막 확인</span><strong>방금</strong></div>
+            </div>
+            <div class="settings-action-row"><div><strong>AI 연결 관리</strong><p>연결 정보와 작업 배정은 OJ Platform에서 관리합니다.</p></div><button class="button secondary" type="button">OJ Platform 열기</button></div>
+          </section>
+
+          <section class="settings-view system-management" data-settings-panel="system" hidden>
+            <div class="system-heading">
+              <div><h3>시스템 상태</h3><p id="system-checked-time">마지막 확인 · 방금</p></div>
+              <div class="heading-actions"><span class="status success" id="system-summary-status">사용 준비됨</span><button class="button secondary" type="button" data-refresh-system><svg class="icon" aria-hidden="true"><use href="#i-refresh-cw"></use></svg>다시 확인</button></div>
+            </div>
+            <div class="system-status-list" id="system-status-list">
+              <div data-system-state="ready"><span class="system-state-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><div><strong>애드온 실행</strong><p>사용할 준비가 되었습니다.</p></div><span class="status success">사용 준비됨</span></div>
+              <div data-system-state="ready"><span class="system-state-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><div><strong>데이터 구조</strong><p>최신 상태입니다.</p></div><span class="status success">사용 준비됨</span></div>
+              <div data-system-state="ready"><span class="system-state-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><div><strong>작업 처리</strong><p>대기 중인 오류가 없습니다.</p></div><span class="status success">사용 준비됨</span></div>
+              <div data-system-state="ready"><span class="system-state-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><div><strong>파일 보관</strong><p>안전하게 보관되고 있습니다.</p></div><span class="status success">사용 준비됨</span></div>
+              <div data-system-state="ready"><span class="system-state-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><div><strong>AI 작업 배정</strong><p>두 평가 작업을 사용할 수 있습니다.</p></div><span class="status success">사용 준비됨</span></div>
+            </div>
+
+            <section class="system-action-row">
+              <div><h3>기존 데이터</h3><p>이전 버전 데이터가 발견되었습니다.</p><div class="compact-statuses"><span class="status info">이전 가능 1,248</span><span class="status warning">확인 필요 3</span><span class="status neutral">제외 18</span></div></div>
+              <button class="button secondary" type="button" data-open-legacy-migration>이전 내용 확인</button>
+            </section>
+            <section class="system-action-row danger-zone">
+              <div><h3>데이터 보존</h3><p>플러그인을 제거해도 활동지와 평가 결과는 유지됩니다.</p></div>
+              <button class="button danger" type="button" data-open-purge>영구 정리</button>
+            </section>
+          </section>
+        </section>
+      </main>
+
+      <main class="product-main worksheet-workspace" id="worksheet-workspace" hidden>
+        <div class="workspace-heading">
+          <button class="icon-button" type="button" data-close-worksheet aria-label="활동지 목록으로" title="뒤로">
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg>
+          </button>
+          <div>
+            <h1 tabindex="-1">우리 지역의 기후 변화</h1>
+            <p><span class="status neutral">초안</span><span id="teacher-save-status">저장됨 · 10:42</span></p>
+          </div>
+          <div class="workspace-actions">
+            <button class="button secondary" type="button" data-run-check>AI 점검</button>
+            <button class="button primary" type="button" data-save-worksheet>
+              <svg class="icon" aria-hidden="true"><use href="#i-save"></use></svg>
+              저장
+            </button>
+          </div>
+        </div>
+
+        <nav class="phase-nav" aria-label="활동지 진행 단계">
+          <button type="button" class="is-active"><span>1</span>만들기</button>
+          <button type="button"><span>2</span>배포</button>
+          <button type="button"><span>3</span>평가</button>
+          <button type="button"><span>4</span>공개</button>
+        </nav>
+
+        <div class="editor-grid">
+          <aside class="outline-panel">
+            <div class="panel-title"><strong>문항</strong><button class="icon-button quiet" type="button" data-add-prototype-question aria-label="문항 추가" title="문항 추가"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg></button></div>
+            <button type="button" class="outline-item is-active" data-question-target="prototype-question-1"><span>1</span><strong>지역 변화 살펴보기</strong></button>
+            <button type="button" class="outline-item" data-question-target="prototype-question-2"><span>2</span><strong>우리의 실천</strong></button>
+          </aside>
+
+          <section class="editor-canvas" aria-label="활동지 편집 영역">
+            <div class="editor-toolbar" role="toolbar" aria-label="활동지 편집 도구">
+              <div class="toolbar-group" aria-label="실행 기록">
+                <button class="tool-button" type="button" aria-label="실행 취소" title="실행 취소"><svg class="icon" aria-hidden="true"><use href="#i-undo"></use></svg></button>
+                <button class="tool-button" type="button" aria-label="다시 실행" title="다시 실행"><svg class="icon" aria-hidden="true"><use href="#i-redo"></use></svg></button>
+              </div>
+              <div class="toolbar-group">
+                <label class="toolbar-select"><span class="sr-only">문단 형식</span><select data-block-style><option>본문</option><option>제목 1</option><option>제목 2</option><option>제목 3</option><option>인용문</option></select></label>
+              </div>
+              <div class="toolbar-group" aria-label="글자 서식">
+                <button class="tool-button" type="button" data-toolbar-toggle aria-label="굵게" aria-pressed="false" title="굵게"><strong>B</strong></button>
+                <button class="tool-button" type="button" data-toolbar-toggle aria-label="기울임" aria-pressed="false" title="기울임"><em>I</em></button>
+                <button class="tool-button" type="button" data-toolbar-toggle aria-label="밑줄" aria-pressed="false" title="밑줄"><u>U</u></button>
+                <button class="tool-button" type="button" data-toolbar-toggle aria-label="취소선" aria-pressed="false" title="취소선"><s>S</s></button>
+              </div>
+              <div class="toolbar-group" aria-label="문단 정렬과 목록">
+                <button class="tool-button" type="button" data-toolbar-toggle aria-label="왼쪽 정렬" aria-pressed="false" title="정렬"><svg class="icon" aria-hidden="true"><use href="#i-align-left"></use></svg></button>
+                <button class="tool-button" type="button" data-toolbar-toggle aria-label="글머리 목록" aria-pressed="false" title="글머리 목록"><svg class="icon" aria-hidden="true"><use href="#i-list"></use></svg></button>
+                <button class="tool-button" type="button" data-toolbar-toggle aria-label="번호 목록" aria-pressed="false" title="번호 목록"><svg class="icon" aria-hidden="true"><use href="#i-list-ordered"></use></svg></button>
+                <button class="tool-button" type="button" data-toolbar-toggle aria-label="링크" aria-pressed="false" title="링크"><svg class="icon" aria-hidden="true"><use href="#i-link"></use></svg></button>
+              </div>
+              <div class="toolbar-menu-wrap" data-toolbar-menu>
+                <button class="tool-menu-button" type="button" data-menu-trigger="insert-menu" aria-controls="insert-menu" aria-expanded="false" aria-haspopup="menu"><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg><span>삽입</span><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button>
+                <div class="toolbar-popover insert-menu" id="insert-menu" role="menu" hidden>
+                  <button type="button" role="menuitem" data-insert-kind="table"><svg class="icon" aria-hidden="true"><use href="#i-table"></use></svg>표</button>
+                  <button type="button" role="menuitem" data-insert-kind="media"><svg class="icon" aria-hidden="true"><use href="#i-image"></use></svg>미디어</button>
+                  <button type="button" role="menuitem" data-insert-kind="math"><svg class="icon" aria-hidden="true"><use href="#i-sigma"></use></svg>수식</button>
+                  <button type="button" role="menuitem" data-insert-kind="code"><svg class="icon" aria-hidden="true"><use href="#i-code"></use></svg>코드</button>
+                  <button type="button" role="menuitem" data-insert-kind="callout"><svg class="icon" aria-hidden="true"><use href="#i-quote"></use></svg>강조 상자</button>
+                  <button type="button" role="menuitem" data-insert-kind="columns"><svg class="icon" aria-hidden="true"><use href="#i-columns"></use></svg>2단</button>
+                  <button type="button" role="menuitem" data-insert-kind="separator"><svg class="icon" aria-hidden="true"><use href="#i-separator"></use></svg>구분선</button>
+                  <button type="button" role="menuitem" data-insert-kind="file"><svg class="icon" aria-hidden="true"><use href="#i-file-up"></use></svg>파일</button>
+                </div>
+              </div>
+              <div class="toolbar-menu-wrap toolbar-menu-wrap--response" data-toolbar-menu>
+                <button class="tool-menu-button response-button" type="button" data-menu-trigger="response-menu" aria-controls="response-menu" aria-expanded="false" aria-haspopup="menu"><svg class="icon" aria-hidden="true"><use href="#i-response"></use></svg><span>응답</span><svg class="icon chevron" aria-hidden="true"><use href="#i-chevron-down"></use></svg></button>
+                <div class="toolbar-popover response-menu" id="response-menu" role="menu" hidden>
+                  <div class="response-menu-grid">
+                    <div class="response-menu-section"><strong>텍스트</strong><button type="button" role="menuitemradio" data-response-kind="short_text">단답형</button><button type="button" role="menuitemradio" data-response-kind="long_text">서술형</button></div>
+                    <div class="response-menu-section"><strong>선택</strong><button type="button" role="menuitemradio" data-response-kind="single_choice">단일 선택</button><button type="button" role="menuitemradio" data-response-kind="multiple_choice">복수 선택</button><button type="button" role="menuitemradio" data-response-kind="checkbox">확인 체크</button></div>
+                    <div class="response-menu-section"><strong>수치·구조</strong><button type="button" role="menuitemradio" data-response-kind="number">숫자</button><button type="button" role="menuitemradio" data-response-kind="table">표 입력</button></div>
+                    <div class="response-menu-section"><strong>첨부·표현</strong><button type="button" role="menuitemradio" data-response-kind="image_upload">이미지 첨부</button><button type="button" role="menuitemradio" data-response-kind="file_upload">파일 첨부</button><button type="button" role="menuitemradio" data-response-kind="drawing">그림 응답</button></div>
+                  </div>
+                </div>
+              </div>
+              <span class="toolbar-status" id="editor-action-status" aria-live="polite"></span>
+            </div>
+            <article class="worksheet-page" contenteditable="true" aria-label="활동지 내용">
+              <p class="subject-label">과학 · 2학년</p>
+              <h2>우리 지역의 기후 변화</h2>
+              <p>최근 10년 동안 우리 지역의 여름 날씨가 어떻게 달라졌는지 자료를 보고 생각해 봅시다.</p>
+              <figure class="data-figure" id="worksheet-source-chart" tabindex="-1">
+                <div class="temperature-bars" aria-label="2016년부터 2025년까지 평균 기온이 높아지는 막대 그래프">
+                  <span style="--bar:45%"></span><span style="--bar:52%"></span><span style="--bar:49%"></span><span style="--bar:61%"></span><span style="--bar:58%"></span><span style="--bar:70%"></span><span style="--bar:74%"></span><span style="--bar:77%"></span><span style="--bar:82%"></span><span style="--bar:88%"></span>
+                </div>
+                <figcaption>우리 지역 8월 평균 기온 변화</figcaption>
+              </figure>
+              <section class="prototype-question is-active" id="prototype-question-1" data-prototype-question>
+                <header class="prototype-question__header"><strong>문항 1</strong><span data-prototype-answer-count>답안 2개</span></header>
+                <h3 contenteditable="true">자료에서 찾을 수 있는 변화를 두 가지 써 보세요.</h3>
+                <div class="response-placeholder response-placeholder--long_text is-active" id="response-preview" data-prototype-response data-kind="long_text" data-label="변화의 근거" data-required="true" contenteditable="false" role="button" tabindex="0" aria-pressed="true">
+                  <b class="response-answer-label">변화의 근거</b><strong>서술형</strong><span>긴 글로 답합니다.</span><div class="response-lines"><i></i><i></i><i></i></div>
+                </div>
+                <div class="response-placeholder response-placeholder--single_choice" data-prototype-response data-kind="single_choice" data-label="변화 방향" data-required="false" contenteditable="false" role="button" tabindex="0" aria-pressed="false">
+                  <b class="response-answer-label">변화 방향</b><strong>단일 선택</strong><span>하나를 고릅니다.</span><div class="response-options"><label><input type="radio" disabled>높아짐</label><label><input type="radio" disabled>낮아짐</label></div>
+                </div>
+                <footer class="prototype-question__footer"><button type="button" data-add-prototype-response><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>답안 추가</button></footer>
+              </section>
+              <section class="prototype-question" id="prototype-question-2" data-prototype-question>
+                <header class="prototype-question__header"><strong>문항 2</strong><span data-prototype-answer-count>답안 1개</span></header>
+                <h3 contenteditable="true">기후 변화에 대응하기 위해 우리가 할 수 있는 일을 써 보세요.</h3>
+                <div class="response-placeholder response-placeholder--short_text" data-prototype-response data-kind="short_text" data-label="실천 방법" data-required="true" contenteditable="false" role="button" tabindex="0" aria-pressed="false">
+                  <b class="response-answer-label">실천 방법</b><strong>단답형</strong><span>짧은 문장으로 답합니다.</span><div class="response-line"></div>
+                </div>
+                <footer class="prototype-question__footer"><button type="button" data-add-prototype-response><svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>답안 추가</button></footer>
+              </section>
+            </article>
+          </section>
+
+          <aside class="inspector-panel">
+            <div class="panel-title"><strong>응답 설정</strong></div>
+            <label><span>응답 안내</span><input type="text" id="response-label-input" value="변화의 근거"></label>
+            <label><span>응답 형식</span><select id="response-kind-select">
+              <optgroup label="텍스트"><option value="short_text">단답형</option><option value="long_text" selected>서술형</option></optgroup>
+              <optgroup label="선택"><option value="single_choice">단일 선택</option><option value="multiple_choice">복수 선택</option><option value="checkbox">확인 체크</option></optgroup>
+              <optgroup label="수치·구조"><option value="number">숫자</option><option value="table">표 입력</option></optgroup>
+              <optgroup label="첨부·표현"><option value="image_upload">이미지 첨부</option><option value="file_upload">파일 첨부</option><option value="drawing">그림 응답</option></optgroup>
+            </select></label>
+            <label><span>필수 응답</span><input type="checkbox" id="response-required-toggle" checked></label>
+            <label data-response-setting="text"><span>최소 글자 수</span><input type="number" value="50"></label>
+            <label data-response-setting="choice" hidden><span>선택지</span><textarea rows="4">선택지 1&#10;선택지 2</textarea></label>
+            <div class="setting-grid" data-response-setting="table" hidden><label><span>행 수</span><input type="number" value="3"></label><label><span>열</span><input type="text" value="내용, 정리"></label></div>
+            <label data-response-setting="attachment" hidden><span>파일 크기</span><select><option>10MB 이하</option></select></label>
+            <button class="button secondary response-delete-button" type="button" data-delete-prototype-response>응답 삭제</button>
+            <section class="ai-check" id="ai-check-result" aria-label="AI 점검 결과" hidden>
+              <div class="ai-check-heading">
+                <div><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><strong>확인할 항목 2개</strong></div>
+                <span>점검 완료</span>
+              </div>
+              <div class="ai-check-filters" role="group" aria-label="점검 결과 필터">
+                <button type="button" class="is-active" data-check-filter="all" aria-pressed="true">전체 2</button>
+                <button type="button" data-check-filter="edit" aria-pressed="false">수정 1</button>
+                <button type="button" data-check-filter="review" aria-pressed="false">확인 1</button>
+              </div>
+              <div class="ai-finding-list">
+                <article class="ai-finding" data-check-kind="edit" data-finding-state="open">
+                  <button type="button" class="ai-finding-link" data-evidence-target="worksheet-source-chart">
+                    <span><b>수정</b>답변 가능성</span>
+                    <strong>그래프의 수치가 보이지 않아요</strong>
+                    <small>그래프 자료</small>
+                  </button>
+                  <p>학생이 변화를 두 가지 찾으려면 연도별 값을 읽을 수 있어야 합니다.</p>
+                  <div class="ai-finding-actions" role="group" aria-label="그래프 항목 판단">
+                    <button type="button" data-finding-decision="resolve">수정하기</button>
+                    <button type="button" data-finding-decision="defer">보류</button>
+                    <button type="button" data-finding-decision="dismiss">기각</button>
+                  </div>
+                  <p class="ai-decision-status" aria-live="polite"></p>
+                </article>
+                <article class="ai-finding" data-check-kind="review" data-finding-state="open">
+                  <button type="button" class="ai-finding-link" data-evidence-target="worksheet-source-chart">
+                    <span><b>확인</b>안전성</span>
+                    <strong>자료 출처를 확인하세요</strong>
+                    <small>그래프 설명</small>
+                  </button>
+                  <p>출처와 사용 범위를 확인한 뒤 표시하세요.</p>
+                  <div class="ai-finding-actions" role="group" aria-label="출처 항목 판단">
+                    <button type="button" data-finding-decision="resolve">수정하기</button>
+                    <button type="button" data-finding-decision="defer">보류</button>
+                    <button type="button" data-finding-decision="dismiss">기각</button>
+                  </div>
+                  <p class="ai-decision-status" aria-live="polite"></p>
+                </article>
+              </div>
+              <button class="button secondary ai-return" type="button" data-return-to-check hidden>결과로 돌아가기</button>
+            </section>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <section class="prototype-screen" id="student-preview" aria-label="학생 화면" hidden>
+    <header class="platform-header public-header">
+      <strong class="platform-brand">OJ</strong>
+      <nav aria-label="사용자 메뉴"><a href="#">홈</a><a href="#" class="is-current">학습</a><a href="#">내 기록</a></nav>
+      <div class="header-actions"><button class="icon-button" type="button" aria-label="알림" title="알림"><svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg><span class="notification-dot">1</span></button><span class="avatar">박</span></div>
+    </header>
+
+    <main class="student-main" id="student-main">
+      <div class="student-heading">
+        <div><p>2학년 3반</p><h1>활동지</h1></div>
+      </div>
+      <nav class="student-tabs" aria-label="활동지 상태">
+        <button type="button" class="is-active" data-student-tab="todo">할 일 <span>2</span></button>
+        <button type="button" data-student-tab="submitted">제출함</button>
+        <button type="button" data-student-tab="results">결과 <span>1</span></button>
+      </nav>
+
+      <section class="student-panel is-active" data-student-panel="todo">
+        <button class="assignment-card urgent" type="button" data-open-assignment>
+          <span class="status warning">오늘 마감</span>
+          <strong>우리 지역의 기후 변화</strong>
+          <span>과학 · 김교사</span>
+          <span class="assignment-meta"><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg>오늘 18:00</span>
+        </button>
+        <button class="assignment-card" type="button" data-open-assignment>
+          <span class="status info">진행 중</span>
+          <strong>설득하는 글쓰기</strong>
+          <span>국어 · 이교사</span>
+          <span class="assignment-meta"><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg>8월 12일</span>
+        </button>
+      </section>
+
+      <section class="student-panel" data-student-panel="submitted" hidden>
+        <article class="receipt-card" id="latest-receipt" hidden>
+          <div class="receipt-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></div>
+          <div><strong>우리 지역의 기후 변화</strong><span>방금 제출 · 정시 · 접수 2</span><small>답변 2개 · 파일 1개</small></div>
+          <button class="button secondary" type="button" data-download-submission><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>작성 결과물</button>
+        </article>
+        <article class="receipt-card">
+          <div class="receipt-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></div>
+          <div><strong>설득하는 글쓰기</strong><span>8월 9일 16:24 · 정시 · 접수 1</span><small>답변 3개</small></div>
+          <button class="button secondary" type="button" data-download-submission><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>작성 결과물</button>
+        </article>
+      </section>
+
+      <section class="student-panel" data-student-panel="results" hidden>
+        <article class="result-card">
+          <header><div><span class="status success">결과 공개</span><h2>자료를 읽고 비교하기</h2></div><strong class="score">86</strong></header>
+          <div class="result-notice"><strong>수정된 결과입니다</strong><span>8월 13일 수정</span></div>
+          <dl><div><dt>자료 이해</dt><dd>28 / 30</dd></div><div><dt>근거 사용</dt><dd>25 / 30</dd></div><div><dt>표현</dt><dd>33 / 40</dd></div></dl>
+          <p>두 자료의 차이를 잘 찾았습니다. 마지막 문단에 근거를 하나 더 연결해 보세요.</p>
+          <button class="button secondary" type="button" data-download-result><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>PDF</button>
+        </article>
+      </section>
+    </main>
+
+    <main class="student-main assignment-workspace" id="assignment-workspace" hidden>
+      <div class="assignment-heading">
+        <button class="icon-button" type="button" data-close-assignment aria-label="활동지 목록으로" title="뒤로"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+        <div><p>과학 · 김교사</p><h1 tabindex="-1">우리 지역의 기후 변화</h1></div>
+        <span class="save-state" id="student-save-status" data-state="saved"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span data-save-label>저장됨 · 10:42</span></span>
+      </div>
+      <div class="deadline-bar"><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg><strong>오늘 18:00 마감</strong><span>문항 1 / 2</span><button class="button secondary compact" type="button" data-download-worksheet><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>활동지 PDF</button></div>
+      <section class="student-save-alert" id="student-conflict-alert" hidden>
+        <div><strong>다른 저장 내용이 있습니다</strong><span>사용할 내용을 선택하세요.</span></div>
+        <div><button class="button secondary" type="button" data-conflict-choice="mine">내 내용 사용</button><button class="button secondary" type="button" data-conflict-choice="saved">저장된 내용 사용</button></div>
+      </section>
+      <nav class="question-progress" aria-label="문항 이동">
+        <button type="button" class="is-active" data-question-target="student-question-1" aria-current="step">1</button>
+        <button type="button" data-question-target="student-question-2">2</button>
+      </nav>
+      <article class="student-paper" id="student-question-1" tabindex="-1">
+        <h2>1. 지역 변화 살펴보기</h2>
+        <p>자료에서 찾을 수 있는 변화를 두 가지 써 보세요.</p>
+        <div class="temperature-bars student-chart" aria-label="평균 기온이 높아지는 막대 그래프"><span style="--bar:45%"></span><span style="--bar:52%"></span><span style="--bar:49%"></span><span style="--bar:61%"></span><span style="--bar:58%"></span><span style="--bar:70%"></span><span style="--bar:74%"></span><span style="--bar:77%"></span><span style="--bar:82%"></span><span style="--bar:88%"></span></div>
+        <label class="answer-field"><span>내 답변</span><textarea rows="7" data-student-answer>여름 평균 기온이 전반적으로 높아졌고, 최근 3년 동안 상승 폭이 더 커졌습니다.</textarea><small data-char-count>47자</small></label>
+      </article>
+      <article class="student-paper" id="student-question-2" tabindex="-1">
+        <h2>2. 관찰 자료 첨부하기</h2>
+        <p>조사에 사용한 자료를 파일로 첨부하세요.</p>
+        <div class="attachment-answer">
+          <button class="button secondary" type="button" data-select-attachment><svg class="icon" aria-hidden="true"><use href="#i-upload"></use></svg>파일 선택</button>
+          <div class="attachment-row" id="student-attachment-status" data-attachment-state="ready">
+            <span class="attachment-state-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span>
+            <div><strong>관찰표.pdf</strong><span data-attachment-label>확인 완료 · 1.2 MB</span></div>
+            <button class="icon-button quiet" type="button" data-remove-attachment aria-label="파일 제거" title="파일 제거"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button>
+          </div>
+        </div>
+      </article>
+      <div class="student-submit-bar"><div class="student-submit-copy"><strong>답변 2개 저장됨</strong><span>파일 1개 확인 완료</span></div><button class="button primary" type="button" data-open-submit><svg class="icon" aria-hidden="true"><use href="#i-send"></use></svg>제출하기</button></div>
+    </main>
+  </section>
+
+  <dialog class="workflow-dialog" id="distribution-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>새 배포</span><h2>활동지 배포</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <nav class="dialog-progress" aria-label="배포 단계">
+        <button type="button" class="is-active" data-distribution-step="0"><span>1</span>활동지</button>
+        <button type="button" data-distribution-step="1"><span>2</span>대상</button>
+        <button type="button" data-distribution-step="2"><span>3</span>일정</button>
+        <button type="button" data-distribution-step="3"><span>4</span>확인</button>
+      </nav>
+      <section class="dialog-panel" data-distribution-panel="0">
+        <h3>활동지 선택</h3>
+        <label class="field-control"><span>활동지</span><select><option>우리 지역의 기후 변화</option><option>설득하는 글쓰기</option></select></label>
+        <div class="selection-summary"><span class="status success">발행</span><div><strong>발행본 3</strong><small>오늘 10:32 발행</small></div></div>
+      </section>
+      <section class="dialog-panel" data-distribution-panel="1" hidden>
+        <h3>대상 선택</h3>
+        <label class="field-control"><span>수업·그룹</span><select><option>2026 · 2학년 3반</option><option>2026 · 2학년 4반</option></select></label>
+        <div class="selection-summary"><span class="selection-count">28</span><div><strong>학생 28명</strong><small>플랫폼 명단 · 방금 확인</small></div></div>
+      </section>
+      <section class="dialog-panel" data-distribution-panel="2" hidden>
+        <h3>일정과 제출</h3>
+        <div class="form-grid"><label class="field-control"><span>시작</span><input type="datetime-local" value="2026-08-10T13:00"></label><label class="field-control"><span>정시 마감</span><input type="datetime-local" value="2026-08-12T18:00"></label><label class="field-control"><span>최종 종료</span><input type="datetime-local" value="2026-08-13T18:00"></label></div>
+        <label class="field-control"><span>마감 뒤 제출</span><select><option>받지 않음</option><option selected>지각 표시 후 받기</option></select></label>
+        <label class="check-control"><input type="checkbox" checked><span>최종 종료 때 저장된 답변 제출</span></label>
+        <label class="check-control"><input type="checkbox" checked><span>학생에게 시작 알림</span></label>
+      </section>
+      <section class="dialog-panel" data-distribution-panel="3" hidden>
+        <h3>최종 확인</h3>
+        <dl class="confirmation-list"><div><dt>활동지</dt><dd>우리 지역의 기후 변화 · 발행본 3</dd></div><div><dt>대상</dt><dd>2학년 3반 · 28명</dd></div><div><dt>정시 마감</dt><dd>8월 12일 18:00</dd></div><div><dt>최종 종료</dt><dd>8월 13일 18:00 · 저장된 답변 제출</dd></div></dl>
+      </section>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button secondary" type="button" data-distribution-back hidden>이전</button><button class="button primary" type="button" data-distribution-next>다음</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="workflow-dialog submission-import-dialog" id="submission-import-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>배포·제출</span><h2>제출 가져오기</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <div class="submission-import-fields">
+        <label class="field-control"><span>활동지</span><select><option>우리 지역의 기후 변화 · 2학년 3반</option><option>설득하는 글쓰기 · 2학년 4반</option></select></label>
+        <label class="field-control"><span>응답칸</span><select><option>2. 관찰 자료 첨부하기</option></select></label>
+      </div>
+      <div class="submission-import-upload"><svg class="icon" aria-hidden="true"><use href="#i-upload"></use></svg><div><strong>2학년3반_관찰자료.zip</strong><span>28개 파일 · 42 MB</span></div><button class="button secondary compact" type="button">다시 선택</button></div>
+      <div class="submission-import-summary" aria-label="가져오기 확인"><span class="status success">연결 완료 26</span><span class="status warning">확인 필요 2</span><span class="status neutral">제외 0</span></div>
+      <div class="table-wrap submission-import-table">
+        <table class="work-table">
+          <thead><tr><th>파일</th><th>학생</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td><strong>20101_박하늘.pdf</strong><span>1.2 MB</span></td><td><select aria-label="20101_박하늘.pdf 학생"><option>박하늘</option></select></td><td><span class="status success">연결 완료</span></td></tr>
+            <tr><td><strong>관찰자료_준서.pdf</strong><span>860 KB</span></td><td><select aria-label="관찰자료_준서.pdf 학생"><option>학생 선택</option><option>이준서</option></select></td><td><span class="status warning">확인 필요</span></td></tr>
+            <tr><td><strong>이름없음.pdf</strong><span>540 KB</span></td><td><select aria-label="이름없음.pdf 학생"><option>학생 선택</option><option>최서윤</option></select></td><td><span class="status warning">확인 필요</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <label class="field-control submission-import-reason"><span>제출 사유</span><input type="text" value="수업 시간에 받은 파일" maxlength="500"></label>
+      <p class="submission-import-note" id="submission-import-status" aria-live="polite">이미 제출한 학생의 결과물은 바뀌지 않습니다.</p>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button primary" type="button" data-confirm-submission-import disabled>26개 가져오기</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="review-dialog" id="review-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>학생 제출 평가</span><h2>박하늘 · 우리 지역의 기후 변화</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <div class="review-context"><span>2학년 3반</span><span>오늘 10:18 제출</span><span class="status danger">검토 필요</span><span class="status warning">직접 확인 1</span></div>
+      <div class="review-workspace">
+        <section class="answer-review"><h3>학생 답변</h3><p>여름 평균 기온이 전반적으로 높아졌고, 최근 3년 동안 상승 폭이 더 커졌습니다.</p><mark><strong>근거</strong> 최근 3년 동안 상승 폭이 더 커졌습니다.</mark><div class="answer-attachment"><span>관찰 자료.pdf</span><b>직접 확인</b></div></section>
+        <section class="rubric-review"><div class="rubric-heading"><h3>평가 기준</h3><span>AI 제안</span></div><label><span><strong>자료 이해</strong><small>답변에서 변화 두 가지를 확인했습니다</small></span><input type="number" value="28" min="0" max="30" aria-label="자료 이해 점수"><b>/ 30</b></label><label class="needs-review"><span><strong>근거 사용</strong><small>첨부 자료는 직접 확인해 주세요</small></span><input type="number" placeholder="-" min="0" max="30" aria-label="근거 사용 점수"><b>/ 30</b></label><label><span><strong>표현</strong><small>내용이 분명하게 이어집니다</small></span><input type="number" value="34" min="0" max="40" aria-label="표현 점수"><b>/ 40</b></label><div class="total-score"><span>확인된 점수</span><strong>62 / 70</strong></div><p class="review-total-note">남은 기준을 확인하면 총점을 확정할 수 있습니다.</p></section>
+      </div>
+      <label class="review-note"><span>조정 메모</span><textarea rows="3">두 번째 변화의 근거를 다시 확인함.</textarea></label>
+      <div class="dialog-actions"><button class="button secondary" type="button" data-reject-review>반려</button><button class="button secondary" value="cancel">보류</button><button class="button primary" type="button" data-confirm-review>결과 확정</button></div>
+    </form>
+  </dialog>
+
+
+  <dialog class="workflow-dialog feedback-dialog" id="feedback-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>결과 확정</span><h2>학생 피드백</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <div class="feedback-score-summary"><span>확정 점수</span><strong id="feedback-score">- / 100</strong></div>
+      <div class="feedback-command-row"><button class="button secondary" type="button" data-generate-feedback>AI 초안</button><span id="feedback-status" aria-live="polite">직접 작성할 수도 있습니다</span></div>
+      <label class="feedback-field"><span>학생 피드백</span><textarea rows="5" maxlength="2000" data-feedback-text></textarea></label>
+      <label class="feedback-field"><span>다음 단계</span><input type="text" maxlength="300" data-feedback-next-step></label>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">나중에</button><button class="button primary" type="button" data-approve-feedback>피드백 승인</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="workflow-dialog release-dialog" id="release-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>공개 확인</span><h2>학생에게 공개</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <div class="release-summary"><span>확정 점수</span><strong id="release-score">- / 100</strong></div>
+      <fieldset class="release-options">
+        <legend>보여 줄 내용</legend>
+        <label class="check-control"><input type="checkbox" checked data-release-score><span>총점</span></label>
+        <label class="check-control"><input type="checkbox" checked data-release-criteria><span>기준별 결과</span></label>
+        <label class="check-control"><input type="checkbox" checked data-release-feedback><span>피드백</span></label>
+      </fieldset>
+      <div class="release-preview"><strong>미리보기</strong><p data-release-preview>점수와 피드백을 공개합니다.</p></div>
+      <p class="release-status" id="release-status" aria-live="polite">학생 1명에게 공개합니다</p>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button primary" type="button" data-confirm-release>학생에게 공개</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="workflow-dialog report-export-dialog" id="report-export-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>보고서</span><h2>내보내기</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <div class="export-format" role="group" aria-label="파일 형식">
+        <button type="button" class="is-active" data-export-format="pdf" aria-pressed="true">PDF</button>
+        <button type="button" data-export-format="csv" aria-pressed="false">CSV</button>
+        <button type="button" data-export-format="json" aria-pressed="false">JSON</button>
+        <button type="button" data-export-format="zip" aria-pressed="false">ZIP</button>
+      </div>
+      <dl class="export-summary"><div><dt>범위</dt><dd id="export-context">우리 지역의 기후 변화 · 전체 배포</dd></div><div><dt>기준</dt><dd id="export-baseline">8월 13일 10:42</dd></div><div><dt>형식</dt><dd id="export-format-label">보고서 PDF</dd></div></dl>
+      <fieldset class="export-options"><legend>포함 내용</legend><label class="check-control"><input type="checkbox" checked><span>상세 목록</span></label><label class="check-control"><input type="checkbox" checked><span>학생 피드백</span></label><label class="check-control"><input type="checkbox" data-export-student-note><span>교사 기록</span></label></fieldset>
+      <p class="export-status" id="report-export-status" aria-live="polite">현재 기준으로 파일을 만듭니다</p>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button primary" type="button" data-start-report-export>파일 만들기</button><button class="button primary" type="button" data-download-report-export hidden><svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>다운로드</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="workflow-dialog student-note-dialog" id="student-note-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>교사 기록</span><h2>박하늘</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <div class="student-note-source"><span>우리 지역의 기후 변화</span><p>자료의 변화를 찾아 설명하고 관찰 자료를 연결했습니다.</p></div>
+      <div class="student-note-command"><button class="button secondary" type="button" data-generate-student-note>AI 초안</button><span id="student-note-status" aria-live="polite">승인된 기록입니다</span></div>
+      <label class="feedback-field"><span>기록</span><textarea rows="6" maxlength="1500" data-student-note-text>자료의 변화 양상을 찾아 자신의 말로 설명했으며, 관찰 자료에서 확인한 내용을 근거로 연결하려는 모습을 보임.</textarea></label>
+      <label class="check-control"><input type="checkbox" checked data-include-student-note><span>보고서에 포함</span></label>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">닫기</button><button class="button primary" type="button" data-approve-student-note>승인</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="workflow-dialog migration-dialog" id="legacy-migration-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>시스템 관리</span><h2>기존 데이터 이전</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <div class="operation-summary"><div><span>이전 가능</span><strong>1,248</strong></div><div><span>확인 필요</span><strong>3</strong></div><div><span>제외</span><strong>18</strong></div></div>
+      <div class="migration-review-list">
+        <div><strong>활동지와 문항</strong><span class="status success">482개</span></div>
+        <div><strong>배포와 학생 작성 결과</strong><span class="status success">701개</span></div>
+        <div><strong>평가와 피드백</strong><span class="status warning">3개 확인</span></div>
+        <div><strong>기존 사용자 권한</strong><span class="status neutral">변경 없음</span></div>
+      </div>
+      <p class="operation-note" id="legacy-migration-status">원본 데이터는 바꾸거나 삭제하지 않습니다.</p>
+      <label class="confirmation-check"><input type="checkbox" data-migration-ack><span>이전할 내용과 제외 항목을 확인했습니다.</span></label>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button primary" type="button" data-confirm-legacy-migration disabled>이전 시작</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="workflow-dialog purge-dialog" id="purge-dialog">
+    <form method="dialog">
+      <div class="dialog-title-row"><div><span>데이터 보존</span><h2>데이터 영구 정리</h2></div><button class="icon-button quiet" value="cancel" aria-label="닫기" title="닫기"><svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg></button></div>
+      <div class="purge-warning"><strong>이 작업은 되돌릴 수 없습니다.</strong><p>활동지 86개, 학생 작성 결과 1,204개, 평가 1,187개와 보관 파일 2.4 GB가 삭제됩니다.</p></div>
+      <label class="confirmation-check"><input type="checkbox" data-purge-backup><span>외부 백업을 확인했습니다.</span></label>
+      <label class="confirmation-field"><span>계속하려면 <strong>영구 삭제</strong>를 입력하세요.</span><input type="text" autocomplete="off" data-purge-phrase></label>
+      <p class="operation-note" id="purge-status">보존 중인 데이터가 없는지 실행 전에 다시 확인합니다.</p>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button danger" type="button" data-confirm-purge disabled>영구 정리</button></div>
+    </form>
+  </dialog>
+
+  <dialog class="submit-dialog" id="submit-dialog">
+    <form method="dialog">
+      <h2>활동지를 제출할까요?</h2>
+      <dl><div><dt>필수 답변</dt><dd>완료</dd></div><div><dt>첨부</dt><dd>1개 · 확인 완료</dd></div><div><dt>마감</dt><dd>오늘 18:00</dd></div></dl>
+      <p>제출 후에는 교사가 다시 열어 줄 때까지 수정할 수 없습니다.</p>
+      <div class="dialog-actions"><button class="button secondary" value="cancel">취소</button><button class="button primary" value="confirm" data-confirm-submit>제출</button></div>
+    </form>
+  </dialog>
+
+  <script src="ui-prototype.js"></script>
+</body>
+</html>

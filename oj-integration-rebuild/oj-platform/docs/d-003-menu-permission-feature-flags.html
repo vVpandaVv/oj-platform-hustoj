@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D-003 메뉴·권한·기능 설정 재정비 | OJ Platform</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #5c667a;
+      --line: #d9dee8;
+      --surface: #ffffff;
+      --soft: #f5f7fa;
+      --nav: #172033;
+      --blue: #2563a7;
+      --green: #24734f;
+      --green-soft: #eaf6ef;
+      --amber: #9a5c00;
+      --amber-soft: #fff4dc;
+      --red: #a23a3a;
+      --red-soft: #fff0f0;
+      --shadow: 0 10px 30px rgba(23, 32, 51, 0.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--soft);
+      color: var(--ink);
+      font-family: "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    a { color: inherit; }
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #edf1f6;
+      color: #29415f;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9em;
+      overflow-wrap: anywhere;
+    }
+    .skip-link {
+      position: fixed;
+      left: 12px;
+      top: -80px;
+      z-index: 100;
+      padding: 10px 14px;
+      background: #fff;
+      color: #111;
+    }
+    .skip-link:focus { top: 12px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 24px;
+      background: var(--nav);
+      color: #fff;
+      box-shadow: 0 3px 16px rgba(17, 24, 39, 0.2);
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .topbar-status { color: #c9d4e5; font-size: 14px; text-align: right; }
+    .layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      width: min(1500px, 100%);
+      margin: 0 auto;
+    }
+    .toc {
+      position: sticky;
+      top: 58px;
+      height: calc(100vh - 58px);
+      padding: 30px 22px;
+      border-right: 1px solid var(--line);
+      background: #eef2f7;
+      overflow: auto;
+    }
+    .toc strong { font-size: 13px; color: var(--muted); }
+    .toc ul { margin: 14px 0 0; padding: 0; list-style: none; }
+    .toc a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 5px;
+      color: #344054;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .toc a:hover, .toc a:focus-visible { background: #fff; color: var(--blue); }
+    main { min-width: 0; padding: 38px clamp(20px, 4vw, 58px) 60px; }
+    .report-header, .section {
+      margin-bottom: 28px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .report-header { padding: clamp(26px, 4vw, 48px); }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 14px; font-size: clamp(30px, 4vw, 47px); line-height: 1.2; }
+    h2 { margin-bottom: 6px; font-size: 24px; }
+    h3 { margin-bottom: 6px; font-size: 17px; }
+    .lede { max-width: 920px; margin-bottom: 18px; color: #3c4658; font-size: 17px; }
+    .report-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--muted); font-size: 13px; }
+    .metric-grid, .contract-grid, .role-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .metric, .contract, .role-card {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--soft);
+    }
+    .metric strong { display: block; font-size: 28px; line-height: 1.15; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .summary-band, .warning-band, .next-step {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-left: 4px solid var(--green);
+      border-radius: 5px;
+      background: var(--green-soft);
+    }
+    .warning-band { border-left-color: var(--amber); background: var(--amber-soft); }
+    .section { padding: clamp(22px, 3vw, 34px); }
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-heading p { margin-bottom: 0; color: var(--muted); }
+    .badge {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      min-height: 27px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #e8edf4;
+      color: #435066;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .badge.good { background: var(--green-soft); color: var(--green); }
+    .badge.warn { background: var(--amber-soft); color: var(--amber); }
+    .badge.risk { background: var(--red-soft); color: var(--red); }
+    .finding-list, .decision-list, .rule-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+    .finding, .decision, .rule {
+      padding: 17px 18px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+    }
+    .finding p, .decision p, .rule p, .contract p, .role-card p { margin-bottom: 0; color: var(--muted); }
+    .item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+    .item-head h3 { min-width: 0; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 7px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; font-size: 14px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #eef2f7; color: #39465a; font-size: 12px; }
+    tr:last-child td { border-bottom: 0; }
+    .contract-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .contract strong, .role-card strong { display: block; margin-bottom: 6px; }
+    .contract .step { color: var(--blue); font-size: 12px; font-weight: 800; }
+    .role-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .role-card.recommended { border-color: #88bda3; background: var(--green-soft); }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+    .flow article { padding: 16px; border: 1px solid var(--line); border-radius: 7px; background: var(--soft); }
+    .flow span { display: block; margin-bottom: 5px; color: var(--blue); font-size: 12px; font-weight: 800; }
+    .next-step { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .next-step h2, .next-step p { margin-bottom: 0; }
+    footer { padding: 18px 4px 0; color: var(--muted); font-size: 13px; text-align: center; }
+    @media (max-width: 1120px) {
+      .metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .contract-grid, .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 780px) {
+      .topbar { position: static; align-items: flex-start; padding: 10px 16px; }
+      .topbar-status { display: none; }
+      .layout { display: block; width: 100%; min-width: 0; }
+      .toc { position: static; width: 100%; max-width: 100%; height: auto; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+      .toc::-webkit-scrollbar { display: none; }
+      .toc strong { display: none; }
+      .toc ul { display: flex; width: max-content; max-width: none; gap: 8px; margin: 0; }
+      .toc li { flex: 0 0 auto; }
+      .toc a { padding: 5px 9px; border: 1px solid var(--line); line-height: 20px; white-space: nowrap; }
+      main { width: 100%; min-width: 0; padding: 22px 14px 44px; overflow: hidden; }
+      .report-header, .section { width: 100%; min-width: 0; }
+      .report-meta > *, .lede, p, h1, h2, h3 { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+      .table-wrap { width: 100%; max-width: 100%; }
+      .section-heading, .item-head, .next-step { flex-direction: column; }
+      .metric-grid, .contract-grid, .role-grid, .flow {
+        width: 100%;
+        max-width: 100%;
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .metric, .contract, .role-card, .flow article { width: 100%; max-width: 100%; }
+      h1 { font-size: 31px; }
+    }
+    @media print {
+      body { background: #fff; }
+      .topbar, .toc, .skip-link { display: none; }
+      .layout { display: block; width: auto; }
+      main { padding: 0; }
+      .report-header, .section { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="OJ Platform 문서 홈">
+      <span class="brand-mark" aria-hidden="true">OJ</span>
+      <strong>OJ Platform 재정비</strong>
+    </a>
+    <span class="topbar-status">D-003 · 선행 계약 소스 반영 · 목표 UI 전환 대기</span>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="문서 목차">
+      <strong>문서 목차</strong>
+      <ul>
+        <li><a href="#overview">조사 결론</a></li>
+        <li><a href="#flow">현재 접근 흐름</a></li>
+        <li><a href="#menu">메뉴 조사</a></li>
+        <li><a href="#actions">작업 액션 조사</a></li>
+        <li><a href="#permissions">권한·역할 조사</a></li>
+        <li><a href="#features">기능 플래그 조사</a></li>
+        <li><a href="#findings">해결 결과</a></li>
+        <li><a href="#decisions">확정 결과</a></li>
+      </ul>
+    </nav>
+
+    <main id="main">
+      <header class="report-header" id="overview">
+        <p class="eyebrow">OJ Platform 재정비 기준 · D-003</p>
+        <h1>메뉴·권한·기능 설정 재정비</h1>
+        <p class="lede">이 문서는 관리자 메뉴, 작업 권한과 기능 활성화 판정을 하나의 실행 계약으로 재정비한 기준서다. 중앙 메뉴·권한·액션·기능 계약은 실제 코드에 반영됐으며, D-002의 제출 경로 전환, D-007의 목표 58개 메뉴 Registry 재배치, Jobs 신규 액션 3개와 서비스 수업·대회·문제의 담당 범위 정책은 후속 구현 대상으로 분리한다.</p>
+        <div class="report-meta">
+          <span>조사일: 2026-07-19</span>
+          <span>기준: D-002 선행 경로 정리 이후의 현재 코드</span>
+          <span>문서 인코딩: UTF-8</span>
+          <span>상태: 선행 실행 계약 반영·서비스 담당 범위 설계 확정·구현 대기</span>
+        </div>
+
+        <div class="metric-grid" aria-label="재정비 기준 수치">
+          <article class="metric"><strong>51</strong><span>관리자 메뉴 항목</span></article>
+          <article class="metric"><strong>90</strong><span>관리자 화면</span></article>
+          <article class="metric"><strong>122</strong><span>고유 작업 액션</span></article>
+          <article class="metric"><strong>60</strong><span>플랫폼 권한</span></article>
+          <article class="metric"><strong>30</strong><span>기능 플래그</span></article>
+        </div>
+
+        <div class="summary-band">
+          <strong>핵심 결론</strong>
+          <p>메뉴와 GET 화면은 실제 경로를 권한 기준으로 유지했다. POST·AJAX 작업 122개를 중앙 액션 계약으로 모았고, 기존 Judge 사용자 일괄 가져오기 화면·메뉴·작업 2개를 제거했으며, 기능별 화면·권한·액션·자산은 실행 저장소에서 자동 계산한다.</p>
+        </div>
+
+        <div class="summary-band">
+          <strong>현재와 목표의 경계</strong>
+          <p>이 문서의 9개 상위·42개 하위 메뉴와 연결 경로 수는 현재 코드 기준선이다. 구현 4단계에서 D-002의 제출 맥락 경로 8개를 <code>*.submissions</code>로 바꾸고, D-007의 7개 업무 묶음으로 메뉴를 재배치한다. 이때 메뉴 Provider와 경로 키를 같은 변경에서 갱신하되 이 문서에서 확정한 권한·액션·기능 OFF 계약은 유지한다.</p>
+        </div>
+      </header>
+
+      <section class="section" id="flow">
+        <div class="section-heading">
+          <div>
+            <h2>재정비 기준이 되는 현재 접근 흐름</h2>
+            <p>화면 열기와 작업 실행은 서로 다른 경로로 검증된다.</p>
+          </div>
+          <span class="badge good">기본 방어 적용</span>
+        </div>
+
+        <div class="flow">
+          <article><span>1 · 메뉴</span><strong>표시 가능 여부</strong><p>기능 플래그와 메뉴 권한, 연결 화면의 실제 권한을 모두 확인한다.</p></article>
+          <article><span>2 · GET 경로</span><strong>화면 접근 여부</strong><p>기능 상태, 로그인, 경로 권한 또는 맥락 규칙 순으로 검사한다.</p></article>
+          <article><span>3 · POST·AJAX</span><strong>작업 실행 여부</strong><p>중앙 액션 저장소가 기능을 먼저 검사하고, nonce와 대상별 권한은 기존 처리 함수가 이어서 검사한다.</p></article>
+          <article><span>4 · 서비스</span><strong>업무 규칙</strong><p>소유자, 그룹 범위, 제출 공개 범위 등 대상별 조건을 추가로 확인한다.</p></article>
+        </div>
+
+        <div class="summary-band">
+          <strong>구현된 공통 계약</strong>
+          <p>모든 작업은 소유 모듈, 전송 방식, 로그인 노출, 기능, 권한 정책, nonce 정책을 기록한다. 중복 액션과 존재하지 않는 기능 키는 등록 단계에서 거부된다.</p>
+        </div>
+        <div class="summary"><strong>로그인 우선 진입:</strong> 모든 OJ 화면은 기본 로그인 필수다. 비로그인 사용자는 <code>/login</code>으로 이동하고 <code>active</code> 상태로 인증에 성공하면 메인 홈 <code>/</code>을 연다. 로그인, 가입 기능이 켜진 회원가입, 로그인 화면의 비밀번호 복구·재설정, 법정대리인 확인과 법적 문서 4개만 로그인 전 접근 예외다.</div>
+      </section>
+
+      <section class="section" id="menu">
+        <div class="section-heading">
+          <div>
+            <h2>관리자 메뉴 재정비 근거</h2>
+            <p>메뉴는 중앙 제공자 한 곳에서 등록되고 실제 화면 경로의 권한을 우선 사용한다.</p>
+          </div>
+          <span class="badge good">검증 완료</span>
+        </div>
+
+        <div class="contract-grid">
+          <article class="contract"><span class="step">구조</span><strong>상위 9개 · 하위 42개</strong><p>총 51개 항목이며 메뉴 키와 상하 관계가 중복 없이 등록된다.</p></article>
+          <article class="contract"><span class="step">경로</span><strong>고유 화면 44개 연결</strong><p>상위 메뉴와 첫 하위 메뉴가 같은 화면을 공유할 수 있어 메뉴 수와 화면 수는 다르다.</p></article>
+          <article class="contract"><span class="step">상세 화면</span><strong>46개는 메뉴 없음</strong><p>수정, 상세, 삭제 확인 등 맥락 화면은 목록 화면 안에서 진입하므로 독립 메뉴를 만들지 않는다.</p></article>
+          <article class="contract"><span class="step">표기</span><strong>한글 51/51</strong><p>모든 메뉴명이 UTF-8 한글 원문이며 <code>\uXXXX</code> 표기는 발견되지 않았다.</p></article>
+        </div>
+        <div class="summary"><strong>목표 계약:</strong> 현재 51개는 코드 기준선이다. 재정비 후에는 D-007의 정확한 Registry에 따라 상위 7개·하위 51개, 총 58개를 등록하고 고유 화면 55개를 연결한다. 사용자·문제·제출 상위 항목은 고정 목록 주소가 아니라 현재 역할이 접근할 수 있는 첫 하위 화면을 대상으로 계산한다. 구조 검사는 키·부모·동적 진입 규칙·라우트·기능·권한·순서와 두 허브 라우트의 존재를 함께 검증한다.</div>
+
+        <div class="table-wrap" style="margin-top: 18px;">
+          <table>
+            <thead><tr><th>검사 항목</th><th>현재 동작</th><th>판정</th></tr></thead>
+            <tbody>
+              <tr><td>메뉴 권한과 경로 권한</td><td>경로가 등록되어 있으면 메뉴에 적힌 권한 대신 경로의 <code>capability</code>, <code>capabilities</code>, <code>access_rule</code>을 사용</td><td><span class="badge good">정상</span></td></tr>
+              <tr><td>상위 메뉴 권한 부족</td><td>접근 가능한 하위 메뉴가 있으면 상위 메뉴를 표시하고 고정 목록 주소가 아닌 첫 접근 가능 하위 화면으로 연결</td><td><span class="badge good">목표 유지</span></td></tr>
+              <tr><td>기능 OFF</td><td>메뉴 기능과 연결 경로 기능을 모두 확인해 비활성 메뉴를 숨김</td><td><span class="badge good">정상</span></td></tr>
+              <tr><td>게시판·공지 상위 메뉴</td><td>상위 메뉴는 단일 기능을 지정하지 않고 게시판 또는 공지 중 접근 가능한 첫 화면을 사용</td><td><span class="badge good">의도된 예외</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="actions">
+        <div class="section-heading">
+          <div>
+            <h2>작업 액션 재정비 근거</h2>
+            <p>저장, 삭제, 일괄 작업과 제출 상태 조회에 등록된 WordPress 훅을 조사했다.</p>
+          </div>
+          <span class="badge good">중앙 계약 완료</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>종류</th><th>등록 수</th><th>고유 액션</th><th>기능 가드</th><th>메모</th></tr></thead>
+            <tbody>
+              <tr><td><code>admin_post</code></td><td>124</td><td>121</td><td>121개 계약 적용</td><td>로그인·비로그인 양쪽 노출은 하나의 액션 계약이 두 훅을 생성</td></tr>
+              <tr><td><code>wp_ajax</code></td><td>2</td><td>1</td><td>1개 계약 적용</td><td><code>oj_submission_poll</code>도 제출 기능 OFF 시 공통 404 응답</td></tr>
+              <tr><td>전체</td><td>126</td><td>122</td><td>122개 중앙 관리</td><td>nonce와 세부 대상 권한은 기존 처리 함수가 계속 검사</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="summary" style="margin-top:18px"><strong>목표 액션 수:</strong> 기준선 고유 액션 122개에서 중복·폐기 계약 6개를 제거하고 Jobs 3개, 문제 작성·테스트케이스 AI 작업 등록 1개, 가입 승인 전용 명령 1개, 퀴즈 응시 시작·최종 제출 2개, 제출 복원 1개, 최고 관리자 주제 생성 1개, 작업별 AI 배정 저장 1개, 테스트 환경 저장 1개와 플러그인 전용 로그아웃 1개를 추가한다. 따라서 정상 운영 목표 고유 액션은 128개이며 전송별 정의는 <code>admin_post</code> 124개·<code>wp_ajax</code> 4개다. 비로그인 액션의 <code>admin_post_nopriv</code> Hook 6개를 포함한 실제 WordPress Action Hook 등록 목표는 134개다.</div>
+        <div class="callout"><strong>R-05 구현 감사:</strong> 게시 저장이 이전 활성 동의를 자동 전환하므로 <code>oj_activate_agreement_document</code>를 제거했고, 미리보기·실행으로 통합된 <code>oj_console_bulk_import_users</code>, 로그인 중 명시적 이전 계약과 충돌하는 WordPress 사용자 생성·연결 2개, 비가역 익명화 계약과 충돌하는 삭제 사용자 복원·영구 삭제 2개를 제거했다. <code>oj_delete_account</code>는 모든 소유 모듈의 익명화 계약을 연결하는 R-11까지 명시적으로 유예한다.</div>
+        <div class="callout"><strong>신규 설치 예외:</strong> 설치 미완료 동안에만 Kernel의 SetupBootstrap이 <code>oj_platform_setup</code> 단일 액션을 별도 Registry에 등록한다. 이 액션은 WordPress <code>manage_options</code>와 설치 ID·계획 해시를 검사하며 정상 운영 128개에 포함하지 않는다. 설치 완료 뒤 해당 액션과 Hook 등록은 0개여야 한다.</div>
+        <div class="table-wrap" style="margin-top:18px">
+          <table>
+            <thead><tr><th>목표 액션</th><th>전송·소유</th><th>기본 계약</th><th>추가 접근 판정</th></tr></thead>
+            <tbody>
+              <tr><td><code>oj_job_status</code></td><td><code>wp_ajax</code> · Jobs</td><td>로그인·작업 소유 기능 ON·<code>oj_job_status_{job_id}</code> nonce</td><td>Handler의 현재 조회 정책 필수. 관리 작업은 콘솔 범위, 제출 피드백은 본인 제출 상세 범위에서만 조회. 다른 사용자 작업은 등록된 전체 조회 범위가 추가로 필요하고 Migration은 항상 <code>oj_manage_migration</code></td></tr>
+              <tr><td><code>oj_job_cancel</code></td><td><code>admin_post</code> · Jobs</td><td>로그인·작업 소유 기능 ON·<code>oj_job_cancel_{job_id}</code> nonce</td><td>Handler의 현재 관리 정책 필수. 생성자는 Handler가 허용한 자기 작업만 관리할 수 있으며 실행 가능한 상태를 재검증</td></tr>
+              <tr><td><code>oj_job_retry_failed</code></td><td><code>admin_post</code> · Jobs</td><td>로그인·작업 소유 기능 ON·<code>oj_job_retry_failed_{job_id}</code> nonce</td><td>Handler의 현재 관리 정책 필수. 생성자는 Handler가 허용한 자기 작업만 관리할 수 있으며 재시도 가능한 실패 항목과 현재 입력·Handler 버전을 재검증</td></tr>
+              <tr><td><code>oj_problem_ai_generate</code></td><td><code>wp_ajax</code> · Problems</td><td>로그인·<code>problem_ai_assist</code>·작업별 nonce</td><td><code>title_only</code>·<code>full_draft</code>는 AI 보조와 문제 생성·수정 범위, <code>testcase_file</code>·<code>generator_bundle</code>은 AI 보조와 테스트데이터 범위를 모두 요구. AI를 직접 호출하지 않고 Jobs만 등록</td></tr>
+              <tr><td><code>oj_problem_topic_create</code></td><td><code>admin_post</code> · Problems</td><td>로그인·<code>problems</code>·최고 관리자 전용 Policy·폼 nonce</td><td><code>oj_manage_problems</code>, 문제 소유·협업 범위와 <code>manage_options</code>만으로는 허용하지 않는다. 표준 키 중복, 한글 이름, 상위 주제와 별칭을 검증한 뒤 WordPress 비공개 분류 <code>oj_problem_topic</code>에 한 번 생성</td></tr>
+              <tr><td><code>oj_save_ai_task_routing</code></td><td><code>admin_post</code> · Settings/AI 기반</td><td>로그인·<code>oj_manage_settings</code>·현재 설정 revision·폼 nonce</td><td>등록된 네 작업과 검사 완료 프로필만 허용한다. 주·대체 중복, 작업 미허용, 제출 코드 승인, 시간 제한과 대체 정책을 다시 검사해 endpoint·비밀값·프롬프트 없이 한 revision으로 저장</td></tr>
+              <tr><td><code>oj_console_approve_user_registration</code></td><td><code>admin_post</code> · Auth</td><td>로그인·<code>registration</code>·<code>oj_approve_user_registrations</code>·사용자별 nonce</td><td>현재 <code>pending</code>, 필수 동의·법정대리인 확인 완료와 원본 버전을 재검증한 뒤 <code>active</code>로 한 번만 전환</td></tr>
+              <tr><td><code>oj_user_password_reset</code></td><td><code>admin_post</code> · Auth</td><td>로그인·<code>oj_edit_users</code>·선택 묶음 nonce·최대 100명</td><td>사용자 목록 단건·선택 일괄을 소유한다. 각 대상의 WordPress <code>edit_user</code>와 현재 상태를 다시 확인하고 임시 비밀번호 일회 표시·세션 폐기·다음 로그인 변경 강제를 수행한다. 기존 공개 그룹 초기화 명령 <code>oj_group_public_reset_member_password</code>를 이 Auth 명령으로 교체하므로 전체 액션 수는 늘지 않는다.</td></tr>
+              <tr><td><code>oj_group_reset_member_password</code></td><td><code>admin_post</code> · Groups → Auth</td><td>로그인·<code>groups</code>·<code>oj_reset_group_member_password</code>·그룹별 nonce·최대 100명</td><td><code>user_ids[]</code>의 승인된 일반 구성원을 대상별 재검사하고 Auth <code>Password_Reset_Service</code>에 그룹 Context로 위임한다. 그룹 소유자·위임 운영자·전역 계정 관리자·행위자 본인·그룹 밖 사용자는 제외한다.</td></tr>
+              <tr><td><code>oj_quiz_start_attempt</code></td><td><code>admin_post</code> · Problems</td><td><code>active</code> 로그인·<code>quizzes</code>·문제별 nonce·시작 멱등 키</td><td>퀴즈 활성, 문제 접근, 게시 버전의 활성 문항, 남은 응시 횟수와 진행 중 시도 부재를 트랜잭션에서 다시 검사한다. 현재 불변 <code>quiz_revision_id</code>를 참조하는 시도 요약 행 하나만 만들고, 같은 멱등 키는 같은 진행 시도로 돌려보낸다.</td></tr>
+              <tr><td><code>oj_quiz_submit_attempt</code></td><td><code>admin_post</code> · Problems</td><td><code>active</code> 로그인·<code>quizzes</code>·시도별 nonce</td><td>시도 소유자, 문제 일치와 시도가 참조하는 게시 버전의 문항별 답안 형식을 다시 검사한다. <code>in_progress</code>이면 해당 불변 버전으로 채점해 학습자 답안·점수·요약만 한 트랜잭션에서 한 번 확정하고, 이미 <code>graded</code>이면 다시 쓰지 않고 같은 본인 결과 화면으로 이동</td></tr>
+              <tr><td><code>oj_submission_restore</code></td><td><code>admin_post</code> · Submissions</td><td>로그인·<code>submissions</code>·<code>oj_manage_submissions</code>·제출별 nonce·요청 멱등 키</td><td>현재 담당 범위, <code>solution.valid=0</code>, 소스·결과 관계 존재와 복원 사유를 다시 검사한 뒤 <code>valid=1</code>로 한 번 복원하고 실행자·사유·이전값을 <code>submission_events</code>에 기록</td></tr>
+              <tr><td><code>oj_ai_feedback_generate</code></td><td>기존 <code>admin_post</code> · AI Feedback</td><td>로그인·<code>ai_feedback</code>·기존 nonce</td><td>본인 제출 상세 또는 승인된 전체 범위와 수행모드를 검사해 <code>submission_ai_feedback_generate</code>만 등록. <code>oj_manage_ai_feedback</code>만으로 제출 소스 접근을 허용하지 않음</td></tr>
+              <tr><td><code>oj_problem_generate_metadata</code><br><code>oj_problem_generate_metadata_filtered</code></td><td>기존 <code>admin_post</code> · Problems</td><td>문제 AI 보조·기존 nonce·대상 문제 범위</td><td>동기 <code>generate_many()</code>를 제거하고 고정 대상의 <code>problem_metadata_generate</code> 작업만 등록</td></tr>
+<tr><td><code>oj_problem_test_data_action</code></td><td>기존 <code>admin_post</code> · Problems</td><td>로그인·<code>testcase_tools</code>·<code>oj_manage_testcases</code>·문제별 nonce</td><td>타입이 있는 <code>operation</code>으로 문제 폴더 루트의 파일 생성·편집·이름 변경·다중 삭제·다운로드, ZIP 생성·미리보기·검증 해제와 SPJ 컴파일 Job 등록을 처리한다. 새 폴더·폴더 열기·이동·복사 operation은 등록하지 않는다. 모든 명령은 현재 문제 범위·루트 경로·원본 해시·파일 잠금을 재검사하고, <code>apply_ai_draft</code>는 초안 소유·AI 보조 기능을 추가 검사해 <code>problem_testcase_apply</code>만 등록한다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="summary"><strong>동적 Jobs 권한:</strong> 중앙 Registry는 공통 로그인·기능·nonce 검사를 수행하고 <code>Job_Access_Policy</code>가 <code>owner_module</code>과 작업 종류에 등록된 현재 조회·관리 권한을 판정한다. 생성자 일치는 권한을 대신하지 않고 자기 작업 범위를 제한하는 조건으로만 사용한다. 다른 사용자 작업에는 Handler가 등록한 전체 조회·관리 범위가 추가로 필요하다. 권한 회수, 소유 기능 OFF, 범위 밖 작업, 존재하지 않는 작업은 상태 정보 없이 거부한다. 결과 내보내기 GET 경로도 같은 조회 정책과 작업별 nonce를 사용한다.</div>
+
+        <ul class="finding-list" style="margin-top: 18px;">
+          <li class="finding">
+            <div class="item-head"><h3>시스템 오류 기록 삭제도 중앙 계약에 포함</h3><span class="badge good">완료</span></div>
+            <p><code>oj_platform_clear_last_fatal</code>은 필수 관리자 콘솔 기능에 연결했고, 기존 nonce와 <code>oj_manage_system</code> 또는 <code>oj_manage_settings</code> 검사를 유지했다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>제출 상태 조회 AJAX 기능 가드 적용</h3><span class="badge good">완료</span></div>
+            <p><code>oj_submission_poll</code>은 <code>submissions</code> 기능을 먼저 확인한다. 기능이 꺼지면 콜백을 실행하지 않고 404로 응답하는 테스트를 추가했다.</p>
+          </li>
+          <li class="finding">
+            <div class="item-head"><h3>중앙 액션 저장소를 실제 등록 창구로 전환</h3><span class="badge good">완료</span></div>
+            <p>122개 고유 액션이 모두 <code>Admin_Post_Registry</code>를 사용한다. 모듈의 직접 <code>admin_post</code>·<code>wp_ajax</code> 등록은 제거했다.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" id="permissions">
+        <div class="section-heading">
+          <div>
+            <h2>권한·역할 재정비 근거</h2>
+            <p>플랫폼 권한 60개와 OJ 전용 역할 15개의 실제 배정을 비교하고 위임 역할을 보강했다.</p>
+          </div>
+          <span class="badge good">운영 역할 보강 완료</span>
+        </div>
+
+        <div class="role-grid">
+          <article class="role-card"><strong>전역 권한 51개</strong><p>WordPress 역할에 권한이 있으면 모든 대상에 적용하는 기본 모델이다.</p></article>
+          <article class="role-card"><strong>전역·그룹 권한 7개</strong><p>전역 역할 또는 소유·위임된 특정 그룹에서 사용할 수 있다.</p></article>
+          <article class="role-card"><strong>소유 범위 권한 2개</strong><p><code>oj_create_groups</code>, <code>oj_manage_own_groups</code>는 소유 범위 계약을 사용한다.</p></article>
+          <article class="role-card"><strong>관리자 우회</strong><p>슈퍼 관리자 또는 <code>manage_options</code> 보유자는 등록된 플랫폼 capability를 사용할 수 있다. 다만 주제 생성처럼 별도 <code>super_admin_only</code> Policy로 봉인한 작업은 최고 관리자만 수행한다.</p></article>
+          <article class="role-card recommended"><strong>일상 운영 권한 5개</strong><p>가입 정책, 제출 설정, AI 피드백, 메일 설정의 전용 역할 4개로 위임할 수 있다.</p></article>
+          <article class="role-card"><strong>일반 역할 미배정 14개</strong><p>고위험 관리자 전용 7개와 그룹 맥락 판정 7개만 남았다.</p></article>
+        </div>
+        <div class="summary"><strong>CF-1 목표 범위:</strong> 위 수치는 현재 60 capability·15 역할의 기준선이다. 재정비에서는 기존 키 60개를 보존하고 가입 승인 전용 <code>oj_approve_user_registrations</code>를 추가한다. 목표 분포는 <code>global</code> 50개, <code>global_or_context</code> 9개, <code>creation</code> 1개, <code>context_only</code> 1개이며 총 61개다. 전용 역할과 preset도 하나씩 추가해 16개·10개로 만든다.</div>
+
+        <div class="summary-band">
+          <strong>서비스 담당 범위 확정</strong>
+          <p>WordPress capability가 있는 플랫폼 운영자는 해당 기능 전체를 관리하고, 일반 강사는 소유·담당 관계가 있는 대상에서만 맥락 규칙으로 작업한다. 대상 배정은 다른 대상의 권한을 주지 않으며 목록, 상세 GET, POST·AJAX, Jobs, 보고서와 내보내기가 같은 접근 정책을 사용한다.</p>
+        </div>
+
+        <div class="table-wrap" style="margin-top: 18px;">
+          <table>
+            <thead><tr><th>대상</th><th>전체 범위</th><th>담당 범위</th><th>전역 전용 작업</th><th>메뉴·목록 규칙</th></tr></thead>
+            <tbody>
+              <tr><td>수업</td><td>플랫폼 수업 관리자</td><td>소유 강사, 활성 공동 강사</td><td>장애 복구, 강제 소유자 변경, 영구 정리</td><td>생성 권한 또는 담당 수업이 하나 이상일 때 표시하며 일반 강사는 담당 수업만 조회</td></tr>
+              <tr><td>대회·평가</td><td>플랫폼 대회 관리자</td><td>소유 강사, 공동 운영자, 시험 감독자, 결과 검토자</td><td>강제 소유자 변경, 전체 데이터 복구·영구 정리</td><td>생성 권한 또는 담당 대회가 하나 이상일 때 표시하며 역할별 허용 작업만 제공</td></tr>
+<tr><td>문제 은행</td><td>전체 문제 관리자</td><td>문제 소유 강사, 공동 편집자, 테스트데이터 담당자</td><td>문제 번호 변경, XML 일괄 작업, 미배정 문제 삭제·복구, 최고 관리자 전용 분야·세부 주제 추가</td><td>생성 권한 또는 담당 문제가 하나 이상일 때 표시하며 미배정 문제는 전체 관리자만 조회한다. 주제 관리 메뉴는 최고 관리자에게만 별도로 표시한다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="summary"><strong>구현 계약:</strong> 기존 capability 키 60개는 유지하고 가입 승인 전용 키 1개만 추가한다. 승인 전용 역할은 승인 대기 계정의 최소 목록과 승인 명령만 사용하며 사용자 수정·가입 정책·그룹 관리 권한을 갖지 않는다. 대상별 Controller는 숫자 <code>wp_users.ID</code> 의미의 <code>user_id</code>와 대상 식별자를 맥락으로 전달하고 Service의 Context Rule이 실제 범위를 판정한다.</div>
+
+        <div class="table-wrap" style="margin-top: 18px;">
+          <table>
+            <thead><tr><th>위임한 운영 권한</th><th>연결 화면</th><th>현재 역할</th></tr></thead>
+            <tbody>
+              <tr><td><code>oj_manage_agreements</code></td><td>약관</td><td>OJ 가입 정책 관리자</td></tr>
+              <tr><td><code>oj_manage_registration_settings</code></td><td>가입 설정</td><td>OJ 가입 정책 관리자</td></tr>
+              <tr><td><code>oj_approve_user_registrations</code></td><td>사용자 목록의 승인 대기 보기·가입 승인</td><td>OJ 가입 승인 담당자</td></tr>
+              <tr><td><code>oj_manage_smtp</code></td><td>SMTP 설정</td><td>OJ 메일 설정 관리자</td></tr>
+              <tr><td><code>oj_manage_submission_settings</code></td><td>제출 설정·블록 코딩</td><td>OJ 제출 설정 관리자</td></tr>
+              <tr><td><code>oj_manage_ai_feedback</code></td><td>AI 피드백·답변 지침·학습 수준 분석</td><td>OJ AI 피드백 관리자</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="summary-band">
+          <strong>기존 설치 반영</strong>
+          <p>역할 계약 버전을 추가했다. 기존 사이트에서도 누락된 역할과 권한을 한 번만 보충하고, 이후에는 반복 설치하지 않는다.</p>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="section-heading">
+          <div>
+            <h2>기능 설정 재정비 근거</h2>
+            <p>30개 기능의 의존 관계, 화면 연결 정보와 OFF 동작을 대조했다.</p>
+          </div>
+          <span class="badge good">실행 저장소 단일화 완료</span>
+        </div>
+
+        <div class="contract-grid">
+          <article class="contract"><span class="step">전체</span><strong>30개</strong><p>기반 기능과 사용자 기능을 하나의 기능 저장소에서 관리한다.</p></article>
+          <article class="contract"><span class="step">잠금</span><strong>10개</strong><p>필수이거나 비활성화할 수 없는 기반 기능은 항상 켜진다.</p></article>
+          <article class="contract"><span class="step">선택</span><strong>20개</strong><p>기능을 끄면 해당 기능에 의존하는 다른 기능도 자동으로 꺼진다.</p></article>
+          <article class="contract"><span class="step">권한 연결</span><strong>60/60</strong><p>모든 권한의 <code>feature_key</code>는 존재하는 기능을 가리킨다.</p></article>
+        </div>
+
+        <div class="table-wrap" style="margin-top: 18px;">
+          <table>
+            <thead><tr><th>이전에 기능 설정에서 빠졌던 화면</th><th>현재 처리</th></tr></thead>
+            <tbody>
+              <tr><td><code>console.dashboard</code></td><td>실제 경로에서 <code>admin_console</code> 연결 자동 계산</td></tr>
+              <tr><td><code>console.roles.index</code>, <code>console.users.roles</code></td><td>실제 경로에서 <code>permission</code> 연결 자동 계산</td></tr>
+              <tr><td><code>console.settings.database</code></td><td>실제 경로에서 <code>judge_db</code> 연결 자동 계산</td></tr>
+              <tr><td><code>console.submissions.learner_levels</code></td><td>실제 경로에서 <code>ai_feedback</code> 연결 자동 계산</td></tr>
+              <tr><td><code>console.system_status</code></td><td>실제 경로에서 <code>settings</code> 연결 자동 계산</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ul class="rule-list" style="margin-top: 18px;">
+          <li class="rule"><div class="item-head"><h3>기능 설정은 정책만 소유</h3><span class="badge good">완료</span></div><p><code>config/features.php</code>에는 키, 기본 상태, 잠금, 의존 관계만 남겼다.</p></li>
+          <li class="rule"><div class="item-head"><h3>기술 정보 자동 계산</h3><span class="badge good">완료</span></div><p>기능 관리 화면은 실제 대표 경로, 권한, 액션, 자산 저장소에서 현재 연결 정보를 계산한다. 목표 Route Registry에는 호환 리디렉션이 없다.</p></li>
+          <li class="rule"><div class="item-head"><h3>Blockly 조건부 적재 유지</h3><span class="badge good">완료</span></div><p>Blockly 자산에 기능 소유권을 명시했고, 블록 제출을 사용하는 화면에서 기능이 켜진 경우에만 불러오는 기존 조건을 유지했다.</p></li>
+        </ul>
+      </section>
+
+      <section class="section" id="findings">
+        <div class="section-heading">
+          <div>
+            <h2>재정비 대상</h2>
+            <p>조사에서 확인한 다섯 가지 구조 문제와 구현 결과다.</p>
+          </div>
+          <span class="badge good">5개 해결 완료</span>
+        </div>
+
+        <ul class="finding-list">
+          <li class="finding"><div class="item-head"><h3>D3-F01 · 작업 액션 계약 분산</h3><span class="badge good">해결</span></div><p>122개 작업을 중앙 액션 저장소로 전환하고 소유자·기능·권한·nonce 정책을 필수화했다.</p></li>
+          <li class="finding"><div class="item-head"><h3>D3-F02 · AJAX 기능 OFF 우회</h3><span class="badge good">해결</span></div><p>제출 상태 조회 AJAX에도 공통 기능 가드를 적용하고 콜백 차단 테스트를 추가했다.</p></li>
+          <li class="finding"><div class="item-head"><h3>D3-F03 · 운영 권한을 역할로 위임할 수 없음</h3><span class="badge good">해결</span></div><p>일상 운영 권한 5개를 네 개의 전용 역할로 위임할 수 있게 했다.</p></li>
+          <li class="finding"><div class="item-head"><h3>D3-F04 · 그룹 권한 규칙 중복과 범위 표기 불일치</h3><span class="badge good">해결</span></div><p>중복 규칙을 제거하고 그룹 서비스 규칙 하나와 <code>global_or_context</code> 범위로 정리했다.</p></li>
+          <li class="finding"><div class="item-head"><h3>D3-F05 · 기능별 화면 목록 이중 관리</h3><span class="badge good">해결</span></div><p>기능 설정의 중복 목록을 제거하고 실행 저장소에서 연결 정보를 자동 계산한다.</p></li>
+        </ul>
+      </section>
+
+      <section class="section" id="decisions">
+        <div class="section-heading">
+          <div>
+            <h2>재정비 결정과 구현 결과</h2>
+            <p>사용자가 D3-01부터 D3-06까지 모두 권장안대로 확정했으며 구현과 검증을 마쳤다.</p>
+          </div>
+          <span class="badge good">사용자 확정 · 완료</span>
+        </div>
+
+        <ol class="decision-list">
+          <li class="decision">
+            <div class="item-head"><h3>D3-01 · 작업 액션 중앙 계약</h3><span class="badge good">구현 완료</span></div>
+            <p><code>Admin_Post_Registry</code>를 실제 등록 창구로 사용한다. 각 액션에 소유 모듈, 허용 로그인 상태, 기능, 권한 또는 맥락 규칙, nonce 이름, 처리 함수를 명시하고 등록과 검증 테스트를 자동화한다.</p>
+          </li>
+          <li class="decision">
+            <div class="item-head"><h3>D3-02 · 기능 연결 정보의 단일 기준</h3><span class="badge good">구현 완료</span></div>
+            <p>기능 설정에는 키, 기본 상태, 잠금, 의존 관계만 둔다. 연결 화면과 권한은 실제 <code>Route_Registry</code>와 <code>Capability_Registry</code>에서 계산해 기능 관리 화면에 표시한다.</p>
+          </li>
+          <li class="decision">
+            <div class="item-head"><h3>D3-03 · 운영 권한 역할 분리</h3><span class="badge good">구현 완료</span></div>
+            <p>기존 역할의 권한을 예고 없이 넓히지 않는다. 가입 정책, 제출 설정, AI 피드백, 메일 설정을 담당하는 전용 역할 4개를 추가하고, 일반 역할 미배정 권한은 고위험 관리자 전용 7개와 그룹 맥락 판정 7개로 제한한다.</p>
+          </li>
+          <li class="decision">
+            <div class="item-head"><h3>D3-04 · 그룹 권한 규칙 단일화</h3><span class="badge good">구현 완료</span></div>
+            <p>그룹 서비스 기반 규칙 하나만 실제 대상별 권한 판정을 소유한다. 소유·위임 그룹 공급자는 관리자 메뉴 진입 범위 계산에만 사용하고, 그룹 권한 범위에는 전역 또는 특정 그룹에서 허용될 수 있음을 명시하는 범주를 추가한다.</p>
+          </li>
+          <li class="decision">
+            <div class="item-head"><h3>D3-05 · 기능 OFF 동작 통일</h3><span class="badge good">구현 완료</span></div>
+            <p>기능 OFF 시 메뉴 숨김, GET 404, POST·AJAX 404, 전용 자산 미적재를 공통 계약으로 확정한다. 먼저 제출 상태 조회 AJAX에 기능 가드를 추가하고 자동 검사로 누락을 막는다.</p>
+          </li>
+          <li class="decision">
+            <div class="item-head"><h3>D3-06 · 메뉴 계약 유지</h3><span class="badge good">검증 완료</span></div>
+            <p>중앙 메뉴 제공자, 실제 경로 권한 우선, 접근 가능한 첫 하위 메뉴 연결 방식을 유지한다. 상세·수정·삭제 확인 화면 46개에는 별도 메뉴를 만들지 않는다.</p>
+          </li>
+        </ol>
+
+        <div class="next-step">
+          <div>
+            <h2>다음 재정비 기준</h2>
+            <p>D-003 재정비 소스 반영 상태를 기준선으로 고정했고 D-004 데이터 저장소 재정비 설계도 확정했다.</p>
+          </div>
+          <span class="badge good">D-003 완료</span>
+        </div>
+      </section>
+
+      <footer>D-003 · 메뉴·권한·기능 설정 재정비 · 선행 계약 반영 · 목표 UI 전환 대기 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

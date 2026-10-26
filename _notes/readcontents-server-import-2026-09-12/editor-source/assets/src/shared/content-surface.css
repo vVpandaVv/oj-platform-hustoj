@@ -1,0 +1,393 @@
+.contents-editor-content-surface {
+  --contents-editor-content-max: 896px;
+  --contents-editor-content-padding: 28px;
+  --contents-editor-content-ink: #172033;
+  --contents-editor-content-muted: #64748b;
+  --contents-editor-content-line: #d5dfef;
+  --contents-editor-content-soft: #f8fafc;
+  --contents-editor-content-accent: #2563eb;
+  box-sizing: border-box;
+  color: var(--contents-editor-content-ink);
+  font-family:
+    Inter, Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic",
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  inline-size: min(100%, var(--contents-editor-content-max));
+  line-height: 1.72;
+  margin-inline: auto;
+  max-inline-size: var(--contents-editor-content-max);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  padding-inline: var(--contents-editor-content-padding) !important;
+  word-break: keep-all;
+}
+
+.contents-editor-content-surface--authoring {
+  padding-block: 28px 176px !important;
+}
+
+.contents-editor-content-surface--public {
+  padding-block: 0 48px;
+}
+
+.contents-editor-content-surface > :first-child {
+  margin-block-start: 0;
+}
+
+.contents-editor-content-surface h1,
+.contents-editor-content-surface h2,
+.contents-editor-content-surface h3,
+.contents-editor-content-surface h4,
+.contents-editor-content-surface h5,
+.contents-editor-content-surface h6 {
+  color: #0f172a;
+  font-weight: 760;
+  letter-spacing: 0;
+  line-height: 1.25;
+  text-wrap: pretty;
+  white-space: pre-wrap;
+}
+
+.contents-editor-content-surface h1 {
+  font-size: 2.25rem;
+  margin: 0 0 1rem;
+}
+
+.contents-editor-content-surface h2 {
+  font-size: 1.7rem;
+  margin: 2.15rem 0 0.8rem;
+}
+
+.contents-editor-content-surface h3 {
+  font-size: 1.35rem;
+  margin: 1.75rem 0 0.65rem;
+}
+
+.contents-editor-content-surface h4 {
+  font-size: 1.12rem;
+  margin: 1.4rem 0 0.5rem;
+}
+
+.contents-editor-content-surface h5 {
+  font-size: 1rem;
+  margin: 1.2rem 0 0.4rem;
+}
+
+.contents-editor-content-surface h6 {
+  font-size: 0.92rem;
+  margin: 1rem 0 0.35rem;
+}
+
+.contents-editor-content-surface p {
+  margin: 0.72rem 0;
+  min-block-size: 1.72em;
+  white-space: pre-wrap;
+}
+
+.contents-editor-content-surface a {
+  color: var(--contents-editor-content-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.contents-editor-content-surface blockquote {
+  border-inline-start: 3px solid #93c5fd;
+  color: #334155;
+  margin: 1.2rem 0;
+  padding: 0.15rem 0 0.15rem 1rem;
+  white-space: pre-wrap;
+}
+
+.contents-editor-content-surface ul,
+.contents-editor-content-surface ol {
+  margin: 0.9rem 0;
+  padding-inline-start: 1.5rem;
+}
+
+.contents-editor-content-surface li {
+  margin: 0.3rem 0;
+}
+
+.contents-editor-content-surface hr {
+  background: var(--contents-editor-content-line);
+  border: 0;
+  block-size: 1px;
+  margin: 2rem 0;
+}
+
+.contents-editor-content-surface pre {
+  background: #0f172a;
+  border-radius: 8px;
+  color: #e5eefb;
+  margin: 1.2rem 0;
+  max-inline-size: 100%;
+  overflow: auto;
+  padding: 1rem;
+  white-space: pre;
+}
+
+.contents-editor-content-surface code,
+.contents-editor-content-surface kbd {
+  font-family:
+    "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.92em;
+}
+
+.contents-editor-content-surface :not(pre) > code,
+.contents-editor-content-surface kbd {
+  background: #eef4ff;
+  border: 1px solid #dbeafe;
+  border-radius: 5px;
+  color: #1e3a8a;
+  padding: 0.12rem 0.3rem;
+}
+
+.contents-editor-content-surface .contents-editor-table-scroll,
+.contents-editor-content-surface [class~="group/table"] {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.contents-editor-content-surface table {
+  border-collapse: collapse;
+  inline-size: 100% !important;
+  margin: 1.2rem 0;
+  min-inline-size: 100%;
+}
+
+.contents-editor-content-surface th,
+.contents-editor-content-surface td {
+  border: 1px solid var(--contents-editor-content-line);
+  min-inline-size: 88px;
+  padding: 0.65rem 0.75rem;
+  text-align: start;
+  vertical-align: top;
+}
+
+.contents-editor-content-surface th {
+  background: var(--contents-editor-content-soft);
+  font-weight: 700;
+}
+
+.contents-editor-content-surface figure {
+  box-sizing: border-box;
+  margin-block: 1.4rem;
+  max-inline-size: 100%;
+}
+
+.contents-editor-content-surface img,
+.contents-editor-content-surface video,
+.contents-editor-content-surface iframe,
+.contents-editor-content-surface audio {
+  box-sizing: border-box;
+  display: block;
+  max-inline-size: 100%;
+}
+
+.contents-editor-content-surface img,
+.contents-editor-content-surface video,
+.contents-editor-content-surface iframe {
+  block-size: auto;
+  border: 1px solid var(--contents-editor-content-line);
+  border-radius: 8px;
+}
+
+.contents-editor-content-surface audio {
+  inline-size: 100%;
+}
+
+.contents-editor-content-surface iframe {
+  aspect-ratio: 16 / 9;
+  inline-size: 100%;
+}
+
+.contents-editor-content-surface figcaption {
+  color: var(--contents-editor-content-muted);
+  font-size: 0.9rem;
+  margin-block-start: 0.5rem;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+.contents-editor-content-surface .contents-editor-callout {
+  align-items: flex-start;
+  background: var(--contents-editor-content-soft);
+  border-radius: 6px;
+  display: flex;
+  gap: 0.65rem;
+  margin: 0.8rem 0;
+  padding: 0.9rem 1rem;
+}
+
+.contents-editor-content-surface .contents-editor-callout__icon {
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.72;
+}
+
+.contents-editor-content-surface .contents-editor-columns {
+  display: flex;
+  gap: 1rem;
+  inline-size: 100%;
+  margin: 1rem 0;
+}
+
+.contents-editor-content-surface .contents-editor-column {
+  min-inline-size: 0;
+}
+
+.contents-editor-content-surface .contents-editor-toggle {
+  border-block: 1px solid var(--contents-editor-content-line);
+  margin: 0.75rem 0;
+  padding: 0.45rem 0;
+}
+
+.contents-editor-content-surface .contents-editor-toggle summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.contents-editor-content-surface .contents-editor-equation {
+  background: var(--contents-editor-content-soft);
+  border-radius: 6px;
+  margin: 1rem 0;
+  overflow-x: auto;
+  padding: 0.8rem 1rem;
+  text-align: center;
+}
+
+.contents-editor-content-surface .contents-editor-equation--inline,
+.contents-editor-content-surface .contents-editor-date,
+.contents-editor-content-surface .contents-editor-mention {
+  background: #eef4ff;
+  border-radius: 5px;
+  display: inline-block;
+  margin-inline: 0.12rem;
+  padding: 0.08rem 0.35rem;
+}
+
+.contents-editor-content-surface .contents-editor-code-drawing,
+.contents-editor-content-surface .contents-editor-excalidraw {
+  border: 1px solid var(--contents-editor-content-line);
+  border-radius: 8px;
+  margin: 1.4rem 0;
+  overflow: hidden;
+}
+
+.contents-editor-content-surface .contents-editor-code-drawing__body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.contents-editor-content-surface .contents-editor-code-drawing__render,
+.contents-editor-content-surface .contents-editor-excalidraw__render {
+  align-items: center;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  min-block-size: 260px;
+  min-inline-size: 0;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.contents-editor-content-surface .contents-editor-code-drawing__render img,
+.contents-editor-content-surface .contents-editor-excalidraw__render svg {
+  border: 0;
+  max-block-size: 640px;
+  max-inline-size: 100%;
+}
+
+.contents-editor-content-surface .contents-editor-code-drawing__status {
+  color: var(--contents-editor-content-muted);
+  margin: 0;
+  padding: 1rem;
+}
+
+.contents-editor-content-surface .contents-editor-public-visualization {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  margin: 1.4rem 0;
+  overflow: visible;
+  padding: 0;
+}
+
+.contents-editor-content-surface [data-visualization-preview-shell],
+.contents-editor-content-surface .contents-editor-visualization-result-shell {
+  background: #ffffff;
+  border: 1px solid var(--contents-editor-content-line);
+  border-radius: 8px;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow: hidden;
+}
+
+.contents-editor-content-surface .contents-editor-visualization-result-shell__header {
+  align-items: center;
+  border-block-end: 1px solid var(--contents-editor-content-line);
+  display: flex;
+  min-block-size: 48px;
+  padding: 0.7rem 1rem;
+}
+
+.contents-editor-content-surface [data-visualization-canvas] {
+  block-size: auto;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-block-size: 260px;
+}
+
+.contents-editor-content-surface [data-visualization-step-player],
+.contents-editor-content-surface [data-contents-editor-visualization-steps] {
+  background: var(--contents-editor-content-soft);
+  border-block-end: 1px solid var(--contents-editor-content-line);
+}
+
+.contents-editor-content-surface :focus-visible {
+  outline: 3px solid rgb(37 99 235 / 0.45);
+  outline-offset: 2px;
+}
+
+@media (max-width: 680px) {
+  .contents-editor-content-surface {
+    --contents-editor-content-padding: 16px;
+    font-size: 16px;
+    max-inline-size: 100%;
+  }
+
+  .contents-editor-content-surface--authoring {
+    padding-block: 20px 128px !important;
+  }
+
+  .contents-editor-content-surface h1 {
+    font-size: 1.9rem;
+  }
+
+  .contents-editor-content-surface h2 {
+    font-size: 1.45rem;
+  }
+
+  .contents-editor-content-surface .contents-editor-columns,
+  .contents-editor-content-surface .contents-editor-code-drawing__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contents-editor-content-surface .contents-editor-column {
+    inline-size: 100% !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contents-editor-content-surface *,
+  .contents-editor-content-surface *::before,
+  .contents-editor-content-surface *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

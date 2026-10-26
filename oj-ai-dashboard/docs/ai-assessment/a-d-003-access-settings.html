@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-D-003 메뉴·권한·기능 설정</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-D-003 메뉴·권한·기능 설정</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html" aria-current="page">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#result">판정</a>
+          <a href="#evidence">조사 근거</a>
+          <a href="#capabilities">Capability</a>
+          <a href="#roles">역할</a>
+          <a href="#surfaces">화면·작업</a>
+          <a href="#rest">REST</a>
+          <a href="#nonce">Nonce</a>
+          <a href="#scope">객체 범위</a>
+          <a href="#settings">설정·플래그</a>
+          <a href="#ownership">목표 소유권</a>
+          <a href="#gaps">발견 격차</a>
+          <a href="#decision">확인할 결정</a>
+          <a href="#completion">완료 판정</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <p class="notice">이 문서는 당시 구현의 조사 기록입니다. 아래에서 제거됨으로 표시한 구형 소스는 현재 사용되지 않아 정리했습니다. <a href="retired-runtime-removal-2026-10-20.html">제거 범위와 유지한 호환 기능</a>을 참고하세요.</p>
+      <section class="hero" id="result">
+        <p class="eyebrow">A-D-003 · Access, Scope and Settings Baseline</p>
+        <h2>메뉴·권한·기능 설정</h2>
+        <p>현재 애드온의 capability, 역할 설치, 화면과 REST 권한, 객체 범위, nonce, WordPress 옵션과 기능 플래그를 실제 코드에서 추적했다. 목표 권한 모델을 확정하기 전 현재 동작과 OJ Platform 통합 격차를 고정하는 문서다.</p>
+        <div class="meta">
+          <span class="badge">조사일 2026-08-10</span>
+          <span class="badge">상태 사용자 확인·기준선 확정</span>
+          <span class="badge">Capability 16개</span>
+          <span class="badge">애드온 역할 3개</span>
+          <span class="badge">REST 85작업</span>
+          <span class="badge">명시적 nonce 검사 54작업</span>
+          <span class="badge">실행 코드 변경 0건</span>
+        </div>
+      </section>
+
+      <h2>한 줄 판정</h2>
+      <section class="panel">
+        <p>기능 단위 capability는 비교적 세분되어 있지만, 별도 애드온 역할이 OJ Console 접근권한과 연결되지 않고 화면 권한과 화면 안 작업 권한도 일치하지 않는다. REST는 capability를 검사해도 대부분의 교사 작업에서 학급·배정·결과 소유 범위를 재검사하지 않으며, 브라우저가 발급하는 nonce와 서버가 검증하는 nonce action이 달라 현재 쓰기 요청이 정상적으로 통과할 수 없다.</p>
+        <div class="warning callout"><strong>설계 기준:</strong> capability 보유는 기능 종류에 대한 허용일 뿐 특정 학급·학생·배정·평가 결과에 대한 접근 허용이 아니다. 목표 모델은 <code>shell 접근 + 기능 capability + 객체 scope + 요청 무결성</code>을 모든 메뉴, 직접 URL, REST, Jobs, 보고서에서 같은 순서로 검사해야 한다.</div>
+      </section>
+
+      <h2>수량 기준선</h2>
+      <table>
+        <thead><tr><th>항목</th><th>현재 수량</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td>애드온 capability</td><td>16</td><td>기능 단위로 분리되어 있으나 사용되지 않는 키와 화면 진입 불일치가 있음</td></tr>
+          <tr><td>애드온 역할</td><td>기본 2, 선택 1</td><td><code>oj_ai_teacher</code>, <code>oj_ai_student</code>, 선택형 <code>oj_ai_assistant</code></td></tr>
+          <tr><td>관리자 부여</td><td>16 capability 전부</td><td>WordPress <code>administrator</code> 역할에 설치 시 추가</td></tr>
+          <tr><td>REST 작업</td><td>85</td><td>GET 33, POST 51, DELETE 1</td></tr>
+          <tr><td>상태 변경 작업</td><td>52</td><td>POST·DELETE 전부가 애드온의 별도 nonce 검사를 요청</td></tr>
+          <tr><td>추가 nonce GET</td><td>2</td><td>제출 목록·상세 GET이 쓰기용 permission callback을 재사용</td></tr>
+          <tr><td>WordPress 옵션</td><td>5</td><td>버전 1, 설정 1, 보조교사 역할 1, DB 버전 1, 적용 migration 1</td></tr>
+          <tr><td>런타임 기능 플래그</td><td>10</td><td>실제 분기 사용은 일부이며 독립 실행 모드를 포함</td></tr>
+          <tr><td>권한 자동 테스트</td><td>0</td><td>역할별 메뉴·직접 URL·REST·객체 범위·nonce 행렬을 실행하는 테스트가 없음</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="evidence">조사 근거</h2>
+      <table>
+        <thead><tr><th>영역</th><th>기준 파일</th><th>확인 내용</th></tr></thead>
+        <tbody>
+          <tr><td>Capability·역할</td><td><span title="2026-10-20 제거된 구형 소스">Capabilities.php (제거됨)</span>, <span title="2026-10-20 제거된 구형 소스">Security_Module.php (제거됨)</span></td><td>16개 키, 3개 역할, 관리자 부여, 매 요청 <code>init</code> 동기화</td></tr>
+          <tr><td>공통 REST 권한</td><td><span title="2026-10-20 제거된 구형 소스">Rest_Permission.php (제거됨)</span>, <span title="2026-10-20 제거된 구형 소스">Permission_Guard.php (제거됨)</span></td><td>로그인, capability, 선택형 nonce와 학생 범위 검사 순서</td></tr>
+          <tr><td>Nonce</td><td><span title="2026-10-20 제거된 구형 소스">Nonce_Service.php (제거됨)</span>, <code>Admin_Workflow_Page.php (이전)</code> → <a href="../../src/Platform/Assignment_Workbench_Page_Handler.php">Assignment_Workbench_Page_Handler.php</a>, <span title="2026-10-20 제거된 구형 소스">admin-actions.js (제거됨)</span></td><td><code>oj_ai_dashboard</code> 검증과 <code>wp_rest</code> 발급 불일치</td></tr>
+          <tr><td>학사 범위</td><td><span title="2026-10-20 제거된 구형 소스">Scope_Checker.php (제거됨)</span>, <span title="2026-10-20 제거된 구형 소스">Academic_Scope_Provider.php (제거됨)</span></td><td>자기 자신, 전역 관리 우회, 애드온 학급·학생 mapping 기반 판정</td></tr>
+          <tr><td>화면 권한</td><td><span title="2026-10-20 제거된 구형 소스">Admin_Shell.php (제거됨)</span>, <code>Admin_Module.php (이전)</code> → <a href="../../src/Platform/Addon_Manifest.php">Addon_Manifest.php</a></td><td>11개 화면 진입 capability와 화면 내부 form capability 비교</td></tr>
+          <tr><td>REST Controller</td><td><code>src/*/*_Rest_Controller.php</code> 10개</td><td>73경로·85작업의 capability, nonce, scope option과 callback 재검사</td></tr>
+          <tr><td>설정</td><td><code>Admin_Settings_Service.php (이전)</code> → <a href="../../src/Platform/External_Ai_Consent_Settings_Page_Handler.php">External_Ai_Consent_Settings_Page_Handler.php</a></td><td>5개 사용자 설정 필드와 보조교사 옵션 중복 저장</td></tr>
+          <tr><td>기능 플래그</td><td><span title="2026-10-20 제거된 구형 소스">Feature_Flags.php (제거됨)</span></td><td>연결·독립 실행 모드에서 계산되는 10개 플래그와 실제 사용처</td></tr>
+          <tr><td>플랫폼 비교</td><td><a href="../../../oj-integration-rebuild/oj-platform/config/capabilities.php">capabilities.php</a>, <a href="../../../oj-integration-rebuild/oj-platform/docs/d-003-menu-permission-feature-flags.html">플랫폼 D-003</a>, <a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html">C-28 Addon API v1</a></td><td>플랫폼 역할·맥락 권한과 현재 애드온 확장 계약의 공백</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="capabilities">Capability 전수 목록</h2>
+      <p>역할 표기는 관리자 <code>관리</code>, 교사 <code>교사</code>, 학생 <code>학생</code>, 선택형 보조교사 <code>보조</code>다. “현재 연결”은 capability가 선언된 의도가 아니라 실제 화면 또는 REST permission callback 사용을 뜻한다.</p>
+      <table>
+        <thead><tr><th>Capability</th><th>부여 역할</th><th>현재 연결</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_dashboard_manage</code></td><td>관리</td><td>학생·학급 scope 전역 우회</td><td>화면·REST의 직접 기능 권한으로는 사용되지 않음</td></tr>
+          <tr><td><code>oj_ai_dashboard_teach</code></td><td>관리·교사·보조</td><td>교사 대시보드, 학사 조회, 대시보드 REST</td><td>기능 범위가 넓고 대상 scope가 일관되게 붙지 않음</td></tr>
+          <tr><td><code>oj_ai_dashboard_view_own_dashboard</code></td><td>관리·교사·학생</td><td>관리 shell root·학생 화면, 학생 REST</td><td>Console 진입과 PublicUI 사용 권한이 섞임</td></tr>
+          <tr><td><code>oj_ai_dashboard_view_student_dashboard</code></td><td>관리·교사·보조</td><td>실행 경로 없음</td><td>부여되지만 화면·REST에서 참조되지 않는 dead capability</td></tr>
+          <tr><td><code>oj_ai_dashboard_manage_academic_context</code></td><td>관리·교사</td><td>학사 화면, 학년·학급·학생·그룹 쓰기</td><td>플랫폼 원장 사용 결정에 따라 목표에서 제거 대상</td></tr>
+          <tr><td><code>oj_ai_dashboard_manage_worksheets</code></td><td>관리·교사</td><td>활동지 CRUD, 템플릿, 교육과정 연결</td><td>활동지 자체 평가 권한과는 아직 분리되지 않음</td></tr>
+          <tr><td><code>oj_ai_dashboard_assign_worksheets</code></td><td>관리·교사</td><td>배정 목록·저장·상세</td><td>화면 진입은 <code>MANAGE_WORKSHEETS</code>라 단독 부여가 무의미</td></tr>
+          <tr><td><code>oj_ai_dashboard_manage_submissions</code></td><td>관리·교사·보조</td><td>제출 목록·재개방·대리 제출·ZIP·자동 제출</td><td>교사 학급·배정 범위가 대부분 빠짐</td></tr>
+          <tr><td><code>oj_ai_dashboard_run_assessment</code></td><td>관리·교사</td><td>평가 화면, 실행·일괄 실행·재시도</td><td>활동지 자체 평가와 학생 제출 평가를 구분하지 않음</td></tr>
+          <tr><td><code>oj_ai_dashboard_review_assessment</code></td><td>관리·교사·보조</td><td>평가 검토 작업</td><td>보조교사는 평가 화면에 진입할 수 없어 단독 부여가 막힘</td></tr>
+          <tr><td><code>oj_ai_dashboard_approve_feedback</code></td><td>관리·교사</td><td>피드백 승인·일괄 승인·공개</td><td>평가 화면 진입권과 별도라 화면에 허용되지 않는 form이 나타날 수 있음</td></tr>
+          <tr><td><code>oj_ai_dashboard_generate_special_notes</code></td><td>관리·교사</td><td>특기사항 생성</td><td>평가 화면 진입권에 종속되고 학생 범위 재검사가 없음</td></tr>
+          <tr><td><code>oj_ai_dashboard_manage_curriculum</code></td><td>관리·교사</td><td>교육과정·성취기준 CRUD</td><td>플랫폼 교육과정 소유 여부를 A-D-005에서 다시 확인해야 함</td></tr>
+          <tr><td><code>oj_ai_dashboard_export_reports</code></td><td>관리·교사·보조</td><td>보고서 화면·CSV·파일 다운로드</td><td>생성 파일 소유자·학급 범위가 일관되지 않음</td></tr>
+          <tr><td><code>oj_ai_dashboard_import_data</code></td><td>관리·교사</td><td>명단·템플릿·이전 데이터 가져오기</td><td>서로 다른 데이터 소유권을 하나의 권한으로 묶음</td></tr>
+          <tr><td><code>oj_ai_dashboard_manage_settings</code></td><td>관리</td><td>설정·환경·플랫폼 연결 화면과 REST</td><td>평가 정책과 플랫폼 AI 연결 책임을 분리해야 함</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="roles">역할 설치와 플랫폼 통합</h2>
+      <table>
+        <thead><tr><th>현재 역할</th><th>애드온 capability</th><th>현재 설치 방식</th><th>통합 문제</th></tr></thead>
+        <tbody>
+          <tr><td>WordPress <code>administrator</code></td><td>16개 전부</td><td>기존 역할에 capability 추가</td><td>권한 제거·재설치 정책이 없고 애드온 비활성화 뒤에도 남음</td></tr>
+          <tr><td><code>oj_ai_teacher</code></td><td>14개</td><td>빈 역할 생성 후 애드온 capability만 추가</td><td><code>oj_access_console</code> 등 플랫폼 shell 권한이 없어 OJ Console 역할과 결합되지 않음</td></tr>
+          <tr><td><code>oj_ai_student</code></td><td>1개</td><td>빈 역할 생성 후 <code>VIEW_OWN_DASHBOARD</code> 추가</td><td>플랫폼 학습자 역할·PublicUI 정책과 별도 체계가 됨</td></tr>
+          <tr><td><code>oj_ai_assistant</code></td><td>5개</td><td>옵션이 켜진 경우 생성, 끄면 역할 삭제</td><td>검토 권한은 있지만 평가 화면 진입권이 없고 플랫폼 보조교사 범위와 연결되지 않음</td></tr>
+        </tbody>
+      </table>
+      <pre><code>현재
+WordPress 사용자
+  |-- OJ Platform 역할·capability ------ OJ Console / 수업 맥락
+  `-- AI 애드온 역할·capability -------- 애드온 화면 / REST
+                  두 체계의 자동 연결 없음
+
+권고 목표
+OJ Platform 사용자·역할
+  |-- core shell 접근 정책
+  |-- manifest로 선언된 addon capability 배정
+  `-- platform class/group context
+          `-- addon 화면·REST가 동일한 복합 정책을 재검사</code></pre>
+      <div class="callout"><strong>권고:</strong> 목표 설치에서 <code>oj_ai_teacher</code>, <code>oj_ai_student</code>, <code>oj_ai_assistant</code> 역할을 새로 만들지 않는다. 애드온은 namespaced capability를 선언하고, 플랫폼 역할·사용자 권한 관리가 이를 배정하는 범용 계약을 C-28에 추가한다. 자동으로 모든 교사에게 강한 권한을 주지 않는다.</div>
+
+      <h2 id="surfaces">화면 진입과 내부 작업 불일치</h2>
+      <table>
+        <thead><tr><th>화면</th><th>진입 capability</th><th>화면 안 작업 capability</th><th>현재 결과</th></tr></thead>
+        <tbody>
+          <tr><td>평가·채점</td><td><code>RUN_ASSESSMENT</code></td><td><code>RUN_ASSESSMENT</code>, <code>REVIEW_ASSESSMENT</code>, <code>APPROVE_FEEDBACK</code>, <code>GENERATE_SPECIAL_NOTES</code>, ZIP의 <code>MANAGE_SUBMISSIONS</code></td><td>진입자에게 수행할 수 없는 form도 함께 표시되고, 보조교사는 검토 권한이 있어도 화면을 열 수 없음</td></tr>
+          <tr><td>가져오기</td><td><code>IMPORT_DATA</code></td><td>명단은 <code>MANAGE_ACADEMIC_CONTEXT</code>, 템플릿은 <code>MANAGE_WORKSHEETS</code>, import run은 <code>IMPORT_DATA</code></td><td>하나의 상위 화면에 세 권한과 세 소유권이 섞임</td></tr>
+          <tr><td>활동지·배부</td><td><code>MANAGE_WORKSHEETS</code></td><td><code>MANAGE_WORKSHEETS</code>, <code>ASSIGN_WORKSHEETS</code>, <code>MANAGE_SUBMISSIONS</code></td><td>배정 전담자와 제출 관리자에게 필요한 화면 진입 경로가 없음</td></tr>
+          <tr><td>설정</td><td><code>MANAGE_SETTINGS</code></td><td>설정 저장은 <code>MANAGE_SETTINGS</code>, 자동 제출 작업은 <code>MANAGE_SUBMISSIONS</code></td><td>운영 명령과 정책 설정이 같은 화면에 섞임</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>목표 규칙:</strong> 화면은 허용된 작업만 렌더링하고, 하위 탭의 직접 URL과 REST는 같은 capability를 다시 검사한다. 단, 버튼을 숨기는 것은 보안 경계가 아니며 서버 검사가 최종 기준이다.</div>
+
+      <h2 id="rest">REST 권한 행렬</h2>
+      <table>
+        <thead><tr><th>Controller</th><th>경로 / 작업</th><th>주요 capability</th><th>객체 범위 판정</th></tr></thead>
+        <tbody>
+          <tr><td><code>Admin_Settings</code></td><td>1 / 2</td><td><code>MANAGE_SETTINGS</code></td><td>전역 설정으로 별도 행 scope 없음</td></tr>
+          <tr><td><code>Academic</code></td><td>8 / 12</td><td>GET <code>TEACH</code>, POST <code>MANAGE_ACADEMIC_CONTEXT</code></td><td>교사별 학급 목록·쓰기 범위 없음</td></tr>
+          <tr><td><code>Assessment</code></td><td>16 / 17</td><td>실행 7, 검토 5, 승인 4, 특기사항 1 작업</td><td>submission·result·feedback의 교사 담당 범위 없음</td></tr>
+          <tr><td><code>Curriculum</code></td><td>5 / 8</td><td><code>MANAGE_CURRICULUM</code>, <code>MANAGE_WORKSHEETS</code></td><td>활동지·교육과정 객체 소유 범위 없음</td></tr>
+          <tr><td><code>Dashboard</code></td><td>8 / 8</td><td><code>TEACH</code>, <code>VIEW_OWN_DASHBOARD</code>, <code>EXPORT_REPORTS</code></td><td>일부 학생·학급 export만 사용자 정의 검사</td></tr>
+          <tr><td><code>Environment</code></td><td>1 / 1</td><td><code>MANAGE_SETTINGS</code></td><td>전역 진단</td></tr>
+          <tr><td><code>Import</code></td><td>4 / 4</td><td><code>IMPORT_DATA</code></td><td>import run 요청자·대상 범위 없음</td></tr>
+          <tr><td><code>Platform</code></td><td>4 / 4</td><td><code>MANAGE_SETTINGS</code></td><td>전역 연결 진단</td></tr>
+          <tr><td><code>Submission</code></td><td>17 / 18</td><td><code>MANAGE_SUBMISSIONS</code> 10, <code>ASSIGN_WORKSHEETS</code> 3, <code>VIEW_OWN_DASHBOARD</code> 5</td><td>학생 self callback은 배정을 재검사하지만 교사 목록·상세·재개방·ZIP은 담당 학급 범위가 없음</td></tr>
+          <tr><td><code>Worksheet</code></td><td>9 / 11</td><td><code>MANAGE_WORKSHEETS</code> 9, 학생용 <code>VIEW_OWN_DASHBOARD</code> 조건부 2</td><td>학생 템플릿 보기·답안 정규화에 해당 배정의 소유 확인이 없음</td></tr>
+        </tbody>
+      </table>
+      <p>전역 capability만 검사하는 작업은 다른 교사의 학생·배정·제출·평가 결과 ID를 알게 된 경우 접근을 막지 못한다. 목록 filter도 보안 범위가 아니므로 Repository 조회 조건과 단건 Service 명령에서 actor context를 함께 강제해야 한다.</p>
+
+      <h2 id="nonce">Nonce 흐름</h2>
+      <pre><code>브라우저 화면 7곳
+  wp_create_nonce('wp_rest')
+          |
+          `-- X-WP-Nonce header
+                    |
+                    | WordPress REST cookie 인증: wp_rest 검증
+                    ` Rest_Permission: oj_ai_dashboard action으로 다시 검증
+                                      `-- action 불일치, 403 bad_nonce
+
+영향
+  POST 51 + DELETE 1 + 제출 GET 2 = 명시적 검사 54작업</code></pre>
+      <table>
+        <thead><tr><th>단계</th><th>현재 값</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr><td>화면 발급</td><td><code>wp_create_nonce('wp_rest')</code></td><td>WordPress cookie REST의 표준 nonce</td></tr>
+          <tr><td>클라이언트 전송</td><td><code>X-WP-Nonce</code></td><td>표준 header</td></tr>
+          <tr><td>애드온 재검증</td><td>기본 action <code>oj_ai_dashboard</code></td><td>같은 nonce 문자열을 다른 action으로 검증해 실패</td></tr>
+          <tr><td>GET 재사용</td><td><code>/submissions</code>, <code>/submissions/{id}</code></td><td>조회도 쓰기용 <code>manage_submissions</code> callback을 사용해 nonce를 요구</td></tr>
+        </tbody>
+      </table>
+      <div class="warning callout"><strong>목표 규칙:</strong> 브라우저 cookie REST는 WordPress의 <code>wp_rest</code> 계약 하나를 사용한다. capability와 객체 scope는 permission callback에서 계속 검사하되 같은 header를 다른 action으로 중복 검증하지 않는다. 비브라우저 호출이 필요하면 별도의 명시적 인증 방식을 설계하고 nonce와 섞지 않는다.</div>
+      <div class="good callout" id="nonce-r148"><strong>0.1.13 구현 확인:</strong> 평가 정책·루브릭·검토 기준·활동지 외부 AI 동의·학생 제출 외부 AI 동의의 cookie 기반 <code>GET</code>과 쓰기 요청이 모두 화면에서 발급한 <code>wp_rest</code> nonce를 전송한다. 로그인·capability·객체 scope 검사는 서버 permission callback에서 계속 수행하며 REST 경로와 권한 계약은 바뀌지 않았다.</div>
+
+      <h2 id="scope">객체 범위</h2>
+      <table>
+        <thead><tr><th>대상</th><th>현재 검사</th><th>현재 적용</th><th>누락</th></tr></thead>
+        <tbody>
+          <tr><td>자기 학생 데이터</td><td>actor와 student ID가 같으면 허용</td><td>학생 목록·상세 Service callback</td><td>활동지 template·normalize 단계의 assignment 소유 연계</td></tr>
+          <tr><td>관리자</td><td><code>MANAGE</code> 보유 시 전역 우회</td><td><code>Scope_Checker</code></td><td>민감 작업의 별도 최고 관리자 정책 여부</td></tr>
+          <tr><td>교사→학생</td><td><code>student_user_id_param</code>이 선언된 일부 Route만 provider 호출</td><td>대리 제출·업로드와 일부 보고서</td><td>제출·평가·피드백·보고서 대부분</td></tr>
+          <tr><td>교사→학급</td><td>일부 export callback의 사용자 정의 검사</td><td>학급 CSV 등 제한적</td><td>학사 조회·쓰기, 대시보드, 배정, import</td></tr>
+          <tr><td>교사→활동지</td><td>없음</td><td>없음</td><td>작성자·공동 편집자·배부 가능 범위</td></tr>
+          <tr><td>교사→배정·제출</td><td>학생 self 경로 일부만 assignment 재검사</td><td>학생 작성·제출</td><td>교사 목록·상세·재개방·대리 작업</td></tr>
+          <tr><td>교사→평가 결과</td><td>없음</td><td>없음</td><td>실행·재시도·검토·승인·공개·특기사항 전체</td></tr>
+          <tr><td>내보내기 파일</td><td><code>EXPORT_REPORTS</code>만 확인</td><td>파일 다운로드</td><td><code>requested_by</code>, 학급·보고서 대상 소유 확인</td></tr>
+        </tbody>
+      </table>
+      <p>현재 provider는 애드온 테이블의 학급 교사 ID와 학생 mapping을 읽는다. 이미 확정한 “플랫폼 사용자·학급·그룹 원장 사용” 원칙과 충돌하므로 목표에서는 로컬 학사 provider를 제거하고 플랫폼의 공개된 context authorization gateway를 사용해야 한다.</p>
+      <div class="callout"><strong>Fail closed 유지:</strong> 플랫폼 context gateway가 없거나 호환되지 않으면 교사 범위 작업을 전역 허용하지 않는다. 연결 및 진단에서 원인을 보여 주고 해당 명령을 거부한다.</div>
+
+      <h2 id="settings">옵션과 기능 플래그</h2>
+      <h3>WordPress 옵션 5개</h3>
+      <table>
+        <thead><tr><th>옵션</th><th>현재 목적</th><th>목표 분류</th></tr></thead>
+        <tbody>
+          <tr><td><code>oj_ai_dashboard_version</code></td><td>애드온 코드 버전</td><td>애드온 내부 설치 metadata로 유지</td></tr>
+          <tr><td><code>oj_ai_dashboard_db_version</code></td><td>애드온 DB schema 버전</td><td>무접두어 <code>oj_ai_*</code> 테이블 migration metadata로 유지</td></tr>
+          <tr><td><code>oj_ai_dashboard_installed_migrations</code></td><td>적용 migration 목록</td><td>애드온 내부 migration metadata로 유지</td></tr>
+          <tr><td><code>oj_ai_dashboard_enable_assistant_role</code></td><td>선택형 역할 생성 여부</td><td>별도 애드온 역할 제거 권고에 따라 폐기 후보</td></tr>
+          <tr><td><code>oj_ai_dashboard_settings</code></td><td>호환, 역할, AI, queue 설정 묶음</td><td>소유권에 맞춰 평가 정책·이전 정책만 남기고 분해</td></tr>
+        </tbody>
+      </table>
+
+      <h3><code>oj_ai_dashboard_settings</code> 필드</h3>
+      <table>
+        <thead><tr><th>필드</th><th>실제 사용</th><th>목표 소유자</th></tr></thead>
+        <tbody>
+          <tr><td><code>legacy_shortcode_compat_enabled</code></td><td>호환 shortcode filter에 실제 사용</td><td>애드온 A-DS-15 이전 정책</td></tr>
+          <tr><td><code>assistant_role_enabled</code></td><td>별도 옵션과 역할 생성에 실제 사용</td><td>플랫폼 권한 배정으로 대체 권고</td></tr>
+          <tr><td><code>ai_provider</code></td><td>저장·화면 표시만 하고 평가 transport가 읽지 않음</td><td>OJ Platform AI 연결 프로필</td></tr>
+          <tr><td><code>ai_model</code></td><td>저장·화면 표시만 하고 평가 transport가 읽지 않음</td><td>OJ Platform AI 작업 배정</td></tr>
+          <tr><td><code>queue_batch_limit</code></td><td>저장·화면 표시만 하고 worker가 읽지 않음</td><td>A-DS-07에서 실행 gateway와 함께 확정, dead setting으로 유지 금지</td></tr>
+        </tbody>
+      </table>
+
+      <h3>기능 플래그 10개</h3>
+      <table>
+        <thead><tr><th>묶음</th><th>플래그</th><th>현재 판정</th></tr></thead>
+        <tbody>
+          <tr><td>플랫폼 연결</td><td><code>oj_platform_available</code>, <code>oj_groups_enabled</code>, <code>teacher_dashboard_in_oj_enabled</code></td><td>연결 모드 진단에 사용. 그룹 flag는 학사 모드 분기에 실제 사용</td></tr>
+          <tr><td>독립 실행</td><td><code>local_groups_enabled</code>, <code>standalone_teacher_dashboard</code></td><td>플랫폼 필수 목표와 충돌하므로 제거 대상</td></tr>
+          <tr><td>플랫폼 기능</td><td><code>oj_code_grading_enabled</code>, <code>oj_problem_analysis_enabled</code></td><td>주로 진단 표시이며 기능별 공개 API 가용성과 직접 연결되지 않음</td></tr>
+          <tr><td>애드온 기능</td><td><code>worksheet_enabled</code>, <code>ai_assessment_enabled</code></td><td>항상 true이고 실제 기능 차단 정책으로 쓰이지 않음</td></tr>
+          <tr><td>호환</td><td><code>legacy_shortcode_compat_enabled</code></td><td>항상 true로 계산되어 저장 설정을 반영하지 않음</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>목표 규칙:</strong> “플랫폼에 연결됨” 한 개의 큰 flag로 기능을 추정하지 않는다. manifest 승인, context gateway, AI task routing, PublicUI 기여처럼 필요한 공개 계약의 개별 가용성을 읽고, 사용자가 바꿀 수 없는 진단 사실과 운영자가 바꾸는 정책 설정을 분리한다.</div>
+
+      <h2 id="ownership">확정된 목표 소유권</h2>
+      <table>
+        <thead><tr><th>영역</th><th>OJ Platform</th><th>AI 평가 애드온</th></tr></thead>
+        <tbody>
+          <tr><td>사용자·수업 대상</td><td>사용자, 학급, 그룹, 교사 담당 관계의 원장과 context 판정</td><td>플랫폼 식별자를 참조하며 별도 학년·그룹을 만들지 않음</td></tr>
+          <tr><td>AI 연결</td><td>provider profile, endpoint, 인증 비밀값, 연결 검사</td><td>비밀값을 저장·조회하지 않고 연결 상태 코드만 사용</td></tr>
+          <tr><td>AI 작업 배정</td><td>task type별 주·대체 profile, model, 제한과 routing revision</td><td><code>addon.oj_ai_dashboard.worksheet_quality_assessment</code>, <code>addon.oj_ai_dashboard.student_submission_assessment</code> 같은 task type을 선언</td></tr>
+          <tr><td>평가 업무</td><td>작업 routing과 공개 실행 gateway 제공</td><td>활동지 자체 평가, 학생 제출 평가, 입력 구성, 결과 schema 검증과 이력 저장</td></tr>
+          <tr><td>평가 정책</td><td>소유하지 않음</td><td>기본 루브릭, 평가 정책, 검토·승인·학생 공개 기준</td></tr>
+          <tr><td>운영 화면</td><td>기존 <code>운영 &gt; AI 연결 프로필</code>, <code>운영 &gt; AI 작업 배정</code></td><td>OJ Console의 <code>AI 활동지</code> 안에서 제작·배부·평가·검토</td></tr>
+          <tr><td>학생 화면</td><td>PublicUI shell, 메뉴 합성, 로그인 사용자 context</td><td><code>학습 &gt; 활동지</code> 목록·상세·작성·제출·공개 결과</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>C-28 보완 반영:</strong> <a href="../../../oj-integration-rebuild/oj-platform/docs/development-c-28-addon-extension-api.html#runtime-gateways">C28-D09~D11</a>에 범용 capability 선언·명시적 배정, context authorization, AI task 선언·실행 gateway를 추가했다. 플랫폼 구현 시 같은 C-28 HTML과 테스트·버전·수량 문서를 함께 갱신한다.</div>
+
+      <h2 id="gaps">발견 격차와 후속 소유</h2>
+      <table>
+        <thead><tr><th>ID</th><th>중요도</th><th>현재 사실</th><th>위험</th><th>후속 단계</th></tr></thead>
+        <tbody>
+          <tr><td><code>A-D003-F01</code></td><td><span class="badge danger">Critical</span></td><td>애드온 역할과 플랫폼 역할이 분리되고 Console 접근권한을 공유하지 않음</td><td>권한이 있어도 메뉴에 못 들어가거나 역할을 이중 관리함</td><td><code>C28-D09</code> 권한 계약, <code>A-DS-02</code>·<code>A-DS-03</code>·<code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D003-F02</code></td><td><span class="badge danger">High</span></td><td>역할·capability를 매 <code>init</code>에 추가하고 비활성화 시 정리하지 않음</td><td>삭제·축소된 권한이 계속 남음</td><td><code>A-DS-02</code>·<code>A-DS-03</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D003-F03</code></td><td><span class="badge wait">Medium</span></td><td><code>VIEW_STUDENT_DASHBOARD</code>는 실행 경로에서 사용되지 않음</td><td>권한 표가 실제 접근을 설명하지 못함</td><td><code>A-DS-03</code>·<code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D003-F04</code></td><td><span class="badge danger">High</span></td><td>4개 주요 화면의 진입 capability와 내부 작업 capability가 다름</td><td>dead control 또는 권한 보유자의 진입 차단</td><td><code>A-DS-01</code>·<code>A-DS-03</code>·<code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D003-F05</code></td><td><span class="badge danger">Critical</span></td><td>교사 REST 대부분이 전역 capability만 검사</td><td>다른 교사의 학생·배정·평가 결과 접근 가능</td><td>C-28 context gateway, <code>A-DS-03</code>, <code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D003-F06</code></td><td><span class="badge danger">Critical</span></td><td>학생 template 보기·답안 normalize에 assignment 범위가 없음</td><td>배정되지 않은 활동지 내용 접근 가능</td><td><code>A-DS-03</code>, <code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D003-F07</code></td><td><span class="badge danger">Critical</span></td><td>내보내기 파일 다운로드에 요청자·학급 범위가 없음</td><td>파일 ID 노출 시 다른 보고서 다운로드 가능</td><td><code>A-D-007</code>, <code>A-DS-03</code>·<code>A-DS-08</code>·<code>A-DS-14</code></td></tr>
+          <tr><td><code>A-D003-F08</code></td><td><span class="badge danger">High</span></td><td>UI의 <code>wp_rest</code> nonce와 서버의 <code>oj_ai_dashboard</code> action이 다름</td><td>명시적 nonce 대상 54작업이 403</td><td><code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D003-F09</code></td><td><span class="badge wait">Medium</span></td><td>제출 목록·상세 GET이 쓰기 nonce callback을 재사용</td><td>조회가 불필요한 nonce 수명에 묶임</td><td><code>A-DS-03</code>, <code>A-DS-08</code></td></tr>
+          <tr><td><code>A-D003-F10</code></td><td><span class="badge danger">High</span></td><td>provider·model·queue 설정이 저장만 되고 실행에서 사용되지 않음</td><td>운영자가 바꾼 설정과 실제 AI 동작이 다름</td><td><code>A-DS-04</code>, <code>A-DS-07</code></td></tr>
+          <tr><td><code>A-D003-F11</code></td><td><span class="badge wait">Medium</span></td><td>기능 플래그 대부분이 진단 전용이고 호환 flag는 저장값과 다름</td><td>화면의 가용성 표시가 실제 기능과 어긋남</td><td><code>A-DS-04</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D003-F12</code></td><td><span class="badge danger">Critical</span></td><td>범위 provider가 애드온 학급·학생 mapping을 원본으로 사용</td><td>플랫폼 수업 대상과 권한 결과가 달라짐</td><td><code>C28-D10</code> context gateway, <code>A-D-005</code>, <code>A-DS-03</code>·<code>A-DS-06</code>·<code>A-DS-15</code></td></tr>
+          <tr><td><code>A-D003-F13</code></td><td><span class="badge danger">High</span></td><td>역할별 메뉴·URL·REST·scope·nonce 실행 테스트가 없음</td><td>권한 우회와 정상 사용자 차단을 자동 탐지하지 못함</td><td><code>A-DS-03</code>·<code>A-DS-08</code>·<code>A-DS-16</code></td></tr>
+          <tr><td><code>A-D003-F14</code></td><td><span class="badge danger">Critical</span></td><td>조사 시점 C-28에 범용 AI task와 context permission 공개 계약이 없었음</td><td>애드온이 플랫폼 내부 service를 몰래 조회하거나 기능을 중복 구현하게 됨</td><td><code>C28-D09~D11</code> 보완 반영, 후속 <code>A-DS-02</code>·<code>A-DS-04</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="decision">A-D-003 확정 결정</h2>
+      <section class="panel">
+        <ol>
+          <li>신규 설치에서는 애드온 전용 교사·학생·보조교사 역할을 만들지 않고, 플랫폼의 역할·사용자 권한 관리에서 애드온 capability를 배정한다.</li>
+          <li>Console Route는 플랫폼 shell 접근과 애드온 capability를 모두 요구하고, PublicUI Route는 로그인·학습자 사용 capability·해당 배정 scope를 모두 요구한다.</li>
+          <li>교사 객체 범위는 애드온 로컬 학급 표가 아니라 플랫폼 context authorization gateway를 기준으로 한다.</li>
+          <li>활동지 자체 평가 실행과 학생 제출 평가 실행 capability를 분리하고, 검토·승인·공개도 독립 capability로 유지한다.</li>
+          <li>브라우저 REST는 <code>wp_rest</code> nonce 계약 하나만 사용하며 모든 읽기·쓰기에서 capability와 객체 scope를 별도로 검사한다.</li>
+          <li>C-28 보완은 플랫폼 코드 변경 전에 플랫폼 개발 문서에 계약·거부 조건·테스트 기준을 먼저 반영하고 같은 구현 작업에서 동기화한다.</li>
+        </ol>
+      </section>
+      <div class="callout"><strong>승인 기록:</strong> 2026-08-10 사용자가 보완이 필요한 부분을 반영하고 다음 단계로 진행하도록 승인했다. 위 여섯 결정을 A-D-003 목표 기준선으로 동결한다.</div>
+
+      <h2 id="completion">A-D-003 완료 판정</h2>
+      <table>
+        <thead><tr><th>완료 조건</th><th>결과</th><th>증거</th></tr></thead>
+        <tbody>
+          <tr><td>Capability·역할 전수 목록</td><td>충족</td><td>16개 capability, 기본 2개·선택 1개 역할과 관리자 부여 기록</td></tr>
+          <tr><td>화면·작업 권한 비교</td><td>충족</td><td>평가, 가져오기, 활동지, 설정의 진입·내부 작업 불일치 기록</td></tr>
+          <tr><td>REST 권한·scope 추적</td><td>충족</td><td>10 Controller, 85작업과 객체별 누락 범위 기록</td></tr>
+          <tr><td>Nonce 검증 추적</td><td>충족</td><td>52 상태 변경 + 2 GET의 action 불일치 기록</td></tr>
+          <tr><td>옵션·기능 플래그 소유권</td><td>충족</td><td>옵션 5개, 설정 필드 5개, 기능 플래그 10개 분류</td></tr>
+          <tr><td>플랫폼 통합 격차</td><td>충족</td><td>역할·context·AI task의 C-28 보완 항목 기록</td></tr>
+          <tr><td>실행 코드·플랫폼 변경 금지</td><td>충족</td><td>HTML 설계 문서만 추가·연결, 실행 코드 변경 0건</td></tr>
+          <tr><td>사용자 기준선 확인</td><td>충족</td><td>2026-08-10 여섯 목표 권한 결정과 C-28 보완을 승인하고 <code>A-D-004</code> 시작</td></tr>
+        </tbody>
+      </table>
+
+      <p class="footer">이 문서의 권한·scope·nonce·설정 기준선을 확정했다. 다음 단계는 <a href="a-d-004-data-storage.html"><code>A-D-004 데이터 저장 구조</code></a> 전수 조사다.</p>
+    </main>
+  </div>
+</body>
+</html>

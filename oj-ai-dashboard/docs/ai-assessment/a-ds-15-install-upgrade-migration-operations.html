@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A-DS-15 설치·업그레이드·기존 데이터 이전·운영</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>A-DS-15 설치·이전·운영</p>
+      <nav><div class="nav-group"><strong>문서</strong>
+        <a href="index.html">허브</a>
+        <a href="design-procedure.html">전체 설계 순서</a>
+        <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+        <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+        <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+        <a href="a-d-004-data-storage.html">A-D-004 데이터·저장</a>
+        <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+        <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+        <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+        <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+        <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+        <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+        <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+        <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+        <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+        <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+        <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+        <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+        <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+        <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+        <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+        <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html" aria-current="page">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+        <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+        <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+        <a href="a-ds-01-ui-prototype.html">UI 시안</a>
+        <a href="redesign.html">재설계 기준</a>
+        <a href="code-consistency.html">코드 일관성</a>
+      </div><div class="nav-group"><strong>섹션</strong>
+        <a href="#result">결론</a><a href="#scope">범위·입력</a><a href="#baseline">현재 구현</a><a href="#boundary">운영 경계</a><a href="#compatibility">호환성</a><a href="#install">신규 설치</a><a href="#upgrade">업그레이드</a><a href="#migration-engine">Schema 적용</a><a href="#backup">백업·복구</a><a href="#legacy">기존 데이터</a><a href="#collision">이름 충돌 전환</a><a href="#mapping">이전 매핑</a><a href="#import-flow">미리보기·실행</a><a href="#compensation">보상·재실행</a><a href="#deactivate">비활성화·제거</a><a href="#purge">영구 정리</a><a href="#operations">상태 점검</a><a href="#platform">플랫폼 API</a><a href="#rest">REST 동결</a><a href="#database">DB 동결</a><a href="#ui">운영 UI</a><a href="#limits">한도</a><a href="#errors">오류</a><a href="#security">보안</a><a href="#acceptance">수용 기준</a><a href="#decisions">결정 기록</a><a href="#forward-migration-1-0-1">1.0.1 전진 적용</a><a href="#failure-restart-1-0-2">S03 재시작</a><a href="#forward-repair-1-0-2">S04 C75 복구</a><a href="#data-preservation-1-0-2">S05 데이터 보존</a><a href="#legacy-preview-0-1-2">S01 C61 이전 preview</a><a href="#g6-upgrade-rollback">G6 최종 인수</a><a href="#completion">완료 판정</a>
+      </div></nav>
+    </aside>
+
+    <main class="content">
+      <section class="hero" id="result">
+        <p class="eyebrow">Detailed Design 16 / 17</p>
+        <h2>설치·업그레이드·기존 데이터 이전·운영</h2>
+        <p>새 설치, 코드 업데이트, 과거 데이터 이전, 장애 복구와 영구 정리를 서로 다른 절차로 운영한다. 모든 대상 테이블은 WordPress prefix를 붙이지 않은 고정 <code>oj_ai_*</code> 이름이며 어떤 절차도 OJ Platform 파일·테이블·설정·migration을 수정하지 않는다.</p>
+        <div class="meta"><span class="badge">작성일 2026-08-14</span><span class="badge good">상태 사용자 확인·동결</span><span class="badge good">확정일 2026-08-14</span><span class="badge good">A-DS-14 사용자 확인·동결</span><span class="badge">결정 24개</span><span class="badge good">Contract Amendment 1건 반영</span><span class="badge good">DB Amendment 1건 반영</span><span class="badge good">REST Amendment 1건 반영</span><span class="badge good">플랫폼 dev.33 Runtime readiness 인수</span><span class="badge">목표 table 45개 유지</span><span class="badge good">C28-I06 G0 코드 관문 충족</span><span class="badge">애드온 업무 Runtime 변경 0건</span></div>
+      </section>
+
+      <h2 id="scope">목적·범위·동결 입력</h2>
+      <section class="panel">
+        <p>이 단계는 WordPress 활성화·업데이트·비활성화·제거, 애드온 schema 설치와 forward repair, 기존 0.x 데이터의 읽기 전용 검사·명시 이전, 운영 상태와 복구 절차를 정한다. 활동지 package 가져오기는 A-DS-09, 학생 제출 ZIP 가져오기는 A-DS-11이며 이 단계의 “기존 데이터 이전”과 섞지 않는다.</p>
+        <table><thead><tr><th>입력</th><th>계승 계약</th><th>A-DS-15 책임</th></tr></thead><tbody>
+          <tr><td><a href="a-ds-02-addon-lifecycle.html">A-DS-02</a></td><td><code>oj_platform_register_addons</code>, 애드온별 <code>onReady()</code>, fail closed, 플랫폼 무수정</td><td>활성화 hook과 다음 정상 boot의 역할을 분리</td></tr>
+          <tr><td><a href="a-ds-03-access-policy.html">A-DS-03</a></td><td><code>manage_migrations</code>, 기존 권한 자동 승격 금지</td><td>이전·복구·영구 정리의 추가 운영 gate와 감사</td></tr>
+          <tr><td><a href="a-ds-05-addon-database.html">A-DS-05</a></td><td>45개 고정 무접두어 <code>oj_ai_*</code> table, owner marker, migration/import/purge 원장</td><td>실행 순서·상태·checkpoint·외부 백업 근거를 상세화</td></tr>
+          <tr><td><a href="a-ds-08-route-rest-command.html">A-DS-08</a></td><td><code>Q28~Q29·Q36</code>, <code>C61~C63·C70~C75</code>, 비동기 명령·Policy</td><td>승인·purge·repair 조회와 명령을 Amendment 05로 동결</td></tr>
+          <tr><td><a href="a-ds-14-dashboard-report-export.html">A-DS-14</a></td><td>private file, checksum, 비동기 artifact와 다운로드 재인가</td><td>이전 package를 보고서 export와 구분하고 수명·보호 규칙을 적용</td></tr>
+          <tr><td><a href="../../../oj-integration-rebuild/oj-platform/docs/development-ds-15-operations-migration.html">OJ Platform DS-15</a></td><td>웹 요청에서 DB 관리자 명령·전체 dump·전체 restore를 수행하지 않음</td><td>외부 백업과 애드온 forward repair의 책임을 분리</td></tr>
+        </tbody></table>
+        <div class="warning callout"><strong>구현 중단선:</strong> <code>A-DS15-D01~D24</code>과 세 amendment는 사용자 확인으로 동결했다. 활성화기·목표 migration·이전·purge·운영 REST를 포함한 업무 Runtime 구현은 A-DS-16 최종 승인 뒤에만 시작한다.</div>
+      </section>
+
+      <h2 id="baseline">현재 구현 기준선과 교체 지점</h2>
+      <table><thead><tr><th>ID</th><th>현재 사실</th><th>목표 계약</th><th>판정</th></tr></thead><tbody>
+        <tr><td><code>A-DS15-B01</code></td><td>플러그인 0.1.7 header는 WordPress 6.6+·PHP 8.1+을 요구한다.</td><td>OJ Platform 기준과 같은 사전 검사</td><td>유지</td></tr>
+        <tr><td><code>A-DS15-B02</code></td><td><code>Activation::activate()</code>가 권한 설치·DB 적용·option 갱신을 바로 실행한다.</td><td>호환성 검사 뒤 애드온 schema만 적용</td><td>교체</td></tr>
+        <tr><td><code>A-DS15-B03</code></td><td><code>Capabilities::install()</code>이 로컬 역할과 capability를 만든다.</td><td>Manifest 선언과 OJ Platform 배정만 사용</td><td>제거</td></tr>
+        <tr><td><code>A-DS15-B04</code></td><td>현재 Migrator는 option과 <code>dbDelta()</code> 결과를 완료 근거로 사용한다.</td><td>named lock·immutable checksum·postcondition·checkpoint 원장</td><td>교체</td></tr>
+        <tr><td><code>A-DS15-B05</code></td><td>현재 Table_Names는 35개 고정 이름만 알고 owner marker가 없다.</td><td>45개 exact registry와 installation owner·fingerprint</td><td>교체</td></tr>
+        <tr><td><code>A-DS15-B06</code></td><td>부분 schema·동명 외부 table·Multisite 차단이 완전하지 않다.</td><td>쓰기 전 전수 검사와 단일 사이트 전용 차단</td><td>보강</td></tr>
+        <tr><td><code>A-DS15-B07</code></td><td>현재 legacy preview가 import run row를 생성한다.</td><td>미리보기의 업무 데이터 변경 0건</td><td>교체</td></tr>
+        <tr><td><code>A-DS15-B08</code></td><td>현재 commit은 항목 처리 중 실패하면 앞선 쓰기가 남을 수 있다.</td><td>batch checkpoint와 생성 대상별 보상 가능 기록</td><td>교체</td></tr>
+        <tr><td><code>A-DS15-B09</code></td><td>현재 import가 로컬 학년·학급·그룹·학생 master를 대상으로 한다.</td><td>플랫폼 Context·사용자 매핑만 검증하고 원장은 쓰지 않음</td><td>제거</td></tr>
+        <tr><td><code>A-DS15-B10</code></td><td>기존 capability를 새 권한으로 안전하게 이관하는 승인 흐름이 없다.</td><td>권고안만 표시하고 자동 배정 0건</td><td>보강</td></tr>
+        <tr><td><code>A-DS15-B11</code></td><td>비활성화는 제출 scheduler 일부만 정리한다.</td><td>모든 schedule·lease·worker를 중단하고 데이터 보존</td><td>교체</td></tr>
+        <tr><td><code>A-DS15-B12</code></td><td>명시적인 uninstall 보존·purge 계약이 구현돼 있지 않다.</td><td>기본 보존과 사전 2단계 영구 정리</td><td>보강</td></tr>
+        <tr><td><code>A-DS15-B13</code></td><td>현재 Plugin은 실제 <code>onReady()</code> 연결 전에 모듈을 boot한다.</td><td>Bridge unavailable 조립 뒤 accepted callback에서만 연결</td><td>교체</td></tr>
+        <tr><td><code>A-DS15-B14</code></td><td>플랫폼 <code>dev.33</code>의 <code>AddonSystemStatusProvider</code>가 catalog와 Runtime readiness를 분리해 운영 상태에 연결한다.</td><td>OJ Platform 운영 화면을 진단 진입점으로 사용</td><td><span class="badge good">G0 구현 인수</span></td></tr>
+        <tr><td><code>A-DS15-B15</code></td><td><code>onReady()</code> 결과는 <code>pending|ready|failed|not_required</code>로 보존되고 callback 예외는 안전 code로 축약된다.</td><td>플랫폼 진단과 별도로 애드온 Bridge는 자기 연결 전까지 fail closed</td><td><span class="badge good">LC01 구현</span></td></tr>
+        <tr><td><code>A-DS15-B16</code></td><td>현재 35개 중 일부 이름이 목표 45개와 겹친다.</td><td>같은 DB의 자동 in-place 전환 금지와 오프라인 cutover</td><td>명시 분리</td></tr>
+      </tbody></table>
+
+      <h2 id="boundary">운영 경계와 불변식</h2>
+      <table><thead><tr><th>영역</th><th>애드온 책임</th><th>금지</th></tr></thead><tbody>
+        <tr><td>대상 DB</td><td>현재 단일 사이트의 45개 literal <code>oj_ai_*</code> table과 애드온 option·private file</td><td><code>$wpdb-&gt;prefix</code>로 대상 이름 생성, OJ Platform·WordPress 원장 write</td></tr>
+        <tr><td>플랫폼</td><td>공개 상수·Addon API 호환성 확인과 Manifest 등록</td><td>플랫폼 파일·config·table·option·migration patch</td></tr>
+        <tr><td>권한</td><td>15개 capability 선언, 현재 운영자 Policy 검사</td><td>활성화 때 role·user 자동 grant</td></tr>
+        <tr><td>Schema</td><td>owner marker, exact fingerprint, immutable forward delta, postcondition</td><td>동명 업무 table 자동 adoption, down migration, 추측 복구</td></tr>
+        <tr><td>기존 데이터</td><td>허용된 legacy profile의 read-only SELECT, preview·mapping·명시 승인</td><td>원본 rename·update·delete, wildcard table 채택, 이중 쓰기</td></tr>
+        <tr><td>백업</td><td>외부 백업 확인 정보와 scope digest만 checkpoint에 기록</td><td>웹 요청의 <code>mysqldump</code>, DB 생성·삭제, 전체 restore</td></tr>
+      </tbody></table>
+      <div class="warning callout"><strong>무접두어 원칙:</strong> target registry는 언제나 정확한 <code>oj_ai_*</code> literal이다. 과거 WordPress prefix가 붙은 이름은 운영자가 선택한 legacy source profile에서만 읽고 target 이름·fallback·자동 후보로 사용하지 않는다.</div>
+
+      <h2 id="compatibility">설치 호환성 행렬</h2>
+      <table><thead><tr><th>검사</th><th>허용</th><th>실패 처리</th></tr></thead><tbody>
+        <tr><td>WordPress·PHP</td><td>WordPress 6.6 이상, PHP 8.1 이상</td><td>활성화 중단, DB 변경 0건</td></tr>
+        <tr><td>PHP extension</td><td><code>dom|fileinfo|intl|mbstring|mysqli|openssl|xmlwriter|zip</code></td><td>필수 기능별 누락 표시, schema 적용 전 차단</td></tr>
+        <tr><td>OJ Platform</td><td>활성 상태, 제품 최솟값 충족, Addon API <code>&gt;=1.1.0 &lt;2.0.0</code></td><td><code>activation_blocked</code></td></tr>
+        <tr><td>사이트</td><td>단일 사이트</td><td>Multisite network·blog activation 모두 차단</td></tr>
+        <tr><td>DB 권한</td><td>exact DDL·DML postcondition을 수행할 권한</td><td>설치 전 중단 또는 forward repair 필요 상태</td></tr>
+        <tr><td>DB metadata</td><td>MySQL SQL <code>NULL</code>과 MariaDB nullable 문자열 <code>NULL</code> 표현을 같은 의미로 정규화</td><td>실제 문자열·type·nullable·order·auto increment drift는 <code>table_columns_mismatch</code></td></tr>
+        <tr><td>동명 table</td><td>없음 또는 같은 addon owner marker·지원 fingerprint. 승인된 0.1.5 복구는 exact·empty <code>oj_ai_installations</code> 하나만 예외</td><td><code>schema_owner_conflict</code>, 그 밖의 자동 채택 0건</td></tr>
+        <tr><td>private storage</td><td>기존 외부 root 우선, 신규 설치는 writable <code>HOME</code>·<code>USERPROFILE</code> 후보, 필요 시 <code>OJ_AI_PRIVATE_STORAGE_DIR</code></td><td>web root 밖 경로만 허용, 공개 upload fallback 없음</td></tr>
+      </tbody></table>
+      <p>OJ Platform 제품 하한은 <code>2.0.0-dev.33</code>, Addon API 범위는 <code>&gt;=1.1.0 &lt;2.0.0</code>으로 고정한다. 검증 G0 upgrade·rollback·fingerprint 증거를 기록했고 production package는 manifest가 <code>source_dirty=false</code>일 때만 만든다. Composer와 plugin header의 요구 버전은 같은 release manifest에서 생성한다.</p>
+
+      <h2 id="install">신규 설치 절차</h2>
+      <div class="flow">
+        <div class="step"><div><strong>1 · 정적 사전 검사</strong><br>WordPress·PHP·extension·단일 사이트·플랫폼 상수와 Addon API 범위를 확인한다.</div></div>
+        <div class="step"><div><strong>2 · 이름·소유 검사</strong><br>45개 exact 이름을 조회하고 동명 table과 과거 source를 구분한다. 하나라도 소유 불명이면 쓰지 않는다. 단, exact·empty bootstrap owner table 하나는 0.1.5 제한 복구로 잠금 전후 재검증한다.</div></div>
+        <div class="step"><div><strong>3 · DB lock</strong><br><code>oj_ai_dashboard_schema</code> named lock 하나를 획득하고 설치 correlation을 만든다.</div></div>
+        <div class="step"><div><strong>4 · 원장 bootstrap</strong><br>installation·schema migration 원장을 먼저 만들고 owner marker를 기록한다.</div></div>
+        <div class="step"><div><strong>5 · Immutable delta</strong><br>정렬된 migration을 한 번씩 적용하고 DDL·checksum·postcondition을 기록한다.</div></div>
+        <div class="step"><div><strong>6 · 전수 검산</strong><br>45개 table·owner 10개·index·column·FK·schema fingerprint를 다시 계산한다.</div></div>
+        <div class="step"><div><strong>7 · 등록 대기</strong><br>설치는 <code>registration_pending</code>으로 끝나며 다음 정상 boot의 Manifest 승인을 미리 성공으로 간주하지 않는다.</div></div>
+        <div class="step"><div><strong>8 · Runtime 준비</strong><br>accepted <code>onReady()</code>에서 schema를 읽기 전용 검산하고 Bridge를 원자 연결한다. DDL은 실행하지 않는다.</div></div>
+      </div>
+      <p>WordPress activation hook이 실패하면 안정 code와 짧은 조치만 표시한다. DDL은 auto-commit될 수 있으므로 일부 적용이 발생하면 원장과 postcondition으로 <code>maintenance_required</code>를 남기고 다음 시도는 완료된 checksum을 검산한 뒤 forward repair만 수행한다.</p>
+
+      <h2 id="upgrade">코드 업데이트 절차</h2>
+      <table><thead><tr><th>단계</th><th>행동</th><th>실패 시</th></tr></thead><tbody>
+        <tr><td>Package 검증</td><td>code version·migration manifest·checksum·요구 플랫폼 범위 검증</td><td>기존 code·schema로 유지</td></tr>
+        <tr><td>Preflight</td><td>현재 owner marker·schema version·fingerprint·미완료 run·disk·DB 권한 확인</td><td>업무 command를 maintenance 상태로 차단</td></tr>
+        <tr><td>Forward apply</td><td>추가·확장형 immutable migration을 순서대로 적용</td><td>checkpoint 뒤 중단, down SQL 자동 실행 금지</td></tr>
+        <tr><td>Postcondition</td><td>각 migration과 전체 45-table fingerprint 검산</td><td><code>repair_required</code>, worker·쓰기 중단</td></tr>
+        <tr><td>Boot</td><td>다음 <code>onReady()</code>에서 code/schema 호환을 확인하고 Bridge ready</td><td>안전한 이용 불가 화면</td></tr>
+      </tbody></table>
+      <ul>
+        <li>일반 업데이트 migration은 additive·bounded여야 한다. 대량 rewrite·column 의미 교체·원본 삭제는 code update에 포함하지 않고 명시 운영 절차로 분리한다.</li>
+        <li>migration 파일의 ID·정규화 SQL·checksum은 릴리스 뒤 바꾸지 않는다. 수정은 새 migration ID로만 한다.</li>
+        <li>구 code로 rollback할 때 새 schema를 자동으로 내리지 않는다. 호환 release 또는 forward repair를 배포한다.</li>
+      </ul>
+
+      <h2 id="migration-engine">Schema 적용·재개·복구</h2>
+      <table><thead><tr><th>상태</th><th>진입</th><th>허용</th><th>다음</th></tr></thead><tbody>
+        <tr><td><code>planned</code></td><td>manifest에 있고 원장에 없음</td><td>precondition·checksum 검증</td><td>running|blocked</td></tr>
+        <tr><td><code>running</code></td><td>lock 획득·checkpoint 시작</td><td>현재 phase의 idempotent forward step</td><td>applied|repair_required</td></tr>
+        <tr><td><code>applied</code></td><td>모든 postcondition 통과</td><td>읽기 전용 재검산</td><td>유지</td></tr>
+        <tr><td><code>repair_required</code></td><td>부분 DDL·checksum·postcondition 불일치</td><td>쓰기·worker 중단, C75 명시 repair</td><td>running|blocked</td></tr>
+        <tr><td><code>blocked</code></td><td>owner 충돌·알 수 없는 migration·하향 code</td><td>진단·외부 복구만</td><td>운영자 조치</td></tr>
+      </tbody></table>
+      <p><code>dbDelta()</code> 호출 성공이나 option 값만으로 완료를 판정하지 않는다. 각 migration은 ID, checksum, from/to version, precondition, ordered step, checkpoint profile, postcondition과 repair handler를 하나의 descriptor로 제공한다.</p>
+
+      <h2 id="backup">외부 백업과 복구 책임</h2>
+      <table><thead><tr><th>작업</th><th>백업 요구</th><th>애드온이 기록하는 것</th><th>실제 복구 owner</th></tr></thead><tbody>
+        <tr><td>신규 빈 설치</td><td>필수 아님</td><td>설치 correlation·schema fingerprint</td><td>애드온 forward repair</td></tr>
+        <tr><td>additive 소규모 update</td><td>사이트 운영 정책 적용</td><td>migration checkpoint</td><td>애드온 forward repair</td></tr>
+        <tr><td>대량 변환·C75 repair</td><td>최근 24시간 외부 백업 확인 필수</td><td>참조 digest·검증 시각·scope digest, 경로·credential 제외</td><td>호스팅·DB 운영자</td></tr>
+        <tr><td>기존 데이터 cutover</td><td>DB·private file 외부 백업과 이전 package 필수</td><td>source·package fingerprint와 운영자 승인</td><td>호스팅·DB 운영자 + 애드온 import</td></tr>
+        <tr><td>영구 정리</td><td>외부 백업 확인과 legal hold 0건 필수</td><td>preview hash·승인자·만료 token·checkpoint</td><td>외부 백업 복원은 운영자</td></tr>
+      </tbody></table>
+      <div class="warning callout"><strong>백업 기능의 의미:</strong> 애드온은 전체 DB dump·database restore·server filesystem 복원을 실행하지 않는다. 화면의 “백업 확인”은 운영자가 외부 백업을 만들었다는 증거를 고위험 작업에 묶는 절차이며 백업 성공 자체를 보장한다는 뜻이 아니다.</div>
+
+      <h2 id="legacy-contract">기존 데이터 이전 Contract Amendment 01</h2>
+      <div class="callout"><strong><code>A-DS15-CA01</code> · 사용자 확인·동결:</strong> 애드온 내부 계약 <code>oj_ai.legacy_migration_plan@1.0.0</code>과 암호화 이동 형식 <code>oj_ai.legacy_migration_package@1.0.0</code>을 정의한다. OJ Platform 공개 API나 플랫폼 table을 추가하지 않는다.</div>
+      <table><thead><tr><th>계약</th><th>필수 항목</th><th>금지</th></tr></thead><tbody>
+        <tr><td>Plan</td><td>source profile·version·fingerprint, inventory, mapping decisions, exclusions, conflicts, counts, plan hash</td><td>비밀값·원본 전체 row·자동 권한 grant</td></tr>
+        <tr><td>Package manifest</td><td>contract version, source fingerprint, ordered chunk list, item count, byte count, created time, package hash</td><td>절대 경로·DB credential·API key</td></tr>
+        <tr><td>Chunk</td><td>연속 번호, source domain, compressed bytes, plaintext hash, AEAD nonce·tag</td><td>무결성 없는 ZIP·실행 파일·상대 경로</td></tr>
+        <tr><td>Key</td><td>운영자에게 별도 전달되는 일회성 256-bit key</td><td>package·DB·option·로그에 key 저장</td></tr>
+        <tr><td>Item</td><td>source type·key·checksum, schema version, allowlisted payload, asset reference</td><td>SQL 문장·PHP object serialization·platform table dump</td></tr>
+      </tbody></table>
+      <p>package는 source adapter가 검증한 canonical record만 담고 각 chunk를 독립 인증 암호화한다. import 전에 전체 manifest·chunk hash를 검증하며 key를 잃으면 package를 복구하지 않는다. target public ID는 package에 미리 고정하지 않고 import run의 deterministic mapping에서 생성·기록한다.</p>
+
+      <h2 id="legacy">기존 데이터의 정확한 범위</h2>
+      <table><thead><tr><th>구분</th><th>포함</th><th>제외</th></tr></thead><tbody>
+        <tr><td>애드온 업무 데이터</td><td>활동지·문항·연결·배포·제출·첨부·평가·검토·피드백·교사 기록</td><td>검증할 수 없는 임시 row·orphan·중복 공식 결과</td></tr>
+        <tr><td>로컬 학사 데이터</td><td>플랫폼 Context·WordPress 사용자와 연결할 mapping 후보만</td><td>학년·학급·그룹·학생 master의 target 복제와 플랫폼 write</td></tr>
+        <tr><td>권한</td><td>기존 key별 신규 capability 권고안과 차이</td><td>role·user 자동 grant</td></tr>
+        <tr><td>AI 설정</td><td>평가 정책으로 안전하게 변환 가능한 값만</td><td>provider·model·API key·endpoint·비밀값 자동 이전</td></tr>
+        <tr><td>보고서·파일</td><td>원본 연결과 scan이 검증된 private 첨부</td><td>재현 원본 없는 report/export, 공개 URL, 알 수 없는 파일</td></tr>
+        <tr><td>감사 기록</td><td>이전 package의 source manifest와 target import 감사</td><td>legacy 문자열 로그를 새 append-only 감사 사건으로 위장</td></tr>
+      </tbody></table>
+      <p>legacy source adapter는 알려진 릴리스별 exact table 목록만 가진다. 운영자가 source profile을 선택하고 표시된 이름을 확인한 뒤에만 metadata와 row를 읽으며 wildcard table scan, 임의 접두어 추측과 target registry 혼합을 금지한다.</p>
+
+      <h2 id="collision">과거 무접두어 이름 충돌과 오프라인 전환</h2>
+      <div class="warning callout"><strong>자동 in-place 이전 금지:</strong> 현재 35개 무접두어 source 중 일부는 목표 45개와 물리 이름이 같지만 column 의미가 다르다. owner marker가 없는 같은 이름을 target으로 채택하거나 그 자리에서 ALTER·rename·delete하지 않는다.</div>
+      <div class="flow">
+        <div class="step"><div><strong>1 · Bridge export</strong><br>target DDL 전 legacy-compatible 애드온이 source를 읽어 <code>oj_ai.legacy_migration_package@1.0.0</code>을 만든다.</div></div>
+        <div class="step"><div><strong>2 · 외부 검증</strong><br>DB·private file 백업, package manifest·chunk checksum·복호화 검사를 완료한다.</div></div>
+        <div class="step"><div><strong>3 · 유지보수 전환</strong><br>사이트 쓰기를 중단하고 호스팅·DB 운영자가 legacy table을 별도 보관한 뒤 target 이름 공간을 비운다.</div></div>
+        <div class="step"><div><strong>4 · 신규 schema 설치</strong><br>애드온은 빈 target 이름과 owner marker를 검증하고 45개 schema를 설치한다.</div></div>
+        <div class="step"><div><strong>5 · Package import</strong><br>preview·mapping·승인 뒤 target public ID를 새로 만들고 항목별 checkpoint를 기록한다.</div></div>
+        <div class="step"><div><strong>6 · 검산·재개</strong><br>수량·hash·관계·표본 화면을 확인한 뒤 maintenance를 해제한다.</div></div>
+      </div>
+      <p>애드온은 3단계의 DB archive·drop을 웹 요청으로 실행하지 않는다. 운영자가 원본을 보관하지 않았거나 package 검증이 실패하면 target 설치와 이전을 시작하지 않는다. 과거 prefix로 이름이 분리된 source는 같은 plan 계약 아래 read-only direct import가 가능하지만 승인·검산 기준은 같다.</p>
+
+      <h2 id="mapping">이전 매핑 규칙</h2>
+      <table><thead><tr><th>Source 묶음</th><th>Target</th><th>필수 검증</th><th>불가 처리</th></tr></thead><tbody>
+        <tr><td>template·question·achievement link</td><td>worksheet root·immutable revision·question·link</td><td>Plate canonicalization, response kind 10종, document hash</td><td>항목 제외·사유</td></tr>
+        <tr><td>assignment·submission·revision</td><td>assignment·target·submission·receipt</td><td>platform Context·active learner mapping, exact source revision</td><td>mapping 확인 대기</td></tr>
+        <tr><td>attachment·ZIP</td><td>private file·attachment·ZIP item</td><td>실제 byte, MIME, size, hash, malware scan</td><td>파일 격리</td></tr>
+        <tr><td>plan·rubric snapshot</td><td>policy·rubric·review rule revision</td><td>지원 schema·배점·불변 참조</td><td>활성화 없이 archive 제외</td></tr>
+        <tr><td>run·grading·result·review</td><td>subject별 evaluation·run·result·official review</td><td>source chain 완전성, 점수 합계, 교사 확정 근거</td><td>AI 결과를 공식 결과로 승격하지 않음</td></tr>
+        <tr><td>feedback·special note</td><td>feedback·student note revision</td><td>교사 승인·학생 공개 범위·민감정보</td><td>draft 또는 제외</td></tr>
+        <tr><td>local class·group·student</td><td>target master 없음</td><td>현재 OJ Platform Context와 WordPress 사용자 explicit mapping</td><td>원본에만 보존</td></tr>
+        <tr><td>report·export</td><td>기본 미이전</td><td>exact source manifest가 완전한 경우만 새 snapshot 후보</td><td>target에서 다시 생성</td></tr>
+      </tbody></table>
+
+      <h2 id="import-flow">미리보기·승인·실행</h2>
+      <table><thead><tr><th>단계</th><th>상태</th><th>변경</th><th>필수 출력</th></tr></thead><tbody>
+        <tr><td>Source 검사</td><td><code>discovered</code></td><td>0건</td><td>profile·table·row·blob byte·source fingerprint</td></tr>
+        <tr><td>미리보기</td><td><code>previewed</code></td><td>업무 데이터·원장 0건</td><td>이전·제외·충돌·mapping 필요 수, plan hash, 30분 <code>preview_token</code></td></tr>
+        <tr><td>Mapping</td><td><code>previewed</code></td><td>서명 token만 반환</td><td>Context·사용자·권한 권고 차이</td></tr>
+        <tr><td>명시 승인</td><td><code>approved</code></td><td>원장 run 최초 생성, 승인자·시각·plan hash</td><td>source·plan 재계산, token 검증, <code>run_id</code></td></tr>
+        <tr><td>실행</td><td><code>running</code></td><td>batch별 target transaction</td><td>item state·target public ID·checkpoint</td></tr>
+        <tr><td>검산</td><td><code>completed|completed_with_errors</code></td><td>새 업무 쓰기 없음</td><td>수량·관계·hash·표본·failure 목록</td></tr>
+      </tbody></table>
+      <p>preview는 source를 읽어 매번 결정적으로 계산하며 <code>oj_ai_import_runs</code> row를 만들지 않는다. C61·C71부터 <code>Idempotency-Key</code>를 필수로 받고, 반환하는 최대 4 KiB <code>preview_token</code>은 purpose·site·source/scope fingerprint·plan hash·<code>idempotency_key_hash</code>·발급·만료 시각·무작위 nonce만 담은 서명 envelope다. 원본 record·PII·경로·credential은 담지 않는다. 승인 요청은 같은 key와 plan을 다시 계산해 token과 비교한 뒤 exact preview와 source fingerprint를 원장에 처음 기록한다. Import는 <code>uq_import_idempotency</code>, purge는 <code>uq_purge_idempotency</code>와 <code>uq_purge_approval_token</code>으로 같은 key 또는 token의 중복 원장 생성을 막는다. 다른 key를 사용하거나 source가 한 byte라도 달라지거나 token이 30분을 넘기면 거부하며, 같은 key의 재전송은 같은 run/job을 반환한다.</p>
+
+      <h2 id="compensation">부분 실패·보상·재실행</h2>
+      <ul>
+        <li>각 item은 source type·key·checksum과 생성한 target type·public ID를 기록한다. 같은 source checksum 재실행은 기존 성공 item을 중복 생성하지 않는다.</li>
+        <li>한 batch는 owner aggregate 단위 transaction으로 처리한다. 다른 batch 실패가 이미 검증된 aggregate를 암묵적으로 rollback하지 않는다.</li>
+        <li><code>C63</code>은 DB 전체 rollback이 아니라 이 run이 만든 target만 역의존 순서로 보상한다. 이후 사용자가 수정·배포·제출한 target은 자동 삭제하지 않고 수동 해결로 남긴다.</li>
+        <li>원본 source와 package는 수정하지 않는다. 실패 항목을 고친 새 mapping은 새 plan hash와 새 run을 사용한다.</li>
+        <li>보상 완료 뒤에도 import run·item과 감사 사건은 남기며 원본 삭제를 성공 조건으로 삼지 않는다.</li>
+      </ul>
+
+      <h2 id="deactivate">비활성화·재활성화·플러그인 제거</h2>
+      <table><thead><tr><th>행동</th><th>처리</th><th>보존</th></tr></thead><tbody>
+        <tr><td>비활성화</td><td>애드온 schedule과 활동지·학생 제출 평가 worker hook 제거, 새 lease 금지, 실행 중 작업을 interrupted로 회수 가능하게 표시</td><td>45개 table·option·private file·동의·권한 배정 기록</td></tr>
+        <tr><td>재활성화</td><td>전체 preflight·owner·fingerprint·미완료 checkpoint 검산 뒤 schedule 재등록</td><td>기존 public ID·revision·감사</td></tr>
+        <tr><td>플러그인 파일 제거</td><td>uninstall hook은 데이터 삭제를 실행하지 않고 보존 상태만 기록 가능한 범위에서 유지</td><td>애드온 데이터 전부</td></tr>
+        <tr><td>재설치</td><td>정확한 owner marker·지원 schema·fingerprint일 때만 기존 installation 인수</td><td>불일치 시 자동 adoption 없이 차단</td></tr>
+      </tbody></table>
+      <div class="callout"><strong>중요:</strong> WordPress의 플러그인 제거 요청에는 제품 UI의 2단계 확인을 안전하게 넣을 수 없으므로 uninstall 자체는 항상 보존 모드다. 영구 삭제가 필요하면 플러그인을 활성 상태로 둔 채 아래 절차를 먼저 완료한다.</div>
+
+      <h2 id="purge">2단계 영구 정리</h2>
+      <div class="flow">
+        <div class="step"><div><strong>1 · 범위 계산</strong><br>owner별 row 수, private blob byte, 미완료 job, legal hold를 읽기 전용으로 계산한다.</div></div>
+        <div class="step"><div><strong>2 · 미리보기</strong><br>삭제될 활동지·제출·평가·보고서·파일 수와 제외 이유, 30분 <code>preview_token</code>을 보여 준다.</div></div>
+        <div class="step"><div><strong>3 · 운영자 확인</strong><br>범위를 다시 계산해 token·현재 권한·외부 백업·preview hash를 검증하고 purge job과 expiring approval을 처음 만든다.</div></div>
+        <div class="step"><div><strong>4 · 실행</strong><br>업무 쓰기를 maintenance로 닫고 역의존 순서로 metadata와 blob을 checkpoint 삭제한다.</div></div>
+        <div class="step"><div><strong>5 · 완료 검산</strong><br>target table·option·private blob 0건과 platform fingerprint 불변을 확인한다.</div></div>
+      </div>
+      <p>legal hold가 하나라도 있거나 backup evidence가 없거나 preview hash가 바뀌면 승인·실행을 거부한다. 플랫폼 capability 배정 기록과 OJ Platform 데이터는 purge 범위가 아니며 애드온이 삭제하지 않는다.</p>
+
+      <h2 id="operations">운영 상태와 조치</h2>
+      <table><thead><tr><th>상태 항목</th><th>정상</th><th>경고·오류</th><th>가능 행동</th></tr></thead><tbody>
+        <tr><td>플랫폼 등록</td><td>accepted</td><td>incompatible·rejected</td><td>OJ Platform 운영 상태 확인</td></tr>
+        <tr><td>애드온 실행</td><td>Bridge ready</td><td>pending·callback 미호출·실패</td><td>기능 이용 중단·LC01 진단</td></tr>
+        <tr><td>데이터 구조</td><td>owner·version·fingerprint·45개 일치</td><td>부분 적용·checksum·postcondition 불일치</td><td>다시 확인·명시 복구</td></tr>
+        <tr><td>작업 처리</td><td>schedule·queue·lease 정상</td><td>오래된 lease·실패 누적·비활성</td><td>작업 재개·진단</td></tr>
+        <tr><td>파일 보관</td><td>private path·쓰기·scan·cleanup 정상</td><td>공간 부족·고아 blob·권한 오류</td><td>정리·운영자 조치</td></tr>
+        <tr><td>AI 작업 배정</td><td>두 task 모두 연결됨</td><td>task별 설정 필요·확인 불가·다시 확인 필요</td><td>OJ Platform AI 작업 배정으로 이동</td></tr>
+        <tr><td>기존 데이터</td><td>없음 또는 완료·검산됨</td><td>source 변경·mapping·충돌·부분 실패</td><td>미리보기·재실행·보상</td></tr>
+      </tbody></table>
+      <p>일반 화면은 “사용 준비됨”, “확인 필요”, “사용할 수 없음”과 다음 행동만 보여 준다. table 이름·SQL·절대 경로·stack·비밀값·raw exception은 권한 있는 상세에서도 표시하지 않고 안전 code와 correlation ID만 제공한다.</p>
+      <div class="good callout"><strong>G5-IMP-05-S01 구현 인수:</strong> Q28의 Bridge·데이터 구조·작업 처리 세 상태를 구현했다. 동일 schema readiness 결과와 네 AI worker schedule, literal queue aggregate를 사용하며 DDL·repair·AI execute·write는 0회다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S02 구현 인수:</strong> Q28이 두 AI task의 현재 routing을 독립 판정한다. 작업 배정 미완료는 플랫폼 AI 작업 배정으로 안내하고, 일시 오류·stale snapshot은 재확인으로 안내한다. provider·model·endpoint·원본 오류는 노출하지 않는다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S03 구현 인수:</strong> A-DS15-RA01의 <code>storage</code> 공백을 해소했다. private 경로·읽기·쓰기·공간, 네 scan·cleanup 작업, 15분 지연과 metadata 일관성을 읽기 전용으로 판정하며 물리 파일 전체 순회·repair·삭제는 수행하지 않는다.</div>
+      <div class="good callout"><strong>G5-IMP-05-S04 구현 인수:</strong> 설정의 시스템 상태 탭에 Q28 다섯 검사를 연결하고 사용자에게 짧은 상태와 복구 행동만 제공한다. repair 명령은 만들지 않았으며 필요한 경우 실제 플랫폼 화면 또는 다시 확인으로 안내한다.</div>
+      <p>Manifest incompatible·rejected와 callback failed는 Bridge 이전 상태이므로 OJ Platform 운영 화면이 정본이다. 애드온 Q28은 Console 공통 Policy를 우회하지 않으며 Bridge가 ready인 뒤 local 상태만 확인한다.</p>
+
+      <h2 id="platform">OJ Platform API 구현 대조와 인수 판정</h2>
+      <table><thead><tr><th>항목</th><th>실제 구현</th><th>A-DS-15 처리</th></tr></thead><tbody>
+        <tr><td>등록</td><td><code>oj_platform_register_addons</code>에서 원자 후보를 수집</td><td>activation hook과 분리, 다음 boot에서만 판정</td></tr>
+        <tr><td>승인 Runtime</td><td>accepted entry만 <code>onReady()</code> 최대 1회 호출</td><td>Bridge ready와 catalog accepted 분리, handler fail closed</td></tr>
+        <tr><td>Catalog 상태</td><td><code>AcceptedAddonCatalog</code>가 addon ID·<code>accepted|incompatible|rejected</code>·안전 code를 내부 보존</td><td>애드온 자체 API가 아닌 OJ Platform 운영 화면에서 확인</td></tr>
+        <tr><td>운영 화면</td><td><code>dev.33</code>의 <code>AddonSystemStatusProvider</code>가 catalog와 Runtime readiness를 <code>SystemStatusRegistry</code>에 등록</td><td>거부·비호환·callback 실패의 안전한 진입점으로 인수</td></tr>
+        <tr><td>Callback 상태</td><td><code>pending|ready|failed|not_required</code>를 catalog 승인 상태와 분리해 보존</td><td><code>addon_runtime_callback_failed</code> 진단과 Bridge fail closed를 함께 적용</td></tr>
+        <tr><td>플랫폼 쓰기</td><td>Addon API에 platform migration·설정 write 없음</td><td>새 API를 만들지 않고 애드온 데이터만 운영</td></tr>
+      </tbody></table>
+      <div class="callout"><strong>dev.33 G0 구현 인수:</strong> <code>AddonRuntimeReadiness</code>, <code>AddonLifecycleManager</code>, <code>AddonSystemStatusProvider</code>와 <code>CompositionRoot</code> 조립을 확인했다. accepted catalog와 callback ready/failed는 서로 다른 축이며 계약 fixture가 raw 예외 비노출과 무재시도 경계를 검증한다. 애드온 내부 설치·이전에는 새 플랫폼 API 후보가 없다.</div>
+      <p>manifest 거부·비호환은 OJ Platform 운영 상태에서 확인하고, accepted 뒤 callback 실패는 별도 Runtime <code>failed</code>와 안전 code로 확인한다. 어느 경우든 애드온은 Bridge가 준비되지 않은 모든 Runtime 의존 기능을 닫고 같은 부팅 재시도를 추측하지 않는다. 이 진단 구현은 별도 플랫폼 G0 작업으로 끝났으며 애드온 설치 과정은 플랫폼 Runtime을 수정하지 않는다.</p>
+
+      <h2 id="rest">A-DS-08 REST Semantic Amendment 05 · 사용자 확인·동결</h2>
+      <div class="callout"><strong><code>A-DS15-RA01</code> · 사용자 확인·동결:</strong> Page Route 9개는 유지한다. <code>Q36</code>과 <code>C70~C75</code>를 additive로 추가해 조회 36개·명령 75개로 하고 기존 C61~C63의 preview·승인·실행·보상 의미를 분명히 한다.</div>
+      <table><thead><tr><th>ID</th><th>Path</th><th>의미</th></tr></thead><tbody>
+        <tr><td><code>Q28</code></td><td><code>GET /diagnostics</code></td><td>Bridge·schema·queue·storage·AI와 제공 가능한 platform catalog 안전 상태</td></tr>
+        <tr><td><code>Q29</code></td><td><code>GET /migration-runs/{run_id}</code></td><td>source fingerprint·preview·승인·checkpoint·item 요약</td></tr>
+        <tr><td><code>Q36</code></td><td><code>GET /purge-jobs/{job_id}</code></td><td>영구 정리 미리보기·승인 만료·checkpoint·legal hold 요약</td></tr>
+        <tr><td><code>C61</code></td><td><code>POST /migration-runs/commands/preview</code></td><td>필수 Idempotency-Key에 결속된 plan과 서명 <code>preview_token</code> 계산, 업무·원장 변경 0건</td></tr>
+        <tr><td><code>C70</code></td><td><code>POST /migration-runs/commands/approve</code></td><td>token·source·preview hash를 재검산하고 approved run 최초 생성</td></tr>
+        <tr><td><code>C62</code></td><td><code>POST /migration-runs/{run_id}/commands/execute</code></td><td>approved run만 202 실행·checkpoint 재개</td></tr>
+        <tr><td><code>C63</code></td><td><code>POST /migration-runs/{run_id}/commands/rollback</code></td><td>이 run이 생성하고 아직 변경되지 않은 target만 보상</td></tr>
+        <tr><td><code>C71</code></td><td><code>POST /purge-jobs/commands/preview</code></td><td>필수 Idempotency-Key에 결속된 row·blob byte·hold와 서명 <code>preview_token</code> 계산, 변경 0건</td></tr>
+        <tr><td><code>C72</code></td><td><code>POST /purge-jobs/commands/approve</code></td><td>token·backup evidence·preview hash·확인 문구를 검증하고 purge job 최초 생성</td></tr>
+        <tr><td><code>C73</code></td><td><code>POST /purge-jobs/{job_id}/commands/execute</code></td><td>maintenance 전환 뒤 202 checkpoint purge</td></tr>
+        <tr><td><code>C74</code></td><td><code>POST /purge-jobs/{job_id}/commands/cancel</code></td><td>실행 전 취소 또는 안전 경계에서 중단</td></tr>
+        <tr><td><code>C75</code></td><td><code>POST /operations/schema/commands/repair</code></td><td>외부 백업 evidence와 exact postcondition을 요구하는 forward repair</td></tr>
+      </tbody></table>
+      <p>모든 명령은 <code>oj_access_console + view_workspace + manage_migrations</code>와 현재 운영자 Policy, 표준 <code>wp_rest</code> nonce, <code>Idempotency-Key</code>, expected state/hash를 검사한다. 영구 정리 승인·실행은 추가로 WordPress 핵심 <code>delete_plugins</code>, 외부 backup evidence와 legal hold 0건을 요구한다.</p>
+
+      <h2 id="database">A-DS-05 Database Amendment 08 · 사용자 확인·동결</h2>
+      <div class="callout"><strong><code>A-DS15-DBA01</code> · 사용자 확인·동결:</strong> A-DS-05의 <code>JSON(name)</code> profile을 운영 원장에 정확히 적용한다. <code>JSON(preview)</code>가 이미 <code>preview_hash</code>를 포함하므로 <code>oj_ai_import_runs</code>와 <code>oj_ai_purge_jobs</code>의 중복 표기를 제거한다. <code>oj_ai_purge_jobs</code>에는 <code>idempotency_key VARCHAR(191)</code>, <code>uq_purge_idempotency(idempotency_key)</code>, <code>uq_purge_approval_token(approval_token_hash)</code>을 추가한다. 신규 table 없이 table 45개·owner 10개·literal 무접두어 <code>oj_ai_*</code>는 유지한다.</div>
+      <table><thead><tr><th>Table·profile</th><th>Schema</th><th>핵심 필드</th></tr></thead><tbody>
+        <tr><td><code>oj_ai_schema_migrations.checkpoint</code></td><td><code>oj_ai.schema_migration_checkpoint@1.0.0</code></td><td>phase·cursor·postcondition·backup evidence digest</td></tr>
+        <tr><td><code>oj_ai_import_runs.preview</code></td><td><code>oj_ai.legacy_migration_preview@1.0.0</code></td><td>source inventory·mapping·제외·충돌·수량·plan hash</td></tr>
+        <tr><td><code>oj_ai_import_runs.checkpoint</code></td><td><code>oj_ai.legacy_migration_checkpoint@1.0.0</code></td><td>batch·item cursor·target public IDs·검산</td></tr>
+        <tr><td><code>oj_ai_import_items.payload</code></td><td><code>oj_ai.legacy_item_payload@1.0.0</code></td><td>허용된 source projection·mapping decision, 비밀 제외</td></tr>
+        <tr><td><code>oj_ai_purge_jobs.preview</code></td><td><code>oj_ai.purge_preview@1.0.0</code></td><td>owner별 row·blob byte·legal hold·scope hash</td></tr>
+        <tr><td><code>oj_ai_purge_jobs.checkpoint</code></td><td><code>oj_ai.purge_checkpoint@1.0.0</code></td><td>역의존 phase·cursor·blob tombstone·postcondition</td></tr>
+        <tr><td><code>oj_ai_purge_jobs.idempotency_key</code></td><td><code>VARCHAR(191)</code></td><td><code>uq_purge_idempotency</code>로 같은 명령 key의 job 중복 생성 차단</td></tr>
+        <tr><td><code>oj_ai_purge_jobs.approval_token_hash</code></td><td>SHA-256 lowercase hex</td><td><code>uq_purge_approval_token</code>으로 같은 preview token의 원장 재사용 차단</td></tr>
+      </tbody></table>
+      <p>각 profile은 <code>name_schema</code>·<code>name_version</code>·<code>name_json</code>·<code>name_hash</code> 네 column이며 canonical JSON·byte limit·upcaster·retention owner를 가진다. 외부 백업 경로·credential·DB dump 내용은 어느 profile에도 저장하지 않는다.</p>
+
+      <h2 id="ui">운영 UI 시안 반영 계약</h2>
+      <table><thead><tr><th>위치</th><th>첫 화면</th><th>사용자 행동</th></tr></thead><tbody>
+        <tr><td>설정 &gt; 시스템 관리</td><td>플랫폼 등록·애드온 실행·데이터 구조·작업 처리·파일 보관 다섯 상태</td><td>다시 확인, 필요한 항목만 열기</td></tr>
+        <tr><td>기존 데이터</td><td>이전 가능·확인 필요·제외 수와 마지막 검사 시각</td><td>이전 내용 확인</td></tr>
+        <tr><td>이전 dialog</td><td>가져올 내용·제외·충돌·권한 변경 0건</td><td>확인 checkbox 뒤 이전 시작</td></tr>
+        <tr><td>데이터 보존</td><td>플러그인을 제거해도 데이터 유지</td><td>영구 정리 열기</td></tr>
+        <tr><td>영구 정리 dialog</td><td>row·파일 용량·보류 건, 되돌릴 수 없음</td><td>백업 확인 + 문구 입력 + 실행</td></tr>
+      </tbody></table>
+      <p><a href="a-ds-01-ui-prototype.html">UI 시안</a>에는 다섯 설정 탭과 시스템 관리 화면, 이전 확인과 영구 정리 dialog를 추가한다. 일반 화면에 schema·table·hash·migration 같은 설계 용어를 길게 노출하지 않고 상태·영향·다음 행동을 먼저 보여 준다.</p>
+
+      <h2 id="limits">한도와 시간 예산</h2>
+      <table><thead><tr><th>ID</th><th>항목</th><th>한도</th><th>초과 처리</th></tr></thead><tbody>
+        <tr><td><code>A-DS15-L01</code></td><td>schema lock 대기</td><td>60초</td><td><code>schema_lock_busy</code></td></tr>
+        <tr><td><code>A-DS15-L02</code></td><td>migration web time slice</td><td>20초</td><td>checkpoint 뒤 202 재개</td></tr>
+        <tr><td><code>A-DS15-L03</code></td><td>이전 batch</td><td>250 items 또는 20초</td><td>먼저 도달한 경계에서 commit</td></tr>
+        <tr><td><code>A-DS15-L04</code></td><td>동시 migration</td><td>site당 1개</td><td>409</td></tr>
+        <tr><td><code>A-DS15-L05</code></td><td>legacy table profile</td><td>100개 exact names</td><td>미지원 source</td></tr>
+        <tr><td><code>A-DS15-L06</code></td><td>item payload</td><td>1 MiB</td><td>파일은 별도 stream, item 실패</td></tr>
+        <tr><td><code>A-DS15-L07</code></td><td>이전 package</td><td>2 GiB, 64 MiB chunk</td><td>분할 package 요구</td></tr>
+        <tr><td><code>A-DS15-L08</code></td><td>승인 유효 시간</td><td>30분</td><td>새 preview·승인</td></tr>
+        <tr><td><code>A-DS15-L09</code></td><td>고위험 backup evidence</td><td>24시간 이내</td><td>재확인 요구</td></tr>
+        <tr><td><code>A-DS15-L10</code></td><td>purge batch</td><td>250 rows 또는 20초</td><td>checkpoint 재개</td></tr>
+        <tr><td><code>A-DS15-L11</code></td><td>상태 조회</td><td>3초, 외부 AI probe 없음</td><td>현재 확인 불가 표시</td></tr>
+        <tr><td><code>A-DS15-L12</code></td><td>운영 상세</td><td>최근 100 events</td><td>cursor pagination</td></tr>
+      </tbody></table>
+
+      <h2 id="errors">안정 오류와 사용자 문구</h2>
+      <table><thead><tr><th>Error</th><th>상태</th><th>사용자 문구</th><th>다음 행동</th></tr></thead><tbody>
+        <tr><td><code>platform_missing</code></td><td>activation blocked</td><td>OJ Platform이 필요합니다</td><td>플랫폼 설치·활성화</td></tr>
+        <tr><td><code>platform_incompatible</code></td><td>activation blocked</td><td>지원되는 버전을 확인해 주세요</td><td>호환 버전 설치</td></tr>
+        <tr><td><code>multisite_unsupported</code></td><td>activation blocked</td><td>이 사이트 구성에서는 사용할 수 없습니다</td><td>단일 사이트 사용</td></tr>
+        <tr><td><code>schema_owner_conflict</code></td><td>blocked</td><td>기존 데이터 확인이 필요합니다</td><td>source·소유권 점검</td></tr>
+        <tr><td><code>schema_checksum_mismatch</code></td><td>maintenance</td><td>데이터 구조를 확인해야 합니다</td><td>운영자 복구</td></tr>
+        <tr><td><code>backup_evidence_required</code></td><td>409</td><td>먼저 백업을 확인해 주세요</td><td>외부 백업 확인</td></tr>
+        <tr><td><code>legacy_source_changed</code></td><td>409</td><td>기존 데이터가 바뀌었습니다</td><td>다시 미리보기</td></tr>
+        <tr><td><code>legacy_collision_requires_cutover</code></td><td>blocked</td><td>운영자 전환 절차가 필요합니다</td><td>이전 package·offline cutover</td></tr>
+        <tr><td><code>migration_approval_required</code></td><td>409</td><td>이전 내용을 먼저 확인해 주세요</td><td>승인</td></tr>
+        <tr><td><code>purge_legal_hold</code></td><td>409</td><td>보존 중인 데이터가 있습니다</td><td>hold 해결</td></tr>
+        <tr><td><code>purge_approval_expired</code></td><td>409</td><td>삭제 내용을 다시 확인해 주세요</td><td>새 preview</td></tr>
+        <tr><td><code>addon_status_unavailable</code></td><td>503</td><td>연결 상태를 확인할 수 없습니다</td><td>플랫폼 운영 확인</td></tr>
+      </tbody></table>
+
+      <h2 id="security">위협과 방어</h2>
+      <table><thead><tr><th>위협</th><th>방어</th><th>검증</th></tr></thead><tbody>
+        <tr><td>동명 table 탈취</td><td>owner marker·exact fingerprint 없으면 쓰기 0건. 0.1.5 bootstrap 복구는 단일 table·0행·exact baseline을 잠금 전후와 기록 직전에 검증</td><td>외부·부분·구버전·행 존재·복수 table fixture</td></tr>
+        <tr><td>접두어 혼동</td><td>target literal registry와 승인된 legacy profile을 별도 type으로 분리</td><td>custom historical prefix·wildcard 음수 fixture</td></tr>
+        <tr><td>권한 자동 승격</td><td>legacy capability는 권고 projection만 생성</td><td>role·user diff 0건</td></tr>
+        <tr><td>이전 중 source 변조</td><td>source fingerprint·item checksum·승인 hash 재검사</td><td>preview 후 row 변경 fixture</td></tr>
+        <tr><td>악성 package</td><td>version·chunk AEAD·checksum·size·path allowlist·schema 검증</td><td>tamper·zip slip·oversize fixture</td></tr>
+        <tr><td>부분 schema 성공 오인</td><td>migration별 postcondition과 전체 fingerprint</td><td>각 step failure injection</td></tr>
+        <tr><td>무단 영구 삭제</td><td>복합 권한·2단계 preview·key 결속·단일 사용 token·backup·legal hold</td><td>stale hash·다른 key·중복 token·철회·재전송 fixture</td></tr>
+        <tr><td>진단 정보 노출</td><td>안전 code·correlation만, raw manifest·SQL·path·stack 제외</td><td>권한별 response snapshot</td></tr>
+      </tbody></table>
+
+      <h2 id="acceptance">수용 기준</h2>
+      <table><thead><tr><th>ID</th><th>검증</th><th>통과 조건</th></tr></thead><tbody>
+        <tr><td><code>A-DS15-A01</code></td><td>호환성</td><td>WordPress·PHP·extension·플랫폼·API·단일 사이트 실패가 DDL 전에 차단된다</td></tr>
+        <tr><td><code>A-DS15-A02</code></td><td>플랫폼 무수정</td><td>설치·update·이전·purge 전후 플랫폼 source·table·option hash가 같다</td></tr>
+        <tr><td><code>A-DS15-A03</code></td><td>대상 이름</td><td>45개 target 모두 literal 무접두어 <code>oj_ai_*</code>이며 prefix 결합 호출이 0건이다</td></tr>
+        <tr><td><code>A-DS15-A04</code></td><td>소유권</td><td>동명 owner·fingerprint 불명 table에 write·ALTER·rename·delete 0건이다</td></tr>
+        <tr><td><code>A-DS15-A05</code></td><td>신규 설치</td><td>lock·원장·migration·postcondition·45-table 검산 뒤 pending으로 끝난다</td></tr>
+        <tr><td><code>A-DS15-A06</code></td><td>등록 분리</td><td>activation은 catalog accepted를 가정하지 않고 onReady는 DDL을 실행하지 않는다</td></tr>
+        <tr><td><code>A-DS15-A07</code></td><td>권한</td><td>활성화·이전에서 local role 생성과 role·user 자동 grant가 0건이다</td></tr>
+        <tr><td><code>A-DS15-A08</code></td><td>Migration</td><td>ID·checksum 불변, 부분 실패 checkpoint, 재실행과 forward repair가 결정적이다</td></tr>
+        <tr><td><code>A-DS15-A09</code></td><td>Rollback</td><td>down migration·전체 DB restore를 웹 요청에서 실행하지 않는다</td></tr>
+        <tr><td><code>A-DS15-A10</code></td><td>백업</td><td>고위험 작업이 외부 backup evidence 없이 시작되지 않고 경로·credential은 저장되지 않는다</td></tr>
+        <tr><td><code>A-DS15-A11</code></td><td>Source 범위</td><td>exact legacy profile만 read-only이며 wildcard·임의 prefix source가 거부된다</td></tr>
+        <tr><td><code>A-DS15-A12</code></td><td>이름 충돌</td><td>과거 무접두어 동명 source는 package·offline cutover 없이 target으로 채택되지 않는다</td></tr>
+        <tr><td><code>A-DS15-A13</code></td><td>미리보기</td><td>C61·C71 preview의 업무 table·원장·platform·role·file 변경이 0건이고 token에 원본 record·PII가 없다</td></tr>
+        <tr><td><code>A-DS15-A14</code></td><td>승인</td><td>승인 endpoint가 token·동일 Idempotency-Key·source·preview hash를 재검산하고 30분 만료·다른 key 재사용·중복 token 충돌을 거부한 뒤 run/job을 처음 만든다</td></tr>
+        <tr><td><code>A-DS15-A15</code></td><td>학사 mapping</td><td>로컬 학사 master가 target에 복제되지 않고 platform mapping 불명 항목은 제외된다</td></tr>
+        <tr><td><code>A-DS15-A16</code></td><td>평가 이력</td><td>legacy AI 결과가 교사 확정 근거 없이 official review로 승격되지 않는다</td></tr>
+        <tr><td><code>A-DS15-A17</code></td><td>부분 실패</td><td>성공 item은 중복되지 않고 실패 item·target ID·checkpoint를 재현할 수 있다</td></tr>
+        <tr><td><code>A-DS15-A18</code></td><td>보상</td><td>run 생성 후 변경되지 않은 target만 보상되고 사용자 변경 객체는 보존된다</td></tr>
+        <tr><td><code>A-DS15-A19</code></td><td>비활성화</td><td>모든 schedule·새 lease가 중단되고 data·file·assignment가 보존된다</td></tr>
+        <tr><td><code>A-DS15-A20</code></td><td>Uninstall</td><td>플러그인 제거만으로 table·option·file·platform 배정이 삭제되지 않는다</td></tr>
+        <tr><td><code>A-DS15-A21</code></td><td>Purge</td><td>preview·backup·legal hold·만료 승인·checkpoint 없이 영구 삭제가 0건이다</td></tr>
+        <tr><td><code>A-DS15-A22</code></td><td>운영 UI</td><td>desktop·mobile에서 다섯 상태와 이전·보존 행동이 짧은 문구로 구분된다</td></tr>
+        <tr><td><code>A-DS15-A23</code></td><td>플랫폼 진단</td><td>dev.33 운영 상태가 catalog와 Runtime readiness를 분리 표시하고 Bridge 의존 surface가 fail closed함</td></tr>
+        <tr><td><code>A-DS15-A24</code></td><td>전체 관문</td><td>CA01·DBA01·RA01은 G1 이후 구현한다. <code>C28-I06-LC01</code>·<code>C28-I06-RC01</code>·<code>C28-I06-RC02</code>·<code>C28-I06-CG11</code>·<code>C28-I06-AJ08</code> 코드·검증 ZIP 관문은 G0에서 충족했고 release 증거는 <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>과 A-DS-16에 유지한다.</td></tr>
+      </tbody></table>
+
+      <h2 id="decisions">결정 기록</h2>
+      <table><thead><tr><th>ID</th><th>결정</th><th>상태</th></tr></thead><tbody>
+        <tr><td><code>A-DS15-D01</code></td><td>목표 요구 버전을 WordPress 6.6+·PHP 8.1+와 OJ Platform 정식 최솟값으로 맞춘다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D02</code></td><td>고정 무접두어 table 때문에 v1 설치 범위는 단일 사이트로 제한한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D03</code></td><td>플랫폼·API·환경 사전 검사를 모든 target DDL보다 먼저 수행한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D04</code></td><td>activation 성공과 다음 boot의 Manifest accepted를 별도 상태로 관리한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D05</code></td><td>onReady에서는 read-only schema 검산과 Bridge 연결만 하고 migration을 실행하지 않는다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D06</code></td><td>동명 table은 owner marker·지원 fingerprint가 없으면 자동 채택하지 않는다. 2026-08-27 승인한 0.1.5 예외는 exact·empty <code>oj_ai_installations</code> 하나의 누락 owner row 복구로만 제한한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D07</code></td><td>활성화와 이전에서 애드온 역할·capability 자동 grant를 하지 않는다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D08</code></td><td>schema 완료는 dbDelta·option이 아닌 원장 checksum·postcondition·전체 fingerprint로 판정한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D09</code></td><td>migration은 immutable forward delta와 checkpoint·repair만 제공하고 down SQL은 제공하지 않는다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D10</code></td><td>대량 rewrite는 일반 code update에서 분리해 maintenance 명령으로 수행한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D11</code></td><td>전체 DB·filesystem 백업과 restore는 호스팅·DB 운영자 책임으로 둔다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D12</code></td><td>고위험 repair·cutover·purge는 외부 backup evidence를 요구하되 경로·credential은 저장하지 않는다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D13</code></td><td>기존 table과 파일은 승인된 source profile에서 read-only로만 접근한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D14</code></td><td>legacy source의 자동 rename·ALTER·delete·adoption·이중 쓰기를 금지한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D15</code></td><td>과거 무접두어 동명 source는 암호화 package와 운영자 offline cutover로 이전한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D16</code></td><td>로컬 학사 master는 가져오지 않고 현재 OJ Platform Context·사용자 mapping만 승인한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D17</code></td><td>기존 capability는 권고안만 표시하고 신규 key로 자동 승격하지 않는다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D18</code></td><td>preview는 업무·원장 변경 없이 Idempotency-Key에 결속된 30분 서명 token을 반환하고 승인 때 재계산한 exact preview와 source fingerprint를 원장에 처음 고정한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D19</code></td><td>이전은 250-item batch checkpoint와 target public ID 기록으로 재실행 가능하게 한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D20</code></td><td>C63은 DB rollback이 아니라 이 run의 미변경 target만 보상한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D21</code></td><td>비활성화는 작업을 멈추고 데이터·파일·플랫폼 배정 기록을 보존한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D22</code></td><td>uninstall은 항상 보존하며 영구 정리는 활성 상태의 2단계 purge로만 수행한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D23</code></td><td>설정의 시스템 관리 화면은 상태·영향·다음 행동을 짧은 문구로 제공한다.</td><td>사용자 확인·동결</td></tr>
+        <tr><td><code>A-DS15-D24</code></td><td>dev.32의 catalog 상태 provider를 구현 인수하고 새 플랫폼 후보를 만들지 않으며 callback 결과 공백은 기존 LC01 관문으로 유지한다. dev.33 readiness 구현으로 이 조건을 충족했다.</td><td>사용자 확인·동결</td></tr>
+      </tbody></table>
+
+      <h2 id="forward-migration-1-0-1">구현 기록 · schema 1.0.1 전진 마이그레이션</h2>
+      <section class="panel">
+        <table><thead><tr><th>구간</th><th>고정 값</th><th>실행</th></tr></thead><tbody>
+          <tr><td>불변 기준선</td><td><code>1.0.0</code> · <code>c55b775563273920fef127142e99e64321a07699e6a3f081579714dfb4a526c1</code></td><td>기존 <code>202608140001</code>·<code>202608140002</code> ID·SQL·checksum 유지</td></tr>
+          <tr><td>전진 delta</td><td><code>202608220001_export_job_context_identity</code></td><td><code>oj_ai_export_jobs</code> optional Context·nullable active identity unique 추가</td></tr>
+          <tr><td>목표</td><td><code>1.0.1</code> · <code>31cee35952177177a1b36bd483f43ea1d6c1880c7d2a1e1ad891f896a41e32b1</code></td><td>전체 metadata와 세 migration applied 검산 뒤 <code>registration_pending</code></td></tr>
+          <tr><td>새 설치</td><td>45 CREATE + 1 ALTER</td><td>기준선과 업그레이드가 같은 append-only 이력을 사용</td></tr>
+          <tr><td>기존 설치</td><td>검증된 1.0.0 + 기존 두 applied record</td><td>ALTER 1건만 실행하고 <code>upgraded</code> 반환</td></tr>
+          <tr><td>중단 복구</td><td><code>maintenance_required</code></td><td>승인·백업 근거 뒤 baseline 또는 target exact metadata만 수용해 중복 DDL 없이 재개</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>검증 완료:</strong> <code>check:database-foundation</code>, <code>check:database-infrastructure</code>, <code>check:activation-database</code>, <code>check:runtime-schema-readiness</code>가 모두 통과했다. WordPress prefix·platform table·platform migration은 사용하지 않았다.</div>
+      </section>
+
+      <h2 id="forward-migration-1-0-2">구현 기록 · schema 1.0.2 전진 마이그레이션</h2>
+      <section class="panel">
+        <table><thead><tr><th>구간</th><th>고정 값</th><th>실행</th></tr></thead><tbody>
+          <tr><td>이전 목표</td><td><code>1.0.1</code> · <code>31cee35952177177a1b36bd483f43ea1d6c1880c7d2a1e1ad891f896a41e32b1</code></td><td>기존 세 migration ID·SQL·checksum 불변</td></tr>
+          <tr><td>전진 delta</td><td><code>202608230001_expand_submission_prompt_contract</code></td><td><code>oj_ai_submission_evaluations.prompt_contract_version</code>을 64자로 확장</td></tr>
+          <tr><td>목표</td><td><code>1.0.2</code> · <code>e49cb1fbcd726f4aae44fe4cb0ad952eabda49971420a7a2a398eee037fd6ee6</code></td><td>전체 metadata와 네 migration applied 검산 뒤 <code>registration_pending</code></td></tr>
+          <tr><td>새 설치</td><td>45 CREATE + 2 ALTER</td><td>1.0.0 baseline에서 두 forward delta를 순서대로 적용</td></tr>
+          <tr><td>기존 1.0.0</td><td>기존 두 applied record</td><td>ALTER 2건만 실행하고 <code>upgraded</code> 반환</td></tr>
+          <tr><td>기존 1.0.1</td><td>기존 세 applied record</td><td>prompt contract ALTER 1건만 실행하고 <code>upgraded</code> 반환</td></tr>
+          <tr><td>중단 복구</td><td><code>maintenance_required</code></td><td>버전별 exact source metadata와 ledger를 확인하고 중복 DDL 없이 재개</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>검증 완료:</strong> database foundation·infrastructure·runtime readiness와 <code>check:submission-evaluation-query-g4</code>가 fresh 1.0.2, 1.0.0→1.0.2, 1.0.1→1.0.2를 통과했다. 기존 1.0.1은 ALTER 1건만 실행한다. WordPress prefix·platform table·platform migration은 사용하지 않았다.</div>
+      </section>
+
+      <h2 id="failure-restart-1-0-2">구현 기록 · schema 1.0.2 실패 상태와 재시작</h2>
+      <section class="panel">
+        <table><thead><tr><th>구간</th><th>고정 값</th><th>실행</th></tr></thead><tbody>
+          <tr><td>실패 동결</td><td><code>maintenance_required</code>·<code>repair_required</code></td><td>설정 seed·version 기록·Runtime 연결 중단</td></tr>
+          <tr><td>checkpoint 봉투</td><td>schema·version 1·canonical JSON·SHA-256</td><td>payload phase·cursor·table·state 결속까지 lock 전에 검증</td></tr>
+          <tr><td>일반 재시도</td><td><code>blocked</code></td><td>lock·DDL·원장 write 0건</td></tr>
+          <tr><td>명시 repair</td><td>actor·승인 digest·backup evidence·catalog fingerprint</td><td>exact baseline 또는 target만 받아 남은 forward delta 재개</td></tr>
+          <tr><td>완료</td><td>45 table·migration 4개·fingerprint</td><td>중복 DDL 없이 <code>registration_pending</code> 복귀</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>G5-IMP-06-S03 인수:</strong> <a href="g5-imp-06-s03-failure-restart.html">전용 구현 기록</a>과 <code>check:failure-restart-g5</code>가 CREATE·ALTER·postcondition·원장·최종 상태 실패, checkpoint 변조 7종과 결정적 재시작을 통과했다.</div>
+      </section>
+
+      <h2 id="forward-repair-1-0-2">구현 기록 · C75 정방향 복구</h2>
+      <section class="panel">
+        <table><thead><tr><th>구간</th><th>고정 값</th><th>실행</th></tr></thead><tbody>
+          <tr><td>명령</td><td><code>POST /operations/schema/commands/repair</code> · <code>202</code></td><td>strict expected·backup·forward-only body</td></tr>
+          <tr><td>권한</td><td><code>oj_access_console + view_workspace + manage_migrations</code></td><td>표준 <code>wp_rest</code> nonce와 8~128자 Idempotency-Key</td></tr>
+          <tr><td>백업</td><td>24시간 이내 UTC·SHA-256 digest</td><td>원문 경로·URL·credential 저장 0건</td></tr>
+          <tr><td>멱등</td><td>actor·key·canonical request digest</td><td>같은 body replay, 다른 body 409 conflict</td></tr>
+          <tr><td>실행</td><td>기존 deterministic repair runner</td><td>중단·후조건 실패 뒤 중복 DDL 없이 resume 또는 converge</td></tr>
+          <tr><td>영수증</td><td>option claim → <code>oj_ai_audit_events</code>·<code>oj_ai_outbox_events</code></td><td>schema 완성 뒤 한 transaction으로 승격</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>G5-IMP-06-S04 인수:</strong> <a href="g5-imp-06-s04-forward-repair.html">전용 구현 기록</a>과 <code>check:forward-repair-g5</code>가 권한·nonce·멱등·stale·expired backup·lock·crash convergence·audit/outbox와 desktop·mobile 복구 UI를 통과했다.</div>
+      </section>
+
+      <h2 id="data-preservation-1-0-2">구현 기록 · 데이터 보존 회귀</h2>
+      <section class="panel">
+        <table><thead><tr><th>보호 대상</th><th>검증 기준</th><th>결과</th></tr></thead><tbody>
+          <tr><td>업무 row·평가 설정</td><td>table별 payload hash와 정책·루브릭·검토 기준 active revision exact snapshot</td><td>전후 동일</td></tr>
+          <tr><td>private file</td><td>asset·첨부·PDF·CSV 실제 byte size·SHA-256</td><td>전후 동일</td></tr>
+          <tr><td>기존 영수증</td><td>audit·outbox 기존 prefix</td><td>rewrite 0건, C75 성공 append 각 1건</td></tr>
+          <tr><td>실행 경로</td><td>신규 설치 격리·1.0.0 upgrade·target no-op·drift 차단·부분 실패·C75·replay</td><td>모두 통과</td></tr>
+          <tr><td>SQL 경계</td><td>CREATE·ALTER allowlist, 파괴 DDL·DML·접두어 table·down migration 0건</td><td>통과</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>G5-IMP-06-S05 인수:</strong> <a href="g5-imp-06-s05-data-preservation.html">전용 구현 기록</a>과 <code>check:data-preservation-g5</code>가 실제 runner·C75 service, 설정 seed 보존과 전체 데이터 스냅샷을 통과했다. production Runtime·schema·플랫폼 API 변경은 없다.</div>
+      </section>
+
+      <h2 id="legacy-preview-0-1-2">구현 기록 · C61 기존 데이터 이전 미리보기</h2>
+      <section class="panel">
+        <table><thead><tr><th>경계</th><th>구현 계약</th><th>결과</th></tr></thead><tbody>
+          <tr><td>소스 선택</td><td><code>oj_ai_dashboard_wpdb_prefixed@0.1.2</code>의 정확한 35개 table·column만 read-only inventory</td><td>통과</td></tr>
+          <tr><td>지문</td><td>canonical row와 제출 첨부·ZIP·내보내기 실제 bytes를 source fingerprint에 결속</td><td>통과</td></tr>
+          <tr><td>계획</td><td>이전·제외·충돌·매핑 필요 수량과 <code>oj_ai.legacy_migration_plan@1.0.0</code> plan hash</td><td>통과</td></tr>
+          <tr><td>토큰</td><td>site·source·plan·Idempotency-Key를 묶은 최대 4 KiB·정확히 30분 HMAC token</td><td>통과</td></tr>
+          <tr><td>변경</td><td>업무·import·audit·outbox·option·플랫폼 mutation 0</td><td>통과</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>G5-IMP-07-S01 인수:</strong> <a href="g5-imp-07-s01-legacy-migration-preview.html">전용 구현 기록</a>과 <code>check:legacy-migration-preview-g5</code>가 exact profile, source drift, collision, 결정적 계획, 토큰 변조와 C61 공통 Policy를 통과했다. target table은 계속 literal <code>oj_ai_*</code>이며 플랫폼 공개 API 변경은 없다.</div>
+      </section>
+
+      <h2 id="completion">완료 판정과 다음 단계</h2>
+      <section class="panel">
+        <p><strong>A-DS-15와 세 보강 계약을 2026-08-14 사용자 확인으로 동결했다.</strong> 신규 설치·forward update·외부 백업·legacy source·이름 충돌 cutover·명시 이전·보상·비활성화·보존 uninstall·2단계 purge와 운영 상태를 하나의 절차로 연결했다.</p>
+        <ul>
+          <li><code>A-DS15-CA01</code>: <code>oj_ai.legacy_migration_plan|package@1.0.0</code> 내부 계약</li>
+          <li><code>A-DS15-DBA01</code>: 운영 JSON profile 정확화, 중복 preview hash 표기 제거와 purge idempotency key·approval token UNIQUE 추가</li>
+          <li><code>A-DS15-RA01</code>: <code>Q36</code>·<code>C70~C75</code> 추가, Page 9·조회 36·명령 75, preview token 뒤 승인 시 run/job 생성</li>
+          <li>플랫폼 추가 후보 0건: <code>dev.33</code>의 catalog·Runtime readiness 진단과 <code>C28-I06-LC01</code> 구현을 인수</li>
+        </ul>
+        <p>A-DS-02·03·05·08과 플랫폼 C-28 개발 문서에 CA01·DBA01·RA01의 정식 amendment를 반영했다. 다음은 <code>A-DS-16 전체 연결·교차 검증·동결</code>이며 그 사용자 승인 전에는 업무 Runtime 구현을 시작하지 않는다.</p>
+        <div class="callout"><strong>후속 Amendment 06:</strong> <a href="a-ds-08-route-rest-command.html#amendment-06">G2 R01 활동지 외부 AI 동의 계약</a>이 Q37·C76·C77을 추가해 당시 aggregate는 Page 9·조회 37·명령 77이었다. 위 RA01의 Q36·C75 수치는 A-DS-15 동결 당시 이력으로 유지한다.</div>
+        <div class="good callout"><strong>후속 Amendment 07:</strong> <a href="a-ds-08-route-rest-command.html#amendment-07">G4 R01 학생 제출 외부 AI 동의 계약</a>이 Q38·C78·C79를 추가해 현재 aggregate는 Page 9·조회 38·명령 79다. 기존 audit·outbox table을 재사용하고 WordPress option은 짧은 동시성 lock에만 사용하므로 새 table·column·migration은 0건이다. 비활성화는 학생 제출 평가 worker hook도 정리한다.</div>
+        <div class="good callout"><strong>CFG-BOOTSTRAP-02 설치 구현:</strong> schema 설치·검산 뒤 두 subject의 정책·루브릭·검토 기준을 한 transaction으로 seed하고 성공한 뒤에만 add-on version을 기록한다. 세 설정 table 중 하나라도 subject 자료가 있으면 그 subject 전체를 보존하며 재활성화는 중복 생성하지 않는다.</div>
+        <div class="callout"><strong>보안 경계:</strong> 설정 seed는 외부 AI 동의를 승인하지 않고 provider·model·endpoint·비밀값을 저장하지 않는다. 물리 table은 기존 literal <code>oj_ai_*</code>만 사용해 새 migration은 0건이다.</div>
+        <div class="good callout"><strong>G5-IMP-06-S01 신규 설치 인수:</strong> <a href="g5-imp-06-s01-fresh-install.html">전용 구현 기록</a>과 <code>check:fresh-install-g5</code>가 A01~A07의 환경·storage 사전 차단, 45 literal table·10 owner·lock·원장·pending, 설정 seed·version 순서와 SELECT-only onReady를 통과했다. 플랫폼 공개 API 변경은 없다.</div>
+        <div class="good callout"><strong>G5-IMP-06-S02 순차 upgrade 인수:</strong> <a href="g5-imp-06-s02-sequential-upgrade.html">전용 구현 기록</a>과 <code>check:sequential-upgrade-g5</code>가 exact 1.0.0·1.0.1 source의 최소 delta, target no-op, owner·fingerprint·ledger·물리 drift의 DDL 0건 차단을 통과했다. production migration 변경과 플랫폼 공개 API 변경은 없다.</div>
+        <div class="good callout"><strong>G5-IMP-06-S03 실패 상태·재시작 인수:</strong> <a href="g5-imp-06-s03-failure-restart.html">전용 구현 기록</a>과 <code>check:failure-restart-g5</code>가 checkpoint 봉투 무결성, maintenance 동결, CREATE·ALTER 재개와 중복 DDL 차단을 통과했다. schema migration 추가와 플랫폼 공개 API 변경은 없다.</div>
+        <div class="good callout"><strong>G5-IMP-06-S04 C75 정방향 복구 인수:</strong> <a href="g5-imp-06-s04-forward-repair.html">전용 구현 기록</a>과 <code>check:forward-repair-g5</code>가 24시간 백업 근거, strict expected state/hash, durable replay·audit/outbox와 복구 화면을 통과했다. table·column·migration 추가와 플랫폼 공개 API 변경은 없다.</div>
+        <div class="good callout"><strong>G5-IMP-06-S05 데이터 보존 회귀 인수:</strong> <a href="g5-imp-06-s05-data-preservation.html">전용 구현 기록</a>과 <code>check:data-preservation-g5</code>가 업무 row·설정·private bytes·기존 영수증 보존과 C75 append-only replay를 통과했다. production Runtime과 플랫폼 공개 API 변경은 없다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S01 C61 이전 preview 인수:</strong> <a href="g5-imp-07-s01-legacy-migration-preview.html">전용 구현 기록</a>과 <code>check:legacy-migration-preview-g5</code>가 35개 exact source table, 실제 row·blob fingerprint, 30분 token과 mutation 0을 통과했다. 플랫폼 공개 API 변경은 없다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S02 C70 이전 승인 인수:</strong> <a href="g5-imp-07-s02-legacy-migration-approval.html">전용 구현 기록</a>과 <code>check:legacy-migration-approval-g5</code>가 token·site·key·현재 source·plan 재검산, 최초 201·replay 200, approved run·audit·outbox 원자 transaction과 rollback을 통과했다. import item·업무·플랫폼 write는 0건이며 C61에 없는 mapping을 만들지 않는다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-D3-D2 mapping 계약 인수:</strong> <a href="g5-imp-07-s03-d3-d-owner-migration.html">배정·제출·평가 owner 이전 기록</a>과 <code>check:legacy-migration-mapping-g5</code>가 actual assignment Context·learner 의존성 기반 manifest, C70 exact decision, C62 Context·roster·membership 재검산을 통과했다. D3-D4에서 현재 profile은 배정 관계를 포함한 <code>@1.2.0</code>이며 Context-only <code>@1.1.0</code> mapping run은 새 preview·승인을 요구한다.</div>
+        <div class="callout"><strong>경계:</strong> 결정은 기존 <code>oj_ai_import_runs.preview_json</code>에 canonical 저장한다. 새 table·column·migration과 플랫폼 write는 0건이고 기존 Platform Context·roster API만 소비한다. <strong>Platform API change: 0</strong></div>
+        <div class="good callout"><strong>G5-IMP-07-S03-D3-D3 migration publication 인수:</strong> <a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d3-result">구현 결과</a>와 <code>check:legacy-migration-publication-g5</code>가 exact worksheet receipt, 네 canonical profile, <code>retired</code> immutable 저장, replay·변조 차단과 root·revision·item receipt 무변경을 통과했다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-D3-D4 assignment·target 인수:</strong> <a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d4-result">구현 결과</a>와 <code>check:legacy-migration-assignment-g5</code>가 plan <code>@1.2.0</code>, 배정별 learner 격리, closed·withdrawn 역사 root, 0 target, literal assignment·target 저장과 caller-owned rollback을 검증한다. writer는 transaction·audit·outbox·item receipt를 직접 소유하지 않는다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-D3-D5 submission 인수:</strong> <a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d5-result">구현 결과</a>와 <code>check:legacy-migration-submission-g5</code>가 10종 response, 불변 revision, 조건부 official/control receipt, attachment manifest, relation source drift와 caller-owned rollback을 검증한다. target은 literal <code>oj_ai_*</code>이며 private file write는 D3-D7까지 0건이다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-D3-D6 evaluation lineage 인수:</strong> <a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d6-result">구현 결과</a>와 <code>check:legacy-migration-evaluation-g5</code>가 현재 score 계약, 10개 source relation, review·feedback·release·note, 원본 provider 응답 비저장, incomplete run terminal 처리와 caller-owned rollback을 검증한다. target은 기존 literal <code>oj_ai_*</code>이며 새 schema·플랫폼 write는 0건이다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-D3-D7 private file 인수:</strong> <a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d7-result">구현 결과</a>와 <code>check:legacy-migration-private-files-g5</code>가 uploads-root containment, current attachment·ZIP 검사, private storage 복원, reverse compensation과 receipt privacy를 검증한다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-D3-D8 owner matrix 인수:</strong> <a href="g5-imp-07-s03-d3-d-owner-migration.html#d3-d8-result">구현 결과</a>와 <code>check:legacy-migration-owner-matrix-g5</code>가 35-table disposition·owner 완전성, production batch graph, 250-item·rollback·retry·stale·중복과 literal target 경계를 검증한다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-E C62 Runtime 인수:</strong> <a href="g5-imp-07-s03-d3-d-owner-migration.html#s03-e-result">구현 결과</a>와 <code>check:legacy-migration-runtime-g5</code>가 strict expected hash, 최초·재전송 202, durable approved→running receipt, exact run worker handoff와 비활성화 cleanup을 검증한다. target은 literal <code>oj_ai_*</code>이며 플랫폼 write는 0건이다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-F 복구 인수:</strong> site ID별 named lock과 active-run locking read가 사이트 단일 실행을 보장하고, worker source drift·mapping·중간 SQL 실패는 target·item·checkpoint 전체를 rollback한다. <code>check:legacy-migration-recovery-g5</code>가 durable checkpoint 재시작과 중복 0을 검증한다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S03-G 동결:</strong> 전용 gate·전체 회귀·HTML 증거·플랫폼 API 감사를 동기화했다. schema <code>1.0.2</code>, literal <code>oj_ai_*</code>, 플랫폼 write 0과 Platform API change 0을 유지한다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S04 Q29 인수:</strong> <a href="g5-imp-07-s04-migration-run-query.html">전용 구현 기록</a>과 <code>check:legacy-migration-run-query-g5</code>가 run·item 단일 snapshot SELECT, preview·checkpoint canonical hash, item 집계 일치, safe projection과 <code>manage_migrations</code> 경계를 검증한다. literal <code>oj_ai_*</code> 조회만 수행하며 mutation·DB schema·플랫폼 API 변경은 0건이다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S05 C63 인수:</strong> <a href="g5-imp-07-s05-legacy-migration-rollback.html">전용 구현 기록</a>과 <code>check:legacy-migration-rollback-g5</code>가 terminal run CAS, 실행 actor 소유권, exact child·외부 참조 검사, 미변경 target 역의존 삭제, private byte purge·<code>purged</code> metadata tombstone, import run·item·source·audit·outbox 보존과 durable replay를 검증한다. 실제 운영 DB 실행은 수행하지 않았다.</div>
+        <div class="good callout"><strong>G5-IMP-07-S06 통합 인수:</strong> <a href="g5-imp-07-s06-legacy-migration-integration-freeze.html">전용 구현 기록</a>과 <code>check:legacy-migration-integration-g5</code>가 1,800초 token 만료·재preview, 승인·실행 source 재검사, C62·C63 사이트 직렬화, idempotent private delete와 원장 보존을 검증한다. 새 Runtime·schema·route 없이 IMP-07을 6/6으로 닫았다.</div>
+      </section>
+        <div class="good callout"><strong>G5-IMP-08-S01 uninstall 보존 인수:</strong> <a href="g5-imp-08-s01-uninstall-preservation.html">전용 구현 기록</a>과 <code>check:uninstall-preservation-g5</code>가 45개 literal table·option·private bytes·platform assignment 불변, Runtime 미부팅, mutation 0과 release package 필수 진입점을 검증한다. uninstall 수용·결정 계약을 충족하며 영구 삭제는 계속 C71~C74로만 허용한다.</div>
+        <div class="good callout"><strong>G5-IMP-08-S02 C71 preview 인수:</strong> <a href="g5-imp-08-s02-purge-preview.html">전용 구현 기록</a>과 <code>check:purge-preview-g5</code>가 45개 literal table·10 owner, 단일 SELECT의 row·private byte·legal hold·미완료 job, 1,800초 서명 token과 업무·원장·role·option·file·platform mutation 0을 검증한다. C71은 purge job·승인·삭제·maintenance를 만들지 않는다.</div>
+        <div class="good callout"><strong>G5-IMP-08-S03 C72 승인 인수:</strong> <a href="g5-imp-08-s03-purge-approval.html">전용 구현 기록</a>과 <code>check:purge-approval-g5</code>가 C71 token·현재 preview·24시간 backup evidence·정확한 <code>영구 삭제</code> 확인문·legal hold 0, <code>manage_migrations + delete_plugins</code>, approved job·audit·outbox 원자 기록, durable replay와 삭제 0을 검증한다.</div>
+        <div class="good callout"><strong>G5-IMP-08-S04 C73·C74 인수:</strong> <a href="g5-imp-08-s04-purge-execution-cancel.html">전용 구현 기록</a>과 <code>check:purge-execution-g5</code>가 C72 delta 재검증, <code>maintenance_required</code>, 5개 control ledger 보존, private byte 우선, 40-table 역의존 250행·20초 checkpoint, durable replay·retry와 안전 경계 취소를 검증한다. 완료·부분 취소·실패는 maintenance를 유지한다.</div>
+        <div class="good callout"><strong>G5-IMP-08-S05 Q36 인수:</strong> <a href="g5-imp-08-s05-purge-job-query.html">전용 구현 기록</a>과 <code>check:purge-job-query-g5</code>가 단일 literal-table snapshot, 1,800초 승인 만료, 승인 당시·현재 legal hold 비교, canonical preview·checkpoint 무결성과 mutation 0을 검증한다. maintenance에서도 <code>manage_migrations</code>로 안전 상태를 읽는다.</div>
+        <div class="good callout"><strong>G5-IMP-08-S06 purge 통합 동결 인수:</strong> <a href="g5-imp-08-s06-purge-integration-freeze.html">전용 구현 기록</a>과 <code>check:purge-integration-g5</code>가 uninstall 보존부터 Q36까지, 정확한 token·승인 만료, 정확히 24시간인 backup 허용, legal hold 차단, 5개 control ledger 보존, private byte 우선과 최종 행·파일·바이트 0을 검증했다. 새 Runtime·schema·route 없이 IMP-08 6/6과 G5 8/8을 완료했다.</div>
+      <h2 id="g6-upgrade-rollback">G6-IMP-04 업그레이드·롤백 최종 인수</h2>
+      <section class="panel">
+        <p><a href="g6-imp-04-upgrade-rollback.html">최종 인수 기록</a>과 <code>check:upgrade-rollback-g6</code>가 A-DS-15의 설치·업데이트·복구 정책을 13 existing gates로 재검산해 G6 4/5를 완료했다.</p>
+        <table><thead><tr><th>범위</th><th>최종 판정</th></tr></thead><tbody>
+          <tr><td>신규 설치</td><td>45개 table·기본 설정 검산 뒤 애드온 version 기록</td></tr>
+          <tr><td>지원 upgrade</td><td>schema 1.0.0·1.0.1에서 1.0.2로 순차 전진</td></tr>
+          <tr><td>코드 rollback</td><td>미래 schema와 unknown migration을 mutation 전에 차단하며 down migration 0건</td></tr>
+          <tr><td>재활성화</td><td>데이터·설정 보존, active worker 16개와 recurring sweep 14개 복원</td></tr>
+          <tr><td>증거</td><td>13개 관문의 상대 경로·SHA-256·운영 순서를 canonical manifest로 검증</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>동결:</strong> Runtime·Page·REST·schema·플랫폼 API 변경 없이 기존 구현을 최종 인수했다. clean production ZIP은 <code>G6-IMP-05</code>에서 별도로 생성·검증했다.</div>
+      </section>
+      <h2 id="g6-final-package">G6-IMP-05 경계·최종 package</h2>
+      <section class="panel">
+        <p><a href="g6-imp-05-boundary-final-package.html">최종 package 기록</a>과 <code>check:boundary-final-package-g6</code>가 운영 배포 전 경계와 증거를 확인한다.</p>
+        <table><thead><tr><th>범위</th><th>현재 판정</th></tr></thead><tbody>
+          <tr><td>S01·S02 플랫폼 경계</td><td>Runtime 내부 의존 0건, 플랫폼 공개 API 파일 변경 0건</td></tr>
+          <tr><td>S03 fingerprint</td><td>API 29·schema 41·route 80·platform API source 38파일 고정</td></tr>
+          <tr><td>S04 기록</td><td>인수 HTML·진행표·교차 검증·API 감사·<a href="release-changelog.html">changelog</a> 일치</td></tr>
+          <tr><td>S05 production ZIP</td><td>승인 commit과 <code>source_dirty=false</code>에서 ZIP·manifest·checksum 생성·검증 완료</td></tr>
+        </tbody></table>
+        <div class="good callout"><strong>완료:</strong> S01~S05를 통과했다. 임시 clean 저장소로 우회하지 않고 승인 commit에서 production package를 생성했다.</div>
+      </section>
+      <p class="footer">A-DS-15 설치·업그레이드·기존 데이터 이전·운영 · schema 1.0.2 append-only 전진 적용 · G6-IMP-05 S01~S05 통과 · G6 5/5 · target은 literal <code>oj_ai_*</code>·플랫폼 Runtime 변경 0건 · clean production ZIP·manifest·checksum 검증 · Platform API change: 0</p>
+    </main>
+  </div>
+</body>
+</html>

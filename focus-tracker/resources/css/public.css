@@ -1,0 +1,24 @@
+/*
+ * 내 집중도 요약(학생 화면). 머리말·지표·빈 상태는 OJ Platform 공용 부품(ojp-*)을 쓰고,
+ * 여기에는 배치만 둔다. 색은 --ojp-* 토큰만 쓴다.
+ */
+.ftk-self-view {
+    max-width: 720px;
+}
+
+.ftk-self-view h2 {
+    margin: var(--ojp-space-5, 24px) 0 0;
+    font-size: var(--ojp-text-title3, 18px);
+}
+
+.ftk-self-view .ftk-self-total {
+    margin: 0;
+    text-align: center;
+    font-size: var(--ojp-text-body, 15px);
+}
+
+.ftk-self-view .ftk-self-total strong {
+    margin-left: var(--ojp-space-1, 4px);
+    color: var(--ojp-color-primary);
+    font-size: var(--ojp-text-title1, 26px);
+}

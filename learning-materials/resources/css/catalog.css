@@ -1,0 +1,42 @@
+.lmt-public .lmt-filters,
+.lmt-console .lmt-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--ojp-space-3, 12px);
+    align-items: end;
+    margin-bottom: var(--ojp-space-4, 16px);
+}
+.lmt-public .lmt-filter-actions,
+.lmt-console .lmt-filter-actions,
+.lmt-public .lmt-pagination,
+.lmt-console .lmt-pagination,
+.lmt-public .lmt-badges,
+.lmt-console .lmt-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ojp-space-2, 8px);
+}
+.lmt-public .lmt-pagination,
+.lmt-console .lmt-pagination {
+    justify-content: center;
+    margin-top: var(--ojp-space-5, 24px);
+}
+.lmt-public .lmt-diagnostics {
+    margin-top: var(--ojp-space-5, 24px);
+    padding: var(--ojp-space-4, 16px);
+    border: 1px solid var(--ojp-color-border, currentColor);
+    border-radius: var(--ojp-radius-md, 12px);
+}
+.lmt-public .lmt-diagnostic-results {
+    overflow-wrap: anywhere;
+}
+.lmt-public .lmt-preview-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ojp-space-2, 8px);
+    margin-top: var(--ojp-space-3, 12px);
+}
+.lmt-public .lmt-preview-new-window[hidden] {
+    display: none;
+}

@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "status": "draft-not-runtime",
+  "audience": "중학생 중심, 심화는 고등학생 확장 후보",
+  "provenance": "이 검토에서 작성한 합성 교육 자료. 실제 학생·건강·금융 자료가 아니며 운영 게임에 자동 등록하지 않는다.",
+  "cases": [
+    {
+      "id": "extract-stock-filter", "gameId": "data-extraction", "level": "easy", "skill": "열 선택과 조건 필터", "kind": "extract",
+      "prompt": "실습실 재고가 3개 미만인 물품의 번호와 재고만 추출하세요. 3개인 물품은 제외합니다.",
+      "data": {"rows": [{"id":"A","stock":3,"color":"빨강"},{"id":"B","stock":2,"color":"파랑"},{"id":"C","stock":7,"color":"빨강"},{"id":"D","stock":0,"color":"초록"}]},
+      "grading": {"columns":["id","stock"],"filter":{"field":"stock","op":"lt","value":3}},
+      "expected": {"rowIds":["B","D"],"rows":[{"id":"B","stock":2},{"id":"D","stock":0}]},
+      "explanation": "2와 0은 3보다 작습니다. 물품 번호는 결과를 식별하는 열이고 색은 이번 조건과 무관합니다.",
+      "misconception": "미만과 이하를 혼동하거나 재고 0을 결측값으로 취급하는 오류."
+    },
+    {
+      "id":"extract-loan-and", "gameId":"data-extraction", "level":"easy", "skill":"두 조건의 교집합", "kind":"extract",
+      "prompt":"도서가 대출 가능하고 쪽수가 150쪽 이하인 도서의 번호와 제목을 추출하세요.",
+      "data":{"rows":[{"id":"A","title":"별 관찰","available":true,"pages":150},{"id":"B","title":"암석","available":false,"pages":90},{"id":"C","title":"바다 지도","available":true,"pages":151},{"id":"D","title":"색의 발견","available":true,"pages":80}]},
+      "grading":{"columns":["id","title"],"filter":{"all":[{"field":"available","op":"eq","value":true},{"field":"pages","op":"lte","value":150}]}},
+      "expected":{"rowIds":["A","D"],"rows":[{"id":"A","title":"별 관찰"},{"id":"D","title":"색의 발견"}]},
+      "explanation":"두 조건을 모두 만족해야 합니다. 150쪽은 포함되고 151쪽은 제외됩니다.",
+      "misconception":"AND를 OR로 적용하거나 출력 열과 조건에 사용하는 열을 혼동하는 오류."
+    },
+    {
+      "id":"extract-sort-tie", "gameId":"data-extraction", "level":"normal", "skill":"정렬과 동률 처리", "kind":"extract",
+      "prompt":"배터리 잔량이 적은 장치부터 번호와 잔량을 출력하세요. 잔량이 같으면 번호 오름차순입니다.",
+      "data":{"rows":[{"id":"C","battery":20,"room":"서쪽"},{"id":"A","battery":20,"room":"동쪽"},{"id":"B","battery":80,"room":"서쪽"}]},
+      "grading":{"columns":["id","battery"],"sort":[{"field":"battery","direction":"asc"},{"field":"id","direction":"asc"}]},
+      "expected":{"rowIds":["A","C","B"],"rows":[{"id":"A","battery":20},{"id":"C","battery":20},{"id":"B","battery":80}]},
+      "explanation":"잔량 20인 두 장치에는 두 번째 정렬 기준을 적용합니다.",
+      "misconception":"원본 입력 순서가 동률 정렬 기준이라고 가정하는 오류."
+    },
+    {
+      "id":"extract-per-person", "gameId":"data-extraction", "level":"normal", "skill":"파생 변수와 비교 기준", "kind":"extract",
+      "prompt":"모둠별 종이 사용량을 인원수로 나눈 1인당 사용량을 계산하세요. 1인당 3장을 초과한 모둠의 번호와 계산값만 출력합니다.",
+      "data":{"rows":[{"id":"A","sheets":30,"members":10},{"id":"B","sheets":24,"members":6},{"id":"C","sheets":18,"members":9}]},
+      "grading":{"derive":{"field":"perPerson","numerator":"sheets","denominator":"members"},"filter":{"field":"perPerson","op":"gt","value":3},"columns":["id","perPerson"]},
+      "expected":{"rowIds":["B"],"rows":[{"id":"B","perPerson":4}]},
+      "explanation":"총량은 A가 크지만 1인당 사용량은 A=3, B=4, C=2입니다. 이 결과만으로 낭비의 원인까지 단정하지 않습니다.",
+      "misconception":"총량을 비율로 착각하거나 관찰값을 원인 판단으로 확대하는 오류."
+    },
+    {
+      "id":"extract-empty-result", "gameId":"data-extraction", "level":"hard", "skill":"빈 결과와 결측 구별", "kind":"extract",
+      "prompt":"측정값이 기록되어 있고 100을 초과한 센서의 번호와 값을 추출하세요. 조건에 맞는 행이 없으면 빈 결과를 제출합니다.",
+      "data":{"rows":[{"id":"S1","reading":100},{"id":"S2","reading":null},{"id":"S3","reading":0},{"id":"S4","reading":98}]},
+      "grading":{"columns":["id","reading"],"filter":{"all":[{"field":"reading","op":"notNull"},{"field":"reading","op":"gt","value":100}]}},
+      "expected":{"rowIds":[],"rows":[]},
+      "explanation":"100은 초과 조건에 맞지 않고 결측값은 크기 비교의 근거가 되지 않습니다. 빈 결과도 정상적인 추출 결과입니다.",
+      "misconception":"항상 하나 이상의 정답 행이 있다고 가정하거나 null을 0으로 자동 변환하는 오류."
+    },
+    {
+      "id":"extract-aggregate", "gameId":"data-extraction", "level":"hard", "skill":"그룹별 합계", "kind":"extract",
+      "prompt":"같은 구역의 물 사용량을 합산한 뒤 구역 이름과 합계를 구역 이름순으로 출력하세요. 날짜별 원본 기록은 유지합니다.",
+      "data":{"rows":[{"id":"r1","zone":"A","litres":12,"day":1},{"id":"r2","zone":"B","litres":8,"day":1},{"id":"r3","zone":"A","litres":7,"day":2},{"id":"r4","zone":"B","litres":5,"day":2}]},
+      "grading":{"groupBy":"zone","sum":"litres","resultField":"total","sort":[{"field":"zone","direction":"asc"}],"columns":["zone","total"]},
+      "expected":{"rows":[{"zone":"A","total":19},{"zone":"B","total":13}]},
+      "explanation":"A는 12+7=19, B는 8+5=13입니다. 그룹별 합계표와 원본 행은 서로 다른 자료입니다.",
+      "misconception":"각 구역의 마지막 행만 남기거나 모든 구역을 하나로 합산하는 오류."
+    },
+    {
+      "id":"missing-mean-policy", "gameId":"missing-values", "level":"easy", "skill":"명시된 평균 대체 정책", "kind":"impute",
+      "prompt":"연습 규칙은 관측된 값의 평균으로 대체하기입니다. 결측값은 평균의 분모에서 제외하고 원본은 보존하세요.",
+      "data":{"values":[20,22,null,24],"unit":"실습 점수"},
+      "grading":{"method":"mean","precision":1}, "expected":{"replacements":{"2":22}},
+      "explanation":"(20+22+24)/3=22입니다. 대체값 22는 원래 관측된 사실이 아니라 계산한 값입니다.",
+      "misconception":"결측값을 0으로 넣고 4로 나누는 오류."
+    },
+    {
+      "id":"missing-median-policy", "gameId":"missing-values", "level":"normal", "skill":"중앙값과 극단값 영향", "kind":"impute",
+      "prompt":"이번 실습에서는 중앙값 대체 정책을 사용합니다. 기록된 응답 시간의 중앙값으로 빈칸을 채우고 평균과 비교하세요.",
+      "data":{"values":[10,11,null,12,100],"unit":"ms"},
+      "grading":{"method":"median","precision":1}, "expected":{"replacements":{"2":11.5}},
+      "explanation":"정렬된 관측값 10,11,12,100의 가운데 두 값은 11과 12입니다. 중앙값은 11.5ms이며 평균 33.25ms와 다릅니다.",
+      "misconception":"원본 가운데 위치를 고르거나 짝수 개일 때 가운데 두 값의 평균을 생략하는 오류."
+    },
+    {
+      "id":"missing-mode-estimate", "gameId":"missing-values", "level":"easy", "skill":"범주형 대체와 추정 표시", "kind":"impute",
+      "prompt":"모형 실습용 색상 자료입니다. 미기록 칸을 최빈 범주로 대체하되 추정한 값이라고 표시하세요.",
+      "data":{"values":["빨강","파랑",null,"빨강"],"unit":"범주"},
+      "grading":{"method":"mode"}, "expected":{"replacements":{"2":"빨강"}},
+      "explanation":"빨강이 두 번으로 가장 많습니다. 미기록 대상의 실제 색상을 알아낸 것은 아닙니다.",
+      "misconception":"최빈값 대체를 실제 관측값의 복원이라고 믿는 오류."
+    },
+    {
+      "id":"missing-time-interpolation", "gameId":"missing-values", "level":"hard", "skill":"시간 간격을 반영한 보간", "kind":"impute",
+      "prompt":"모형 카트가 0초부터 20초까지 일정한 속도로 움직인다고 가정합니다. 5초와 15초의 위치를 선형 보간하세요.",
+      "data":{"times":[0,5,15,20],"values":[0,null,null,40],"unit":"cm"},
+      "grading":{"method":"interpolate","precision":1}, "expected":{"replacements":{"1":10,"2":30}},
+      "explanation":"20초에 40cm이므로 초당 2cm입니다. 배열 칸 간격이 아니라 실제 시간 간격을 사용합니다.",
+      "misconception":"빈칸 두 개에 모두 앞뒤 값의 평균 20을 넣는 오류."
+    },
+    {
+      "id":"missing-state-policy", "gameId":"missing-values", "level":"normal", "skill":"이전 값 유지의 전제", "kind":"impute",
+      "prompt":"가상 스위치 기록은 상태가 바뀔 때만 값을 남기며 장치 오류가 없다고 가정합니다. 빈칸은 변화 없음이므로 이전 상태로 표시하세요.",
+      "data":{"values":["켜짐",null,null,"꺼짐"],"unit":"상태"},
+      "grading":{"method":"previous"}, "expected":{"replacements":{"1":"켜짐","2":"켜짐"}},
+      "explanation":"상태가 바뀔 때 기록한다는 규칙이 명시되어 있으므로 이전 상태를 이어갑니다. 결측이 있는 모든 로그에 적용할 수 있는 규칙은 아닙니다.",
+      "misconception":"기록 장치 오류나 상태 변화 가능성을 확인하지 않고 이전 값을 자동 복제하는 오류."
+    },
+    {
+      "id":"missing-keep-unknown", "gameId":"missing-values", "level":"hard", "skill":"대체하지 않는 판단", "kind":"impute",
+      "prompt":"자발적 설문의 응답 여부를 집계합니다. 미응답자의 취향을 추정할 필요는 없습니다. 빈칸을 어떻게 보존해야 할까요?",
+      "data":{"values":["독서",null,"운동","독서"],"unit":"응답"},
+      "grading":{"method":"leave"}, "expected":{"replacements":{"1":null}},
+      "explanation":"미응답은 그대로 보존하고 응답자 수는 3명으로 보고합니다. 다른 사람의 취향을 대신 작성하지 않습니다.",
+      "misconception":"결측값은 항상 채워야 한다고 생각하거나 미응답을 0 또는 독서로 바꾸는 오류."
+    },
+    {
+      "id":"outlier-allowed-range", "gameId":"outlier-detection", "level":"easy", "skill":"허용 범위와 경계값", "kind":"outlier",
+      "prompt":"가상 센서의 실습용 허용 범위는 0 이상 100 이하입니다. 범위를 벗어난 기록을 모두 표시하고 삭제 대신 원본 확인 대상으로 남기세요.",
+      "data":{"values":[-2,0,20,100,40,103,50]},
+      "grading":{"method":"range","min":0,"max":100}, "expected":{"indexes":[0,5],"action":"review"},
+      "explanation":"-2와 103은 범위 밖이며 0과 100은 경계에 포함됩니다. 확인 전에는 원본을 지우지 않습니다.",
+      "misconception":"범위의 양 끝을 제외하거나 큰 값 하나만 고르는 오류."
+    },
+    {
+      "id":"outlier-none", "gameId":"outlier-detection", "level":"easy", "skill":"이상치 없음", "kind":"outlier",
+      "prompt":"모형 부품의 허용 길이는 18mm 이상 22mm 이하입니다. 허용 범위를 벗어난 부품이 없다면 '없음'을 제출하세요.",
+      "data":{"values":[18,19,20,21,22,20]},
+      "grading":{"method":"range","min":18,"max":22}, "expected":{"indexes":[],"action":"keep"},
+      "explanation":"모든 길이가 명시된 허용 범위 안에 있습니다. 최댓값이라는 이유만으로 이상치가 되지 않습니다.",
+      "misconception":"모든 문제에는 반드시 제거할 값이 있다고 생각하는 오류."
+    },
+    {
+      "id":"outlier-iqr", "gameId":"outlier-detection", "level":"hard", "skill":"명시된 사분위수 규칙", "kind":"outlier",
+      "prompt":"정렬 후 아래 절반과 위 절반의 중앙값으로 Q1·Q3를 구합니다. Q1-1.5IQR 미만 또는 Q3+1.5IQR 초과인 값만 후보로 표시하세요. 큰 값이 실제 행사 기록인지 추가 확인합니다.",
+      "data":{"values":[4,5,6,7,8,9,10,30]},
+      "grading":{"method":"iqr-halves","factor":1.5}, "expected":{"indexes":[7],"q1":5.5,"q3":9.5,"lower":-0.5,"upper":15.5,"action":"review"},
+      "explanation":"IQR=4, 하한=-0.5, 상한=15.5이므로 30만 후보입니다. 통계적 후보와 기록 오류는 같은 말이 아닙니다.",
+      "misconception":"사분위수 계산법을 섞거나 후보를 곧바로 오류로 확정하는 오류."
+    },
+    {
+      "id":"outlier-group-context", "gameId":"outlier-detection", "level":"normal", "skill":"집단별 비교", "kind":"outlier",
+      "prompt":"실습 기기 A의 정상 범위는 3~7, B는 13~17입니다. 소속 기기의 범위를 벗어난 행만 표시하세요. 서로 다른 기기의 값은 한 범위로 합치지 않습니다.",
+      "data":{"rows":[{"id":"a1","group":"A","value":4},{"id":"b1","group":"B","value":14},{"id":"a2","group":"A","value":5},{"id":"b2","group":"B","value":16},{"id":"a3","group":"A","value":15}]},
+      "grading":{"method":"group-range","ranges":{"A":[3,7],"B":[13,17]}}, "expected":{"rowIds":["a3"],"action":"review"},
+      "explanation":"15는 B 기기에서는 정상 범위지만 A 기기에서는 확인 대상입니다. 비교 집단이 판단에 영향을 줍니다.",
+      "misconception":"자료를 합친 뒤 큰 값 전체를 이상치로 고르는 오류."
+    },
+    {
+      "id":"viz-time-purpose", "gameId":"data-visualization", "level":"easy", "skill":"시간 축과 목적", "kind":"visualize",
+      "prompt":"모형 식물의 날짜별 높이 변화를 표현하고 증가량이 가장 큰 구간을 찾으세요. 날짜 순서와 cm 단위가 보이는 꺾은선 또는 막대 표현을 허용합니다.",
+      "data":{"x":[1,2,3,4],"y":[2,3,7,8],"xLabel":"날짜","yLabel":"높이(cm)"},
+      "grading":{"task":"max-increase","acceptedCharts":["line","bar"]}, "expected":{"interval":[2,3],"increase":4},
+      "explanation":"증가량은 1,4,1cm입니다. 가장 높은 시점과 가장 많이 증가한 구간은 다릅니다.",
+      "misconception":"마지막 값이 가장 크므로 마지막 구간의 증가량도 최대라고 판단하는 오류."
+    },
+    {
+      "id":"viz-part-whole", "gameId":"data-visualization", "level":"easy", "skill":"전체와 부분", "kind":"visualize",
+      "prompt":"행사 예산은 총 40단위이며 한 비용은 한 항목에만 포함됩니다. 재료비가 전체에서 차지하는 비율을 표현하세요. 원그래프 또는 100% 누적 막대를 허용합니다.",
+      "data":{"labels":["재료","장소","운반"],"values":[20,12,8],"total":40},
+      "grading":{"task":"share","category":"재료","acceptedCharts":["pie","stacked100"]}, "expected":{"share":0.5},
+      "explanation":"20/40=0.5이므로 50%입니다. 원그래프를 쓰려면 항목들이 중복되지 않는 하나의 전체여야 합니다.",
+      "misconception":"항목 수가 셋이므로 각각 3분의 1이라고 생각하는 오류."
+    },
+    {
+      "id":"viz-bin-boundary", "gameId":"data-visualization", "level":"normal", "skill":"히스토그램 구간 경계", "kind":"visualize",
+      "prompt":"측정값을 [0,10), [10,20), [20,30] 구간으로 집계해 히스토그램을 만드세요. 마지막 구간에만 오른쪽 경계 30을 포함합니다.",
+      "data":{"values":[0,9,10,19,20,30],"edges":[0,10,20,30]},
+      "grading":{"task":"histogram","acceptedCharts":["histogram"]}, "expected":{"counts":[2,2,2]},
+      "explanation":"10은 두 번째, 20과 30은 세 번째 구간입니다. 모든 관측값은 정확히 한 번 집계됩니다.",
+      "misconception":"경계값을 두 번 세거나 30을 빠뜨리는 오류."
+    },
+    {
+      "id":"viz-correlation-not-cause", "gameId":"data-visualization", "level":"hard", "skill":"관계와 인과 구별", "kind":"visualize",
+      "prompt":"같은 날 관찰한 두 측정량입니다. 두 값의 관계를 산점도로 표시하세요. 이 관찰 자료만으로 X가 Y의 원인이라고 결론낼 수 있는지도 판단합니다.",
+      "data":{"points":[[1,2],[2,4],[3,6],[4,8],[5,10]],"design":"observational"},
+      "grading":{"task":"association","acceptedCharts":["scatter"]}, "expected":{"direction":"positive","causalConclusion":false},
+      "explanation":"값들은 함께 증가하지만 실험이나 다른 원인에 대한 검토가 없으므로 원인 관계를 확정할 수 없습니다.",
+      "misconception":"점들이 일직선에 있다는 이유로 인과관계를 확정하는 오류."
+    },
+    {
+      "id":"structure-peek-pop", "gameId":"data-structure-lab", "level":"easy", "skill":"스택 비파괴 조회", "kind":"structure",
+      "prompt":"각 명령 뒤의 스택을 그린 뒤, peek과 pop이 반환한 값을 순서대로 제출하세요. 그림의 왼쪽은 바닥, 오른쪽은 top입니다.",
+      "data":{"structure":"stack","operations":[{"op":"push","value":"A"},{"op":"push","value":"B"},{"op":"peek"},{"op":"pop"},{"op":"push","value":"C"},{"op":"pop"},{"op":"pop"}]},
+      "grading":{"emptyPolicy":"error-and-continue"}, "expected":{"outputs":["B","B","C","A"],"final":[],"errorSteps":[],"states":[["A"],["A","B"],["A","B"],["A"],["A","C"],["A"],[]]},
+      "explanation":"peek은 B를 확인하지만 제거하지 않습니다. 다음 pop도 B를 반환합니다.",
+      "misconception":"조회 명령을 삭제로 처리하는 오류."
+    },
+    {
+      "id":"structure-queue-trace", "gameId":"data-structure-lab", "level":"normal", "skill":"큐 중간 상태", "kind":"structure",
+      "prompt":"대기열을 명령마다 갱신하고 반환값을 제출하세요. 왼쪽은 front이며 front 명령은 삭제하지 않습니다.",
+      "data":{"structure":"queue","operations":[{"op":"enqueue","value":"A"},{"op":"enqueue","value":"B"},{"op":"dequeue"},{"op":"enqueue","value":"C"},{"op":"front"},{"op":"dequeue"}]},
+      "grading":{"emptyPolicy":"error-and-continue"}, "expected":{"outputs":["A","B","B"],"final":["C"],"errorSteps":[],"states":[["A"],["A","B"],["B"],["B","C"],["B","C"],["C"]]},
+      "explanation":"먼저 들어온 A가 먼저 나가고 B는 front에서 확인된 뒤 dequeue로 제거됩니다.",
+      "misconception":"새로 들어온 C가 먼저 처리되는 스택 규칙을 적용하는 오류."
+    },
+    {
+      "id":"structure-priority-tie", "gameId":"data-structure-lab", "level":"hard", "skill":"우선순위 동률 규칙", "kind":"structure",
+      "prompt":"숫자가 클수록 먼저 처리하며 숫자가 같으면 먼저 들어온 항목부터 처리합니다. 매 단계 상태를 처리 예정 순서로 표시하세요.",
+      "data":{"structure":"priority-queue","operations":[{"op":"push","value":"A","priority":2},{"op":"push","value":"B","priority":5},{"op":"push","value":"C","priority":5},{"op":"pop"},{"op":"push","value":"D","priority":5},{"op":"pop"},{"op":"pop"}]},
+      "grading":{"emptyPolicy":"error-and-continue","tieBreak":"fifo"}, "expected":{"outputs":["B","C","D"],"final":["A"],"errorSteps":[],"states":[["A"],["B","A"],["B","C","A"],["C","A"],["C","D","A"],["D","A"],["A"]]},
+      "explanation":"동률인 B,C,D는 삽입 순서대로 처리합니다. 값 A는 우선순위가 낮아 남습니다.",
+      "misconception":"우선순위 숫자가 작을수록 먼저라고 가정하거나 동률 정책을 생략하는 오류."
+    },
+    {
+      "id":"structure-empty-operation", "gameId":"data-structure-lab", "level":"hard", "skill":"빈 구조의 예외", "kind":"structure",
+      "prompt":"빈 스택에서 시작합니다. 빈 스택의 pop은 오류를 기록하고 상태를 바꾸지 않습니다. 이후 명령은 계속 수행합니다.",
+      "data":{"structure":"stack","operations":[{"op":"pop"},{"op":"push","value":"1"},{"op":"peek"}]},
+      "grading":{"emptyPolicy":"error-and-continue"}, "expected":{"outputs":["1"],"final":["1"],"errorSteps":[0],"states":[[],["1"],["1"]]},
+      "explanation":"첫 명령은 꺼낼 값이 없어 오류입니다. 0이나 임의의 값이 반환되지는 않습니다.",
+      "misconception":"빈 구조를 숫자 0으로 간주하거나 오류 이후의 진행 정책을 임의로 해석하는 오류."
+    },
+    {
+      "id":"classifier-inclusive-boundary", "gameId":"ai-classifier-lab", "level":"easy", "skill":"경계 위의 데이터", "kind":"classify",
+      "prompt":"가상 부품의 폭이 5 이상이면 B, 그렇지 않으면 A입니다. 폭이 4인 점과 정확히 5인 점을 각각 분류하세요. 이 단계는 주어진 규칙 적용 연습입니다.",
+      "data":{"training":[{"x":1,"y":2,"label":"A"},{"x":4,"y":7,"label":"A"},{"x":5,"y":1,"label":"B"},{"x":8,"y":8,"label":"B"}],"queries":[{"x":4,"y":4},{"x":5,"y":4}]},
+      "grading":{"method":"threshold","axis":"x","threshold":5,"comparison":"gte"}, "expected":{"labels":["A","B"]},
+      "explanation":"5 이상에는 5도 포함됩니다. 이 활동 자체는 기계학습 훈련이 아니라 결정 규칙의 적용입니다.",
+      "misconception":"경계에 놓인 점을 제외하거나 사람이 준 규칙을 모델이 학습한 결과라고 생각하는 오류."
+    },
+    {
+      "id":"classifier-neighbors", "gameId":"ai-classifier-lab", "level":"normal", "skill":"학습 예제로부터 예측", "kind":"classify",
+      "prompt":"두 축은 같은 단위입니다. 새 점 (2,2)에서 제곱거리로 가장 가까운 학습점 3개를 골라 다수결로 예측하세요. 동률 거리는 번호순으로 처리합니다.",
+      "data":{"training":[{"id":"p1","x":1,"y":1,"label":"A"},{"id":"p2","x":2,"y":1,"label":"A"},{"id":"p3","x":1,"y":2,"label":"A"},{"id":"p4","x":8,"y":8,"label":"B"},{"id":"p5","x":9,"y":8,"label":"B"},{"id":"p6","x":8,"y":9,"label":"B"}],"queries":[{"x":2,"y":2}]},
+      "grading":{"method":"knn","k":3,"distance":"squared-euclidean","distanceTieBreak":"id-ascending"}, "expected":{"labels":["A"],"neighbors":[["p2","p3","p1"]]},
+      "explanation":"가장 가까운 p2,p3,p1의 라벨이 모두 A입니다. 제시된 정답 규칙을 고르는 활동과 학습 예제로 예측하는 활동을 구분합니다.",
+      "misconception":"가장 먼 점을 고르거나 아직 답을 모르는 새 점을 학습 자료에 포함하는 오류."
+    },
+    {
+      "id":"model-train-only-preprocessing", "gameId":"ai-model-lab", "level":"normal", "skill":"데이터 분리와 누수 방지", "kind":"model-split",
+      "prompt":"훈련 자료에서만 평균을 구해 전처리 규칙을 정하세요. 검증·평가 자료는 평균 계산에 사용하지 않습니다. 훈련 자료의 결측값을 대체한 결과도 제출하세요.",
+      "data":{"train":[{"id":"t1","value":10},{"id":"t2","value":null},{"id":"t3","value":20}],"validation":[{"id":"v1","value":100}],"test":[{"id":"e1","value":200}]},
+      "grading":{"method":"train-mean"}, "expected":{"mean":15,"trainValues":[10,15,20]},
+      "explanation":"훈련 자료의 관측값 10과 20만 사용하므로 평균은 15입니다. 평가 자료를 먼저 보고 전처리를 정하면 평가 조건이 달라집니다.",
+      "misconception":"전체 자료의 평균을 사용해 평가 자료 정보가 훈련 과정에 섞이는 오류."
+    },
+    {
+      "id":"model-accuracy-trap", "gameId":"ai-model-lab", "level":"hard", "skill":"클래스 불균형과 재현율", "kind":"model-metrics",
+      "prompt":"가상 부품 20개 중 불량은 2개입니다. 불량을 놓치지 않는 것이 우선이며 오경보 2개까지 허용합니다. 혼동행렬은 행=실제 [정상,불량], 열=예측 [정상,불량]입니다. 더 적합한 모델을 고르세요.",
+      "data":{"models":[{"id":"always-normal","matrix":[[18,0],[2,0]]},{"id":"detect-defects","matrix":[[16,2],[0,2]]}]},
+      "grading":{"priority":"recall","positiveClass":"불량","maxFalsePositives":2,"zeroDivision":0},
+      "expected":{"selected":"detect-defects","metrics":{"always-normal":{"accuracy":0.9,"precision":0,"recall":0,"f1":0},"detect-defects":{"accuracy":0.9,"precision":0.5,"recall":1,"f1":0.6666666667}}},
+      "explanation":"정확도는 둘 다 90%지만 첫 모델은 불량을 하나도 찾지 못합니다. 두 번째는 허용 오경보 범위에서 불량 2개를 모두 찾습니다.",
+      "misconception":"정확도만 같으면 두 모델이 언제나 동등하다고 판단하는 오류."
+    }
+  ]
+}

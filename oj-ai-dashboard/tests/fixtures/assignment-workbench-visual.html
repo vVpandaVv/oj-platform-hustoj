@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>배포 관리</title>
+  <link rel="stylesheet" href="../../resources/css/assignment-workbench.css">
+  <link rel="stylesheet" href="../../resources/css/submission-document.css">
+  <link rel="stylesheet" href="../../resources/css/worksheet-workflow.css">
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #f3f5f7; }
+    body { padding: 24px; box-sizing: border-box; }
+    @media (max-width: 680px) { body { padding: 0; } }
+  </style>
+  <style data-fixture-icon-style>.oj-ai-icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}</style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+  </svg>
+  <section id="oj-ai-assignment-app" class="oj-ai-assignment" data-rest-root="https://example.test/wp-json/oj-ai/v1" data-rest-nonce="nonce-g3" data-locale="ko-KR" data-can-manage-submissions="true" data-can-assess-submissions="true" data-assessments-url="https://example.test/oj-console/addons/oj-ai-dashboard/assessments?type=submission">
+    <header class="oj-ai-assignment__header"><div><h1>배포 관리</h1><p data-role="summary">수업을 선택하세요.</p></div><button type="button" class="oj-ai-assignment__primary" data-action="new" disabled>새 배포</button></header>
+    <div class="oj-ai-assignment__filters"><label><span>수업</span><select data-field="context-filter"><option value="">수업 선택</option></select></label></div>
+    <div class="oj-ai-assignment__notice" data-role="notice" role="status">수업과 활동지를 불러오는 중입니다.</div>
+    <div class="oj-ai-assignment__table-wrap" data-role="assignment-content" hidden><table class="oj-ai-assignment__table"><thead><tr><th>활동지</th><th>상태</th><th>대상</th><th>제출</th><th>마감</th><th>작업</th></tr></thead><tbody data-role="assignment-list"></tbody></table></div>
+    <section class="oj-ai-assignment__detail" data-role="assignment-detail" hidden>
+      <header><div><p data-detail="state">-</p><h2 data-detail="title">배포 상세</h2></div><button type="button" class="oj-ai-assignment__icon" data-action="close-detail" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true"><use href="#x"></use></svg></button></header>
+      <dl><div><dt>대상</dt><dd data-detail="target-count">-</dd></div><div><dt>제출</dt><dd data-detail="progress">-</dd></div><div><dt>공개</dt><dd data-detail="opens">-</dd></div><div><dt>마감</dt><dd data-detail="due">-</dd></div><div><dt>종료</dt><dd data-detail="closes">-</dd></div></dl>
+      <ul data-role="target-list"></ul><div class="oj-ai-assignment__actions" data-role="detail-actions"></div>
+    </section>
+    <section class="oj-ai-assignment__submissions" data-role="submission-panel" hidden aria-labelledby="fixture-submission-title">
+      <header><div><p>학생 제출</p><h2 id="fixture-submission-title" data-role="submission-title">제출 현황</h2></div><div class="oj-ai-assignment__heading-actions"><button type="button" class="oj-ai-assignment__primary" data-action="evaluate-assignment-submissions">제출 평가 시작</button><a class="oj-ai-assignment__button" data-action="open-assessments" href="https://example.test/oj-console/addons/oj-ai-dashboard/assessments?type=submission">평가에서 확인</a><button type="button" class="oj-ai-assignment__icon" data-action="close-submissions" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true"><use href="#x"></use></svg></button></div></header>
+      <p class="oj-ai-assignment__notice" data-role="submission-notice" role="status"></p>
+      <div data-role="submission-bundle"></div>
+      <div class="oj-ai-assignment__submission-list" data-role="submission-list">
+        <div class="oj-ai-assignment__table-wrap"><table class="oj-ai-assignment__table"><thead><tr><th>학생</th><th>상태</th><th>제출</th><th>제출 시각</th><th>보기</th></tr></thead><tbody data-role="submission-rows"></tbody></table></div>
+      </div>
+      <section class="oj-ai-assignment__submission-detail" data-role="submission-detail" hidden>
+        <button type="button" class="oj-ai-assignment__back" data-action="back-submissions">제출 목록</button>
+        <header><div><p data-submission="state">-</p><h3 data-submission="student">학생 제출</h3></div></header>
+        <dl><div><dt>제출 횟수</dt><dd data-submission="attempt">-</dd></div><div><dt>제출 시각</dt><dd data-submission="submitted">-</dd></div><div><dt>평가</dt><dd data-submission="evaluation">-</dd></div><div><dt>결과 공개</dt><dd data-submission="release">-</dd></div></dl>
+        <h4>제출 내용</h4><dl class="oj-ai-assignment__answers" data-role="submission-answers"></dl>
+        <div class="oj-ai-assignment__actions" data-role="submission-actions"></div>
+        <h4>변경 기록</h4><ol class="oj-ai-assignment__history" data-role="submission-history"></ol>
+      </section>
+    </section>
+    <section class="oj-ai-assignment__wizard" data-role="wizard" role="dialog" aria-modal="true" hidden aria-labelledby="oj-ai-assignment-wizard-title">
+      <header><div><p data-role="step-label">1 / 4</p><h2 id="oj-ai-assignment-wizard-title" data-role="step-title">발행본</h2></div><button type="button" class="oj-ai-assignment__icon" data-action="cancel" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+      <ol class="oj-ai-assignment__steps" aria-label="배포 단계"><li data-step-indicator="1" aria-current="step">발행본</li><li data-step-indicator="2">대상</li><li data-step-indicator="3">일정</li><li data-step-indicator="4">확인</li></ol>
+      <div class="oj-ai-assignment__step" data-step="1"><label><span>활동지</span><select data-field="publication"><option value="">발행된 활동지 선택</option></select></label></div>
+      <div class="oj-ai-assignment__step" data-step="2" hidden><label><span>수업</span><select data-field="context"><option value="">배포할 수업 선택</option></select></label><p data-role="target-summary">현재 명단 전체에 배포됩니다.</p></div>
+      <div class="oj-ai-assignment__step oj-ai-assignment__schedule" data-step="3" hidden>
+        <label><span>공개 시각</span><input type="datetime-local" data-field="opens-at"></label><label><span>제출 마감</span><input type="datetime-local" data-field="due-at" required></label><label><span>종료 시각</span><input type="datetime-local" data-field="closes-at" required></label>
+        <label class="oj-ai-assignment__check"><input type="checkbox" data-field="auto-submit" checked><span>종료 시 자동 제출</span></label><label><span>최대 제출 횟수</span><input type="number" data-field="max-attempts" min="1" max="10" value="2"></label><label class="oj-ai-assignment__check"><input type="checkbox" data-field="copy-answers" checked><span>다시 열 때 이전 답안 복사</span></label>
+      </div>
+      <div class="oj-ai-assignment__step oj-ai-assignment__review" data-step="4" hidden><dl><div><dt>활동지</dt><dd data-review="publication">-</dd></div><div><dt>대상</dt><dd data-review="context">-</dd></div><div><dt>공개</dt><dd data-review="opens">바로 열기 전까지 대기</dd></div><div><dt>마감</dt><dd data-review="due">-</dd></div></dl></div>
+      <p class="oj-ai-assignment__wizard-notice" data-role="wizard-notice" role="alert" hidden></p>
+      <footer><button type="button" data-action="previous" hidden>이전</button><span></span><button type="button" class="oj-ai-assignment__primary" data-action="next">다음</button><button type="button" class="oj-ai-assignment__primary" data-action="create" hidden>배포 만들기</button></footer>
+    </section>
+  </section>
+  <script>
+    const publicationId = '01HZY3M4N5P6Q7R8S9T0V1W2X3';
+    const publicationHash = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+    const contexts = [{ type: 'class', id: 'class-21', revision: 'context-r1', label: '2학년 1반', lifecycle_state: 'active', enabled: true, selectable: true }];
+    const worksheets = [{ id: '01HZY3M4N5P6Q7R8S9T0V1W2X2', title: '분수 비교 활동지', state: 'active', latest_publication_id: publicationId, latest_publication_hash: publicationHash }];
+    const assignmentId = '01HZY3M4N5P6Q7R8S9T0V1W2X4';
+    const submissionId = '01HZY3M4N5P6Q7R8S9T0V1W2X6';
+    const revisionId = '01HZY3M4N5P6Q7R8S9T0V1W2X7';
+    const evaluationId = '01HZY3M4N5P6Q7R8S9T0V1W2X8';
+    const scheduleHash = 'd'.repeat(64);
+    const assignments = [{ id: assignmentId, worksheet_publication_id: publicationId, publication_hash: publicationHash, title: '지난 배포', state: 'closed', lock_version: 3, schedule_version: 1, schedule_hash: scheduleHash, context: { type: 'class', id: 'class-21', revision: 'context-r1' }, target_count: 24, progress: { started: 5, submitted: 3 }, schedule: { version: 1, hash: scheduleHash, opens_at_utc: '2026-08-22 09:00:00', due_at_utc: '2026-08-22 10:00:00', closes_at_utc: '2026-08-22 11:00:00', auto_submit_enabled: true } }];
+    const submissionSummary = { id: submissionId, official_attempt_no: 1, submitted_at_utc: '2026-08-22 09:42:00' };
+    const submissionItems = [{ target: { user_id: 72, display_name: '김하늘' }, status: 'submitted', submission: submissionSummary }];
+    const submission = {
+      id: submissionId, state: 'submitted', assignment_state: 'closed', official_revision_id: revisionId, official_attempt_no: 1, lock_version: 2,
+      submitted_at_utc: '2026-08-22 09:42:00', context: { type: 'class', id: 'class-21', revision: 'context-r1' },
+      source: { publication_hash: publicationHash }, schedule: { version: 1, hash: scheduleHash },
+      official_revision: { id: revisionId, content_hash: 'b'.repeat(64), attachment_set_hash: 'c'.repeat(64), response: { answers: { answer_1: '분모가 같으면 분자가 큰 분수가 더 큽니다.' } } },
+      attachments: [], evaluation: { status: 'not_evaluated' }, release: { status: 'not_released' }
+    };
+    const revisions = [{ id: revisionId, revision_no: 1, is_official: true, is_current: true, created_at_utc: '2026-08-22 09:42:00', receipts: [] }];
+    const envelope = (data, meta = {}) => ({ data, meta: { correlation_id: 'g3-fixture', ...meta }, links: {}, actions: [] });
+    window.__assignmentRequests = [];
+    window.__assessmentRequests = [];
+    window.fetch = async (url, options = {}) => {
+      const value = String(url);
+      const method = options.method || 'GET';
+      if (value.includes('/assignments/' + assignmentId + '/submissions?') && method === 'GET') return { ok: true, status: 200, async json() { return envelope({ assignment: assignments.find((item) => item.id === assignmentId), items: submissionItems }, { next_cursor: '' }); } };
+      if (value.includes('/assignments/' + assignmentId + '?') && method === 'GET') return { ok: true, status: 200, async json() { return envelope({ assignment: assignments.find((item) => item.id === assignmentId), targets: [{ user_id: 72, display_name: '김하늘' }] }); } };
+      if (value.includes('/submissions/' + submissionId + '/revisions?') && method === 'GET') return { ok: true, status: 200, async json() { return envelope({ revisions }, { next_cursor: '' }); } };
+      if (value.includes('/submissions/' + submissionId + '?') && method === 'GET') return { ok: true, status: 200, async json() { return envelope({ submission }); } };
+      if (value.includes('/assignments/' + assignmentId + '/commands/evaluate-submissions?') && method === 'POST') {
+        const body = JSON.parse(options.body || '{}');
+        window.__assessmentRequests.push({ kind: 'batch', url: value, body, headers: { ...(options.headers || {}) } });
+        return { ok: true, status: 202, async json() { return envelope({ items: [{ submission_id: submissionId, evaluation_id: evaluationId, status: 'created' }] }, { next_item_cursor: '', counts: { created: 1, existing: 0, skipped: 0, failed: 0, total: 1 } }); } };
+      }
+      if (value.includes('/submissions/' + submissionId + '/commands/evaluate?') && method === 'POST') {
+        const body = JSON.parse(options.body || '{}');
+        window.__assessmentRequests.push({ kind: 'single', url: value, body, headers: { ...(options.headers || {}) } });
+        submission.evaluation = { id: evaluationId, status: 'requested' };
+        return { ok: true, status: 202, async json() { return envelope({ evaluation: { id: evaluationId, state: 'requested' } }); } };
+      }
+      if (value.includes('/contexts?')) return { ok: true, status: 200, async json() { return envelope({ items: contexts }); } };
+      if (value.includes('/worksheets?')) return { ok: true, status: 200, async json() { return envelope({ items: worksheets }); } };
+      if (value.includes('/assignments?') && method === 'GET') return { ok: true, status: 200, async json() { return envelope({ items: assignments }); } };
+      if (value.endsWith('/assignments') && method === 'POST') {
+        const body = JSON.parse(options.body || '{}');
+        window.__assignmentRequests.push({ body, headers: { ...(options.headers || {}) } });
+        assignments.unshift({ id: '01HZY3M4N5P6Q7R8S9T0V1W2X5', worksheet_publication_id: publicationId, publication_hash: publicationHash, title: '분수 비교 활동지', state: body.payload.schedule.opens_at_utc ? 'scheduled' : 'draft', context: { ...body.payload.context, revision: body.expected.expected_context_revision }, target_count: 24, progress: { started: 0, submitted: 0 }, schedule: body.payload.schedule });
+        return { ok: true, status: 201, async json() { return envelope({ assignment: assignments[0] }); } };
+      }
+      return { ok: false, status: 404, async json() { return { message: 'fixture route missing' }; } };
+    };
+  </script>
+  <script src="../../resources/js/worksheet-workflow.js"></script>
+  <script src="../../resources/js/learner-labels.js"></script>
+  <script src="../../resources/js/submission-document.js"></script>
+  <script src="../../resources/js/assignment-workbench.js"></script>
+</body>
+</html>

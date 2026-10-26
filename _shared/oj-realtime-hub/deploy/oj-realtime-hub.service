@@ -1,0 +1,22 @@
+[Unit]
+Description=OJ shared realtime hub
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/oj-realtime-hub
+ExecStart=/usr/bin/node src/index.js
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=3
+Environment=NODE_ENV=production
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/oj-realtime-hub/modules
+
+[Install]
+WantedBy=multi-user.target

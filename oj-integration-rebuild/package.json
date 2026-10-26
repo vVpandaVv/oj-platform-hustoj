@@ -1,0 +1,17 @@
+{
+  "name": "oj-platform-rebuild",
+  "version": "0.0.0",
+  "private": true,
+  "description": "OJ Platform clean rebuild development environment",
+  "scripts": {
+    "release:build": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/build-release.ps1",
+    "wp-env:start": "wp-env start --update",
+    "wp-env:stop": "wp-env stop",
+    "wp-env:status": "wp-env status",
+    "wp-env:logs": "wp-env logs"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^11.10.0",
+    "ace-builds": "^1.44.0"
+  }
+}

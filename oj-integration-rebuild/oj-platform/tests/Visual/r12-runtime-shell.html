@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>실행 셸 시각 검증</title>
+  <link rel="stylesheet" href="../../resources/ui/css/oj-ui-system.css">
+</head>
+<body class="ojp-app">
+  <div id="fixture-root"></div>
+
+  <template id="screen-user">
+    <a class="ojp-skip-link" href="#user-main">본문으로 건너뛰기</a>
+    <div class="ojp-public-shell">
+      <header class="ojp-public-header">
+        <div class="ojp-public-header__inner">
+          <a class="ojp-brand" href="#">
+            <span class="ojp-brand__mark" aria-hidden="true">OJ</span>
+            <span class="ojp-brand__name">OJ Platform</span>
+          </a>
+          <nav class="ojp-public-nav" aria-label="사용자 메뉴">
+            <div class="ojp-nav-item">
+              <a class="ojp-nav-link" href="#" aria-current="page"><span>홈</span></a>
+            </div>
+            <div class="ojp-nav-item">
+              <button class="ojp-nav-trigger" type="button" aria-expanded="false" aria-controls="fixture-problem-menu" data-ojp-menu-toggle="fixture-problem-menu">
+                <span>문제</span><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#chevron-down"></use></svg>
+              </button>
+              <div class="ojp-nav-submenu" id="fixture-problem-menu" data-ojp-menu hidden>
+                <a class="ojp-nav-link" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#book-open"></use></svg><span>문제 목록</span></a>
+                <a class="ojp-nav-link" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#book-open"></use></svg><span>퀴즈</span></a>
+                <a class="ojp-nav-link" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#book-open"></use></svg><span>문제집</span></a>
+              </div>
+            </div>
+            <div class="ojp-nav-item"><a class="ojp-nav-link" href="#"><span>제출</span></a></div>
+            <div class="ojp-nav-item"><a class="ojp-nav-link" href="#"><span>학습</span></a></div>
+            <div class="ojp-nav-item"><a class="ojp-nav-link" href="#"><span>커뮤니티</span></a></div>
+          </nav>
+          <div class="ojp-account-wrap">
+            <button class="ojp-account-button" type="button" aria-label="내 정보 메뉴" aria-expanded="false" aria-controls="fixture-account" data-ojp-menu-toggle="fixture-account">
+              <svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#user"></use></svg>
+            </button>
+            <div class="ojp-popover-menu ojp-account-popover" id="fixture-account" data-ojp-menu hidden>
+              <div class="ojp-account-summary"><strong>김하늘</strong><span>내 계정</span></div>
+              <a href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#user"></use></svg><span>프로필</span></a>
+              <a href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#settings"></use></svg><span>계정 설정</span></a>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="ojp-public-main" id="user-main">
+        <div class="ojp-shell">
+          <header class="ojp-home-heading">
+            <div><h1>김하늘님, 안녕하세요.</h1><p>지금 이어서 할 학습과 최근 결과를 확인하세요.</p></div>
+            <span class="ojp-home-date">2026년 8월 9일</span>
+          </header>
+          <section class="ojp-continue-band">
+            <div><span>이어서 하기</span><strong>내 학습을 계속하세요.</strong><span>최근 학습 현황과 추천 문제를 한곳에서 확인합니다.</span></div>
+            <a class="ojp-button ojp-button--primary" href="#">내 학습 열기</a>
+          </section>
+          <div class="ojp-home-grid">
+            <div class="ojp-home-column">
+              <section class="ojp-home-section">
+                <div class="ojp-section-heading"><div><h2>내 학습 공간</h2><p>참여 중인 공간으로 이동합니다.</p></div></div>
+                <div class="ojp-space-grid">
+                  <a class="ojp-space-card" href="#"><div><span class="ojp-status-badge ojp-status-badge--info">수업</span><h3>수업</h3><p>수업 문제와 학습 현황</p></div><span class="ojp-space-card__action">열기</span></a>
+                  <a class="ojp-space-card" href="#"><div><span class="ojp-status-badge ojp-status-badge--warning">대회·평가</span><h3>대회·평가</h3><p>참여 일정과 순위 확인</p></div><span class="ojp-space-card__action">열기</span></a>
+                  <a class="ojp-space-card" href="#"><div><span class="ojp-status-badge">그룹</span><h3>그룹</h3><p>구성원과 함께 학습</p></div><span class="ojp-space-card__action">열기</span></a>
+                </div>
+              </section>
+              <section class="ojp-home-section">
+                <div class="ojp-section-heading"><div><h2>최근 제출</h2><p>채점 결과와 제출 기록을 확인합니다.</p></div><a class="ojp-button ojp-button--small" href="#">전체 보기</a></div>
+                <a class="ojp-home-action-row" href="#"><span><strong>제출 현황</strong><small>최근 채점 결과와 제출 상세 보기</small></span><b>열기</b></a>
+              </section>
+            </div>
+            <aside class="ojp-home-column">
+              <section class="ojp-home-section"><div class="ojp-section-heading"><div><h2>공지</h2><p>최근 게시된 안내입니다.</p></div></div><ul class="ojp-home-notices"><li><a href="#"><strong>서비스 운영 안내</strong><span>오늘</span></a></li><li><a href="#"><strong>평가 참여 안내</strong><span>어제</span></a></li></ul></section>
+              <section class="ojp-home-section"><div class="ojp-section-heading"><div><h2>빠른 이동</h2></div></div><div class="ojp-home-quick-list"><a href="#"><span><strong>문제 찾기</strong><small>주제와 난이도로 문제 검색</small></span><b>열기</b></a><a href="#"><span><strong>내 학습</strong><small>학습 현황과 추천 문제 확인</small></span><b>열기</b></a></div></section>
+            </aside>
+          </div>
+        </div>
+      </main>
+      <nav class="ojp-mobile-bottom-nav" aria-label="모바일 사용자 메뉴">
+        <a href="#" aria-current="page"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#home"></use></svg><span>홈</span></a>
+        <button type="button"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#book-open"></use></svg><span>문제</span></button>
+        <a href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#send"></use></svg><span>제출</span></a>
+        <a href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#graduation-cap"></use></svg><span>학습</span></a>
+        <button type="button"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#ellipsis"></use></svg><span>더보기</span></button>
+      </nav>
+    </div>
+  </template>
+
+  <template id="screen-admin">
+    <a class="ojp-skip-link" href="#admin-main">본문으로 건너뛰기</a>
+    <div class="ojp-console-shell">
+      <header class="ojp-console-header"><div class="ojp-console-header__inner">
+        <button class="ojp-icon-button ojp-console-menu-button" type="button" aria-label="관리 메뉴 열기"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#menu"></use></svg></button>
+        <a class="ojp-brand" href="#"><span class="ojp-brand__mark">OJ</span><span class="ojp-brand__name">관리자 콘솔</span></a>
+        <div class="ojp-console-tools"><a class="ojp-console-user-link" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#external-link"></use></svg><span>사용자 화면</span></a><button class="ojp-account-button" type="button" aria-label="관리자 계정"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#user"></use></svg></button></div>
+      </div></header>
+      <div class="ojp-console-layout">
+        <aside class="ojp-console-sidebar" aria-label="관리자 메뉴">
+          <strong class="ojp-console-sidebar__title">관리자 메뉴</strong>
+          <nav class="ojp-console-nav"><section class="ojp-console-nav__group"><a class="ojp-console-nav__root is-current" aria-current="page" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#layout-dashboard"></use></svg><span>대시보드</span></a></section><section class="ojp-console-nav__group"><a class="ojp-console-nav__root" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#users"></use></svg><span>사용자</span></a></section><section class="ojp-console-nav__group"><a class="ojp-console-nav__root" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#book-open"></use></svg><span>문제</span></a></section><section class="ojp-console-nav__group"><a class="ojp-console-nav__root" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#graduation-cap"></use></svg><span>학습 공간</span></a></section><section class="ojp-console-nav__group"><a class="ojp-console-nav__root" href="#"><svg class="ojp-icon"><use href="../../resources/ui/icons/lucide.svg#settings"></use></svg><span>운영</span></a></section></nav>
+        </aside>
+        <main class="ojp-console-main" id="admin-main"><div class="ojp-shell">
+          <div class="ojp-breadcrumb">관리자 / 대시보드</div>
+          <header class="ojp-page-header"><div><p class="ojp-eyebrow">운영</p><h1>대시보드</h1><p>내가 확인할 운영 업무와 담당 기능을 봅니다.</p></div><span class="ojp-status-badge ojp-status-badge--info">권한 범위 적용</span></header>
+          <div class="ojp-dashboard-layout"><div><section class="ojp-dashboard-section"><div class="ojp-section-heading"><div><h2>내 할 일</h2><p>현재 계정에서 처리할 수 있는 항목만 표시합니다.</p></div></div><div class="ojp-task-list"><a class="ojp-task-row" href="#"><span class="ojp-task-count">12</span><span class="ojp-task-main"><strong>가입 승인 대기</strong><small>신청 정보와 동의 상태를 확인합니다.</small></span><b>확인</b></a></div></section><section class="ojp-dashboard-section"><div class="ojp-section-heading"><div><h2>최근 작업</h2><p>권한 범위에서 실행한 작업이 표시됩니다.</p></div></div><div class="ojp-empty-state"><p>표시할 최근 작업이 없습니다.</p></div></section></div><aside><section class="ojp-dashboard-section"><div class="ojp-section-heading"><div><h2>담당 바로가기</h2><p>사용할 수 있는 관리 메뉴입니다.</p></div></div><div class="ojp-quick-list"><a class="ojp-quick-row" href="#"><span><strong>사용자 관리</strong><small>승인과 계정 상태</small></span><b>열기</b></a><a class="ojp-quick-row" href="#"><span><strong>문제 관리</strong><small>문제와 문제 은행</small></span><b>열기</b></a><a class="ojp-quick-row" href="#"><span><strong>학습 공간</strong><small>수업과 대회 운영</small></span><b>열기</b></a></div></section></aside></div>
+        </div></main>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (() => {
+      const screen = new URLSearchParams(location.search).get("screen") || "user";
+      const template = document.getElementById(`screen-${screen}`) || document.getElementById("screen-user");
+      document.getElementById("fixture-root").replaceChildren(template.content.cloneNode(true));
+    })();
+  </script>
+  <script src="../../resources/ui/js/oj-ui.js"></script>
+</body>
+</html>

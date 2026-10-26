@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DS-10 관리 도구·구현 상세 설계 | OJ Platform</title>
+  <link rel="stylesheet" href="assets/ds10-design.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">OJ</span><strong>OJ Platform 개발 설계</strong></a>
+      <span class="topbar-label">DS-10 문제</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="문서 목차">
+      <strong>관리 도구·구현</strong>
+      <ul>
+        <li><a href="#permissions">담당 범위</a></li>
+        <li><a href="#ai-jobs">AI Jobs</a></li>
+        <li><a href="#test-data">테스트데이터</a></li>
+        <li><a href="#tools">번호·XML·보관</a></li>
+        <li><a href="#data-boundary">데이터 경계</a></li>
+        <li><a href="#code">목표 코드 구조</a></li>
+        <li><a href="#implementation">구현 순서</a></li>
+        <li><a href="#gates">완료 관문</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <header class="report-header">
+        <p class="eyebrow">DS-10 · 상세 설계 4/4</p>
+        <h1>관리 도구·구현 상세 설계</h1>
+        <p class="lede">문제 관리자 업무를 권한과 위험도에 따라 분리하고, AI·파일·다중 저장소 변경은 공통 Jobs로 실행한다. 이 문서가 DS-10 실제 구현 순서와 코드 경계의 기준이다.</p>
+        <div class="meta">
+          <span>관리자 화면 13개</span>
+          <span>Problems 테이블 12개</span>
+          <span>Controller 10개</span>
+          <span>웹 요청 AI 실행 0건</span>
+        </div>
+        <div class="doc-nav" aria-label="DS-10 상세 문서">
+          <a href="development-ds-10-problems.html">개요</a>
+          <a href="development-ds-10-page-contracts.html">페이지 계약</a>
+          <a href="development-ds-10-problem-content.html">문제 콘텐츠</a>
+          <a href="development-ds-10-quiz-design.html">퀴즈</a>
+          <a href="development-ds-10-operations.html" aria-current="page">관리 도구·구현</a>
+        </div>
+      </header>
+
+      <section class="section" id="permissions">
+        <div class="section-heading">
+          <div><h2>관리 권한과 담당 범위</h2><p>전역 capability와 문제별 관계를 한 Policy에서 결합한다.</p></div>
+          <span class="badge good">CF-1 유지</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>행위자</th><th>허용</th><th>제한</th><th>범위 원본</th></tr></thead>
+            <tbody>
+              <tr><td>문제 소유 강사</td><td>담당 문제 본문·메타데이터·테스트데이터·담당자, AI 초안, 보관</td><td>문제 번호 변경, XML 일괄 작업, 영구 삭제</td><td><code>problem_ownerships</code></td></tr>
+              <tr><td>공동 편집자</td><td>담당 문제 본문·메타데이터, AI 메타데이터·작성 초안</td><td>소유권·테스트데이터·보관·번호 변경</td><td><code>problem_collaborators.role=editor</code></td></tr>
+              <tr><td>테스트데이터 담당자</td><td>담당 문제 테스트 파일·SPJ·AI 테스트케이스 초안과 적용</td><td>본문·메타데이터·소유권·보관</td><td><code>problem_collaborators.role=testcase_manager</code></td></tr>
+              <tr><td>전역 문제 관리자</td><td>전체·미배정 문제와 역할 capability 안의 생성·수정·퀴즈·문제집</td><td>별도 capability가 없는 번호 변경·XML·AI·테스트데이터</td><td>WordPress capability</td></tr>
+              <tr><td>최고 관리자</td><td>전역 문제 관리와 분야·세부 주제 사전 조회·추가</td><td>확정 키 변경·3단계 분류·즉시 삭제·기존 문제 자동 재분류</td><td>최고 관리자 전용 Policy · 위임 capability 없음</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ol class="rule-list">
+          <li>전역 관리자는 전체 문제, 담당자는 소유·활성 협업 문제만 목록에서 본다. 미배정 문제는 전역 문제 관리자만 본다.</li>
+          <li><code>problem_ai_assist</code>는 기본 비활성화한다. 기능을 켜고 해당 <code>task_type</code>의 AI 작업 배정이 준비된 경우에만 버튼과 실행을 함께 허용하며, <code>oj_manage_problem_ai_assist</code>는 문제 수정·테스트데이터 권한을 대신하지 않는다.</li>
+          <li><code>oj_problem_topic_create</code>는 최고 관리자 Policy와 위험 작업 nonce를 모두 통과해야 한다. 일반 문제 capability와 대상별 담당 관계로는 허용하지 않는다.</li>
+          <li>담당 관계가 해제되면 다음 요청과 대기 Job 실행 직전 검사부터 접근과 결과 노출을 차단한다.</li>
+          <li>목록의 일괄 작업은 화면에서 체크된 문제 또는 서버가 고정한 필터 대상만 사용한다.</li>
+        </ol>
+      </section>
+
+      <section class="section" id="ai-jobs">
+        <div class="section-heading">
+          <div><h2>AI와 장기 작업</h2><p>AJAX는 등록과 상태 조회만 하고 공급자 호출은 Worker가 수행한다.</p></div>
+          <span class="badge good">CF-5 공통 기반</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Job 종류</th><th>입력·결과</th><th>반영 조건</th><th>원본 보호</th></tr></thead>
+            <tbody>
+              <tr><td><code>problem_metadata_generate</code></td><td>저장된 문제 원문과 현재 2단계 주제 사전 → 난이도 1~5, 세부 주제 0~3, 신뢰도 <code>confidence</code>(0~1), 생성 근거 <code>rationale</code>. 네 필드 모두 필수. 기존 분류와 정답·제출 통계는 AI 입력에서 제외</td><td>분야가 아닌 활성 세부 주제 키 또는 정확한 항목이 없을 때의 빈 배열, Schema·사전 버전 해시·입력 해시 통과 후 저장 또는 비교 승인. 연결 후보 검사도 신뢰도·생성 근거의 누락과 형식 오류를 거부</td><td>AI의 새 분야·세부 주제 생성과 기존 수동값 자동 덮어쓰기 금지. 누락한 신뢰도를 임의 기본값으로 채우지 않음</td></tr>
+              <tr><td><code>problem_authoring_generate</code></td><td><code>title_only</code> 또는 제목·본문·입출력·예시·힌트 전체 초안</td><td>필드별 비교·선택 뒤 일반 문제 저장 POST</td><td>Judge <code>problem</code> 직접 쓰기 금지</td></tr>
+              <tr><td><code>problem_testcase_generate</code></td><td>단일 파일 또는 생성기 실행 결과의 암호화 초안</td><td>Jobs 임시 영역에서 생성한 뒤 확장자·파일명·크기·구문·경로·원본 해시 검증</td><td>생성기 소스와 검증 전 결과의 문제 데이터 디렉터리 직접 쓰기 금지</td></tr>
+              <tr><td><code>problem_testcase_apply</code></td><td>검증된 초안과 적용 계획</td><td>별도 확인, 임시 파일 쓰기, 원자 교체, 사후 해시 확인</td><td>충돌 시 원본 유지</td></tr>
+              <tr><td><code>problem_number_change</code></td><td>원본·대상 번호와 다중 저장소 영향 계획</td><td>전역 권한, 잠금, 단계별 체크포인트와 사후 검증</td><td>DDL 금지, 실패 단계 보상</td></tr>
+              <tr><td><code>quiz_revision_reapply</code></td><td>원본·새 버전, 진행·완료 대상 스냅샷</td><td>현재 권한, 안정 키 대응, 멱등 키</td><td>기존 버전·시도·결과 보존</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flow">
+          <article><span>1 · 등록</span><strong>권한·대상·입력 해시 고정</strong><p>Controller는 타입 입력을 만들고 Job ID를 반환한다.</p></article>
+          <article><span>2 · 실행</span><strong>Worker 재검증</strong><p>현재 권한과 원본 버전이 같을 때만 AI 또는 유지보수 작업을 실행한다.</p></article>
+          <article><span>3 · 검토</span><strong>결과 비교·명시 적용</strong><p>실패·충돌은 사유를 남기고 업무 원본을 바꾸지 않는다.</p></article>
+        </div>
+        <div class="callout"><strong>메타데이터 응답 재생성:</strong> 업무 검증에서 발견한 필수 필드 누락·형식 오류는 같은 항목의 기존 시도 한도(기본 총 3회) 안에서 5초 뒤 다시 실행 가능하게 큐에 넣는다. 단, Ollama에 native Schema를 보냈는데 최상위 필수 필드가 누락된 응답은 아래의 Provider 계약 오류로 즉시 중단한다. 한 번의 Worker 시도에서 Provider는 한 번만 호출하고, 반복 시도에는 검증된 출력 Schema에 완전한 객체를 요구하는 설명을 보강한다. 입력 스냅샷·해시와 <code>problem-metadata-v1</code> 계약은 유지한다. 한도 소진 시 <code>problem.ai_contract_failed</code>와 원래 오류 사유를 남겨 확인을 요청한다. 원문·프로필·권한 변경과 선택 불가 주제는 이 자동 재시도 대상이 아니며, 검증 전 응답은 초안이나 Jobs 결과에 저장하지 않는다.</div>
+        <div class="callout"><strong>Ollama 구조화 출력 검사:</strong> <code>ProblemMetadataOutputContract</code> 한 곳에서 생성한 Schema를 연결 후보 검사와 실제 생성 요청 모두 <code>/api/chat</code>의 <code>format</code>에 전달한다. 같은 Schema를 플랫폼 system 메시지에도 명시하며 애드온 지시와 사용자 데이터의 순서는 유지한다. Schema의 최상위 <code>required</code> 필드가 누락되면 <code>schema_required_missing</code>(Jobs 표시: <code>problem.ai_provider_failed</code>)으로 확인을 요청한다. 반복 재시도나 다른 Provider로 자동 전송하지 않고, 누락 필드명만 표시하며 응답 원문·미지의 키·인증정보는 노출하지 않는다. 필드의 형식·범위·주제 유효성은 기존 업무 검증을 계속 거친다. 서버의 Ollama 버전·모델 구조화 출력 지원 및 역방향 프록시의 <code>format</code> 전달 여부를 확인하고 연결 후보 검사를 다시 수행한다. 이는 서버 측 원인이 확인되었다는 의미가 아니며, 로컬 모의 응답 검증과 실제 서버 재검증을 구분한다. <a href="https://docs.ollama.com/capabilities/structured-outputs">Ollama 공식 구조화 출력 문서</a></div>
+        <div class="warning"><strong>Gemma 4 서버 호환성:</strong> 구버전의 <code>think=false</code> 요청에서 <code>format</code>을 무시하는 <a href="https://github.com/ollama/ollama/issues/15260">상류 이슈 #15260</a>는 <a href="https://github.com/ollama/ollama/releases/tag/v0.21.1">Ollama 0.21.1</a>에 수정되었다. 이후 사용자가 확인한 버전은 서버 <code>0.34.2</code>, CLI <code>0.20.5</code>이다. CLI 버전 경고만으로 실제 서버가 구버전이라고 판단하지 않는다. 플러그인은 CLI를 실행하지 않고 HTTP API에 직접 요청하므로, 현재 누락 오류의 원인을 이 구버전 버그로 확정할 수 없다. 플랫폼에 설정된 실제 endpoint의 <code>/api/version</code>, 연결 후보 검사, 생성 요청과 응답을 대조해야 한다. 추론 모드 강제 활성화는 지연·출력 토큰 소모를 늘릴 수 있어 자동 우회하지 않는다.</div>
+        <div class="callout"><strong>본문 근거와 재분석:</strong> 메타데이터 분석은 문제 창작과 구분한다. 저장된 <code>description/input/output/sample_input/sample_output/hint</code>를 사실 근거로 삼고, 제목이나 문제 번호로 기억하는 다른 문제를 대신 설명하지 않는다. <code>rationale</code>은 한국어 500자 이내의 실제 요구사항 요약과 구체적인 본문·입출력 근거로 구성하며 없는 조건·공식·알고리즘을 추가하지 않는다. 텍스트로 확인할 수 없는 이미지·외부 자료 또는 모순은 한계로 밝히도록 지시한다. 잘못 저장된 DP 분류가 단순 Hello 출력 문제의 재분석을 오염시키지 않도록 <code>current_metadata/accepted_count/submitted_count</code>를 Provider 전송 사본에서 제외한다. 기존 큐 스냅샷과 해시는 변경하지 않아 원본·메타데이터 변경 충돌 검사를 유지한다. 분석은 미저장 편집 내용이 아닌 저장된 원문을 대상으로 한다. JSON 검증 통과나 모델이 반환한 높은 신뢰도는 내용의 정확성을 보증하지 않으며, 수정 적용 뒤 실제 모델 재생성과 초안 검토가 필요하다. 반환 네 필드·DB·공개 Addon API 계약은 변경하지 않는다.</div>
+        <div class="callout"><strong>본문 전달과 문맥 한도:</strong> Provider용 메타데이터 메시지는 선택 가능한 주제의 <code>key → label</code> 사전을 먼저, 실제 <code>problem</code>을 마지막에 배치한다. 주제 사전은 문제의 입력 데이터가 아님을 명시하며, 상위 분야 레코드와 중복 출력 Schema는 메시지에서 제외한다. 원문·예시를 자르거나 주제를 누락하지 않고 native Schema 및 큐 스냅샷은 유지한다. 설명·입력·출력·힌트에 텍스트 근거가 전혀 없으면 전송 전에 중단한다. Ollama 구조화 요청은 <code>truncate=false</code>와 <code>shift=false</code>를 보내 지원 서버에서 본문을 조용히 버리지 못하게 하며, 확인된 문맥 한도 오류는 자동 재시도 없이 <code>num_ctx</code> 설정 확인을 안내한다. 메모리 용량을 가정해 문맥 크기를 자동으로 올리지는 않는다. 기본 전체 사전과 Hello 테스트의 사용자 메시지는 11,438 → 3,313바이트이며 토큰 수나 실제 모델 판독량을 뜻하지 않는다. 실제 서버 로그·설정으로 입력 잘림 여부를 확인해야 하며 프록시가 두 옵션과 전체 <code>messages</code>를 보존하는지도 점검한다. <a href="https://github.com/ollama/ollama/blob/v0.34.2/api/types.go">Ollama 0.34.2 ChatRequest 옵션</a></div>
+        <div class="warning"><strong>초안 보존:</strong> AI 문제·테스트데이터 초안은 암호화 Form Draft에 두고 취소·적용·폐기 또는 24시간 만료 때 제거한다. 비밀과 원문 전체를 Jobs 사건 로그에 기록하지 않는다.</div>
+      </section>
+
+      <section class="section" id="test-data">
+        <div class="section-heading">
+          <div><h2>테스트데이터 편집기와 특수 채점기</h2><p>문제별 채점 폴더를 하나의 안전한 작업 공간으로 제공한다.</p></div>
+          <span class="badge risk">파일 경계</span>
+        </div>
+        <div class="summary"><strong>현재 확인 경로:</strong> Problems 소유 <code>problem_test_data</code> 설정을 단일 원본으로 사용하며 기본값은 <code>/home/judge/data</code>다. 시스템 관리자는 <code>/oj-console/settings/test-data</code>에서 WordPress 공개 경로 밖의 읽기·쓰기 가능한 절대 경로와 승인된 SPJ 실행 파일을 저장한다. 실제 문제 파일은 그 아래 <code>{problem_id}</code> 폴더에서 읽는다.</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>영역</th><th>목표 기능</th><th>안전 계약</th><th>제외 기능</th></tr></thead>
+            <tbody>
+              <tr><td>경로</td><td>읽기 전용 데이터 루트와 현재 문제 폴더 표시</td><td>Problems 소유 <code>oj_platform_problem_test_data_settings</code>를 단일 원본으로 사용하고 정규화된 <code>{problem_id}</code> 폴더를 유일한 작업 위치로 고정한다. 하위 폴더 생성·탐색은 허용하지 않는다.</td><td>상위 폴더·다른 문제 폴더 이동, 하위 폴더 생성·열기, 문제별 편집 화면에서 루트 변경. 전역 루트는 시스템 관리자 전용 테스트 환경 화면에서만 변경</td></tr>
+              <tr><td>파일</td><td>생성, 업로드, UTF-8 텍스트 편집, 이름 변경, 다중 삭제·다운로드</td><td>문제별 쓰기 잠금, 루트 바로 아래 파일명만 허용, 원본 해시 검사, 임시 파일 기록 후 원자 교체, 모든 대상 재검증</td><td>폴더 생성·이동·복사, 임의 명령 실행, 권한 변경, URL 원격 가져오기</td></tr>
+              <tr><td>압축</td><td>선택한 파일 ZIP 만들기, ZIP 내용·충돌 미리보기, 검증 후 풀기</td><td>절대 경로·<code>..</code>·NUL·디렉터리 항목·심볼릭 링크를 차단하고 항목 수·개별 크기·총 해제 크기·압축 비율을 제한한다. 임시 영역에서 검증한 루트 파일만 적용한다.</td><td>폴더 구조 보존, 중첩 압축 자동 해제, 레거시 TAR·GZIP·BZIP 실행 코드</td></tr>
+              <tr><td>입출력 쌍</td><td><code>1.in</code>↔<code>1.out</code>와 같은 쌍 상태, 누락·중복·빈 파일 검사</td><td>검사는 파일을 바꾸지 않고 결과만 표시하며 AI 초안도 별도 승인 뒤 적용</td><td>파일명 자동 변경과 묵시적 <code>.ans</code> 변환</td></tr>
+              <tr><td>파일 유형</td><td><code>.in</code>, <code>.out</code>, <code>.txt</code>, <code>.ans</code>, 생성기·SPJ 소스와 로그는 텍스트 편집, <code>.zip</code>은 압축 도구</td><td>알려진 텍스트만 브라우저 편집, 바이너리는 제한된 다운로드만 허용하고 실행 파일은 승인된 <code>spj</code>만 설치</td><td>업로드 파일의 확장자만 믿고 실행</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout"><strong><code>phpfm</code> 반영 범위:</strong> 레거시 도구의 기능을 검토하되 목표 편집기에는 파일 생성·편집·이름 변경·다중 삭제·업로드·다운로드와 ZIP 기능만 반영한다. 폴더 생성·탐색·이동·복사는 제외한다. 레거시 코드는 루트가 전체 <code>OJ_DATA</code>이고 오래된 전역 요청·아카이브 코드를 사용하므로 재사용하지 않으며 필요한 기능만 타입이 있는 새 Service·Policy·Responder로 구현한다.</div>
+
+        <h3>SPJ 컴파일</h3>
+        <ol class="rule-list">
+          <li>문제 편집에서 특수 채점기 사용이 켜진 경우에만 <code>spj.c</code>, <code>spj.cc</code>, <code>spj.cpp</code> 중 선택한 한 소스를 컴파일할 수 있다.</li>
+          <li><code>problem_spj_compile</code> Job은 Bubblewrap의 분리된 네임스페이스에서 실행한다. <code>/usr</code>와 동적 라이브러리는 읽기 전용, 문제별 임시 폴더는 <code>/build</code>, 제한된 임시 공간은 <code>/tmp</code>로만 노출하고 네트워크와 capability를 제거한다.</li>
+          <li>C는 <code>gcc -std=c11</code>, C++은 <code>g++ -std=c++17</code>을 기본 프로필로 하고 CPU 시간·메모리·출력 크기·전체 시간을 제한한다.</li>
+          <li><code>problem_test_data.spj_sandbox_executable</code>의 승인된 <code>/usr</code> 아래 <code>bwrap</code>과 컴파일러가 준비되지 않으면 작업 등록을 거부한다. 호스트 직접 컴파일로 우회하지 않는다.</li>
+          <li>성공한 새 바이너리의 형식·해시·실행 권한을 확인한 뒤에만 문제 폴더의 <code>spj</code>를 원자 교체한다. 실패하면 기존 동작 중인 <code>spj</code>를 그대로 둔다.</li>
+          <li>컴파일 로그는 민감 경로를 제거한 뒤 결과 참조로 보존하고 화면에서 성공·실패·컴파일러·시각을 확인한다. 실제 채점 인자 검증은 Judge Adapter가 SPJ 실행 계약을 제공할 때만 추가한다.</li>
+        </ol>
+        <div class="summary"><strong>파일 원본:</strong> 확정된 입출력 파일과 SPJ 소스·바이너리는 문제 데이터 폴더의 루트가 소유한다. 테스트케이스 생성기와 검증 전 결과는 Jobs 임시 영역에서만 다루며 확정 파일만 루트에 반영한다. 플랫폼 DB에는 파일 본문을 복제하지 않고 Jobs에는 경로가 아닌 문제 번호·파일명·해시·크기·결과 코드만 기록한다.</div>
+      </section>
+
+      <section class="section" id="tools">
+        <div class="section-heading">
+          <div><h2>문제 번호·XML·보관</h2><p>일상 편집에서 분리한 고위험 도구는 영향 확인과 복구 가능성을 먼저 제공한다.</p></div>
+          <span class="badge risk">별도 화면</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>도구</th><th>실행</th><th>필수 검사</th><th>실패·복구</th></tr></thead>
+            <tbody>
+              <tr><td>문제 번호 일괄 변경</td><td>연속 범위 또는 임의 번호 쌍을 하나의 매핑 집합으로 정규화하고 Job 등록</td><td>원본 존재, 일대일 매핑, 외부 번호 충돌, Judge·플랫폼·WordPress·파일·진행 작업, 현재 권한</td><td>문제 잠금, 임시 번호 2단계 전환, 체크포인트·검증·역순 보상, <code>ALTER TABLE</code> 금지</td></tr>
+              <tr><td>XML 내보내기</td><td>권한 있는 문제를 제한된 크기로 파일 응답</td><td>식별자·범위·파일 수·테스트 파일 크기</td><td>한도 초과 시 쓰기 없이 중단</td></tr>
+              <tr><td>XML 가져오기</td><td>파싱·Schema·중복·미리보기 뒤 선택 적용. XML 주제가 없을 때 사용할 활성 세부 주제는 선택 사항</td><td>문제 필드, 번호 충돌, 파일명·확장자·크기·경로, 선택한 대체 주제 유효성. 대체 주제 미선택은 허용</td><td>실패 항목은 원본을 바꾸지 않고 사유 표시</td></tr>
+              <tr><td>문제 보관</td><td>Judge <code>problem.defunct=Y</code>로 사용자 목록에서 숨김</td><td>담당 범위, 수업·대회·제출·퀴즈·문제집 참조</td><td>관리 목록에서 복원, HTTP 영구 삭제 금지</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>문제 번호 일괄 변경 계약</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>입력·단계</th><th>처리</th><th>거부 조건</th><th>검증</th></tr></thead>
+            <tbody>
+              <tr><td>연속 범위</td><td>현재 시작·끝과 새 시작을 받아 순서를 유지한 일대일 매핑 생성</td><td>역방향 범위, 개수 불일치, 최대 작업 수 초과</td><td>생성된 모든 번호 쌍을 실행 전 표로 표시</td></tr>
+              <tr><td>임의 집합</td><td>행 편집 또는 CSV·TSV의 <code>현재 번호,새 번호</code>를 같은 매핑 계약으로 변환</td><td>원본·대상 중복, 자기 매핑만 있는 항목, 존재하지 않는 원본</td><td>제목·공개 상태와 함께 대상별 성공·충돌 표시</td></tr>
+              <tr><td>교환·순환</td><td>전체 사용 번호와 충돌하지 않는 임시 번호를 확보해 모든 원본→임시, 모든 임시→대상 순서로 전환</td><td>안전한 임시 번호 집합을 확보할 수 없음</td><td>두 단계 모두 같은 Registry의 모든 직접 참조를 갱신</td></tr>
+              <tr><td>실행 준비</td><td>대상 문제의 새 제출·편집·테스트데이터 변경을 잠그고 대기·실행 중 채점과 문제 대상 Job을 소진</td><td>기한 안에 채점·Job이 끝나지 않음, 저장소 readiness 실패</td><td>잠금 토큰·대상 해시·저장소별 영향 건수 고정</td></tr>
+              <tr><td>완료</td><td>모든 저장소를 검증한 뒤 캐시를 무효화하고 잠금 해제</td><td>이전 번호 활성 참조, 고아 행, 파일 해시·행 수 불일치</td><td>새 번호 조회·제출·수업·대회·게시판 질문의 표본 기능 검사</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>번호 참조 Registry</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>저장소</th><th>변경 대상</th><th>처리 방식</th><th>변경하지 않는 원본</th></tr></thead>
+            <tbody>
+              <tr><td>JudgeDb</td><td><code>problem.problem_id</code>, <code>solution.problem_id</code>, <code>contest_problem.problem_id</code>, 지원 스키마에 등록된 직접 참조</td><td>스키마 Registry의 허용 목록만 두 단계 로컬 트랜잭션으로 변경</td><td><code>source_code</code>, <code>compileinfo</code>, <code>runtimeinfo</code>는 <code>solution_id</code> 연결이므로 그대로 유지</td></tr>
+              <tr><td>PlatformDb</td><td><code>class_problem_links</code>, <code>problem_ownerships</code>, <code>problem_collaborators</code>, <code>problem_metadata</code>, <code>problem_topic_links</code>, <code>quiz_revisions</code>, <code>quiz_attempt_summaries</code>, <code>problem_book_category_items</code>, <code>personal_problem_book_items</code></td><td>9개 직접 참조를 하나의 로컬 트랜잭션에서 변경</td><td>퀴즈 문항·선택지·답안은 revision·question·attempt 키를 사용하므로 변경하지 않음</td></tr>
+              <tr><td>구조화 값</td><td><code>problem_metadata.recommendation_links</code>의 추천 문제 번호, 문제별 제출 방식 설정 키</td><td>Schema로 파싱한 뒤 알려진 문제 번호 필드만 변경하고 재직렬화</td><td>자유 텍스트와 AI 원문 스냅샷의 숫자는 바꾸지 않음</td></tr>
+              <tr><td>WordPress</td><td><code>oj_board_post</code> 중 <code>_oj_board_context_type=problem</code>인 글의 <code>_oj_board_context_id</code></td><td>문맥 종류와 문제 번호를 함께 조건으로 갱신</td><td>수업·대회·전체 게시판 문맥과 글 본문은 변경하지 않음</td></tr>
+              <tr><td>파일</td><td><code>{data_root}/{old_problem_id}</code> 폴더 전체</td><td>상대 경로·크기·해시 manifest를 고정하고 임시 폴더를 거쳐 이름 전환</td><td>파일 내용은 다시 쓰지 않음</td></tr>
+              <tr><td>Jobs·감사</td><td>대기·실행 중인 문제 대상 작업은 시작 전 소진 또는 차단</td><td>완료 작업은 번호 매핑 사건으로 연결하고 새 작업만 새 번호 사용</td><td>완료된 <code>background_job_events</code>·제출 사건은 불변 이력으로 유지</td></tr>
+              <tr><td>파생 화면</td><td>문제·제출·수업·대회·추천·질문 조회 캐시와 URL</td><td>완료 뒤 관련 캐시를 무효화하고 새 대표 URL만 생성</td><td>이전 번호 호환 주소와 영구 별칭 테이블은 만들지 않음</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warning"><strong>원자성 한계:</strong> JudgeDb, PlatformDb, WordPress와 파일 시스템을 하나의 DB 트랜잭션으로 묶을 수 없다. 따라서 <code>problem_number_change</code> Job이 저장소별 체크포인트·사후 조건·보상 결과를 기록하고, 전체 검증이 끝날 때까지 대상 문제 잠금을 유지한다.</div>
+        <div class="warning"><strong>문구 통일:</strong> D-002에서 확정한 <code>console.problems.delete</code>와 <code>/oj-console/problems/{problem_id}/delete</code>는 유지하되 화면 제목과 버튼은 실제 동작에 맞게 “문제 보관”으로 표시한다. Judge 문제 행과 테스트 파일의 영구 정리는 DS-15 이전·운영에서 별도 보존·복구 계약을 승인한 뒤에만 제공한다.</div>
+        <div class="summary"><strong>관리자 시안:</strong> <a href="development-ds-10-admin-problems-ui.html">관리자 문제 시안</a>에서 목록·추가·편집·보관·테스트데이터·번호 변경·XML 7개 화면을 확인한다.</div>
+      </section>
+
+      <section class="section" id="data-boundary">
+        <div class="section-heading">
+          <div><h2>데이터 소유 경계</h2><p>Judge 원본, Problems 확장 데이터, 파일과 Jobs 상태를 섞지 않는다.</p></div>
+          <span class="badge good">12개 플랫폼 테이블</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>소유자</th><th>원본</th><th>핵심 책임</th></tr></thead>
+            <tbody>
+              <tr><td>JudgeDb</td><td><code>problem</code>의 원문·<code>bann</code>·<code>front</code>·<code>body</code>·<code>rear</code>, 제한된 <code>solution</code> 집계</td><td>문제 원문·공개 중지·제출 코드 정책, 문제 통계·순위와 참조 검사</td></tr>
+              <tr><td>Problems · 담당·메타데이터</td><td><code>problem_ownerships</code>, <code>problem_collaborators</code>, <code>problem_metadata</code>, <code>problem_topic_links</code></td><td>담당 범위, 난이도·세부 주제·전체 코드/빈칸 완성 작성 방식과 생성 근거</td></tr>
+              <tr><td>WordPress 분류</td><td><code>oj_problem_topic</code> term과 termmeta</td><td>최고 관리자 추가형 분야→세부 주제 2단계 사전과 AI 별칭</td></tr>
+              <tr><td>Problems · 퀴즈</td><td>퀴즈 5개 테이블</td><td>공유 불변 버전, 사용자 시도·답안·점수</td></tr>
+              <tr><td>Problems · 문제집</td><td><code>problem_book_categories</code>, <code>problem_book_category_items</code>, <code>personal_problem_book_items</code></td><td>공용 문제집과 본인 개인 문제집</td></tr>
+              <tr><td>파일</td><td>Judge 문제 데이터 루트의 문제 디렉터리</td><td>하위 폴더 없는 확정 테스트 파일과 SPJ</td></tr>
+              <tr><td>Jobs Core</td><td>기존 Jobs 4개 테이블과 암호화 Form Draft</td><td>상태·대상·체크포인트·사건·결과 참조, 생성기와 검증 전 테스트데이터 초안</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout"><strong>식별자:</strong> Problems 12개 테이블의 <code>owner_user_id</code>, <code>assigned_by_user_id</code>, <code>user_id</code> 등 모든 사용자 참조 열은 숫자 <code>wp_users.ID</code>다. Judge <code>solution.user_id</code> 문자열은 JudgeDb 어댑터가 <code>user_login</code>과 연결하며 영구 Judge ID 매핑 테이블을 만들지 않는다.</div>
+      </section>
+
+      <section class="section" id="code">
+        <div class="section-heading">
+          <div><h2>목표 코드 구조</h2><p>화면·SQL·AI·파일 처리를 10개 Controller와 내부 계층으로 분리한다.</p></div>
+          <span class="badge info">6 + 4 Controller</span>
+        </div>
+        <div class="tree">modules/Problems/
+|-- Controller/
+|   |-- Console_Problem_List_Controller.php
+|   |-- Console_Problem_Edit_Controller.php
+|   |-- Console_Problem_Metadata_Controller.php
+|   |-- Console_Quiz_Controller.php
+|   |-- Console_Problem_Book_Controller.php
+|   |-- Console_Problem_Tool_Controller.php
+|   |-- Public_Problem_Catalog_Controller.php
+|   |-- Public_Problem_Report_Controller.php
+|   |-- Public_Quiz_Controller.php
+|   `-- Public_Problem_Book_Controller.php
+|-- Application/
+|-- Domain/
+|-- Repository/
+|-- Gateway/
+|-- Jobs/
+|-- Provider/
+|-- Integration/
+`-- View/</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>계층</th><th>소유</th><th>금지</th></tr></thead>
+            <tbody>
+              <tr><td>Controller</td><td>타입 입력, Policy, Application Service, 응답 선택</td><td>SQL, AI 호출, HTML 문자열 조립, 요청값 반복 해석</td></tr>
+              <tr><td>Application</td><td>권한·검증·저장 순서·완료 조건</td><td>HTTP 리디렉션, 실행 중 Container 조회</td></tr>
+              <tr><td>Domain</td><td>난이도·주제·공개·담당·퀴즈 규칙과 빈칸 스키마를 포함한 불변 <code>Problem_Submission_Code_Policy</code></td><td>WordPress·DB 전역 함수 직접 호출</td></tr>
+              <tr><td>Repository·Gateway</td><td>소유 테이블·Judge·파일의 타입 조회와 명령</td><td>다른 모듈 범용 SQL, Judge DDL</td></tr>
+              <tr><td>Jobs Handler</td><td>권한 재검사, AI·장기 작업, 체크포인트·보상</td><td>화면 세션 의존, 원문을 사건 로그에 저장</td></tr>
+              <tr><td>Provider·Integration</td><td>문제 요약 공개, 문제 상세 선택 Section 조립</td><td>내부 Repository 노출, Board SQL, 완성 HTML 수신</td></tr>
+              <tr><td>View</td><td>타입 ViewModel과 공통 Renderer</td><td>권한 결정, 저장 명령, 화면별 LaTeX 구현</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="summary"><strong>조립 원칙:</strong> <code>Module.php</code>는 생성자 의존을 연결하고 Route·Action·Jobs Handler·Provider를 등록한다. Controller·Service·Repository·Renderer는 실행 중 <code>Plugin::instance()</code>나 문자열 Container로 서비스를 찾지 않는다.</div>
+      </section>
+
+      <section class="section" id="implementation">
+        <div class="section-heading">
+          <div><h2>구현 순서</h2><p>목록·메타데이터를 첫 수직 기능으로 검증한 뒤 위험도가 높은 기능으로 확장한다.</p></div>
+          <span class="badge good">I-03 코드 완료</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>순서</th><th>구현 묶음</th><th>완료 증거</th></tr></thead>
+            <tbody>
+              <tr><td>P-1</td><td>Gateway·Repository·담당 Policy·WordPress 2단계 주제 Dictionary</td><td>Judge/PlatformDb/WordPress 분리, 12개 플랫폼 테이블 Schema, 최고 관리자 추가 권한과 분야·세부 주제 2단계 검사</td></tr>
+              <tr><td>P-2</td><td>관리자 목록·메타데이터 단건/선택/필터 전체 Jobs</td><td>난이도 1~5, 선택 세부 주제 0~3, 대상 고정, 충돌·재시도 E2E</td></tr>
+              <tr><td>P-3</td><td>문제 작성·편집·보관·AI 작성 초안, 공통 본문 Renderer, 전체 코드/빈칸 완성 작성기, 제출 금지 코드·채점용 앞·뒤 코드 Policy Provider</td><td>원본·템플릿 해시 충돌, 빈칸 ID·형식, 권한 회수, LaTeX·예시 원문 보존, 전체 코드·빈칸·Blockly 공통 정책과 원본/채점 소스 분리</td></tr>
+              <tr><td>P-4</td><td>테스트데이터·AI 초안·번호 변경·XML</td><td>경로 이탈·파일 충돌·보상·DDL 0건·복구 검사</td></tr>
+              <tr><td>P-5</td><td>사용자 문제·통계·순위·퀴즈·문제집, 문제별 질문, 관리자 퀴즈</td><td>로그인·본인 결과·버전 보호·평가 보호·기능 OFF·모바일 E2E</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="summary"><strong>R-05 구현 증거:</strong> Problems 사용자 10개·관리자 13개 Route Handler와 Action Handler 20개, 소유 스키마 12개를 실제 Composition Root에 연결했다. 문제·메타데이터·주제·코드 정책·AI Jobs·테스트데이터·SPJ·번호 변경·XML·퀴즈·문제집 단위 검사와 전역 계약·구조·단일 CSS/JS·UTF-8 정적 검사를 통과했으며 운영 DB에는 쓰지 않았다.</div>
+      </section>
+
+      <section class="section" id="gates">
+        <div class="section-heading">
+          <div><h2>완료 관문</h2><p>하나라도 실패하면 DS-10 구현 완료로 처리하지 않는다.</p></div>
+          <span class="badge wait">자동 검사 통과 · 시각 확인 대기</span>
+        </div>
+        <div class="gate"><div><strong>경로</strong></div><div>Problems 사용자 10개·관리자 13개 대표 주소만 등록되고 호환 경로가 없다.</div><div>Registry 검사</div></div>
+        <div class="gate"><div><strong>주제 권한</strong></div><div>최고 관리자만 주제 관리 GET과 생성 POST를 사용할 수 있고 일반 문제 관리자는 활성 주제 선택만 할 수 있다.</div><div>허용·거부 E2E</div></div>
+        <div class="gate"><div><strong>권한</strong></div><div>메뉴·GET·POST·AJAX·Jobs·파일·내보내기가 같은 담당 Policy를 사용한다.</div><div>허용·거부 행렬</div></div>
+        <div class="gate"><div><strong>AI</strong></div><div>웹 요청 공급자 호출이 0건이며 계약 실패·충돌이 원본을 바꾸지 않는다.</div><div>실패 주입</div></div>
+        <div class="gate"><div><strong>제출 코드 정책</strong></div><div>문제 편집·상세·DS-11 전체 코드·빈칸 완성·Blockly 제출이 같은 Policy Provider를 사용하고 새 테이블·직접 Judge 조회·화면별 파서를 만들지 않는다.</div><div>정적 의존·통합 검사</div></div>
+        <div class="gate"><div><strong>파일</strong></div><div>경로 이탈·심볼릭 링크·충돌·부분 실패 뒤에도 원본과 복구 상태를 판정한다.</div><div>통합·복구</div></div>
+        <div class="gate"><div><strong>구조</strong></div><div>10개 Controller와 생성자 의존 구조가 지켜지고 런타임 Container 조회가 없다.</div><div>정적 구조 검사</div></div>
+        <div class="gate"><div><strong>UI·UTF-8</strong></div><div>1440×900, 1024×768, 390×844에서 겹침이 없고 한글 원문에 유니코드 이스케이프가 없다.</div><div>Playwright·인코딩</div></div>
+      </section>
+
+      <footer>OJ Platform 개발 설계 · DS-10 관리 도구·구현 · UTF-8 HTML</footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "name": "codingpanda/oj-ai-dashboard",
+  "description": "OJ Platform add-on for worksheets, AI assessment, review, feedback, and reports.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=8.1",
+    "ext-dom": "*",
+    "ext-intl": "*",
+    "ext-mbstring": "*",
+    "dompdf/dompdf": "^3.1"
+  },
+  "require-dev": {
+    "php-stubs/wordpress-stubs": "^6.8",
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^10.5",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "wp-coding-standards/wpcs": "^3.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "OJAI\\Dashboard\\": "src/"
+    }
+  },
+  "scripts": {
+    "lint:php": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/lint-php.ps1",
+    "check:harness": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-plugin-harness.ps1",
+    "check": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-quality.ps1 -Strict"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "sort-packages": true
+  }
+}

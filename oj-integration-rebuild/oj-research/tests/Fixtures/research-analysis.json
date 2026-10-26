@@ -1,0 +1,3227 @@
+{
+  "synthetic": true,
+  "oracle": "statsmodels 0.14.6; scipy 1.18.1",
+  "t_critical": {
+    "1": 12.706204736174694,
+    "2": 4.302652729749462,
+    "5": 2.5705818356363146,
+    "10": 2.2281388519862744,
+    "30": 2.0422724563012378,
+    "100": 1.983971518523552,
+    "1000": 1.9623390808264083
+  },
+  "fixtures": [
+    {
+      "name": "positive",
+      "allocation": "stratified",
+      "rows": [
+        {
+          "participant": "SYNTHETIC-1",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 21.022883569860227,
+          "posttest_score": 33.26384943340355,
+          "gain": 12.240965863543323
+        },
+        {
+          "participant": "SYNTHETIC-2",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 25.89632392816705,
+          "posttest_score": 32.322359380565345,
+          "gain": 6.426035452398295
+        },
+        {
+          "participant": "SYNTHETIC-3",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 29.164920404605652,
+          "posttest_score": 34.83779921940633,
+          "gain": 5.672878814800676
+        },
+        {
+          "participant": "SYNTHETIC-4",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.608777043035403,
+          "posttest_score": 20.232633228046893,
+          "gain": -0.37614381498850946
+        },
+        {
+          "participant": "SYNTHETIC-5",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 16.07478468703146,
+          "posttest_score": 30.452802172712616,
+          "gain": 14.378017485681156
+        },
+        {
+          "participant": "SYNTHETIC-6",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 13.849853244932678,
+          "posttest_score": 18.47453549772406,
+          "gain": 4.624682252791381
+        },
+        {
+          "participant": "SYNTHETIC-7",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 27.919980664823967,
+          "posttest_score": 40.89944115739611,
+          "gain": 12.979460492572144
+        },
+        {
+          "participant": "SYNTHETIC-8",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 14.882079430171054,
+          "posttest_score": 23.62347652252408,
+          "gain": 8.741397092353026
+        },
+        {
+          "participant": "SYNTHETIC-9",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 19.589640303952386,
+          "posttest_score": 32.20041303012561,
+          "gain": 12.610772726173224
+        },
+        {
+          "participant": "SYNTHETIC-10",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 24.175852200934685,
+          "posttest_score": 28.499820925978618,
+          "gain": 4.323968725043933
+        },
+        {
+          "participant": "SYNTHETIC-11",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 33.78441687389018,
+          "posttest_score": 45.16388134065048,
+          "gain": 11.379464466760297
+        },
+        {
+          "participant": "SYNTHETIC-12",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 33.32356619429336,
+          "posttest_score": 41.94994464446227,
+          "gain": 8.626378450168907
+        },
+        {
+          "participant": "SYNTHETIC-13",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 15.847321977230575,
+          "posttest_score": 35.44985273621975,
+          "gain": 19.60253075898918
+        },
+        {
+          "participant": "SYNTHETIC-14",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 30.506904216952087,
+          "posttest_score": 35.38552093827323,
+          "gain": 4.878616721321144
+        },
+        {
+          "participant": "SYNTHETIC-15",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 16.593552590160165,
+          "posttest_score": 30.920827579697736,
+          "gain": 14.327274989537571
+        },
+        {
+          "participant": "SYNTHETIC-16",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 34.37327183215377,
+          "posttest_score": 35.960565084121725,
+          "gain": 1.5872932519679566
+        },
+        {
+          "participant": "SYNTHETIC-17",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.970238298490557,
+          "posttest_score": 34.51776790998812,
+          "gain": 13.547529611497566
+        },
+        {
+          "participant": "SYNTHETIC-18",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 34.16270650968341,
+          "posttest_score": 31.890096299192848,
+          "gain": -2.272610210490562
+        },
+        {
+          "participant": "SYNTHETIC-19",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 23.69489393984086,
+          "posttest_score": 34.372227054470336,
+          "gain": 10.677333114629477
+        },
+        {
+          "participant": "SYNTHETIC-20",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.85244327536701,
+          "posttest_score": 25.259025947774845,
+          "gain": 4.406582672407836
+        },
+        {
+          "participant": "SYNTHETIC-21",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 39.8616242717076,
+          "posttest_score": 46.65089189894822,
+          "gain": 6.789267627240619
+        },
+        {
+          "participant": "SYNTHETIC-22",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.01489385933579,
+          "posttest_score": 37.287122410800706,
+          "gain": 7.2722285514649165
+        },
+        {
+          "participant": "SYNTHETIC-23",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 51.92217996227599,
+          "posttest_score": 59.29051520312491,
+          "gain": 7.368335240848921
+        },
+        {
+          "participant": "SYNTHETIC-24",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 37.307154712608394,
+          "posttest_score": 34.017154116388845,
+          "gain": -3.2900005962195493
+        },
+        {
+          "participant": "SYNTHETIC-25",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 45.94154262696435,
+          "posttest_score": 52.56616969334556,
+          "gain": 6.624627066381208
+        },
+        {
+          "participant": "SYNTHETIC-26",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 35.089961042471785,
+          "posttest_score": 34.6817312059469,
+          "gain": -0.40822983652488176
+        },
+        {
+          "participant": "SYNTHETIC-27",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 52.487180051083826,
+          "posttest_score": 57.420042436878646,
+          "gain": 4.93286238579482
+        },
+        {
+          "participant": "SYNTHETIC-28",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 35.61445060798141,
+          "posttest_score": 36.08817224571752,
+          "gain": 0.4737216377361122
+        },
+        {
+          "participant": "SYNTHETIC-29",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.656764900250842,
+          "posttest_score": 38.964330613720726,
+          "gain": 8.307565713469884
+        },
+        {
+          "participant": "SYNTHETIC-30",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 42.2679644889384,
+          "posttest_score": 51.78099863873487,
+          "gain": 9.513034149796475
+        },
+        {
+          "participant": "SYNTHETIC-31",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 29.649128930749086,
+          "posttest_score": 41.02696496572527,
+          "gain": 11.377836034976184
+        },
+        {
+          "participant": "SYNTHETIC-32",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 32.65053331535202,
+          "posttest_score": 36.72002522195765,
+          "gain": 4.069491906605627
+        },
+        {
+          "participant": "SYNTHETIC-33",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 39.46965716121073,
+          "posttest_score": 49.71513125355338,
+          "gain": 10.245474092342647
+        },
+        {
+          "participant": "SYNTHETIC-34",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 40.54167945011839,
+          "posttest_score": 41.775514925989455,
+          "gain": 1.233835475871068
+        },
+        {
+          "participant": "SYNTHETIC-35",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 42.75647263882057,
+          "posttest_score": 45.32096684746851,
+          "gain": 2.564494208647943
+        },
+        {
+          "participant": "SYNTHETIC-36",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 31.8911605465937,
+          "posttest_score": 36.57055853031884,
+          "gain": 4.679397983725142
+        },
+        {
+          "participant": "SYNTHETIC-37",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 40.89746170207346,
+          "posttest_score": 47.31203141881818,
+          "gain": 6.414569716744722
+        },
+        {
+          "participant": "SYNTHETIC-38",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 46.66850481383061,
+          "posttest_score": 44.29148220661527,
+          "gain": -2.3770226072153378
+        },
+        {
+          "participant": "SYNTHETIC-39",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.321121942947748,
+          "posttest_score": 34.717747355093934,
+          "gain": 4.396625412146186
+        },
+        {
+          "participant": "SYNTHETIC-40",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 51.568559626994634,
+          "posttest_score": 47.15525385125235,
+          "gain": -4.4133057757422876
+        },
+        {
+          "participant": "SYNTHETIC-41",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 67.53725746512345,
+          "posttest_score": 62.45695772376364,
+          "gain": -5.080299741359809
+        },
+        {
+          "participant": "SYNTHETIC-42",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 48.80986178431226,
+          "posttest_score": 40.24563340376838,
+          "gain": -8.56422838054388
+        },
+        {
+          "participant": "SYNTHETIC-43",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 53.183385919926884,
+          "posttest_score": 57.99754201006858,
+          "gain": 4.814156090141694
+        },
+        {
+          "participant": "SYNTHETIC-44",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 47.46749498644088,
+          "posttest_score": 39.86539586846682,
+          "gain": -7.602099117974063
+        },
+        {
+          "participant": "SYNTHETIC-45",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 63.58427488891287,
+          "posttest_score": 67.17725398740932,
+          "gain": 3.5929790984964427
+        },
+        {
+          "participant": "SYNTHETIC-46",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 60.19867989229075,
+          "posttest_score": 60.74417901675938,
+          "gain": 0.545499124468634
+        },
+        {
+          "participant": "SYNTHETIC-47",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 46.35082169383138,
+          "posttest_score": 55.48232906782838,
+          "gain": 9.131507373997003
+        },
+        {
+          "participant": "SYNTHETIC-48",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 66.15796001220309,
+          "posttest_score": 55.84363466167725,
+          "gain": -10.314325350525841
+        },
+        {
+          "participant": "SYNTHETIC-49",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 58.72820611840911,
+          "posttest_score": 62.52455913657866,
+          "gain": 3.7963530181695475
+        },
+        {
+          "participant": "SYNTHETIC-50",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 66.16107423311257,
+          "posttest_score": 58.431588095101965,
+          "gain": -7.729486138010607
+        },
+        {
+          "participant": "SYNTHETIC-51",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 50.77902586337732,
+          "posttest_score": 60.10292412455624,
+          "gain": 9.323898261178918
+        },
+        {
+          "participant": "SYNTHETIC-52",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 59.07436562305869,
+          "posttest_score": 48.23211618527883,
+          "gain": -10.842249437779863
+        },
+        {
+          "participant": "SYNTHETIC-53",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 65.211890258777,
+          "posttest_score": 64.40447130366104,
+          "gain": -0.8074189551159634
+        },
+        {
+          "participant": "SYNTHETIC-54",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 47.152812153186105,
+          "posttest_score": 35.20320553780417,
+          "gain": -11.949606615381931
+        },
+        {
+          "participant": "SYNTHETIC-55",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 61.04389285893801,
+          "posttest_score": 59.392713888967265,
+          "gain": -1.6511789699707435
+        },
+        {
+          "participant": "SYNTHETIC-56",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 52.36542509236342,
+          "posttest_score": 51.925839813774594,
+          "gain": -0.43958527858882235
+        },
+        {
+          "participant": "SYNTHETIC-57",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 55.717551305866564,
+          "posttest_score": 61.45681830351683,
+          "gain": 5.739266997650269
+        },
+        {
+          "participant": "SYNTHETIC-58",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 63.11434173664642,
+          "posttest_score": 54.939513583403254,
+          "gain": -8.174828153243169
+        },
+        {
+          "participant": "SYNTHETIC-59",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 67.49004862517882,
+          "posttest_score": 63.79474016466777,
+          "gain": -3.6953084605110433
+        },
+        {
+          "participant": "SYNTHETIC-60",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 49.123054174879194,
+          "posttest_score": 53.64141183832914,
+          "gain": 4.518357663449947
+        }
+      ],
+      "expected": {
+        "primary": {
+          "estimate": 7.681967521013263,
+          "se": 1.0301611632744536,
+          "lower": 5.6174784158060165,
+          "upper": 9.74645662622051,
+          "df": 55.0
+        },
+        "standardized_difference": 0.6574143038011553,
+        "levels": {
+          "advanced": {
+            "estimate": 9.382335438372408,
+            "se": 2.1535590452760136,
+            "lower": 5.062843007629471,
+            "upper": 13.701827869115345,
+            "df": 53.0
+          },
+          "beginner": {
+            "estimate": 7.889229808805219,
+            "se": 1.5151233892237035,
+            "lower": 4.850277138457339,
+            "upper": 10.928182479153097,
+            "df": 53.0
+          },
+          "intermediate": {
+            "estimate": 5.776694922440868,
+            "se": 1.6749530537623842,
+            "lower": 2.417164542511531,
+            "upper": 9.136225302370205,
+            "df": 53.0
+          }
+        },
+        "differences": [
+          {
+            "left": "advanced",
+            "right": "beginner",
+            "effect": {
+              "estimate": 1.4931056295671894,
+              "se": 2.582579901490157,
+              "lower": -3.686893665435109,
+              "upper": 6.673104924569488,
+              "df": 53.0
+            }
+          },
+          {
+            "left": "advanced",
+            "right": "intermediate",
+            "effect": {
+              "estimate": 3.6056405159315403,
+              "se": 2.7388491934802515,
+              "lower": -1.8877952856710483,
+              "upper": 9.099076317534129,
+              "df": 53.0
+            }
+          },
+          {
+            "left": "beginner",
+            "right": "intermediate",
+            "effect": {
+              "estimate": 2.112534886364351,
+              "se": 2.284145054883179,
+              "lower": -2.4688799101926984,
+              "upper": 6.6939496829214,
+              "df": 53.0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "negative",
+      "allocation": "stratified",
+      "rows": [
+        {
+          "participant": "SYNTHETIC-1",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 21.022883569860227,
+          "posttest_score": 19.263849433403546,
+          "gain": -1.7590341364566804
+        },
+        {
+          "participant": "SYNTHETIC-2",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 25.89632392816705,
+          "posttest_score": 32.322359380565345,
+          "gain": 6.426035452398295
+        },
+        {
+          "participant": "SYNTHETIC-3",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 29.164920404605652,
+          "posttest_score": 20.837799219406328,
+          "gain": -8.327121185199324
+        },
+        {
+          "participant": "SYNTHETIC-4",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.608777043035403,
+          "posttest_score": 20.232633228046893,
+          "gain": -0.37614381498850946
+        },
+        {
+          "participant": "SYNTHETIC-5",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 16.07478468703146,
+          "posttest_score": 16.452802172712616,
+          "gain": 0.37801748568115556
+        },
+        {
+          "participant": "SYNTHETIC-6",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 13.849853244932678,
+          "posttest_score": 18.47453549772406,
+          "gain": 4.624682252791381
+        },
+        {
+          "participant": "SYNTHETIC-7",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 27.919980664823967,
+          "posttest_score": 26.899441157396108,
+          "gain": -1.0205395074278591
+        },
+        {
+          "participant": "SYNTHETIC-8",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 14.882079430171054,
+          "posttest_score": 23.62347652252408,
+          "gain": 8.741397092353026
+        },
+        {
+          "participant": "SYNTHETIC-9",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 19.589640303952386,
+          "posttest_score": 18.200413030125613,
+          "gain": -1.3892272738267728
+        },
+        {
+          "participant": "SYNTHETIC-10",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 24.175852200934685,
+          "posttest_score": 28.499820925978618,
+          "gain": 4.323968725043933
+        },
+        {
+          "participant": "SYNTHETIC-11",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 33.78441687389018,
+          "posttest_score": 31.163881340650477,
+          "gain": -2.6205355332397033
+        },
+        {
+          "participant": "SYNTHETIC-12",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 33.32356619429336,
+          "posttest_score": 41.94994464446227,
+          "gain": 8.626378450168907
+        },
+        {
+          "participant": "SYNTHETIC-13",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 15.847321977230575,
+          "posttest_score": 21.449852736219754,
+          "gain": 5.602530758989179
+        },
+        {
+          "participant": "SYNTHETIC-14",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 30.506904216952087,
+          "posttest_score": 35.38552093827323,
+          "gain": 4.878616721321144
+        },
+        {
+          "participant": "SYNTHETIC-15",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 16.593552590160165,
+          "posttest_score": 16.920827579697736,
+          "gain": 0.32727498953757106
+        },
+        {
+          "participant": "SYNTHETIC-16",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 34.37327183215377,
+          "posttest_score": 35.960565084121725,
+          "gain": 1.5872932519679566
+        },
+        {
+          "participant": "SYNTHETIC-17",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.970238298490557,
+          "posttest_score": 20.517767909988123,
+          "gain": -0.4524703885024337
+        },
+        {
+          "participant": "SYNTHETIC-18",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 34.16270650968341,
+          "posttest_score": 31.890096299192848,
+          "gain": -2.272610210490562
+        },
+        {
+          "participant": "SYNTHETIC-19",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 23.69489393984086,
+          "posttest_score": 20.372227054470336,
+          "gain": -3.3226668853705235
+        },
+        {
+          "participant": "SYNTHETIC-20",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.85244327536701,
+          "posttest_score": 25.259025947774845,
+          "gain": 4.406582672407836
+        },
+        {
+          "participant": "SYNTHETIC-21",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 39.8616242717076,
+          "posttest_score": 32.65089189894822,
+          "gain": -7.210732372759381
+        },
+        {
+          "participant": "SYNTHETIC-22",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.01489385933579,
+          "posttest_score": 37.287122410800706,
+          "gain": 7.2722285514649165
+        },
+        {
+          "participant": "SYNTHETIC-23",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 51.92217996227599,
+          "posttest_score": 45.29051520312491,
+          "gain": -6.631664759151079
+        },
+        {
+          "participant": "SYNTHETIC-24",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 37.307154712608394,
+          "posttest_score": 34.017154116388845,
+          "gain": -3.2900005962195493
+        },
+        {
+          "participant": "SYNTHETIC-25",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 45.94154262696435,
+          "posttest_score": 38.56616969334556,
+          "gain": -7.375372933618792
+        },
+        {
+          "participant": "SYNTHETIC-26",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 35.089961042471785,
+          "posttest_score": 34.6817312059469,
+          "gain": -0.40822983652488176
+        },
+        {
+          "participant": "SYNTHETIC-27",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 52.487180051083826,
+          "posttest_score": 43.420042436878646,
+          "gain": -9.06713761420518
+        },
+        {
+          "participant": "SYNTHETIC-28",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 35.61445060798141,
+          "posttest_score": 36.08817224571752,
+          "gain": 0.4737216377361122
+        },
+        {
+          "participant": "SYNTHETIC-29",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.656764900250842,
+          "posttest_score": 24.964330613720723,
+          "gain": -5.692434286530119
+        },
+        {
+          "participant": "SYNTHETIC-30",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 42.2679644889384,
+          "posttest_score": 51.78099863873487,
+          "gain": 9.513034149796475
+        },
+        {
+          "participant": "SYNTHETIC-31",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 29.649128930749086,
+          "posttest_score": 27.02696496572527,
+          "gain": -2.622163965023816
+        },
+        {
+          "participant": "SYNTHETIC-32",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 32.65053331535202,
+          "posttest_score": 36.72002522195765,
+          "gain": 4.069491906605627
+        },
+        {
+          "participant": "SYNTHETIC-33",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 39.46965716121073,
+          "posttest_score": 35.71513125355338,
+          "gain": -3.754525907657353
+        },
+        {
+          "participant": "SYNTHETIC-34",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 40.54167945011839,
+          "posttest_score": 41.775514925989455,
+          "gain": 1.233835475871068
+        },
+        {
+          "participant": "SYNTHETIC-35",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 42.75647263882057,
+          "posttest_score": 31.32096684746851,
+          "gain": -11.435505791352057
+        },
+        {
+          "participant": "SYNTHETIC-36",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 31.8911605465937,
+          "posttest_score": 36.57055853031884,
+          "gain": 4.679397983725142
+        },
+        {
+          "participant": "SYNTHETIC-37",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 40.89746170207346,
+          "posttest_score": 33.31203141881818,
+          "gain": -7.585430283255278
+        },
+        {
+          "participant": "SYNTHETIC-38",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 46.66850481383061,
+          "posttest_score": 44.29148220661527,
+          "gain": -2.3770226072153378
+        },
+        {
+          "participant": "SYNTHETIC-39",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.321121942947748,
+          "posttest_score": 20.717747355093934,
+          "gain": -9.603374587853814
+        },
+        {
+          "participant": "SYNTHETIC-40",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 51.568559626994634,
+          "posttest_score": 47.15525385125235,
+          "gain": -4.4133057757422876
+        },
+        {
+          "participant": "SYNTHETIC-41",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 67.53725746512345,
+          "posttest_score": 48.45695772376364,
+          "gain": -19.08029974135981
+        },
+        {
+          "participant": "SYNTHETIC-42",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 48.80986178431226,
+          "posttest_score": 40.24563340376838,
+          "gain": -8.56422838054388
+        },
+        {
+          "participant": "SYNTHETIC-43",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 53.183385919926884,
+          "posttest_score": 43.99754201006858,
+          "gain": -9.185843909858306
+        },
+        {
+          "participant": "SYNTHETIC-44",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 47.46749498644088,
+          "posttest_score": 39.86539586846682,
+          "gain": -7.602099117974063
+        },
+        {
+          "participant": "SYNTHETIC-45",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 63.58427488891287,
+          "posttest_score": 53.17725398740931,
+          "gain": -10.407020901503564
+        },
+        {
+          "participant": "SYNTHETIC-46",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 60.19867989229075,
+          "posttest_score": 60.74417901675938,
+          "gain": 0.545499124468634
+        },
+        {
+          "participant": "SYNTHETIC-47",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 46.35082169383138,
+          "posttest_score": 41.48232906782838,
+          "gain": -4.868492626002997
+        },
+        {
+          "participant": "SYNTHETIC-48",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 66.15796001220309,
+          "posttest_score": 55.84363466167725,
+          "gain": -10.314325350525841
+        },
+        {
+          "participant": "SYNTHETIC-49",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 58.72820611840911,
+          "posttest_score": 48.52455913657866,
+          "gain": -10.203646981830452
+        },
+        {
+          "participant": "SYNTHETIC-50",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 66.16107423311257,
+          "posttest_score": 58.431588095101965,
+          "gain": -7.729486138010607
+        },
+        {
+          "participant": "SYNTHETIC-51",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 50.77902586337732,
+          "posttest_score": 46.10292412455624,
+          "gain": -4.676101738821082
+        },
+        {
+          "participant": "SYNTHETIC-52",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 59.07436562305869,
+          "posttest_score": 48.23211618527883,
+          "gain": -10.842249437779863
+        },
+        {
+          "participant": "SYNTHETIC-53",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 65.211890258777,
+          "posttest_score": 50.404471303661026,
+          "gain": -14.807418955115978
+        },
+        {
+          "participant": "SYNTHETIC-54",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 47.152812153186105,
+          "posttest_score": 35.20320553780417,
+          "gain": -11.949606615381931
+        },
+        {
+          "participant": "SYNTHETIC-55",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 61.04389285893801,
+          "posttest_score": 45.39271388896726,
+          "gain": -15.65117896997075
+        },
+        {
+          "participant": "SYNTHETIC-56",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 52.36542509236342,
+          "posttest_score": 51.925839813774594,
+          "gain": -0.43958527858882235
+        },
+        {
+          "participant": "SYNTHETIC-57",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 55.717551305866564,
+          "posttest_score": 47.45681830351683,
+          "gain": -8.260733002349731
+        },
+        {
+          "participant": "SYNTHETIC-58",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 63.11434173664642,
+          "posttest_score": 54.939513583403254,
+          "gain": -8.174828153243169
+        },
+        {
+          "participant": "SYNTHETIC-59",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 67.49004862517882,
+          "posttest_score": 49.79474016466777,
+          "gain": -17.695308460511043
+        },
+        {
+          "participant": "SYNTHETIC-60",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 49.123054174879194,
+          "posttest_score": 53.64141183832914,
+          "gain": 4.518357663449947
+        }
+      ],
+      "expected": {
+        "primary": {
+          "estimate": -6.318032478986744,
+          "se": 1.0301611632744536,
+          "lower": -8.382521584193992,
+          "upper": -4.253543373779498,
+          "df": 55.0
+        },
+        "standardized_difference": -0.5406902479351146,
+        "levels": {
+          "advanced": {
+            "estimate": -4.617664561627606,
+            "se": 2.1535590452760145,
+            "lower": -8.937156992370545,
+            "upper": -0.29817213088466765,
+            "df": 53.0
+          },
+          "beginner": {
+            "estimate": -6.110770191194792,
+            "se": 1.515123389223703,
+            "lower": -9.14972286154267,
+            "upper": -3.0718175208469134,
+            "df": 53.0
+          },
+          "intermediate": {
+            "estimate": -8.223305077559136,
+            "se": 1.6749530537623845,
+            "lower": -11.582835457488473,
+            "upper": -4.863774697629799,
+            "df": 53.0
+          }
+        },
+        "differences": [
+          {
+            "left": "advanced",
+            "right": "beginner",
+            "effect": {
+              "estimate": 1.4931056295671858,
+              "se": 2.5825799014901576,
+              "lower": -3.6868936654351137,
+              "upper": 6.673104924569485,
+              "df": 53.0
+            }
+          },
+          {
+            "left": "advanced",
+            "right": "intermediate",
+            "effect": {
+              "estimate": 3.6056405159315297,
+              "se": 2.7388491934802524,
+              "lower": -1.8877952856710607,
+              "upper": 9.09907631753412,
+              "df": 53.0
+            }
+          },
+          {
+            "left": "beginner",
+            "right": "intermediate",
+            "effect": {
+              "estimate": 2.112534886364344,
+              "se": 2.2841450548831785,
+              "lower": -2.4688799101927046,
+              "upper": 6.693949682921392,
+              "df": 53.0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "cluster",
+      "allocation": "class",
+      "rows": [
+        {
+          "participant": "SYNTHETIC-1",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 21.022883569860227,
+          "posttest_score": 31.26384943340355,
+          "gain": 10.240965863543323
+        },
+        {
+          "participant": "SYNTHETIC-2",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 25.89632392816705,
+          "posttest_score": 35.322359380565345,
+          "gain": 9.426035452398295
+        },
+        {
+          "participant": "SYNTHETIC-3",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 29.164920404605652,
+          "posttest_score": 32.83779921940633,
+          "gain": 3.6728788148006757
+        },
+        {
+          "participant": "SYNTHETIC-4",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.608777043035403,
+          "posttest_score": 23.232633228046893,
+          "gain": 2.6238561850114905
+        },
+        {
+          "participant": "SYNTHETIC-5",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 32.07478468703146,
+          "posttest_score": 41.172802172712615,
+          "gain": 9.098017485681154
+        },
+        {
+          "participant": "SYNTHETIC-6",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 29.849853244932678,
+          "posttest_score": 34.194535497724054,
+          "gain": 4.344682252791376
+        },
+        {
+          "participant": "SYNTHETIC-7",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 43.91998066482397,
+          "posttest_score": 51.61944115739611,
+          "gain": 7.699460492572143
+        },
+        {
+          "participant": "SYNTHETIC-8",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.882079430171054,
+          "posttest_score": 39.34347652252408,
+          "gain": 8.461397092353025
+        },
+        {
+          "participant": "SYNTHETIC-9",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 51.589640303952386,
+          "posttest_score": 55.640413030125615,
+          "gain": 4.0507727261732285
+        },
+        {
+          "participant": "SYNTHETIC-10",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 56.175852200934685,
+          "posttest_score": 56.93982092597862,
+          "gain": 0.763968725043938
+        },
+        {
+          "participant": "SYNTHETIC-11",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 65.78441687389018,
+          "posttest_score": 68.60388134065049,
+          "gain": 2.8194644667603086
+        },
+        {
+          "participant": "SYNTHETIC-12",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 65.32356619429336,
+          "posttest_score": 70.38994464446229,
+          "gain": 5.066378450168926
+        },
+        {
+          "participant": "SYNTHETIC-13",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-1",
+          "pretest_score": 15.847321977230575,
+          "posttest_score": 31.449852736219754,
+          "gain": 15.602530758989179
+        },
+        {
+          "participant": "SYNTHETIC-14",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-1",
+          "pretest_score": 30.506904216952087,
+          "posttest_score": 36.38552093827323,
+          "gain": 5.878616721321144
+        },
+        {
+          "participant": "SYNTHETIC-15",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-1",
+          "pretest_score": 16.593552590160165,
+          "posttest_score": 26.920827579697736,
+          "gain": 10.327274989537571
+        },
+        {
+          "participant": "SYNTHETIC-16",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-1",
+          "pretest_score": 34.37327183215377,
+          "posttest_score": 36.960565084121725,
+          "gain": 2.5872932519679566
+        },
+        {
+          "participant": "SYNTHETIC-17",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-1",
+          "pretest_score": 36.97023829849056,
+          "posttest_score": 41.23776790998812,
+          "gain": 4.267529611497565
+        },
+        {
+          "participant": "SYNTHETIC-18",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-1",
+          "pretest_score": 50.16270650968341,
+          "posttest_score": 43.61009629919286,
+          "gain": -6.552610210490549
+        },
+        {
+          "participant": "SYNTHETIC-19",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-1",
+          "pretest_score": 39.69489393984086,
+          "posttest_score": 41.09222705447034,
+          "gain": 1.3973331146294825
+        },
+        {
+          "participant": "SYNTHETIC-20",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-1",
+          "pretest_score": 36.85244327536701,
+          "posttest_score": 36.979025947774836,
+          "gain": 0.12658267240782806
+        },
+        {
+          "participant": "SYNTHETIC-21",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-1",
+          "pretest_score": 55.8616242717076,
+          "posttest_score": 51.37089189894822,
+          "gain": -4.490732372759375
+        },
+        {
+          "participant": "SYNTHETIC-22",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-1",
+          "pretest_score": 46.014893859335785,
+          "posttest_score": 49.007122410800704,
+          "gain": 2.992228551464919
+        },
+        {
+          "participant": "SYNTHETIC-23",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-1",
+          "pretest_score": 67.92217996227599,
+          "posttest_score": 64.01051520312491,
+          "gain": -3.91166475915108
+        },
+        {
+          "participant": "SYNTHETIC-24",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-1",
+          "pretest_score": 53.307154712608394,
+          "posttest_score": 45.73715411638885,
+          "gain": -7.570000596219543
+        },
+        {
+          "participant": "SYNTHETIC-25",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-2",
+          "pretest_score": 29.941542626964353,
+          "posttest_score": 39.84616969334556,
+          "gain": 9.904627066381206
+        },
+        {
+          "participant": "SYNTHETIC-26",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-2",
+          "pretest_score": 19.08996104247178,
+          "posttest_score": 28.961731205946897,
+          "gain": 9.871770163475116
+        },
+        {
+          "participant": "SYNTHETIC-27",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-2",
+          "pretest_score": 36.487180051083826,
+          "posttest_score": 44.70004243687865,
+          "gain": 8.212862385794821
+        },
+        {
+          "participant": "SYNTHETIC-28",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-2",
+          "pretest_score": 19.614450607981407,
+          "posttest_score": 30.368172245717517,
+          "gain": 10.75372163773611
+        },
+        {
+          "participant": "SYNTHETIC-29",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-2",
+          "pretest_score": 30.656764900250842,
+          "posttest_score": 38.964330613720726,
+          "gain": 8.307565713469884
+        },
+        {
+          "participant": "SYNTHETIC-30",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-2",
+          "pretest_score": 42.2679644889384,
+          "posttest_score": 58.78099863873487,
+          "gain": 16.513034149796475
+        },
+        {
+          "participant": "SYNTHETIC-31",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-2",
+          "pretest_score": 29.649128930749086,
+          "posttest_score": 41.02696496572527,
+          "gain": 11.377836034976184
+        },
+        {
+          "participant": "SYNTHETIC-32",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-2",
+          "pretest_score": 32.65053331535202,
+          "posttest_score": 43.72002522195765,
+          "gain": 11.069491906605627
+        },
+        {
+          "participant": "SYNTHETIC-33",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-2",
+          "pretest_score": 55.46965716121073,
+          "posttest_score": 62.435131253553386,
+          "gain": 6.965474092342653
+        },
+        {
+          "participant": "SYNTHETIC-34",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-2",
+          "pretest_score": 56.54167945011839,
+          "posttest_score": 61.495514925989454,
+          "gain": 4.953835475871067
+        },
+        {
+          "participant": "SYNTHETIC-35",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-2",
+          "pretest_score": 58.75647263882057,
+          "posttest_score": 58.04096684746851,
+          "gain": -0.7155057913520579
+        },
+        {
+          "participant": "SYNTHETIC-36",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-2",
+          "pretest_score": 47.891160546593696,
+          "posttest_score": 56.29055853031884,
+          "gain": 8.399397983725144
+        },
+        {
+          "participant": "SYNTHETIC-37",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-3",
+          "pretest_score": 24.897461702073457,
+          "posttest_score": 29.59203141881818,
+          "gain": 4.694569716744724
+        },
+        {
+          "participant": "SYNTHETIC-38",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-3",
+          "pretest_score": 30.668504813830612,
+          "posttest_score": 33.57148220661527,
+          "gain": 2.90297739278466
+        },
+        {
+          "participant": "SYNTHETIC-39",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-3",
+          "pretest_score": 14.32112194294775,
+          "posttest_score": 16.997747355093935,
+          "gain": 2.676625412146185
+        },
+        {
+          "participant": "SYNTHETIC-40",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-3",
+          "pretest_score": 35.568559626994634,
+          "posttest_score": 36.43525385125234,
+          "gain": 0.8666942242577065
+        },
+        {
+          "participant": "SYNTHETIC-41",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-3",
+          "pretest_score": 51.53725746512344,
+          "posttest_score": 42.73695772376363,
+          "gain": -8.800299741359808
+        },
+        {
+          "participant": "SYNTHETIC-42",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-3",
+          "pretest_score": 32.80986178431226,
+          "posttest_score": 29.525633403768374,
+          "gain": -3.2842283805438868
+        },
+        {
+          "participant": "SYNTHETIC-43",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-3",
+          "pretest_score": 37.183385919926884,
+          "posttest_score": 38.27754201006858,
+          "gain": 1.094156090141695
+        },
+        {
+          "participant": "SYNTHETIC-44",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-3",
+          "pretest_score": 31.467494986440887,
+          "posttest_score": 29.145395868466824,
+          "gain": -2.322099117974062
+        },
+        {
+          "participant": "SYNTHETIC-45",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-3",
+          "pretest_score": 63.58427488891287,
+          "posttest_score": 58.17725398740931,
+          "gain": -5.407020901503564
+        },
+        {
+          "participant": "SYNTHETIC-46",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-3",
+          "pretest_score": 60.19867989229075,
+          "posttest_score": 60.74417901675938,
+          "gain": 0.545499124468634
+        },
+        {
+          "participant": "SYNTHETIC-47",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-3",
+          "pretest_score": 46.35082169383138,
+          "posttest_score": 46.48232906782838,
+          "gain": 0.13150737399700319
+        },
+        {
+          "participant": "SYNTHETIC-48",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-3",
+          "pretest_score": 66.15796001220309,
+          "posttest_score": 55.84363466167725,
+          "gain": -10.314325350525841
+        },
+        {
+          "participant": "SYNTHETIC-49",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-4",
+          "pretest_score": 26.728206118409112,
+          "posttest_score": 36.084559136578655,
+          "gain": 9.356353018169543
+        },
+        {
+          "participant": "SYNTHETIC-50",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-4",
+          "pretest_score": 34.16107423311258,
+          "posttest_score": 40.99158809510197,
+          "gain": 6.830513861989388
+        },
+        {
+          "participant": "SYNTHETIC-51",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-4",
+          "pretest_score": 18.77902586337732,
+          "posttest_score": 33.662924124556234,
+          "gain": 14.883898261178913
+        },
+        {
+          "participant": "SYNTHETIC-52",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-4",
+          "pretest_score": 27.07436562305869,
+          "posttest_score": 30.79211618527882,
+          "gain": 3.7177505622201323
+        },
+        {
+          "participant": "SYNTHETIC-53",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-4",
+          "pretest_score": 49.211890258777004,
+          "posttest_score": 50.68447130366103,
+          "gain": 1.4725810448840235
+        },
+        {
+          "participant": "SYNTHETIC-54",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-4",
+          "pretest_score": 31.152812153186105,
+          "posttest_score": 30.483205537804167,
+          "gain": -0.6696066153819373
+        },
+        {
+          "participant": "SYNTHETIC-55",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-4",
+          "pretest_score": 45.04389285893801,
+          "posttest_score": 45.67271388896725,
+          "gain": 0.6288210300292434
+        },
+        {
+          "participant": "SYNTHETIC-56",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-4",
+          "pretest_score": 36.36542509236342,
+          "posttest_score": 47.205839813774595,
+          "gain": 10.840414721411179
+        },
+        {
+          "participant": "SYNTHETIC-57",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-4",
+          "pretest_score": 55.717551305866564,
+          "posttest_score": 60.45681830351683,
+          "gain": 4.739266997650269
+        },
+        {
+          "participant": "SYNTHETIC-58",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-4",
+          "pretest_score": 63.11434173664642,
+          "posttest_score": 62.939513583403254,
+          "gain": -0.17482815324316903
+        },
+        {
+          "participant": "SYNTHETIC-59",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-4",
+          "pretest_score": 67.49004862517882,
+          "posttest_score": 62.79474016466777,
+          "gain": -4.695308460511043
+        },
+        {
+          "participant": "SYNTHETIC-60",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-4",
+          "pretest_score": 49.123054174879194,
+          "posttest_score": 61.64141183832914,
+          "gain": 12.518357663449947
+        },
+        {
+          "participant": "SYNTHETIC-61",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-5",
+          "pretest_score": 14.246655531846752,
+          "posttest_score": 25.170405378871468,
+          "gain": 10.923749847024716
+        },
+        {
+          "participant": "SYNTHETIC-62",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-5",
+          "pretest_score": 28.999382503108905,
+          "posttest_score": 33.454134310125184,
+          "gain": 4.4547518070162795
+        },
+        {
+          "participant": "SYNTHETIC-63",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-5",
+          "pretest_score": 13.588687667303411,
+          "posttest_score": 23.087398649748216,
+          "gain": 9.498710982444805
+        },
+        {
+          "participant": "SYNTHETIC-64",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-5",
+          "pretest_score": 34.96676522100244,
+          "posttest_score": 41.63728998186963,
+          "gain": 6.670524760867188
+        },
+        {
+          "participant": "SYNTHETIC-65",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-5",
+          "pretest_score": 37.82075507209087,
+          "posttest_score": 47.712322807747206,
+          "gain": 9.891567735656338
+        },
+        {
+          "participant": "SYNTHETIC-66",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-5",
+          "pretest_score": 45.69379737977709,
+          "posttest_score": 47.79466047269182,
+          "gain": 2.1008630929147287
+        },
+        {
+          "participant": "SYNTHETIC-67",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-5",
+          "pretest_score": 34.3864974151127,
+          "posttest_score": 39.74212743357611,
+          "gain": 5.355630018463408
+        },
+        {
+          "participant": "SYNTHETIC-68",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-5",
+          "pretest_score": 52.97048106137264,
+          "posttest_score": 56.4289587654894,
+          "gain": 3.45847770411676
+        },
+        {
+          "participant": "SYNTHETIC-69",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-5",
+          "pretest_score": 62.447283608238024,
+          "posttest_score": 62.5934146084001,
+          "gain": 0.1461310001620788
+        },
+        {
+          "participant": "SYNTHETIC-70",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-5",
+          "pretest_score": 67.01004188958802,
+          "posttest_score": 60.07734565177488,
+          "gain": -6.932696237813147
+        },
+        {
+          "participant": "SYNTHETIC-71",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-5",
+          "pretest_score": 65.25995719778263,
+          "posttest_score": 59.259909250835136,
+          "gain": -6.00004794694749
+        },
+        {
+          "participant": "SYNTHETIC-72",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-5",
+          "pretest_score": 49.09978793336947,
+          "posttest_score": 44.202880988963734,
+          "gain": -4.896906944405735
+        },
+        {
+          "participant": "SYNTHETIC-73",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-6",
+          "pretest_score": 22.162367025439423,
+          "posttest_score": 24.126014117801226,
+          "gain": 1.9636470923618035
+        },
+        {
+          "participant": "SYNTHETIC-74",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-6",
+          "pretest_score": 13.492588626760313,
+          "posttest_score": 23.719063463238307,
+          "gain": 10.226474836477994
+        },
+        {
+          "participant": "SYNTHETIC-75",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-6",
+          "pretest_score": 26.46268999403201,
+          "posttest_score": 30.319250927690835,
+          "gain": 3.856560933658823
+        },
+        {
+          "participant": "SYNTHETIC-76",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-6",
+          "pretest_score": 13.544149475512068,
+          "posttest_score": 20.382067133601062,
+          "gain": 6.837917658088994
+        },
+        {
+          "participant": "SYNTHETIC-77",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-6",
+          "pretest_score": 32.0185491665913,
+          "posttest_score": 45.40549132305583,
+          "gain": 13.386942156464528
+        },
+        {
+          "participant": "SYNTHETIC-78",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-6",
+          "pretest_score": 39.87318145401667,
+          "posttest_score": 47.06228892880001,
+          "gain": 7.1891074747833414
+        },
+        {
+          "participant": "SYNTHETIC-79",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-6",
+          "pretest_score": 50.55707116125316,
+          "posttest_score": 46.38212276343427,
+          "gain": -4.174948397818895
+        },
+        {
+          "participant": "SYNTHETIC-80",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-6",
+          "pretest_score": 43.36639532948341,
+          "posttest_score": 43.63653235490484,
+          "gain": 0.2701370254214268
+        },
+        {
+          "participant": "SYNTHETIC-81",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-6",
+          "pretest_score": 45.7575876200593,
+          "posttest_score": 56.974999842092686,
+          "gain": 11.217412222033389
+        },
+        {
+          "participant": "SYNTHETIC-82",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-6",
+          "pretest_score": 63.9051283590862,
+          "posttest_score": 64.15207794834518,
+          "gain": 0.24694958925898192
+        },
+        {
+          "participant": "SYNTHETIC-83",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-6",
+          "pretest_score": 63.932217280686714,
+          "posttest_score": 60.19225023794767,
+          "gain": -3.739967042739046
+        },
+        {
+          "participant": "SYNTHETIC-84",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-6",
+          "pretest_score": 66.40060161695949,
+          "posttest_score": 64.2847422870487,
+          "gain": -2.1158593299107906
+        },
+        {
+          "participant": "SYNTHETIC-85",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-7",
+          "pretest_score": 15.49735847885186,
+          "posttest_score": 25.7355499392098,
+          "gain": 10.23819146035794
+        },
+        {
+          "participant": "SYNTHETIC-86",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-7",
+          "pretest_score": 33.44218896987181,
+          "posttest_score": 32.396451738567,
+          "gain": -1.0457372313048054
+        },
+        {
+          "participant": "SYNTHETIC-87",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-7",
+          "pretest_score": 27.286518863856934,
+          "posttest_score": 31.712933403534443,
+          "gain": 4.426414539677509
+        },
+        {
+          "participant": "SYNTHETIC-88",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-7",
+          "pretest_score": 19.589375978792887,
+          "posttest_score": 29.393800199610194,
+          "gain": 9.804424220817307
+        },
+        {
+          "participant": "SYNTHETIC-89",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-7",
+          "pretest_score": 46.668324403635836,
+          "posttest_score": 45.652792478955725,
+          "gain": -1.0155319246801113
+        },
+        {
+          "participant": "SYNTHETIC-90",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-7",
+          "pretest_score": 45.10337568860345,
+          "posttest_score": 41.7512599856254,
+          "gain": -3.352115702978047
+        },
+        {
+          "participant": "SYNTHETIC-91",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-7",
+          "pretest_score": 37.7604011140318,
+          "posttest_score": 35.777998751772095,
+          "gain": -1.9824023622597053
+        },
+        {
+          "participant": "SYNTHETIC-92",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-7",
+          "pretest_score": 41.392129282509366,
+          "posttest_score": 40.892897188200834,
+          "gain": -0.49923209430853177
+        },
+        {
+          "participant": "SYNTHETIC-93",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-7",
+          "pretest_score": 54.59070627353558,
+          "posttest_score": 52.179497233749295,
+          "gain": -2.4112090397862858
+        },
+        {
+          "participant": "SYNTHETIC-94",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-7",
+          "pretest_score": 49.71995675562019,
+          "posttest_score": 50.13177876168107,
+          "gain": 0.4118220060608806
+        },
+        {
+          "participant": "SYNTHETIC-95",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-7",
+          "pretest_score": 49.24368969059226,
+          "posttest_score": 43.996410992058394,
+          "gain": -5.247278698533869
+        },
+        {
+          "participant": "SYNTHETIC-96",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-7",
+          "pretest_score": 47.84187532875033,
+          "posttest_score": 41.6828925907469,
+          "gain": -6.158982738003431
+        },
+        {
+          "participant": "SYNTHETIC-97",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-8",
+          "pretest_score": 20.145056824087632,
+          "posttest_score": 25.52853072554714,
+          "gain": 5.3834739014595065
+        },
+        {
+          "participant": "SYNTHETIC-98",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-8",
+          "pretest_score": 16.985071248019246,
+          "posttest_score": 24.26062250739684,
+          "gain": 7.275551259377593
+        },
+        {
+          "participant": "SYNTHETIC-99",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-8",
+          "pretest_score": 31.84085442186385,
+          "posttest_score": 42.07163429391568,
+          "gain": 10.23077987205183
+        },
+        {
+          "participant": "SYNTHETIC-100",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-8",
+          "pretest_score": 18.548100208355038,
+          "posttest_score": 31.424184777558008,
+          "gain": 12.87608456920297
+        },
+        {
+          "participant": "SYNTHETIC-101",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-8",
+          "pretest_score": 50.138004531753225,
+          "posttest_score": 52.905283813545694,
+          "gain": 2.7672792817924687
+        },
+        {
+          "participant": "SYNTHETIC-102",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-8",
+          "pretest_score": 47.355475032147126,
+          "posttest_score": 50.58873182507979,
+          "gain": 3.2332567929326643
+        },
+        {
+          "participant": "SYNTHETIC-103",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-8",
+          "pretest_score": 48.659100033661105,
+          "posttest_score": 55.75756166441655,
+          "gain": 7.098461630755445
+        },
+        {
+          "participant": "SYNTHETIC-104",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-8",
+          "pretest_score": 29.59765592352306,
+          "posttest_score": 41.8989210536246,
+          "gain": 12.301265130101537
+        },
+        {
+          "participant": "SYNTHETIC-105",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-8",
+          "pretest_score": 56.725658498630935,
+          "posttest_score": 60.10736357792813,
+          "gain": 3.3817050792971983
+        },
+        {
+          "participant": "SYNTHETIC-106",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-8",
+          "pretest_score": 66.22183792563925,
+          "posttest_score": 72.32409244179306,
+          "gain": 6.102254516153806
+        },
+        {
+          "participant": "SYNTHETIC-107",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-8",
+          "pretest_score": 52.392232225673915,
+          "posttest_score": 58.0106509502013,
+          "gain": 5.6184187245273876
+        },
+        {
+          "participant": "SYNTHETIC-108",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-8",
+          "pretest_score": 68.23240468073375,
+          "posttest_score": 69.85568723402444,
+          "gain": 1.623282553290693
+        },
+        {
+          "participant": "SYNTHETIC-109",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-9",
+          "pretest_score": 19.35835702799521,
+          "posttest_score": 27.918664658537296,
+          "gain": 8.560307630542084
+        },
+        {
+          "participant": "SYNTHETIC-110",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-9",
+          "pretest_score": 28.490461068621485,
+          "posttest_score": 33.868136733721,
+          "gain": 5.377675665099517
+        },
+        {
+          "participant": "SYNTHETIC-111",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-9",
+          "pretest_score": 22.268744040411462,
+          "posttest_score": 30.16554019458554,
+          "gain": 7.896796154174076
+        },
+        {
+          "participant": "SYNTHETIC-112",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-9",
+          "pretest_score": 15.691941136415835,
+          "posttest_score": 21.11293933393702,
+          "gain": 5.420998197521186
+        },
+        {
+          "participant": "SYNTHETIC-113",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-9",
+          "pretest_score": 52.23456127988344,
+          "posttest_score": 46.041881692381,
+          "gain": -6.19267958750244
+        },
+        {
+          "participant": "SYNTHETIC-114",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-9",
+          "pretest_score": 46.88001100810885,
+          "posttest_score": 45.58876266841474,
+          "gain": -1.2912483396941141
+        },
+        {
+          "participant": "SYNTHETIC-115",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-9",
+          "pretest_score": 50.82827975359872,
+          "posttest_score": 49.507478591287665,
+          "gain": -1.3208011623110565
+        },
+        {
+          "participant": "SYNTHETIC-116",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-9",
+          "pretest_score": 39.635032867714614,
+          "posttest_score": 45.1095176430607,
+          "gain": 5.474484775346085
+        },
+        {
+          "participant": "SYNTHETIC-117",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-9",
+          "pretest_score": 65.38100081763616,
+          "posttest_score": 57.73700171203519,
+          "gain": -7.643999105600976
+        },
+        {
+          "participant": "SYNTHETIC-118",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-9",
+          "pretest_score": 57.10959048174651,
+          "posttest_score": 53.039307451840926,
+          "gain": -4.070283029905582
+        },
+        {
+          "participant": "SYNTHETIC-119",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-9",
+          "pretest_score": 61.59904604020107,
+          "posttest_score": 57.79760761972912,
+          "gain": -3.8014384204719462
+        },
+        {
+          "participant": "SYNTHETIC-120",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-9",
+          "pretest_score": 59.18223150078377,
+          "posttest_score": 48.68539805568962,
+          "gain": -10.496833445094154
+        },
+        {
+          "participant": "SYNTHETIC-121",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-10",
+          "pretest_score": 27.75745431005424,
+          "posttest_score": 40.977809863766666,
+          "gain": 13.220355553712427
+        },
+        {
+          "participant": "SYNTHETIC-122",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-10",
+          "pretest_score": 31.502461815327642,
+          "posttest_score": 42.728031431537765,
+          "gain": 11.225569616210123
+        },
+        {
+          "participant": "SYNTHETIC-123",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-10",
+          "pretest_score": 22.475934930421616,
+          "posttest_score": 39.50419045566788,
+          "gain": 17.028255525246266
+        },
+        {
+          "participant": "SYNTHETIC-124",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-10",
+          "pretest_score": 27.07856173537939,
+          "posttest_score": 36.170405462089214,
+          "gain": 9.091843726709822
+        },
+        {
+          "participant": "SYNTHETIC-125",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-10",
+          "pretest_score": 29.66781811102686,
+          "posttest_score": 36.86844813905178,
+          "gain": 7.200630028024918
+        },
+        {
+          "participant": "SYNTHETIC-126",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-10",
+          "pretest_score": 52.663162358693,
+          "posttest_score": 58.357107513374196,
+          "gain": 5.693945154681195
+        },
+        {
+          "participant": "SYNTHETIC-127",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-10",
+          "pretest_score": 46.91672474988945,
+          "posttest_score": 53.45807066998215,
+          "gain": 6.541345920092702
+        },
+        {
+          "participant": "SYNTHETIC-128",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-10",
+          "pretest_score": 40.45314168841813,
+          "posttest_score": 50.39389222228327,
+          "gain": 9.940750533865142
+        },
+        {
+          "participant": "SYNTHETIC-129",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-10",
+          "pretest_score": 62.35181607844777,
+          "posttest_score": 59.361577351507684,
+          "gain": -2.9902387269400847
+        },
+        {
+          "participant": "SYNTHETIC-130",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-10",
+          "pretest_score": 47.91114988167955,
+          "posttest_score": 59.41824402437718,
+          "gain": 11.507094142697632
+        },
+        {
+          "participant": "SYNTHETIC-131",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-10",
+          "pretest_score": 45.297331523251074,
+          "posttest_score": 54.423219156037135,
+          "gain": 9.12588763278606
+        },
+        {
+          "participant": "SYNTHETIC-132",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-10",
+          "pretest_score": 46.27656238774413,
+          "posttest_score": 52.801259192229345,
+          "gain": 6.524696804485217
+        },
+        {
+          "participant": "SYNTHETIC-133",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-11",
+          "pretest_score": 25.127966026541557,
+          "posttest_score": 38.45903893134377,
+          "gain": 13.331072904802213
+        },
+        {
+          "participant": "SYNTHETIC-134",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-11",
+          "pretest_score": 15.120567957362173,
+          "posttest_score": 35.437649589844916,
+          "gain": 20.317081632482743
+        },
+        {
+          "participant": "SYNTHETIC-135",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-11",
+          "pretest_score": 25.09589610452877,
+          "posttest_score": 34.29151729251589,
+          "gain": 9.195621187987122
+        },
+        {
+          "participant": "SYNTHETIC-136",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-11",
+          "pretest_score": 29.86234573126838,
+          "posttest_score": 35.608654032995425,
+          "gain": 5.746308301727044
+        },
+        {
+          "participant": "SYNTHETIC-137",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-11",
+          "pretest_score": 42.780247353309306,
+          "posttest_score": 46.50491618106532,
+          "gain": 3.7246688277560125
+        },
+        {
+          "participant": "SYNTHETIC-138",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-11",
+          "pretest_score": 37.11748609935999,
+          "posttest_score": 41.77348193977693,
+          "gain": 4.655995840416935
+        },
+        {
+          "participant": "SYNTHETIC-139",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-11",
+          "pretest_score": 47.62044779215244,
+          "posttest_score": 47.424657566474636,
+          "gain": -0.19579022567780413
+        },
+        {
+          "participant": "SYNTHETIC-140",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-11",
+          "pretest_score": 42.53226819734195,
+          "posttest_score": 45.9579307931028,
+          "gain": 3.4256625957608478
+        },
+        {
+          "participant": "SYNTHETIC-141",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-11",
+          "pretest_score": 48.11910116258697,
+          "posttest_score": 44.501109214528256,
+          "gain": -3.617991948058716
+        },
+        {
+          "participant": "SYNTHETIC-142",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-11",
+          "pretest_score": 63.558195440993316,
+          "posttest_score": 53.2004308763434,
+          "gain": -10.35776456464992
+        },
+        {
+          "participant": "SYNTHETIC-143",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-11",
+          "pretest_score": 57.612452648534365,
+          "posttest_score": 49.86566716788501,
+          "gain": -7.746785480649358
+        },
+        {
+          "participant": "SYNTHETIC-144",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-11",
+          "pretest_score": 53.52483592001605,
+          "posttest_score": 54.25511998865686,
+          "gain": 0.7302840686408061
+        }
+      ],
+      "expected": {
+        "primary": {
+          "estimate": 5.065877951521475,
+          "se": 1.0575460624735036,
+          "lower": 2.7382347619039487,
+          "upper": 7.3935211411390025,
+          "df": 11.0
+        },
+        "standardized_difference": 0.4184713704867235,
+        "levels": {
+          "advanced": {
+            "estimate": 8.319327023377163,
+            "se": 0.6106777097443361,
+            "lower": 6.97523444663113,
+            "upper": 9.663419600123195,
+            "df": 11.0
+          },
+          "beginner": {
+            "estimate": 1.4650233355609839,
+            "se": 1.7351912729650016,
+            "lower": -2.3541069061555047,
+            "upper": 5.284153577277472,
+            "df": 11.0
+          },
+          "intermediate": {
+            "estimate": 5.418621975604539,
+            "se": 1.746303985564732,
+            "lower": 1.575032818367681,
+            "upper": 9.262211132841397,
+            "df": 11.0
+          }
+        },
+        "differences": [
+          {
+            "left": "advanced",
+            "right": "beginner",
+            "effect": {
+              "estimate": 6.854303687816179,
+              "se": 1.8378736720678837,
+              "lower": 2.8091710094716396,
+              "upper": 10.899436366160717,
+              "df": 11.0
+            }
+          },
+          {
+            "left": "advanced",
+            "right": "intermediate",
+            "effect": {
+              "estimate": 2.9007050477726235,
+              "se": 1.7853368289459826,
+              "lower": -1.0287948185025488,
+              "upper": 6.830204914047796,
+              "df": 11.0
+            }
+          },
+          {
+            "left": "beginner",
+            "right": "intermediate",
+            "effect": {
+              "estimate": -3.9535986400435554,
+              "se": 1.548670306348774,
+              "lower": -7.362199002191779,
+              "upper": -0.5449982778953322,
+              "df": 11.0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "uncertain",
+      "allocation": "stratified",
+      "rows": [
+        {
+          "participant": "SYNTHETIC-1",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 21.022883569860227,
+          "posttest_score": 26.263849433403546,
+          "gain": 5.24096586354332
+        },
+        {
+          "participant": "SYNTHETIC-2",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 25.89632392816705,
+          "posttest_score": 32.322359380565345,
+          "gain": 6.426035452398295
+        },
+        {
+          "participant": "SYNTHETIC-3",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 29.164920404605652,
+          "posttest_score": 27.837799219406328,
+          "gain": -1.3271211851993243
+        },
+        {
+          "participant": "SYNTHETIC-4",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.608777043035403,
+          "posttest_score": 20.232633228046893,
+          "gain": -0.37614381498850946
+        },
+        {
+          "participant": "SYNTHETIC-5",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 16.07478468703146,
+          "posttest_score": 23.452802172712616,
+          "gain": 7.378017485681156
+        },
+        {
+          "participant": "SYNTHETIC-6",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 13.849853244932678,
+          "posttest_score": 18.47453549772406,
+          "gain": 4.624682252791381
+        },
+        {
+          "participant": "SYNTHETIC-7",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 27.919980664823967,
+          "posttest_score": 33.89944115739611,
+          "gain": 5.979460492572144
+        },
+        {
+          "participant": "SYNTHETIC-8",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 14.882079430171054,
+          "posttest_score": 23.62347652252408,
+          "gain": 8.741397092353026
+        },
+        {
+          "participant": "SYNTHETIC-9",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 19.589640303952386,
+          "posttest_score": 25.200413030125613,
+          "gain": 5.610772726173227
+        },
+        {
+          "participant": "SYNTHETIC-10",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 24.175852200934685,
+          "posttest_score": 28.499820925978618,
+          "gain": 4.323968725043933
+        },
+        {
+          "participant": "SYNTHETIC-11",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 33.78441687389018,
+          "posttest_score": 38.16388134065048,
+          "gain": 4.379464466760297
+        },
+        {
+          "participant": "SYNTHETIC-12",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 33.32356619429336,
+          "posttest_score": 41.94994464446227,
+          "gain": 8.626378450168907
+        },
+        {
+          "participant": "SYNTHETIC-13",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 15.847321977230575,
+          "posttest_score": 28.449852736219754,
+          "gain": 12.602530758989179
+        },
+        {
+          "participant": "SYNTHETIC-14",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 30.506904216952087,
+          "posttest_score": 35.38552093827323,
+          "gain": 4.878616721321144
+        },
+        {
+          "participant": "SYNTHETIC-15",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 16.593552590160165,
+          "posttest_score": 23.920827579697736,
+          "gain": 7.327274989537571
+        },
+        {
+          "participant": "SYNTHETIC-16",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 34.37327183215377,
+          "posttest_score": 35.960565084121725,
+          "gain": 1.5872932519679566
+        },
+        {
+          "participant": "SYNTHETIC-17",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.970238298490557,
+          "posttest_score": 27.517767909988123,
+          "gain": 6.547529611497566
+        },
+        {
+          "participant": "SYNTHETIC-18",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 34.16270650968341,
+          "posttest_score": 31.890096299192848,
+          "gain": -2.272610210490562
+        },
+        {
+          "participant": "SYNTHETIC-19",
+          "arm": "A",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 23.69489393984086,
+          "posttest_score": 27.372227054470336,
+          "gain": 3.6773331146294765
+        },
+        {
+          "participant": "SYNTHETIC-20",
+          "arm": "B",
+          "level": "beginner",
+          "class_code": "C-0",
+          "pretest_score": 20.85244327536701,
+          "posttest_score": 25.259025947774845,
+          "gain": 4.406582672407836
+        },
+        {
+          "participant": "SYNTHETIC-21",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 39.8616242717076,
+          "posttest_score": 39.65089189894822,
+          "gain": -0.21073237275938084
+        },
+        {
+          "participant": "SYNTHETIC-22",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.01489385933579,
+          "posttest_score": 37.287122410800706,
+          "gain": 7.2722285514649165
+        },
+        {
+          "participant": "SYNTHETIC-23",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 51.92217996227599,
+          "posttest_score": 52.29051520312491,
+          "gain": 0.36833524084892133
+        },
+        {
+          "participant": "SYNTHETIC-24",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 37.307154712608394,
+          "posttest_score": 34.017154116388845,
+          "gain": -3.2900005962195493
+        },
+        {
+          "participant": "SYNTHETIC-25",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 45.94154262696435,
+          "posttest_score": 45.56616969334556,
+          "gain": -0.37537293361879165
+        },
+        {
+          "participant": "SYNTHETIC-26",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 35.089961042471785,
+          "posttest_score": 34.6817312059469,
+          "gain": -0.40822983652488176
+        },
+        {
+          "participant": "SYNTHETIC-27",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 52.487180051083826,
+          "posttest_score": 50.420042436878646,
+          "gain": -2.06713761420518
+        },
+        {
+          "participant": "SYNTHETIC-28",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 35.61445060798141,
+          "posttest_score": 36.08817224571752,
+          "gain": 0.4737216377361122
+        },
+        {
+          "participant": "SYNTHETIC-29",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.656764900250842,
+          "posttest_score": 31.964330613720726,
+          "gain": 1.3075657134698844
+        },
+        {
+          "participant": "SYNTHETIC-30",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 42.2679644889384,
+          "posttest_score": 51.78099863873487,
+          "gain": 9.513034149796475
+        },
+        {
+          "participant": "SYNTHETIC-31",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 29.649128930749086,
+          "posttest_score": 34.02696496572527,
+          "gain": 4.377836034976184
+        },
+        {
+          "participant": "SYNTHETIC-32",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 32.65053331535202,
+          "posttest_score": 36.72002522195765,
+          "gain": 4.069491906605627
+        },
+        {
+          "participant": "SYNTHETIC-33",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 39.46965716121073,
+          "posttest_score": 42.71513125355338,
+          "gain": 3.245474092342647
+        },
+        {
+          "participant": "SYNTHETIC-34",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 40.54167945011839,
+          "posttest_score": 41.775514925989455,
+          "gain": 1.233835475871068
+        },
+        {
+          "participant": "SYNTHETIC-35",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 42.75647263882057,
+          "posttest_score": 38.32096684746851,
+          "gain": -4.435505791352057
+        },
+        {
+          "participant": "SYNTHETIC-36",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 31.8911605465937,
+          "posttest_score": 36.57055853031884,
+          "gain": 4.679397983725142
+        },
+        {
+          "participant": "SYNTHETIC-37",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 40.89746170207346,
+          "posttest_score": 40.31203141881818,
+          "gain": -0.5854302832552776
+        },
+        {
+          "participant": "SYNTHETIC-38",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 46.66850481383061,
+          "posttest_score": 44.29148220661527,
+          "gain": -2.3770226072153378
+        },
+        {
+          "participant": "SYNTHETIC-39",
+          "arm": "A",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 30.321121942947748,
+          "posttest_score": 27.717747355093934,
+          "gain": -2.603374587853814
+        },
+        {
+          "participant": "SYNTHETIC-40",
+          "arm": "B",
+          "level": "intermediate",
+          "class_code": "C-0",
+          "pretest_score": 51.568559626994634,
+          "posttest_score": 47.15525385125235,
+          "gain": -4.4133057757422876
+        },
+        {
+          "participant": "SYNTHETIC-41",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 67.53725746512345,
+          "posttest_score": 55.45695772376364,
+          "gain": -12.08029974135981
+        },
+        {
+          "participant": "SYNTHETIC-42",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 48.80986178431226,
+          "posttest_score": 40.24563340376838,
+          "gain": -8.56422838054388
+        },
+        {
+          "participant": "SYNTHETIC-43",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 53.183385919926884,
+          "posttest_score": 50.99754201006858,
+          "gain": -2.1858439098583062
+        },
+        {
+          "participant": "SYNTHETIC-44",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 47.46749498644088,
+          "posttest_score": 39.86539586846682,
+          "gain": -7.602099117974063
+        },
+        {
+          "participant": "SYNTHETIC-45",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 63.58427488891287,
+          "posttest_score": 60.17725398740931,
+          "gain": -3.4070209015035644
+        },
+        {
+          "participant": "SYNTHETIC-46",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 60.19867989229075,
+          "posttest_score": 60.74417901675938,
+          "gain": 0.545499124468634
+        },
+        {
+          "participant": "SYNTHETIC-47",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 46.35082169383138,
+          "posttest_score": 48.48232906782838,
+          "gain": 2.131507373997003
+        },
+        {
+          "participant": "SYNTHETIC-48",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 66.15796001220309,
+          "posttest_score": 55.84363466167725,
+          "gain": -10.314325350525841
+        },
+        {
+          "participant": "SYNTHETIC-49",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 58.72820611840911,
+          "posttest_score": 55.52455913657866,
+          "gain": -3.2036469818304525
+        },
+        {
+          "participant": "SYNTHETIC-50",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 66.16107423311257,
+          "posttest_score": 58.431588095101965,
+          "gain": -7.729486138010607
+        },
+        {
+          "participant": "SYNTHETIC-51",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 50.77902586337732,
+          "posttest_score": 53.10292412455624,
+          "gain": 2.3238982611789183
+        },
+        {
+          "participant": "SYNTHETIC-52",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 59.07436562305869,
+          "posttest_score": 48.23211618527883,
+          "gain": -10.842249437779863
+        },
+        {
+          "participant": "SYNTHETIC-53",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 65.211890258777,
+          "posttest_score": 57.404471303661026,
+          "gain": -7.807418955115978
+        },
+        {
+          "participant": "SYNTHETIC-54",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 47.152812153186105,
+          "posttest_score": 35.20320553780417,
+          "gain": -11.949606615381931
+        },
+        {
+          "participant": "SYNTHETIC-55",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 61.04389285893801,
+          "posttest_score": 52.39271388896726,
+          "gain": -8.65117896997075
+        },
+        {
+          "participant": "SYNTHETIC-56",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 52.36542509236342,
+          "posttest_score": 51.925839813774594,
+          "gain": -0.43958527858882235
+        },
+        {
+          "participant": "SYNTHETIC-57",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 55.717551305866564,
+          "posttest_score": 54.45681830351683,
+          "gain": -1.2607330023497312
+        },
+        {
+          "participant": "SYNTHETIC-58",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 63.11434173664642,
+          "posttest_score": 54.939513583403254,
+          "gain": -8.174828153243169
+        },
+        {
+          "participant": "SYNTHETIC-59",
+          "arm": "A",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 67.49004862517882,
+          "posttest_score": 56.79474016466777,
+          "gain": -10.695308460511043
+        },
+        {
+          "participant": "SYNTHETIC-60",
+          "arm": "B",
+          "level": "advanced",
+          "class_code": "C-0",
+          "pretest_score": 49.123054174879194,
+          "posttest_score": 53.64141183832914,
+          "gain": 4.518357663449947
+        }
+      ],
+      "expected": {
+        "primary": {
+          "estimate": 0.6819675210132559,
+          "se": 1.0301611632744536,
+          "lower": -1.3825215841939906,
+          "upper": 2.7464566262205024,
+          "df": 55.0
+        },
+        "standardized_difference": 0.05836202793302012,
+        "levels": {
+          "advanced": {
+            "estimate": 2.382335438372401,
+            "se": 2.153559045276014,
+            "lower": -1.9371569923705367,
+            "upper": 6.701827869115339,
+            "df": 53.0
+          },
+          "beginner": {
+            "estimate": 0.8892298088052257,
+            "se": 1.5151233892237035,
+            "lower": -2.149722861542654,
+            "upper": 3.9281824791531053,
+            "df": 53.0
+          },
+          "intermediate": {
+            "estimate": -1.2233050775591323,
+            "se": 1.6749530537623845,
+            "lower": -4.5828354574884695,
+            "upper": 2.136225302370205,
+            "df": 53.0
+          }
+        },
+        "differences": [
+          {
+            "left": "advanced",
+            "right": "beginner",
+            "effect": {
+              "estimate": 1.4931056295671752,
+              "se": 2.5825799014901576,
+              "lower": -3.6868936654351243,
+              "upper": 6.673104924569475,
+              "df": 53.0
+            }
+          },
+          {
+            "left": "advanced",
+            "right": "intermediate",
+            "effect": {
+              "estimate": 3.6056405159315332,
+              "se": 2.738849193480252,
+              "lower": -1.8877952856710563,
+              "upper": 9.099076317534124,
+              "df": 53.0
+            }
+          },
+          {
+            "left": "beginner",
+            "right": "intermediate",
+            "effect": {
+              "estimate": 2.112534886364358,
+              "se": 2.2841450548831794,
+              "lower": -2.468879910192692,
+              "upper": 6.693949682921408,
+              "df": 53.0
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

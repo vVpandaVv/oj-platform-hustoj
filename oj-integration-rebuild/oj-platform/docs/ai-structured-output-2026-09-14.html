@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>구조화 AI 출력과 Ollama 작업별 설정</title></head>
+<body><main><h1>구조화 AI 출력과 Ollama 작업별 설정</h1>
+<p>2026-09-14. 평가 애드온과 명시적으로 분리한 플랫폼 제공자 작업. 사용자 요청으로 두 소유 영역의 소스를 수정하되 애드온 설치·실행 중 플랫폼을 수정하는 코드는 추가하지 않는다.</p>
+<p><a href="../../../oj-ai-dashboard/docs/ai-assessment/ollama-score-grounding-2026-09-14.html">연동 애드온 변경과 검증 기록</a> · <a href="development-c-28-addon-extension-api.html">애드온 API 계약</a></p>
+<h2>계약</h2><ul>
+<li>공개 Addon API V1의 메서드 서명은 유지한다. 선택적 내부 StructuredAiProviderClient 인터페이스로 schema와 생성 옵션을 전달하며 기존 클라이언트는 원래 generate 경로를 사용한다.</li>
+<li>AiTaskRequest의 operation_payload.output_contract.json_schema 또는 output_contract.json_schema를 제공자 중립 응답 형식으로 받는다. 최대 64KiB, 제한된 중첩·노드 수, 순환 없는 내부 $defs 참조만 허용한다. 모델·주소·인증 정보는 이 입력으로 변경할 수 없다.</li>
+<li>Ollama는 단순 JSON 대신 JSON Schema를 format으로 전송한다. 구조화 요청의 기본 temperature는 0.2, 기존 비구조화 요청은 1.0을 유지한다. 작업별 AI 배정의 Ollama 설정에서 temperature를 덮어쓸 수 있다. 0도 유효하다.</li>
+<li>문맥 토큰은 설정한 경우에만 num_ctx로 전달한다. 서버 VRAM이나 현재 로딩 용량을 추정해 강제로 올리지 않는다. 입력·출력에 필요한 문맥 용량은 운영 서버의 ollama ps와 실제 요청 규모로 별도 확인한다.</li>
+<li>옵션은 기존 ai_task_routing 설정 저장·권한·revision 체계를 사용한다. 설정 변경은 라우팅 fingerprint를 변경하므로 이전 설정의 실행은 차단된다. DB migration은 없다.</li>
+<li>done_reason=length이면 완성된 JSON처럼 보여도 output_truncated로 거부한다. context가 출력 한도 이하이면 전송 전에 차단한다. 영구 오류이므로 자동 대체 제공자나 반복 호출을 유발하지 않는다.</li>
+<li>사용량 계측 장식자도 schema와 옵션을 보존한다. Gemini 요청 포맷·temperature는 변경하지 않는다.</li>
+</ul><h2>검증</h2><p>tests/Unit/ai-structured-output.php에서 라우팅→계측→HTTP 본문, 설정 저장·범위·fingerprint, 내부 참조, 순환·외부 참조 차단, 출력 잘림, Gemini·기존 요청 호환성을 합성 transport로 검사한다. 실제 모델 호출이나 서버 설정 변경은 하지 않는다.</p>
+<p>작업별 설정 UI 계약은 tests/E2E/operations-ui.php, 변경 코드 정적 검사는 tests/StaticAnalysis/ai-structured-output.neon으로 확인한다. 브라우저 시각 검사와 실제 모델 성능 검증을 대체하지 않는다.</p>
+<h2>운영 적용</h2><p>플랫폼 2.0.3을 먼저 적용하고 평가 애드온 1.0.6을 적용한다. 작업별 AI 배정에서 필요할 때만 문맥 토큰을 설정한다. 기존 평가를 삭제하거나 점수를 일괄 변경하지 말고 시험 제출의 재채점으로 확인한다. <a href="../../dist/oj-platform-2.0.3.zip">플랫폼 설치 ZIP</a>을 생성했고 PHP 문법 1,429개·회귀 스크립트 66개와 운영 파일 1,467개의 소스 일치 검증을 통과했다. <a href="../../../oj-ai-dashboard/docs/ai-assessment/package-1.0.6-2026-09-14.html">두 패키지의 설치 순서·검증 기록</a>을 함께 확인한다. 서버 설치·실제 모델 추론은 아직 실시하지 않았다.</p>
+</main></body></html>

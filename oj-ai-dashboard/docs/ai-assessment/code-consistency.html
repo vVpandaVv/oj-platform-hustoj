@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 평가 애드온 코드 일관성 기준</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>AI 평가 애드온</h1>
+      <p>코드 일관성</p>
+      <nav>
+        <div class="nav-group">
+          <strong>문서</strong>
+          <a href="index.html">허브</a>
+          <a href="design-procedure.html">전체 설계 순서</a>
+          <a href="a-d-001-boundary-dependencies.html">A-D-001 경계·의존</a>
+          <a href="a-d-002-screen-entrypoints.html">A-D-002 화면·진입</a>
+          <a href="a-d-003-access-settings.html">A-D-003 권한·설정</a>
+          <a href="a-d-004-data-storage.html">A-D-004 데이터 저장</a>
+          <a href="a-d-005-worksheet-plate.html">A-D-005 활동지·Plate</a>
+          <a href="a-d-006-ai-evaluation-flow.html">A-D-006 평가·AI 실행</a>
+          <a href="a-d-007-user-workflow-risks.html">A-D-007 업무 흐름·위험</a>
+          <a href="a-d-008-module-data-ownership.html">A-D-008 모듈·소유권</a>
+          <a href="a-d-009-baseline-gap-freeze.html">A-D-009 기준선·격차</a>
+
+          <a href="a-ds-00-scope-baseline.html">A-DS-00 목적·범위</a>
+
+          <a href="a-ds-01-ui-system.html">A-DS-01 UI 시스템</a>
+
+          <a href="a-ds-02-addon-lifecycle.html">A-DS-02 생명주기</a>
+
+
+          <a href="a-ds-02-addon-api-profile.html">A-DS-02 API 프로필</a>
+          <a href="a-ds-02-am-01-onready-adoption.html">A-DS-02 AM-01</a>
+
+
+
+          <a href="a-ds-03-access-policy.html">A-DS-03 권한·범위</a>
+          <a href="a-ds-04-settings-ai-connection.html">A-DS-04 설정·AI 연결</a>
+          <a href="a-ds-05-addon-database.html">A-DS-05 데이터베이스</a>
+          <a href="a-ds-06-platform-ledger-connector.html">A-DS-06 원장 Connector</a>
+          <a href="a-ds-07-ai-job-execution.html">A-DS-07 AI 실행·큐</a>
+          <a href="a-ds-08-route-rest-command.html">A-DS-08 경로·REST·명령</a>
+        <a href="a-ds-09-worksheet-authoring-version.html">A-DS-09 활동지 제작·버전</a>
+        <a href="a-ds-10-worksheet-self-evaluation.html">A-DS-10 활동지 자체 평가</a>
+        <a href="a-ds-11-assignment-student-submission.html">A-DS-11 배포·학생 제출</a>
+        <a href="a-ds-12-submission-ai-assessment.html">A-DS-12 제출물 AI 평가</a>
+        <a href="a-ds-13-teacher-review-feedback-release.html">A-DS-13 검토·피드백·공개</a>
+
+        <a href="a-ds-14-dashboard-report-export.html">A-DS-14 보고서·내보내기</a>
+        <a href="a-ds-15-install-upgrade-migration-operations.html">A-DS-15 설치·이전·운영</a>
+        <a href="a-ds-16-cross-validation-freeze.html">A-DS-16 연결·동결</a>
+          <a href="platform-api-implementation-audit.html">API 구현 재검증</a>
+          <a href="g0-c28-i06-release-gate.html">G0 릴리스 관문</a>
+          <a href="g1-common-access-policy.html">G1 공통 접근 정책</a>
+          <a href="g1-common-rest-envelope.html">G1 공통 REST envelope</a>
+          <a href="g1-context-list-q01.html">G1 Context 목록·Q01</a>
+          <a href="redesign.html">재설계 기준</a>
+          <a href="code-consistency.html" aria-current="page">코드 일관성</a>
+        </div>
+        <div class="nav-group">
+          <strong>섹션</strong>
+          <a href="#principles">원칙</a>
+          <a href="#boundaries">경계</a>
+          <a href="#naming">이름 규칙</a>
+          <a href="#layers">계층</a>
+          <a href="#access-policy">접근 정책</a>
+          <a href="#rest">REST</a>
+          <a href="#checks">검증</a>
+        </div>
+      </nav>
+    </aside>
+    <main class="content">
+      <section class="hero">
+        <p class="eyebrow">Code Consistency</p>
+        <h2>AI 평가 애드온 코드 일관성 기준</h2>
+        <p>전체 코드는 같은 경계, 같은 이름 규칙, 같은 계층 책임을 따르도록 작성한다. 기능을 빨리 붙이기보다 유지 가능한 구조를 우선한다.</p>
+        <div class="meta">
+          <span class="badge">문서 상태 구현 기준</span>
+          <span class="badge">작성일 2026-08-09</span>
+          <span class="badge">PHP 7.4 호환</span>
+        </div>
+      </section>
+
+      <h2 id="principles">작성 원칙</h2>
+      <section class="panel">
+        <ul>
+          <li>기존 namespace <code>OJAI\Dashboard</code>를 유지한다.</li>
+          <li>새 기능은 독립 모듈로 추가하고, 기존 모듈 책임을 흐리지 않는다.</li>
+          <li>controller에는 business logic을 넣지 않는다.</li>
+          <li>repository는 SQL과 저장소 접근만 담당한다.</li>
+          <li>service는 업무 흐름을 조합하되 직접 테이블명을 만들지 않는다.</li>
+          <li>학생 공개 데이터는 서버에서 제거한 뒤 반환한다.</li>
+        </ul>
+      </section>
+
+      <h2 id="boundaries">모듈 경계</h2>
+      <table>
+        <thead><tr><th>모듈</th><th>책임</th><th>금지</th></tr></thead>
+        <tbody>
+          <tr><td><code>Worksheet</code></td><td>Plate 원문, schema 생성, 템플릿 저장</td><td>학생 제출물 채점 수행</td></tr>
+          <tr><td><code>WorksheetEvaluation</code></td><td>활동지 자체 AI 진단과 진단 결과 저장</td><td>학생 답안 사용</td></tr>
+          <tr><td><code>Assessment</code></td><td>학생 제출물 채점, 재채점 검토</td><td>활동지 품질 진단 저장</td></tr>
+          <tr><td><code>Feedback</code></td><td>accepted 결과 기반 피드백 생성과 공개</td><td>미승인 점수 공개</td></tr>
+          <tr><td><code>Platform</code></td><td>OJ 데이터 읽기와 콘솔 연결</td><td>OJ 원본 쓰기</td></tr>
+          <tr><td><code>Database</code></td><td>테이블명, schema, migration, repository 기반</td><td><code>$wpdb->prefix</code> 결합</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="naming">이름 규칙</h2>
+      <section class="panel">
+        <pre><code>PHP namespace: OJAI\Dashboard\{Module}
+Class: Worksheet_Evaluation_Service
+Repository: Worksheet_Evaluation_Repository
+REST controller: Worksheet_Evaluation_Rest_Controller
+Table logical key: WORKSHEET_EVALUATIONS
+Physical table: oj_ai_worksheet_evaluations
+REST namespace: oj-ai/v1
+REST route: /worksheets/{worksheet_id}/commands/evaluate
+JS data-action: evaluate-worksheet
+CSS prefix: oj-ai-</code></pre>
+      </section>
+
+      <h2 id="layers">계층별 책임</h2>
+      <div class="grid">
+        <section class="card">
+          <h3>Module</h3>
+          <p>WordPress hook 등록만 담당한다. 객체 조립은 constructor에서 하고, 실행 로직은 service로 위임한다.</p>
+        </section>
+        <section class="card">
+          <h3>REST Controller</h3>
+          <p>요청 파싱, permission callback, response 변환만 담당한다. 채점이나 진단 판단은 하지 않는다.</p>
+        </section>
+        <section class="card">
+          <h3>Service</h3>
+          <p>업무 흐름과 상태 전이를 담당한다. AI 호출, normalizer, repository를 조합한다.</p>
+        </section>
+        <section class="card">
+          <h3>Repository</h3>
+          <p>저장과 조회만 담당한다. 테이블명은 반드시 <code>Table_Names::table()</code>에서 가져온다.</p>
+        </section>
+        <section class="card">
+          <h3>Normalizer</h3>
+          <p>AI 응답을 안정적인 내부 구조로 바꾼다. 점수 범위, 누락 필드, 검토 필요 상태를 정규화한다.</p>
+        </section>
+        <section class="card">
+          <h3>Admin UI</h3>
+          <p>상태, 목록, 버튼, 모달 중심으로 구성한다. 긴 사용 설명은 HTML 문서로 분리한다.</p>
+        </section>
+        <section class="card">
+          <h3>Application Policy</h3>
+          <p>Runtime, actor, capability, Context, 객체와 상태를 한 순서로 판정한다. Page, REST, Job과 파일은 같은 Port를 사용한다.</p>
+        </section>
+        <section class="card">
+          <h3>REST Foundation</h3>
+          <p>서버 actor, 표준 nonce, 공통 Policy, correlation, 멱등키와 성공·실패 envelope를 Controller마다 같은 구현으로 제공한다.</p>
+        </section>
+      </div>
+
+      <h2 id="access-policy">접근 정책 규칙</h2>
+      <section class="panel">
+        <ul>
+          <li>Manifest에 선언한 15개 capability만 사용하고 <code>AddonCapabilityKeyV1</code> 공개 mapper로 변환한다.</li>
+          <li>Console은 <code>oj_access_console + view_workspace</code>, Public은 active actor + <code>participate</code>를 공통 gate로 사용한다.</li>
+          <li>capability는 서로 상속하지 않으며 role 이름, <code>manage_options</code>, ambient current user를 권한 근거로 사용하지 않는다.</li>
+          <li>플랫폼 Context는 공개 <code>AddonContextGatewayV1</code>로 현재 <code>class|group</code>를 매번 재인가한다.</li>
+          <li>객체 소유 모듈은 relation, revision, state와 transition을 조회 조건에서 제한하고 공통 객체 Policy Port를 구현한다.</li>
+          <li>owner 어댑터, Runtime 또는 Gateway가 없으면 임시 허용하지 않고 503으로 닫는다.</li>
+        </ul>
+      </section>
+
+      <h2 id="rest">REST 공통 규칙</h2>
+      <section class="panel">
+        <ul>
+          <li>namespace는 <code>oj-ai/v1</code> 하나이며 URL은 <code>rest_url()</code>에서 만든다.</li>
+          <li>목록 cursor 기본 상한은 191자다. 공개 플랫폼 opaque cursor를 왕복하는 Q01만 동결된 endpoint profile 512자를 사용하며 decode·절단하지 않는다.</li>
+          <li>현재 actor는 WordPress 인증 상태에서만 읽고 body·query·path의 actor·권한·owner를 신뢰하지 않는다.</li>
+          <li>GET은 읽기 전용이다. POST는 <code>X-WP-Nonce</code>의 <code>wp_rest</code> action과 8~128자 <code>Idempotency-Key</code>를 요구한다.</li>
+          <li>correlation ID는 서버가 새로 발급하며 클라이언트 header를 반사하거나 응답 meta에서 덮어쓰지 않는다.</li>
+          <li>성공은 <code>data/meta/links/actions</code>, 실패는 WordPress 호환 <code>code/message/data</code> envelope를 사용한다.</li>
+          <li>내부 reason, SQL, table·class, stack, provider 원문, secret을 응답에 포함하지 않는다.</li>
+          <li>Controller는 명령 DTO와 하나의 Application Port만 호출하고 멱등 예약·digest·업무 row·audit·outbox는 owner transaction에서 함께 반영한다.</li>
+          <li>Use Case가 준비되지 않은 catalog route와 문서에 없는 진단 route는 등록하지 않는다.</li>
+        </ul>
+      </section>
+
+      <h2>데이터 접근 규칙</h2>
+      <section class="panel">
+        <ul>
+          <li>애드온 테이블은 <code>oj_ai_*</code> 고정 이름을 사용한다.</li>
+          <li>기능 코드에서 문자열로 테이블명을 직접 조립하지 않는다.</li>
+          <li>새 테이블은 <code>Table_Names</code>, <code>Schema</code>, 새 migration, repository를 함께 추가한다.</li>
+          <li>OJ 원장은 공개 Addon API Gateway로만 읽고 플랫폼 table·내부 Repository에 직접 접근하지 않는다.</li>
+          <li>삭제는 기본적으로 <code>deleted_at</code> soft delete로 처리한다.</li>
+        </ul>
+      </section>
+
+      <h2>AI 계약 규칙</h2>
+      <section class="panel">
+        <ul>
+          <li>활동지 진단, 제출물 채점, 피드백, 특기사항은 서로 다른 policy key를 사용한다.</li>
+          <li>AI raw response는 교사용 검토와 디버깅 범위에서만 저장한다.</li>
+          <li>서버가 최종 점수 합계와 범위 보정을 담당한다.</li>
+          <li>AI 결과는 곧바로 학생에게 공개하지 않는다.</li>
+        </ul>
+      </section>
+
+      <h2 id="checks">검증 기준</h2>
+      <section class="panel">
+        <pre><code>D:\php\php.exe -l src/Database/Table_Names.php
+npm.cmd run check:access-policy
+npm.cmd run check:plate
+npm.cmd run check:assessment
+npm.cmd run check:rest-foundation
+npm.cmd run check:compat</code></pre>
+        <p>하네스가 실패하면 실패 항목과 원인을 문서에 남기고, 설계 기준과 하네스 기대값 중 어느 쪽을 고칠지 먼저 판단한다.</p>
+      </section>
+
+      <p class="footer">처음으로 돌아가기: <a href="index.html">문서 허브</a></p>
+    </main>
+  </div>
+</body>
+</html>

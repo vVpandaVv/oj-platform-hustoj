@@ -1,0 +1,2194 @@
+[
+    {
+        "path": "README.md",
+        "mode": "100644",
+        "git_blob": "d11d828c58363a308ad1cd70327153c9293dabe7",
+        "bytes": 979,
+        "sha256": "1dcc8ddccccbd112fc9e51a7061f6f218fedcdba0a833c166d1c1f88a14b0331",
+        "lines": 17
+    },
+    {
+        "path": "config/.gitkeep",
+        "mode": "100644",
+        "git_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+        "bytes": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "lines": null
+    },
+    {
+        "path": "config/capabilities.php",
+        "mode": "100644",
+        "git_blob": "0a403f8115cf789dbf9c54a27b4c45d3c9428ce1",
+        "bytes": 18918,
+        "sha256": "e0e014d3ed97ae13045bbb6ab6b9b2dfda79baee1f8c00a9928a18da3127ecf2",
+        "lines": 505
+    },
+    {
+        "path": "config/features.php",
+        "mode": "100644",
+        "git_blob": "1987946476a8d318fd45366259e48605a34468c0",
+        "bytes": 6423,
+        "sha256": "93434708a1d82a310039d3bdf0066ce0c6ef49a20b79fee6199448dbbf442746",
+        "lines": 216
+    },
+    {
+        "path": "config/modules.php",
+        "mode": "100644",
+        "git_blob": "78b58ea1c4be2bb27a4be8852ef668eca35a563e",
+        "bytes": 5438,
+        "sha256": "cc427a32f0a99969767d00f1e3cda966c493331fdb1a84226b7d3520c0e69fdd",
+        "lines": 141
+    },
+    {
+        "path": "config/plugin.php",
+        "mode": "100644",
+        "git_blob": "b06402ceacf73c197c5fcd6d12c0318011177c06",
+        "bytes": 228,
+        "sha256": "56fc3e8f1c61255d675a19fc22f9b48b6853ca9d355a37478e20fc79a98bc715",
+        "lines": 11
+    },
+    {
+        "path": "config/settings.php",
+        "mode": "100644",
+        "git_blob": "8f97e6f8e25eaa56becd33e9ff50d41739cd1801",
+        "bytes": 450,
+        "sha256": "05d8ce52d3c014f97446d6e125e5cbed8d0a4e612c8a750e1bc0d71e11d240f3",
+        "lines": 17
+    },
+    {
+        "path": "docs/assets/ds08-prototype.css",
+        "mode": "100644",
+        "git_blob": "83ebccf594c40ed6f1922615573d9e42e7fb416f",
+        "bytes": 9887,
+        "sha256": "bddc144a3e3c2e5a773e92b28c4859572f08ee0399ce3d7d57c9ede4487a7f4c",
+        "lines": 631
+    },
+    {
+        "path": "docs/assets/ds09-prototype.css",
+        "mode": "100644",
+        "git_blob": "398e39150724fbe232025a7bb98b11dd2b9bc6d9",
+        "bytes": 10496,
+        "sha256": "2843c6a3570a9e55f6bda9be6b69b43607a3e8a3f6f0b51ab288f825e8414a04",
+        "lines": 612
+    },
+    {
+        "path": "docs/assets/ds09-prototype.js",
+        "mode": "100644",
+        "git_blob": "761122d6f81fdb1f602d09f1704208795d33a0cf",
+        "bytes": 4143,
+        "sha256": "1f51e6fbfdc708c042c44549b96a0f8afd7c4b3f83acb995adccc7044a3c593c",
+        "lines": 126
+    },
+    {
+        "path": "docs/assets/ds10-design.css",
+        "mode": "100644",
+        "git_blob": "3098e68f166c1eb351787cba2b420ff24b4bf8a3",
+        "bytes": 7497,
+        "sha256": "7aa76870244f8a1b2bccc29de512bce40cdeea962de02528305d318663ae8b2a",
+        "lines": 521
+    },
+    {
+        "path": "docs/assets/ds11-blockly-contract.js",
+        "mode": "100644",
+        "git_blob": "e583e5634d04447165caee938b26b7aafab14ae3",
+        "bytes": 387,
+        "sha256": "681a1641341498103d7ff42ca026140b80c9af5a53ae106e0fe15e1f288e732c",
+        "lines": 17
+    },
+    {
+        "path": "docs/assets/ds11-blockly-editor-frame.html",
+        "mode": "100644",
+        "git_blob": "6c09a5bcb64917b624962307c080f8a88c7ec5ea",
+        "bytes": 79370,
+        "sha256": "e4f8cb70fb6e889b0883fa14d5eeb0f7e0f123f61c43694c74fa3377b9b1d3f3",
+        "lines": 1873
+    },
+    {
+        "path": "docs/assets/ds11-prototype.css",
+        "mode": "100644",
+        "git_blob": "96338f0650eb8fe1c1cbf976b78caf6acd726cef",
+        "bytes": 12047,
+        "sha256": "e1e3b62be2f1329dae739386e336d8a323a6580ed65b52e902a84adc1650374f",
+        "lines": 734
+    },
+    {
+        "path": "docs/assets/ds11-prototype.js",
+        "mode": "100644",
+        "git_blob": "c2d010ca1d91706f8778de6da4333b5a43678c20",
+        "bytes": 10841,
+        "sha256": "42dc07a0630104b8f6f7b88e6305d54bda76a5e84c2bb9fa0fd746be3893a2af",
+        "lines": 294
+    },
+    {
+        "path": "docs/assets/ds12-prototype.css",
+        "mode": "100644",
+        "git_blob": "0c6d38fa14069518b10c04216d5478a59273690d",
+        "bytes": 11448,
+        "sha256": "de887daf4f0f75ac7247be5882150b2e27b052f7897945b722c81054b5e11492",
+        "lines": 705
+    },
+    {
+        "path": "docs/assets/ds12-prototype.js",
+        "mode": "100644",
+        "git_blob": "7a0ff9bcb16493e1449692f0acb72dc3ac896474",
+        "bytes": 5280,
+        "sha256": "6502c8730f8d948c55cde3f2448746ccfa00f2b48dea2ceeb7904e435365e8f9",
+        "lines": 145
+    },
+    {
+        "path": "docs/assets/ds13-prototype.css",
+        "mode": "100644",
+        "git_blob": "a99551ac48516ff4ac0e32df0e956a517c5d226d",
+        "bytes": 10122,
+        "sha256": "5f9474425ae64efcaa401f71781f8e50a0037082c6b0ad4834afb15ee81a8a40",
+        "lines": 646
+    },
+    {
+        "path": "docs/assets/ds13-prototype.js",
+        "mode": "100644",
+        "git_blob": "05c64da8f2c644aa4341a9adc4e4f93143f9d803",
+        "bytes": 3000,
+        "sha256": "0f94ba6e9213946175e826e7093ec8a5931b6e3a7d34cd31aafac4344a98109d",
+        "lines": 78
+    },
+    {
+        "path": "docs/assets/ds14-prototype.css",
+        "mode": "100644",
+        "git_blob": "db373cd364868815002e48ac8e5e89ed38800b5d",
+        "bytes": 9182,
+        "sha256": "c04be08563c7453533520d9c76c7d40d0bc04b955b090e053685f0cde2b04cd8",
+        "lines": 591
+    },
+    {
+        "path": "docs/assets/ds14-prototype.js",
+        "mode": "100644",
+        "git_blob": "a61c385465e3f6278476c54084b63f10396baaf9",
+        "bytes": 3440,
+        "sha256": "8c13cfe0a09b71caa5775774dee8caaf0898b4bf945083c188e745c59700dedf",
+        "lines": 99
+    },
+    {
+        "path": "docs/assets/ds15-prototype.css",
+        "mode": "100644",
+        "git_blob": "9f3cd110c3d8c43a26fcf1e59969d49f2656318d",
+        "bytes": 23803,
+        "sha256": "8ad7e97a0e8a19f76c143c9232a968c71e027a1938834821ba8c943ff3bee4d3",
+        "lines": 1390
+    },
+    {
+        "path": "docs/assets/ds15-prototype.js",
+        "mode": "100644",
+        "git_blob": "88199b68f791689ae400115658fd568d77c9ff75",
+        "bytes": 26868,
+        "sha256": "c24cb3282512d282b389a835d4dfacaa62ffa72343819ac5e4d7e0d155bd01f8",
+        "lines": 604
+    },
+    {
+        "path": "docs/assets/oj-code-completion-prototype.js",
+        "mode": "100644",
+        "git_blob": "303e721228b8ce1781829a52e54708cbbc2e9cfb",
+        "bytes": 7399,
+        "sha256": "aad93faaf02c66561de3310a0125d9fd01358fa414b46a3e324984e1c5985d26",
+        "lines": 249
+    },
+    {
+        "path": "docs/assets/oj-ui-prototype.js",
+        "mode": "100644",
+        "git_blob": "df45be2c9fbe4fd82790aaca33ab7b3a621f80ef",
+        "bytes": 14868,
+        "sha256": "54ed8ddfcdb5c3977885a8fadbea229335580e41c3f61482f8216d4836ad9104",
+        "lines": 428
+    },
+    {
+        "path": "docs/assets/oj-ui-system.css",
+        "mode": "100644",
+        "git_blob": "416ef3c80a9474f748d083ef45ca8e7da9d22b6f",
+        "bytes": 43721,
+        "sha256": "97e4d2590fc704ec786c72b0e5eea40a0a9e1ed2f37cc7fc54e38da9f3afc452",
+        "lines": 2656
+    },
+    {
+        "path": "docs/d-001-module-dependencies.html",
+        "mode": "100644",
+        "git_blob": "604960cb27d85e823c60aeb432fcb9b710bcea23",
+        "bytes": 36986,
+        "sha256": "b8593c4a2c4acc34c142de6e43e959ddcd1416eb7763d6b5e6106ddc9c5af155",
+        "lines": 1090
+    },
+    {
+        "path": "docs/d-002-route-inventory.html",
+        "mode": "100644",
+        "git_blob": "4da5b9e1cf7db3585f5a8ac56c3e3bd9aa023455",
+        "bytes": 60973,
+        "sha256": "5a53047dc017ecba88c730cfdb0a2540453ece7c291921b5b173173be5fb7773",
+        "lines": 945
+    },
+    {
+        "path": "docs/d-003-menu-permission-feature-flags.html",
+        "mode": "100644",
+        "git_blob": "ea208729a21477e189a60bfe04a5f02582f3de42",
+        "bytes": 43889,
+        "sha256": "aa0433bed492d26287ea75ba77ac9a56eb58c13fba88c922435a11955efa482b",
+        "lines": 577
+    },
+    {
+        "path": "docs/d-004-storage-inventory.html",
+        "mode": "100644",
+        "git_blob": "72809c0eeb06ff793a11ace6f7f5ce514706ea02",
+        "bytes": 39587,
+        "sha256": "8166b0d4e9541ede5a35a800962ab1ec22f09edb6a16512e3480a63a300794a6",
+        "lines": 629
+    },
+    {
+        "path": "docs/d-005-user-workflows-risks.html",
+        "mode": "100644",
+        "git_blob": "c8136a5bf251a20b766cd48b537612316959a37b",
+        "bytes": 209291,
+        "sha256": "cb9038db25a7afb5535affa56a6f1dc05e6ac6983e1434579c51b561d6858243",
+        "lines": 1541
+    },
+    {
+        "path": "docs/d-006-current-state-baseline.html",
+        "mode": "100644",
+        "git_blob": "ccaaa0ea473750db87d5bff4d277b411d361b176",
+        "bytes": 85865,
+        "sha256": "eda9106d4aae44ac43d6963add24c01d7e153e60c722a8ad1c5223f53901afa8",
+        "lines": 701
+    },
+    {
+        "path": "docs/d-007-users-terminology-navigation.html",
+        "mode": "100644",
+        "git_blob": "52ae0f0cca5ed9855a8c11dc25ddcca0ab01cc30",
+        "bytes": 63006,
+        "sha256": "03ce8267caa0247e5a0c372d41685ebe2e1cdc85feeb7013a5da6ef9c37d415c",
+        "lines": 461
+    },
+    {
+        "path": "docs/d-008-module-database-ownership.html",
+        "mode": "100644",
+        "git_blob": "c9d52af123a901d2736d74e34a56c51ddb264246",
+        "bytes": 110603,
+        "sha256": "9c337bee36f7aaf6edd7c95700c1728ab40d0ebbf5838f3612fc7a4ffafa76b2",
+        "lines": 479
+    },
+    {
+        "path": "docs/d-009-admin-ui-system.html",
+        "mode": "100644",
+        "git_blob": "e0ae712ff3724c066c466eca496a7bd122dfde19",
+        "bytes": 41574,
+        "sha256": "06f7d1ad751f41bf39d6eacf1327605f4b4b1e8036d3e75f28109779fd8f8ec4",
+        "lines": 349
+    },
+    {
+        "path": "docs/development-cf-1-permission.html",
+        "mode": "100644",
+        "git_blob": "b1aaf8b49b2c8f4cec1386840bf96194801813d8",
+        "bytes": 53626,
+        "sha256": "324f03cb644fdfbaec5560ca606e86b4f1f28e77261ed59e0c0d16df3977bb9b",
+        "lines": 447
+    },
+    {
+        "path": "docs/development-cf-2-settings.html",
+        "mode": "100644",
+        "git_blob": "8da2867698136adb54f19f6ff01b000b61460160",
+        "bytes": 39509,
+        "sha256": "988a2d5baf059ba9f76b8712c73a6ec83b5f4dda9e8dc9b72fb6aeffb5ffabb6",
+        "lines": 356
+    },
+    {
+        "path": "docs/development-cf-3-platformdb.html",
+        "mode": "100644",
+        "git_blob": "e4ef7edca7bcd8604bdfbce2da66b05e8ebabaab",
+        "bytes": 41306,
+        "sha256": "a2666a46d1b581bdbf18d4258726275815d16ba64afe558f83584d47ead4a338",
+        "lines": 387
+    },
+    {
+        "path": "docs/development-cf-4-judgedb.html",
+        "mode": "100644",
+        "git_blob": "c32a2bc3826e8baef2a16457be4c9a6af93f16e0",
+        "bytes": 40814,
+        "sha256": "662916e2e15bc83b3a53d32238889b7a0f91b8258b64771be8fdf695080f3818",
+        "lines": 380
+    },
+    {
+        "path": "docs/development-cf-5-jobs.html",
+        "mode": "100644",
+        "git_blob": "c4e99b4eada484a5b233b8b54111a1c8a8c3dc7b",
+        "bytes": 52295,
+        "sha256": "21794547cedc2a283d2adc3597a1de7f95b4762c70a1a893a01e0c37a4157d1e",
+        "lines": 461
+    },
+    {
+        "path": "docs/development-cf-6-accessrouter.html",
+        "mode": "100644",
+        "git_blob": "3f9ea8c0f866aca3a9e9733191866ca3a9a04327",
+        "bytes": 34533,
+        "sha256": "5d0e5c289073e1cce55a596af764d1548e5cff02fe6cf819ef195dea5655f097",
+        "lines": 342
+    },
+    {
+        "path": "docs/development-common-foundation.html",
+        "mode": "100644",
+        "git_blob": "2a06186d911b95e27ee8fc462cb2361fe8bc480a",
+        "bytes": 38397,
+        "sha256": "b1af884fee0444776c7be936f368c46c16b7611b28db1acbe6b50a85ab4ec810",
+        "lines": 362
+    },
+    {
+        "path": "docs/development-ds-00-scope-baseline.html",
+        "mode": "100644",
+        "git_blob": "da3d0cd5c5aa4c4baed9aadbbc76dd7be1778183",
+        "bytes": 18802,
+        "sha256": "43094b7f292dddec60f826a8a8048d89280f225b368dcc07047c8b8d908f2a5f",
+        "lines": 243
+    },
+    {
+        "path": "docs/development-ds-01-ui-system.html",
+        "mode": "100644",
+        "git_blob": "36cf49557a438637ba2e454b03fce21ef4cb5c1e",
+        "bytes": 27245,
+        "sha256": "5b9a836f6d024a97d53c4b55de7d4b70c10506ec7301f82b5266090069c33097",
+        "lines": 234
+    },
+    {
+        "path": "docs/development-ds-08-access-policy-ui.html",
+        "mode": "100644",
+        "git_blob": "39121651c297d20073b23a9335d974ab933d8fbd",
+        "bytes": 20167,
+        "sha256": "55801bbfce9e644b43019b7303d924d0f6cb754bae94a30d6359c860c3811a84",
+        "lines": 259
+    },
+    {
+        "path": "docs/development-ds-08-accounts-users.html",
+        "mode": "100644",
+        "git_blob": "42760717cc04cccabb0aaa66cbcbbcb07e66c374",
+        "bytes": 50974,
+        "sha256": "449278cd72fa3b1ec71f99b088c9175b3efad9f12f7ca4b6062a1871ebee288b",
+        "lines": 426
+    },
+    {
+        "path": "docs/development-ds-08-admin-users-ui.html",
+        "mode": "100644",
+        "git_blob": "9c418971b2f355157bb63bc3dbe4d37e243685e6",
+        "bytes": 36010,
+        "sha256": "c4eec262cc99f4f7d9bdca8eb54ca3fbdeffae9c1d3dee831e92decf20ea9216",
+        "lines": 283
+    },
+    {
+        "path": "docs/development-ds-08-user-account-ui.html",
+        "mode": "100644",
+        "git_blob": "bc0a9022a7fa5c3418d8c6cd2237862ee7733fd8",
+        "bytes": 14118,
+        "sha256": "f3a4af4fe51642555d6c0569de84c915b250fb6449475fc7393f2f9d5fbbaa14",
+        "lines": 182
+    },
+    {
+        "path": "docs/development-ds-09-admin-dashboard-shell-ui.html",
+        "mode": "100644",
+        "git_blob": "f825fc0dae0471dabe6aee91bf69f9b6f990bd50",
+        "bytes": 22032,
+        "sha256": "0292fedddaf20b143a35e2546e65481056e48c9230c2edf4e502957a1bd2879e",
+        "lines": 220
+    },
+    {
+        "path": "docs/development-ds-09-home-dashboard-shell.html",
+        "mode": "100644",
+        "git_blob": "07ebb1d55fb3a5c30b574659c0fe419f99df9290",
+        "bytes": 41544,
+        "sha256": "f1a223735d43aa4142db7b84e142bf6b5cbee180a4ef6ad14d10fd63b84f4e6c",
+        "lines": 377
+    },
+    {
+        "path": "docs/development-ds-09-user-home-shell-ui.html",
+        "mode": "100644",
+        "git_blob": "5ca0e3224a515bd76e6314c9a04269c787715672",
+        "bytes": 21390,
+        "sha256": "1e624b487639d8bb12cec490c956e754f4faeb4250518fdb6853ca41205e2464",
+        "lines": 224
+    },
+    {
+        "path": "docs/development-ds-10-admin-problems-ui.html",
+        "mode": "100644",
+        "git_blob": "85b2be70bbc6a0e29c4ea0747f3ef510319b909d",
+        "bytes": 77441,
+        "sha256": "8d7bcf002c3f10ffd1da77bae1a0c8422e055e35fe4f3e248f5fd68f199dda62",
+        "lines": 683
+    },
+    {
+        "path": "docs/development-ds-10-admin-quizzes-ui.html",
+        "mode": "100644",
+        "git_blob": "f16fa2b7929843a15c7b7169d703e86792328cc3",
+        "bytes": 29891,
+        "sha256": "0acddbcf8a11c51fa58514567f79a2fdfba3031f1413ea39afc3efd98a3389ea",
+        "lines": 293
+    },
+    {
+        "path": "docs/development-ds-10-operations.html",
+        "mode": "100644",
+        "git_blob": "70840a58a963e2b93f993df0abc52c23011b83ca",
+        "bytes": 30153,
+        "sha256": "c75f20ccaa819b7870d852a7f24b87f70f45a2229775a85684d286a9aec80421",
+        "lines": 287
+    },
+    {
+        "path": "docs/development-ds-10-page-contracts.html",
+        "mode": "100644",
+        "git_blob": "83fb1c8d984924a80ac976893feeded996f53c20",
+        "bytes": 14906,
+        "sha256": "d4f54c8571a1185a7609e6ad7d83f9d6e9b68065f8e38d6518ba473d9a325a8f",
+        "lines": 160
+    },
+    {
+        "path": "docs/development-ds-10-problem-content.html",
+        "mode": "100644",
+        "git_blob": "1a469a9fc447fecc4f1cfd012626e623dc0b4cc7",
+        "bytes": 26055,
+        "sha256": "e6d600f681f45679ad4949e50b2ec74df87fe9a5459444391d57e82636db9be3",
+        "lines": 244
+    },
+    {
+        "path": "docs/development-ds-10-problem-detail-ui.html",
+        "mode": "100644",
+        "git_blob": "25d433c731bdae3125ee25fb8ef859f78c4f1442",
+        "bytes": 46278,
+        "sha256": "e356d4e9481186e34eb381c18cd5aad779819d379f966b89f60e8f3fbe14d53e",
+        "lines": 1691
+    },
+    {
+        "path": "docs/development-ds-10-problems.html",
+        "mode": "100644",
+        "git_blob": "c6b2d7ded8b5d9dd185b5fc3a50f626d9f312e65",
+        "bytes": 17778,
+        "sha256": "7a647ac1b007e57d151e22473756ae629a508bcd54ef904f1f99733d78ef0740",
+        "lines": 199
+    },
+    {
+        "path": "docs/development-ds-10-quiz-design.html",
+        "mode": "100644",
+        "git_blob": "602681657f72e2939c4fa52921dd1dfb7a5a46d3",
+        "bytes": 14034,
+        "sha256": "a70e8ef1858016896a914d732e7c926a2557ccc7a398a37419a9bcfda77483fe",
+        "lines": 187
+    },
+    {
+        "path": "docs/development-ds-10-user-problems-ui.html",
+        "mode": "100644",
+        "git_blob": "a98ded8f6eac0e82a1453265af08776c451a6a6c",
+        "bytes": 22340,
+        "sha256": "cecdd8f784a20a6b8c3e979cde891aab2a4120a4a44b62789a74149eb3740999",
+        "lines": 345
+    },
+    {
+        "path": "docs/development-ds-10-user-quizzes-ui.html",
+        "mode": "100644",
+        "git_blob": "b109403d5cf9bd2dd6a6c9c95a792046fa52bb2f",
+        "bytes": 20265,
+        "sha256": "04ba81905d6e0f07bb01f092b08066badb5105a1cdc9cb593f062f4ca2c3c66c",
+        "lines": 293
+    },
+    {
+        "path": "docs/development-ds-11-admin-submissions-ui.html",
+        "mode": "100644",
+        "git_blob": "f0562184d14d1e02f2ce7593054ecfd2b042f428",
+        "bytes": 26553,
+        "sha256": "03c49607cf831c87228b0d2152e8ab739a51fa8fc16032633c13249d3651d123",
+        "lines": 311
+    },
+    {
+        "path": "docs/development-ds-11-submissions-blockly.html",
+        "mode": "100644",
+        "git_blob": "d7cbb1416ef5831d3272d0f7cee9bfa8a26088fb",
+        "bytes": 63847,
+        "sha256": "655a56266eba20f3465de797ead131eae5afae1540e072dcb4dfcf0228958795",
+        "lines": 496
+    },
+    {
+        "path": "docs/development-ds-11-user-submissions-ui.html",
+        "mode": "100644",
+        "git_blob": "5e67c8369fc29bce8261fbcd0e87cadf53b20e50",
+        "bytes": 25917,
+        "sha256": "37ee72228a86043c7171474819b0cff440f9d68aecb3350d76b2b85d0fce540d",
+        "lines": 370
+    },
+    {
+        "path": "docs/development-ds-12-admin-classes-ui.html",
+        "mode": "100644",
+        "git_blob": "95b4ddc8d6633f1003cf2ca4dea58666f99f48f8",
+        "bytes": 32018,
+        "sha256": "6ec3b5b15072ea0d9481b657e4ffc703942e862081dfcaa3c03c7c12260dd33d",
+        "lines": 112
+    },
+    {
+        "path": "docs/development-ds-12-admin-contests-ui.html",
+        "mode": "100644",
+        "git_blob": "5c86259c96e00c0e13b2074590e4be5295464a41",
+        "bytes": 36064,
+        "sha256": "eb6a163eb8804442424d9a532659a308d6c196e2f821e6250d05292be162ce82",
+        "lines": 142
+    },
+    {
+        "path": "docs/development-ds-12-admin-groups-ui.html",
+        "mode": "100644",
+        "git_blob": "121001cd05e7fd1fca24f93b12e69756e7467711",
+        "bytes": 23093,
+        "sha256": "bfe399ba4bad8bfdade101b3ecf3c6a1082a2f1a3a5842f9ad997235abe751c8",
+        "lines": 60
+    },
+    {
+        "path": "docs/development-ds-12-admin-learning-hub-ui.html",
+        "mode": "100644",
+        "git_blob": "73f4c2bae98b757fbe216e798fb0a249a98935bd",
+        "bytes": 11282,
+        "sha256": "7f3d851772b6e6cd0bb0344dd1e4a5ff6ec53c805ecbc083998251418a6de339",
+        "lines": 52
+    },
+    {
+        "path": "docs/development-ds-12-learning-spaces.html",
+        "mode": "100644",
+        "git_blob": "ed6d5cb390bff53f3b3ac6c7f9cbd1d097a7d7d8",
+        "bytes": 47107,
+        "sha256": "ad0c5578764734355ce70bfbc1d537ab06242af54148dac071712e93e2d992d0",
+        "lines": 535
+    },
+    {
+        "path": "docs/development-ds-12-user-classes-ui.html",
+        "mode": "100644",
+        "git_blob": "9ec597cb5f076c274b0dfc579adfa1f974ed629c",
+        "bytes": 16072,
+        "sha256": "09d96610c0200e8dc365b2b161c32bbca532b19681577ca23a11e9ad914580d1",
+        "lines": 121
+    },
+    {
+        "path": "docs/development-ds-12-user-contests-ui.html",
+        "mode": "100644",
+        "git_blob": "c8759173dfc15ab11da12e5f1e4fc4772f5d0c9e",
+        "bytes": 20553,
+        "sha256": "4bf15df99f6e1d88c428929c10f728c88ce44ced36e100106bbf980c1ad17691",
+        "lines": 108
+    },
+    {
+        "path": "docs/development-ds-12-user-groups-ui.html",
+        "mode": "100644",
+        "git_blob": "5f1ac0ec01324b8dcc692be7cb28e661944a5195",
+        "bytes": 11416,
+        "sha256": "33f198fde71fc9b2c195940054db74382050a3720fab6f0b4a9a0f843d832d5b",
+        "lines": 71
+    },
+    {
+        "path": "docs/development-ds-13-admin-ai-ui.html",
+        "mode": "100644",
+        "git_blob": "a12daeb6bd63cae952871d7eca8081e667dc5527",
+        "bytes": 32111,
+        "sha256": "74d2c4f08ff1082fbd6a20fde97daa3421dcba47cdaf12be77679c4252e774c5",
+        "lines": 318
+    },
+    {
+        "path": "docs/development-ds-13-learning-support.html",
+        "mode": "100644",
+        "git_blob": "d613b25a107418e4bc1d258188e6fa0e4754bec4",
+        "bytes": 44947,
+        "sha256": "b55113770a2ff9a8e40b5cd56a772235315e87c57df3565e283c24ee8644ee9c",
+        "lines": 407
+    },
+    {
+        "path": "docs/development-ds-13-user-learning-ui.html",
+        "mode": "100644",
+        "git_blob": "99f0d7fbe7d44f42d501e89412a2ed7832fbd6b2",
+        "bytes": 21213,
+        "sha256": "583ba7a2b1f131303d2b8ad678dc86369cc9d335cf411d96f7b480f05a25bcd8",
+        "lines": 310
+    },
+    {
+        "path": "docs/development-ds-14-admin-community-ui.html",
+        "mode": "100644",
+        "git_blob": "9f203e06367bcf45dc68dec39191d0b1b59c9644",
+        "bytes": 33540,
+        "sha256": "816253119376ba86af6cc5ce4d45eb2d31cd897f2b430b828fc29e8e225d95af",
+        "lines": 182
+    },
+    {
+        "path": "docs/development-ds-14-community.html",
+        "mode": "100644",
+        "git_blob": "dc983f02bb8329931cafa3f07723b5374210aab4",
+        "bytes": 39441,
+        "sha256": "d285710b8c171f63e221df32338b44645a9418c9f57fb4ff35f4d44ed86eb4fc",
+        "lines": 361
+    },
+    {
+        "path": "docs/development-ds-14-user-community-ui.html",
+        "mode": "100644",
+        "git_blob": "2a291b9a20efc47c938b914f89bd8c5205fc4247",
+        "bytes": 25220,
+        "sha256": "c6ec83bdd74592dcaaafc4f8b67bcfb51fa4e106a3f318e9a6c4523b489adecd",
+        "lines": 238
+    },
+    {
+        "path": "docs/development-ds-15-admin-operations-ui.html",
+        "mode": "100644",
+        "git_blob": "33d4d045a8a691785c508fc8a62c309b5018d69d",
+        "bytes": 75659,
+        "sha256": "b14ec88c5df41c491957980db51171aa95862002c49f97d699be98b9686b16a2",
+        "lines": 453
+    },
+    {
+        "path": "docs/development-ds-15-operations-migration.html",
+        "mode": "100644",
+        "git_blob": "240a547c88f98b468c800411f33ddd95ebafc4ea",
+        "bytes": 73786,
+        "sha256": "d89753c6fffe127dea87670a051a9f2bd94b765b80d480bb6537f2dfa3576ee5",
+        "lines": 589
+    },
+    {
+        "path": "docs/development-ds-16-integration-freeze.html",
+        "mode": "100644",
+        "git_blob": "565f032c98723628c6eb5e354c816bbef7dc8f2e",
+        "bytes": 33353,
+        "sha256": "45f70ecba78e4307365586b275de13f0f19717711504d787ba80532baa747544",
+        "lines": 552
+    },
+    {
+        "path": "docs/development-sequence.html",
+        "mode": "100644",
+        "git_blob": "07076cf57dfeb218b59afd1b8c6f20b92efd71f7",
+        "bytes": 40355,
+        "sha256": "14a60f44abfb41ef4802a7aa5caea2213a971bb68a4a5419fea841d2a5b25cf1",
+        "lines": 331
+    },
+    {
+        "path": "docs/index.html",
+        "mode": "100644",
+        "git_blob": "fe95f1d4bc288ab9dc1fad9b332a1579233d275b",
+        "bytes": 25467,
+        "sha256": "f75559131aa8b5adec36d1a3df827a5e4744a8bca49db66b0dd7f5ee9f8c36f6",
+        "lines": 452
+    },
+    {
+        "path": "docs/user-menu-page-access-data-map.html",
+        "mode": "100644",
+        "git_blob": "6845ea710e571130c8b8b90ab28d97e9d93e1dd9",
+        "bytes": 32923,
+        "sha256": "b7c3aac7336098164bb9f0508249746fc34b15c9842f8e7c494a8f287724a2d9",
+        "lines": 176
+    },
+    {
+        "path": "languages/.gitkeep",
+        "mode": "100644",
+        "git_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+        "bytes": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "lines": null
+    },
+    {
+        "path": "modules/.gitkeep",
+        "mode": "100644",
+        "git_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+        "bytes": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "lines": null
+    },
+    {
+        "path": "modules/AI/Controller/Ai_Feedback_Controller.php",
+        "mode": "100644",
+        "git_blob": "da7cf7b19c62369c389008b1443c5a3468f76665",
+        "bytes": 1797,
+        "sha256": "7485a753cf2578c3878abfa64e6d8c686658c81d2c42b642344d39b33f734d21",
+        "lines": 59
+    },
+    {
+        "path": "modules/AI/Controller/Ai_Feedback_Settings_Controller.php",
+        "mode": "100644",
+        "git_blob": "7d51bf02caee3a8ec31fd55b1e59c412ea5e0a14",
+        "bytes": 11432,
+        "sha256": "e4d8e6009bf9c18d9e9dc401d42b38050295a6a0d8a31063806a6a27c7497bc0",
+        "lines": 285
+    },
+    {
+        "path": "modules/AI/Controller/Ai_Persona_Controller.php",
+        "mode": "100644",
+        "git_blob": "a83254897794ac7bb28344371a2349c1ef5715c5",
+        "bytes": 46615,
+        "sha256": "363386623ab809fbc33aec26dff9ffe995702a9009b7592df4d428f5d2d9254c",
+        "lines": 979
+    },
+    {
+        "path": "modules/AI/Controller/Student_Level_Controller.php",
+        "mode": "100644",
+        "git_blob": "c0be71b118d5492305e56d442b949b65680dd3d5",
+        "bytes": 10204,
+        "sha256": "9b6804db39fec442fbd451ddb9ae144cf6cea9c2c4c8a3bd36192186f43a19a8",
+        "lines": 217
+    },
+    {
+        "path": "modules/AI/Module.php",
+        "mode": "100644",
+        "git_blob": "19aea7f8c5621af482110e8b74070a56be4cfd3c",
+        "bytes": 9650,
+        "sha256": "b019557df9630f83a8e4d5cb540372ea24c3a9fb6670c5fcd15bb4fc565cdf3f",
+        "lines": 177
+    },
+    {
+        "path": "modules/AI/Repository/Ai_Feedback_Repository.php",
+        "mode": "100644",
+        "git_blob": "43e367b299b30c28eebb29ed3c528b730be7b37f",
+        "bytes": 3100,
+        "sha256": "773788ee6bdbfc75d20911db1c330d5f03e7f7b0e8451952947c816e73df83a6",
+        "lines": 110
+    },
+    {
+        "path": "modules/AI/Repository/Ai_Persona_Repository.php",
+        "mode": "100644",
+        "git_blob": "67d355026027ea5030353e7d3f66448122248e17",
+        "bytes": 21273,
+        "sha256": "952f6777afea2dd3af98d773fd5738a92aee25f7c4c9188e753649f511b480b8",
+        "lines": 656
+    },
+    {
+        "path": "modules/AI/Repository/Student_Level_Profile_Repository.php",
+        "mode": "100644",
+        "git_blob": "f91c3d33b4f7b82676e8ad709bfd502db572fbb9",
+        "bytes": 7783,
+        "sha256": "35836dadbb00fae59503c8b74bd08aa0768d5059a247eb5858c2bc8160945000",
+        "lines": 211
+    },
+    {
+        "path": "modules/AI/Service/Ai_Feedback_Service.php",
+        "mode": "100644",
+        "git_blob": "b8e3f4e8eb445369ee4d8638c7275fb7a2811ef1",
+        "bytes": 25977,
+        "sha256": "49788a11f8b37000ac4ce1a60764d556ed439cbe96ca9ee24f387427c9ed49e2",
+        "lines": 652
+    },
+    {
+        "path": "modules/AI/Service/Student_Level_Service.php",
+        "mode": "100644",
+        "git_blob": "4f2f869e9b8792f72cfd773f06210dbc3d11bcd4",
+        "bytes": 21887,
+        "sha256": "e921c4b127e1cb4d512f6c279c141a845596ea1d9154414e5d8fd377a404b8a9",
+        "lines": 576
+    },
+    {
+        "path": "modules/AI/Storage/Ai_Prompt_Storage.php",
+        "mode": "100644",
+        "git_blob": "c8294b3789229efea46afd05035e76396118a5a8",
+        "bytes": 7365,
+        "sha256": "149126334b4d40e2bb3df859b2664a06ba6f7573b30fcf1122b27ff2d620c5bc",
+        "lines": 281
+    },
+    {
+        "path": "modules/AccessRouter/Compatibility_Route_Provider.php",
+        "mode": "100644",
+        "git_blob": "59453732baaaadf1eb405f37adb1a4112e7915f9",
+        "bytes": 9758,
+        "sha256": "e6fd2c6a108f63b329f84689f37e674340ee80b6b9201ef962b75721f69a8c69",
+        "lines": 166
+    },
+    {
+        "path": "modules/AccessRouter/Module.php",
+        "mode": "100644",
+        "git_blob": "d9775535918266a52e9aba8ed619b4473865caf7",
+        "bytes": 1855,
+        "sha256": "affe2de73d732e8d4cf2aec5854002db898dcc44f5de60dd7beb5eb52d82f8e9",
+        "lines": 47
+    },
+    {
+        "path": "modules/AccessRouter/Page_Resolver.php",
+        "mode": "100644",
+        "git_blob": "53b44d171c5c21b5dd0a40899ad7d4a8ec3276ae",
+        "bytes": 13330,
+        "sha256": "89102bfd5a903d514795cff6913cf9899665a1f8425cca74aa327288c542c409",
+        "lines": 401
+    },
+    {
+        "path": "modules/AccessRouter/Rewrite_Manager.php",
+        "mode": "100644",
+        "git_blob": "07f785727399c174391c45736eac6463000ca7de",
+        "bytes": 3822,
+        "sha256": "6be35320a39fcb14bfc1385b2f13ad1c7a22ea09955df45398493e29134c0628",
+        "lines": 134
+    },
+    {
+        "path": "modules/AccessRouter/Route_Matcher.php",
+        "mode": "100644",
+        "git_blob": "172661f5e1b24409ceb4f56043a4542c4124959e",
+        "bytes": 5723,
+        "sha256": "4c531bf5bb8c17b1281ab043ad94a2deae070aa488d6e4c9a7f2c364e58b42d1",
+        "lines": 200
+    },
+    {
+        "path": "modules/AccessRouter/Router.php",
+        "mode": "100644",
+        "git_blob": "1acbfd9c8bfb5b2768896d9c17929b069537a183",
+        "bytes": 22811,
+        "sha256": "d623f491f82b36fd4031e11e56c56537d1e8941eac8fe2ce58883fd4d9404ad9",
+        "lines": 726
+    },
+    {
+        "path": "modules/AccessRouter/Url_Generator.php",
+        "mode": "100644",
+        "git_blob": "104a4480113581267a7211ff5a70ceb1c6e5e694",
+        "bytes": 2037,
+        "sha256": "7d7aff8cc4a9844669ff24aebc3e91517e87285454683ed2494a06a59a411c84",
+        "lines": 67
+    },
+    {
+        "path": "modules/AdminConsole/Backup/Admin_Backup_Policy.php",
+        "mode": "100644",
+        "git_blob": "ff3e594a99994a37b6d9614eccf0e4fce8c7ff3f",
+        "bytes": 5720,
+        "sha256": "0ced960719675adb967b5945094f2ba16cc97774020eb2333253bc7bed9d2af3",
+        "lines": 166
+    },
+    {
+        "path": "modules/AdminConsole/Dashboard/Console_Dashboard_Renderer.php",
+        "mode": "100644",
+        "git_blob": "4570445467276a309005491647def8f05efc2ad4",
+        "bytes": 33321,
+        "sha256": "ba04030bab1c252418b41a45a930c132fe501f90482a756290241ee1c051c050",
+        "lines": 740
+    },
+    {
+        "path": "modules/AdminConsole/Module.php",
+        "mode": "100644",
+        "git_blob": "6b6d542d4640bce0801b998afe7c3354ee433273",
+        "bytes": 7566,
+        "sha256": "c89340985910f516c2686a41e055f1ff1b5cc90eb5268a73e4de7db0a0e6250b",
+        "lines": 213
+    },
+    {
+        "path": "modules/AdminConsole/Navigation/Console_Menu_Provider.php",
+        "mode": "100644",
+        "git_blob": "deaf4f59794f6d227f33d39685ddfe5bd5377283",
+        "bytes": 10075,
+        "sha256": "84d59c418d0eae18ac0a9764ba0c97e2709efcbc3507a6a84691861959ec53b6",
+        "lines": 181
+    },
+    {
+        "path": "modules/AdminConsole/Shell/Console_Shell_Renderer.php",
+        "mode": "100644",
+        "git_blob": "8567629758139ef06b3a246083061b823cb5a857",
+        "bytes": 24733,
+        "sha256": "5d46b74939fc92ac4d46c886276dc571d2b0a473427c3897d769dc37935a3798",
+        "lines": 624
+    },
+    {
+        "path": "modules/Auth/Controller/Console_User_Controller.php",
+        "mode": "100644",
+        "git_blob": "62bb986784d798a21bcb9a4b97a5c4ea4f9439ab",
+        "bytes": 97364,
+        "sha256": "8a10610277d7a0ee7250e828d5b8111312d0d341c169d7d85c48cc11a0121a66",
+        "lines": 2013
+    },
+    {
+        "path": "modules/Auth/Controller/Public_Auth_Controller.php",
+        "mode": "100644",
+        "git_blob": "e582e105e6371d2b97777cef3977c053742e4cb6",
+        "bytes": 72603,
+        "sha256": "908b9f2bae8d5de5e2660db6b80b92e7cb7636bd78188a0bcf64de0c8d347ac4",
+        "lines": 1552
+    },
+    {
+        "path": "modules/Auth/Controller/Registration_Settings_Controller.php",
+        "mode": "100644",
+        "git_blob": "a45f031b02de6fdf65a261af30c17a421cd9ecfd",
+        "bytes": 1432,
+        "sha256": "902c775c70bd79250b57c1b76c202af770f82b316d296fd3ac3d4fe7d5035770",
+        "lines": 32
+    },
+    {
+        "path": "modules/Auth/Module.php",
+        "mode": "100644",
+        "git_blob": "c25d6a9f84766f6c1fe24dca4a09bf94f6acbea7",
+        "bytes": 16896,
+        "sha256": "8ab8c68be64768581434ccbf647d878405e035a9a0456b41a1308d118e6ce768",
+        "lines": 259
+    },
+    {
+        "path": "modules/Auth/Repository/Agreement_Repository.php",
+        "mode": "100644",
+        "git_blob": "d807a4bded392913d2aa4c205174b83ed962b1c7",
+        "bytes": 15494,
+        "sha256": "8db6eaee54f64dd6587a1ce7e6a47a9ec25dd361779db4a69f9264af56640235",
+        "lines": 501
+    },
+    {
+        "path": "modules/Auth/Repository/Deleted_User_Repository.php",
+        "mode": "100644",
+        "git_blob": "5f91b7536cca4ed47368e78cadc14d81e3c48b11",
+        "bytes": 3325,
+        "sha256": "c1e816db864e40bcae16f850afdcb0c9d5d276ea51299b1ce08eb914f75f1924",
+        "lines": 117
+    },
+    {
+        "path": "modules/Auth/Repository/Guardian_Verification_Repository.php",
+        "mode": "100644",
+        "git_blob": "8a55065a79f0d0ea8c4161a67612c6ef7eb453c8",
+        "bytes": 3825,
+        "sha256": "5b2f3c3042e25b7a75f35ebcda9dee057049c1dbaf22f87b01ef1111dfba5c85",
+        "lines": 131
+    },
+    {
+        "path": "modules/Auth/Repository/Judge_User_Repository.php",
+        "mode": "100644",
+        "git_blob": "24c218516d4e51bf2c733c0128372f3b0695ab7d",
+        "bytes": 9067,
+        "sha256": "cf9a6f6fc19bea8aa66074f692da7660119a0133eb005a373f913df3f8859231",
+        "lines": 282
+    },
+    {
+        "path": "modules/Auth/Repository/Platform_User_Repository.php",
+        "mode": "100644",
+        "git_blob": "fe13619dd43f0cf4536e5bf964e6e5cf24c8a4b9",
+        "bytes": 34610,
+        "sha256": "60cc719f4c937ae4be12c854a9469b5e19ea5574c2b15c508d7a78bafd0f3c55",
+        "lines": 1047
+    },
+    {
+        "path": "modules/Auth/Repository/User_Preferences_Repository.php",
+        "mode": "100644",
+        "git_blob": "08ae5a527db4d638cee849d8c0e66708f2190fc0",
+        "bytes": 3522,
+        "sha256": "f2bacacf14dec56f07a99ce0966c9c03cdff73454e122c1c3c06e5420f29cadc",
+        "lines": 113
+    },
+    {
+        "path": "modules/Auth/Service/Account_Deletion_Service.php",
+        "mode": "100644",
+        "git_blob": "25d120f4d5a0b762d538d7c3fd790de5eac1a449",
+        "bytes": 10693,
+        "sha256": "56c874b5cab7f6ccc74ed05fb37aecea0e5b92a27719d5fd180b7f1d93492921",
+        "lines": 262
+    },
+    {
+        "path": "modules/Auth/Service/Authenticator.php",
+        "mode": "100644",
+        "git_blob": "9664f55560e4ffd40d647d4f344914a2882f0eee",
+        "bytes": 4596,
+        "sha256": "b4615c97910b8ad8c56d87faf971897e56d42d35ae375aac17fe577e645e4c88",
+        "lines": 122
+    },
+    {
+        "path": "modules/Auth/Service/Bulk_User_Registration_Service.php",
+        "mode": "100644",
+        "git_blob": "76ab449314b8e46f16783f1ee0faefa57de3121f",
+        "bytes": 9209,
+        "sha256": "112fa710eacd40f701557383d3cf698cc85cd12fce97c8e3329ce2a74fbda2df",
+        "lines": 287
+    },
+    {
+        "path": "modules/Auth/Service/Guardian_Consent_Request_Service.php",
+        "mode": "100644",
+        "git_blob": "702d6075a7664649e221c12a9f640dfb380a8e84",
+        "bytes": 9414,
+        "sha256": "ead3d7ede42dbe3ed5a410b5a369361dd0eaa6d702b9d09e819ac6b0f893b768",
+        "lines": 235
+    },
+    {
+        "path": "modules/Auth/Service/Linked_User_Resolver.php",
+        "mode": "100644",
+        "git_blob": "ccc8ac6c3fa299fb4dfa325d48ae519b6204d43a",
+        "bytes": 8569,
+        "sha256": "f51c096d2271f6b53d96e6c9c745fc38568b401b6646c7d6a3703df4efec9d31",
+        "lines": 269
+    },
+    {
+        "path": "modules/Auth/Service/Registration_Service.php",
+        "mode": "100644",
+        "git_blob": "9aaf179efa56c9733117700379cd300b5d1d6721",
+        "bytes": 13303,
+        "sha256": "ebaa043497caa03dceb35bd73590ffca152a64670192a4057e1783d7626edeb5",
+        "lines": 342
+    },
+    {
+        "path": "modules/Auth/Service/User_Profile_Service.php",
+        "mode": "100644",
+        "git_blob": "4b4771d7398e46e0437885cddc7fd1fcc5699d20",
+        "bytes": 3569,
+        "sha256": "4efd1441af1db6378d0c2570d87193f08ae6069ca6791058df073fc6d4a07bbf",
+        "lines": 102
+    },
+    {
+        "path": "modules/Auth/Service/User_Settings_Service.php",
+        "mode": "100644",
+        "git_blob": "9d1cb8a055bfa13a587dee0cb55f64914bdeb6cf",
+        "bytes": 14667,
+        "sha256": "2cd5468aba45f19f6af0c12e2b74c5c4f0b808398b3a3ef741e647437ed6349b",
+        "lines": 392
+    },
+    {
+        "path": "modules/Auth/Service/WordPress_User_Synchronizer.php",
+        "mode": "100644",
+        "git_blob": "0d640e0db300528bcaee07820df83a4189a77a6c",
+        "bytes": 6052,
+        "sha256": "1b144749af23da22b7a4b3d59cc157ade7ef69d478fd1ece57831ff32999151d",
+        "lines": 181
+    },
+    {
+        "path": "modules/Auth/Support/Oj_Password_Hasher.php",
+        "mode": "100644",
+        "git_blob": "a5fbac61de146e99dc796148c7ebf642050d8cdb",
+        "bytes": 533,
+        "sha256": "c583cb7c7efd4a925d7011a809e1240f050a658523bbc76f7beb7d61ecdc8c51",
+        "lines": 18
+    },
+    {
+        "path": "modules/Auth/Support/Oj_Password_Verifier.php",
+        "mode": "100644",
+        "git_blob": "fd675e092124b0e61053d751c9a5540663b7cd50",
+        "bytes": 1177,
+        "sha256": "43d10900963b4d515097b1212374eb23e1643714df98115bb568c0b4edc58a1a",
+        "lines": 40
+    },
+    {
+        "path": "modules/Blockly/Controller/Blockly_Settings_Controller.php",
+        "mode": "100644",
+        "git_blob": "2c9b36991e8bdcdbd26414836eae6212da9cd2d2",
+        "bytes": 4896,
+        "sha256": "528d9d64c36b9a1893603bec512c3f1a6e3969fae4965508e8621fd9bc4c04ac",
+        "lines": 93
+    },
+    {
+        "path": "modules/Blockly/Module.php",
+        "mode": "100644",
+        "git_blob": "45886406d10a508d7c5cf2e03381ad2f167553c7",
+        "bytes": 17766,
+        "sha256": "7fed00549df61dfbcda5da6f04161b02b32bfb3ccb899199d9ff2bef79215b81",
+        "lines": 472
+    },
+    {
+        "path": "modules/Blockly/Support/Upload_Repository.php",
+        "mode": "100644",
+        "git_blob": "dcfc0f299d733f85e10248bf119e6f9e31aff8f5",
+        "bytes": 5453,
+        "sha256": "37b1388c506d7a3f7326a76aae658ca9ead3b1a0072b03a97c943de2b087d352",
+        "lines": 174
+    },
+    {
+        "path": "modules/Board/Controller/Board_Settings_Controller.php",
+        "mode": "100644",
+        "git_blob": "cf06aad688136005ed49f6ec7fcb0a27e6dddc43",
+        "bytes": 3006,
+        "sha256": "3fb3b6e809b84bce6d37235ac114069996b4c69849e69fc592333189838651a5",
+        "lines": 60
+    },
+    {
+        "path": "modules/Board/Controller/Console_Board_Controller.php",
+        "mode": "100644",
+        "git_blob": "d6afa51b901d0fe6c59d622429bb324a8b6f5adf",
+        "bytes": 47552,
+        "sha256": "380c2110c33a1946e1cbaab5b6a091ea017dc408d9cb208925957aa5362f32ea",
+        "lines": 899
+    },
+    {
+        "path": "modules/Board/Controller/Public_Board_Controller.php",
+        "mode": "100644",
+        "git_blob": "f1ae83f14c3188d80e12fc898aa306ac190b20a3",
+        "bytes": 70176,
+        "sha256": "4ca174c8741d9e727c88b4cce3b13567c8492899d99e224e98ffbf4e603c7c51",
+        "lines": 1397
+    },
+    {
+        "path": "modules/Board/Module.php",
+        "mode": "100644",
+        "git_blob": "5a5d1e30a3fca4bc96ae59140c41d52edf26aa97",
+        "bytes": 13703,
+        "sha256": "a1c66e68daade38bf066e1a84c008a91d9b798028d6aee43f613c3db9335812e",
+        "lines": 215
+    },
+    {
+        "path": "modules/Board/Repository/Board_Post_Repository.php",
+        "mode": "100644",
+        "git_blob": "7b52831a5db23e849293bdbb03182061b5335103",
+        "bytes": 11316,
+        "sha256": "67a52fd79328192a7e50f2fd134e25febf4d7f213459a705abeeb58194ece14f",
+        "lines": 336
+    },
+    {
+        "path": "modules/Board/Repository/Notice_Repository.php",
+        "mode": "100644",
+        "git_blob": "2f514ffdb27663b493482a4e1f88610c1966995f",
+        "bytes": 11923,
+        "sha256": "3bff215fdd2d3973683d9671c9515073d0906b88346ecea4f35100ec5153089e",
+        "lines": 374
+    },
+    {
+        "path": "modules/Board/Service/Board_Service.php",
+        "mode": "100644",
+        "git_blob": "2eae12941dd5d0c3f48628f4c0846abe9a309506",
+        "bytes": 9921,
+        "sha256": "d0d3ce89038208a808cf3d0b85ff67a04766bbcec01035e03a6a56e6a5a1f120",
+        "lines": 300
+    },
+    {
+        "path": "modules/Board/Support/Attachment_Handler.php",
+        "mode": "100644",
+        "git_blob": "cfe11683b4a8cb13970553f68684e585af417678",
+        "bytes": 10145,
+        "sha256": "32ce74bef66219ac99f81dd73741ed055ce69d49e57fb706afe7cf5cf298a37a",
+        "lines": 312
+    },
+    {
+        "path": "modules/Classes/Controller/Console_Class_Controller.php",
+        "mode": "100644",
+        "git_blob": "bb8520aaa142d60f788ec45b61435b7b85044f27",
+        "bytes": 82818,
+        "sha256": "c979a689298ac4c43530c5d146a0473708de6326ae44d56593aebdf78907e43b",
+        "lines": 1611
+    },
+    {
+        "path": "modules/Classes/Controller/Public_Class_Controller.php",
+        "mode": "100644",
+        "git_blob": "416d5fb9633c4436b1751fd5cf5f274135006e4b",
+        "bytes": 71514,
+        "sha256": "6743dd6bc4e79e63013071926d3418ad5b025158bbbd251584cdb37c2fbb5962",
+        "lines": 1534
+    },
+    {
+        "path": "modules/Classes/Module.php",
+        "mode": "100644",
+        "git_blob": "64fb10b7b5438f51acfd2983170cdea7965f59a6",
+        "bytes": 8561,
+        "sha256": "2d7bea0d5ca42101e3276e742966bb420a6688bbd1eadf516df8cc400d31b8f2",
+        "lines": 159
+    },
+    {
+        "path": "modules/Classes/Repository/Class_Repository.php",
+        "mode": "100644",
+        "git_blob": "b36efc15a25670a42d68381516528b72a73f2267",
+        "bytes": 24738,
+        "sha256": "00ec15524f24b516d89746f843367b5f2d793fa63a808af1fcb0cf02b4c5fb78",
+        "lines": 786
+    },
+    {
+        "path": "modules/Classes/Service/Class_Service.php",
+        "mode": "100644",
+        "git_blob": "cd451986e8e713ce44715f7959f1a79a49b79df1",
+        "bytes": 26247,
+        "sha256": "6ab1baf4604c3f7739d912027556b94171953f9c3fa7712d6a0735be1df289e9",
+        "lines": 752
+    },
+    {
+        "path": "modules/Contests/Controller/Console_Contest_Controller.php",
+        "mode": "100644",
+        "git_blob": "c65bfe277b578d3f0bebbd29e3d69775a0edd2e1",
+        "bytes": 73208,
+        "sha256": "364d226a3a7902adb6ac552482d47990360645983cd30ee465a1679bcd04be03",
+        "lines": 1414
+    },
+    {
+        "path": "modules/Contests/Controller/Public_Contest_Controller.php",
+        "mode": "100644",
+        "git_blob": "bd4f5bdf2746a62c384ed8402ac0972690c96efd",
+        "bytes": 69639,
+        "sha256": "a387fc3e0a92aa44bce1f26355a2b7dc1235d9e3a9e2b11a88058b2c2306d95e",
+        "lines": 1400
+    },
+    {
+        "path": "modules/Contests/Module.php",
+        "mode": "100644",
+        "git_blob": "6c9a49795ee4c49bb2a3a6a4d73984158fd1ef54",
+        "bytes": 10113,
+        "sha256": "63a25f09b2c6f341d28c57b951ba15ddc0778daec137dfa81bcb5ab0d89b0cc0",
+        "lines": 168
+    },
+    {
+        "path": "modules/Contests/Repository/Contest_Repository.php",
+        "mode": "100644",
+        "git_blob": "d63eb0ad41c3526366eef2148d373c6add93cdaa",
+        "bytes": 38726,
+        "sha256": "d5c07af2f2fff792529fcd416da10deef93d4bdff00f983d0483e2c17754689d",
+        "lines": 1128
+    },
+    {
+        "path": "modules/Contests/Service/Contest_Service.php",
+        "mode": "100644",
+        "git_blob": "7618cef48e39982bf216f9ff93365f2831ead72d",
+        "bytes": 28559,
+        "sha256": "5e5e44dead4e918111284075bf687cf808f928161e3585d88d0948ff8111e216",
+        "lines": 823
+    },
+    {
+        "path": "modules/Contests/View/Contest_Statistics_Renderer.php",
+        "mode": "100644",
+        "git_blob": "ff74df24bf4339f329e2b285981634b73c47ef3e",
+        "bytes": 14794,
+        "sha256": "82785a97eb286bf8e68625eb2a2e3754fbc976105dbc500ae9e9a5064329c6fc",
+        "lines": 338
+    },
+    {
+        "path": "modules/Groups/Controller/Console_Group_Controller.php",
+        "mode": "100644",
+        "git_blob": "dffb9c8d6bacde817b8e0a1a12bb59dbb2c64e65",
+        "bytes": 90955,
+        "sha256": "f65103da7a42035dc93abbfbd56240dd18896493a23bf1a6f5a42510ad062fdd",
+        "lines": 1812
+    },
+    {
+        "path": "modules/Groups/Controller/Public_Group_Controller.php",
+        "mode": "100644",
+        "git_blob": "56261334444a004fb0f0648af5e64ddcf064dd62",
+        "bytes": 75840,
+        "sha256": "c2bba75680a20f0c77f556bbdb05ea20d6dfcb5633a4fda646162db23662707f",
+        "lines": 1657
+    },
+    {
+        "path": "modules/Groups/Module.php",
+        "mode": "100644",
+        "git_blob": "afcd838ec95a3e9f6726a2257abea7ffbdfb7a39",
+        "bytes": 12498,
+        "sha256": "2e0374650938b7f3d83203cfd7e2a845ce1aa57d391e56581b9f6c11c03d838d",
+        "lines": 183
+    },
+    {
+        "path": "modules/Groups/Repository/Group_Report_Repository.php",
+        "mode": "100644",
+        "git_blob": "08f1678e87783b87f2d54df0f3dca99a5a767f11",
+        "bytes": 7064,
+        "sha256": "6066acf104bac89a26de648bcfb0bb59a6bf364fbfa676348be766456eed906d",
+        "lines": 212
+    },
+    {
+        "path": "modules/Groups/Repository/Group_Repository.php",
+        "mode": "100644",
+        "git_blob": "298bd4a317818bdc09bca9dcfdf6ef234b2e0c6a",
+        "bytes": 26418,
+        "sha256": "8083e561289585ca9064baa712fc62d8f9b44e6246307337dd8c8d9fc01c5047",
+        "lines": 840
+    },
+    {
+        "path": "modules/Groups/Service/Group_Service.php",
+        "mode": "100644",
+        "git_blob": "d6513b221bbe9af395eba706053e23935f027899",
+        "bytes": 30184,
+        "sha256": "f448befa2b19c6d72d8548e16644c7cc40cc159d7c207b1f0f4e40ec48e2002d",
+        "lines": 779
+    },
+    {
+        "path": "modules/Groups/Support/Group_Permission_Rule.php",
+        "mode": "100644",
+        "git_blob": "edf50be4ec795ed50ec95055beeb97a64852e8bd",
+        "bytes": 2106,
+        "sha256": "561c8d7e72b5b7ef6ee5685dd668d2e257df1ff77ab125d5ab2c41fd5d0197e6",
+        "lines": 61
+    },
+    {
+        "path": "modules/JudgeDb/Connection/Connection_Manager.php",
+        "mode": "100644",
+        "git_blob": "c4372eb98496cc5e2b9331932cc3669818524673",
+        "bytes": 3125,
+        "sha256": "131de50f041a12e2ae0022b977c57ca0c2a280b188ccd4dbb01627a4dd56bc46",
+        "lines": 109
+    },
+    {
+        "path": "modules/JudgeDb/Controller/Settings_Controller.php",
+        "mode": "100644",
+        "git_blob": "5baa1447945a58f53da9ba5caa6d819b1dcf3b7e",
+        "bytes": 3118,
+        "sha256": "d79d02a7548088458314874fd6ffa231bf21ac9e59f1b69390bf147170553c1f",
+        "lines": 70
+    },
+    {
+        "path": "modules/JudgeDb/Database/Judge_Db.php",
+        "mode": "100644",
+        "git_blob": "9d98bdcc48f5b5886d7e318d6b7f9c0c9e2bf6fb",
+        "bytes": 3382,
+        "sha256": "11b48b899cfa96fb1cef49ce53e2578dcfc2954f4b8a2220cb6473aa723d1629",
+        "lines": 124
+    },
+    {
+        "path": "modules/JudgeDb/Health/Db_Health_Checker.php",
+        "mode": "100644",
+        "git_blob": "9ef44fd876a6e52deadf09f7f571e168806ccce3",
+        "bytes": 3840,
+        "sha256": "7dc484efe8c9d95a6df0110e5af29451b50ef3e125fa7227a88615aec8c93e89",
+        "lines": 117
+    },
+    {
+        "path": "modules/JudgeDb/Health/Settings_Tester.php",
+        "mode": "100644",
+        "git_blob": "f16e1a328428ed632ec5974719a40247f9943427",
+        "bytes": 3953,
+        "sha256": "e76caef245785b6fa2f9624ac8b1d59d0f61d482dbea21e84938e6e8ce752349",
+        "lines": 89
+    },
+    {
+        "path": "modules/JudgeDb/Mapping/Judge_Table_Map.php",
+        "mode": "100644",
+        "git_blob": "4dcc18de2468564d37cb9454eb652d2a0c135f1f",
+        "bytes": 3157,
+        "sha256": "dae91d24d551002b91eda9d355f3ac88b21103b8943b71037c2e8210353aa796",
+        "lines": 135
+    },
+    {
+        "path": "modules/JudgeDb/Module.php",
+        "mode": "100644",
+        "git_blob": "df88003c1b46933c1b8f46d4f640149a1eb1441a",
+        "bytes": 3767,
+        "sha256": "a8604b49c8f8d3f5b996b12054e4cd247303d6d9cef179669af43397a4aec5e9",
+        "lines": 97
+    },
+    {
+        "path": "modules/LearningDashboard/Controller/Public_Dashboard_Controller.php",
+        "mode": "100644",
+        "git_blob": "5fd6053ce6d5eb2d0f6a69a19dc1f3ff37c252fa",
+        "bytes": 767,
+        "sha256": "97fc43960fe2b1619c9e4b33938a4a4bbffb80d5f9613e3597451d18e5e8074c",
+        "lines": 27
+    },
+    {
+        "path": "modules/LearningDashboard/Module.php",
+        "mode": "100644",
+        "git_blob": "37de98bbdd886c5bdd3cae6e6d48d4c3d10e13b2",
+        "bytes": 2704,
+        "sha256": "7f4359bca3495a67356ea27ebc5125c4892e4011077f0f24e64fa5f73d89af3e",
+        "lines": 72
+    },
+    {
+        "path": "modules/LearningDashboard/Renderer/Learning_Dashboard_Renderer.php",
+        "mode": "100644",
+        "git_blob": "38956eebcc0908567f4766cf4278b65474808441",
+        "bytes": 18652,
+        "sha256": "f1e617f553653b292747a579943a4c9563f641228cb1cb10f678e267e648695e",
+        "lines": 373
+    },
+    {
+        "path": "modules/LearningDashboard/Service/Learning_Dashboard_Service.php",
+        "mode": "100644",
+        "git_blob": "8ae23084508b7204daae18fb6d2798b0318d1214",
+        "bytes": 16767,
+        "sha256": "83e216f25326900bc003be8c422ec2e0791548cfaa33e9b9724246e788ed6c5c",
+        "lines": 466
+    },
+    {
+        "path": "modules/Migration/Controller/Console_Migration_Controller.php",
+        "mode": "100644",
+        "git_blob": "82f5db25ce82498b8dd5d5c2bd9da382bf149940",
+        "bytes": 48330,
+        "sha256": "f5106c2d05d8a6ed09cb907c897adc19b9f73089f3bc7d3c07846e7402b081da",
+        "lines": 876
+    },
+    {
+        "path": "modules/Migration/Module.php",
+        "mode": "100644",
+        "git_blob": "3da011f4a8bfb37da190282fd3bff5dc47b214cd",
+        "bytes": 5841,
+        "sha256": "e229502c16d6a4024e7329a642f6c9f4ba8a89a1078add34077cc10bbe65cc1e",
+        "lines": 124
+    },
+    {
+        "path": "modules/Migration/Repository/Migration_Repository.php",
+        "mode": "100644",
+        "git_blob": "ce7b60fbf273c764996aa59374057a127a7d29f8",
+        "bytes": 28547,
+        "sha256": "0f49d96fbdeea5730414ba2d07305fc8522848b56ad5b3d4d3eb60e61e4e7b49",
+        "lines": 838
+    },
+    {
+        "path": "modules/Migration/Service/Migration_Service.php",
+        "mode": "100644",
+        "git_blob": "7e1d93561956ce0dfb93add08c26c77e1cad4cec",
+        "bytes": 29152,
+        "sha256": "0d222a69651c967cfa9057f23600c318b4c7723822e7e67a9d9f6a2cc92cd6f2",
+        "lines": 722
+    },
+    {
+        "path": "modules/Permission/Module.php",
+        "mode": "100644",
+        "git_blob": "39c2e7094988e531a48f4faac14d18b47c10d794",
+        "bytes": 944,
+        "sha256": "a4f8369f5a0fe11cf062e5698752f4608cab103f2e62319191dbd0b2d13a35fd",
+        "lines": 34
+    },
+    {
+        "path": "modules/PlatformDb/Health/Platform_Db_Health_Checker.php",
+        "mode": "100644",
+        "git_blob": "7f6539c6a298d341469edf2cda77a69f06bc7412",
+        "bytes": 1903,
+        "sha256": "a05415fdd1f8b49f61cc3a724efbb672ddd853be560990e2cb842b8fc01c6ee8",
+        "lines": 70
+    },
+    {
+        "path": "modules/PlatformDb/Mapping/Platform_Table_Map.php",
+        "mode": "100644",
+        "git_blob": "166b9ee058da5b7d7bba994a9ab096dfc84776f2",
+        "bytes": 3348,
+        "sha256": "68f25c1bdac896b64113181afc62730ebe07a34651984a99276a10058bf74082",
+        "lines": 102
+    },
+    {
+        "path": "modules/PlatformDb/Module.php",
+        "mode": "100644",
+        "git_blob": "30c6582703b11ba5b1a94c931e41a7021d978687",
+        "bytes": 3009,
+        "sha256": "b57775f20f6cbd997e27f68c9d28ae73f478a91e25bf0dee8e05f625951a3fdb",
+        "lines": 84
+    },
+    {
+        "path": "modules/PlatformDb/Schema/Platform_Schema_Installer.php",
+        "mode": "100644",
+        "git_blob": "09075cd45bd2267b8e3f1a11a1a165217c2d2944",
+        "bytes": 36596,
+        "sha256": "931a13e8b821d04d45cb21db6646de02817959d21b4a1c806381df0ed8c45cde",
+        "lines": 792
+    },
+    {
+        "path": "modules/Problems/Controller/Console_Problem_Controller.php",
+        "mode": "100644",
+        "git_blob": "20c861e061966c2816b9898ae60c6db52a973358",
+        "bytes": 153878,
+        "sha256": "037e5495d08e3a7e8d35b6c339a794b743f61402eb7ae1e48eb6b7581d7ce8c8",
+        "lines": 2879
+    },
+    {
+        "path": "modules/Problems/Controller/Public_Problem_Controller.php",
+        "mode": "100644",
+        "git_blob": "1ec3b2f104e0651f5448e4874ebab150d52e3308",
+        "bytes": 98173,
+        "sha256": "4284283e767ee2ab7a143ed5fa872eae465fbcc56ca6bc73efaf27c90249506b",
+        "lines": 2229
+    },
+    {
+        "path": "modules/Problems/Module.php",
+        "mode": "100644",
+        "git_blob": "e88c5365647fba5ab4b198d1406bd55b091022c3",
+        "bytes": 12335,
+        "sha256": "c1830ddef0dd65ef422747596aed6228cc81077bf60969a9eb8a674de0ecba3e",
+        "lines": 184
+    },
+    {
+        "path": "modules/Problems/Repository/Problem_Book_Repository.php",
+        "mode": "100644",
+        "git_blob": "aa7ee01923a321436076b56877b47c3179ee81cf",
+        "bytes": 16975,
+        "sha256": "d8ea25b6eaec2b8b9529a0d9f31f34090968a5d959e808084469088b9d70d9f4",
+        "lines": 548
+    },
+    {
+        "path": "modules/Problems/Repository/Problem_Metadata_Repository.php",
+        "mode": "100644",
+        "git_blob": "02e0317a53d0316397f76462e84cfc48e9723f5f",
+        "bytes": 9768,
+        "sha256": "2ebeb7a505bcf296d48a2c939b7131d47ec3adec788645eef5fdc921e2d446ef",
+        "lines": 302
+    },
+    {
+        "path": "modules/Problems/Repository/Problem_Repository.php",
+        "mode": "100644",
+        "git_blob": "c9ce6321d30e92ae7bd6701aa3804fab07492de7",
+        "bytes": 28088,
+        "sha256": "c93b7a04e26749d7dec93339010a4d1855cfe1e0fa8a71b138d2b6c229d62aed",
+        "lines": 821
+    },
+    {
+        "path": "modules/Problems/Repository/Problem_Submit_Mode_Repository.php",
+        "mode": "100644",
+        "git_blob": "c01963a0f14755b18388ada48209e4e5f149bbcd",
+        "bytes": 3385,
+        "sha256": "ee6151a21c03f80a15756113f92c98aa18240ee08eec4dcc78092b656440b1bc",
+        "lines": 118
+    },
+    {
+        "path": "modules/Problems/Repository/Problem_Tool_Repository.php",
+        "mode": "100644",
+        "git_blob": "4435d069c018c8c3e8dedf6768b9a32df49b734b",
+        "bytes": 13967,
+        "sha256": "f63b97a04d15cd2fa364900b14fe5f436ecfeed215825a072f755a491266ae33",
+        "lines": 379
+    },
+    {
+        "path": "modules/Problems/Repository/Quiz_Repository.php",
+        "mode": "100644",
+        "git_blob": "8680b3347905c8cf30dca8dc6f306bf7ed51f8cf",
+        "bytes": 25265,
+        "sha256": "e92c1e6faa317c236f71808ff6ff8990ea82c801adafc37156cfbe0af9b97b7f",
+        "lines": 748
+    },
+    {
+        "path": "modules/Problems/Service/Problem_Metadata_Ai_Service.php",
+        "mode": "100644",
+        "git_blob": "187a2795d13dc161fb043987f8168a999014667e",
+        "bytes": 15132,
+        "sha256": "4b300c8b041c1ae5ff06a3a5b63ee17c87e5c4f0fd0c0dce42138524d12f2759",
+        "lines": 368
+    },
+    {
+        "path": "modules/Problems/Service/Problem_Metadata_Service.php",
+        "mode": "100644",
+        "git_blob": "14eae3b280559c78c20fc1d2563ac98e872dba08",
+        "bytes": 16422,
+        "sha256": "76076e1f11bec8e01471a29f1e35451e6ea80154757a7b5894d9f8acb5f7b4c8",
+        "lines": 452
+    },
+    {
+        "path": "modules/Problems/Service/Problem_Test_Data_Service.php",
+        "mode": "100644",
+        "git_blob": "ba85e1587d5f162c0a4f10bb74eee6165f4c12a7",
+        "bytes": 37461,
+        "sha256": "bc8a8da44cd86c33786edc4107a311a6a014976ba49209429adad6b9368e8184",
+        "lines": 1042
+    },
+    {
+        "path": "modules/Problems/Service/Problem_Xml_Service.php",
+        "mode": "100644",
+        "git_blob": "6f696e9d8649324b59341f300d3000669307e769",
+        "bytes": 15060,
+        "sha256": "30ed97f97a42b681e680c3980456c9362b77be99c678e73eafeea129d834298c",
+        "lines": 420
+    },
+    {
+        "path": "modules/Problems/View/Problem_Ranking_Renderer.php",
+        "mode": "100644",
+        "git_blob": "93c6a67b9294b95faa0846ff4e9051edc7b83791",
+        "bytes": 7617,
+        "sha256": "f75f668e2be0e2d99e41bd3dee3c6f908ccee27d5df13657f3a9813b8da2d50e",
+        "lines": 162
+    },
+    {
+        "path": "modules/Problems/View/Problem_Statistics_Renderer.php",
+        "mode": "100644",
+        "git_blob": "9b496ef968182cdfffe485f2b43ee1ed3ed80bdc",
+        "bytes": 11880,
+        "sha256": "4344850a991afce0eb9f1d8d741fd26eaa9ad3a93540edb706ace340f4cadd34",
+        "lines": 280
+    },
+    {
+        "path": "modules/PublicUi/Home/Home_Page_Renderer.php",
+        "mode": "100644",
+        "git_blob": "15e0835c661d2a1226b8c73dbe5d2e8b0140af77",
+        "bytes": 20911,
+        "sha256": "b08bc13ddc84e1b0f12519b9c2f6c0c776f3982b4ad4adaa0476d76e7585df04",
+        "lines": 531
+    },
+    {
+        "path": "modules/PublicUi/Home/Home_Page_Service.php",
+        "mode": "100644",
+        "git_blob": "723470619cf369808f990877ab0087329ffb1757",
+        "bytes": 22616,
+        "sha256": "fe6d873d60d00f49c120a6f045cdd6d29245118ea09717878a243de9b6fa7d14",
+        "lines": 627
+    },
+    {
+        "path": "modules/PublicUi/Module.php",
+        "mode": "100644",
+        "git_blob": "1c4f1f3c8fba4a1d7b4520083ef3f155120edd41",
+        "bytes": 10712,
+        "sha256": "22672251e2814721cb8f4b75cc309274701c50ff4d2938f0401745c94e4a3795",
+        "lines": 328
+    },
+    {
+        "path": "modules/PublicUi/Navigation/Public_Navigation_Provider.php",
+        "mode": "100644",
+        "git_blob": "e55f083d8a246afbc04706d4d6422f6f22b65d47",
+        "bytes": 3856,
+        "sha256": "260352a71ff31e492f0ab3b7b983c72f9ab0a6712e93875ed1f7301bf4f4f7d6",
+        "lines": 131
+    },
+    {
+        "path": "modules/PublicUi/Shell/Public_Shell_Renderer.php",
+        "mode": "100644",
+        "git_blob": "f8c1e65394f6f5fddd8bf21959ffed1f3f7693cf",
+        "bytes": 16188,
+        "sha256": "c164ff6ba1302a1661db7a5664f618449f7f2e342a79165f690e5ee7de40d6ae",
+        "lines": 438
+    },
+    {
+        "path": "modules/Ranking/Controller/Public_Ranking_Controller.php",
+        "mode": "100644",
+        "git_blob": "ce0bd8524d52c5169b31d4d90dda3b69e0ddcd38",
+        "bytes": 7960,
+        "sha256": "5314f9a3a19722189ef9aca833cf8dda5f57045237a952eaa1a95ad69cfed995",
+        "lines": 177
+    },
+    {
+        "path": "modules/Ranking/Module.php",
+        "mode": "100644",
+        "git_blob": "85d003cac6bd944d1ce2f8e7dfc15585d703a91b",
+        "bytes": 2002,
+        "sha256": "8e4fda7a1e50f8a0b820f53857df886cc0da1784b7b430f66ecd8bd78c35ed84",
+        "lines": 64
+    },
+    {
+        "path": "modules/Ranking/Repository/Ranking_Repository.php",
+        "mode": "100644",
+        "git_blob": "c2d4bfa72d984dd70126a1d8abc0419411f6c5cb",
+        "bytes": 9572,
+        "sha256": "14f872f2539f404ab737599fd3588e35fc4723db3351d80676a1dd684f7adc4d",
+        "lines": 294
+    },
+    {
+        "path": "modules/Settings/Controller/Abstract_Settings_Controller.php",
+        "mode": "100644",
+        "git_blob": "95f7fcd279f5fc391dc9cd64cb3a7a8d16e509fa",
+        "bytes": 2932,
+        "sha256": "f938fa6aa4293040fe0c7551e5998885b38d9814d23f00b50aa7e143ceb76c11",
+        "lines": 99
+    },
+    {
+        "path": "modules/Settings/Controller/Settings_Overview_Controller.php",
+        "mode": "100644",
+        "git_blob": "3ed9190128dbe07cd3878aebc41c9a9054acfd9f",
+        "bytes": 4930,
+        "sha256": "cbf4a118fb6b43486ca12786629e351ff3a5e33457e6ecb15717349cbf955108",
+        "lines": 106
+    },
+    {
+        "path": "modules/Settings/Module.php",
+        "mode": "100644",
+        "git_blob": "1eb06cff960fdf501d739d469560af49e2a12af6",
+        "bytes": 30967,
+        "sha256": "f4613cd4e1ab3c5ea7390ccf20db5b36e83401d395232193940785aa266e0cc5",
+        "lines": 758
+    },
+    {
+        "path": "modules/Settings/Pages/Settings_Page_Renderer.php",
+        "mode": "100644",
+        "git_blob": "96d8ad8af87fa8b17f3a0b3ef9bc0e1127a7b504",
+        "bytes": 135864,
+        "sha256": "d68bf7a2ced3522727c612cff1cc8d4ee2013827f1ed1f01990fb9b438b874de",
+        "lines": 2397
+    },
+    {
+        "path": "modules/Settings/Repository/Settings_Repository.php",
+        "mode": "100644",
+        "git_blob": "4ffa6c9ae57bdb317c0f5084332ee4d24c8231bb",
+        "bytes": 32739,
+        "sha256": "08161f32caeb1fb73589b3f1c879b44588ce5c8c6ebc0a0dbbb218ae65a023c5",
+        "lines": 853
+    },
+    {
+        "path": "modules/Settings/Secrets/Secret_Store.php",
+        "mode": "100644",
+        "git_blob": "adf52e8376f9e200c97c3b9d5b7339bd3f6446d5",
+        "bytes": 7875,
+        "sha256": "46c2ded6e36bbe77adde4b4e209d851c9a870db066c237a70eaae0ef5dd81c18",
+        "lines": 277
+    },
+    {
+        "path": "modules/Settings/Services/Smtp_Service.php",
+        "mode": "100644",
+        "git_blob": "35768e5728c805afe0e9b0ae234fe1b677727c70",
+        "bytes": 2368,
+        "sha256": "515ab605d26bbec5d2e55d00904324317d52028bc3bad291a892e846c9b1b134",
+        "lines": 74
+    },
+    {
+        "path": "modules/Settings/Services/System_Behavior_Service.php",
+        "mode": "100644",
+        "git_blob": "fb04e890e1a58f09272207ba7e2b4d9a6a517bde",
+        "bytes": 2335,
+        "sha256": "156813d854618544d96ff8ac477c2a0038cfa4a54fbd41fa67df544f4db360ba",
+        "lines": 85
+    },
+    {
+        "path": "modules/Submissions/Controller/Console_Submission_Controller.php",
+        "mode": "100644",
+        "git_blob": "6e5c0e11eb04917b3f4657a016909f49665f355a",
+        "bytes": 61818,
+        "sha256": "596cfb6fcd20c66ed021b412d7d4f73c9544e78288eb7c50552de797c895e6a9",
+        "lines": 1302
+    },
+    {
+        "path": "modules/Submissions/Controller/Public_Submission_Controller.php",
+        "mode": "100644",
+        "git_blob": "ffc4c1ba036752fbacf23499a1739a523bc4e01e",
+        "bytes": 50210,
+        "sha256": "ab967ab9c60ba8a02b35437c165a62cc238e434399d2bfaf1acae7b53c656fc5",
+        "lines": 1193
+    },
+    {
+        "path": "modules/Submissions/Controller/Submission_Settings_Controller.php",
+        "mode": "100644",
+        "git_blob": "cea2e16394b403189ebd40ca678047851a0e3aee",
+        "bytes": 4480,
+        "sha256": "ce2ac955c97785690ba1c27eab38ab310ffd7bfd0a1372d026673beb56130b7d",
+        "lines": 122
+    },
+    {
+        "path": "modules/Submissions/Module.php",
+        "mode": "100644",
+        "git_blob": "082f0e0e32853f07de49962ae523cb39fb8c6d0b",
+        "bytes": 9592,
+        "sha256": "d78a385d5067c4ece12c9f912db34f488b7049a7342de24521c04b4f2c428c1e",
+        "lines": 177
+    },
+    {
+        "path": "modules/Submissions/Repository/Submission_Event_Repository.php",
+        "mode": "100644",
+        "git_blob": "641c8e4514e91710e15477bb652dc5e6568539ad",
+        "bytes": 5401,
+        "sha256": "e937fcd2cd2702bfa0ed033a2480f05180c5380ddda7816f0c1ca0db92728a9a",
+        "lines": 162
+    },
+    {
+        "path": "modules/Submissions/Repository/Submission_Repository.php",
+        "mode": "100644",
+        "git_blob": "8e4b0476a3f388e7a4dead9ba947538fd358b8b2",
+        "bytes": 15336,
+        "sha256": "b7d186579f16a599e9d4e31e4b8c7f6e36d83b0b1fb4fa8fbbbed4b285064686",
+        "lines": 482
+    },
+    {
+        "path": "modules/Submissions/Service/Submission_Service.php",
+        "mode": "100644",
+        "git_blob": "01fe39990d5993c105b1ab2dc04f289f8e2fce11",
+        "bytes": 28026,
+        "sha256": "8a21073b252239911e2b5c015806b185b2fec4340c7478f726fe9dca8f4278b6",
+        "lines": 677
+    },
+    {
+        "path": "modules/Submissions/Support/Language_Catalog.php",
+        "mode": "100644",
+        "git_blob": "4cdb7c589ce4fbf0e81d4e173570e65ef7b34b83",
+        "bytes": 3958,
+        "sha256": "d0a2ae56851956e3ed01eef6fae23eef6fc87ffcd154b29fab8b3591a4b42d27",
+        "lines": 133
+    },
+    {
+        "path": "modules/Submissions/Support/Submission_Source_Metadata.php",
+        "mode": "100644",
+        "git_blob": "fe0c1ebde0776ad2ac56126113f2dc7d2fcd4fd6",
+        "bytes": 1378,
+        "sha256": "eb2bea75d03cc24cf9ac095d07257d925a3dcc683c8eac35336cb054f79d7727",
+        "lines": 48
+    },
+    {
+        "path": "modules/Submissions/View/Submit_Form_Renderer.php",
+        "mode": "100644",
+        "git_blob": "b12ca161e890de4f79b4900cfb9927758f472edb",
+        "bytes": 14588,
+        "sha256": "639ffee089b803ea8709df64b98484b6b14b5a8908d9e5e3dae160184b9f60c4",
+        "lines": 285
+    },
+    {
+        "path": "oj-platform.php",
+        "mode": "100644",
+        "git_blob": "b8e2c18fd98adfd95ccc2e505e206ad70c781de3",
+        "bytes": 2104,
+        "sha256": "f5f1d5de4a9b7eeded4b42effbf7311aae72b8b016b781e1d6fb5e51ea4c2ad7",
+        "lines": 64
+    },
+    {
+        "path": "resources/.gitkeep",
+        "mode": "100644",
+        "git_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+        "bytes": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "lines": null
+    },
+    {
+        "path": "resources/console/css/console.css",
+        "mode": "100644",
+        "git_blob": "5d27c12077eeefebb8a3d5d1c694ff2ba6e25d68",
+        "bytes": 81904,
+        "sha256": "334667dc536e9e29f6883bcdb6975cbf9ddc355fa1d2abae20658958783cd05c",
+        "lines": 4283
+    },
+    {
+        "path": "resources/console/js/console.js",
+        "mode": "100644",
+        "git_blob": "970a617038bdca50dd51cfc7c177093dfb2f9822",
+        "bytes": 6654,
+        "sha256": "28c3325c60502d42202b522c8305494e773dfa79296d0a7097a5a3488036d461",
+        "lines": 252
+    },
+    {
+        "path": "resources/prompts/submission-feedback-leveled.md",
+        "mode": "100644",
+        "git_blob": "099e2c0c85511cc6f98a9ae1ee9c6f24771375aa",
+        "bytes": 1588,
+        "sha256": "20075f5a8af0ff68e348a3e47928f7a86416d0881d969ca33184ed4ff84c8898",
+        "lines": 26
+    },
+    {
+        "path": "resources/prompts/submission-feedback.md",
+        "mode": "100644",
+        "git_blob": "5e4e51e6b299153c167fc5aa3a74b288624b7fa2",
+        "bytes": 479,
+        "sha256": "21bc07f13373af25f5b7d80ef7912c5aa3050ca25106acc0c80a320b5a211b47",
+        "lines": 11
+    },
+    {
+        "path": "resources/public/css/blockly.css",
+        "mode": "100644",
+        "git_blob": "d3cb3faf7e1439e86310637b9a8bc4f4d1c91046",
+        "bytes": 7016,
+        "sha256": "76d0ddb38b65c7a6387cafd465c865f31620e35b1e6f97be12110248c22e9092",
+        "lines": 281
+    },
+    {
+        "path": "resources/public/css/public.css",
+        "mode": "100644",
+        "git_blob": "4d70d607310437d346d0aeadfe5e7331f1bb963c",
+        "bytes": 128342,
+        "sha256": "9699e66e51ec0de28e14faf5f0ae12179018bb94e31b64d0445d8dce8bca984a",
+        "lines": 6844
+    },
+    {
+        "path": "resources/public/js/blockly-loader.js",
+        "mode": "100644",
+        "git_blob": "9d72a08b15f9b8ecb75845d2a63e4d7fb9583e92",
+        "bytes": 3379,
+        "sha256": "6588cf534793878c4a7a364675d3b4116f2c2e1de0bc4aa4bbf0cfe7a1ba46bb",
+        "lines": 112
+    },
+    {
+        "path": "resources/public/js/blockly.js",
+        "mode": "100644",
+        "git_blob": "4614949433c71d49c2100916ecee8e8c5d64b359",
+        "bytes": 56139,
+        "sha256": "0a15d6f872715a95544c356b5814fd01338564bfb76216fe16c501a0f951c33e",
+        "lines": 1649
+    },
+    {
+        "path": "resources/public/js/public.js",
+        "mode": "100644",
+        "git_blob": "540d7d3847e148de020098e93955a50026da5525",
+        "bytes": 20266,
+        "sha256": "aa0e134a541680cc88e7d9df26169f3ea305b79999a1b756d7fab1d6e796ff3c",
+        "lines": 650
+    },
+    {
+        "path": "resources/vendor/blockly/blockly_compressed.js",
+        "mode": "100644",
+        "git_blob": "66ae2a2a28bc4266a5e7e22abe7a29c31edc65b1",
+        "bytes": 973281,
+        "sha256": "2496815c27b415707c98c808489cdeddf27b45431af35d275f67e8c2c36c903a",
+        "lines": 1825
+    },
+    {
+        "path": "resources/vendor/blockly/blocks_compressed.js",
+        "mode": "100644",
+        "git_blob": "d24172ef2bf35df03dfb559c9ddc8a5bf2f877d8",
+        "bytes": 88974,
+        "sha256": "d81768b75d6557da6d6e5604d27ee13ef791ac45b87478e8cfa2cb0df319a2c6",
+        "lines": 194
+    },
+    {
+        "path": "resources/vendor/blockly/javascript_compressed.js",
+        "mode": "100644",
+        "git_blob": "3c8ce6fdedb4529ebf95a169d3e87d2420eced80",
+        "bytes": 56376,
+        "sha256": "0e06988d22cf2d2a68869c657e79b02be2290eea2e9f86f7b05f7ca102d89829",
+        "lines": 264
+    },
+    {
+        "path": "resources/vendor/blockly/msg/en.js",
+        "mode": "100644",
+        "git_blob": "1a7ffa43c4d707e5be9f304ab1bd69dde46bb698",
+        "bytes": 34554,
+        "sha256": "5f864e95613d0f016deb6933d0b1e4ccc90f319f1d3d0c3d29a9ad253cff5eff",
+        "lines": 465
+    },
+    {
+        "path": "resources/vendor/blockly/msg/ko.js",
+        "mode": "100644",
+        "git_blob": "e5856fc45972a1cc40650bde4fe62b1d090e1266",
+        "bytes": 39550,
+        "sha256": "ba71d9a8aee7796c115381e595707ed96033ba2123b3adb68ecb664e510e6831",
+        "lines": 465
+    },
+    {
+        "path": "resources/vendor/blockly/python_compressed.js",
+        "mode": "100644",
+        "git_blob": "3a99adaa33308c414be664c3044030124212a8a2",
+        "bytes": 51532,
+        "sha256": "5799539eb44e470425f4b2a184405520abd3ce41d89307eda6cafe587cd91894",
+        "lines": 208
+    },
+    {
+        "path": "src/.gitkeep",
+        "mode": "100644",
+        "git_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+        "bytes": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "lines": null
+    },
+    {
+        "path": "src/Contract/Group_Membership_Provider_Interface.php",
+        "mode": "100644",
+        "git_blob": "683585450606fa267ca75b1a822e98d3b66f172f",
+        "bytes": 208,
+        "sha256": "4c369420e58252a844a56960b6aab4bc4d1a3f79da2ae020090b891274556a2c",
+        "lines": 10
+    },
+    {
+        "path": "src/Core/Activatable_Module_Interface.php",
+        "mode": "100644",
+        "git_blob": "fa07914989806cbcfc3a4bcc2da9ed7c9de7f7da",
+        "bytes": 177,
+        "sha256": "47479895aa6cd440ba8f323a23f5d1d0e226d7db84648b585c66ebc1a1025803",
+        "lines": 10
+    },
+    {
+        "path": "src/Core/Autoloader.php",
+        "mode": "100644",
+        "git_blob": "3e65c8ca4704cc1f766074c7eb9b049f4f3f1449",
+        "bytes": 1036,
+        "sha256": "f67739805f1d24c45c671938e50d5873243b4c98c5ea4bff7ac2fc10113b2344",
+        "lines": 43
+    },
+    {
+        "path": "src/Core/Config.php",
+        "mode": "100644",
+        "git_blob": "3eb9f3988f4dd12567337475586fa979994e3fea",
+        "bytes": 4783,
+        "sha256": "238c0f3b07203f86f8c169ee0ac8628e4dffe23aef3f64cc985ba24c1b56aafb",
+        "lines": 186
+    },
+    {
+        "path": "src/Core/Container.php",
+        "mode": "100644",
+        "git_blob": "aabf314c2aabe70cbfddc3737f1937f82468ceb6",
+        "bytes": 795,
+        "sha256": "986a61992595fcb32518c7d2ee225e27440d454b85d330abd246fa6474fcee6f",
+        "lines": 42
+    },
+    {
+        "path": "src/Core/Deactivatable_Module_Interface.php",
+        "mode": "100644",
+        "git_blob": "b5444d0f6b79bc1789c30e80699ca2928226275e",
+        "bytes": 181,
+        "sha256": "a7cc4f5bfb4d6930522bf0864c66aa43206cd5ac4570f3259512f35f2dc1cda4",
+        "lines": 10
+    },
+    {
+        "path": "src/Core/Error_Logger.php",
+        "mode": "100644",
+        "git_blob": "3acdd027d2230c4ffce6903c5f21027ac1785c91",
+        "bytes": 3800,
+        "sha256": "8f6b0795367dd171150c62c6790d0d698ba851335bb6e84bcfbf3d73e60a9684",
+        "lines": 140
+    },
+    {
+        "path": "src/Core/Feature/Feature_Action_Guard.php",
+        "mode": "100644",
+        "git_blob": "1061dece1fdd76e2d6e92cc336bb4133f3a094f6",
+        "bytes": 1713,
+        "sha256": "2c3fdda8bc34fe1d88ac66a8a3730fc4472933d969315a5bfa3666f100032947",
+        "lines": 70
+    },
+    {
+        "path": "src/Core/Feature/Feature_Flag_Service.php",
+        "mode": "100644",
+        "git_blob": "582bc927141c2150f9c30d7fca77abe9ce3c43fa",
+        "bytes": 6409,
+        "sha256": "887f6bf44cce44833d1f3d1dcc1872803ea155260dd8a87db48019b9457a4a14",
+        "lines": 232
+    },
+    {
+        "path": "src/Core/I18n.php",
+        "mode": "100644",
+        "git_blob": "ed097e89c3b111e27de3a4851dd6fac735a0aeed",
+        "bytes": 308854,
+        "sha256": "e906528dc7a97b88383c360dafe259805bf44198213ba51e8168e9715e32dba3",
+        "lines": 3564
+    },
+    {
+        "path": "src/Core/Module_Interface.php",
+        "mode": "100644",
+        "git_blob": "e7744bdb140cfd190b39fc9a5b8f77e630ca7823",
+        "bytes": 201,
+        "sha256": "e34106daf7f06a9c677fe4b940dc5749b16359d14ff1467473af1c8b85c021b2",
+        "lines": 12
+    },
+    {
+        "path": "src/Core/Module_Manager.php",
+        "mode": "100644",
+        "git_blob": "f49bdcbd6563dd0e713ffaa273c8276d75a42b9e",
+        "bytes": 8623,
+        "sha256": "15c9452a622e3e7aa704104065b378b20e514e08cf1a5289679262bf9fa625c5",
+        "lines": 291
+    },
+    {
+        "path": "src/Core/Permission/Context_Rule_Interface.php",
+        "mode": "100644",
+        "git_blob": "ffe6b43741323e652fe9164289fbbafa55092736",
+        "bytes": 404,
+        "sha256": "d97b6199044bbb6dc6c204cdb31812776187f0ef09f0dcb36e37e06275bc34c2",
+        "lines": 18
+    },
+    {
+        "path": "src/Core/Permission/Permission_Service.php",
+        "mode": "100644",
+        "git_blob": "42a095de22dff6d49171efb07bb0b8d3e254090f",
+        "bytes": 7372,
+        "sha256": "a59ead842c065e20a2fc9b069f2cee5427eda5ac2e692cbfe4aa439c3e7a555e",
+        "lines": 245
+    },
+    {
+        "path": "src/Core/Permission/Role_Capability_Installer.php",
+        "mode": "100644",
+        "git_blob": "02ca1f12544eff445094a6d453da6b9f470051b2",
+        "bytes": 4055,
+        "sha256": "eee8bfcfac6ba3c569301dbda171d764190d522d89a6123ec77eb356593a70bf",
+        "lines": 142
+    },
+    {
+        "path": "src/Core/Plugin.php",
+        "mode": "100644",
+        "git_blob": "6f31e4feb3c9bd0faa42c8a97015797e8ddca213",
+        "bytes": 9360,
+        "sha256": "3645513284bb4e98124d8a7c2607db520d4dab1bf2940c68d939a987800aa1db",
+        "lines": 257
+    },
+    {
+        "path": "src/Core/Registry/Admin_Post_Registry.php",
+        "mode": "100644",
+        "git_blob": "7673c6725b4eea02b12b91f07fc536e8278e3879",
+        "bytes": 5382,
+        "sha256": "38bc9e62e87c3e4e4ca32f08ac9a75e71baf19774351c150596579df88445d70",
+        "lines": 156
+    },
+    {
+        "path": "src/Core/Registry/Asset_Registry.php",
+        "mode": "100644",
+        "git_blob": "79f695cdfc2e6d692f758ecb3cb7ebc0d681a8f0",
+        "bytes": 550,
+        "sha256": "733d5e227e68d0511d473943d5c679c712652a0a06a1a47e20fda7af6292d789",
+        "lines": 23
+    },
+    {
+        "path": "src/Core/Registry/Capability_Registry.php",
+        "mode": "100644",
+        "git_blob": "db341fe621b7940ac19f895f2e5db82d0ea1331f",
+        "bytes": 3156,
+        "sha256": "1a4b22f1a9fea6020384f2e3c372b1d8f5b39ca8a03b8eff34ec822740c378e2",
+        "lines": 127
+    },
+    {
+        "path": "src/Core/Registry/Console_Menu_Registry.php",
+        "mode": "100644",
+        "git_blob": "2e9600916bfc7e186e942f05c1cc58938477c7ae",
+        "bytes": 2410,
+        "sha256": "baa844b33ebfad61b22acea18dd276133159adcb5b627992ed34cc8299ea4985",
+        "lines": 91
+    },
+    {
+        "path": "src/Core/Registry/Event_Registry.php",
+        "mode": "100644",
+        "git_blob": "9bd9daafb819e54c2ca20ec9c630cb033a21ecb0",
+        "bytes": 133,
+        "sha256": "9d355339f80b74b688f46591e305b96633f8f7ca0a5717d80b1549cb13bb4486",
+        "lines": 9
+    },
+    {
+        "path": "src/Core/Registry/Feature_Registry.php",
+        "mode": "100644",
+        "git_blob": "9c0f60efaf66455f00a7c95e40c8954863d95517",
+        "bytes": 2754,
+        "sha256": "fdab2f30bbfe19707960b0a6fc152dfdbdd0e67759d8b2c35d415d7b32067759",
+        "lines": 105
+    },
+    {
+        "path": "src/Core/Registry/Navigation_Registry.php",
+        "mode": "100644",
+        "git_blob": "0426861aad3ec45bb3ce2fdabdda8c2b1385cc70",
+        "bytes": 1273,
+        "sha256": "251ae494d04e2b83419e0a0245ff6372f29046b8362415b3efb4b3d9fce3b915",
+        "lines": 45
+    },
+    {
+        "path": "src/Core/Registry/Registry.php",
+        "mode": "100644",
+        "git_blob": "9ee1a1e1c0f6bdf41dc7aee393393f8047b5809b",
+        "bytes": 1004,
+        "sha256": "476ac3531881286544ec4de310222b285fd23a1ef9521c5d425fb076b45f818c",
+        "lines": 51
+    },
+    {
+        "path": "src/Core/Registry/Route_Registry.php",
+        "mode": "100644",
+        "git_blob": "20e9b5bec9c7d4e0c4eb13157c13630f4e3a0861",
+        "bytes": 4506,
+        "sha256": "cb266f85483f041624c5badc3bc07fedd6000122c1fc64fb6d26d47da3c79796",
+        "lines": 141
+    },
+    {
+        "path": "src/Core/Registry/Shortcode_Registry.php",
+        "mode": "100644",
+        "git_blob": "c5078f3c19f2cae37f3cfc9dde124dec55a79080",
+        "bytes": 137,
+        "sha256": "73ead4199dbdd09672231e0ab177aceaa5b0121cef3ac91ece3d52fa1e5230aa",
+        "lines": 9
+    },
+    {
+        "path": "src/Core/Request_Context.php",
+        "mode": "100644",
+        "git_blob": "997425c42432dbf88e81fc3639f51cd5c8fc9f90",
+        "bytes": 1591,
+        "sha256": "e5ae918dfb06867512d782be67195068f522e84348df49e8092c76d8eb0d0e94",
+        "lines": 88
+    },
+    {
+        "path": "src/Core/Support/Pagination_Renderer.php",
+        "mode": "100644",
+        "git_blob": "12339f76d35bf3843f94cb96c15292d2bce4c4c0",
+        "bytes": 5315,
+        "sha256": "e96652bf83dee6cafd56ad46790983da080e7f93f25de9dc8f6835a5ee987a9e",
+        "lines": 144
+    },
+    {
+        "path": "src/Core/System_Status.php",
+        "mode": "100644",
+        "git_blob": "e50cb10330fbf74a0bfd3067ea6494ee83201f12",
+        "bytes": 13374,
+        "sha256": "7b4d4e4c067917ffddae52df436e6f6c866eedadff76d8e6e73748bbe1c7509d",
+        "lines": 294
+    },
+    {
+        "path": "src/Infrastructure/AI/Ai_Client.php",
+        "mode": "100644",
+        "git_blob": "b800ad54ec2ef8c4dcd819ab2767311a007ac5e6",
+        "bytes": 7724,
+        "sha256": "86b175e6cde459741c076848c43b4b251252a0d9e111531fb90ddd1923e8209a",
+        "lines": 207
+    },
+    {
+        "path": "src/Infrastructure/AI/Ai_Client_Interface.php",
+        "mode": "100644",
+        "git_blob": "64cc34d53af0d698891d10b0377c235e0e548817",
+        "bytes": 362,
+        "sha256": "61cb90e915e431d8b2964a22a6689df095d648afad5a25a1e3f6c6d0f68e1c25",
+        "lines": 14
+    },
+    {
+        "path": "templates/.gitkeep",
+        "mode": "100644",
+        "git_blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+        "bytes": 1,
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "lines": null
+    },
+    {
+        "path": "tests/action-contracts.php",
+        "mode": "100644",
+        "git_blob": "15d8682ae75b4eb619240b0abfbcfba04a36aad2",
+        "bytes": 10202,
+        "sha256": "34f50d37a495f0e3923a015f312b6d59a696e81d52ba94f6a29e557160655c6f",
+        "lines": 220
+    },
+    {
+        "path": "tests/architecture-smoke.php",
+        "mode": "100644",
+        "git_blob": "807549463fd135194156d897b91eaaede75ec8c8",
+        "bytes": 36000,
+        "sha256": "ad87aaa4537c01ea2b456e8d1c9f063f2424e4543db8ce1270455752008bab73",
+        "lines": 655
+    },
+    {
+        "path": "tests/problem-metadata-contract.php",
+        "mode": "100644",
+        "git_blob": "a202b45e5443540e9e60a1b291b83bd6f4f6ccee",
+        "bytes": 4070,
+        "sha256": "38123114e21c8f161ee73a05d2846afeaba77dbe2bc26a0048636e48f5b84eb0",
+        "lines": 100
+    },
+    {
+        "path": "tests/submission-behavior.php",
+        "mode": "100644",
+        "git_blob": "4da88affc147213d8b6df7da567079810606d9ae",
+        "bytes": 10712,
+        "sha256": "612e2dcb7b6af9f2f42e85d97aa16039e6e688c1bce17869b53b59a9f6c8f26f",
+        "lines": 281
+    }
+]

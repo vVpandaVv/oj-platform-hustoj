@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>R-04 계정 화면 검증</title>
+  <link rel="stylesheet" href="../../resources/ui/css/oj-ui-system.css">
+</head>
+<body class="ojp-app">
+  <div id="fixture-root"></div>
+
+  <template id="screen-login">
+    <div class="ojp-public-shell">
+      <header class="ojp-public-header">
+        <div class="ojp-public-header__inner">
+          <a class="ojp-brand" href="#">OJ Platform</a>
+          <nav class="ojp-guest-nav" aria-label="비로그인 메뉴">
+            <a href="#">로그인</a>
+            <a href="#">회원가입</a>
+          </nav>
+        </div>
+      </header>
+      <main class="ojp-guest-main">
+        <section class="ojp-auth-panel">
+          <header>
+            <h1>로그인</h1>
+            <p>등록된 계정으로 학습 공간에 접속합니다.</p>
+          </header>
+          <div class="ojp-notice ojp-notice--info">
+            <strong>기존 채점 계정 확인</strong>
+            <p>처음 로그인한 계정은 확인 후 WordPress 계정으로 전환할 수 있습니다.</p>
+          </div>
+          <form class="ojp-form-stack">
+            <label class="ojp-field">
+              <span class="ojp-label">로그인 아이디</span>
+              <input class="ojp-input" name="user_login" autocomplete="username" value="student01">
+            </label>
+            <label class="ojp-field">
+              <span class="ojp-label">비밀번호</span>
+              <input class="ojp-input" type="password" name="password" autocomplete="current-password" value="example-password">
+            </label>
+            <button class="ojp-button ojp-button--primary" type="button">로그인</button>
+          </form>
+          <footer class="ojp-auth-links">
+            <a href="#">회원가입</a>
+            <a href="#">비밀번호 찾기</a>
+            <a href="#">이용 동의 확인</a>
+          </footer>
+        </section>
+      </main>
+    </div>
+  </template>
+
+  <template id="screen-users">
+    <div class="ojp-console-shell">
+      <header class="ojp-console-header">
+        <div class="ojp-console-header__inner">
+          <button class="ojp-icon-button ojp-console-menu-button" type="button" aria-label="관리 메뉴 열기">
+            <svg class="ojp-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+          <a class="ojp-brand" href="#">OJ Platform 관리자</a>
+          <div class="ojp-console-account">
+            <a href="#">사용자 화면</a>
+            <span>운영 관리자</span>
+            <a href="#">로그아웃</a>
+          </div>
+        </div>
+      </header>
+      <div class="ojp-console-layout">
+        <aside class="ojp-console-sidebar">
+          <nav class="ojp-console-nav" aria-label="관리자 메뉴">
+            <section class="ojp-console-nav__group">
+              <a class="ojp-console-nav__root" href="#">대시보드</a>
+            </section>
+            <section class="ojp-console-nav__group">
+              <a class="ojp-console-nav__root is-current" href="#">사용자</a>
+              <div class="ojp-console-nav__children">
+                <a aria-current="page" href="#">사용자 목록</a>
+                <a href="#">사용자 등록</a>
+                <a href="#">일괄 등록</a>
+                <a href="#">가입 승인</a>
+                <a href="#">역할 관리</a>
+              </div>
+            </section>
+            <section class="ojp-console-nav__group">
+              <a class="ojp-console-nav__root" href="#">문제</a>
+            </section>
+          </nav>
+        </aside>
+        <main class="ojp-console-main">
+          <div class="ojp-shell">
+            <header class="ojp-page-header">
+              <div>
+                <p class="ojp-eyebrow">사용자</p>
+                <h1>사용자 목록</h1>
+                <p>계정 상태를 확인하고 필요한 관리 작업을 수행합니다.</p>
+              </div>
+              <div class="ojp-command-group">
+                <a class="ojp-button" href="#">일괄 등록</a>
+                <a class="ojp-button ojp-button--primary" href="#">사용자 등록</a>
+              </div>
+            </header>
+            <form class="ojp-filter-bar">
+              <div class="ojp-filter-bar__primary">
+                <label class="ojp-field">
+                  <span class="ojp-label">검색</span>
+                  <input class="ojp-input" value="프로그래밍">
+                </label>
+                <label class="ojp-field">
+                  <span class="ojp-label">상태</span>
+                  <select class="ojp-select"><option>전체 상태</option></select>
+                </label>
+                <label class="ojp-field">
+                  <span class="ojp-label">역할</span>
+                  <select class="ojp-select"><option>전체 역할</option></select>
+                </label>
+              </div>
+              <button class="ojp-button" type="button">조회</button>
+            </form>
+            <div class="ojp-bulk-bar">
+              <strong>2명 선택</strong>
+              <div class="ojp-command-group">
+                <button class="ojp-button" type="button">비밀번호 초기화</button>
+                <button class="ojp-button" type="button">선택 해제</button>
+              </div>
+            </div>
+            <div class="ojp-table-wrap">
+              <table class="ojp-table ojp-user-table--selectable">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" checked aria-label="전체 선택"></th>
+                    <th>로그인 아이디</th>
+                    <th>이름</th>
+                    <th>이메일</th>
+                    <th>소속</th>
+                    <th>상태</th>
+                    <th>역할</th>
+                    <th>작업</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox" checked aria-label="student01 선택"></td>
+                    <td><a href="#">student01</a></td>
+                    <td>김코딩</td>
+                    <td>student01@example.com</td>
+                    <td>알고리즘 학습반</td>
+                    <td><span class="ojp-status-badge ojp-status-badge--success">활성</span></td>
+                    <td>학습자</td>
+                    <td><a class="ojp-button ojp-button--small" href="#">상세</a></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" checked aria-label="teacher01 선택"></td>
+                    <td><a href="#">teacher01</a></td>
+                    <td>이운영</td>
+                    <td>teacher01@example.com</td>
+                    <td>문제 출제팀</td>
+                    <td><span class="ojp-status-badge ojp-status-badge--warning">승인 대기</span></td>
+                    <td>수업 운영자, 문제 출제자</td>
+                    <td><a class="ojp-button ojp-button--small" href="#">상세</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </template>
+
+  <template id="screen-import">
+    <div class="ojp-console-shell">
+      <header class="ojp-console-header">
+        <div class="ojp-console-header__inner">
+          <button class="ojp-icon-button ojp-console-menu-button" type="button" aria-label="관리 메뉴 열기">
+            <svg class="ojp-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+          <a class="ojp-brand" href="#">OJ Platform 관리자</a>
+          <div class="ojp-console-account">
+            <a href="#">사용자 화면</a>
+            <span>운영 관리자</span>
+            <a href="#">로그아웃</a>
+          </div>
+        </div>
+      </header>
+      <div class="ojp-console-layout">
+        <aside class="ojp-console-sidebar">
+          <nav class="ojp-console-nav" aria-label="관리자 메뉴">
+            <section class="ojp-console-nav__group">
+              <a class="ojp-console-nav__root is-current" href="#">사용자</a>
+              <div class="ojp-console-nav__children">
+                <a href="#">사용자 목록</a>
+                <a aria-current="page" href="#">일괄 등록</a>
+                <a href="#">가입 승인</a>
+              </div>
+            </section>
+          </nav>
+        </aside>
+        <main class="ojp-console-main">
+          <div class="ojp-shell">
+            <header class="ojp-page-header">
+              <div>
+                <p class="ojp-eyebrow">CSV Jobs</p>
+                <h1>사용자 일괄 등록 미리보기</h1>
+                <p>검증 결과를 확인한 뒤 오류가 없는 행만 등록합니다.</p>
+              </div>
+              <span class="ojp-status">실행 전</span>
+            </header>
+            <dl class="ojp-metrics">
+              <div><dt>전체 행</dt><dd>128</dd></div>
+              <div><dt>등록 가능</dt><dd>124</dd></div>
+              <div><dt>오류</dt><dd>4</dd></div>
+              <div><dt>기존 계정</dt><dd>2</dd></div>
+            </dl>
+            <div class="ojp-notice ojp-notice--warning">
+              <strong>검토가 필요한 행이 있습니다.</strong>
+              <p>오류 행은 실행에서 제외되며 비밀번호는 결과 기록에 저장되지 않습니다.</p>
+            </div>
+            <div class="ojp-table-wrap">
+              <table class="ojp-table">
+                <thead>
+                  <tr>
+                    <th>행</th>
+                    <th>로그인 아이디</th>
+                    <th>이름</th>
+                    <th>이메일</th>
+                    <th>소속</th>
+                    <th>처리 상태</th>
+                    <th>확인 내용</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2</td>
+                    <td>student101</td>
+                    <td>학습자 일공일</td>
+                    <td>student101@example.com</td>
+                    <td>여름 알고리즘 과정</td>
+                    <td><span class="ojp-status-badge ojp-status-badge--success">등록 가능</span></td>
+                    <td>검증 완료</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>student102</td>
+                    <td>학습자 일공이</td>
+                    <td>invalid-email</td>
+                    <td>여름 알고리즘 과정</td>
+                    <td><span class="ojp-status-badge ojp-status-badge--danger">오류</span></td>
+                    <td>이메일 형식을 확인하세요.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="ojp-action-bar">
+              <a class="ojp-button" href="#">CSV 다시 선택</a>
+              <button class="ojp-button ojp-button--primary" type="button">124명 등록</button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (() => {
+      const name = new URLSearchParams(window.location.search).get("screen") || "login";
+      const template = document.getElementById(`screen-${name}`) || document.getElementById("screen-login");
+      document.getElementById("fixture-root").replaceChildren(template.content.cloneNode(true));
+      document.title = `R-04 ${name} 화면 검증`;
+    })();
+  </script>
+</body>
+</html>

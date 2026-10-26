@@ -1,0 +1,83 @@
+/*
+ * 학습자료 학생 화면. 공용 부품(ojp-*)과 --ojp-* 토큰만 쓴다.
+ */
+.lmt-public {
+    max-width: 960px;
+}
+
+.lmt-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--ojp-space-4, 16px);
+}
+
+.lmt-card {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--ojp-space-2, 8px);
+    padding: var(--ojp-space-4, 16px);
+    border-radius: var(--ojp-radius-md, 12px);
+    background: var(--ojp-color-surface, #fff);
+    box-shadow: var(--ojp-shadow-1, 0 1px 2px rgb(0 0 0 / 5%));
+    color: var(--ojp-color-ink, #1d1d1f);
+    text-decoration: none;
+    transition: box-shadow var(--ojp-duration, 200ms) ease, transform 120ms ease;
+}
+
+.ojp-app .lmt-card {
+    color: var(--ojp-color-ink, #1d1d1f);
+}
+
+.lmt-card:hover {
+    box-shadow: var(--ojp-shadow, 0 6px 24px rgb(0 0 0 / 8%));
+}
+
+.lmt-card:active {
+    transform: scale(0.99);
+}
+
+.lmt-card:focus-visible {
+    outline: 3px solid var(--ojp-color-focus, rgb(8 125 120 / 45%));
+    outline-offset: 2px;
+}
+
+.lmt-card h3 {
+    margin: 0;
+    font-size: var(--ojp-text-headline, 15px);
+    font-weight: 600;
+}
+
+.lmt-card p {
+    margin: 0;
+    color: var(--ojp-color-muted, #6e6e73);
+    font-size: var(--ojp-text-footnote, 12px);
+}
+
+.lmt-content-section {
+    margin-top: var(--ojp-space-2, 8px);
+}
+
+.lmt-viewer {
+    display: block;
+    width: 100%;
+    height: 75vh;
+    border: 0;
+    border-radius: var(--ojp-radius-md, 12px);
+    background: var(--ojp-color-subtle, #f5f5f7);
+    box-shadow: var(--ojp-shadow-1, 0 1px 2px rgb(0 0 0 / 5%));
+}
+
+.lmt-public .lmt-image-preview {
+    display: block;
+    max-width: 100%;
+    max-height: 75vh;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lmt-card {
+        transition: none;
+    }
+}

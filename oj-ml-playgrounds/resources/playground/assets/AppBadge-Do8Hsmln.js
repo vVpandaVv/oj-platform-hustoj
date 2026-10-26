@@ -1,0 +1,1 @@
+import{Y as e,dt as t,et as n,mt as r}from"./vue-i18n-7JtS-33s.js";var i={class:`rounded-field bg-surface-sunken px-2 py-0.5 text-ink-soft`},a=n({__name:`AppBadge`,setup(n){return(n,a)=>(t(),e(`span`,i,[r(n.$slots,`default`)]))}});export{a as t};

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OJ 애드온 설치 안내서</title>
+<style>
+:root { --bg:#ffffff; --fg:#1d2433; --muted:#5b6475; --line:#dde2ea; --accent:#1f5fbf; --note:#fff7e0; --note-line:#e8b931; --code:#f3f5f9; }
+@media (prefers-color-scheme: dark) { :root { --bg:#14171d; --fg:#e6e9ef; --muted:#9aa3b2; --line:#2c323d; --accent:#7fb0ff; --note:#2e2814; --note-line:#a8851d; --code:#1f242d; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.65 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif; }
+header { padding:32px 16px 16px; max-width:960px; margin:0 auto; border-bottom:1px solid var(--line); }
+header p { color:var(--muted); margin:4px 0 0; font-size:14px; }
+.title { font-size:28px; font-weight:700; margin:0; }
+nav { max-width:960px; margin:0 auto; padding:16px; }
+nav ol { margin:0; padding-left:20px; columns:2; }
+main { max-width:960px; margin:0 auto; padding:0 16px 64px; }
+section.doc { border-top:2px solid var(--line); padding-top:8px; margin-top:40px; }
+h1 { font-size:24px; margin:24px 0 12px; } h2 { font-size:19px; margin:28px 0 8px; } h3 { font-size:16px; }
+a { color:var(--accent); }
+code { background:var(--code); padding:1px 5px; border-radius:4px; font-size:.9em; word-break:break-all; }
+pre { background:var(--code); padding:12px 14px; border-radius:6px; overflow-x:auto; }
+pre code { padding:0; background:none; word-break:normal; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; margin:8px 0 16px; font-size:14px; }
+th, td { border:1px solid var(--line); padding:6px 10px; text-align:left; vertical-align:top; }
+th { background:var(--code); }
+.note { background:var(--note); border-left:4px solid var(--note-line); padding:10px 14px; border-radius:4px; margin:12px 0; }
+@media (max-width:640px) { nav ol { columns:1; } .title { font-size:22px; } }
+@media print { nav { display:none; } section.doc { page-break-before:always; border:0; } a { color:inherit; } }
+</style>
+</head>
+<body>
+<!--TEMPLATE-ONLY-->
+<div style="margin:16px;padding:14px 16px;border:2px solid #d33;border-radius:6px;background:#fff0f0;color:#111;font-size:15px;line-height:1.6">
+<strong>이 파일은 안내서 틀(템플릿)입니다. 완성된 안내서가 아닙니다.</strong><br>
+완성본: <code>_releases/latest/install-guides/install-guide.html</code><br>
+다시 만들기: <code>_release-kit\release.cmd docs</code>
+</div>
+<!--/TEMPLATE-ONLY-->
+<header>
+<p class="title">OJ 애드온 설치 안내서</p>
+<p>생성 시각 {{generated_at}} · 자동 생성 문서 (원본: _release-kit/guides)</p>
+</header>
+<nav><ol>
+{{toc}}</ol></nav>
+<main>
+{{content}}</main>
+</body>
+</html>

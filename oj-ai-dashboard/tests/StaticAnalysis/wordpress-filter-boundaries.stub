@@ -1,0 +1,51 @@
+<?php
+// WordPress returns filter/option values without a native return type check.
+// Keep add-on validation of these external values visible to static analysis.
+
+/**
+ * @param string $scheme
+ * @return mixed Filter: salt (wp-includes/pluggable.php).
+ */
+function wp_salt(string $scheme = 'auth') {}
+
+/**
+ * @param string $path
+ * @param string $scheme
+ * @return mixed Filter: rest_url (wp-includes/rest-api.php).
+ */
+function rest_url(string $path = '', string $scheme = 'rest') {}
+
+/** @return mixed Filter: locale (wp-includes/l10n.php). */
+function get_locale() {}
+
+/** @return mixed Filter: determine_locale (wp-includes/l10n.php). */
+function determine_locale() {}
+
+/** @return mixed Option: timezone_string (wp-includes/functions.php). */
+function wp_timezone_string() {}
+
+/**
+ * @param string|null $time
+ * @param bool $create_dir
+ * @param bool $refresh_cache
+ * @return mixed Filter: upload_dir (wp-includes/functions.php).
+ */
+function wp_upload_dir(?string $time = null, bool $create_dir = true, bool $refresh_cache = false) {}
+
+/** @return mixed Delegates to wp_upload_dir (wp-includes/functions.php). */
+function wp_get_upload_dir() {}
+
+/**
+ * @param array<string,mixed> $file
+ * @param array<string,mixed>|false $overrides
+ * @param string|null $time
+ * @return mixed Filter: wp_handle_upload (wp-admin/includes/file.php).
+ */
+function wp_handle_upload(&$file, $overrides = false, $time = null) {}
+
+/**
+ * @param int $attachment_id
+ * @param string $file
+ * @return mixed Filter: wp_generate_attachment_metadata (wp-admin/includes/image.php).
+ */
+function wp_generate_attachment_metadata(int $attachment_id, string $file) {}

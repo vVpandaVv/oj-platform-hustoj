@@ -1,0 +1,53 @@
+<?php
+declare(strict_types=1);
+
+$id = ['name' => 'id', 'type' => 'BIGINT UNSIGNED', 'auto_increment' => true];
+$primary = ['name' => null, 'columns' => ['id'], 'primary' => true, 'unique' => true];
+return [
+    [
+        'name' => 'research_studies', 'owner_module' => 'research', 'schema_version' => '1',
+        'columns' => [$id,
+            ['name' => 'title', 'type' => 'VARCHAR(191)'],
+            ['name' => 'owner_id', 'type' => 'BIGINT UNSIGNED'],
+            ['name' => 'status', 'type' => 'VARCHAR(30)'],
+            ['name' => 'revision', 'type' => 'INT UNSIGNED', 'default' => 1],
+            ['name' => 'data', 'type' => 'LONGTEXT'],
+            ['name' => 'created_at', 'type' => 'DATETIME'],
+            ['name' => 'updated_at', 'type' => 'DATETIME'],
+        ],
+        'indexes' => [$primary, ['name' => 'ix_research_owner', 'columns' => ['owner_id', 'status']]],
+    ],
+    [
+        'name' => 'research_participants', 'owner_module' => 'research', 'schema_version' => '1',
+        'columns' => [$id,
+            ['name' => 'study_id', 'type' => 'BIGINT UNSIGNED'],
+            ['name' => 'user_id', 'type' => 'BIGINT UNSIGNED'],
+            ['name' => 'group_id', 'type' => 'BIGINT UNSIGNED'],
+            ['name' => 'active_user_id', 'type' => 'BIGINT UNSIGNED', 'nullable' => true, 'default' => null],
+            ['name' => 'pseudonym', 'type' => 'VARCHAR(40)'],
+            ['name' => 'arm', 'type' => 'VARCHAR(10)', 'nullable' => true, 'default' => null],
+            ['name' => 'consent', 'type' => 'VARCHAR(20)'],
+            ['name' => 'baseline', 'type' => 'LONGTEXT'],
+        ],
+        'indexes' => [$primary,
+            ['name' => 'ux_research_participant', 'columns' => ['study_id', 'user_id'], 'unique' => true],
+            ['name' => 'ux_research_active_user', 'columns' => ['active_user_id'], 'unique' => true],
+            ['name' => 'ux_research_pseudonym', 'columns' => ['study_id', 'pseudonym'], 'unique' => true],
+        ],
+    ],
+    [
+        'name' => 'research_records', 'owner_module' => 'research', 'schema_version' => '1',
+        'columns' => [$id,
+            ['name' => 'study_id', 'type' => 'BIGINT UNSIGNED'],
+            ['name' => 'participant_id', 'type' => 'BIGINT UNSIGNED', 'default' => 0],
+            ['name' => 'event_key', 'type' => 'CHAR(64)'],
+            ['name' => 'kind', 'type' => 'VARCHAR(50)'],
+            ['name' => 'data', 'type' => 'LONGTEXT'],
+            ['name' => 'created_at', 'type' => 'DATETIME'],
+        ],
+        'indexes' => [$primary,
+            ['name' => 'ux_research_event', 'columns' => ['study_id', 'event_key'], 'unique' => true],
+            ['name' => 'ix_research_participant_kind', 'columns' => ['study_id', 'participant_id', 'kind']],
+        ],
+    ],
+];

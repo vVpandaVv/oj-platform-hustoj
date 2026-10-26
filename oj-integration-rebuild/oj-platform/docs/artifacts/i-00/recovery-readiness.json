@@ -1,0 +1,106 @@
+{
+    "schema_version":  1,
+    "checked_at":  "2026-07-26T01:45:46.8224672Z",
+    "read_only":  true,
+    "ready_for_backup_and_restore":  false,
+    "checks":  [
+                   {
+                       "key":  "php",
+                       "label":  "PHP CLI",
+                       "ready":  true,
+                       "evidence":  "D:\\php\\php.exe",
+                       "required":  true
+                   },
+                   {
+                       "key":  "php_mysql_driver",
+                       "label":  "PHP MySQL 드라이버",
+                       "ready":  false,
+                       "evidence":  "없음",
+                       "required":  false
+                   },
+                   {
+                       "key":  "node",
+                       "label":  "Node.js",
+                       "ready":  true,
+                       "evidence":  "C:\\Program Files\\nodejs\\node.exe",
+                       "required":  true
+                   },
+                   {
+                       "key":  "npm",
+                       "label":  "npm",
+                       "ready":  true,
+                       "evidence":  "C:\\Program Files\\nodejs\\npm.cmd",
+                       "required":  true
+                   },
+                   {
+                       "key":  "docker",
+                       "label":  "Docker",
+                       "ready":  false,
+                       "evidence":  "없음",
+                       "required":  true
+                   },
+                   {
+                       "key":  "wp_env_config",
+                       "label":  "wp-env 구성",
+                       "ready":  true,
+                       "evidence":  "D:\\프로젝트\\plugins\\oj-integration-rebuild\\.wp-env.json",
+                       "required":  true
+                   },
+                   {
+                       "key":  "wp_env_binary",
+                       "label":  "wp-env 실행 파일",
+                       "ready":  true,
+                       "evidence":  "D:\\프로젝트\\plugins\\oj-integration-rebuild\\node_modules\\.bin\\wp-env.cmd",
+                       "required":  true
+                   },
+                   {
+                       "key":  "mysql_client",
+                       "label":  "MySQL/MariaDB 클라이언트",
+                       "ready":  false,
+                       "evidence":  "없음",
+                       "required":  true
+                   },
+                   {
+                       "key":  "mysql_dump",
+                       "label":  "MySQL/MariaDB 덤프 도구",
+                       "ready":  false,
+                       "evidence":  "없음",
+                       "required":  true
+                   },
+                   {
+                       "key":  "wordpress_runtime",
+                       "label":  "운영 WordPress 경로",
+                       "ready":  false,
+                       "evidence":  "지정되지 않음",
+                       "required":  true
+                   },
+                   {
+                       "key":  "database_inputs",
+                       "label":  "DB 연결 입력",
+                       "ready":  false,
+                       "evidence":  "설정 0개, 미설정 12개",
+                       "required":  true
+                   }
+               ],
+    "pdo_drivers":  [
+
+                    ],
+    "configured_environment_variable_names":  [
+
+                                              ],
+    "missing_environment_variable_names":  [
+                                               "OJ_I00_WP_DB_HOST",
+                                               "OJ_I00_WP_DB_PORT",
+                                               "OJ_I00_WP_DB_NAME",
+                                               "OJ_I00_WP_DB_USER",
+                                               "OJ_I00_JUDGE_DB_HOST",
+                                               "OJ_I00_JUDGE_DB_PORT",
+                                               "OJ_I00_JUDGE_DB_NAME",
+                                               "OJ_I00_JUDGE_DB_USER",
+                                               "OJ_I00_JUDGE_TEST_HOST",
+                                               "OJ_I00_JUDGE_TEST_PORT",
+                                               "OJ_I00_JUDGE_TEST_DB_NAME",
+                                               "OJ_I00_JUDGE_TEST_DB_USER"
+                                           ],
+    "secrets_recorded":  false
+}

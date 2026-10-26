@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>활동지 평가 작업대</title>
+  <link rel="stylesheet" href="../../resources/css/admin-shell.css">
+  <link rel="stylesheet" href="../../resources/css/worksheet-evaluation-workbench.css">
+  <style>
+    body { margin: 0; background: #f3f5f6; color: #17202a; font-family: Arial, "Malgun Gothic", sans-serif; }
+    .fixture-shell { background: #fff; margin: 0 auto; max-width: 1440px; min-height: 100vh; padding: 0 28px; }
+    @media (max-width: 680px) { .fixture-shell { padding: 0 16px; } }
+  </style>
+  <style data-fixture-icon-style>.oj-ai-icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}</style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+  </svg>
+  <main class="fixture-shell">
+    <section
+      id="oj-ai-worksheet-evaluation-app" data-icon-sprite=""
+      class="oj-ai-evaluation"
+      data-rest-root="https://example.test/wp-json/oj-ai/v1"
+      data-rest-nonce="visual-rest-nonce"
+      data-locale="ko_KR"
+      data-timezone="+09:00"
+      data-can-review="1"
+      data-consent-recorded="1"
+      data-settings-url="#settings"
+      data-edit-url-template="#worksheets/{worksheet_id}"
+    >
+      <header class="oj-ai-evaluation__header">
+        <div><h1>활동지 평가</h1><p data-role="summary">불러오는 중</p></div>
+        <div class="oj-ai-evaluation__header-actions">
+          <button type="button" class="oj-ai-evaluation__icon-button" data-action="refresh" aria-label="새로고침" title="새로고침"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button>
+          <button type="button" class="oj-ai-evaluation__primary" data-action="new-evaluation">새 점검</button>
+        </div>
+      </header>
+      <div class="oj-ai-evaluation__consent" data-role="consent-status" role="status">
+        <span data-role="consent-label"></span><a href="#settings">설정</a>
+      </div>
+      <div class="oj-ai-evaluation__filters">
+        <label class="oj-ai-evaluation__search"><span class="screen-reader-text">평가 검색</span><input type="search" data-field="search" placeholder="활동지 검색"></label>
+        <label><span class="screen-reader-text">상태</span><select data-field="state">
+          <option value="">전체</option><option value="review_required">교사 검토 대기</option><option value="running">진행 중</option>
+          <option value="queued">대기</option><option value="failed">실패</option><option value="reviewed">교사 검토 완료</option>
+          <option value="cancelled">취소</option><option value="stale">새 버전 있음</option>
+        </select></label>
+      </div>
+      <div class="oj-ai-evaluation__notice" data-role="notice" role="status">평가를 불러오는 중입니다.</div>
+      <div class="oj-ai-evaluation__layout" data-role="content" hidden>
+        <aside class="oj-ai-evaluation__inbox" aria-label="평가 목록"><div data-role="evaluation-list"></div><button type="button" class="oj-ai-evaluation__load-more" data-action="load-more" hidden>더 보기</button></aside>
+        <section class="oj-ai-evaluation__detail" data-role="evaluation-detail" aria-live="polite"><div class="oj-ai-evaluation__empty"><strong>평가를 선택하세요.</strong></div></section>
+      </div>
+      <dialog class="oj-ai-evaluation__dialog" data-role="new-evaluation-dialog" aria-labelledby="oj-ai-new-evaluation-title">
+        <form method="dialog">
+          <header><h2 id="oj-ai-new-evaluation-title">새 점검</h2><button type="submit" class="oj-ai-evaluation__dialog-close" value="cancel" aria-label="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+          <label>활동지<select data-field="worksheet"><option value="">활동지를 선택하세요</option></select></label>
+          <p class="oj-ai-evaluation__dialog-status" data-role="new-evaluation-status" role="status"></p>
+          <label class="oj-ai-evaluation__ack"><input type="checkbox" data-field="external-processing-ack"><span>활동지 내용의 외부 AI 처리를 확인했습니다.</span></label>
+          <footer><button type="submit" value="cancel">취소</button><button type="button" class="oj-ai-evaluation__primary" data-action="enqueue" disabled>점검 시작</button></footer>
+        </form>
+      </dialog>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const ids = {
+        worksheet: '01HZY3M4N5P6Q7R8S9T0V1W2X3',
+        revision: '01HZY3M4N5P6Q7R8S9T0V1W2X4',
+        currentRevision: '01HZY3M4N5P6Q7R8S9T0V1W2X5',
+        evaluation: '01HZY3M4N5P6Q7R8S9T0V1W2X6',
+        secondEvaluation: '01HZY3M4N5P6Q7R8S9T0V1W2X7',
+        failedEvaluation: '01HZY3M4N5P6Q7R8S9T0V1W2XC',
+        failedRunStale: '01HZY3M4N5P6Q7R8S9T0V1W2XD',
+        failedRunFresh: '01HZY3M4N5P6Q7R8S9T0V1W2XE',
+        run: '01HZY3M4N5P6Q7R8S9T0V1W2X8',
+        result: '01HZY3M4N5P6Q7R8S9T0V1W2X9',
+        review: '01HZY3M4N5P6Q7R8S9T0V1W2XA',
+        node: '01HZY3M4N5P6Q7R8S9T0V1W2XB',
+      };
+      const hash = (letter) => letter.repeat(64);
+      const dimensions = [
+        ['learning_goal_alignment', 'meets', '학습 목표와 질문이 잘 연결되어 있습니다.'],
+        ['instruction_clarity', 'minor_issue', '한 문항의 안내를 더 짧게 다듬을 수 있습니다.'],
+        ['answerability', 'meets', '학생이 제공된 자료로 답할 수 있습니다.'],
+        ['difficulty_fit', 'meets', '대상 학년에 적절한 난이도입니다.'],
+        ['rubric_quality', 'major_issue', '서술형 문항의 판단 기준이 부족합니다.'],
+        ['safety', 'meets', '안전상 우려가 발견되지 않았습니다.'],
+      ].map(([dimension_key, rating, summary], index) => ({ dimension_key, rating, confidence: (0.91 - index * 0.01).toFixed(4), summary }));
+      const findings = [
+        {
+          finding_key: hash('b'), dimension_key: 'instruction_clarity', position: 0, severity: 'minor',
+          title: '질문 안내를 간결하게 다듬어 주세요', rationale: '한 문장에 서로 다른 행동이 함께 제시되어 있습니다.',
+          evidence: [{ anchor_type: 'node', anchor_id: ids.node, field: 'text.content', quote: '관찰하고 이유를 쓰고 친구와 비교해 보세요.' }],
+          recommendation: '관찰과 비교를 두 단계로 나누어 안내하세요.', confidence: '0.8700',
+        },
+        {
+          finding_key: hash('c'), dimension_key: 'rubric_quality', position: 1, severity: 'major',
+          title: '서술형 판단 기준을 추가해 주세요', rationale: '학생 답변을 판단할 수 있는 구체적인 근거가 없습니다.',
+          evidence: [{ anchor_type: 'response', anchor_id: ids.node, field: 'private_metadata.rubric', quote: null }],
+          recommendation: '관찰 근거와 설명의 구체성을 판단 기준으로 추가하세요.', confidence: '0.9300',
+        },
+      ];
+      const evaluation = {
+        id: ids.evaluation, state: 'review_required', is_stale: true,
+        worksheet: { id: ids.worksheet, title: '우리 동네 환경 조사' },
+        revision: { id: ids.revision, revision_no: 3, state: 'draft', source_hash: hash('a'), is_current: false },
+        status: { overall_status: 'action_required', finding_count: 2, needs_attention_count: 2, safety_flagged: false, latest_review_no: 1, next_action: 'evaluate_current_revision' },
+        latest_run: { id: ids.run, run_no: 1, state: 'succeeded', queued_at_utc: '2026-08-21 09:00:00', updated_at_utc: '2026-08-21 09:02:00' },
+        requested_at_utc: '2026-08-21 09:00:00', updated_at_utc: '2026-08-21 09:10:00',
+      };
+      const second = {
+        id: ids.secondEvaluation, state: 'running', is_stale: false,
+        worksheet: { id: '01HZY3M4N5P6Q7R8S9T0V1W2XG', title: '학교 주변 생태 지도' },
+        revision: { id: ids.currentRevision, revision_no: 1, state: 'draft', source_hash: hash('d'), is_current: true },
+        status: { overall_status: null, finding_count: 0, needs_attention_count: 0, safety_flagged: false, latest_review_no: null, next_action: 'cancel' },
+        latest_run: { id: ids.run, run_no: 1, state: 'running', queued_at_utc: '2026-08-21 10:00:00', updated_at_utc: '2026-08-21 10:01:00' },
+        requested_at_utc: '2026-08-21 10:00:00', updated_at_utc: '2026-08-21 10:01:00',
+      };
+      const failed = {
+        id: ids.failedEvaluation, state: 'failed', is_stale: false,
+        worksheet: { id: '01HZY3M4N5P6Q7R8S9T0V1W2XF', title: '저작권 보호하기' },
+        revision: { id: ids.currentRevision, revision_no: 4, state: 'draft', source_hash: hash('d'), is_current: true },
+        status: { overall_status: null, finding_count: 0, needs_attention_count: 0, safety_flagged: false, latest_review_no: null, next_action: 'retry' },
+        latest_run: { id: ids.failedRunStale, run_no: 1, state: 'failed', queued_at_utc: '2026-09-02 08:00:00', updated_at_utc: '2026-09-02 08:06:00' },
+        requested_at_utc: '2026-09-02 08:00:00', updated_at_utc: '2026-09-02 08:06:00',
+      };
+      const failedDetail = (fresh) => {
+        const schemaFailure = scenario.get('schema_failure') === '1';
+        const latestRun = {
+          id: fresh ? ids.failedRunFresh : ids.failedRunStale,
+          run_no: fresh ? 2 : 1,
+          state: 'failed',
+          queued_at_utc: '2026-09-02 08:00:00',
+          updated_at_utc: '2026-09-02 08:06:00',
+        };
+        return {
+          evaluation: { ...failed, latest_run: latestRun },
+          result: null,
+          runs: [{
+            ...latestRun,
+            result_id: null,
+            attempt_count: 1,
+            available_at_utc: '2026-09-02 08:00:00',
+            started_at_utc: '2026-09-02 08:01:00',
+            finished_at_utc: '2026-09-02 08:06:00',
+            last_error_code: schemaFailure ? (scenario.get('failure_code') || 'output_schema_invalid') : scenario.get('evidence_mismatch') === '1' ? 'output_domain_invalid' : 'addon_ai_task_failed',
+            last_error_message: schemaFailure ? scenario.get('failure_path') : scenario.get('evidence_mismatch') === '1' ? '$.findings[0].evidence[1].quote (not a substring of the anchored field)' : 'Gemini 생성 응답이 JSON 객체가 아닙니다 (출력 토큰 한도를 초과해 응답이 중간에 잘렸습니다).',
+          }],
+          reviews: [],
+        };
+      };
+      const detail = {
+        evaluation,
+        result: {
+          id: ids.result, run_id: ids.run, overall_status: 'action_required', overall_confidence: '0.9100',
+          summary: '학습 목표와 활동 흐름은 적절합니다. 질문 안내와 서술형 평가 기준을 보완하면 바로 사용할 수 있습니다.',
+          abstained: false, safety_flagged: false, abstain_reason: null, dimensions, findings,
+          limitations: ['첨부 이미지의 시각적 적합성은 교사가 최종 확인해야 합니다.'], created_at_utc: '2026-08-21 09:02:00',
+        },
+        runs: [
+          { id: ids.run, run_no: 2, state: 'succeeded', result_id: ids.result, attempt_count: 1, queued_at_utc: '2026-08-21 09:00:00', available_at_utc: '2026-08-21 09:00:00', started_at_utc: '2026-08-21 09:01:00', finished_at_utc: '2026-08-21 09:02:00', last_error_code: null, last_error_message: null },
+          { id: hash('run1'), run_no: 1, state: 'failed', result_id: null, attempt_count: 1, queued_at_utc: '2026-08-21 08:50:00', available_at_utc: '2026-08-21 08:50:00', started_at_utc: '2026-08-21 08:51:00', finished_at_utc: '2026-08-21 08:52:00', last_error_code: 'addon_ai_task_failed', last_error_message: 'AI Provider 인증에 실패했습니다.' },
+        ],
+        reviews: [{ id: ids.review, review_no: 1, decision: 'in_progress', note: null, previous_id: null, created_at_utc: '2026-08-21 09:10:00', item_decisions: [{ finding_key: hash('b'), decision: 'dismissed', reason_code: 'not_applicable', note: '문맥상 단계가 분명해 현재 안내를 유지합니다.', resolution_revision_id: null, resolution_source_hash: null }] }],
+      };
+      const scenario = new URLSearchParams(location.search);
+      const historyScenario = scenario.get('history') === '1';
+      let currentRevisionId = ids.currentRevision;
+      let currentRevisionNo = 4;
+      const olderEvaluation = { ...evaluation, id: '01HZY3M4N5P6Q7R8S9T0V1W2XH', revision: { ...evaluation.revision, revision_no: 2 } };
+      window.__setCurrentWorksheetVersion = () => { currentRevisionId = '01HZY3M4N5P6Q7R8S9T0V1W2XJ'; currentRevisionNo = 5; };
+      window.__historyReads = [];
+      window.__evaluateRequestUrl = '';
+      if (scenario.get('no_findings') === '1') {
+        findings.length = 0;
+        evaluation.is_stale = false;
+        evaluation.revision.is_current = true;
+        currentRevisionId = evaluation.revision.id;
+        currentRevisionNo = evaluation.revision.revision_no;
+        evaluation.status.finding_count = 0;
+        evaluation.status.needs_attention_count = 0;
+        evaluation.status.latest_review_no = 0;
+        detail.reviews = [];
+        detail.result.overall_status = 'ready';
+        detail.result.summary = '학습 목표와 활동 내용이 일치하고 평가 기준이 명확합니다.';
+        evaluation.status.overall_status = 'ready';
+        evaluation.status.next_action = 'review';
+        detail.result.dimensions = dimensions.map((dimension) => ({ ...dimension, rating: 'meets', summary: '기준 충족' }));
+        detail.result.limitations = [];
+      }
+      if (scenario.get('can_review') === '0') document.getElementById('oj-ai-worksheet-evaluation-app').dataset.canReview = '0';
+      if (scenario.get('review_history') === '1') {
+        evaluation.is_stale = false;
+        evaluation.revision.is_current = true;
+        currentRevisionId = evaluation.revision.id;
+        currentRevisionNo = evaluation.revision.revision_no;
+        evaluation.state = 'reviewed';
+        evaluation.status.latest_review_no = 2;
+        evaluation.status.next_action = null;
+        detail.reviews.push({
+          id: '01HZY3M4N5P6Q7R8S9T0V1W2XK', review_no: 2, decision: 'completed', previous_id: ids.review,
+          note: null, created_at_utc: '2026-09-11 03:00:00',
+          item_decisions: findings.map(finding => ({finding_key:finding.finding_key,decision:'dismissed',reason_code:'not_applicable',note:'2차 검토에서 확인한 판단',resolution_revision_id:null,resolution_source_hash:null})),
+        });
+      }
+      window.__reviewRequests = [];
+      window.__reviewHistorySnapshot = () => JSON.parse(JSON.stringify(detail.reviews));
+      const envelope = (data, meta = {}) => ({ data, meta: { correlation_id: 'evaluation-visual', ...meta }, links: {}, actions: [] });
+      const jsonResponse = (payload, status = 200) => Promise.resolve({ ok: status >= 200 && status < 300, status, json: async () => payload });
+      window.confirm = () => true;
+      window.__evaluationCommandCount = 0;
+      window.__failNextEvaluation = false;
+      window.__failedDetailReads = 0;
+      window.__retryRequestBody = null;
+      window.fetch = async (url, options = {}) => {
+        const value = String(url);
+        if (value.endsWith('/settings/external-ai-consent')) return jsonResponse(envelope({ external_ai_consent: { consent: { state: 'approved', effective: true, consent_hash: hash('c'), approved_at_utc: '2026-08-21 08:30:00', approved_by_user_id: 7, task_key: 'addon.oj_ai_dashboard.worksheet_quality_assessment', destination: { provider_key: 'openai', model_key: 'gpt-5-mini', profile_fingerprint: hash('p') } }, routing: { available: true, task_key: 'addon.oj_ai_dashboard.worksheet_quality_assessment', provider_key: 'openai', model_key: 'gpt-5-mini', profile_fingerprint: hash('p'), routing_revision: 'routing-visual' }, input_categories: ['worksheet_assessment_configuration', 'worksheet_asset_text', 'worksheet_content'] } }));
+        if (value.includes('/worksheet-evaluations?')) {
+          const query = new URL(value).searchParams;
+          if (query.get('view') === 'history') {
+            window.__historyReads.push(value);
+            if (window.__failHistory) { window.__failHistory = false; return jsonResponse({message:'이력 조회 실패',data:{status:503}},503); }
+            const more = query.has('cursor');
+            return jsonResponse(envelope({items: more ? [olderEvaluation] : [evaluation]}, {next_cursor: more ? '' : 'history-next'}));
+          }
+          window.__lastEvaluationListUrl = value;
+          return jsonResponse(envelope({ items: historyScenario ? [evaluation] : [evaluation, second, failed] }, { next_cursor: '', has_more: false, limit: 30 }));
+        }
+        if (value.endsWith(`/worksheet-evaluations/${ids.evaluation}`)) return jsonResponse(envelope(detail));
+        if (value.endsWith(`/worksheet-evaluations/${olderEvaluation.id}`)) return jsonResponse(envelope({ ...detail, evaluation: olderEvaluation }));
+        if (value.endsWith('/worksheet-evaluations/' + ids.failedEvaluation)) {
+          window.__failedDetailReads += 1;
+          return jsonResponse(envelope(failedDetail(window.__failedDetailReads > 1)));
+        }
+        if (value.endsWith('/worksheet-evaluations/' + ids.failedEvaluation + '/commands/retry') && options.method === 'POST') {
+          window.__retryRequestBody = JSON.parse(options.body || '{}');
+          return jsonResponse({
+            code: 'worksheet_evaluation_configuration_changed',
+            message: '평가 설정이 바뀌었습니다.',
+            data: { status: 409 },
+          }, 409);
+        }
+        if (value.includes('/commands/evaluate')) {
+          window.__evaluationCommandCount += 1;
+          window.__evaluateRequestUrl = value;
+          if (window.__failNextEvaluation) {
+            window.__failNextEvaluation = false;
+            return jsonResponse({ code: 'worksheet_evaluation_configuration_unavailable', message: '평가 설정을 확인해 주세요.', data: { status: 503 } }, 503);
+          }
+          return jsonResponse(envelope({ evaluation: { id: ids.evaluation, state: 'queued', worksheet_revision_id: ids.currentRevision, source_hash: hash('d') }, run: { id: ids.run, run_no: 1, state: 'queued' } }), 202);
+        }
+        if (value.endsWith('/commands/review') && options.method === 'POST' && (scenario.get('no_findings') === '1' || scenario.get('review_history') === '1')) {
+          const command = JSON.parse(options.body);
+          window.__reviewRequests.push(command);
+          await new Promise(resolve => setTimeout(resolve, 100));
+          if (window.__failNextReview) { window.__failNextReview = false; return jsonResponse({message:'검토 저장 실패',data:{status:503}},503); }
+          window.__emptyReviewRequest = command;
+          evaluation.state = command.payload.complete_review ? 'reviewed' : 'review_required';
+          const previous = detail.reviews.at(-1);
+          const next = { id: `review-fixture-${detail.reviews.length+1}`, review_no: detail.reviews.length+1,
+            decision: command.payload.complete_review ? 'completed' : 'in_progress', created_at_utc: '2026-09-11 03:10:00',
+            previous_id: previous?.id || null, note: null, item_decisions: structuredClone(command.payload.item_decisions) };
+          detail.reviews.push(next);
+          evaluation.status.latest_review_no = next.review_no;
+          return jsonResponse(envelope({ evaluation, result_id: ids.result, review: next }), 201);
+        }
+        if (value.includes('/worksheet-evaluations/') && options.method === 'POST') return jsonResponse(envelope({ evaluation, result_id: ids.result, review: detail.reviews[0] }), 201);
+        const worksheets = [evaluation, second, failed].map(item => ({id:item.worksheet.id,title:item.worksheet.title,state:'draft',current_revision_id:currentRevisionId}));
+        const worksheet = worksheets.find(item => value.endsWith(`/worksheets/${item.id}`));
+        if (worksheet) return jsonResponse(envelope({ worksheet }));
+        if (value.includes('/worksheets?')) return jsonResponse(envelope({ items: worksheets }));
+        if (value.endsWith(`/worksheet-revisions/${currentRevisionId}`)) return jsonResponse(envelope({ worksheet_id: ids.worksheet, revision: { id: currentRevisionId, revision_no: currentRevisionNo, state: 'draft', document_hash: hash('d') }, teacher_document: {}, questions: [] }));
+        if (value.includes('/commands/evaluate')) return jsonResponse(envelope({ evaluation: { id: ids.evaluation, state: 'queued', worksheet_revision_id: ids.currentRevision, source_hash: hash('d') }, run: { id: ids.run, run_no: 1, state: 'queued' } }), 202);
+        return jsonResponse({ code: 'oj_ai_not_found', message: '대상을 찾을 수 없습니다.', data: { status: 404 } }, 404);
+      };
+    })();
+  </script>
+  <script src="../../resources/js/worksheet-workflow.js"></script>
+  <script src="../../resources/js/worksheet-evaluation-workbench.js"></script>
+</body>
+</html>

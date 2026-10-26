@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학생 피드백 검토</title>
+  <link rel="stylesheet" href="../../resources/css/admin-shell.css">
+  <link rel="stylesheet" href="../../resources/css/submission-evaluation-review-workbench.css">
+  <link rel="stylesheet" href="../../resources/css/worksheet-workflow.css">
+  <style>
+    body { margin: 0; background: #eef1f4; color: #17202a; font-family: Arial, "Malgun Gothic", sans-serif; }
+    .fixture-shell { background: #fff; margin: 0 auto; max-width: 1320px; min-height: 100vh; padding: 22px 28px 42px; }
+    @media (max-width: 760px) { .fixture-shell { padding: 12px 16px 32px; } }
+  </style>
+  <style data-fixture-icon-style>.oj-ai-icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}</style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
+  </svg>
+  <main class="fixture-shell">
+    <div class="oj-ai-assessment-surface">
+      <section
+        id="oj-ai-submission-review-app" data-icon-sprite=""
+        class="oj-ai-submission-review"
+        data-rest-root="https://example.test/wp-json/oj-ai/v1"
+        data-rest-nonce="submission-feedback-s04-nonce"
+        data-locale="ko-KR"
+        data-can-review="1"
+      >
+        <header class="oj-ai-submission-review__header">
+          <div><h1>학생 제출 평가</h1><p data-role="submission-summary">수업을 선택하세요.</p></div>
+          <button type="button" class="oj-ai-submission-review__icon-button" data-review-action="refresh" aria-label="새로고침" title="새로고침"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg></button>
+        </header>
+        <div class="oj-ai-submission-review__filters">
+          <label><span>수업</span><select data-review-field="context"><option value="">수업 선택</option></select></label>
+          <label><span>배포</span><select data-review-field="assignment"><option value="">전체 활동지</option></select></label>
+          <label><span>상태</span><select data-review-field="state"><option value="review_required">검토 대기</option><option value="reviewed" selected>검토 완료</option><option value="failed">평가 실패</option><option value="">전체</option></select></label>
+          <label class="oj-ai-submission-review__search"><span>찾기</span><input type="search" data-review-field="search" placeholder="활동지 또는 학생"></label>
+        </div>
+        <p class="oj-ai-submission-review__notice" data-review-role="notice" role="status">수업을 불러오는 중입니다.</p>
+        <div class="oj-ai-submission-review__layout" data-review-role="content" hidden>
+          <aside class="oj-ai-submission-review__inbox" aria-label="학생 제출 평가 목록">
+            <div data-review-role="list"></div>
+            <button type="button" data-review-action="load-more" class="oj-ai-submission-review__load-more" hidden>더 보기</button>
+          </aside>
+          <section class="oj-ai-submission-review__detail" data-review-role="detail" aria-live="polite">
+            <div class="oj-ai-submission-review__empty"><strong>제출을 선택하세요.</strong></div>
+          </section>
+        </div>
+        <dialog class="oj-ai-submission-review__dialog" data-review-role="reject-dialog" aria-labelledby="oj-ai-feedback-fixture-review-reject-title">
+          <form method="dialog">
+            <header><h2 id="oj-ai-feedback-fixture-review-reject-title">평가 반려</h2><button type="submit" value="cancel" class="oj-ai-submission-review__dialog-close" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+            <label><span>반려 사유</span><textarea rows="4" maxlength="2000" data-review-field="reject-reason"></textarea></label>
+            <p data-review-role="reject-status" class="oj-ai-submission-review__dialog-status" role="alert"></p>
+            <footer><button type="submit" value="cancel">취소</button><button type="button" class="oj-ai-submission-review__danger" data-review-action="confirm-reject">반려</button></footer>
+          </form>
+        </dialog>
+        <dialog class="oj-ai-submission-review__dialog" data-feedback-role="reject-dialog" aria-labelledby="oj-ai-feedback-fixture-reject-title">
+          <form method="dialog">
+            <header><h2 id="oj-ai-feedback-fixture-reject-title">피드백 기각</h2><button type="submit" value="cancel" class="oj-ai-submission-review__dialog-close" aria-label="닫기" title="닫기"><svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg></button></header>
+            <label><span>기각 사유</span><textarea rows="4" maxlength="2000" data-feedback-field="reject-reason" placeholder="다시 작성할 이유를 입력하세요."></textarea></label>
+            <p data-feedback-role="reject-status" class="oj-ai-submission-review__dialog-status" role="alert"></p>
+            <footer><button type="submit" value="cancel">취소</button><button type="button" class="oj-ai-submission-review__danger" data-feedback-action="confirm-reject">기각</button></footer>
+          </form>
+        </dialog>
+      </section>
+    </div>
+  </main>
+  <script>
+    (() => {
+      const publicId = (value) => `01K6B${String(value).padStart(21, '0')}`;
+      const hash = (value) => value.repeat(64);
+      const ids = {
+        evaluation: publicId(1),
+        assignment: publicId(2),
+        submission: publicId(3),
+        revision: publicId(4),
+        result: publicId(5),
+        run: publicId(6),
+        review: publicId(7),
+        responseEvidence: publicId(8),
+        responseReasoning: publicId(9),
+        criterionEvidence: publicId(10),
+        criterionReasoning: publicId(11),
+      };
+      const bindings = [
+        { binding_key: hash('a'), criterion_id: ids.criterionEvidence, label: '관찰 근거', maximum_points: '5.0000', position: 0, response_id: ids.responseEvidence, scope: 'response' },
+        { binding_key: hash('b'), criterion_id: ids.criterionReasoning, label: '설명과 추론', maximum_points: '5.0000', position: 1, response_id: ids.responseReasoning, scope: 'response' },
+      ];
+      const scoreDecisions = [
+        { binding_key: hash('a'), maximum_points: '5.0000', official_points: '4.0000', position: 0, reason_code: null, reason_note: null, response_id: ids.responseEvidence, scope: 'response', source: 'ai_accepted' },
+        { binding_key: hash('b'), maximum_points: '5.0000', official_points: '4.0000', position: 1, reason_code: 'evidence_checked', reason_note: '설명 근거를 확인했습니다.', response_id: ids.responseReasoning, scope: 'response', source: 'teacher_assigned' },
+      ];
+      const evaluation = {
+        id: ids.evaluation,
+        state: 'reviewed',
+        assignment: { id: ids.assignment, title: '우리 동네 생태 관찰', state: 'closed', due_at_utc: '2026-08-22 08:00:00' },
+        context: { type: 'class', id: 'class-5-2', revision: 'membership-17' },
+        learner: { user_id: 72, display_name: '김하늘', membership_revision: 'membership-17' },
+        submission: { id: ids.submission, state: 'submitted', source_revision_id: ids.revision, is_source_current: true, submitted_at_utc: '2026-08-22 07:42:00' },
+        candidate: { id: ids.result, score: '8.0000', maximum_score: '10.0000', confidence: '0.8800', abstained: false, safety_flagged: false, summary: '근거와 설명이 잘 연결되었습니다.', created_at_utc: '2026-08-22 07:46:00' },
+        review: { count: 1, latest_id: ids.review, latest_no: 1, latest_decision: 'adjusted', official_id: ids.review, official_scope: 'this_evaluation' },
+        feedback: { count: 0, latest_id: null, latest_revision_no: null, state: null },
+        release: { count: 0, latest_id: null, latest_no: null, state: null, current_id: null, current_hash: null, current_scope: 'none' },
+        priority: { rank: 0, reasons: [], review_needed_count: 0, item_count: 2 },
+        latest_run: { id: ids.run, run_no: 1, state: 'succeeded', queued_at_utc: '2026-08-22 07:43:00', updated_at_utc: '2026-08-22 07:46:00' },
+        requested_at_utc: '2026-08-22 07:43:00',
+        updated_at_utc: '2026-08-22 07:50:00',
+      };
+      const detail = {
+        evaluation,
+        source: {
+          evaluation_ref: 'EV_BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
+          submission_revision: { id: ids.revision, content_hash: hash('c'), revision_no: 2, is_official: true },
+          worksheet_publication: { id: publicId(12), content_hash: hash('d') },
+          locale: 'ko-KR',
+          grading_schema_hash: hash('1'),
+          representation_set_hash: hash('2'),
+          responses: [
+            { response_id: ids.responseEvidence, kind: 'long_text', label: '관찰한 생물과 환경을 적으세요.', position: 0, answer: { text: '하천에서 잠자리와 갈대를 관찰했습니다.' } },
+            { response_id: ids.responseReasoning, kind: 'long_text', label: '서로 어떤 영향을 주는지 설명하세요.', position: 1, answer: { text: '깨끗한 물과 식물이 생물의 먹이와 쉼터가 됩니다.' } },
+          ],
+          bindings,
+          rubric: { content_hash: hash('3'), revision_ref: publicId(13), total_points: '10.0000', criteria: bindings.map((item) => ({ criterion_id: item.criterion_id, label: item.label, maximum_points: item.maximum_points, scope: item.scope })) },
+        },
+        configuration: {},
+        selected_result: {
+          id: ids.result,
+          run_id: ids.run,
+          provider_status: 'complete',
+          candidate_score: '8.0000',
+          maximum_score: '10.0000',
+          overall_confidence: '0.8800',
+          abstained: false,
+          safety_flagged: false,
+          summary: '관찰 근거와 설명이 잘 연결되어 있습니다.',
+          items: [
+            { binding_key: hash('a'), criterion_id: ids.criterionEvidence, response_id: ids.responseEvidence, scope: 'response', decision: 'score', candidate_points: '4.0000', maximum_points: '5.0000', confidence: '0.9200', rationale: '관찰 장소와 생물을 구체적으로 적었습니다.', abstain_reason: null, evidence: [{ source: 'response', anchor: 'answer.text', quote: '잠자리와 갈대' }], flags: [], position: 0 },
+            { binding_key: hash('b'), criterion_id: ids.criterionReasoning, response_id: ids.responseReasoning, scope: 'response', decision: 'score', candidate_points: '3.5000', maximum_points: '5.0000', confidence: '0.8400', rationale: '환경과 생물의 관계를 설명했습니다.', abstain_reason: null, evidence: [{ source: 'response', anchor: 'answer.text', quote: '먹이와 쉼터' }], flags: [], position: 1 },
+          ],
+          limitations: [],
+          created_at_utc: '2026-08-22 07:46:00',
+        },
+        runs: [{ id: ids.run, run_no: 1, state: 'succeeded', result_id: ids.result, attempt_count: 1, available_at_utc: '2026-08-22 07:43:00', queued_at_utc: '2026-08-22 07:43:00', started_at_utc: '2026-08-22 07:44:00', finished_at_utc: '2026-08-22 07:46:00', last_error_code: null }],
+        reviews: [{
+          id: ids.review,
+          review_no: 1,
+          result_id: ids.result,
+          decision: 'adjusted',
+          official_score: '8.0000',
+          score_decisions: { schema_id: 'oj_ai.submission_score_decisions', schema_version: '1.0.0', value: { items: scoreDecisions } },
+          reason: null,
+          previous_id: null,
+          is_official: true,
+          created_at_utc: '2026-08-22 07:50:00',
+        }],
+        feedback: [],
+        releases: [],
+        review_precondition: {
+          expected_result_id: ids.result,
+          expected_result_hash: hash('9'),
+          expected_official_review_id: ids.review,
+          expected_official_review_hash: hash('8'),
+          expected_review_no: 1,
+        },
+      };
+      const clone = (value) => JSON.parse(JSON.stringify(value));
+      const noteFixture = new URLSearchParams(location.search).has('student_note');
+      const noteFailure = new URLSearchParams(location.search).get('note_failure');
+      if (noteFailure) detail.runs.unshift({ id: publicId(300), run_no: 2, operation: 'special_note_draft', state: 'failed', last_error_code: 'student_note_schema_invalid', last_error_message: noteFailure === 'legacy' ? null : 'AI가 반환한 근거 문구가 제공된 원문과 일치하지 않습니다.' });
+      if (noteFixture) document.querySelector('#oj-ai-submission-review-app').dataset.canManageStudentNotes = '1';
+      const note = { note: { id: publicId(200) }, revisions: [], precondition: {} };
+      const noteEvidence = { evidence_key: hash('f'), observation: '제출물에서 관찰 대상과 환경의 관계를 설명함.' };
+      function appendNote(state, content) {
+        const revisionNo = note.revisions.length + 1;
+        const revision = { id: publicId(200 + revisionNo), hash: hash(String(revisionNo)), revision_no: revisionNo, state, content: clone(content), include_in_reports: false, created_at_utc: '2026-09-21 01:00:00' };
+        note.revisions.push(revision);
+        note.precondition = { latest_revision_id: revision.id, latest_revision_hash: revision.hash, latest_revision_no: revisionNo, latest_state: state, include_in_reports: false };
+      }
+      appendNote('ai_draft', { evidence: [noteEvidence], summary: { evidence_keys: [noteEvidence.evidence_key], text: '나는 관찰 내용을 기록했습니다.' }, strengths: [{ evidence_keys: [noteEvidence.evidence_key], text: '환경과 생물의 관계를 설명함.' }], support_suggestions: [{ evidence_keys: [noteEvidence.evidence_key], text: '비교 관찰을 추가하는 지도가 필요함.' }] });
+      window.__noteRequests = [];
+      const generatedFeedback = () => ({
+        criterion_feedback: [
+          { binding_key: hash('a'), strength: '관찰 대상을 구체적으로 적었습니다.', next_step: '관찰한 시간도 함께 적어 보세요.' },
+          { binding_key: hash('b'), strength: '환경과 생물의 관계를 설명했습니다.', next_step: '한 가지 사례를 더 연결해 보세요.' },
+        ],
+        next_steps: ['관찰 시간을 기록하기', '다른 장소와 비교하기'],
+        overall_feedback: '관찰한 내용을 근거로 관계를 잘 설명했습니다.',
+        safety_flags: ['teacher_review_required'],
+      });
+      function appendFeedback(state, value, sourceRunId) {
+        const previous = detail.feedback[detail.feedback.length - 1] || null;
+        const revisionNo = detail.feedback.length + 1;
+        const revision = {
+          id: publicId(100 + revisionNo),
+          hash: hash(['a', 'b', 'c', 'd', 'e'][revisionNo - 1]),
+          revision_no: revisionNo,
+          review_id: ids.review,
+          audience: 'student',
+          state,
+          profile: {
+            schema_id: state === 'rejected' ? 'oj_ai.submission_feedback_rejection' : 'oj_ai.submission_feedback_result',
+            schema_version: '1.0.0',
+            value: { ...clone(value), source_hash: detail.review_precondition.expected_official_review_hash },
+          },
+          previous_id: previous?.id || null,
+          source_run_id: sourceRunId,
+          created_at_utc: `2026-08-24 0${revisionNo + 9}:00:00`,
+        };
+        detail.feedback.push(revision);
+        evaluation.feedback = { count: revisionNo, latest_id: revision.id, latest_revision_no: revisionNo, state };
+        return revision;
+      }
+      const envelope = (data, meta = {}) => ({ data, meta: { correlation_id: 'submission-feedback-s04', ...meta }, links: {}, actions: [] });
+      const jsonResponse = (payload, status = 200) => Promise.resolve({ ok: status >= 200 && status < 300, status, json: async () => payload });
+      window.__feedbackRequests = [];
+      window.__feedbackDetailReads = 0;
+      window.__feedbackConflictOnce = false;
+      window.__feedbackPermissionDenied = false;
+      window.fetch = async (url, options = {}) => {
+        const value = String(url);
+        if (noteFixture && value.includes('/student-notes')) {
+          if (options.method === 'POST') {
+            const body = JSON.parse(options.body);
+            window.__noteRequests.push({ url: value, body });
+            if (value.includes('/commands/review?')) appendNote('teacher_draft', body.payload.note);
+            if (value.includes('/commands/approve?')) appendNote('approved', note.revisions.at(-1).content);
+            return jsonResponse(envelope({}), 201);
+          }
+          return jsonResponse(envelope(value.includes('/student-notes?') ? { items: noteFailure ? [] : [{ id: note.note.id, evaluation: { id: ids.evaluation } }] } : clone(note)));
+        }
+        if (value.includes('/assignments?')) return jsonResponse(envelope({items:[evaluation.assignment]}));
+        if (value.endsWith('/contexts?limit=100')) {
+          return jsonResponse(envelope({ items: [{ type: 'class', id: 'class-5-2', revision: 'membership-17', label: '5학년 2반', selectable: true }] }));
+        }
+        if (value.includes('/submission-evaluations?')) {
+          return jsonResponse(envelope({ items: [evaluation] }, { next_cursor: '', has_more: false, limit: 40 }));
+        }
+        if (value.includes(`/submission-evaluations/${ids.evaluation}?`) && (!options.method || options.method === 'GET')) {
+          window.__feedbackDetailReads += 1;
+          return jsonResponse(envelope(detail));
+        }
+        if (value.includes('/commands/') && options.method === 'POST') {
+          const body = JSON.parse(options.body);
+          const kind = value.includes('/generate-feedback?') ? 'generate' : value.includes('/review-feedback?') ? 'review' : value.includes('/approve-feedback?') ? 'approve' : 'unknown';
+          window.__feedbackRequests.push({ kind, url: value, headers: options.headers, body });
+          if (window.__feedbackConflictOnce) {
+            window.__feedbackConflictOnce = false;
+            return jsonResponse({ code: 'feedback_source_stale', message: '피드백이 변경되었습니다.', data: { status: 409 } }, 409);
+          }
+          if (window.__feedbackPermissionDenied) {
+            return jsonResponse({ code: 'submission_feedback_review_scope_denied', message: '권한이 없습니다.', data: { status: 403 } }, 403);
+          }
+          if (kind === 'generate') {
+            const revision = appendFeedback('ai_draft', generatedFeedback(), publicId(50));
+            return jsonResponse(envelope({ evaluation: { id: ids.evaluation }, feedback_revision: revision }), 202);
+          }
+          if (kind === 'review') {
+            const latest = detail.feedback[detail.feedback.length - 1] || null;
+            if (body.payload.decision === 'teacher_draft') {
+              const profile = { ...clone(body.payload.feedback), safety_flags: [] };
+              const sourceRunId = body.payload.source_mode === 'edit' ? latest?.source_run_id || null : null;
+              const revision = appendFeedback('teacher_draft', profile, sourceRunId);
+              return jsonResponse(envelope({ evaluation: { id: ids.evaluation }, feedback_revision: revision }), 201);
+            }
+            const revision = appendFeedback('rejected', { reason: body.payload.reason }, latest?.source_run_id || null);
+            return jsonResponse(envelope({ evaluation: { id: ids.evaluation }, feedback_revision: revision }), 201);
+          }
+          if (kind === 'approve') {
+            const latest = detail.feedback[detail.feedback.length - 1];
+            const revision = appendFeedback('approved', latest.profile.value, latest.source_run_id);
+            return jsonResponse(envelope({ evaluation: { id: ids.evaluation }, feedback_revision: revision }), 201);
+          }
+        }
+        return jsonResponse({ code: 'oj_ai_not_found', message: '대상을 찾을 수 없습니다.', data: { status: 404 } }, 404);
+      };
+    })();
+  </script>
+  <script>if(location.pathname.endsWith('submission-feedback-workbench-visual.html')){const url=new URL(location.href);url.searchParams.set('stage','report');history.replaceState(history.state,'',url.href);}</script>
+  <script src="../../resources/js/worksheet-workflow.js"></script>
+  <script src="../../resources/js/learner-labels.js"></script>
+  <script src="../../resources/js/submission-evaluation-review-workbench.js"></script>
+</body>
+</html>

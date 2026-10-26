@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 평가 데이터 관리</title>
+  <link rel="stylesheet" href="../../resources/css/admin-shell.css">
+  <link rel="stylesheet" href="../../resources/css/assessment-configuration-settings.css">
+  <link rel="stylesheet" href="../../resources/css/data-management-settings.css">
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #f3f5f7; }
+    body { box-sizing: border-box; padding: 28px; font-family: Arial, "Malgun Gothic", sans-serif; }
+    .fixture-shell { max-width: 1180px; margin: 0 auto; }
+    @media (max-width: 700px) { body { padding: 14px; } }
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
+    <symbol id="database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+    <symbol id="download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+    <symbol id="trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/></symbol>
+    <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  </svg>
+  <main class="fixture-shell">
+    <section
+      id="oj-ai-assessment-settings"
+      class="oj-ai-settings"
+      data-rest-root="https://example.test/wp-json/oj-ai/v1"
+      data-rest-nonce="data-management-nonce"
+      data-locale="ko-KR"
+      data-icon-sprite=""
+    >
+      <header class="oj-ai-settings__header">
+        <div><h1>설정</h1><p>평가 기준과 AI 연결을 관리합니다.</p></div>
+        <button type="button" class="oj-ai-settings__refresh" aria-label="새로고침" title="새로고침">
+          <svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#refresh-cw"></use></svg>
+        </button>
+      </header>
+      <nav class="oj-ai-settings__tabs" role="tablist" aria-label="설정 영역">
+        <button type="button" role="tab" aria-selected="false">평가 정책</button>
+        <button type="button" role="tab" aria-selected="false">기본 루브릭</button>
+        <button type="button" role="tab" aria-selected="false">검토·승인</button>
+        <button type="button" role="tab" aria-selected="false">AI 연결</button>
+        <button type="button" role="tab" aria-selected="true">데이터 관리</button>
+        <button type="button" role="tab" aria-selected="false">시스템 상태</button>
+      </nav>
+      <section id="oj-ai-settings-panel-data" class="oj-ai-data" data-settings-panel="data" role="tabpanel">
+        <div class="oj-ai-data__preservation">
+          <svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#database"></use></svg>
+          <div><strong>데이터는 자동으로 삭제되지 않습니다.</strong><p>플러그인을 비활성화하거나 제거해도 활동지와 평가 결과는 보존됩니다.</p></div>
+        </div>
+        <div class="oj-ai-data__rows">
+          <section class="oj-ai-data__row">
+            <div><h2>이전 데이터 가져오기</h2><p>이 플러그인의 이전 버전에서 만든 활동지와 평가 자료를 가져옵니다.</p></div>
+            <button type="button" class="oj-ai-data__button" data-data-action="migration-open">
+              <svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#download"></use></svg><span>가져오기</span>
+            </button>
+          </section>
+          <section class="oj-ai-data__row oj-ai-data__row--danger">
+            <div><h2>모든 데이터 영구 삭제</h2><p>활동지, 학생 제출, 평가 결과와 비공개 파일을 되돌릴 수 없게 삭제합니다.</p></div>
+            <button type="button" class="oj-ai-data__button oj-ai-data__button--danger" data-data-action="purge-open">
+              <svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#trash"></use></svg><span>영구 삭제</span>
+            </button>
+          </section>
+        </div>
+
+        <dialog class="oj-ai-data__dialog" data-data-dialog="migration" aria-labelledby="oj-ai-migration-title">
+          <form>
+            <header><h2 id="oj-ai-migration-title">이전 데이터 가져오기</h2>
+              <button type="button" class="oj-ai-data__icon-button" data-data-action="dialog-close" aria-label="닫기" title="닫기">
+                <svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg>
+              </button>
+            </header>
+            <p class="oj-ai-data__notice" data-data-role="migration-notice" role="status">가져올 데이터를 확인하는 중입니다.</p>
+            <div class="oj-ai-data__dialog-body" data-data-role="migration-summary" hidden>
+              <dl class="oj-ai-data__metrics">
+                <div><dt>가져올 항목</dt><dd data-data-value="migration-candidates">0</dd></div>
+                <div><dt>연결 확인</dt><dd data-data-value="migration-mapping">0</dd></div>
+                <div><dt>제외 항목</dt><dd data-data-value="migration-excluded">0</dd></div>
+              </dl>
+              <p class="oj-ai-data__detail" data-data-role="migration-detail"></p>
+              <label class="oj-ai-data__check"><input type="checkbox" data-data-field="migration-ack"><span>원본 데이터는 바꾸거나 삭제하지 않습니다.</span></label>
+            </div>
+            <footer><button type="button" data-data-action="dialog-close">취소</button><button type="button" class="oj-ai-data__button oj-ai-data__button--primary" data-data-action="migration-start" disabled>가져오기 시작</button></footer>
+          </form>
+        </dialog>
+
+        <dialog class="oj-ai-data__dialog oj-ai-data__dialog--danger" data-data-dialog="purge" aria-labelledby="oj-ai-purge-title">
+          <form>
+            <header><h2 id="oj-ai-purge-title">모든 데이터 영구 삭제</h2>
+              <button type="button" class="oj-ai-data__icon-button" data-data-action="dialog-close" aria-label="닫기" title="닫기">
+                <svg class="oj-ai-icon" aria-hidden="true" focusable="false"><use href="#x"></use></svg>
+              </button>
+            </header>
+            <p class="oj-ai-data__notice" data-data-role="purge-notice" role="status">삭제할 데이터를 확인하는 중입니다.</p>
+            <div class="oj-ai-data__dialog-body" data-data-role="purge-summary" hidden>
+              <dl class="oj-ai-data__metrics">
+                <div><dt>데이터 행</dt><dd data-data-value="purge-rows">0</dd></div>
+                <div><dt>비공개 파일</dt><dd data-data-value="purge-files">0</dd></div>
+                <div><dt>진행 중 작업</dt><dd data-data-value="purge-jobs">0</dd></div>
+              </dl>
+              <p class="oj-ai-data__warning">삭제 후에는 복구할 수 없습니다. 최근 백업을 먼저 확인하세요.</p>
+              <label class="oj-ai-data__check"><input type="checkbox" data-data-field="purge-backup-ack"><span>최근 백업을 확인했습니다.</span></label>
+              <label class="oj-ai-data__field"><span>백업 확인 메모</span><input type="text" maxlength="200" autocomplete="off" data-data-field="purge-backup-reference"></label>
+              <label class="oj-ai-data__field"><span>백업 확인 시각</span><input type="datetime-local" data-data-field="purge-backup-time"></label>
+              <label class="oj-ai-data__field"><span><strong>영구 삭제</strong>를 입력하세요.</span><input type="text" maxlength="20" autocomplete="off" data-data-field="purge-phrase"></label>
+            </div>
+            <footer><button type="button" data-data-action="dialog-close">취소</button><button type="button" class="oj-ai-data__button oj-ai-data__button--danger" data-data-action="purge-start" disabled>영구 삭제 시작</button></footer>
+          </form>
+        </dialog>
+      </section>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const hash = (letter) => letter.repeat(64);
+      const response = (data, status = 200) => Promise.resolve({
+        ok: status >= 200 && status < 300,
+        status,
+        json: async () => ({ data, meta: { correlation_id: 'data-management-visual' }, links: {}, actions: [] }),
+      });
+      window.__dataManagementRequests = [];
+      window.fetch = async (url, options = {}) => {
+        const path = new URL(String(url)).pathname.replace('/wp-json/oj-ai/v1', '');
+        const body = options.body ? JSON.parse(options.body) : {};
+        const headers = options.headers || {};
+        window.__dataManagementRequests.push({ path, body, idempotencyKey: headers['Idempotency-Key'] || '' });
+        if (path === '/migration-runs/commands/preview') {
+          return response({ migration_preview: { state: 'previewed', preview_token: 'migration-preview-token', counts: { source_rows: 15, migration_candidates: 12, excluded: 3, conflicts: 0, mapping_needed: 0 } } });
+        }
+        if (path === '/migration-runs/commands/approve') {
+          return response({ migration_run: { id: '01HZY3M4N5P6Q7R8S9T0V1W2X3', state: 'approved', plan_hash: hash('a'), source: { fingerprint: hash('b') } } }, 201);
+        }
+        if (path.includes('/migration-runs/') && path.endsWith('/commands/execute')) {
+          return response({ migration_run: { state: 'running' } }, 202);
+        }
+        if (path === '/purge-jobs/commands/preview') {
+          return response({ purge_preview: { state: 'previewed', preview_token: 'purge-preview-token', total_row_count: 90, private_files: { file_count: 3, blob_bytes: 2048, legal_hold_count: 0 }, incomplete_jobs: { total: 0, by_type: {} } } });
+        }
+        if (path === '/purge-jobs/commands/approve') {
+          return response({ purge_job: { id: '01HZY3M4N5P6Q7R8S9T0V1W2X4', state: 'approved', preview_hash: hash('c') } }, 201);
+        }
+        if (path.includes('/purge-jobs/') && path.endsWith('/commands/execute')) {
+          return response({ purge_job: { state: 'running' } }, 202);
+        }
+        return response({ message: '대상을 찾을 수 없습니다.' }, 404);
+      };
+    })();
+  </script>
+  <script src="../../resources/js/data-management-settings.js"></script>
+</body>
+</html>
