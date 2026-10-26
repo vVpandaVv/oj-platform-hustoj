@@ -9,9 +9,7 @@
     "focus-tracker",
     "learning-materials",
     "oj-ai-dashboard",
-    "oj-code-arena",
     "oj-code-lab",
-    "oj-ml-playgrounds",
     "oj-primm",
     "readcontents-library",
     "teaching-tools",
@@ -19,7 +17,8 @@
     "_shared",
     "docs",
     "_notes/readcontents-server-import-2026-09-12/editor-source/assets/src",
-    "_notes/readcontents-server-import-2026-09-12/editor-source/tests"
+    "_notes/readcontents-server-import-2026-09-12/editor-source/tests",
+    "source"
   ],
   "includeFiles": [
     ".editorconfig",
@@ -44,9 +43,7 @@
     "focus-tracker",
     "learning-materials",
     "oj-ai-dashboard",
-    "oj-code-arena",
     "oj-code-lab",
-    "oj-ml-playgrounds",
     "oj-primm",
     "readcontents-library",
     "teaching-tools",
@@ -109,6 +106,9 @@
     "thumbs.db"
   ],
   "excludePaths": [
+    "_release-kit/guides/oj-code-arena.md",
+    "_release-kit/guides/oj-ml-playgrounds.md",
+    "_release-kit/plugins.json",
     "oj-ai-dashboard/docs/ai-assessment/live-account-verification-1.0.0-2026-09-13.html",
     "oj-ai-dashboard/docs/ai-assessment/production-acceptance-2026-09-08.html",
     "oj-ai-dashboard/docs/ai-assessment/server-install-window.html",
@@ -128,8 +128,10 @@
     "oj-integration-rebuild/scripts/build-feedback-report.py"
   ],
   "excludePrefixes": [
+    "oj-code-arena",
     "oj-code-lab/docs/history",
-    "oj-integration-rebuild/oj-platform/docs/research-feedback-validation-20260911"
+    "oj-integration-rebuild/oj-platform/docs/research-feedback-validation-20260911",
+    "oj-ml-playgrounds"
   ],
   "excludeOperationalDocumentNamePatterns": [
     "production-*",
@@ -204,5 +206,16 @@
       ]
     }
   ],
-  "generatedAiDocumentationIndex": "oj-ai-dashboard/docs/ai-assessment/index.html"
+  "generatedAiDocumentationIndex": "oj-ai-dashboard/docs/ai-assessment/index.html",
+  "releaseLayoutPlugins": [
+    "oj-platform",
+    "edu-games",
+    "learning-materials",
+    "oj-ai-dashboard",
+    "oj-code-lab",
+    "readcontents-library",
+    "teaching-tools",
+    "focus-tracker",
+    "oj-primm"
+  ]
 }

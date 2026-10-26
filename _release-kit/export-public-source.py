@@ -292,27 +292,15 @@ def destination(root: Path, value: str) -> Path:
 
 def generated_files(policy: dict[str, Any]) -> dict[str, bytes]:
     catalog = json.dumps({"schemaVersion": 1, "collections": []}, ensure_ascii=False, indent=2) + "\n"
-    readme = (
-        "# Source-only content catalog\n\n"
-        "This public source snapshot intentionally excludes the original content "
-        "catalog and all classroom, learner, teacher, research and private content files.\n\n"
-        "catalog.json is a generated placeholder with schemaVersion 1 and an empty "
-        "collections array. It does not refer to private files, release archives or "
-        "directories outside this snapshot.\n\n"
-        "Restore only separately reviewed, authorized content when preparing your own "
-        "deployment. Regenerate installation guides and content outputs through "
-        "_release-kit/release.cmd; source-only does not mean content was migrated, "
-        "published, or verified. See SOURCE-SNAPSHOT.json for provenance.\n"
-    )
-    return {
+    readme = "# Content catalog\n\nManage collections in catalog.json.\n"
+    generated = {
         policy["generatedCatalog"]: catalog.encode("utf-8"),
         policy["generatedContentReadme"]: readme.encode("utf-8"),
         policy["generatedAiDocumentationIndex"]: (
             "<!doctype html>\n<html lang=\"en\"><meta charset=\"utf-8\">"
             "<title>Public architecture documentation</title><body>"
             "<h1>Public architecture documentation</h1>"
-            "<p>This source snapshot includes the reviewed a-d and a-ds design documents. "
-            "Private implementation diaries, live deployment evidence and screenshots are omitted.</p>"
+            "<p>Architecture and contract design documents.</p>"
             "<ul><li><a href=\"design-procedure.html\">Design procedure</a></li>"
             "<li><a href=\"code-consistency.html\">Code consistency</a></li>"
             "<li><a href=\"a-ds-00-scope-baseline.html\">Scope baseline</a></li></ul>"
@@ -320,6 +308,24 @@ def generated_files(policy: dict[str, Any]) -> dict[str, bytes]:
             "</body></html>\n"
         ).encode("utf-8"),
     }
+    release_plugins = policy.get("releaseLayoutPlugins", [])
+    if release_plugins:
+        for plugin in release_plugins:
+            relative_path(plugin)
+            if "/" in plugin:
+                raise ExportError("Release layout requires a plugin identifier.")
+            generated[f"_releases/{plugin}/.gitkeep"] = b""
+        generated["_releases/README.md"] = (
+            "# Distribution ZIPs\n\n"
+            "Path: `<plugin>/<version>/<plugin>-<version>.zip`.\n"
+        ).encode("utf-8")
+        registry_path = Path(__file__).parent / "plugins.json"
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        registry["plugins"] = [item for item in registry["plugins"] if item["id"] in release_plugins]
+        generated["_release-kit/plugins.json"] = (
+            json.dumps(registry, ensure_ascii=False, indent=2) + "\n"
+        ).encode("utf-8")
+    return generated
 
 
 def manifest(

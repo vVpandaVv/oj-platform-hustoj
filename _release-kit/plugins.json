@@ -84,36 +84,6 @@
       ]
     },
     {
-      "id": "oj-code-arena",
-      "order": 4,
-      "source": "oj-code-arena",
-      "mainFile": "oj-code-arena.php",
-      "guide": "guides/oj-code-arena.md",
-      "extraPackages": [
-        "oj-code-arena-server-{version}.zip"
-      ],
-      "platformRequires": ">=2.0.0-dev.30",
-      "builder": {
-        "type": "powershell",
-        "script": "tools/release/pack.ps1",
-        "args": [
-          "-Version",
-          "{version}",
-          "-OutDir",
-          "{out}"
-        ]
-      },
-      "uiLintExclude": [
-        "resources/css/arena.css",
-        "resources/css/board.css",
-        "resources/js/play.js",
-        "resources/js/board.js",
-        "resources/js/arena-look.js",
-        "game-server/*",
-        "shared/*"
-      ]
-    },
-    {
       "id": "oj-code-lab",
       "order": 5,
       "source": "oj-code-lab",
@@ -127,27 +97,6 @@
           "{out}"
         ]
       }
-    },
-    {
-      "id": "oj-ml-playgrounds",
-      "order": 6,
-      "source": "oj-ml-playgrounds",
-      "mainFile": "oj-ml-playgrounds.php",
-      "guide": "guides/oj-ml-playgrounds.md",
-      "builder": {
-        "type": "php",
-        "preScript": "scripts/verify.ps1",
-        "script": "scripts/package.php",
-        "args": [
-          "{out}"
-        ],
-        "env": {
-          "OJ_ML_UPSTREAM_FRONTEND": "_notes/tmp/ml-playgrounds-2276d1f-applycheck-20260911/ml-playgrounds-2276d1f98d6b7c5c11608a27b20f3c0709aa1542/frontend"
-        }
-      },
-      "uiLintExclude": [
-        "resources/playground/*"
-      ]
     },
     {
       "id": "readcontents-library",

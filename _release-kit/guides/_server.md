@@ -1,6 +1,6 @@
 # 서버 준비 (순서대로)
 
-HUSTOJ 서버에 OJ 플러그인을 설치하기 위한 서버 작업입니다. 위에서부터 **명령을 한 줄씩** 입력하고 `Enter`를 누릅니다.
+Ubuntu 24.04 LTS에 HUSTOJ와 OJ 플러그인을 설치하기 위한 서버 작업입니다. 위에서부터 **명령을 한 줄씩** 입력하고 `Enter`를 누릅니다.
 
 - 웹 루트: `/home/judge/src/web` (WordPress가 설치된 곳)
 - PHP 버전: 8.3
@@ -27,21 +27,21 @@ HUSTOJ 서버에 OJ 플러그인을 설치하기 위한 서버 작업입니다. 
 
 # A. 공통 필수
 
-## 1. HUSTOJ 설치 (이미 설치된 서버는 건너뜀)
+## 1. Ubuntu 24.04 LTS에 HUSTOJ 설치 (이미 설치된 서버는 건너뜀)
 
 ```
-wget http://dl.hustoj.com/install.sh
+wget -O install-hustoj-ubuntu24.04.sh https://raw.githubusercontent.com/zhblue/hustoj/master/trunk/install/install-ubuntu24.04.sh
 ```
 
 ```
-sudo bash install.sh
+sudo bash install-hustoj-ubuntu24.04.sh
 ```
 
-HUSTOJ 설치 스크립트를 내려받아 실행합니다. 시간이 걸립니다.
+[공식 HUSTOJ 저장소](https://github.com/zhblue/hustoj)의 현재 Ubuntu 24.04 설치 스크립트를 내려받아 실행합니다. 설치가 끝나면 다음 단계로 진행합니다.
 
 ## 2. 시스템·PHP 보안 업데이트
 
-모든 플러그인의 공통 작업입니다. 운영 중인 서버는 수업·채점·실시간 경기가 없는 시간에 **20단계의 DB·웹 파일·서버 설정 백업부터 완료**합니다. 새 서버에서 아직 보관할 자료가 없을 때만 백업을 건너뜁니다. 이 단계는 설치된 OS와 PHP 8.3 계열의 패키지를 갱신하며, OS 배포판이나 PHP 주 버전을 바꾸는 절차는 아닙니다.
+모든 플러그인의 공통 작업입니다. 운영 중인 서버는 수업·채점·실시간 활동이 없는 시간에 **20단계의 DB·웹 파일·서버 설정 백업부터 완료**합니다. 새 서버에서 아직 보관할 자료가 없을 때만 백업을 건너뜁니다. 이 단계는 설치된 OS와 PHP 8.3 계열의 패키지를 갱신하며, OS 배포판이나 PHP 주 버전을 바꾸는 절차는 아닙니다.
 
 먼저 OS, CLI·FPM 버전과 설치 패키지 전체 버전을 확인합니다.
 
@@ -409,7 +409,7 @@ location = /wp-content/debug.log {
 }
 ```
 
-업로드 자료의 정적 열람과 인증서의 `.well-known` 경로는 유지하고, PHP로 실행될 수 있는 업로드·숨김 파일·설정 백업·디버그 로그의 직접 요청만 차단합니다. `sudo nginx -t` 성공 후 `sudo systemctl reload nginx`로 적용합니다. `/login`과 업로드된 정상 이미지, 사용하는 실시간 교실·아레나를 확인합니다. 제한을 확인하려고 실제 웹셸을 업로드하지 않습니다.
+업로드 자료의 정적 열람과 인증서의 `.well-known` 경로는 유지하고, PHP로 실행될 수 있는 업로드·숨김 파일·설정 백업·디버그 로그의 직접 요청만 차단합니다. `sudo nginx -t` 성공 후 `sudo systemctl reload nginx`로 적용합니다. `/login`과 업로드된 정상 이미지, 사용하는 실시간 교실을 확인합니다. 제한을 확인하려고 실제 웹셸을 업로드하지 않습니다.
 
 WordPress 설정 파일의 내용은 화면이나 채팅에 출력하지 않습니다. 웹 PHP가 `www-data:www-data`로 실행되고 현재 파일도 해당 소유자·그룹인 것을 먼저 확인한 경우 다음 권한으로 다른 로컬 사용자의 읽기를 제한합니다.
 
@@ -664,27 +664,7 @@ sudo vi /home/judge/src/web/wp-config.php
 define('OJ_AI_PRIVATE_STORAGE_DIR', '/home/judge/oj-ai-private');
 ```
 
-## 14. ML 플레이그라운드 (OJ ML Playgrounds)
-
-```
-sudo mkdir /home/judge/oj-ml-playgrounds
-```
-
-```
-sudo chown -R www-data:www-data /home/judge/oj-ml-playgrounds
-```
-
-```
-sudo vi /home/judge/src/web/wp-config.php
-```
-
-`/wp-settings` 로 찾고 `O`를 눌러 그 위에 아래 줄을 넣은 뒤 저장합니다.
-
-```
-define('OJ_ML_PLAYGROUNDS_PRIVATE_DIR', '/home/judge/oj-ml-playgrounds');
-```
-
-13·14단계를 했으면 PHP를 다시 시작합니다.
+13단계를 마쳤으면 PHP를 다시 시작합니다.
 
 ```
 sudo systemctl restart php8.3-fpm
@@ -700,13 +680,7 @@ sudo mkdir /home/judge/src/readcontents-imports
 sudo chown -R www-data:www-data /home/judge/src/readcontents-imports
 ```
 
-콘텐츠 ZIP을 넣는 폴더입니다(웹 루트 바깥이라 웹으로는 열리지 않습니다). **내 PC**의 PowerShell에서 배포 폴더(`latest`)로 이동한 뒤 콘텐츠를 보냅니다.
-
-```
-scp .\content\{{content_package}} 계정@서버주소:/tmp/
-```
-
-서버에서 폴더로 옮깁니다.
+콘텐츠 ZIP을 서버의 `/tmp/`에 업로드한 뒤 아래 명령으로 웹 루트 밖 저장 폴더로 옮깁니다.
 
 ```
 sudo mv /tmp/{{content_package}} /home/judge/src/readcontents-imports/
@@ -944,79 +918,43 @@ sudo chmod 2775 /home/judge/data/_capture
 
 # C. 선택
 
-## 18. 공통 실시간 서버 (선택)
+## 18. Teaching Tools 공통 실시간 서버 (선택)
 
-티칭툴과 아레나는 **서로 의존하지 않습니다.** 각 WordPress ZIP이 같은 공통 서버 런타임을 포함합니다. 아레나만 쓰면 18-1, 티칭툴만 쓰면 18-2만 진행하고, 둘 다 쓰면 어느 순서로 진행해도 됩니다. 기존 OJ Platform 공통 기반 요구사항은 유지합니다.
+티칭툴의 판서와 수업 신호를 실시간으로 전달하는 서버를 설치합니다. Node.js 24 이상, Ubuntu/Debian, systemd, 기존 nginx 사이트가 필요합니다. Node가 없거나 오래되었으면 설치기가 24를 설치합니다.
 
-첫 실행은 공통 서버를 설치하고 다음 실행은 해당 모듈만 등록·갱신합니다. 서비스와 내부 포트는 하나이고 인증키·앱·채널·방·데이터는 분리합니다. Node.js 24 이상, Ubuntu/Debian, systemd, 기존 nginx 사이트가 필요합니다. Node가 없거나 오래되었으면 설치기가 24를 설치합니다.
+**변경 파일**
 
-**공통 변경 파일**
-
-- `/opt/oj-realtime-hub/config.json`: 앱별 등록·비밀키·허용 출처. 웹에서 공개하지 않습니다.
-- `/opt/oj-realtime-hub/modules/<앱>/`: 각 플러그인의 독립 실행 모듈.
+- `/opt/oj-realtime-hub/config.json`: 앱 등록·비밀키·허용 출처. 웹에서 공개하지 않습니다.
+- `/opt/oj-realtime-hub/modules/teaching-tools/`: 판서 중계 모듈.
 - `/etc/systemd/system/oj-realtime-hub.service`: 공통 서비스, 내부 `127.0.0.1:3210`.
-- `/etc/nginx/sites-enabled/default`: 해당 사이트 블록에 모듈별 스니펫 연결.
+- `/etc/nginx/snippets/oj-realtime-hub.conf`: `/classroom-live` 및 상태 경로 전달.
+- `/etc/nginx/sites-enabled/default`: 해당 사이트 블록에 스니펫 연결.
 
-설치기는 `/opt/.oj-realtime-backup.*`에 기존 서버·설정을 백업합니다. nginx 검사나 등록된 모듈의 인증 확인이 실패하면 이전 설치로 복구를 시도하고 백업 경로를 표시합니다. 다른 사이트의 등록, 충돌하는 경로, 다른 프로그램이 사용하는 포트는 덮어쓰지 않습니다. 설치된 공통 런타임이 더 최신이면 낮추지 않습니다.
+설치기는 `/opt/.oj-realtime-backup.*`에 기존 서버·설정을 백업합니다. nginx 검사나 인증 확인이 실패하면 이전 설치로 복구를 시도하고 백업 경로를 표시합니다. 충돌하는 경로나 다른 프로그램이 사용하는 포트는 덮어쓰지 않습니다. 설치된 공통 런타임이 더 최신이면 낮추지 않습니다.
 
-**공통 서버 갱신은 모든 실시간 연결을 재시작합니다.** 진행 중인 아레나 경기는 종료되므로 반드시 실시간 수업·경기가 없는 시간에 실행합니다. WordPress 기록과 저장된 미전송 결과는 유지합니다. 플러그인 업데이트·주소·비밀키 변경 후에는 해당 플러그인의 새 명령을 다시 실행합니다.
+**서버 갱신은 실시간 연결을 재시작합니다.** 수업이 없는 시간에 실행합니다. 플러그인 업데이트·주소·비밀키 변경 후에는 설정 화면의 새 명령을 사용합니다.
 
-### 18-1. Code Arena 모듈
+### 18-2. Teaching Tools 설치·업데이트
 
-아레나 ZIP만 업로드·활성화해도 진행할 수 있습니다. 티칭툴은 필요하지 않습니다. **교사 메뉴 › 코드 아레나 › 설정**에서 내장 엔진은 유지하고 브라우저 주소를 `wss://oj.school.kr/arena`, 내부 주소를 `http://127.0.0.1:3210/arena`로 저장합니다.
-
-**서버 원클릭 설치** 칸의 실제 명령을 복사해 SSH에서 실행합니다. 설치기가 요청하면 설정 화면의 `ojhub1...` 코드를 붙여 넣으세요. 코드는 숨김 입력으로 읽어 명령줄 인수나 셸 기록에 남기지 않습니다.
-
-```bash
-sudo bash /home/judge/src/web/wp-content/plugins/oj-code-arena/game-server/install.sh
-```
-
-추가되는 파일은 다음과 같습니다.
-
-- `/opt/oj-realtime-hub/modules/oj-code-arena/`: 게임 엔진·규칙·기본 문제은행.
-- `/opt/oj-realtime-hub/modules/oj-code-arena/game-server/data/`: 미전송 결과.
-- `/etc/nginx/snippets/oj-code-arena.conf`: `/arena` 및 하위 API를 공통 서버로 전달.
-
-다른 nginx 사이트 파일을 쓰면 명령 끝에 실제 경로를 붙입니다. 티칭툴 명령에도 같은 방식으로 지정합니다.
-
-```bash
-sudo bash /home/judge/src/web/wp-content/plugins/oj-code-arena/game-server/install.sh /etc/nginx/sites-enabled/oj.school.kr
-```
-
-기존 3200 포트의 `oj-code-arena` 서비스 사용자는 수업이 없는 시간에 내부 주소를 3210으로 바꾸고 위 새 명령을 실행합니다. 설치기는 기존 `/opt/oj-code-arena-server/game-server/data`와 추가 환경 설정을 이전하고, 새 공통 서버의 인증 확인 후 구 서비스의 자동 시작을 해제합니다. 기존 폴더·백업은 자동 삭제하지 않습니다.
-
-완료 후 엔진을 **공통 실시간 서버(WebSocket)**로 바꾸고 저장합니다. **상태 확인**은 HTTP 통신·아레나 등록·비밀키 인증을 검사합니다. 학생의 실제 게임 입장도 확인합니다. 장애 중 내장 엔진으로 바꾸어 진행 중인 경기를 이어갈 수는 없습니다.
-
-```bash
-sudo systemctl status oj-realtime-hub --no-pager
-```
-
-```bash
-curl http://127.0.0.1:3210/arena/healthz
-```
-
-### 18-2. Teaching Tools 모듈
-
-티칭툴 ZIP만 업로드·활성화해도 진행할 수 있습니다. **18-1단계를 먼저 할 필요가 없습니다.** 교실 도구 → 설정에서 실시간 전송을 켜고 `wss://oj.school.kr/classroom-live` 주소를 저장한 뒤 실제 **서버 원클릭 설치** 명령을 SSH에서 실행합니다.
+티칭툴 ZIP을 업로드·활성화하고 **교실 도구 → 설정**에서 실시간 전송을 켜 `wss://oj.school.kr/classroom-live` 주소를 저장합니다. **서버 원클릭 설치** 칸의 실제 명령을 SSH에서 실행합니다. 설치기가 요청하면 설정 화면의 `ojhub1...` 코드를 붙여 넣습니다. 코드는 숨김 입력으로 읽어 명령줄 인수나 셸 기록에 남기지 않습니다.
 
 ```bash
 sudo bash /home/judge/src/web/wp-content/plugins/teaching-tools/realtime-server/install.sh
 ```
 
-이미 설치한 실시간 서버를 **기존 설정 그대로 업데이트**하려면 새 티칭툴 ZIP부터 업로드한 뒤 아래 명령 하나만 실행합니다. 설정 코드를 다시 입력하지 않습니다. 교실 도구 → 설정의 **기존 설정 유지 업데이트 → 업데이트 명령 복사**에서도 서버의 실제 경로가 들어간 명령을 확인할 수 있습니다.
+다른 nginx 사이트 파일을 쓰면 명령 끝에 실제 경로를 붙입니다.
+
+```bash
+sudo bash /home/judge/src/web/wp-content/plugins/teaching-tools/realtime-server/install.sh /etc/nginx/sites-enabled/oj.school.kr
+```
+
+설치된 서버를 **기존 설정 그대로 업데이트**하려면 새 티칭툴 ZIP을 먼저 업로드하고 아래 명령을 실행합니다. 설정 코드를 다시 입력하지 않습니다. 설정 화면의 **기존 설정 유지 업데이트 → 업데이트 명령 복사**에서도 서버의 실제 경로가 들어간 명령을 확인할 수 있습니다.
 
 ```bash
 sudo bash /home/judge/src/web/wp-content/plugins/teaching-tools/realtime-server/install.sh --update
 ```
 
-주소·인증키·사용자 지정 포트·환경값과 아레나 등 다른 모듈·미전송 데이터는 유지합니다. nginx·systemd 유닛·자동 시작 설정은 변경하지 않고 모듈 코드를 갱신합니다. 기존 서버를 백업하고 공통 서비스를 재시작한 뒤 모든 등록 모듈의 인증을 확인하며, 실패하면 이전 서버를 복구합니다. **진행 중 수업과 경기는 중단되므로 비사용 시간에 실행**합니다. 최초 설치나 주소·비밀키를 의도적으로 변경할 때는 `--update` 없이 일반 설치 명령과 새 설정 코드를 사용합니다.
-
-추가되는 파일은 다음과 같습니다.
-
-- `/opt/oj-realtime-hub/modules/teaching-tools/`: 판서 중계 모듈.
-- `/etc/nginx/snippets/oj-realtime-hub.conf`: `/classroom-live` 및 상태 경로를 공통 서버로 전달.
-
-아레나가 이미 있으면 등록과 비밀키를 유지합니다. 기존 티칭툴 단독 `.env` 허브도 이전하며, 기존 허브에 아레나를 먼저 추가하는 경우에는 서버에 있던 티칭툴 파일로 호환 모듈을 구성하므로 티칭툴 WordPress 파일을 요구하지 않습니다.
+주소·인증키·사용자 지정 포트·환경값과 저장된 데이터는 유지합니다. nginx·systemd 유닛·자동 시작 설정은 변경하지 않고 모듈 코드를 갱신합니다. 기존 서버를 백업하고 서비스를 재시작한 뒤 인증을 확인하며, 실패하면 이전 서버를 복구합니다. 최초 설치나 주소·비밀키를 의도적으로 변경할 때는 `--update` 없이 일반 설치 명령과 새 설정 코드를 사용합니다. 기존 티칭툴 단독 `.env` 허브도 이전합니다.
 
 ```bash
 sudo systemctl status oj-realtime-hub --no-pager
@@ -1026,19 +964,19 @@ sudo systemctl status oj-realtime-hub --no-pager
 curl http://127.0.0.1:3210/classroom-live/healthz
 ```
 
-**확인**: 설정 화면의 **버전·연결 다시 확인**이 앱 등록·비밀키 인증까지 성공하고, 설치된 티칭툴 모듈·공통 서버가 동봉 버전보다 낮지 않은지 확인합니다. 업데이트 필요 안내가 남으면 위의 `--update` 명령을 실행합니다. HTTP 상태 확인만으로 브라우저 중계를 보장하지 않으므로, 참여 코드로 학생을 연결해 교사 판서가 전달되는지도 확인합니다. 서버가 없거나 연결이 끊기면 REST 폴링으로 대체되며, 실시간 연결 중에도 저장본 복구 조회를 유지합니다.
+**확인**: 설정 화면의 **버전·연결 다시 확인**에서 앱 등록·비밀키 인증까지 성공하고, 설치된 티칭툴 모듈·공통 서버가 동봉 버전보다 낮지 않은지 확인합니다. 업데이트 필요 안내가 남으면 `--update` 명령을 실행합니다. 참여 코드로 학생을 연결해 교사 판서가 전달되는지도 확인합니다. 서버가 없거나 연결이 끊기면 REST 폴링으로 대체되며, 실시간 연결 중에도 저장본 복구 조회를 유지합니다.
 
 ### nginx 충돌 시
 
-사이트 파일에 직접 작성한 `location /arena` 또는 `location /classroom-live`가 있으면 설치기가 중단합니다. 다음 명령으로 열어 해당 경로를 검색하고 **충돌한 경로의 location 블록만** 제거한 후 다시 설치합니다. 다른 경로는 유지합니다. 기존 `include snippets/oj-code-arena.conf;`나 `include snippets/oj-realtime-hub.conf;`는 자동 재사용합니다.
+사이트 파일에 직접 작성한 `location /classroom-live`가 있으면 설치기가 중단합니다. 아래 명령으로 파일을 열고 해당 경로를 검색해 **충돌한 location 블록만** 제거한 후 다시 설치합니다. 다른 경로는 유지합니다. 기존 `include snippets/oj-realtime-hub.conf;`는 자동 재사용합니다.
 
 ```bash
 sudo vi /etc/nginx/sites-enabled/default
 ```
 
-### 한 모듈만 제거할 때
+### 서버 등록을 제거할 때
 
-WordPress 플러그인 비활성화·삭제는 공통 서버를 중지하지 않습니다. 실시간 서버 등록까지 제거하려면 수업이 없는 시간에 다음 순서로 진행합니다. **다른 모듈을 사용 중이면 공통 서비스나 서버 폴더를 삭제하지 않습니다.**
+WordPress 플러그인 비활성화·삭제는 서버를 중지하지 않습니다. 등록까지 제거하려면 수업이 없는 시간에 다음 순서로 진행합니다.
 
 ```bash
 sudo cp -p /opt/oj-realtime-hub/config.json /opt/oj-realtime-hub/config.json.before-remove
@@ -1048,7 +986,7 @@ sudo cp -p /opt/oj-realtime-hub/config.json /opt/oj-realtime-hub/config.json.bef
 sudo vi /opt/oj-realtime-hub/config.json
 ```
 
-아레나 제거는 `/"id": "oj-code-arena"`, 티칭툴 제거는 `/"id": "teaching-tools"`로 찾아 `apps` 배열에서 **해당 앱 객체 하나만** 삭제합니다. 다른 앱의 객체·인증키는 그대로 두고, 남은 배열의 마지막 객체 뒤 쉼표를 제거합니다. 모두 제거했다면 `"apps": []`로 남깁니다.
+`/"id": "teaching-tools"`로 찾아 `apps` 배열에서 해당 앱 객체를 삭제합니다. 다른 앱 객체·인증키는 유지하고, 남은 배열의 마지막 객체 뒤 쉼표를 제거합니다. 모두 제거했다면 `"apps": []`로 남깁니다.
 
 ```bash
 sudo node -e 'require("/opt/oj-realtime-hub/src/registration").validateConfig(require("/opt/oj-realtime-hub/config.json")); console.log("OK")'
@@ -1060,7 +998,7 @@ sudo node -e 'require("/opt/oj-realtime-hub/src/registration").validateConfig(re
 sudo cp -p /opt/oj-realtime-hub/config.json.before-remove /opt/oj-realtime-hub/config.json
 ```
 
-검사에 성공한 경우에만 아래를 진행합니다. 사이트 파일에서 제거한 모듈의 `include .../oj-code-arena.conf;` 또는 `include .../oj-realtime-hub.conf;` 줄만 찾아 지웁니다. **다른 모듈의 include는 유지합니다.**
+검사에 성공한 경우 사이트 파일에서 `include snippets/oj-realtime-hub.conf;` 줄을 찾아 제거합니다. 다른 모듈이 사용 중이면 해당 include를 유지합니다.
 
 ```bash
 sudo vi /etc/nginx/sites-enabled/default
@@ -1070,7 +1008,7 @@ sudo vi /etc/nginx/sites-enabled/default
 sudo nginx -t
 ```
 
-nginx 검사 성공 후:
+nginx 검사에 성공한 뒤 서버와 nginx를 다시 불러옵니다.
 
 ```bash
 sudo systemctl restart oj-realtime-hub
@@ -1080,7 +1018,7 @@ sudo systemctl restart oj-realtime-hub
 sudo systemctl reload nginx
 ```
 
-다른 모듈의 설정 화면에서 상태 확인과 실제 입장을 확인합니다. `apps`가 비어 있고 더 이상 사용하는 모듈이 없을 때만 `sudo systemctl disable --now oj-realtime-hub`로 서비스를 중지합니다. 모듈 폴더·백업은 자동 삭제하지 않습니다. 아레나의 `game-server/data/unsent-results.jsonl`에 미전송 결과가 남아 있으면 보관·복구 후 정리합니다.
+`apps`가 비어 있고 더 이상 사용하는 모듈이 없을 때만 `sudo systemctl disable --now oj-realtime-hub`로 서비스를 중지합니다. 모듈 폴더·백업은 자동 삭제하지 않습니다.
 
 ## 19. 첨부파일 바이러스 검사 ClamAV — OJ AI Dashboard
 
@@ -1142,7 +1080,7 @@ sudo tar -czf ~/oj-security-backup-20261023/web.tar.gz -C /home/judge/src web
 sudo tar -czf ~/oj-security-backup-20261023/server-config.tar.gz -C / etc/nginx etc/php/8.3
 ```
 
-별도 플랫폼 DB나 웹 루트 밖 AI·ML 저장소를 쓰면 해당 DB·폴더도 같은 백업에 포함합니다. 백업 중 쓰기가 계속되면 DB와 파일 시점이 어긋날 수 있으므로 점검 시간에 수행합니다. `--single-transaction`은 트랜잭션을 지원하는 테이블에 적용되며, 그 밖의 테이블이 있으면 쓰기를 중지한 상태에서 백업합니다.
+별도 플랫폼 DB나 웹 루트 밖 AI 저장소를 쓰면 해당 DB·폴더도 같은 백업에 포함합니다. 백업 중 쓰기가 계속되면 DB와 파일 시점이 어긋날 수 있으므로 점검 시간에 수행합니다. `--single-transaction`은 트랜잭션을 지원하는 테이블에 적용되며, 그 밖의 테이블이 있으면 쓰기를 중지한 상태에서 백업합니다.
 
 ```bash
 sudo gzip -t ~/oj-security-backup-20261023/web.tar.gz ~/oj-security-backup-20261023/server-config.tar.gz
@@ -1156,9 +1094,9 @@ ls -lh ~/oj-security-backup-20261023
 
 ## 21. 서버 준비 명령 복사
 
-플러그인 목록의 **서버 준비 필요** 안내 또는 각 플러그인 설정의 **서버 설치·복구**에서 AI·ML 저장소(13·14), 읽기자료 폴더(15), 그림 캡처 폴더(17), ClamAV(19)의 명령을 복사합니다. AI·ML은 업로드 후 활성화 전에 진행합니다. 실시간 서버(18)는 각 플러그인 설정의 **서버 설치·복구** 창을 사용합니다.
+플러그인 목록의 **서버 준비 필요** 안내 또는 각 플러그인 설정의 **서버 설치·복구**에서 AI 저장소(13), 읽기자료 폴더(15), 그림 캡처 폴더(17), ClamAV(19)의 명령을 복사합니다. AI 활동지는 업로드 후 활성화 전에 준비합니다. 실시간 서버(18)는 각 플러그인 설정의 **서버 설치·복구** 창을 사용합니다.
 
-명령은 WordPress와 같은 Ubuntu/Debian 서버의 SSH에서 실행합니다. Bash 진입점이 필요한 PHP CLI를 자동 준비하고, AI·ML·ClamAV 설정 후 해당 PHP-FPM 서비스를 재시작합니다. 기존 값이 다른 설정은 덮어쓰지 않습니다. `wp-config.php` 백업은 웹 루트 밖 `../.oj-server-backups/`에 관리자 전용으로 보관합니다. 기존 데이터의 소유권은 재귀 변경하지 않습니다.
+명령은 WordPress와 같은 Ubuntu/Debian 서버의 SSH에서 실행합니다. Bash 진입점이 필요한 PHP CLI를 자동 준비하고, AI·ClamAV 설정 후 해당 PHP-FPM 서비스를 재시작합니다. 기존 값이 다른 설정은 덮어쓰지 않습니다. `wp-config.php` 백업은 웹 루트 밖 `../.oj-server-backups/`에 관리자 전용으로 보관합니다. 기존 데이터의 소유권은 재귀 변경하지 않습니다.
 
 실행 후 화면을 새로고침해 저장소 준비 상태를 확인하고 활성화합니다. AI 필수 확장과 ClamAV 상태는 해당 플러그인의 시스템 상태에서도 확인합니다. 실패하면 SSH에 표시된 원인을 해결하고 같은 명령을 다시 실행합니다. 도메인·HTTPS·방화벽·채점기 허용 목록은 기존 단계대로 진행합니다.
 
@@ -1168,7 +1106,7 @@ AI 활동지 준비 명령 예시(기본 서버 경로):
 sudo bash /home/judge/src/web/wp-content/plugins/oj-ai-dashboard/resources/server/install.sh ai /home/judge/src/web 8.3 --apply
 ```
 
-AI 설치기는 `oj-ai-dashboard`에 있으며 `ai`·`clamav`를 제공합니다. ML은 `oj-ml-playgrounds`의 `ml`, 읽기자료는 `readcontents-library`의 `readcontents`, 그림 채점은 `oj-platform`의 `capture`를 사용합니다. 공통 화면에는 업로드된 플러그인만 표시합니다. 실제 서버 경로·PHP 버전은 설치 화면에서 생성한 명령을 우선합니다.
+AI 설치기는 `oj-ai-dashboard`에 있으며 `ai`·`clamav`를 제공합니다. 읽기자료는 `readcontents-library`의 `readcontents`, 그림 채점은 `oj-platform`의 `capture`를 사용합니다. 공통 화면에는 업로드된 플러그인만 표시합니다. 실제 서버 경로·PHP 버전은 설치 화면에서 생성한 명령을 우선합니다.
 
 설치·폴더 권한·서비스 재시작은 `install.sh`가 담당하고, `wp-config-helper.php`는 WordPress 설정 파일 검사·백업·수정만 담당합니다. 서버 작업에는 웹 PHP 버전과 같은 CLI를 사용하며 웹 PHP 버전을 자동 변경하지 않습니다.
 

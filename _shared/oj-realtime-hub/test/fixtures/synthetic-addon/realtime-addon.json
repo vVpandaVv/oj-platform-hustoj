@@ -1,0 +1,9 @@
+{
+  "protocol": 1,
+  "app": "fixture-addon",
+  "version": "1.0.0",
+  "secretKey": "FIXTURE_SECRET",
+  "adapter": "src/adapter.js",
+  "dataPath": "state",
+  "include": ["src"]
+}

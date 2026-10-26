@@ -1,1 +1,0 @@
-function e(){let e=new Map;function t(t){return n=>{n instanceof HTMLInputElement?e.set(t,n):e.delete(t)}}function n(t){for(let[n,r]of e)r.checked=n===t}return{register:t,resync:n}}export{e as t};

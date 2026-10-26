@@ -2,7 +2,7 @@
 
 이 폴더는 아래 플러그인의 **설치 패키지 생성**과 **설치 안내서 생성**을 한 곳에서 처리하는 기준점입니다. 어떤 편집기, 어떤 PC, 어떤 AI 에이전트로 작업하든 패키징과 설치 문서는 이 킷으로만 만듭니다.
 
-대상: `oj-platform`, `edu-games`, `learning-materials`, `oj-ai-dashboard`, `oj-code-arena`, `oj-code-lab`, `oj-ml-playgrounds`, `readcontents-library`, `teaching-tools`, `focus-tracker`, `oj-primm`
+대상: `oj-platform`, `edu-games`, `learning-materials`, `oj-ai-dashboard`, `oj-code-lab`, `readcontents-library`, `teaching-tools`, `focus-tracker`, `oj-primm`
 
 ## 사용법
 
@@ -78,12 +78,11 @@ _releases/
 
 | type | 동작 | 사용 플러그인 |
 |---|---|---|
-| `powershell` / `python` / `php` | 플러그인 자체 릴리스 스크립트를 실행합니다. 각 스크립트의 품질 게이트(테스트, 라이선스, clean git 등)를 그대로 거칩니다. | edu-games, oj-ai-dashboard, oj-code-arena, oj-code-lab, oj-ml-playgrounds |
+| `powershell` / `python` / `php` | 플러그인 자체 릴리스 스크립트를 실행합니다. 각 스크립트의 품질 게이트(테스트, 라이선스, clean git 등)를 그대로 거칩니다. | edu-games, oj-ai-dashboard, oj-code-lab |
 | `generic` | 킷 내장 패키저를 씁니다. `include` 목록만 담고, 인코딩을 검사하고, 압축 후 재검증하고, `.sha256`과 manifest를 생성합니다. | learning-materials, readcontents-library, teaching-tools, oj-primm |
 
 플러그인별 주의:
 - 2026-10-13부터 plugins 폴더 전체가 하나의 git 저장소입니다(플러그인별 옛 기록은 `_attic/git-history/`). 릴리스 스크립트는 자기 플러그인 폴더의 변경만 검사합니다.
 - `oj-ai-dashboard`는 자기 폴더에 커밋하지 않은 변경이 없어야 정식 패키지가 만들어집니다.
 - OJ Platform 정식 버전은 태그 `oj-platform-v<버전>`이 현재 커밋을 가리켜야 패키징됩니다(통합 저장소라 태그에 플러그인 이름을 붙입니다). `release.cmd package -Plugin oj-platform`이 공식 빌더의 전체 검증을 실행하고 `_releases/oj-platform/<버전>/`에 직접 출력합니다.
-- `oj-ml-playgrounds` 패키징 전 검사(`scripts/verify.ps1`)는 업스트림 프런트엔드 원본(고정 커밋 2276d1f의 `frontend`, `node_modules` 포함)이 필요합니다. `plugins.json`의 `builder.env.OJ_ML_UPSTREAM_FRONTEND` 경로를 킷이 자동으로 지정합니다(환경변수가 이미 있으면 그 값을 씁니다).
 - `readcontents-library`의 원본은 루트의 `readcontents-library/` 폴더입니다. 2026-10-12에 `_notes/readcontents-server-import-2026-09-12/`에서 옮겼습니다. 편집기 프런트엔드 소스는 그 노트 폴더의 `editor-source/`에 있습니다.

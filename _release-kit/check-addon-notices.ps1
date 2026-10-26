@@ -1,17 +1,23 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
+$registered = @('teaching-tools', 'oj-code-arena')
+$registryPath = Join-Path $PSScriptRoot 'plugins.json'
+if (Test-Path -LiteralPath $registryPath) {
+    $registry = [IO.File]::ReadAllText($registryPath, (New-Object Text.UTF8Encoding($false, $true))) | ConvertFrom-Json
+    $registered = @($registry.plugins | ForEach-Object { $_.id })
+}
 $required = @(
     'readcontents-library/assets/legal/Assistant-OFL.txt',
     'readcontents-library/assets/legal/editor/katex/LICENSE',
     'oj-ai-dashboard/LICENSE.txt',
     'edu-games/assets/vendor/chartjs/color-LICENSE.md',
     'oj-code-lab/docs/Lucide-Feather-LICENSE.txt',
-    'oj-code-arena/LICENSE.txt',
     '_shared/oj-realtime-hub/LICENSE.txt',
     'teaching-tools/realtime-server/LICENSE.txt',
     'teaching-tools/resources/vendor/pdfjs/LICENSE',
     'teaching-tools/resources/vendor/pdfjs/README.md'
 )
+if ($registered -contains 'oj-code-arena') { $required += 'oj-code-arena/LICENSE.txt' }
 # The Plate builder replaces this legacy bundle. Keep enforcing its notice
 # in checkouts that still distribute it, without requiring a removed asset.
 if (Test-Path -LiteralPath (Join-Path $root 'oj-ai-dashboard/resources/assets/builder/dash.all.min.js') -PathType Leaf) {
@@ -34,7 +40,7 @@ foreach ($directory in @('readcontents-library/assets/legal/editor', 'oj-ai-dash
         $null = (New-Object System.Text.UTF8Encoding($false, $true)).GetString($bytes)
     }
 }
-foreach ($id in @('teaching-tools', 'oj-code-arena')) {
+foreach ($id in @('teaching-tools', 'oj-code-arena') | Where-Object { $registered -contains $_ }) {
     $manifest = [IO.File]::ReadAllText((Join-Path $root "$id/realtime-addon.json")) | ConvertFrom-Json
     if (-not @($manifest.include | Where-Object { $_ -match 'LICENSE.txt$' }).Count) { throw "Server manifest omits license: $id" }
 }

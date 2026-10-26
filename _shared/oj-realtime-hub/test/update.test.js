@@ -13,6 +13,7 @@ const { once } = require('node:events');
 
 const repo = path.resolve(__dirname, '../../..');
 const plugin = path.join(repo, 'teaching-tools');
+const fixturePlugin = path.join(__dirname, 'fixtures/synthetic-addon');
 const env = { HOST: '127.0.0.1', PORT: '3210', WS_PATH: '/classroom-live', ALLOWED_ORIGINS: 'https://school.test', REALTIME_SECRET: 't'.repeat(48) };
 const code = (app, values) => 'ojhub1.' + Buffer.from(JSON.stringify({ v: 1, app, env: values })).toString('base64url');
 function workspace(context) {
@@ -25,13 +26,13 @@ function workspace(context) {
 
 test('noninteractive update preserves credentials, custom ports, tuning and other addon data', async (context) => {
     const root = workspace(context);
-    const arena = path.join(root, 'arena'); fs.mkdirSync(arena);
-    prepare(arena, path.join(root, 'absent'), path.join(repo, 'oj-code-arena'), code('oj-code-arena', {
-        HOST: '127.0.0.1', PORT: '3210', WS_PATH: '/arena', ALLOWED_ORIGINS: env.ALLOWED_ORIGINS,
-        ARENA_SECRET: 'a'.repeat(48), WP_API: env.ALLOWED_ORIGINS + '/wp-json/oj-code-arena/v1',
+    const fixture = path.join(root, 'fixture'); fs.mkdirSync(fixture);
+    prepare(fixture, path.join(root, 'absent'), fixturePlugin, code('fixture-addon', {
+        HOST: '127.0.0.1', PORT: '3210', WS_PATH: '/fixture', ALLOWED_ORIGINS: env.ALLOWED_ORIGINS,
+        FIXTURE_SECRET: 'a'.repeat(48),
     }));
     const installed = path.join(root, 'installed'); fs.mkdirSync(installed);
-    const before = prepare(installed, arena, plugin, code('teaching-tools', env));
+    const before = prepare(installed, fixture, plugin, code('teaching-tools', env));
     const old = before.apps.find((app) => app.id === 'teaching-tools');
     old.version = '1.0.0';
     old.path = '/custom-board';
@@ -40,7 +41,7 @@ test('noninteractive update preserves credentials, custom ports, tuning and othe
     old.env.PORT = '4321';
     before.port = 4321;
     fs.writeFileSync(path.join(installed, 'config.json'), JSON.stringify(before));
-    const data = path.join(installed, 'modules/oj-code-arena/game-server/data/pending-results.jsonl');
+    const data = path.join(installed, 'modules/fixture-addon/state/pending-results.jsonl');
     fs.writeFileSync(data, 'pending\n');
     const previousCode = fs.readFileSync(path.join(installed, 'config.json'));
     const stage = path.join(root, 'update'); fs.mkdirSync(stage);
@@ -52,7 +53,7 @@ test('noninteractive update preserves credentials, custom ports, tuning and othe
     assert.deepEqual(fs.readFileSync(path.join(stage, source)), fs.readFileSync(path.join(plugin, 'realtime-server/src/hub.js')));
     fs.appendFileSync(data, 'later\n');
     refreshData(stage, installed);
-    assert.equal(fs.readFileSync(path.join(stage, 'modules/oj-code-arena/game-server/data/pending-results.jsonl'), 'utf8'), 'pending\nlater\n');
+    assert.equal(fs.readFileSync(path.join(stage, 'modules/fixture-addon/state/pending-results.jsonl'), 'utf8'), 'pending\nlater\n');
     const port = spawnSync(process.execPath, [path.join(__dirname, '../src/update.js'), 'port', installed, plugin], { encoding: 'utf8' });
     assert.equal(port.status, 0);
     assert.equal(port.stdout.trim(), '4321');

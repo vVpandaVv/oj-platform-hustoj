@@ -1,9 +1,0 @@
-{
-  "protocol": 1,
-  "app": "oj-code-arena",
-  "version": "1.3.0",
-  "secretKey": "ARENA_SECRET",
-  "adapter": "game-server/src/realtime-adapter.js",
-  "include": ["game-server/src", "game-server/package.json", "LICENSE.txt", "shared", "data/default-bank.json"],
-  "dataPath": "game-server/data"
-}
