@@ -6,8 +6,24 @@ set -Eeuo pipefail
 usage() {
     cat <<'TEXT'
 bash install.sh [options]
-Default: HTTP on the server IPv4, admin@example.test for testing.
-Options: --site-url URL, --admin-email EMAIL, --admin-user NAME, --title TITLE, --plugin-zip PATH
+
+  --site-url URL       WordPress address; default: http://server-IPv4
+  --admin-email EMAIL  Admin/certificate contact; HTTP default: admin@example.test
+                      HTTPS asks for a real email when omitted.
+  --admin-user NAME    WordPress administrator login; default: ojadmin
+  --title TEXT         Site name; default: OJ Platform
+  --plugin-zip PATH    OJ Platform ZIP; default: newest bundled ZIP + .zip.sha256
+  --help, -h          Show this help without installing anything.
+
+Installs: official HUSTOJ and Docker judging, nginx, MariaDB, PHP 8.3,
+WordPress (ko_KR), WP-CLI, OJ Platform, compilers/runtimes and SPJ tools.
+Host tools: GCC/G++, make, JDK, Python 3 (venv/pip, NumPy/pandas/Matplotlib),
+Node.js/npm, bubblewrap, prlimit, AppArmor and ACL.
+An HTTPS URL also enables certificate issuance, redirect and automatic renewal.
+HUSTOJ output is shown live with elapsed/PID/status updates every 10 seconds.
+
+Resume an existing run with the downloaded internal installer:
+  sudo bash ~/oj-platform-hustoj/_release-kit/install/ubuntu24.sh --resume
 TEXT
 }
 

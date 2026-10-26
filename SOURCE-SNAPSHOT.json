@@ -250,8 +250,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7654,
-  "totalBytes": 148723455,
+  "fileCount": 7656,
+  "totalBytes": 148753344,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -287,8 +287,8 @@
     },
     {
       "path": "README.md",
-      "size": 1104,
-      "sha256": "7af75984242de8c384a8b0a3704daea87b30fef9eaa5b18c9896f1f2724a5ee8",
+      "size": 1757,
+      "sha256": "8d4a74e1f69b5f4a9c865a5d7d6b35692e1fdd96799d467c8f645acbfee2a19a",
       "origin": "working-tree"
     },
     {
@@ -1997,8 +1997,8 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 55566,
-      "sha256": "af45dc14cd71b075b35ca4e3545df3d3f1f5d3f9f2421c5e32bc408b4b042d5e",
+      "size": 59192,
+      "sha256": "6fba9f104429f4937ffac6a8846c542c7974b2f4e1343a0c984be76759d4cc78",
       "origin": "working-tree"
     },
     {
@@ -2063,14 +2063,20 @@
     },
     {
       "path": "_release-kit/install/github-ubuntu24.sh",
-      "size": 2112,
-      "sha256": "6749d50e54fe9c55aba5a21adbda57d74455361045663d0a7a836b5ff02e74c6",
+      "size": 3013,
+      "sha256": "47e43053e76a8a9632a83a24ea777969ee35841157ce4d9d4b54273c9a89700f",
+      "origin": "working-tree"
+    },
+    {
+      "path": "_release-kit/install/run-with-progress.py",
+      "size": 9968,
+      "sha256": "95ea9e5ef0fd10580796edf566cd58e848323dbf8c54d733e8f3ece3771967dd",
       "origin": "working-tree"
     },
     {
       "path": "_release-kit/install/ubuntu24.sh",
-      "size": 29396,
-      "sha256": "3b557a48f42632953b994b6f061146703e16f10c0657673b312059bf7791e961",
+      "size": 30881,
+      "sha256": "1b6cd81086d03fd09fde3d48826879cde5b3f1ddac81f8b4fae930cfe3290ddd",
       "origin": "working-tree"
     },
     {
@@ -2161,6 +2167,12 @@
       "path": "_release-kit/tests/content.ps1",
       "size": 4704,
       "sha256": "aba973ecae49ea7f4abe84bc6b1cb0a491b9977b6bdb3955014e458c2dd359e7",
+      "origin": "working-tree"
+    },
+    {
+      "path": "_release-kit/tests/install-progress.py",
+      "size": 12355,
+      "sha256": "42a5838058de5047016b7653913a61ff0647fb7dc67369270f58a4db9174685e",
       "origin": "working-tree"
     },
     {
@@ -5591,8 +5603,8 @@
     },
     {
       "path": "install.sh",
-      "size": 2112,
-      "sha256": "6749d50e54fe9c55aba5a21adbda57d74455361045663d0a7a836b5ff02e74c6",
+      "size": 3013,
+      "sha256": "47e43053e76a8a9632a83a24ea777969ee35841157ce4d9d4b54273c9a89700f",
       "origin": "working-tree"
     },
     {

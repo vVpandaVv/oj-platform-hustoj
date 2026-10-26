@@ -23,14 +23,34 @@ step() { printf '\n[%s] %s\n' "$1" "$2"; }
 usage() {
     cat <<'TEXT'
 sudo bash _release-kit/install/ubuntu24.sh [options]
-  With no options: HTTP on the server IPv4, admin@example.test for testing.
-  --site-url https://oj.example.com
-  --admin-email admin@example.com
-  --admin-user ojadmin
-  --title "OJ Platform"
-  --plugin-zip /absolute/path/oj-platform-VERSION.zip
-  --resume     Continue this install after resolving an error.
+  --site-url URL       WordPress address; default: http://server-IPv4
+  --admin-email EMAIL  Admin/certificate contact; HTTP default: admin@example.test
+                      HTTPS asks for a real email when omitted.
+  --admin-user NAME    WordPress administrator login; default: ojadmin
+  --title TEXT         Site name; default: OJ Platform
+  --plugin-zip PATH    Plugin ZIP; default: newest bundled ZIP + .zip.sha256
+  --resume            Continue saved stages after resolving an error.
+  --help, -h          Show help without installing anything.
+
+Stack: official HUSTOJ, nginx, MariaDB, PHP 8.3, WordPress (ko_KR),
+WP-CLI, OJ Platform, compilers/runtimes and SPJ tools.
+Host tools: GCC/G++, make, JDK, Python 3 (venv/pip, NumPy/pandas/Matplotlib),
+Node.js/npm, bubblewrap, prlimit, AppArmor and ACL.
+HTTPS: certificate issuance, nginx redirect and certbot.timer renewal.
+HUSTOJ: live redacted output plus 10-second elapsed/PID/status updates.
 TEXT
+}
+
+show_plan() {
+    printf '\nInstallation plan\n  Site: %s\n  Admin login: %s\n  Admin email: %s\n  Site title: %s\n' "$SITE_URL" "$ADMIN_USER" "$ADMIN_EMAIL" "$SITE_TITLE"
+    printf '  Stack: HUSTOJ, nginx, MariaDB, PHP 8.3, WordPress (ko_KR), WP-CLI, OJ Platform\n'
+    printf '  Tools: GCC/G++, JDK, Python 3 and host libraries, Node.js/npm, SPJ sandbox\n'
+    printf '  Databases: jol + oj_wordpress, using the account in judge.conf\n'
+    if [[ $SITE_URL == https://* ]]; then
+        printf '  HTTPS: issue certificate, configure nginx redirect and automatic renewal\n'
+    else
+        printf '  Web access: HTTP\n'
+    fi
 }
 
 parse_args() {
@@ -224,8 +244,10 @@ if source.count(old)!=1: sys.exit('Official installer download block changed; up
 PY
         sha256sum "$STATE/hustoj-upstream.sh" "$STATE/hustoj-install.sh" "$STATE/hustoj-source.tar.gz" > "$STATE/upstream.sha256"
         touch "$STATE/hustoj-started"
-        printf 'Official installer log: %s/hustoj-install.log\n' "$STATE"
-        (umask 022; cd "$STATE"; TERM=dumb timeout --kill-after=60s 3h bash "$STATE/hustoj-install.sh" </dev/null) > "$STATE/hustoj-install.log" 2>&1
+        printf 'Live log: %s/hustoj-progress.log\nPrivate raw log: %s/hustoj-install.log\n' "$STATE" "$STATE"
+        (umask 022; cd "$STATE"; TERM=dumb python3 "$SCRIPT_DIR/run-with-progress.py" \
+            --raw-log "$STATE/hustoj-install.log" --progress-log "$STATE/hustoj-progress.log" \
+            --heartbeat 10 -- timeout --kill-after=60s 3h bash "$STATE/hustoj-install.sh")
     fi
     [[ -f /home/judge/etc/judge.conf && -x /usr/bin/judged && -x /usr/bin/judge_client ]] || fail "HUSTOJ is incomplete. Check $STATE/hustoj-install.log before --resume."
     [[ -d /home/judge/data && -f /etc/init.d/hustoj ]] || fail 'HUSTOJ data or service is missing.'
@@ -544,7 +566,7 @@ main() {
         source "$STATE/config.env"
     else
         [[ ! -e $STATE && ! -e /home/judge && ! -L /home/judge ]] || fail 'Use a fresh server, or --resume for this installer.'
-        [[ -f $SCRIPT_DIR/configure-platform.php ]] || fail 'Installer helper is missing.'
+        [[ -f $SCRIPT_DIR/configure-platform.php && -f $SCRIPT_DIR/run-with-progress.py ]] || fail 'Installer helper is missing.'
         if [[ -z $PLUGIN_ZIP ]]; then
             PLUGIN_ZIP=$(find "$REPOSITORY/_releases/oj-platform" -mindepth 2 -maxdepth 2 -type f -name 'oj-platform-*.zip' | sort -V | tail -n 1)
         fi
@@ -575,6 +597,7 @@ APT
     local expected_package_sha=$PLUGIN_SHA
     validate_package
     [[ $PLUGIN_SHA == "$expected_package_sha" ]] || fail 'Installation package changed since the first run.'
+    show_plan
     [[ -f $STATE/hustoj.done ]] || install_hustoj
     load_judge_credentials
     [[ -f $STATE/programs.done ]] || install_programs

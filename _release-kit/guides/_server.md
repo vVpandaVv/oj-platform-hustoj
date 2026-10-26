@@ -4,39 +4,98 @@ Ubuntu 24.04 LTS에 HUSTOJ와 OJ 플러그인을 설치하기 위한 서버 작�
 
 ## 새 서버 자동 설치
 
-### 공개 저장소에서 다운로드
+### 실행
 
-새 Ubuntu 24.04 서버에서 실행합니다.
+새 Ubuntu 24.04 amd64 서버에서 실행합니다.
 
 ```bash
-curl -fL https://github.com/vVpandaVv/oj-platform-hustoj/raw/main/install.sh -o install.sh && bash install.sh
+curl -fLO https://github.com/vVpandaVv/oj-platform-hustoj/raw/main/install.sh && bash install.sh
 ```
 
-기본 주소는 서버 IPv4의 HTTP 주소이며, 관리자 이메일은 테스트용 `admin@example.test`를 사용합니다. 로그인 없이 `main` 브랜치를 내려받아 설치합니다.
+기본 주소는 서버 IPv4의 HTTP 주소이며, 관리자 이메일은 테스트용 `admin@example.test`입니다. 공개 저장소의 `main` 브랜치를 `~/oj-platform-hustoj`에 내려받아 설치합니다.
 
-운영 주소와 이메일을 지정할 때는 다음처럼 실행합니다. HTTPS 주소를 지정하고 이메일을 생략하면 인증서 연락처를 한 번 입력받습니다.
-
-```bash
-bash install.sh --site-url https://oj.school.kr --admin-email admin@school.kr
-```
-
-### 저장소 폴더에서 실행
-
-도메인의 A 레코드를 서버 IP에 연결하고 80·443 포트를 연 뒤, 저장소 폴더에서 실행합니다.
+도메인으로 운영할 때는 주소와 이메일을 지정합니다. 도메인의 DNS를 서버 IP에 연결하고 외부에서 80·443 포트에 접속할 수 있게 준비합니다.
 
 ```bash
-sudo bash _release-kit/install/ubuntu24.sh \
+bash install.sh \
   --site-url https://oj.school.kr \
   --admin-email admin@school.kr
 ```
 
-공식 HUSTOJ 최신 소스, nginx·MariaDB·PHP 확장, WordPress 한국어판, OJ Platform을 설치합니다. `/home/judge/src/web`을 백업한 뒤 내용을 모두 삭제하고 WordPress로 교체합니다. 채점 DB 연결·설치 마법사·테스트데이터 권한·예약 실행·HTTPS도 설정합니다.
+### 옵션
 
-WordPress DB는 `oj_wordpress`로 만들고, `/home/judge/etc/judge.conf`의 아이디와 비밀번호를 그대로 사용합니다. HUSTOJ의 `jol` DB는 유지합니다.
+| 옵션 | 기본값 | 하는 일 |
+| --- | --- | --- |
+| `--site-url URL` | 서버 IPv4의 `http://` 주소 | WordPress 주소와 nginx 호스트 이름. `https://` 주소이면 인증서 발급·적용과 HTTP → HTTPS 이동을 설정합니다. |
+| `--admin-email EMAIL` | HTTP 테스트는 `admin@example.test` | WordPress 관리자 연락처와 인증서 연락처. HTTPS에서 생략하면 실제 이메일을 한 번 입력받습니다. |
+| `--admin-user NAME` | `ojadmin` | 처음 만들 WordPress 관리자 로그인 아이디 |
+| `--title "이름"` | `OJ Platform` | WordPress 사이트 이름 |
+| `--plugin-zip PATH` | 저장소에 동봉된 최신 OJ Platform ZIP | 사용할 설치 ZIP. 같은 폴더에 해당 `.zip.sha256` 파일을 둡니다. |
+| `--help`, `-h` | — | 도움말을 표시합니다. |
 
-관리자 아이디는 `ojadmin`입니다. 비밀번호는 `sudo cat /var/lib/oj-platform-installer/credentials.txt`로 확인합니다. 다른 설치 ZIP은 `.zip.sha256` 파일과 함께 두고 `--plugin-zip /경로/oj-platform-버전.zip`으로 지정합니다.
+관리자 비밀번호는 자동 생성합니다. 설치 후 다음 명령으로 접속 주소·아이디·비밀번호·DB 정보를 확인합니다.
 
-오류를 해결한 뒤에는 같은 스크립트에 `--resume`을 붙여 이어서 실행합니다. 아래는 수동 설치 절차입니다.
+```bash
+sudo cat /var/lib/oj-platform-installer/credentials.txt
+```
+
+### 설치되는 프로그램과 설정
+
+| 구분 | 설치·설정 내용 | 적용 조건 |
+| --- | --- | --- |
+| HUSTOJ | 공식 저장소의 최신 소스, `judged`·`judge_client`, `jol` DB, 공식 설치기의 Docker 채점 환경 | 항상 |
+| 공식 설치기 보조 서비스 | Redis, fail2ban, PHP 캐시 확장; memcached는 공식 설치기의 메모리 조건에 따라 설치 | 공식 HUSTOJ 설치 단계 |
+| 웹 서버·DB | nginx, MariaDB, PHP 8.3 CLI·FPM | 항상 |
+| PHP 확장 | MySQL, XML·DOM·XMLWriter, mbstring, intl, zip, curl, GD, bcmath, SQLite3, OPcache, OpenSSL·fileinfo 확인 | 항상 |
+| WordPress | 최신 한국어판, WP-CLI, 관리자 계정, 서울 시간대, 고유주소 | 항상 |
+| OJ Platform | 동봉 ZIP 설치·활성화, 플랫폼 스키마·권한 설치, 채점 DB 연결, 테스트데이터 설정 | 항상 |
+| 컴파일·실행 도구 | GCC·G++, make, 기본 JDK, Python 3·venv·pip, Node.js·npm | 호스트에 설치 |
+| Python 패키지 | NumPy, pandas, Matplotlib | 호스트에 설치 |
+| SPJ·저장소 권한 | bubblewrap, prlimit, AppArmor 프로필, ACL, `www-data`·`judge`의 테스트데이터 접근 권한 | 항상 |
+| 설치·검사 도구 | Git, curl, wget, ca-certificates, OpenSSL, tar, rsync, unzip, util-linux, iproute2, hostname, libfcgi-bin | 항상 |
+| 예약 작업 | cron과 1분 주기의 `oj-wordpress-cron.timer` | 항상 |
+| HTTPS | Certbot·nginx 플러그인 설치, 인증서 발급·nginx 적용·`certbot.timer` 자동갱신 등록 | 프로그램은 항상 설치, 인증서 설정은 HTTPS 주소일 때 |
+
+`/home/judge/src/web`을 백업한 뒤 내용을 모두 삭제하고 WordPress로 교체합니다. 채점기·테스트데이터와 `jol` DB는 유지합니다. WordPress DB는 `oj_wordpress`로 분리하고, `/home/judge/etc/judge.conf`의 아이디·비밀번호를 그대로 사용합니다. WordPress 비공개 작업 폴더는 웹 루트 밖 `/home/judge/oj-platform-private`에 만듭니다.
+
+### 설치 화면과 로그
+
+HUSTOJ 단계는 설치 출력을 화면에도 표시하고, 10초마다 경과시간·마지막 출력 이후 시간·실행 PID·프로세스 이름·상태를 표시합니다. 공식 설치 단계에는 3시간 실행 제한이 적용됩니다. 공식 설치 프로세스가 끝나면 종료 코드를 표시하고 DB·채점기 상태를 검사합니다. 출력 없는 시간이 길어지면 표시된 프로세스 상태와 로그를 함께 확인합니다.
+
+표시는 다음과 같습니다. `tasks`는 인수를 제외한 프로세스 이름입니다.
+
+```text
+[HUSTOJ] elapsed=120s pid=2140 silent=10s state=S tasks=timeout,bash,make,g++
+[HUSTOJ] finished exit_code=0 elapsed=840s
+```
+
+| 로그 | 용도 |
+| --- | --- |
+| `/var/lib/oj-platform-installer/hustoj-progress.log` | 비밀번호를 가린 화면 표시용 로그 |
+| `/var/lib/oj-platform-installer/hustoj-install.log` | 공식 설치기의 전체 원본 출력. root 전용 `600` 권한 |
+
+새 설치의 화면 표시용 로그를 다른 터미널에서 볼 수 있습니다. `Ctrl+C`는 이 로그 보기만 끝냅니다.
+
+```bash
+sudo tail -n 40 -f /var/lib/oj-platform-installer/hustoj-progress.log
+```
+
+기존 버전으로 이미 실행 중이면 원본 로그에서 현재 출력되는 내용을 확인합니다.
+
+```bash
+sudo tail -n 40 -f /var/lib/oj-platform-installer/hustoj-install.log
+```
+
+### 오류 해결 후 이어서 실행
+
+다운로드 파일 대신 내려받은 저장소의 **내부 설치기**에 `--resume`을 지정합니다. 저장된 주소·계정·완료 단계에서 이어서 확인하며 실행합니다.
+
+```bash
+cd ~/oj-platform-hustoj
+sudo bash _release-kit/install/ubuntu24.sh --resume
+```
+
+아래는 수동 설치 절차입니다.
 
 - 웹 루트: `/home/judge/src/web` (WordPress가 설치된 곳)
 - PHP 버전: 8.3
