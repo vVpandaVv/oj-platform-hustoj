@@ -1,6 +1,6 @@
 # GitHub 관리
 
-저장소: [vVpandaVv/oj-platform-hustoj](https://github.com/vVpandaVv/oj-platform-hustoj) · Private
+저장소: [vVpandaVv/oj-platform-hustoj](https://github.com/vVpandaVv/oj-platform-hustoj) · Public
 
 - 기본 브랜치: `main`
 - 유지보수 브랜치: `codex/hustoj-maintenance`

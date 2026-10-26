@@ -250,7 +250,7 @@
     "private-notes": 386
   },
   "fileCount": 7653,
-  "totalBytes": 148715796,
+  "totalBytes": 148716037,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -1996,8 +1996,8 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 55481,
-      "sha256": "f6d2c18c9c687d37c12c0bb67ba75e527f88ddbc9cd7c8db5ed2472249bf8679",
+      "size": 55723,
+      "sha256": "d09c88ca3366621ec8330ed50d169cf7ce1d25597cd28a2236ed09f7547aa4bb",
       "origin": "working-tree"
     },
     {
@@ -2404,8 +2404,8 @@
     },
     {
       "path": "docs/github-management.md",
-      "size": 453,
-      "sha256": "d0f6f8669ba352df488bc9d5238210c1001fc63a1907bb81a121ab96a47c2484",
+      "size": 452,
+      "sha256": "b3c5631472b9fcf13506e835188030c8be7b8ad16bec333e82fd16ce58977abf",
       "origin": "working-tree"
     },
     {
@@ -47038,7 +47038,7 @@
     "operatorGateExampleDecision": "HOLD",
     "privateHistoryIncluded": false
   },
-  "repositoryVisibility": "private",
+  "repositoryVisibility": "public",
   "layoutStage": "installer-and-platform-package",
   "releaseArtifacts": [
     {
