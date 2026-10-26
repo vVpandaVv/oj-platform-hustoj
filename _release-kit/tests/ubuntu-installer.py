@@ -216,6 +216,85 @@ with patch.object(pathlib.Path, 'read_text', synthetic_read):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertEqual(result.stdout.splitlines(), [url.rstrip("/"), domain])
 
+    def test_missing_inputs_use_primary_ipv4_and_test_email(self) -> None:
+        for email in ("", "teacher@example.com"):
+            with self.subTest(explicit_email=bool(email)):
+                result = self.shell(
+                    'ip() { printf "%s\\n" "1.1.1.1 via 192.0.2.1 dev eth0 src 192.0.2.17 uid 0"; }\n'
+                    'hostname() { printf "%s\\n" "198.51.100.7"; }\n'
+                    'set_default_inputs\nvalidate_inputs\n'
+                    'printf "%s\\n%s\\n%s\\n" "$SITE_URL" "$ADMIN_EMAIL" "$DOMAIN"\n',
+                    CASE_URL="", CASE_EMAIL=email,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(
+                    result.stdout.splitlines(),
+                    ["http://192.0.2.17", email or "admin@example.test", "192.0.2.17"],
+                )
+
+    def test_default_url_falls_back_to_valid_hostname_ipv4(self) -> None:
+        for route in (None, "1.1.1.1 dev eth0 src 999.0.0.1 uid 0"):
+            with self.subTest(route_available=route is not None):
+                route_stub = 'ip() { return 1; }\n' if route is None else (
+                    'ip() { printf "%s\\n" "$CASE_ROUTE"; }\n'
+                )
+                result = self.shell(
+                    route_stub
+                    + 'hostname() { printf "%s\\n" "2001:db8::7 127.0.0.1 198.51.100.9 10.0.0.9"; }\n'
+                    'set_default_inputs\nvalidate_inputs\nprintf "%s\\n" "$SITE_URL"\n',
+                    CASE_URL="", CASE_EMAIL="", CASE_ROUTE=route or "",
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(result.stdout.strip(), "http://198.51.100.9")
+
+    def test_explicit_site_and_email_skip_address_detection(self) -> None:
+        result = self.shell(
+            'ip() { printf "UNEXPECTED ADDRESS LOOKUP\\n" >&2; exit 97; }\n'
+            'hostname() { printf "UNEXPECTED ADDRESS LOOKUP\\n" >&2; exit 97; }\n'
+            'set_default_inputs\nvalidate_inputs\n'
+            'printf "%s\\n%s\\n" "$SITE_URL" "$ADMIN_EMAIL"\n',
+            CASE_URL="https://class.example.com", CASE_EMAIL="teacher@example.com",
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            result.stdout.splitlines(), ["https://class.example.com", "teacher@example.com"]
+        )
+        self.assertNotIn("UNEXPECTED ADDRESS LOOKUP", result.stderr)
+
+    def test_explicit_site_can_omit_email(self) -> None:
+        result = self.shell(
+            'ip() { printf "UNEXPECTED ADDRESS LOOKUP\\n" >&2; exit 97; }\n'
+            'hostname() { printf "UNEXPECTED ADDRESS LOOKUP\\n" >&2; exit 97; }\n'
+            'set_default_inputs\nvalidate_inputs\n'
+            'printf "%s\\n%s\\n" "$SITE_URL" "$ADMIN_EMAIL"\n',
+            CASE_URL="http://192.0.2.39", CASE_EMAIL="",
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            result.stdout.splitlines(), ["http://192.0.2.39", "admin@example.test"]
+        )
+        self.assertNotIn("UNEXPECTED ADDRESS LOOKUP", result.stderr)
+
+    def test_https_without_email_is_rejected_before_noninteractive_prompt(self) -> None:
+        result = self.shell(
+            'read() { printf "UNEXPECTED INTERACTIVE PROMPT\\n" >&2; exit 97; }\n'
+            'set_default_inputs </dev/null\n',
+            CASE_URL="https://class.example.com", CASE_EMAIL="",
+        )
+        self.assert_rejected(result)
+        self.assertNotIn("UNEXPECTED INTERACTIVE PROMPT", result.stderr)
+
+    def test_automatic_url_requires_an_usable_ipv4(self) -> None:
+        for addresses in ("", "::1 2001:db8::2 127.0.0.1", "999.0.0.1 not-an-ip"):
+            with self.subTest(addresses=addresses):
+                result = self.shell(
+                    'ip() { return 1; }\n'
+                    'hostname() { printf "%s\\n" "$CASE_ADDRESSES"; }\n'
+                    'set_default_inputs\n',
+                    CASE_URL="", CASE_EMAIL="", CASE_ADDRESSES=addresses,
+                )
+                self.assert_rejected(result)
+
     def test_reject_invalid_site_urls(self) -> None:
         for url in (
             "ftp://oj.example.com", "https://user:password@oj.example.com",

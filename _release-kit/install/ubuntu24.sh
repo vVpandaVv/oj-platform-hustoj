@@ -23,6 +23,7 @@ step() { printf '\n[%s] %s\n' "$1" "$2"; }
 usage() {
     cat <<'TEXT'
 sudo bash _release-kit/install/ubuntu24.sh [options]
+  With no options: HTTP on the server IPv4, admin@example.test for testing.
   --site-url https://oj.example.com
   --admin-email admin@example.com
   --admin-user ojadmin
@@ -36,7 +37,7 @@ parse_args() {
     while (($#)); do
         case "$1" in
             --site-url|--admin-email|--admin-user|--title|--plugin-zip)
-                (($# >= 2)) || fail "Missing value for $1"
+                (($# >= 2)) && [[ -n $2 && $2 != --* ]] || fail "Missing value for $1"
                 case "$1" in
                     --site-url) SITE_URL=$2 ;; --admin-email) ADMIN_EMAIL=$2 ;;
                     --admin-user) ADMIN_USER=$2 ;; --title) SITE_TITLE=$2 ;;
@@ -48,6 +49,39 @@ parse_args() {
             *) fail "Unknown option: $1" ;;
         esac
     done
+}
+
+set_default_inputs() {
+    if [[ -z $SITE_URL ]]; then
+        local route_info address_info address
+        route_info=$(ip -4 route get 1.1.1.1 2>/dev/null || :)
+        address_info=$(hostname -I 2>/dev/null || :)
+        address=$(python3 - "$route_info" "$address_info" <<'PY'
+import ipaddress,sys
+route=sys.argv[1].split(); candidates=[]
+for index,token in enumerate(route[:-1]):
+    if token=='src': candidates.append(route[index+1])
+candidates.extend(sys.argv[2].split())
+for candidate in candidates:
+    try: address=ipaddress.ip_address(candidate)
+    except ValueError: continue
+    if isinstance(address,ipaddress.IPv4Address) and not (address.is_loopback or address.is_unspecified or address.is_multicast or address.is_link_local or address.is_reserved):
+        print(address)
+        break
+else: sys.exit(1)
+PY
+        ) || fail 'No server IPv4 address found. Set --site-url explicitly.'
+        SITE_URL=http://$address
+    fi
+    if [[ -z $ADMIN_EMAIL ]]; then
+        if [[ $SITE_URL == https://* ]]; then
+            [[ -t 0 ]] || fail 'HTTPS installation requires --admin-email for the certificate contact.'
+            read -r -p 'Administrator email (HTTPS certificate contact): ' ADMIN_EMAIL
+            [[ -n $ADMIN_EMAIL ]] || fail 'An HTTPS contact email is required.'
+        else
+            ADMIN_EMAIL=admin@example.test
+        fi
+    fi
 }
 
 assert_web_root() {
@@ -511,8 +545,6 @@ main() {
     else
         [[ ! -e $STATE && ! -e /home/judge && ! -L /home/judge ]] || fail 'Use a fresh server, or --resume for this installer.'
         [[ -f $SCRIPT_DIR/configure-platform.php ]] || fail 'Installer helper is missing.'
-        [[ -n $SITE_URL ]] || read -r -p 'Site URL (https://oj.example.com): ' SITE_URL
-        [[ -n $ADMIN_EMAIL ]] || read -r -p 'Administrator email: ' ADMIN_EMAIL
         if [[ -z $PLUGIN_ZIP ]]; then
             PLUGIN_ZIP=$(find "$REPOSITORY/_releases/oj-platform" -mindepth 2 -maxdepth 2 -type f -name 'oj-platform-*.zip' | sort -V | tail -n 1)
         fi
@@ -521,7 +553,8 @@ main() {
         PLUGIN_ZIP=$(realpath -e -- "$PLUGIN_ZIP")
         [[ $PLUGIN_ZIP != /home/judge/* ]] || fail 'Keep the installation package outside /home/judge.'
         apt-get update
-        apt-get install -y ca-certificates curl wget python3 openssl tar util-linux
+        apt-get install -y ca-certificates curl wget python3 openssl tar util-linux iproute2 hostname
+        set_default_inputs
         validate_inputs
         validate_package
         ADMIN_PASSWORD=$(openssl rand -hex 18)

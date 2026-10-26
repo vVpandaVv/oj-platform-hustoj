@@ -5,8 +5,9 @@ set -Eeuo pipefail
 
 usage() {
     cat <<'TEXT'
-bash github-ubuntu24.sh --site-url https://oj.example.com --admin-email admin@example.com
-Optional: --admin-user NAME, --title TITLE, --plugin-zip PATH
+bash install.sh [options]
+Default: HTTP on the server IPv4, admin@example.test for testing.
+Options: --site-url URL, --admin-email EMAIL, --admin-user NAME, --title TITLE, --plugin-zip PATH
 TEXT
 }
 
@@ -14,21 +15,16 @@ fail() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 
 main() {
     local -a forwarded=("$@") elevate=()
-    local site_url= admin_email= checkout
+    local checkout
     while (($#)); do
         case "$1" in
             --help|-h) usage; return 0 ;;
             --site-url|--admin-email|--admin-user|--title|--plugin-zip)
                 (($# >= 2)) && [[ -n $2 && $2 != --* ]] || fail "Missing value for $1"
-                case "$1" in
-                    --site-url) site_url=$2 ;;
-                    --admin-email) admin_email=$2 ;;
-                esac
                 shift 2 ;;
             *) fail "Unknown option: $1" ;;
         esac
     done
-    [[ -n $site_url && -n $admin_email ]] || { usage; return 1; }
     [[ $(uname -s) == Linux && $(uname -m) == x86_64 ]] || fail 'Use an Ubuntu 24.04 amd64 server.'
     # shellcheck disable=SC1091
     source /etc/os-release

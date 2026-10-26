@@ -48,7 +48,8 @@
       "AGENTS.md",
       "OJ-BUILD-HARNESS.md",
       "README.md",
-      "_notes/agent-harness.md"
+      "_notes/agent-harness.md",
+      "install.sh"
     ],
     "includeGlobs": [
       "_notes/readcontents-server-import-2026-09-12/editor-source/package*.json",
@@ -249,8 +250,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7653,
-  "totalBytes": 148716037,
+  "fileCount": 7654,
+  "totalBytes": 148723455,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -286,8 +287,8 @@
     },
     {
       "path": "README.md",
-      "size": 932,
-      "sha256": "633b7a93c36485bd0dc535633bf547063fd031dc25fee6b13b2eaa528bac165c",
+      "size": 1104,
+      "sha256": "7af75984242de8c384a8b0a3704daea87b30fef9eaa5b18c9896f1f2724a5ee8",
       "origin": "working-tree"
     },
     {
@@ -1996,8 +1997,8 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 55723,
-      "sha256": "d09c88ca3366621ec8330ed50d169cf7ce1d25597cd28a2236ed09f7547aa4bb",
+      "size": 55566,
+      "sha256": "af45dc14cd71b075b35ca4e3545df3d3f1f5d3f9f2421c5e32bc408b4b042d5e",
       "origin": "working-tree"
     },
     {
@@ -2062,14 +2063,14 @@
     },
     {
       "path": "_release-kit/install/github-ubuntu24.sh",
-      "size": 2313,
-      "sha256": "565bb0d6356ac45c56006239159df87a547b38429f010b8802d2312c0eae1149",
+      "size": 2112,
+      "sha256": "6749d50e54fe9c55aba5a21adbda57d74455361045663d0a7a836b5ff02e74c6",
       "origin": "working-tree"
     },
     {
       "path": "_release-kit/install/ubuntu24.sh",
-      "size": 28043,
-      "sha256": "7bb1583582994b4a7e4995ce6234ce5663709d26d0073386e01d14e0940766f5",
+      "size": 29396,
+      "sha256": "3b557a48f42632953b994b6f061146703e16f10c0657673b312059bf7791e961",
       "origin": "working-tree"
     },
     {
@@ -2104,8 +2105,8 @@
     },
     {
       "path": "_release-kit/public-source.json",
-      "size": 5553,
-      "sha256": "ff1952a49943d436c56f5f9a0ce7ee43b5f1e4b0b6b57a7059b4bb2803907674",
+      "size": 5571,
+      "sha256": "3052f5b4cc54028510bd5dbed0a67d3155203a23c6af376691629775e71849fc",
       "origin": "working-tree"
     },
     {
@@ -2194,8 +2195,8 @@
     },
     {
       "path": "_release-kit/tests/ubuntu-installer.py",
-      "size": 20060,
-      "sha256": "6863fe1eb83bf3405112caf22af732ebafe7cf177abd37544e1c76e76b59f7e4",
+      "size": 24181,
+      "sha256": "d30a352181dedba928ecd0cca212abf4afc21c166b148ffaf19492de166cb9ec",
       "origin": "working-tree"
     },
     {
@@ -5586,6 +5587,12 @@
       "path": "focus-tracker/uninstall.php",
       "size": 3374,
       "sha256": "9c9b5d7801a5c083db02ad24b2dd4a04740e61e060db4a1c485af661c15f9330",
+      "origin": "working-tree"
+    },
+    {
+      "path": "install.sh",
+      "size": 2112,
+      "sha256": "6749d50e54fe9c55aba5a21adbda57d74455361045663d0a7a836b5ff02e74c6",
       "origin": "working-tree"
     },
     {

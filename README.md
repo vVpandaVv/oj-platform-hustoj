@@ -15,7 +15,13 @@ WordPress 기반 프로그래밍 수업 플랫폼입니다.
 
 Ubuntu 24.04 LTS · HUSTOJ 공식 최신 배포 · WordPress 6.6 이상 · PHP 8.3 이상
 
-새 서버는 [자동 설치 스크립트](_release-kit/install/ubuntu24.sh)로 HUSTOJ·WordPress·OJ Platform을 한 번에 설치합니다. 명령은 [서버 준비](_release-kit/guides/_server.md)를 참고합니다.
+새 Ubuntu 24.04 서버에서 [설치 스크립트](install.sh)를 실행합니다.
+
+```bash
+curl -fL https://github.com/vVpandaVv/oj-platform-hustoj/raw/main/install.sh -o install.sh && bash install.sh
+```
+
+기본값은 서버 IP의 HTTP 주소와 테스트 이메일입니다. [서버 준비](_release-kit/guides/_server.md)에서 운영 주소·이메일 지정 방법을 확인합니다.
 
 1. [Ubuntu 서버 준비](_release-kit/guides/_server.md)
 2. [OJ Platform 설치](_release-kit/guides/oj-platform.md)
