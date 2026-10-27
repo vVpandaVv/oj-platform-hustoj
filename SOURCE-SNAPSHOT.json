@@ -49,7 +49,8 @@
       "OJ-BUILD-HARNESS.md",
       "README.md",
       "_notes/agent-harness.md",
-      "install.sh"
+      "install.sh",
+      "update.sh"
     ],
     "includeGlobs": [
       "_notes/readcontents-server-import-2026-09-12/editor-source/package*.json",
@@ -250,8 +251,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7656,
-  "totalBytes": 148782580,
+  "fileCount": 7660,
+  "totalBytes": 148835534,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -287,8 +288,8 @@
     },
     {
       "path": "README.md",
-      "size": 1999,
-      "sha256": "01f235a4a7eeeb3619152431bc3c8ba51d6791ca622cea9deb37dc3c5ab1ddc1",
+      "size": 2360,
+      "sha256": "c0af54348d87f783785ff2bb84dcc27263bc0abc1fbc3f4aaf4af5d6782e64a5",
       "origin": "working-tree"
     },
     {
@@ -1997,8 +1998,8 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 59771,
-      "sha256": "2443490ba5d3269647e9d7a0b84a7b272c6585e10aeb06cf95b7d2fde481be5a",
+      "size": 60656,
+      "sha256": "472a641cdd846e6b5ac9f67249a002a2cb3daa2192adcab54679b5760183eeb7",
       "origin": "working-tree"
     },
     {
@@ -2033,8 +2034,8 @@
     },
     {
       "path": "_release-kit/guides/oj-platform.md",
-      "size": 40029,
-      "sha256": "36fcfbeb07b30dd39d4a8d838c5a117cbe812ca25465b1ac10a8db6941a510d8",
+      "size": 40241,
+      "sha256": "2145a9a852436620028e36a02c76e49897e585bf4757ffba2efde355f52b48af",
       "origin": "working-tree"
     },
     {
@@ -2080,6 +2081,18 @@
       "origin": "working-tree"
     },
     {
+      "path": "_release-kit/install/update-platform.php",
+      "origin": "working-tree",
+      "size": 4502,
+      "sha256": "6b3fbd791a58af017056a4e1a8d59bbd19a68317760adc7250681445f40772fc"
+    },
+    {
+      "path": "_release-kit/install/update-ubuntu24.sh",
+      "origin": "working-tree",
+      "size": 17225,
+      "sha256": "9d643cc68be712efda462f92979639e7e0c72471d11e5169ed837a96d1fc8fcd"
+    },
+    {
       "path": "_release-kit/lib/Common.ps1",
       "size": 16678,
       "sha256": "6f633e44e5340ef16b6dc69f99ebf5e7bfbbf1fb38b9c62de734b28b1514f189",
@@ -2111,8 +2124,8 @@
     },
     {
       "path": "_release-kit/public-source.json",
-      "size": 5571,
-      "sha256": "3052f5b4cc54028510bd5dbed0a67d3155203a23c6af376691629775e71849fc",
+      "size": 5588,
+      "sha256": "714d2fecc60c1301b7c1f6c99038b4659ef1808b9879f446180c1da32d41b5d5",
       "origin": "working-tree"
     },
     {
@@ -2210,6 +2223,12 @@
       "size": 48177,
       "sha256": "123b7f811e932fc4150e38896b819389e398e33a5e61d812d7a6b175c0cdacc9",
       "origin": "working-tree"
+    },
+    {
+      "path": "_release-kit/tests/ubuntu-updater.py",
+      "origin": "working-tree",
+      "size": 29516,
+      "sha256": "108aa9336ca80fffd922627bd4340c1baca024619f60961d85c148f0b2b89196"
     },
     {
       "path": "_releases/README.md",
@@ -47042,6 +47061,12 @@
       "size": 3087,
       "sha256": "07d475ad110f4791301a605b7ee0775d266441a54a2ef93897fddf02dbaa8882",
       "origin": "working-tree"
+    },
+    {
+      "path": "update.sh",
+      "origin": "working-tree",
+      "size": 236,
+      "sha256": "d6a049eef2535187b49cb01bbc9cd6d54a032be80da2fa3490097ae05af367f6"
     }
   ],
   "lineEndingNormalization": {

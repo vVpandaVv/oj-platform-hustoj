@@ -28,7 +28,8 @@
     "OJ-BUILD-HARNESS.md",
     "README.md",
     "_notes/agent-harness.md",
-    "install.sh"
+    "install.sh",
+    "update.sh"
   ],
   "includeGlobs": [
     "_notes/readcontents-server-import-2026-09-12/editor-source/package*.json",

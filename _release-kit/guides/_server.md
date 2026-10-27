@@ -104,6 +104,18 @@ sudo fuser -v /run/oj-platform-installer.lock
 
 이전 버전의 설치가 끝났는데 `judged`만 잠금을 보유한 경우, Ubuntu 서버를 재부팅한 후 위 명령으로 설치를 이어갑니다.
 
+### 플랫폼 업데이트
+
+설치가 완료된 사이트에서 실행합니다.
+
+```bash
+cd ~/oj-platform-hustoj && git pull --ff-only && sudo bash update.sh
+```
+
+최신 OJ Platform 배포 ZIP의 체크섬과 요구 버전을 확인합니다. 같은 버전이면 변경 없이 끝납니다. 새 버전이 있으면 DB·기존 플랫폼·설정 파일을 `/var/backups/oj-platform/updates/`에 백업하고, 잠시 점검 모드에서 코드와 스키마를 갱신합니다. 사이트 계정·자료·설정은 유지합니다.
+
+중단된 업데이트는 같은 명령을 다시 실행하면 백업해 둔 패키지로 이어갑니다. 완료 후 점검 모드를 해제하고 기존 예약 작업을 복원합니다. 설치 ZIP을 직접 지정할 때는 `sudo bash update.sh --plugin-zip /경로/oj-platform.zip`을 사용하며, 같은 폴더에 `.zip.sha256` 파일을 둡니다.
+
 아래는 수동 설치 절차입니다.
 
 - 웹 루트: `/home/judge/src/web` (WordPress가 설치된 곳)

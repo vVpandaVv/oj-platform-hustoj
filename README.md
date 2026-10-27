@@ -39,4 +39,14 @@ HUSTOJ 설치 출력과 주기적인 실행 상태를 화면에서 확인할 수
 2. [OJ Platform 설치](_release-kit/guides/oj-platform.md)
 3. 플러그인별 ZIP을 WordPress 관리자에서 설치합니다.
 
+## 업데이트
+
+설치된 OJ Platform에 최신 배포 ZIP을 적용합니다.
+
+```bash
+cd ~/oj-platform-hustoj && git pull --ff-only && sudo bash update.sh
+```
+
+계정·자료·설정을 유지하며, 변경 전에 DB·기존 플랫폼·설정 파일을 `/var/backups/oj-platform/updates/`에 백업합니다. 같은 버전이면 변경 없이 끝납니다.
+
 배포 ZIP 경로: `_releases/<플러그인>/<버전>/<파일>.zip`
