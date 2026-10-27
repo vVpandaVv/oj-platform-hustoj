@@ -37,7 +37,7 @@ HUSTOJ 설치 출력과 주기적인 실행 상태를 화면에서 확인할 수
 
 1. [Ubuntu 서버 준비](_release-kit/guides/_server.md)
 2. [OJ Platform 설치](_release-kit/guides/oj-platform.md)
-3. 플러그인별 ZIP을 WordPress 관리자에서 설치합니다.
+3. [플러그인별 ZIP](_releases/README.md)을 WordPress 관리자에서 설치합니다.
 
 ## 업데이트
 

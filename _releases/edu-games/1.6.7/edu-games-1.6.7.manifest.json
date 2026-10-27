@@ -1,0 +1,1643 @@
+{
+    "plugin":  "edu-games",
+    "version":  "1.6.7",
+    "source":  "working-tree",
+    "archive":  "edu-games-1.6.7.zip",
+    "sha256":  "32cae60ef45bd4082d35cf46f088e248823848078c680e309976ec93176d408c",
+    "fileCount":  325,
+    "bytes":  5471953,
+    "excluded":  [
+                     ".git",
+                     "tests",
+                     "scripts",
+                     "docs",
+                     "node_modules"
+                 ],
+    "files":  [
+                  {
+                      "path":  "edu-games/assets/device-matching/ATTRIBUTION.md",
+                      "bytes":  7898,
+                      "sha256":  "46a81c19ecfa05ba15655b6d310b049f19c8ac351575024119fa12b8a115eec3"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/expanded-sources.json",
+                      "bytes":  52380,
+                      "sha256":  "8d7eeae295fa71529430d52dce658bd25d2261db20a66003f23f0296550bf7a3"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/3d-printer.jpg",
+                      "bytes":  520470,
+                      "sha256":  "3df2a7d92357436ec2683c2732822a45eb0b2b69444fbf93993b607f573b70f8"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/arduino-uno.jpg",
+                      "bytes":  247840,
+                      "sha256":  "990dd6aa0006e651f360939ef7f198606733917458e7bdb7b1e9f712c464a58c"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/breadboard.jpg",
+                      "bytes":  91484,
+                      "sha256":  "1d2baf656b75990aa028b19d252e01612e0abd9ed56305682dbe6519460b0adf"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/buzzer.jpg",
+                      "bytes":  111251,
+                      "sha256":  "5aaff2cab1e9d0ae5356638ca71c331d8d61b33134f3f9c9211d2eeeb44698e6"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/cooling-fan.jpg",
+                      "bytes":  150566,
+                      "sha256":  "34a5d9c062e57332fd26f37d87e548cd84dd1f996a9eaeb2edcd008b51d1a6b1"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/cpu.jpg",
+                      "bytes":  272214,
+                      "sha256":  "5f57e3ea97616e0f7bf9ed0e59658ec3cd90e97de578d21548940a531c02200b"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/dc-motor.jpg",
+                      "bytes":  12707,
+                      "sha256":  "afd0545e0d4b048d9ec1967a09d6e190fba51d7be6d328b01402ee0494a03df1"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/desktop-computer.jpg",
+                      "bytes":  45672,
+                      "sha256":  "95b9c2e0fb985d485b6bbdf24fb3a644274ea8da20cbc5044afa61ff19e385cb"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/force-sensor.jpg",
+                      "bytes":  39733,
+                      "sha256":  "25cbcb552717ce0e794544d4e1cbfd1339b6d174ea807b33cb300c244be43334"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/gas-sensor.jpg",
+                      "bytes":  181515,
+                      "sha256":  "e07a3531b6c91e4718d9eafce181fbf77fe9e8dedd8b931fd88ffc3dce3d4491"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/graphics-card.jpg",
+                      "bytes":  145398,
+                      "sha256":  "f4f2313d14f6ea6cfc061dc54730d008ae8f19752944f9afadabf840d9910859"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/keyboard.jpg",
+                      "bytes":  104491,
+                      "sha256":  "97dd5618d3623fe014081ffd583a7475fe1bea7ab86050585e562dec8a9e0348"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/laptop.jpg",
+                      "bytes":  146632,
+                      "sha256":  "5c763f4da6a5c334cb4f5df62882ddb3d51e8bd14d399728273a393cb0f0f4dc"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/led.jpg",
+                      "bytes":  39035,
+                      "sha256":  "a670e7db4b9288a937ae9833acef80f635cdf4a1c0fd83b2ba6873fdaaac27ab"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/light-sensor.jpg",
+                      "bytes":  54960,
+                      "sha256":  "20bc3235210c90aefaad517b3b99e3c52b41057baa0dfd0336514f52955f5cb5"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/linear-actuator.jpg",
+                      "bytes":  7607,
+                      "sha256":  "06a157c68fa4bc324eb520fe9c233ec480f733e0a2fc3f95a16d51c1ced079d6"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/load-cell.jpg",
+                      "bytes":  183551,
+                      "sha256":  "5532a6217516c759d9612ddf533cee6140ee871fbdc42dcde92113fe7207875f"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/microbit.jpg",
+                      "bytes":  101657,
+                      "sha256":  "443cb2457a116e02ad6b065aa8e6b975a0b8c98c258ff70395aa517a8a4ecca8"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/monitor.jpg",
+                      "bytes":  312152,
+                      "sha256":  "1465289dcfe5860ceab143e9ef33cc988cec07201d12938027d13229064cffc0"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/mouse.jpg",
+                      "bytes":  50474,
+                      "sha256":  "cc2d1ef1a6e98eddee03b3c9e492fcbc6b2f70b6bcc444287d3dd3381f0917aa"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/pir-motion-sensor.jpg",
+                      "bytes":  44446,
+                      "sha256":  "e3bb11013ecb16add62d1456c40afe29bf0a3c79896d1ef09a346dd2bde5a269"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/printer.jpg",
+                      "bytes":  96198,
+                      "sha256":  "320254afd15e9e8a5c553d62c2f9175edd108da75b2c7efc3b4a456eb7eb0d35"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/ram.jpg",
+                      "bytes":  64412,
+                      "sha256":  "719180ac5545b78e101625c86a5fce1ebad645c1d5d8e74ea837444b630ee60d"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/raspberry-pi.jpg",
+                      "bytes":  137546,
+                      "sha256":  "14b11d187f5ae15cf6bff379b7a0efb42b8effb39c54bdf91fde61149afe7d3f"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/reed-switch.jpg",
+                      "bytes":  27089,
+                      "sha256":  "cd33b4f1d2415aaba182890d677b867b51fb6e932f04a07e6a7631f94ad7e76f"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/rotary-encoder.jpg",
+                      "bytes":  93626,
+                      "sha256":  "bdc3d271e0f607016abd61e49881eeceee4498f8b0c43614382267de1a084dce"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/router.jpg",
+                      "bytes":  147666,
+                      "sha256":  "aaf2e630af7eaead389367e5a381d1377edaf47a4c8d944a04af7172bdf2b847"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/servo-motor.jpg",
+                      "bytes":  205481,
+                      "sha256":  "e675d88856d731e1c016cb387d65cea9bd85ffc9e14af5bebfb376a449006b19"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/stepper-motor.jpg",
+                      "bytes":  56355,
+                      "sha256":  "756c2539c0a50867e19b3c6803594ce5534e2b3e8a89b4e860dc51dd79d2852d"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/tablet.jpg",
+                      "bytes":  96003,
+                      "sha256":  "6d2eb2ecd76cf27ee4cf42da52026986720f27704b480c0b5daa1720aaf24bcb"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/temperature-humidity-sensor.jpg",
+                      "bytes":  67245,
+                      "sha256":  "0d0af1fc245f27818c7b86f502eadc6fb662b4cac83781d4ef763b92494a0e4e"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/temperature-probe.jpg",
+                      "bytes":  92896,
+                      "sha256":  "8c7b921da18a772d0cfcdff5a4e7eab9b2c34e6d441ec78728ae4baa81e3dc15"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/tilt-sensor.jpg",
+                      "bytes":  193597,
+                      "sha256":  "179f34ffa6c039aaf50f49de7612c760624231fbf560755b6cb2c55888acaad1"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/ultrasonic-sensor.jpg",
+                      "bytes":  126603,
+                      "sha256":  "77c0c99d12487e0a59e5b28e80b03226f47f7e644ef2728346f76c3ac801c18d"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/usb-drive.jpg",
+                      "bytes":  49517,
+                      "sha256":  "fef1a52349dca2ac9924eec92074f3c56cdf15db5d245a341a3c18b3f4788721"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/vibration-motor.jpg",
+                      "bytes":  104886,
+                      "sha256":  "b11434de4fc2027e3acb97e9e7244f03303301636a3901ed6a7286236e201c03"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/water-pump.jpg",
+                      "bytes":  195155,
+                      "sha256":  "88a2efa0a6212e69516d90843be9b852a092efa30d62c8560b3f659b3c5b8397"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/images/webcam.jpg",
+                      "bytes":  92213,
+                      "sha256":  "9def48c8f2dcfe1c573b0b9865938f4569210fa43025494584c3e073df5db0fd"
+                  },
+                  {
+                      "path":  "edu-games/assets/device-matching/reviewed-sources.json",
+                      "bytes":  18203,
+                      "sha256":  "c91e9ff083d9b76c5eab0ff58df6d5270af16a253a2c5e361392fde4abf0ffc7"
+                  },
+                  {
+                      "path":  "edu-games/assets/learning/progress.js",
+                      "bytes":  2319,
+                      "sha256":  "ad15931b2d0894ebe9171ec295beb6f6e4c9c5102300eb8ebdf94b29f1c992e5"
+                  },
+                  {
+                      "path":  "edu-games/assets/learning/style.css",
+                      "bytes":  5931,
+                      "sha256":  "82d797b99635602f07615af9e1575b8b7e089083f9a87fdaadf362ba4ca13608"
+                  },
+                  {
+                      "path":  "edu-games/assets/learning/view.js",
+                      "bytes":  26920,
+                      "sha256":  "cda64783fa35f35b0aa4abde094e759c901550734fcc02d7a24f176ff6644f0f"
+                  },
+                  {
+                      "path":  "edu-games/assets/play/core.js",
+                      "bytes":  11928,
+                      "sha256":  "48bf8787eecabcb8f94a47de33f241289840ac4e0ff2e9942fa352958e6bded8"
+                  },
+                  {
+                      "path":  "edu-games/assets/play/hands.css",
+                      "bytes":  48597,
+                      "sha256":  "8629899bddafad59cf7fcd3308ec9a34b342bc4279754c8915aed25c2e84b759"
+                  },
+                  {
+                      "path":  "edu-games/assets/play/hands.js",
+                      "bytes":  39259,
+                      "sha256":  "22797909ff6c36ac28ad0212564c43fbdcf107d50eb4d6759cac4988cbe1ae98"
+                  },
+                  {
+                      "path":  "edu-games/assets/play/missing.js",
+                      "bytes":  11257,
+                      "sha256":  "b854779e96272cedab111e8ca8bb5e2225920c6d01aa3b43fe6f80c19906afcd"
+                  },
+                  {
+                      "path":  "edu-games/assets/play/rescue.js",
+                      "bytes":  12936,
+                      "sha256":  "f024603f1f39543fb8a9bef7f5d05382daeae3a41be48e22f6c9c169c8d7341a"
+                  },
+                  {
+                      "path":  "edu-games/assets/play/rescue-scenes.js",
+                      "bytes":  21036,
+                      "sha256":  "267fba0528b0616a3a27155cef58f39b313ca06db71ef2f16c2c0ccb9ac74dd5"
+                  },
+                  {
+                      "path":  "edu-games/assets/play/style.css",
+                      "bytes":  10232,
+                      "sha256":  "a8f1577ca8b26cb8784c788e8648f66befcb860950131caf2e4b71520c57c028"
+                  },
+                  {
+                      "path":  "edu-games/assets/play/views.js",
+                      "bytes":  26424,
+                      "sha256":  "5f473d513b18c20cea3c0f6e83cf459b03d8f0ec0c288fc90a5bc031f437d9a7"
+                  },
+                  {
+                      "path":  "edu-games/assets/rankings/pager.css",
+                      "bytes":  3670,
+                      "sha256":  "b7a69102d190c563c00d0d612023bf285728a17612dff5f86fcccab51f43bd71"
+                  },
+                  {
+                      "path":  "edu-games/assets/rankings/pager.js",
+                      "bytes":  10187,
+                      "sha256":  "49250b59a2088b661585c293e0ad9acc5fcc7c60ab090d23cb260d420e133a6b"
+                  },
+                  {
+                      "path":  "edu-games/assets/README.md",
+                      "bytes":  101,
+                      "sha256":  "abac59b2a56c85ddffbfe2d5bd82b00be67ee15900564888e4254a02bcd52caa"
+                  },
+                  {
+                      "path":  "edu-games/assets/shell/icons.svg",
+                      "bytes":  680,
+                      "sha256":  "ce523d5279f81d97e63970a77c62bab011d1e19cbbe3beec62343075ef99548b"
+                  },
+                  {
+                      "path":  "edu-games/assets/shell/LICENSE.txt",
+                      "bytes":  752,
+                      "sha256":  "ee209531f4aac74806dbbbd6866400e55b31161551ede7f4b6a85e0aaf090c0a"
+                  },
+                  {
+                      "path":  "edu-games/assets/shell/shell.css",
+                      "bytes":  55266,
+                      "sha256":  "e5291886d951c573adde8227a1c641c7a303683cdf36cd0d15e37d638c1d7e64"
+                  },
+                  {
+                      "path":  "edu-games/assets/shell/shell.js",
+                      "bytes":  9886,
+                      "sha256":  "5af48748b4f779ec608422b3bc1a447d7206293926c98cef86cea3570f287a85"
+                  },
+                  {
+                      "path":  "edu-games/assets/strategy/board-views.js",
+                      "bytes":  30218,
+                      "sha256":  "a247dfe500a93493b5a5c41536c42c712697b22660610308d676c9a28d945610"
+                  },
+                  {
+                      "path":  "edu-games/assets/strategy/style.css",
+                      "bytes":  14153,
+                      "sha256":  "8f7d54dca9c868c548d8e8ac68def712e50e37d74523da55375c18b2651d082a"
+                  },
+                  {
+                      "path":  "edu-games/assets/strategy/view.js",
+                      "bytes":  19279,
+                      "sha256":  "3777e223d7300b33a7e0aefe7735a453718e261749bc483d302fe5f3b377d42b"
+                  },
+                  {
+                      "path":  "edu-games/assets/vendor/chartjs/chart.umd.min.js",
+                      "bytes":  208522,
+                      "sha256":  "48444a82d4edcb5bec0f1965faacdde18d9c17db3063d042abada2f705c9f54a"
+                  },
+                  {
+                      "path":  "edu-games/assets/vendor/chartjs/color-LICENSE.md",
+                      "bytes":  1085,
+                      "sha256":  "2859c50313bad2ba77b081410c477beaf92b60ca13a77a248d89859a6dd6ac81"
+                  },
+                  {
+                      "path":  "edu-games/assets/vendor/chartjs/LICENSE.md",
+                      "bytes":  1093,
+                      "sha256":  "41a84aa2caba645f966a18d9c2056b73e6d3a81d80bc0046bc0011a2634d4cce"
+                  },
+                  {
+                      "path":  "edu-games/assets/vendor/README.md",
+                      "bytes":  590,
+                      "sha256":  "8e94ace2ffcff984045ae1c62eeccf85e6c99b899ac798ffc6cde84501a089e1"
+                  },
+                  {
+                      "path":  "edu-games/assets/warehouse/crate.svg",
+                      "bytes":  359,
+                      "sha256":  "195d70ba41c2e4da17a05f91081ade133ebb5aa5ffe278d99a5874cf4cb56993"
+                  },
+                  {
+                      "path":  "edu-games/assets/warehouse/style.css",
+                      "bytes":  6145,
+                      "sha256":  "44aac10a2c4b05be1513db41291893253732e235141a8298b73095aaf6ef48b5"
+                  },
+                  {
+                      "path":  "edu-games/assets/warehouse/view.js",
+                      "bytes":  14175,
+                      "sha256":  "ac778c49a6b277773565baa9874f646114554a8850e00d9ff9b68a9c2a1c54f8"
+                  },
+                  {
+                      "path":  "edu-games/blocks/ai-classifier-lab/block.json",
+                      "bytes":  482,
+                      "sha256":  "a6c438ba938667f9e22594a02e93375e57fd8e0488a1a8eeaa01d65df0498ca0"
+                  },
+                  {
+                      "path":  "edu-games/blocks/ai-classifier-lab/render.php",
+                      "bytes":  184,
+                      "sha256":  "86ce1eef1e423143a09dd9fc1b70d423dbea2f62e5b5b37bd4325ba22d49d12b"
+                  },
+                  {
+                      "path":  "edu-games/blocks/ai-classifier-lab/style.css",
+                      "bytes":  10035,
+                      "sha256":  "353e707da80a41623dc7748552dcefcfa7b0e461d06e2f6891f3c40603584316"
+                  },
+                  {
+                      "path":  "edu-games/blocks/ai-classifier-lab/view.js",
+                      "bytes":  39610,
+                      "sha256":  "457b921b136c22aa1fc95b01bebf5437729fbfb93bcb6e0e592d7a54c64730a0"
+                  },
+                  {
+                      "path":  "edu-games/blocks/ai-model-lab/block.json",
+                      "bytes":  473,
+                      "sha256":  "18bfa0ea3184edbb9b5cd091d3828871789a0312ff619bc482ffc909d32b3f71"
+                  },
+                  {
+                      "path":  "edu-games/blocks/ai-model-lab/render.php",
+                      "bytes":  179,
+                      "sha256":  "e2f8ce08bf8d484e0d350fe4964651fe800cab0e0ab456f537ed5470c068d693"
+                  },
+                  {
+                      "path":  "edu-games/blocks/ai-model-lab/style.css",
+                      "bytes":  10309,
+                      "sha256":  "5000ca66b0b0cfadbacdef998086c07fee04510fd06859ef0c0cca1c01878d8d"
+                  },
+                  {
+                      "path":  "edu-games/blocks/ai-model-lab/view.js",
+                      "bytes":  19916,
+                      "sha256":  "970177d12f6c9479a7f4dfefbfc0efaaa6e20b294d49b982f78e6417aa28d252"
+                  },
+                  {
+                      "path":  "edu-games/blocks/binary-arcade/block.json",
+                      "bytes":  455,
+                      "sha256":  "b4a34589294e8533d75ea1ce717a9a20ba4b9ea3a84c5c02cc155bbe8e66780b"
+                  },
+                  {
+                      "path":  "edu-games/blocks/binary-arcade/render.php",
+                      "bytes":  180,
+                      "sha256":  "3f45bd1958d30ee806c1447548c9b4508dd573ce267cfe030dbb9761d3e100c8"
+                  },
+                  {
+                      "path":  "edu-games/blocks/binary-arcade/style.css",
+                      "bytes":  15165,
+                      "sha256":  "c60b193f8d6050de687a10da0187e0dc7f9befd5880314a917c9571b2195f1f1"
+                  },
+                  {
+                      "path":  "edu-games/blocks/binary-arcade/view.js",
+                      "bytes":  37178,
+                      "sha256":  "b92f4246586550f59477bf2a6a631deb6ecfd6a57500c058261da957bdf9275e"
+                  },
+                  {
+                      "path":  "edu-games/blocks/character-code/block.json",
+                      "bytes":  506,
+                      "sha256":  "92d868ef7b1a4cf6e46269a9fb1c31bf46988afb4bb295d4b3c3961c6810cb22"
+                  },
+                  {
+                      "path":  "edu-games/blocks/character-code/render.php",
+                      "bytes":  181,
+                      "sha256":  "b297937557b3264330869b917a9ce6beff512348ff800f26432dae0e183b94e7"
+                  },
+                  {
+                      "path":  "edu-games/blocks/character-code/style.css",
+                      "bytes":  11339,
+                      "sha256":  "84d8db6e51c2369d640a502e2e3238a355fc42410475ade7038bffce87b6b391"
+                  },
+                  {
+                      "path":  "edu-games/blocks/character-code/view.js",
+                      "bytes":  43288,
+                      "sha256":  "f866ffe29e6737b26d3ca885f21ebf35bbbe4e7222365bbeb451accc86dccda1"
+                  },
+                  {
+                      "path":  "edu-games/blocks/code-typing/block.json",
+                      "bytes":  463,
+                      "sha256":  "66b2054663fd517ffe625c1b3c4b736536ce0b414fc1d4b0048a7b6ca40bbe5c"
+                  },
+                  {
+                      "path":  "edu-games/blocks/code-typing/render.php",
+                      "bytes":  178,
+                      "sha256":  "05bf844cd22da1b692637851cb6b09b73fef95d7759b790229733e872da56eb4"
+                  },
+                  {
+                      "path":  "edu-games/blocks/code-typing/style.css",
+                      "bytes":  11898,
+                      "sha256":  "ccedfe1bda94ecb65291c1e1d9a672d3abbbc039d36f3a2d480ce26541f44d07"
+                  },
+                  {
+                      "path":  "edu-games/blocks/code-typing/view.js",
+                      "bytes":  57614,
+                      "sha256":  "a17fbe0cd3e3f6c7a247a629ed29b1d2a53ecb243bc29e2ca36add33c17fb118"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-extraction/block.json",
+                      "bytes":  495,
+                      "sha256":  "a1ef835889e52ff97654561774cbf592c9e110295626432dddafc4c2ba1e33a6"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-extraction/render.php",
+                      "bytes":  172,
+                      "sha256":  "930050b4cfcedb43be19cc33cd1d000c88ff31572e8e76def44e8febc2453855"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-extraction/style.css",
+                      "bytes":  8806,
+                      "sha256":  "ea67f970d1949e15af39c95dceb38c17dd4a87970436f930542c54a12e9744e9"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-extraction/view.js",
+                      "bytes":  33271,
+                      "sha256":  "42a8913ad5bb8b0b69b00f53830469eb5e3be771613a3f82428de4e06bf7197c"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-structure-lab/block.json",
+                      "bytes":  470,
+                      "sha256":  "6953f01f0aa61718051b77832dab83659ec216afacde1bbfd4735c6d8078fc2c"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-structure-lab/render.php",
+                      "bytes":  185,
+                      "sha256":  "ee6f3d189e50c6ab1b98cb7e469ee9feae8294d191b46d25dcde71725e6f081b"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-structure-lab/style.css",
+                      "bytes":  9103,
+                      "sha256":  "287486f9bd2db7a7c12222ded83e813f5593b75750c419cba2a8c08689a901df"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-structure-lab/view.js",
+                      "bytes":  29377,
+                      "sha256":  "3b7e01096af023b8b7eeac1a93bf3df7c0e32230bad69019d2fd9942a3853dcc"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-visualization/block.json",
+                      "bytes":  480,
+                      "sha256":  "3f8ff941cc9fa6c65140d1af5618546e53bc5d60338503cb29a4684d38ac409f"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-visualization/render.php",
+                      "bytes":  185,
+                      "sha256":  "45153315d4cbcbb50cafd1d176fc0a025b7818fe8b02f0e2965a6b1064ca33ac"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-visualization/style.css",
+                      "bytes":  11714,
+                      "sha256":  "0f9fa091bd4052396cac159e923f1ecc46647c7aaa610487b421a171cef320c4"
+                  },
+                  {
+                      "path":  "edu-games/blocks/data-visualization/view.js",
+                      "bytes":  43049,
+                      "sha256":  "84bffce71d2789d569e26f09e539e8cb9ea459e05a161ffb96105d44c087a4a3"
+                  },
+                  {
+                      "path":  "edu-games/blocks/device-matching/block.json",
+                      "bytes":  487,
+                      "sha256":  "7af5fc2718b3ad053cb8818c3b188f3f4a32afd645f04205a2ea589e7ffd4d22"
+                  },
+                  {
+                      "path":  "edu-games/blocks/device-matching/render.php",
+                      "bytes":  182,
+                      "sha256":  "b3279ed31f1f719427ddf486e371375405ea7b0e8c79b9595d342cd42292f548"
+                  },
+                  {
+                      "path":  "edu-games/blocks/device-matching/style.css",
+                      "bytes":  11571,
+                      "sha256":  "e16d4039838c74121c50be83553caa67731a6b01b8f5c80d426791bca648fc1d"
+                  },
+                  {
+                      "path":  "edu-games/blocks/device-matching/view.js",
+                      "bytes":  34731,
+                      "sha256":  "9d1e55fb602a3707b7b1d7eb71d101b6ec68d53aee7f5c577a57cce6caf441ff"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-hub/block.json",
+                      "bytes":  446,
+                      "sha256":  "ddf98025438b755733ae431a8bce943f5dcc3809f63296b0d75bdd6de5d7b325"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-hub/README.md",
+                      "bytes":  98,
+                      "sha256":  "a2f41692145b91418b74333d90cb4abfcdf62b7aeeb7fe265c226114e38c9778"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-hub/render.php",
+                      "bytes":  6972,
+                      "sha256":  "6d8895308bca9f6837bd3e14c0f9e5614214d4b62e299d6e88ddfb1bf327dfdd"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-hub/style.css",
+                      "bytes":  6138,
+                      "sha256":  "101a9a63f20192dfb006dce8e708fd2abc31d279c45b36234b1cf07eabc448db"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-hub/view.js",
+                      "bytes":  74,
+                      "sha256":  "260350faab02f86423737afc65542e2d8ebbff4334030e0fb8d93c70a9976456"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-leaderboard/block.json",
+                      "bytes":  463,
+                      "sha256":  "824fd37a436d0c1a0d79f98f78f0d0274532f518bcb658729f531c0db4cbf61a"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-leaderboard/README.md",
+                      "bytes":  70,
+                      "sha256":  "5aa7fd7b118b6be973ba67793a01bd5232c6f511d155bc46a9ecf7bd067996f5"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-leaderboard/render.php",
+                      "bytes":  1627,
+                      "sha256":  "df85f304a599d53e4873b2ad2926b6647d9a66742d9e3bc677e8140c0382267e"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-leaderboard/style.css",
+                      "bytes":  2231,
+                      "sha256":  "e2a48f1aae175458bc8c58f6585bbf1d6f32a1cc4d195f32292849ab68d13e3d"
+                  },
+                  {
+                      "path":  "edu-games/blocks/game-leaderboard/view.js",
+                      "bytes":  5144,
+                      "sha256":  "401b86582cc1d0fa877c799d9b3f640dd541c64e23c2514240264ea6d3b9d9ab"
+                  },
+                  {
+                      "path":  "edu-games/blocks/group-leaderboard/block.json",
+                      "bytes":  472,
+                      "sha256":  "885c55e101445a10a17138912a749bbe8f3af4f847d97bef8fa0c03d5b834223"
+                  },
+                  {
+                      "path":  "edu-games/blocks/group-leaderboard/README.md",
+                      "bytes":  69,
+                      "sha256":  "0c690acc21fcbc3fe473abf871eff22ef67f9311ffbde842fa62b07eda30cc42"
+                  },
+                  {
+                      "path":  "edu-games/blocks/group-leaderboard/render.php",
+                      "bytes":  2902,
+                      "sha256":  "60b6717f979f4edd1e22f97210f2d711c840e2acfad172abf48fe31c465481c5"
+                  },
+                  {
+                      "path":  "edu-games/blocks/group-leaderboard/style.css",
+                      "bytes":  5166,
+                      "sha256":  "b76167748548c8d71ecf4eb5b5caf87972b0c6025c91bd56a76e7b31651e4292"
+                  },
+                  {
+                      "path":  "edu-games/blocks/group-leaderboard/view.js",
+                      "bytes":  17512,
+                      "sha256":  "925e487ec3dd94c8cf849ce6737574fbd3323ff5ad6779cc95bb88543b1979ab"
+                  },
+                  {
+                      "path":  "edu-games/blocks/image-data/block.json",
+                      "bytes":  479,
+                      "sha256":  "119028435bdf65a04ed9363b33808c816063f32f4233d6280b5cb33331486346"
+                  },
+                  {
+                      "path":  "edu-games/blocks/image-data/render.php",
+                      "bytes":  177,
+                      "sha256":  "9635ad3273b1fbcdfec775bb6cbb38418de548cdbc6075ea50730a3d07e27451"
+                  },
+                  {
+                      "path":  "edu-games/blocks/image-data/style.css",
+                      "bytes":  13367,
+                      "sha256":  "74a694b686fb9a6fc868afa9f97e072a5583b07deb3213880eba0265186f7b5b"
+                  },
+                  {
+                      "path":  "edu-games/blocks/image-data/view.js",
+                      "bytes":  37615,
+                      "sha256":  "3effebc4085892314e2846bb97fce37d4f5973c05ac59b73f1088c54f6d83a71"
+                  },
+                  {
+                      "path":  "edu-games/blocks/keyword-rain/block.json",
+                      "bytes":  476,
+                      "sha256":  "452b42fd47cb75e94188566e0f4cc8ba6d6302fddc4789fe5397eb95fd600c42"
+                  },
+                  {
+                      "path":  "edu-games/blocks/keyword-rain/render.php",
+                      "bytes":  179,
+                      "sha256":  "9eb554845d5ad5523aaa173f83fa312ad27f0d60049a6af63063e0e031f52168"
+                  },
+                  {
+                      "path":  "edu-games/blocks/keyword-rain/style.css",
+                      "bytes":  9081,
+                      "sha256":  "5cd9e722a3a7ea8662c75fa3a3f050bf3d54d6d1121fd2cd9a59414ac725a5a6"
+                  },
+                  {
+                      "path":  "edu-games/blocks/keyword-rain/view.js",
+                      "bytes":  31472,
+                      "sha256":  "b0e09059484727934b831fa80bae172d4bf0905fa750d3491118cf169555ece1"
+                  },
+                  {
+                      "path":  "edu-games/blocks/missing-values/block.json",
+                      "bytes":  480,
+                      "sha256":  "67f56f4744107088293a06bdc40a6944630ccde2ef4c574eac874eaff9e6ffa7"
+                  },
+                  {
+                      "path":  "edu-games/blocks/missing-values/render.php",
+                      "bytes":  181,
+                      "sha256":  "d4b8d2e694d6131b51adbb454be5adf73aa47a75f30daca00b81e145cd438c80"
+                  },
+                  {
+                      "path":  "edu-games/blocks/missing-values/style.css",
+                      "bytes":  9881,
+                      "sha256":  "2d0e07c96c7977817baac15c3e79c4fa15d17a3c1b28ce3489dd708866b99a7c"
+                  },
+                  {
+                      "path":  "edu-games/blocks/missing-values/view.js",
+                      "bytes":  33908,
+                      "sha256":  "21184bef58f43d859b8e3004733a278dbd37c36852b34ed3ab433a7155a70b42"
+                  },
+                  {
+                      "path":  "edu-games/blocks/outlier-detection/block.json",
+                      "bytes":  477,
+                      "sha256":  "e78d64c8f0cd1e72beab6e0aa314a3936bf8a05dabbaa72114f2ae90a17c0282"
+                  },
+                  {
+                      "path":  "edu-games/blocks/outlier-detection/render.php",
+                      "bytes":  184,
+                      "sha256":  "8858b1db3b8338eeaa25247170afd4d7b84c53fdf74fe61d0520a901c3fe469e"
+                  },
+                  {
+                      "path":  "edu-games/blocks/outlier-detection/style.css",
+                      "bytes":  8929,
+                      "sha256":  "f0f7a72f678b44fcf3c21dc3708b551e4f49d67708138038625c6bab48c1626c"
+                  },
+                  {
+                      "path":  "edu-games/blocks/outlier-detection/view.js",
+                      "bytes":  30678,
+                      "sha256":  "71e846a60b613162357e3fd8f97f98f970111ff4e382f4b9561a7a8d9c1c5ec4"
+                  },
+                  {
+                      "path":  "edu-games/blocks/player-stats/block.json",
+                      "bytes":  447,
+                      "sha256":  "a6b4a8e87f888cabc92870622d32429cd015753e3069d91238ab28b1980ca23a"
+                  },
+                  {
+                      "path":  "edu-games/blocks/player-stats/README.md",
+                      "bytes":  71,
+                      "sha256":  "0d70fd20edc0b0ae6b97e29ec545df29c09935a0d53e73256e101b718df656a0"
+                  },
+                  {
+                      "path":  "edu-games/blocks/player-stats/render.php",
+                      "bytes":  1609,
+                      "sha256":  "edd9621ca725b8cdce89be0a389165e856730bc8d3fbcd873cf2bec40853a186"
+                  },
+                  {
+                      "path":  "edu-games/blocks/player-stats/style.css",
+                      "bytes":  2356,
+                      "sha256":  "3eed3900ee6307a02c1a6b187bf0aacba91693e1fcab7014331db079ef88b3ab"
+                  },
+                  {
+                      "path":  "edu-games/blocks/player-stats/view.js",
+                      "bytes":  4540,
+                      "sha256":  "2d4722a9c49432d74eb2a30c4849c260dba62ddb92dc54c1584761638aac0197"
+                  },
+                  {
+                      "path":  "edu-games/blocks/README.md",
+                      "bytes":  144,
+                      "sha256":  "641b368a2b84bb999d3c9d73d07a87717d452da3c9e61cf1fd63ea4ec19a488c"
+                  },
+                  {
+                      "path":  "edu-games/edu-games.php",
+                      "bytes":  1520,
+                      "sha256":  "2fb681be32553ba96262a933cb630904d1b3526e57a57386db1e1b46d5939cbf"
+                  },
+                  {
+                      "path":  "edu-games/languages/README.md",
+                      "bytes":  71,
+                      "sha256":  "9a5b63b83a031e00a8558919eed2996085b4f456ac86bb2f15bca451c1955b36"
+                  },
+                  {
+                      "path":  "edu-games/plugin-package.php",
+                      "bytes":  348,
+                      "sha256":  "326e198eb80dc956cadcc64ec8238bfeb95dac9e0708f32c50850e732ee99208"
+                  },
+                  {
+                      "path":  "edu-games/README.md",
+                      "bytes":  37546,
+                      "sha256":  "d25f0555cfd336c44ef72d782cf37a225023202589800ff4d28413c5438f4310"
+                  },
+                  {
+                      "path":  "edu-games/resources/css/console-game-report.css",
+                      "bytes":  2276,
+                      "sha256":  "595f85f8412789670d07f41141698307304679aee1710106c06c8cfe03739652"
+                  },
+                  {
+                      "path":  "edu-games/resources/css/console-manage.css",
+                      "bytes":  1756,
+                      "sha256":  "e44834afa483825c13699c0800a8b585a0115e3286b35f9a115c0d4331425dc3"
+                  },
+                  {
+                      "path":  "edu-games/resources/css/public-hub.css",
+                      "bytes":  2550,
+                      "sha256":  "adb2bf5fa5fa9085589985ada9941cc1c349f89f42c6589069fd059eb14809e5"
+                  },
+                  {
+                      "path":  "edu-games/resources/js/console-ai-model-lab-report.js",
+                      "bytes":  6509,
+                      "sha256":  "63af5a95b536c83de487e33869bf9acd9fdfdb9e08bdfcd4bef81d0dfd41dab1"
+                  },
+                  {
+                      "path":  "edu-games/resources/js/console-game-report.js",
+                      "bytes":  7024,
+                      "sha256":  "1ddab9430a2fd28341118d76e6d5bfca6f820f74a3255bd922855cb899ad0468"
+                  },
+                  {
+                      "path":  "edu-games/resources/js/console-manage.js",
+                      "bytes":  11255,
+                      "sha256":  "6c3dc77428404b4d8fd98c5e31558f12c6f99e59892c8f90865fdea420138771"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/AiModelLab/Runtime_Bridge.php",
+                      "bytes":  1296,
+                      "sha256":  "35efda4a5141ead129c6cd06bf01377d5ccb6cdf6b5762560202a17a3ca4a82a"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/Console_Ai_Model_Lab_Report_Page_Handler.php",
+                      "bytes":  2212,
+                      "sha256":  "5ee115147cdfcc01bd4edce46f8f75a3d09aeb9997e8a515f39690c234e2836b"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/Console_Game_Report_Page_Handler.php",
+                      "bytes":  3451,
+                      "sha256":  "70f3505e3e6b86847645a15ef104b861ea28f352dfe6ae1ded4bcea032b80197"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/Console_Manage_Page_Handler.php",
+                      "bytes":  4398,
+                      "sha256":  "848fe3fba2c19ca75c770f629e0c965c091b0a4976e01fac99813190a22d0034"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/Game_Play_Page_Handler.php",
+                      "bytes":  1455,
+                      "sha256":  "72948d6df2c060c92c22da161948890de75ade44b413c7621e80fe19a62b16f1"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/Oj_Platform_Registration.php",
+                      "bytes":  15615,
+                      "sha256":  "8beef7f7f3c81927163f55286f374ea687e91332633e72dd4d79ef917444f4dc"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/Page_Response.php",
+                      "bytes":  1565,
+                      "sha256":  "7008793908d685883b47ee44b850141644bc0f6a752757e657a0974f6cd9e1b7"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/Public_Game_Hub_Page_Handler.php",
+                      "bytes":  5487,
+                      "sha256":  "80fac3ca22f68a7896abefb70b527db7bb69700cb3cef2b5c0f7434801908e9c"
+                  },
+                  {
+                      "path":  "edu-games/src/Addon/Public_Ranking_Page_Handler.php",
+                      "bytes":  1571,
+                      "sha256":  "e1c42a2424097897926af321e2295387ce0d411f80110edd6f7e8e4c8aadb816"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Abstract_Game_Renderer.php",
+                      "bytes":  1440,
+                      "sha256":  "8f4eb9579afd34a9b49984a964bbc048bd63181a78364604dc90f444a61ae9c2"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/AI_Classifier_Lab_Renderer.php",
+                      "bytes":  306,
+                      "sha256":  "6bb2fe2a9d6b9fef9151d7e0c401610c421d46c529287417c5ccba7c79b6b207"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/AI_Model_Lab_Renderer.php",
+                      "bytes":  296,
+                      "sha256":  "bef5dd0d398ec4f8da64f99ab3d6463723396edfa0b735cc4b4b5dc5fedd5308"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Binary_Arcade_Renderer.php",
+                      "bytes":  5851,
+                      "sha256":  "b7b0aed5d8503bf83589650edf048d00096fb45dc0eb308a3ab31015475bac2a"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Block_Registrar.php",
+                      "bytes":  925,
+                      "sha256":  "2a8ab336c80ee52646391905f80464906f593671195d5c96b3fb72725f665ac5"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Character_Code_Renderer.php",
+                      "bytes":  7103,
+                      "sha256":  "193079d7de3d24f888b71d1613bfff5012795096f59faf65da849da1cb991b48"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Code_Typing_Renderer.php",
+                      "bytes":  6281,
+                      "sha256":  "a3fb35dd5c2dbd868e114c911126381c7d6bbfb7ec156f83c7b0290140d266a4"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Data_Extraction_Renderer.php",
+                      "bytes":  302,
+                      "sha256":  "fab0f718749d90c54b51ac88c2cc793a26479f0e137a027de76a1c8b54e161b7"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Data_Structure_Lab_Renderer.php",
+                      "bytes":  308,
+                      "sha256":  "4149ce7466b1383330a98b4934eb14b08b9b0cb10125bbacf070469150b6c8ba"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Data_Visualization_Renderer.php",
+                      "bytes":  308,
+                      "sha256":  "b57e8687ab6298f852940def361f86d0d5958a9877afbf74b8b45cad3552179c"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Device_Matching_Renderer.php",
+                      "bytes":  6955,
+                      "sha256":  "000595a5d7c0a7a53139e33087de5c6a8356733e2f580bf13b5a14dfeff072b8"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Game_Shell_Renderer.php",
+                      "bytes":  488,
+                      "sha256":  "922d29ee4c084633cbeeaaa6baa2f01575141fc564e66df7696cee1e3e43182e"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Image_Data_Renderer.php",
+                      "bytes":  7321,
+                      "sha256":  "0abdd8c44c337b0b7a08cd3a5a7a72fdf54a2904bf1fc56c3a59143c0bfff7e5"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Keyword_Rain_Renderer.php",
+                      "bytes":  7925,
+                      "sha256":  "f7a6369b536506b7ea854790fafcac076dd534ae4349b9701b12e328c1745acd"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Learning_Renderer.php",
+                      "bytes":  4942,
+                      "sha256":  "475717cc098465f900012472a636401c17ad50cbd5913a782294f4f4f6321b57"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Missing_Values_Renderer.php",
+                      "bytes":  300,
+                      "sha256":  "526b53630783908bca2b423d39012686e6af424afecb9663bb037345e1581efb"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Outlier_Detection_Renderer.php",
+                      "bytes":  306,
+                      "sha256":  "3b7fa51e27a1f404b2491fcae9bb8d2ae08b7763a566579c47e1478fb2658da0"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Play_Renderer.php",
+                      "bytes":  4374,
+                      "sha256":  "4701178cd69f6c69d8248ccf8e1ee3d392cb920b39c47260ad8141eaadfe5e5d"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Rank_Pager_Renderer.php",
+                      "bytes":  685,
+                      "sha256":  "f11f946a09f94c7ec5ec97460ceb12da5939f70de64565b370e451e3d733f434"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Strategy_Renderer.php",
+                      "bytes":  3910,
+                      "sha256":  "ae783474b07dff269ca555c25ac401625adc16cd6001b1d2345910b4ce8d45cb"
+                  },
+                  {
+                      "path":  "edu-games/src/Blocks/Warehouse_Renderer.php",
+                      "bytes":  2893,
+                      "sha256":  "eb069c088629057039bd7cbdb9449eb0c3e7471af47c4c1c766cf414ebc67618"
+                  },
+                  {
+                      "path":  "edu-games/src/Boards/Catalog.php",
+                      "bytes":  1142,
+                      "sha256":  "85d087b612f177cd162d9ebb6ef4167876a9b890781c071761377bf668f8a0ce"
+                  },
+                  {
+                      "path":  "edu-games/src/Boards/Rules.php",
+                      "bytes":  2720,
+                      "sha256":  "4337073da711e146fc4d46dfffe18eb4c993fed5558cad5c0adfd6179c44557d"
+                  },
+                  {
+                      "path":  "edu-games/src/Core/Autoloader.php",
+                      "bytes":  689,
+                      "sha256":  "c299cedc496aeabc6319d525fb67370ce737393382fc2cd9a05d4ad6ef866fce"
+                  },
+                  {
+                      "path":  "edu-games/src/Core/Legacy_Ranking_Page_Cleanup.php",
+                      "bytes":  2724,
+                      "sha256":  "da9505fa1e6c6bc444925d0526e4dbf0f63458645a307ea6108f5098338e4585"
+                  },
+                  {
+                      "path":  "edu-games/src/Core/Plugin.php",
+                      "bytes":  5639,
+                      "sha256":  "4e68a03363aaa5079f4f3a6edfaa4d07a27c6d2f0e935f4e0afa418f84d0bb0a"
+                  },
+                  {
+                      "path":  "edu-games/src/Database/Installer.php",
+                      "bytes":  10821,
+                      "sha256":  "aa8fa0d97eb8bb923ccfec8900b99f94e50669129ec0698359e90d2ab81e321d"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/AI_Classifier_Lab_Assets.php",
+                      "bytes":  1243,
+                      "sha256":  "1c2d61de0e0e834c78592191c6989781ca69db46c179492c4b633fd3f62e0471"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/AI_Model_Lab_Assets.php",
+                      "bytes":  1178,
+                      "sha256":  "fe467bd78d3d9235ff06abaf3bada5ec865fdb3600e8656256b4618caf9690d3"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Binary_Arcade_Assets.php",
+                      "bytes":  1228,
+                      "sha256":  "83be94d2ad67f502dd341ce097e8be54940e2c3b387864cf7b9fa1d3044d5f2c"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Character_Code_Assets.php",
+                      "bytes":  1237,
+                      "sha256":  "fa845f37e560f7248f6f6aa626e8f0818c78d8690b76b036fd0abd0ef21bb4de"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Code_Typing_Assets.php",
+                      "bytes":  1210,
+                      "sha256":  "b0692b7ca7439127f846d50e8443c576700b16699f1de9a2f9febf57d4c39303"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Data_Extraction_Assets.php",
+                      "bytes":  1185,
+                      "sha256":  "bb105d6c7bae0cb8a5b65a86457d1f2bf978e4f5beb2359c1564b5f48199339b"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Data_Structure_Lab_Assets.php",
+                      "bytes":  1252,
+                      "sha256":  "a63cc9cdfe1f87c7a63940fcf7b01c1d43f9a0a0a503200cd0ba566c398669da"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Data_Visualization_Assets.php",
+                      "bytes":  1252,
+                      "sha256":  "059d47be24dcba35b8215f2578907c793d00d6824e87f64e3bf56ac6fb6422c8"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Device_Matching_Assets.php",
+                      "bytes":  1246,
+                      "sha256":  "4f774fe10973daf50bad44fa08b48d8ecc1fc2749a38ad63dd85a61d9a75c32e"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Game_Access_Guard.php",
+                      "bytes":  2731,
+                      "sha256":  "75df504be4e40370aa6c1a6282b710d75e90208667c3cc764b3c84132c77580b"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Image_Data_Assets.php",
+                      "bytes":  1178,
+                      "sha256":  "e785365f61f690ca663644c26a667fcc09be44d470162660733e6abe223a268a"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Keyword_Rain_Assets.php",
+                      "bytes":  1219,
+                      "sha256":  "bdb573205380d3cfd125fbe24b06f9e3a2815719d6bf4ff89bf840812da5adee"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Missing_Values_Assets.php",
+                      "bytes":  1216,
+                      "sha256":  "e4fa6f651e07bfcd10fad3bee3d754dae2adf7800b9ffc2eba5ba1fc96a78298"
+                  },
+                  {
+                      "path":  "edu-games/src/Frontend/Outlier_Detection_Assets.php",
+                      "bytes":  1243,
+                      "sha256":  "ac3448ecfae42d26c4332510248d95d58c89d8af4b214a6e70f70d2411e2ac2f"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Contracts/Game_Module.php",
+                      "bytes":  236,
+                      "sha256":  "e141effb9183ff2a738825c397e7648380f18e096ed64c3ec3abc23da2394cc3"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Game_Category_Labels.php",
+                      "bytes":  916,
+                      "sha256":  "319de86043724453aee26e360a98d23fb31d44671188a4a7c5f76531854b5d13"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Game_Module_Registry.php",
+                      "bytes":  2422,
+                      "sha256":  "2fd619e19a3c7595f58357fded5af6362c209f25093334a902c4afda25a23e7b"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Game_Visibility.php",
+                      "bytes":  2178,
+                      "sha256":  "142ebd8d5683c376854ee3c7463a95731dc06d763882b18290b2167248a314b7"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Classifier_Lab/AI_Classifier_Lab_Module.php",
+                      "bytes":  55360,
+                      "sha256":  "81894fff6e90c83a91409676965617cb67af045cee28181b7106b4e4f68f5e80"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Classifier_Lab/Hands_Board.php",
+                      "bytes":  2429,
+                      "sha256":  "87910cfbb2b276bce4fcf5c36e88954a5e0b0ce104f0ba8168e6ac26cdd5c5bd"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Classifier_Lab/Learning_Content.php",
+                      "bytes":  6267,
+                      "sha256":  "c91c665094fe5b8453df406fb9de3c6adf4b51dc045d78b70fd8c1886a1b9450"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Classifier_Lab/neighbor-experiments.php",
+                      "bytes":  238463,
+                      "sha256":  "ed982dd32d9557bbef2e23612f3e28b256998ab453c8a13723b8d3e59b0e2f60"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Classifier_Lab/Play_Board.php",
+                      "bytes":  4400,
+                      "sha256":  "22edb43b247bf94f212e275ee6c56f1792a575f12d17b1801b413803558b0e38"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Classifier_Lab/Strategy_Board.php",
+                      "bytes":  10570,
+                      "sha256":  "4ecbc09ad4b29dc9c9586cea804cae7981ce1b3da5d859b91bfa30519f150aae"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/activities/digit_recognition.php",
+                      "bytes":  70183,
+                      "sha256":  "470ff57a0a559b8ed59fc301f2f8340da87264bd2e06c0b63503fe2d06b68880"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/activities/digit_recognition_v2.php",
+                      "bytes":  94446,
+                      "sha256":  "87da762df645590ce169e80ca92f960361c431211144f8cdb43194ff9f912986"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/activities/titanic_survival.php",
+                      "bytes":  41273,
+                      "sha256":  "dafc2ac48934f7c04fd32d72577457ca09ec550b94cb6c5c17dcf782f7c873ed"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Activity_Catalog.php",
+                      "bytes":  1664,
+                      "sha256":  "570de77cb4c6a355e2430653487c261c9aceac458854d8fa430d1285abceda90"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/AI_Model_Lab_Module.php",
+                      "bytes":  2802,
+                      "sha256":  "3573eb9efa14e172f42cd9d842b022db8a7e15ce415b2b53e25aed16a636a763"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Attempt_Repository.php",
+                      "bytes":  6963,
+                      "sha256":  "7f49c33b9e0c6c70442e7a7b0699dd6dd8092ce2f79a32399ea7b7fd0ee7a0f5"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/deck-experiments.php",
+                      "bytes":  25199,
+                      "sha256":  "abd759e6e5f995501d8d561db39bfec38fd656feb94c7e4963d569730d89a9ea"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Domain/Activity_Definition.php",
+                      "bytes":  11782,
+                      "sha256":  "ee50fcd2d676fd20d4b194a58840cacd7cb772ebf8a556f9f30a392dd8ed160f"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Domain/Attempt.php",
+                      "bytes":  3718,
+                      "sha256":  "8fcf50d861cbbb855164325973228e29ac5e5065e8667ad31066fc40bb3a684d"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Domain/Model_Option.php",
+                      "bytes":  1686,
+                      "sha256":  "5642c5521a7870fbf9410fc912ae74a9e517f7153c7486c86011c9c2d77d4c88"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Hands_Board.php",
+                      "bytes":  4699,
+                      "sha256":  "cf1cd36fa72f8dd138bd6222471edf5207d696e52ee5a519bea8358d459d2f9e"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/handwriting-data.php",
+                      "bytes":  216640,
+                      "sha256":  "ca011bb1fb26d4e13ea724171bddb69db12c2a624c6fef978b6a94e938c944c2"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Learning_Content.php",
+                      "bytes":  5512,
+                      "sha256":  "0a17f0109a3b7733658fb42e44c8ebac7faeebaf54e185f24426f5411a59af20"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Phase_Scorer.php",
+                      "bytes":  2049,
+                      "sha256":  "90eeb43fb6f5f17820821a990d2754e3582d0871691b816505e1f5efc7147f2e"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Play_Board.php",
+                      "bytes":  4730,
+                      "sha256":  "66ed53bd494060a7f89e7bfcaeffc43a6dabe7e21fb72284a0861b449d338415"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Session_Service.php",
+                      "bytes":  8592,
+                      "sha256":  "19f1bf18808b918147faac074ecc6ab3bb709379f67e32a6782ebe045c032b49"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/Strategy_Board.php",
+                      "bytes":  5563,
+                      "sha256":  "b964ac8eb3e7bf18b1159cdaf0c13780bd5872e0278c01c946406392899e1e78"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/AI_Model_Lab/strategy-experiments.php",
+                      "bytes":  398614,
+                      "sha256":  "4dff067f591116330f5c7f688dc2cf0d98aa4652a020c1c74ff201213a86b1af"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Binary_Conversion/Binary_Conversion_Module.php",
+                      "bytes":  2652,
+                      "sha256":  "0d15326eedc86b79f60ef05c3a33c03c8d4ba22da4fc840dc90c09de0c02f0b7"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Character_Code/Character_Code_Module.php",
+                      "bytes":  8077,
+                      "sha256":  "5365928b57d5281e644a5ec5c590d5493443c712af7147fcb5b5e2122ddd29df"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Code_Typing/Code_Typing_Module.php",
+                      "bytes":  92493,
+                      "sha256":  "f953207cd31cc71d112d411081c6eb5b7f38f17017f70292c8a13debe650359c"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Code_Typing/expected-output.json",
+                      "bytes":  12239,
+                      "sha256":  "315d77b53a9a5d811df5c55611ec1187899a5ba99b6434a9076b3bcec6df7a0a"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Code_Typing/Learning_Content.php",
+                      "bytes":  1804,
+                      "sha256":  "bf2f9a902601f95b7a0559d993a29507a76766ae8d0d1f386b4735b1d96bb409"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Extraction/Campaign.php",
+                      "bytes":  9812,
+                      "sha256":  "7266fec00bde79dd8cb6595081a36f73b822712a3d356af3ea67bf7c082e89af"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Extraction/Data_Extraction_Module.php",
+                      "bytes":  23558,
+                      "sha256":  "2f42111685f80a582645c6d6a754b9840e9243863ca7f9d0393a061c517b7e50"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Extraction/Hands_Board.php",
+                      "bytes":  2695,
+                      "sha256":  "78b9e215860029cb3dc426eb23723f643873f3ee62d706e2d13e3214ef0265a5"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Extraction/Learning_Content.php",
+                      "bytes":  5490,
+                      "sha256":  "69adf414a138165dcc3d042e19c284cef34b806a82de7144d2941c803578a062"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Extraction/Play_Board.php",
+                      "bytes":  5068,
+                      "sha256":  "3bdc75fbd9d7a9bc7fb367819b74a853c9cddd9847c6ca6e5651a8c50433b4a9"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Extraction/Strategy_Board.php",
+                      "bytes":  10731,
+                      "sha256":  "b67bac8f0e6b3b68bb960fdc5c3cb5f205d31f59b875a4936f4689a991d4d8ac"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Structure_Lab/Data_Structure_Lab_Module.php",
+                      "bytes":  23263,
+                      "sha256":  "40dca2c846622d9fa2423837ce19eea36f120dff1a67c8d0ea62c46af4f6247e"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Structure_Lab/Hands_Board.php",
+                      "bytes":  3360,
+                      "sha256":  "44344421f39aa333e52905f6814ec4dc338bbcb32f44d34eb50745ba23c64ac7"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Structure_Lab/Learning_Content.php",
+                      "bytes":  4624,
+                      "sha256":  "dfbd0122022fca51980c1dacbddccaba69f916f92369cf94c14f63c53f55cd43"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Structure_Lab/Play_Board.php",
+                      "bytes":  3595,
+                      "sha256":  "29867a1226746c87721e6deea3093541ff9b340b9e340bde608fc7e533587d38"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Structure_Lab/Warehouse_Board.php",
+                      "bytes":  9447,
+                      "sha256":  "cfde33731624e9a974ca639e886bec5145dd9722db277c2f8d0c372df33dc83f"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Structure_Lab/warehouse-solutions.php",
+                      "bytes":  10978,
+                      "sha256":  "f68b69d1d804ddf5d360aa23f38c08a2a05239ced982dd3a28c3a079f6ee844f"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Visualization/Campaign.php",
+                      "bytes":  5240,
+                      "sha256":  "83dd3303caadf924302103badc1db26ae469102357f3cbded7ff5257878a7b39"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Visualization/Data_Visualization_Module.php",
+                      "bytes":  44854,
+                      "sha256":  "42ccc752239e3b5f12e5651107b28f10ae0cf2fcd83972489d75180bdb3bfffe"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Visualization/Hands_Board.php",
+                      "bytes":  6770,
+                      "sha256":  "d3aaaae58060b5af2fa740e4a441ee7573c0c05881e243582d494a7d84250a13"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Visualization/Learning_Content.php",
+                      "bytes":  5775,
+                      "sha256":  "f185e43ca22de88c8ecda7886f8f0069958b5f1c1fe13b459bd199f29e1b6bb3"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Visualization/Play_Board.php",
+                      "bytes":  4156,
+                      "sha256":  "0cc53f4ddf091c16f1d16baa5420623792bf54dc728508d12ab935e7d2fcbeba"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Visualization/Strategy_Board.php",
+                      "bytes":  7977,
+                      "sha256":  "9a17bc8334d6615e721d0677a6561737a5db40c56a9e163762100242e448a225"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Data_Visualization/Visualization_Scenes.php",
+                      "bytes":  8996,
+                      "sha256":  "702c57bad14e419d5eb678c4a2270989d367e05501f8cc65d3ee8c30124db6d0"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Device_Matching/Device_Matching_Module.php",
+                      "bytes":  15935,
+                      "sha256":  "bf7da2ed6c704565780ef3b200b9633e22bce5c89c7cc96c5b11b03b81c6a53f"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Device_Matching/Learning_Content.php",
+                      "bytes":  5018,
+                      "sha256":  "7889cb70195d278d8e9501d4fb49c2bfc5fe87e73977a2dad4be194f79c112d7"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Image_Data/Image_Data_Module.php",
+                      "bytes":  48665,
+                      "sha256":  "2b891b7d7fa56e5535961a2f0b9d9e45f83309aa932bfdb96de1fabe2b6e594e"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Image_Data/Simple_Images.php",
+                      "bytes":  3219,
+                      "sha256":  "b68721d49d50c776d4907d9c6802194929914139686b56e81d981948edd718c8"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Keyword_Rain/Keyword_Rain_Module.php",
+                      "bytes":  8066,
+                      "sha256":  "6d49c3caab96de3adeb2b4dfd41c416a36a53189c19c0563a045cc6450bd0724"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Keyword_Rain/Learning_Content.php",
+                      "bytes":  5243,
+                      "sha256":  "cd875b2f6c72f2f3d24ce6b5ca0ce29162d9127d5ccdf595fbe53fbc9c95561b"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Missing_Values/Hands_Board.php",
+                      "bytes":  17278,
+                      "sha256":  "d03bab90f5dc9b8cc38c658c4ad58b3e6570c7b8f08db9062e2a290cec535785"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Missing_Values/Learning_Content.php",
+                      "bytes":  6182,
+                      "sha256":  "b3091e76d8f884e4d0cf65fe92835e508d88e0286a88058cf3a778e439ca929b"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Missing_Values/Missing_Values_Module.php",
+                      "bytes":  26105,
+                      "sha256":  "be5885a33dedab5f054dc240ad2e846d1bb1e5ac2fae7bbe7d2e6601abf768ee"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Missing_Values/Play_Board.php",
+                      "bytes":  4617,
+                      "sha256":  "bdea431b0cc28b97a5fe4ecd5073ab430de68bdcd6537d733c6bfaa97af7fd5c"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Missing_Values/Strategy_Board.php",
+                      "bytes":  11366,
+                      "sha256":  "a25fa3c2431638f13d5f4cac4c6b05c97ba704f0e4e2ea8b2c3dc248c1b1ceeb"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Outlier_Detection/Campaign.php",
+                      "bytes":  4897,
+                      "sha256":  "19e444e204b9b88f034658383c78ccb0cbefccb3bdb85d4e006cd96cf20781ad"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Outlier_Detection/Hands_Board.php",
+                      "bytes":  2148,
+                      "sha256":  "7beb554b1994e2b47300227ee49107bd5c4b17a419886855a35d32f34c8bfb4f"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Outlier_Detection/Learning_Content.php",
+                      "bytes":  3686,
+                      "sha256":  "1a1f6aeb330153c74162ce9e8dcdd8d316200687716361d97bf9fb96047201a3"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Outlier_Detection/Outlier_Detection_Module.php",
+                      "bytes":  18283,
+                      "sha256":  "40c1da9ace7b0f870d1c302dab6427a8e182ee4941945041506fa7dea57386cb"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Outlier_Detection/Play_Board.php",
+                      "bytes":  5070,
+                      "sha256":  "731d05b3ab82f1b64a7dbb8c81f60b1bba1974a18135a6cfcdceb15104919642"
+                  },
+                  {
+                      "path":  "edu-games/src/Games/Modules/Outlier_Detection/Strategy_Board.php",
+                      "bytes":  12016,
+                      "sha256":  "d1769318491f61b833d795bf9462fb872ca3f8f66bb3bfc4a1cb5a8ee524a217"
+                  },
+                  {
+                      "path":  "edu-games/src/Groups/Group_Ranking_Service.php",
+                      "bytes":  4606,
+                      "sha256":  "1319319280389e0b35252373a258bf97cee656b16b88981790adf71d564016e1"
+                  },
+                  {
+                      "path":  "edu-games/src/Groups/Team_Repository.php",
+                      "bytes":  5934,
+                      "sha256":  "a177b63a41e499416614033af52bdde0949f1e384a9dd204f692873ab60402e9"
+                  },
+                  {
+                      "path":  "edu-games/src/Learning/Catalog.php",
+                      "bytes":  1833,
+                      "sha256":  "9928fa9b369173faa7c3b7396157957a46c44d5940c6fef4a780aa28ae9d458c"
+                  },
+                  {
+                      "path":  "edu-games/src/Learning/Installer.php",
+                      "bytes":  1560,
+                      "sha256":  "0cf19f7b0dd0cbd83daf23286714ff840cbfd66a0f8dfa1d7791843e6a21003b"
+                  },
+                  {
+                      "path":  "edu-games/src/Learning/Question.php",
+                      "bytes":  2474,
+                      "sha256":  "ffc290422101914b69ad95e567f0a1d1dfb6d0615fdfe7f604eea21993b69ae7"
+                  },
+                  {
+                      "path":  "edu-games/src/Learning/Run.php",
+                      "bytes":  4250,
+                      "sha256":  "0ccdd603b60367c083d160a90b2fc672a0a05a4355593a223da60fa3e74205d6"
+                  },
+                  {
+                      "path":  "edu-games/src/Play/Board.php",
+                      "bytes":  1749,
+                      "sha256":  "44170489d44708ce7893f85898c96e42848305a9e28a9fffc29631259ac09340"
+                  },
+                  {
+                      "path":  "edu-games/src/Play/Catalog.php",
+                      "bytes":  1662,
+                      "sha256":  "0393f16efba775070861a4f99817d49bddbd8f51cc94c06878165ae63cc98767"
+                  },
+                  {
+                      "path":  "edu-games/src/Play/Hands_Board.php",
+                      "bytes":  2638,
+                      "sha256":  "d141ff563f97a7a24fd65198527b30e56ca93bcf6988d8e821023cdcaa2aa72d"
+                  },
+                  {
+                      "path":  "edu-games/src/Progress/Store.php",
+                      "bytes":  2383,
+                      "sha256":  "7727bb1876ebcb04f723a3e8387c185a135303bbc2b4dd0a19820d1ef9b97628"
+                  },
+                  {
+                      "path":  "edu-games/src/Progress/Validator.php",
+                      "bytes":  5332,
+                      "sha256":  "fffca5679396c15b9ad78127602dde6c38d529e18e4d61ffa7f4b95caa358575"
+                  },
+                  {
+                      "path":  "edu-games/src/Rankings/Leaderboard_Service.php",
+                      "bytes":  10600,
+                      "sha256":  "469e734925cb0a0ff8c9199cc05783abb64a9a4093f9ca5c8ae00985d4c40b08"
+                  },
+                  {
+                      "path":  "edu-games/src/Rankings/Page.php",
+                      "bytes":  725,
+                      "sha256":  "0cc3b68cef722ef8a5efd17a004e52926f97c086911af31df6c25672e0a162cb"
+                  },
+                  {
+                      "path":  "edu-games/src/Rankings/Record_Moderation.php",
+                      "bytes":  495,
+                      "sha256":  "e0ba7191461ced4cc4ed840f8c1485c6911df01b4d1b49da0b010df6418bbf60"
+                  },
+                  {
+                      "path":  "edu-games/src/Rankings/Run_Leaderboard.php",
+                      "bytes":  2191,
+                      "sha256":  "05c009d1a05be82ea25c58383b93f91b4f067894f1b676d21a0b0acb1b3bbc0e"
+                  },
+                  {
+                      "path":  "edu-games/src/Reports/Report.php",
+                      "bytes":  5866,
+                      "sha256":  "165139c023eb3117ae1d1013ae836ed04f0b0e002ec77617ea10d9ac41d1bcbf"
+                  },
+                  {
+                      "path":  "edu-games/src/Reports/Roster.php",
+                      "bytes":  2265,
+                      "sha256":  "e993ef7aa178222ff58877af4cf158035a8c1bbdccb47c78c824e67543f77816"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Api.php",
+                      "bytes":  1315,
+                      "sha256":  "bc97677d26dfd01eac0479a633de2b1e9cdb6759fadecb70ae77450986b909c3"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/AI_Model_Lab_Controller.php",
+                      "bytes":  7515,
+                      "sha256":  "3ec942561d6f8a3d291a7b7e53cdae04b7bf685ca8014b0905bd93587c185eda"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/AI_Model_Lab_Report_Controller.php",
+                      "bytes":  8102,
+                      "sha256":  "f558d993ee01513e3619a1b5b087fbf97a97a70ac4cfb70f496d60c078a23037"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Games_Admin_Controller.php",
+                      "bytes":  3031,
+                      "sha256":  "e4536cd7f9ae642ff907ebbff01297b00dbbf4d0977a78fba254201f256cbf96"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Games_Controller.php",
+                      "bytes":  5034,
+                      "sha256":  "3cda6c843e9053b15553a858e62f918fad771be0bf74418a073f86a685a527e7"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Leaderboard_Controller.php",
+                      "bytes":  6759,
+                      "sha256":  "183255226b25e44c25d1b1e145ee2789aff7e7d8cb17f76a3ecf3709bd6c4fdb"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Learning_Controller.php",
+                      "bytes":  7429,
+                      "sha256":  "2ef4d9cf29ecc717d734d49bf4b1c8b9bfcdb2c5291d503412ed63ad9d5690b1"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Play_Controller.php",
+                      "bytes":  9296,
+                      "sha256":  "42d74fd500cf89035ca306c6ea16197d52dd5194bbfaccecbb0b56c4704c353b"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Player_Stats_Controller.php",
+                      "bytes":  1822,
+                      "sha256":  "82667599bf0d55ed050baceb13d99c2da176bb139db59a6accef7d4f8aae93af"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Progress_Controller.php",
+                      "bytes":  1823,
+                      "sha256":  "19c77ad669ddd563abb875830ea2565f7061f3d6c8cfb408ee9dfdae73905e14"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Ranking_Records_Controller.php",
+                      "bytes":  2670,
+                      "sha256":  "63b9d43f918c4bdce521515e3ddfacccbb11ab31064f11ba622380c19b8c9809"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Report_Controller.php",
+                      "bytes":  2522,
+                      "sha256":  "620ffaf17a994b529155849b7ec8f910c196b178af35c05daa225846e3682506"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Strategy_Controller.php",
+                      "bytes":  9207,
+                      "sha256":  "fe206b42f2f15f200c22347d7db6fc167ea4a74a74423f43435f0d51471726d1"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Teams_Controller.php",
+                      "bytes":  8084,
+                      "sha256":  "6a71287455c23807da2f74b8baecc9d148c87ebd37896b98fde09d3942cc8e00"
+                  },
+                  {
+                      "path":  "edu-games/src/Rest/Controllers/Warehouse_Controller.php",
+                      "bytes":  8061,
+                      "sha256":  "836af5957380049ef5cdf7d9b761091c58187524f19d13cdd0a5479e187ac548"
+                  },
+                  {
+                      "path":  "edu-games/src/Scoring/Quiz_Scorer.php",
+                      "bytes":  5968,
+                      "sha256":  "506cf21b03a8d81da9bb5c93cb088715b5c0b1b6aa400701c3e47a71add8dfd6"
+                  },
+                  {
+                      "path":  "edu-games/src/Scoring/Score_Recorder.php",
+                      "bytes":  3983,
+                      "sha256":  "9a98592cb305878a5698454db5c6693da7dcfee07fa240887ccf19993d32e469"
+                  },
+                  {
+                      "path":  "edu-games/src/Scoring/Score_Validator.php",
+                      "bytes":  11511,
+                      "sha256":  "02d609b679ff5c5854c5a9be7528f2203c5bd6cde233bab9582cc684a732ecef"
+                  },
+                  {
+                      "path":  "edu-games/src/Sessions/Game_Session_Service.php",
+                      "bytes":  4367,
+                      "sha256":  "612ff81dc202360af09091e0522dcf461e8e72adb05ef176ff1ae68cf7bbb9bf"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/AI_Classifier_Lab_Shortcode.php",
+                      "bytes":  778,
+                      "sha256":  "0652026cacd2c538dae7f02b9dde316ddbf291a3a20709cb3826173de430834d"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/AI_Model_Lab_Shortcode.php",
+                      "bytes":  733,
+                      "sha256":  "bd78d73ca0530e71a096d8ae95c854a3cc71214b3a4407f258de1ebd16a255a3"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Binary_Arcade_Shortcode.php",
+                      "bytes":  758,
+                      "sha256":  "555ebb681524801c85c8ff9c682a332fed43835f84762cf22ebf5cb4926ea4cd"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Character_Code_Shortcode.php",
+                      "bytes":  751,
+                      "sha256":  "a43e918c04fc1a855e48768644937b721ecd6b9228950505dff03010a0fd5299"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Code_Typing_Shortcode.php",
+                      "bytes":  724,
+                      "sha256":  "5fd4f13e6e7edba3d664f37ab3ac3c9bff6676962ef158c25b31786dfeb0488f"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Data_Extraction_Shortcode.php",
+                      "bytes":  736,
+                      "sha256":  "7bba7b32f78aded2ec424b9e746416e78c1c0e908b4b6971b5c29f535b6cc456"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Data_Structure_Lab_Shortcode.php",
+                      "bytes":  787,
+                      "sha256":  "058ce48b5d7b17ac528401e35474bb427ba6c90ff96e6156dd424d18ee22d25b"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Data_Visualization_Shortcode.php",
+                      "bytes":  787,
+                      "sha256":  "cd85f3b3f50d71d67dcb85db5a2b122de9d1138d1ba067107f2a94672c55d790"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Device_Matching_Shortcode.php",
+                      "bytes":  760,
+                      "sha256":  "4725d517c51b6c924b3ed163f2027aeb8c793201e486328dd5487021b8d280b7"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Game_Pages_Shortcodes.php",
+                      "bytes":  1687,
+                      "sha256":  "f985d2f71c7b95b50c97a732bbf5ee25ac034767baa0757a7eec96cde3ad8b1a"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Image_Data_Shortcode.php",
+                      "bytes":  715,
+                      "sha256":  "cc20a78df231bb71704434820173bfea6afb195e7ce689444362fa6a2dc62af2"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Keyword_Rain_Shortcode.php",
+                      "bytes":  733,
+                      "sha256":  "72b4f750693c472bee7f1db521ab084ba627050ccb34e1cabea11113584a8a52"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Missing_Values_Shortcode.php",
+                      "bytes":  751,
+                      "sha256":  "66259d4af6e4375a3b44451f3679c7e1130624cd616dc457980f0bfaec1aec0e"
+                  },
+                  {
+                      "path":  "edu-games/src/Shortcodes/Outlier_Detection_Shortcode.php",
+                      "bytes":  778,
+                      "sha256":  "634aab8cdbb1646d70dd5835ed861fffab06c18ca156035d6637e29d78a7bcd0"
+                  },
+                  {
+                      "path":  "edu-games/src/Statistics/Player_Statistics_Service.php",
+                      "bytes":  7111,
+                      "sha256":  "e46f8e82df06d27949f2eaaf7e6589fcac14bee5e0c3fc9327f9c5666219bdb5"
+                  },
+                  {
+                      "path":  "edu-games/src/Support/Capabilities.php",
+                      "bytes":  1388,
+                      "sha256":  "599ac354406e9685fd209ccbc22f99aa3222f9ebac24ad31232b5fa311685644"
+                  },
+                  {
+                      "path":  "edu-games/src/Support/Clock.php",
+                      "bytes":  632,
+                      "sha256":  "a41df002aaeab22ae17de2648ae478a7ddebf615ced0f74b697909dc695c668d"
+                  },
+                  {
+                      "path":  "edu-games/uninstall.php",
+                      "bytes":  827,
+                      "sha256":  "ed0a8f2684279c0e04676b2c8050c96e0ac2c580c69ab2efe4f0cf7285d1ea3e"
+                  }
+              ]
+}

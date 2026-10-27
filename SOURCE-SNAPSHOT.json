@@ -251,8 +251,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7660,
-  "totalBytes": 148835534,
+  "fileCount": 7683,
+  "totalBytes": 191954629,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -288,8 +288,8 @@
     },
     {
       "path": "README.md",
-      "size": 2360,
-      "sha256": "c0af54348d87f783785ff2bb84dcc27263bc0abc1fbc3f4aaf4af5d6782e64a5",
+      "size": 2383,
+      "sha256": "6900e2a292778f5faa46f732f7ce337d18e7e0a6c06e6077cc5d14547dcebdf7",
       "origin": "working-tree"
     },
     {
@@ -2232,8 +2232,8 @@
     },
     {
       "path": "_releases/README.md",
-      "size": 72,
-      "sha256": "0765f1a56c3f85cb31b222a81de77fa0db1ee327e153e6fae443b97b75923567",
+      "size": 1592,
+      "sha256": "d5a64df1cf80005f6ee098f3506e94e4e7c8213b171abd3061a14c67a989ad39",
       "origin": "generated"
     },
     {
@@ -2243,10 +2243,46 @@
       "origin": "generated"
     },
     {
+      "path": "_releases/edu-games/1.6.7/edu-games-1.6.7.manifest.json",
+      "origin": "working-tree",
+      "size": 87350,
+      "sha256": "164f2244e581b18a387f440a5e60c05a31dee4af370caa423172b5111f45eec4"
+    },
+    {
+      "path": "_releases/edu-games/1.6.7/edu-games-1.6.7.zip",
+      "origin": "working-tree",
+      "size": 5471953,
+      "sha256": "32cae60ef45bd4082d35cf46f088e248823848078c680e309976ec93176d408c"
+    },
+    {
+      "path": "_releases/edu-games/1.6.7/edu-games-1.6.7.zip.sha256",
+      "origin": "working-tree",
+      "size": 86,
+      "sha256": "972c1d50db8932ec0144807e7dfb63757005df312d5978b212f1b66a8be4c3d0"
+    },
+    {
       "path": "_releases/focus-tracker/.gitkeep",
       "size": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "origin": "generated"
+    },
+    {
+      "path": "_releases/focus-tracker/1.0.1/focus-tracker-1.0.1.zip",
+      "origin": "working-tree",
+      "size": 184458,
+      "sha256": "81bdd5d34669aef2e432efc29e172e441c701f9f7666145a1998ba5e0f38208c"
+    },
+    {
+      "path": "_releases/focus-tracker/1.0.1/focus-tracker-1.0.1.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 17095,
+      "sha256": "7c86140efa03b29f8b7684962017c62405366c5aa9744b77cb76ceda7305726b"
+    },
+    {
+      "path": "_releases/focus-tracker/1.0.1/focus-tracker-1.0.1.zip.sha256",
+      "origin": "working-tree",
+      "size": 90,
+      "sha256": "9eab4cd7d164bddc8601ae48340203f41e1076589bb325633e4b59f1a340d4c8"
     },
     {
       "path": "_releases/learning-materials/.gitkeep",
@@ -2255,16 +2291,64 @@
       "origin": "generated"
     },
     {
+      "path": "_releases/learning-materials/1.1.2/learning-materials-1.1.2.zip",
+      "origin": "working-tree",
+      "size": 44877,
+      "sha256": "e66bbbe9794e5c38d7fcbf282bf012340ed85303425749a5984528c6c4909821"
+    },
+    {
+      "path": "_releases/learning-materials/1.1.2/learning-materials-1.1.2.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 8451,
+      "sha256": "6884786fabc521e7286975b98ffa6b15f80d9672b144b7c41cffe12d70171666"
+    },
+    {
+      "path": "_releases/learning-materials/1.1.2/learning-materials-1.1.2.zip.sha256",
+      "origin": "working-tree",
+      "size": 95,
+      "sha256": "a2fa2c16526363abf5503cdc9301297d06ff91fac97b1a638ad3a467e8211d82"
+    },
+    {
       "path": "_releases/oj-ai-dashboard/.gitkeep",
       "size": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "origin": "generated"
     },
     {
+      "path": "_releases/oj-ai-dashboard/1.2.15/oj-ai-dashboard-1.2.15.zip",
+      "origin": "working-tree",
+      "size": 24582923,
+      "sha256": "48f3c26dde2de5ada3771cbaab7b76207d88598556a357e0b169a499440c34a8"
+    },
+    {
+      "path": "_releases/oj-ai-dashboard/1.2.15/oj-ai-dashboard-1.2.15.zip.sha256",
+      "origin": "working-tree",
+      "size": 94,
+      "sha256": "0bee57cf1fed718875b9f86c6ef0286343a9208b7eda6a1edaef60140280f261"
+    },
+    {
       "path": "_releases/oj-code-lab/.gitkeep",
       "size": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "origin": "generated"
+    },
+    {
+      "path": "_releases/oj-code-lab/1.4.0/oj-code-lab-1.4.0.manifest.json",
+      "origin": "working-tree",
+      "size": 15875,
+      "sha256": "270b98f084ba29c825a814c616706a4bc24e961fb212d14b2a877710915cdab6"
+    },
+    {
+      "path": "_releases/oj-code-lab/1.4.0/oj-code-lab-1.4.0.zip",
+      "origin": "working-tree",
+      "size": 212857,
+      "sha256": "75319ebec9e1bbad7f5254505b1ee898bcaff29d2a6210108b783026ae85e8ef"
+    },
+    {
+      "path": "_releases/oj-code-lab/1.4.0/oj-code-lab-1.4.0.zip.sha256",
+      "origin": "working-tree",
+      "size": 88,
+      "sha256": "577805e2ab7e9b38c22e249b4db5070cc82fcc68384ea7e0ea4452c17477e099"
     },
     {
       "path": "_releases/oj-platform/.gitkeep",
@@ -2297,16 +2381,70 @@
       "origin": "generated"
     },
     {
+      "path": "_releases/oj-primm/1.0.5/oj-primm-1.0.5.zip",
+      "origin": "working-tree",
+      "size": 146103,
+      "sha256": "7f5d3a47b56555d6ac6045fe69b7ce46c15b06ed979480e9954aa7d95d9dac7c"
+    },
+    {
+      "path": "_releases/oj-primm/1.0.5/oj-primm-1.0.5.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 15019,
+      "sha256": "26ef1b59eb9bcdb375da4340e1fcdb87f089d330381aac38e9b98651217d94d9"
+    },
+    {
+      "path": "_releases/oj-primm/1.0.5/oj-primm-1.0.5.zip.sha256",
+      "origin": "working-tree",
+      "size": 85,
+      "sha256": "65dfd9465d67d1ffb0efe0d245ad1d9c71839e1e59e18deb770051c3877c43bb"
+    },
+    {
       "path": "_releases/readcontents-library/.gitkeep",
       "size": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "origin": "generated"
     },
     {
+      "path": "_releases/readcontents-library/3.3.10/readcontents-library-3.3.10.zip",
+      "origin": "working-tree",
+      "size": 8795712,
+      "sha256": "98890bc4bcffb8b8ec7550e96eea719dc08ea16aa37e11df11f890e058468706"
+    },
+    {
+      "path": "_releases/readcontents-library/3.3.10/readcontents-library-3.3.10.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 326065,
+      "sha256": "2e80eea0df79432408163ccd2fb98db4912924b6312afe64371586f227a0df66"
+    },
+    {
+      "path": "_releases/readcontents-library/3.3.10/readcontents-library-3.3.10.zip.sha256",
+      "origin": "working-tree",
+      "size": 98,
+      "sha256": "a9a904a43c63a53d2ca26bdcd1264e0e54bb8ac2ba1d34bb9b5e2b012604cb48"
+    },
+    {
       "path": "_releases/teaching-tools/.gitkeep",
       "size": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "origin": "generated"
+    },
+    {
+      "path": "_releases/teaching-tools/1.2.9/teaching-tools-1.2.9.zip",
+      "origin": "working-tree",
+      "size": 3116720,
+      "sha256": "1fa07c599935db81ab948bc0df7278e4af8ccee76b761d9475dd138c017da9b8"
+    },
+    {
+      "path": "_releases/teaching-tools/1.2.9/teaching-tools-1.2.9.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 91250,
+      "sha256": "f3c8ac6d9c3a94eee0571b63e5ef717ac118995c1e2b08ebfe3474deda80dd99"
+    },
+    {
+      "path": "_releases/teaching-tools/1.2.9/teaching-tools-1.2.9.zip.sha256",
+      "origin": "working-tree",
+      "size": 91,
+      "sha256": "ba89680f60dbd89b0a996b3543181498682bd627fefb9d0d77947b218fafefb2"
     },
     {
       "path": "_shared/oj-realtime-hub/.gitattributes",
@@ -45000,8 +45138,8 @@
     },
     {
       "path": "teaching-tools/README.md",
-      "size": 76676,
-      "sha256": "a877401c6f4e1f6b0e51507103a262912d71ed0a9e44114a43a8b45c8bccfb69",
+      "size": 76793,
+      "sha256": "9cf676b854315c73a59700862e7c50fc16ac23f3055cf3b5f1e3c5405f2fca8d",
       "origin": "working-tree"
     },
     {
@@ -45013,7 +45151,7 @@
     {
       "path": "teaching-tools/plugin-package.php",
       "size": 280,
-      "sha256": "8989e9aa711f51ca51f7f5df3d5ded0b786c4f5cf0d4366a5e678ef47f836620",
+      "sha256": "03f486fd07c735df94b1a24bc6a99e7c5dd61039c2c5769b29eaaecba08fe988",
       "origin": "working-tree"
     },
     {
@@ -46945,7 +47083,7 @@
     {
       "path": "teaching-tools/teaching-tools.php",
       "size": 2037,
-      "sha256": "84c1ab8adbea476ff8827aa537bb11f89c7b43722dac378d8799a6cecdfc228e",
+      "sha256": "7d928c00d6d6ed23ca2f7f982252384eb448be294741fd93f741824d4f81259e",
       "origin": "working-tree"
     },
     {

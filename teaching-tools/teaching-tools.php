@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Teaching Tools
  * Description: Classroom teaching-support tools including live responses, boards, signals, timers, seating, and activities for OJ Platform.
- * Version: 1.2.8
+ * Version: 1.2.9
  * Requires at least: 6.6
  * Requires PHP: 8.3
  * Author: CodingPanda
@@ -16,7 +16,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-define('TEACHING_TOOLS_VERSION', '1.2.8');
+define('TEACHING_TOOLS_VERSION', '1.2.9');
 define('TEACHING_TOOLS_FILE', __FILE__);
 define('TEACHING_TOOLS_PATH', plugin_dir_path(__FILE__));
 define('TEACHING_TOOLS_URL', plugin_dir_url(__FILE__));

@@ -2,7 +2,7 @@
 return array(
     'id' => 'teaching-tools',
     'name' => 'Teaching Tools',
-    'version' => '1.2.8',
+    'version' => '1.2.9',
     'main_file' => 'teaching-tools.php',
     'requires' => array(
         'oj-platform:^2.3.0',

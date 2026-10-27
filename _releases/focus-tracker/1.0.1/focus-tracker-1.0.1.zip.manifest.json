@@ -1,0 +1,335 @@
+{
+    "plugin":  "focus-tracker",
+    "version":  "1.0.1",
+    "builder":  "_release-kit generic",
+    "archive":  "focus-tracker-1.0.1.zip",
+    "sha256":  "81bdd5d34669aef2e432efc29e172e441c701f9f7666145a1998ba5e0f38208c",
+    "fileCount":  65,
+    "files":  [
+                  {
+                      "path":  "focus-tracker/docs/DESIGN.md",
+                      "bytes":  25471,
+                      "sha256":  "fb730d66a8a262752ba66aab8e97dfc22ca5b4b9c4dda44c4d41ebe591ab8175"
+                  },
+                  {
+                      "path":  "focus-tracker/docs/RC-ACCEPTANCE.md",
+                      "bytes":  8755,
+                      "sha256":  "44811fd1126243abbaa8c4ab65f4541e991a6eae297c0698100ac5523e290c65"
+                  },
+                  {
+                      "path":  "focus-tracker/docs/REAL-WORDPRESS.md",
+                      "bytes":  6454,
+                      "sha256":  "7e599a7bf9a075ffa5e87af8b15b8432a484a76219693941f9f0205ed3dfe342"
+                  },
+                  {
+                      "path":  "focus-tracker/docs/VERIFICATION.md",
+                      "bytes":  19791,
+                      "sha256":  "6463b5f4dea5862a20eed7b68e7b230a4829eb2af868d728fb04424cf911fffa"
+                  },
+                  {
+                      "path":  "focus-tracker/focus-tracker.php",
+                      "bytes":  2797,
+                      "sha256":  "7d6bd62de4fd51d340e1122c123e2ad84933821bd327ec1400eb5180633e8647"
+                  },
+                  {
+                      "path":  "focus-tracker/plugin-package.php",
+                      "bytes":  271,
+                      "sha256":  "f75915dfe91acfdd403f34fa740e6ab149254adf420b8ca876a4d0e1e6f95b1d"
+                  },
+                  {
+                      "path":  "focus-tracker/README.md",
+                      "bytes":  15089,
+                      "sha256":  "69c92e1bcebfe108fa24fb095559e1ed6ea7b4ad9188961bea6e44bd045836ff"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/css/activity-status.css",
+                      "bytes":  1170,
+                      "sha256":  "edcec14bab4b81c4ee250d201421cd212b46251f142848ab38737c4d00fd73a7"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/css/checks.css",
+                      "bytes":  2677,
+                      "sha256":  "8fcabf7f31c1e5888ea67579c0de3a64574f38d01fb1b2f125f6ca095dca43f5"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/css/console.css",
+                      "bytes":  3801,
+                      "sha256":  "6a3c31a8d991d22ac20fff3b879e358c93ea66175573f5eebaefb393c672e773"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/css/public.css",
+                      "bytes":  651,
+                      "sha256":  "2a80431ed82c23c99bebc64accd92ff973830e7dc482657a31607844e322272a"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/css/statistics.css",
+                      "bytes":  2386,
+                      "sha256":  "445f1a652d0b18a13fbfbb097581a88e274f9ae83aab5b4cb0abc2e45edcae01"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/js/activity-gate.js",
+                      "bytes":  16403,
+                      "sha256":  "74a5ec4ef072a5461607fa0f8a058514e11cb4770dcea4d7fc388c331159a030"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/js/checks.js",
+                      "bytes":  28755,
+                      "sha256":  "ed1e64602e2394f83af9a883261a0cb2c256d6d77bd79d32c5313103d159d00d"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/js/dashboard.js",
+                      "bytes":  38021,
+                      "sha256":  "9c9e06cb5afee36c881c8e315e43fd8aaae25596676d9f9ca31fabae66986d9b"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/js/self-view.js",
+                      "bytes":  5711,
+                      "sha256":  "af2e1a2ff09bec84e1f8b948bd74b2f943ec3276bf251e9b2ff97a8b1ed28a22"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/js/statistics.js",
+                      "bytes":  19068,
+                      "sha256":  "92bbc74d58ef115bcab04febeed5053a5afd02c759ab7d981d7047c60773b18e"
+                  },
+                  {
+                      "path":  "focus-tracker/resources/js/tracker.js",
+                      "bytes":  20095,
+                      "sha256":  "d1b13be9e4733d9139e995889aa4387682dfa1b0e0fb85a8ad3f9ad437b0bc3d"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Addon/Console_Dashboard_Page_Handler.php",
+                      "bytes":  13756,
+                      "sha256":  "8c5579f7c6f0c5480e3fc7b9140ceacfdb7fe90ad74dd090ae196d38ea5bc352"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Addon/Console_Settings_Page_Handler.php",
+                      "bytes":  10587,
+                      "sha256":  "3b032202cb6b1177832e58e334b2f47077dd4b1a65e179e62a5d061c79e0ffc6"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Addon/Context_Resolver.php",
+                      "bytes":  5737,
+                      "sha256":  "773835ac9fdf3dc2dce4516da6d3be19fa226fbd3751fd25434a570fac0ade22"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Addon/Oj_Platform_Registration.php",
+                      "bytes":  9217,
+                      "sha256":  "59e60dadc0dce949de6d153e2e783a9f107c59259eb66726417cfd004ed49186"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Addon/Operations_Panel.php",
+                      "bytes":  6111,
+                      "sha256":  "d5192d7210e69bd696ed3a8612f6880e5fb1b9040d612669313c0e55c0ce09cb"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Addon/Page_Response.php",
+                      "bytes":  699,
+                      "sha256":  "37b48e5a0f0daa7f4fed8dbc6aaf7f14cd18a7b6fd786e2c8526cd16ce7cf1bb"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Addon/Runtime_Bridge.php",
+                      "bytes":  1872,
+                      "sha256":  "96e469b099488b6be87c6244a7a4f6638853aef36c46e213d2e7cdb5a86149b5"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Addon/Self_View_Page_Handler.php",
+                      "bytes":  2259,
+                      "sha256":  "4c11dc9fc854788aaa31d75c70638278aa851eb8164ee60e508f87f9cf41cfb7"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Admin/Settings_Page.php",
+                      "bytes":  5042,
+                      "sha256":  "a4c556554ff827cf5fc5c7370803a307ebe6020f451c02659649a273752298e3"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Checks/Check_Service.php",
+                      "bytes":  26581,
+                      "sha256":  "678e14d029d691ebb161d7b3e43c322608044060a7c1ebe66497260ad486c7e9"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Checks/Verified_Question_Generator.php",
+                      "bytes":  26083,
+                      "sha256":  "4b4ae8665d4f503ce9d66dc99a585905b95b58f73d7bd03c1f3976dd181ca175"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Core/Autoloader.php",
+                      "bytes":  819,
+                      "sha256":  "f4b8a57f619eadffc8e271093c098f18a7d7d7d5f64dd68d40d03cbcb3ad404f"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Core/Plugin.php",
+                      "bytes":  1486,
+                      "sha256":  "329a65d83ce47d4585b3d8a9970199bc7505d7a745837be1d5a33dcc94d2a842"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Database/Activity_Repository.php",
+                      "bytes":  9572,
+                      "sha256":  "90fab1e618febdd72d8dbf19b6e7a8a6fb76182f07d44c4a8de783579415eec5"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Database/Check_Repository.php",
+                      "bytes":  6132,
+                      "sha256":  "ae9bec01d51cdb9a6d494b781f85bbc3d4f029ba5b4fc7fe4bc5f780d43111f1"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Database/Event_Repository.php",
+                      "bytes":  4469,
+                      "sha256":  "9938836513794aa41d1badead8f0b5dacbb853ce3b34eaf9b409e79819ed17a0"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Database/Installer.php",
+                      "bytes":  19607,
+                      "sha256":  "6c6874d73eeee95f9ba6ce69fa23fc8d851d5197e6a0bd684c43d564c2c2cf58"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Database/Participation_Repository.php",
+                      "bytes":  9917,
+                      "sha256":  "1c8d2d0ced8deff22103c518d53c7b8bd67dc4e4275d994ac2aa5bc7f4c8ee31"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Database/Score_Repository.php",
+                      "bytes":  3892,
+                      "sha256":  "a63f4d58702218e7f94e3b3636f7f77e8173f5532d4d1b8fee29324a65ace9ff"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Database/Statistics_Repository.php",
+                      "bytes":  10495,
+                      "sha256":  "4e079485711aff86f22ba2e3dbfc78e2cb358a10c7b433a0e4bbbf42bd4a40f9"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Jobs/Retention_Cleanup.php",
+                      "bytes":  24881,
+                      "sha256":  "ca5dfdc6266f99a919e355d5cf23736af72e225c8c1db36031e9352988b9c24c"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Privacy/Personal_Data.php",
+                      "bytes":  12483,
+                      "sha256":  "6d0977454fcbac371302fb5a7043b1609fea56ca2411360cad501c01322ae855"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Privacy/Privacy_Guard.php",
+                      "bytes":  5922,
+                      "sha256":  "ea363cfe72eb994392c730c0ee374a94bb78cd6320b2be238c4b63e850639f64"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Reporting/Statistics_Service.php",
+                      "bytes":  25922,
+                      "sha256":  "983ed143f5dcd8e2e70d8162f4110709a96d308531820691c2be42d09cadfd70"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Api.php",
+                      "bytes":  950,
+                      "sha256":  "fcd1556b653476586a9da4ff49d4a6cec2aa61727ee0f554b882a208744e9a22"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Controllers/Activities_Controller.php",
+                      "bytes":  24245,
+                      "sha256":  "7324ad1563f6e48adf31b4bc095cc2959882967b3af0388c57db3b2355766f7e"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Controllers/Checks_Controller.php",
+                      "bytes":  3789,
+                      "sha256":  "2d5b5991bbae59ef86376d0d3dc63493def731e036dc5a236e42ed9abb1f6766"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Controllers/Contexts_Controller.php",
+                      "bytes":  1499,
+                      "sha256":  "1b84501b5039ffc7853fc480b70511c14443fedad144550e36890092cef2da28"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Controllers/Events_Controller.php",
+                      "bytes":  20128,
+                      "sha256":  "4c25acf24b1d5e6b4f8aaa83353cb745db81504a38432285973d26b5b777fe70"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Controllers/Me_Controller.php",
+                      "bytes":  3166,
+                      "sha256":  "463a9fe3afbdb39b925bdf8dcc55b32f043507489581c45b295e17e0eaa19cb3"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Controllers/Scores_Controller.php",
+                      "bytes":  10630,
+                      "sha256":  "1c827d7401aea0089069333a289eb2f9a89138b8dba5d6f46cbdadd3cab7d48e"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Controllers/Statistics_Controller.php",
+                      "bytes":  4807,
+                      "sha256":  "c6833ed223c51c68d3ce5edb19e9ac17aa686cd24db5525cccbee69e8667c751"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Rest/Controllers/Tracking_Controller.php",
+                      "bytes":  3065,
+                      "sha256":  "be7ba692ecd0aa46ff7a6554d598829d0b1cc09708e1e1f8a42d71e2a710c131"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Scoring/Activity_Score_Service.php",
+                      "bytes":  10983,
+                      "sha256":  "2c284dddc50eb1f9b62571f75983e061aab5430228cd423a1038b01bc63202b9"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Scoring/Score_Calculator.php",
+                      "bytes":  12462,
+                      "sha256":  "0569266719d437477cd53a14d39d75729354adbe66df8c44f3759f571059c508"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Support/Audit_Log.php",
+                      "bytes":  2919,
+                      "sha256":  "91dd577b39a76031a5edceb949095a745fa0a244961506dc530447547d8dc889"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Support/Capabilities.php",
+                      "bytes":  1830,
+                      "sha256":  "e8e40a6b1679aeaaa0bf66f7b2cb1e77528a07aea24c08eeab39cd31092a0f39"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Support/Clock.php",
+                      "bytes":  1211,
+                      "sha256":  "1e3f37709e8b785352fd2eadc24a5c03bf84187a975fff6e554f96f2c20339ee"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Support/Diagnostics.php",
+                      "bytes":  4956,
+                      "sha256":  "2c54978ea287ca8cddfa58b36dcc310f5c5e9c49bddb009468c14419d72bd50a"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Support/Release_Readiness.php",
+                      "bytes":  2591,
+                      "sha256":  "4805d78793e096a72e4c12f3a35b7c4cdab26e12e66ce71ccecae894db648a29"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Support/Request_Limiter.php",
+                      "bytes":  4744,
+                      "sha256":  "46cbae608818a5d5835b0cdcccbf51e5c37bd945af66b8c2f93abd2ef699bfd8"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Support/Settings.php",
+                      "bytes":  4218,
+                      "sha256":  "8b62c9fd4882459bf9b4e663142d251564a50ee9018ae13b3d5d46249ba4da16"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Support/Student_Participation_Defaults.php",
+                      "bytes":  7069,
+                      "sha256":  "4b874c0ad58300999cc1f07a6382e7ba75214937157bbf765ffc32d1ba32f001"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Tracking/Activity_Window_Gate.php",
+                      "bytes":  7515,
+                      "sha256":  "966a1eb3148df3f4848de528a47aea5140e69fd6cd6808573f0aa2fb6d76b2fa"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Tracking/Site_Asset_Config_Provider.php",
+                      "bytes":  419,
+                      "sha256":  "6d2e63470de7ac88e743d47b95b8d8c834574d76492b5766d383747246c37400"
+                  },
+                  {
+                      "path":  "focus-tracker/src/Tracking/Tracked_Page_Enqueuer.php",
+                      "bytes":  6204,
+                      "sha256":  "50ce57a2681f4310b21f21e1bc0198d2b86601d92de47ed17bb0281e5e697c80"
+                  },
+                  {
+                      "path":  "focus-tracker/uninstall.php",
+                      "bytes":  3374,
+                      "sha256":  "9c9b5d7801a5c083db02ad24b2dd4a04740e61e060db4a1c485af661c15f9330"
+                  }
+              ]
+}

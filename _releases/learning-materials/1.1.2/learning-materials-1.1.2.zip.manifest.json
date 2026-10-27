@@ -1,0 +1,165 @@
+{
+    "plugin":  "learning-materials",
+    "version":  "1.1.2",
+    "builder":  "_release-kit generic",
+    "archive":  "learning-materials-1.1.2.zip",
+    "sha256":  "e66bbbe9794e5c38d7fcbf282bf012340ed85303425749a5984528c6c4909821",
+    "fileCount":  31,
+    "files":  [
+                  {
+                      "path":  "learning-materials/learning-materials.php",
+                      "bytes":  1726,
+                      "sha256":  "24fbf80dfa59b6a069d3191c43d5582885086a9ac98aa261bef113c0c2de3325"
+                  },
+                  {
+                      "path":  "learning-materials/plugin-package.php",
+                      "bytes":  288,
+                      "sha256":  "329dd10b70cef10df0c2997d3c9169f8b7672719db2446e59ea0b1fc12d2dae9"
+                  },
+                  {
+                      "path":  "learning-materials/resources/css/catalog.css",
+                      "bytes":  1165,
+                      "sha256":  "8d8c3bb4370b3589be79e57c3c80a980bc9f4598927069789b9e4a700273f365"
+                  },
+                  {
+                      "path":  "learning-materials/resources/css/console.css",
+                      "bytes":  712,
+                      "sha256":  "e4e6b98dbf257d0802e599d4cfa5040ff14adc19b20fa0e794a91bda87831d6c"
+                  },
+                  {
+                      "path":  "learning-materials/resources/css/public.css",
+                      "bytes":  1835,
+                      "sha256":  "7978d3492d092f6cf3117af82760c72ffe50c74880a182b5c24509fa1272787b"
+                  },
+                  {
+                      "path":  "learning-materials/resources/js/preview.js",
+                      "bytes":  8089,
+                      "sha256":  "1791929e6fb45965870b901680a67c6f2121006911698226d7de06efac8b8f89"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Console_Form_Page_Handler.php",
+                      "bytes":  10645,
+                      "sha256":  "ccdfcee6479ae0dfac3e49270d6732a9c057f9f0147c3499f72da0239307da95"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Console_List_Page_Handler.php",
+                      "bytes":  8326,
+                      "sha256":  "d1884ffeaab031fcf279a8385366de9b126e9551fdd94163471451f6c10ba296"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Material_Activity_Provider.php",
+                      "bytes":  2422,
+                      "sha256":  "2d3e1d280dc1a12e994404c3133084d6b584665b3a88718362721039f01624e9"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Material_List_Ui.php",
+                      "bytes":  5331,
+                      "sha256":  "0d0a258109edad0f1286163bf0c09854a71f4f3a1cfb676b7065eec1a27d30ce"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Oj_Platform_Registration.php",
+                      "bytes":  6549,
+                      "sha256":  "84cc39fbec428772bc4ea907a80b2be17f2cd891faceaacf2af81136d98dc5c9"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Page_Response.php",
+                      "bytes":  1279,
+                      "sha256":  "2bcc3e813d8df87d044ba5f5cc16d68fdfed47ef696b689fb02535db50a69e7c"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Public_Detail_Page_Handler.php",
+                      "bytes":  7969,
+                      "sha256":  "eddeaecc585e1d549878398e352e030a08dd73a478156bc7f84423a9a4378c6f"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Public_List_Page_Handler.php",
+                      "bytes":  3229,
+                      "sha256":  "f1a0a0226911385985b8d3e06f89ae0223447f5374107100da76f9d0f02b6ce5"
+                  },
+                  {
+                      "path":  "learning-materials/src/Addon/Runtime_Bridge.php",
+                      "bytes":  935,
+                      "sha256":  "0c8c255287b1525566a1156631e187a83933cf61d6f4c2edb39a5f5a47803e89"
+                  },
+                  {
+                      "path":  "learning-materials/src/Core/Autoloader.php",
+                      "bytes":  687,
+                      "sha256":  "d388a91f1b1e7a4ed2e9f34473ce3144cfacb326f00fdd20409310816496848c"
+                  },
+                  {
+                      "path":  "learning-materials/src/Core/Plugin.php",
+                      "bytes":  833,
+                      "sha256":  "424eb15c9ff846cf2021f2f1a597c2cb6cab930dca651ae191c323b56860c6e7"
+                  },
+                  {
+                      "path":  "learning-materials/src/Database/Installer.php",
+                      "bytes":  3002,
+                      "sha256":  "18d9d6873d1771ae9396ef85d1cd02ba88e386cf6af9194294120159b065d8eb"
+                  },
+                  {
+                      "path":  "learning-materials/src/Http/Materials_Action_Controller.php",
+                      "bytes":  14925,
+                      "sha256":  "3a55b0a7e9812386e97e97ae877bb93a7787b57bbcccaabae1156d0001153fca"
+                  },
+                  {
+                      "path":  "learning-materials/src/Http/Preview_Diagnostics_Controller.php",
+                      "bytes":  1539,
+                      "sha256":  "3b7c0ede7f17c74f274ceea2f6d6dd67292825687c053d2b5f5d0bccbb64fdc5"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Google_Link.php",
+                      "bytes":  2990,
+                      "sha256":  "9578a655128af5d4fa3b680de06673412c5771e73e9a4de9aa7635830b8f6b3e"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Material.php",
+                      "bytes":  5184,
+                      "sha256":  "b64975be76b00dc8806ca61432bc37343d56633c8b0799fc5ec3cc5ae850094b"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Material_Access.php",
+                      "bytes":  5200,
+                      "sha256":  "959c3898f40f8ceae74404f103449d5abc40d5a49b39a83a7b127aca98b1945c"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Material_Catalog.php",
+                      "bytes":  3449,
+                      "sha256":  "3a5e903ba60eda7c63bb5ed59232e0f6e8a69cdc60efd6bdd4784c6d72b1e8b0"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Material_Repository.php",
+                      "bytes":  7278,
+                      "sha256":  "f16810229a688ef27f3ca3401846b55e06ff4531a031c11059fed36301f3cc8f"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Material_Settings.php",
+                      "bytes":  4045,
+                      "sha256":  "02a94472a1e8ac38d1e9045828a813a2ab3161eca41ce79cd1f14181bf931610"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Material_Storage.php",
+                      "bytes":  9602,
+                      "sha256":  "cb21c93f7484e3f64c5b3766eb51fa99999c7a50e8eac36ad891fe9f0469f397"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Preview_Diagnostics.php",
+                      "bytes":  6115,
+                      "sha256":  "1b594e4e2877407298fe26772bc4c327f0169a9c02dce3606c4a68e211ab5993"
+                  },
+                  {
+                      "path":  "learning-materials/src/Materials/Preview_Link.php",
+                      "bytes":  2223,
+                      "sha256":  "2974d5d557cad62011752874c8288e22ef2fefa37317c3f63b3713ad2115689f"
+                  },
+                  {
+                      "path":  "learning-materials/src/Support/Capabilities.php",
+                      "bytes":  906,
+                      "sha256":  "f7dc964da5dac819a609d960f9a64738e7f9157b872fe9b3e50055fff9913e44"
+                  },
+                  {
+                      "path":  "learning-materials/uninstall.php",
+                      "bytes":  1605,
+                      "sha256":  "698a44f1060e8796da6276c8c945141748dbb098080bc5a4631c3a5b77f2f011"
+                  }
+              ]
+}

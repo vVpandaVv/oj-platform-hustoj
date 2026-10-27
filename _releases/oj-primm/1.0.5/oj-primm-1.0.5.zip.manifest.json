@@ -1,0 +1,300 @@
+{
+    "plugin":  "oj-primm",
+    "version":  "1.0.5",
+    "builder":  "_release-kit generic",
+    "archive":  "oj-primm-1.0.5.zip",
+    "sha256":  "7f5d3a47b56555d6ac6045fe69b7ce46c15b06ed979480e9954aa7d95d9dac7c",
+    "fileCount":  58,
+    "files":  [
+                  {
+                      "path":  "oj-primm/CHANGELOG.md",
+                      "bytes":  4066,
+                      "sha256":  "3ba8b8ac0eb2d52ed81c4a9f7568e8905507307db18d8fb71f664d0e7db1ad74"
+                  },
+                  {
+                      "path":  "oj-primm/LICENSE.txt",
+                      "bytes":  35149,
+                      "sha256":  "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+                  },
+                  {
+                      "path":  "oj-primm/oj-primm.php",
+                      "bytes":  847,
+                      "sha256":  "1359170fe3f9d72516881fd35338a91120f470b32d450aaa5a1a1e9ff22ea169"
+                  },
+                  {
+                      "path":  "oj-primm/plugin-package.php",
+                      "bytes":  256,
+                      "sha256":  "37860e8163091fc1713e5f1ef189f6cb2963865acb36fc8bb4d7c94284b42822"
+                  },
+                  {
+                      "path":  "oj-primm/README.md",
+                      "bytes":  9733,
+                      "sha256":  "9eecbc7f5e5e9c3c41439afec5c3ade3a44be1f849e8df57c628cb31ef10f003"
+                  },
+                  {
+                      "path":  "oj-primm/resources/css/primm.css",
+                      "bytes":  8040,
+                      "sha256":  "f1cdef821728cd217ef647ee59bd8162dd6df99dfad7dbaacce0bfb230063b3a"
+                  },
+                  {
+                      "path":  "oj-primm/resources/js/primm.js",
+                      "bytes":  110688,
+                      "sha256":  "885c80e7118de5b984e693b10f592f9137a9195f70f2f097c382f0e7a31b4afe"
+                  },
+                  {
+                      "path":  "oj-primm/resources/prompts/primm-lesson-v1.txt",
+                      "bytes":  10861,
+                      "sha256":  "2532b5f4702143547ff698a18359ffe3f8b03a58535d843d89c76d65552fe703"
+                  },
+                  {
+                      "path":  "oj-primm/src/Addon/PageHandler.php",
+                      "bytes":  1793,
+                      "sha256":  "8f21ccc49bc69d756aacb86a543381f9fef09c894648e93e78d245f13057f6b7"
+                  },
+                  {
+                      "path":  "oj-primm/src/Addon/Registration.php",
+                      "bytes":  5100,
+                      "sha256":  "64fd22c055815308672c3050d4c5737b781e7d3f07c035cb42e5857bfa55dc2a"
+                  },
+                  {
+                      "path":  "oj-primm/src/Addon/RestController.php",
+                      "bytes":  13353,
+                      "sha256":  "cb3bd3d2cda5357faecd6418c71fb4b8948e62c87a401cdce5e92971c30548f5"
+                  },
+                  {
+                      "path":  "oj-primm/src/Addon/RuntimeBridge.php",
+                      "bytes":  1291,
+                      "sha256":  "9af60b10852f643c88671915f501c801dc312c1f10a4e79181bf183260eae469"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/ActivityManagement.php",
+                      "bytes":  18316,
+                      "sha256":  "c1daf5dbc04da46f47a1fc9f3ef245ee9dcaa73be8d0e17643f36c1ab16f14d5"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/ActorRevalidationAccess.php",
+                      "bytes":  224,
+                      "sha256":  "c8626c282162fee842075af62bd7acb17525a2007d5a53394c06f0a2af3d3bef"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/ClassSettingsService.php",
+                      "bytes":  4081,
+                      "sha256":  "53a264dbd98fa0d4d280c3ad6ce73addebe0809e87d0c2d8e93496666065bf56"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/ExerciseAccess.php",
+                      "bytes":  414,
+                      "sha256":  "5f506fe356df2d64374070616cc2d4ad12c6907c9bf401fc898f0cfeb5bdeeb8"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/GenerationService.php",
+                      "bytes":  41772,
+                      "sha256":  "8f4ecbff5b94415ffcd08ef50aa2478020b64fc28952cbb7138d088c210c0e2b"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/LessonExecutor.php",
+                      "bytes":  362,
+                      "sha256":  "da997915a34145a0619f41d3b98d2a79502fe8c5a2a4af43c9797061908ddf46"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/LessonVerification.php",
+                      "bytes":  5167,
+                      "sha256":  "f057bb16511e573694acd927bf6ea56d8458c98f57f4d671b985d9a02374c649"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/PlatformAccess.php",
+                      "bytes":  811,
+                      "sha256":  "cd25079c0f428d7c35a10fef6a88570ca80e38affc187e4aad1a609b6de7f764"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/PracticeExecutor.php",
+                      "bytes":  221,
+                      "sha256":  "cd24f4707622dd9eb8d93afd5a1874a339273c766a0b16551fd3a6887d5a8509"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/PracticeService.php",
+                      "bytes":  8293,
+                      "sha256":  "b48256e0fcb80f0a951480328af33d7203a411c4adb09b62b213bbcb42ae9b07"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/PrimmService.php",
+                      "bytes":  43481,
+                      "sha256":  "cf7247ff72cce45d43c8dcafde8bc365dfacddf581fbf0ca6d32b0851b1eb90f"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/ProblemPreparationAutomation.php",
+                      "bytes":  4380,
+                      "sha256":  "d28c2df83e4de32a9217633c447ee8d1f6069806231994f0b047be8a0ac301d2"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/RosterAccess.php",
+                      "bytes":  241,
+                      "sha256":  "482c95198982768bafa6df7dee3b8c8c35c72a64499cc66a66724fd7fb7b6a88"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/SubmissionDraftAccess.php",
+                      "bytes":  401,
+                      "sha256":  "df7b3c1f01ffb57721206f4bcea4edbf253c3fb7389291fe314378952971e7f5"
+                  },
+                  {
+                      "path":  "oj-primm/src/Application/SubmissionLookupAccess.php",
+                      "bytes":  316,
+                      "sha256":  "808c88cffed8faadb25d40a2e88b3c8d55812e5d7e373b38b4a2f44306895a30"
+                  },
+                  {
+                      "path":  "oj-primm/src/Core/Autoloader.php",
+                      "bytes":  459,
+                      "sha256":  "921d376db702758735a313533205fefef30eb7aa0b9590527406407fc440705b"
+                  },
+                  {
+                      "path":  "oj-primm/src/Core/Plugin.php",
+                      "bytes":  8370,
+                      "sha256":  "d60608e420940cd434e1cac040ae37638e0b1b85571e6694c7e3bc1020bdcdbf"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/CurriculumLessonGenerator.php",
+                      "bytes":  538,
+                      "sha256":  "d0958afa0423d1f75a86e6c5702087a69b56a4b4038a16ff34b605f269cc9902"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/GenerationFailure.php",
+                      "bytes":  269,
+                      "sha256":  "2d2ed095130031d13bb02909426c019e293cc0357e57cdc543731640ea0f4c90"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/LessonGenerator.php",
+                      "bytes":  648,
+                      "sha256":  "bdce2def4f7df67c51136640178b7e89a2bf9a9c4df3b7778d9996c229cda123"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/LessonQuality.php",
+                      "bytes":  2716,
+                      "sha256":  "28cad303267a24b97537e99e04269e7d6dfa0a9d602055eec07004ceae7ce8c9"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/LessonSchema.php",
+                      "bytes":  9766,
+                      "sha256":  "90331247da62b88074a296d6ae5541472b9f2b7eb66d54a30abad5833cb431f0"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/LessonSupport.php",
+                      "bytes":  10387,
+                      "sha256":  "91c7133f8feb6b6d3d70bc11ef009f9997f48469582af4dbcaf852aefe51ca2d"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/LessonTemplate.php",
+                      "bytes":  4939,
+                      "sha256":  "04b31368a7491be820d323b51ef935f12086d72f01da2b2a8252e3eb13d5d38d"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/LessonValidationFailure.php",
+                      "bytes":  3218,
+                      "sha256":  "8d5a7ea2bee102b8b297f10902376104137e1709d88ab7a8f647bd23d9202148"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/PlatformLessonGenerator.php",
+                      "bytes":  13768,
+                      "sha256":  "73116353bd9176d2aa530e61b98be289cef4463b00a99d544e6deb043d4cd3fa"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/TransientGenerationException.php",
+                      "bytes":  421,
+                      "sha256":  "e7439f4160b006002c2743ed7cb276e39ad7ceadf2af8469f76d9e8583c66d75"
+                  },
+                  {
+                      "path":  "oj-primm/src/Generation/ValidationRepairGenerator.php",
+                      "bytes":  399,
+                      "sha256":  "bba639ecbfa938508525d6e34f6ba343e7155eb6ff0c5f638573e8da53cc8006"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/GenerationOperationsStore.php",
+                      "bytes":  733,
+                      "sha256":  "f107f13329805a4b0a612e672663f157fe9e0feafeda76ceae045373f8d6aa28"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/GenerationStore.php",
+                      "bytes":  966,
+                      "sha256":  "da8d26d81a0749c88b8a74be47a8e5217bb6925bd5a98e6daaa9bbfa1473f248"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/Installer.php",
+                      "bytes":  11784,
+                      "sha256":  "a080f3d053e99c02986a1d7c8cca054629b5f62b76851779c3eec7606e994433"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/ManagementStore.php",
+                      "bytes":  459,
+                      "sha256":  "55f792a8311dcced02cb7a06863de4fe8604e3d648dd81c513cc5cbe41a5b7b0"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/PracticeStore.php",
+                      "bytes":  438,
+                      "sha256":  "e55ac6f86564badb60f05a89d8661d5bf6d5272384307d98b77d850949992590"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/Repository.php",
+                      "bytes":  719,
+                      "sha256":  "21701cc81063bfab728887aa80f27ac09aecd51bcf346c8ab4ffc4c741875df2"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/WpdbGenerationStore.php",
+                      "bytes":  21366,
+                      "sha256":  "ed07d29d52b45dafc6c32fbf06111bc166c58a142e3f2134cad22d28dfb32fab"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/WpdbManagementStore.php",
+                      "bytes":  5984,
+                      "sha256":  "1c6d5690cc0b4e31f043b751ceceea61ff103f734069b481bc723cd5e4a594eb"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/WpdbPracticeStore.php",
+                      "bytes":  6136,
+                      "sha256":  "4f52fae57c9e46f7358c3e0583e073ba3032ad96138449f8a164cf71a5c81977"
+                  },
+                  {
+                      "path":  "oj-primm/src/Storage/WpdbRepository.php",
+                      "bytes":  11887,
+                      "sha256":  "ac553e23b7463ef8fa20bfcb0144cc4787c6893fa6ebab73010a5260eb19e89d"
+                  },
+                  {
+                      "path":  "oj-primm/src/Support/GenerationPolicy.php",
+                      "bytes":  1187,
+                      "sha256":  "c0a62fe066aef3ac26835c231e3fb1ed701c7180640bf9cb1685b45c212cbefb"
+                  },
+                  {
+                      "path":  "oj-primm/src/Support/LearnerCapabilities.php",
+                      "bytes":  3371,
+                      "sha256":  "6c72ae67b4e90e6ee400a9b04a19fd8e0bbc0740022204e12327d8b4ad587fc8"
+                  },
+                  {
+                      "path":  "oj-primm/src/Support/PlatformGateway.php",
+                      "bytes":  14625,
+                      "sha256":  "cff29bff063b46f24ab140613c0ebf8a2b7c8a6600217f4a7362732457e4ec82"
+                  },
+                  {
+                      "path":  "oj-primm/src/Support/PlatformLessonExecutor.php",
+                      "bytes":  2940,
+                      "sha256":  "74ecd7164311c260a8c218d3eddc24c7ec185267fd3c5a80532d1446a8d9afa7"
+                  },
+                  {
+                      "path":  "oj-primm/src/Support/PlatformPracticeExecutor.php",
+                      "bytes":  1695,
+                      "sha256":  "0a37d9979f587ce45853d3112788079cc10d8d16c5fed3f941d2b6f05ff35bae"
+                  },
+                  {
+                      "path":  "oj-primm/src/Support/Privacy.php",
+                      "bytes":  2702,
+                      "sha256":  "084b15ab747cbe6a06bdf658fb3a9ad28b60aa14be26f13f6c720ef314bb3e1b"
+                  },
+                  {
+                      "path":  "oj-primm/src/Support/Settings.php",
+                      "bytes":  4887,
+                      "sha256":  "a299d0243d36b90e78ccb600b05562ca2810239b1bcff1b9a4e9f41fe96a26a5"
+                  },
+                  {
+                      "path":  "oj-primm/uninstall.php",
+                      "bytes":  810,
+                      "sha256":  "2e9a23c78e79e4dce40d8b8579c5b02570fd7c046fe650bd4e695edddc01bebf"
+                  }
+              ]
+}

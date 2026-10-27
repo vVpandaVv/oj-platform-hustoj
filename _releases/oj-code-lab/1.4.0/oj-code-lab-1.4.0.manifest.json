@@ -1,0 +1,444 @@
+{
+  "plugin": "oj-code-lab",
+  "version": "1.4.0",
+  "channel": "stable",
+  "release_ready": true,
+  "dataset_policy": "reviewed-only",
+  "datasets": [
+    "penguins.csv"
+  ],
+  "vendor_components": [
+    {
+      "name": "markdown-it",
+      "version": "15.0.3",
+      "license": "MIT",
+      "source": "https://registry.npmjs.org/markdown-it/-/markdown-it-15.0.3.tgz",
+      "integrity": "sha512-+Az7Ojz3iRGu8KYMvJ6xVhvrxP3eE+vEtJX75Ow88XBpcQNV/0lGX5ZynIIBftREo4DC2jsveAMDaeltmm8QvQ==",
+      "dependencies": {
+        "entities": "8.1.0 (BSD-2-Clause)",
+        "linkify-it": "6.1.0 (MIT)",
+        "mdurl": "2.1.0 (MIT)",
+        "punycode.js": "2.3.1 (MIT)",
+        "uc.micro": "3.0.0 (MIT)"
+      },
+      "files": {
+        "resources/vendor/markdown-it/markdown-it.js": "391f2aa638e75e6c7859d0a5c5650ef0956722a45998f17e05b83bc655778e1e",
+        "resources/vendor/markdown-it/LICENSE.txt": "792c48c5a849a15fdf9e37e8bcf9e6d1dd13b32b46c642a748a0a46a9919d473",
+        "resources/vendor/markdown-it/DEPENDENCY-LICENSES.txt": "ed7515a8afff19d9677dd1b0eba05588fcb7fe696212fee5905b7c14dc662b9d"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "oj-code-lab/CHANGELOG.md",
+      "bytes": 17093,
+      "sha256": "02d338740226b651d064f1285e7dbb3b5fa8c5254e6f3096a18b3ad44d002229"
+    },
+    {
+      "path": "oj-code-lab/docs/licenses/palmerpenguins-CC0-1.0.md",
+      "bytes": 6966,
+      "sha256": "8e2c443dd9aea6fcd6c293dbf66935bd5ef502fc0ca9b466c773cf9316d5e04c"
+    },
+    {
+      "path": "oj-code-lab/docs/Lucide-Feather-LICENSE.txt",
+      "bytes": 1971,
+      "sha256": "0625588f15dfe196b8c7532083e10e85181e56b44862fa078812ffa20a297257"
+    },
+    {
+      "path": "oj-code-lab/docs/PRIVACY.md",
+      "bytes": 5754,
+      "sha256": "c6936b611368ae14814d3eb5b53d53ab87cdb553d8fdf1e1ef983f2bca9d17af"
+    },
+    {
+      "path": "oj-code-lab/docs/public-datasets.json",
+      "bytes": 4444,
+      "sha256": "986c992ab78977dbdb6283acc5a5512e89a738fbec479aa23a3f618993aac40b"
+    },
+    {
+      "path": "oj-code-lab/docs/PUBLIC_DATASETS.md",
+      "bytes": 6908,
+      "sha256": "71d38519baaa5c5ce2140908abba90b0dfae4accb3e3dbc2487d928f17f4cb09"
+    },
+    {
+      "path": "oj-code-lab/docs/SUPPORT.md",
+      "bytes": 7118,
+      "sha256": "5d337fc8b87faf52b8f117caf29a247db776d8a08a58d7fbb49eafa4c4d742a5"
+    },
+    {
+      "path": "oj-code-lab/docs/THIRD_PARTY.md",
+      "bytes": 5727,
+      "sha256": "32f80b3c10a305ea1efa0d91475b321dd69eb1e33c2df178fbc5ec3e472c0f8c"
+    },
+    {
+      "path": "oj-code-lab/LICENSE.txt",
+      "bytes": 17984,
+      "sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+    },
+    {
+      "path": "oj-code-lab/oj-code-lab.php",
+      "bytes": 3068,
+      "sha256": "29760353f876a919c97393efac2c2bbcd361741a2c9c0a1fac8dc525e890ae75"
+    },
+    {
+      "path": "oj-code-lab/PLATFORM-LINKING-EXCEPTION.txt",
+      "bytes": 1316,
+      "sha256": "ac7d17b40c50a405b3571b8a025c86587709dc169a140b536e129c6cf0056943"
+    },
+    {
+      "path": "oj-code-lab/plugin-package.php",
+      "bytes": 442,
+      "sha256": "9e6da7c4ced0d49229b78a51aef0d8b220d5883f2e205faf39445583d30d785d"
+    },
+    {
+      "path": "oj-code-lab/README.md",
+      "bytes": 19282,
+      "sha256": "c50aa2a99112f1bf8899eec21e10b95f1f5b3ce5d79c2b7ff6529293428f428f"
+    },
+    {
+      "path": "oj-code-lab/readme.txt",
+      "bytes": 11782,
+      "sha256": "401b822cfa06c3a159759e8ccf34c8948454f58f9914b7f7f92293c9f11909fd"
+    },
+    {
+      "path": "oj-code-lab/resources/css/console.css",
+      "bytes": 5070,
+      "sha256": "54427017d1e40895beb536f762c8454e334bb7e6eb6fbd839569649507cf9145"
+    },
+    {
+      "path": "oj-code-lab/resources/css/lab.css",
+      "bytes": 12576,
+      "sha256": "1f268f785a5fd94e64a2fd44c63fd27271ef7c778c44731b6644889996529323"
+    },
+    {
+      "path": "oj-code-lab/resources/css/markdown.css",
+      "bytes": 6507,
+      "sha256": "cda04b25f2f6ce115843b2aec8c7c005498dd076ebcd5e2e04f112ef270187b1"
+    },
+    {
+      "path": "oj-code-lab/resources/js/cell-editor.js",
+      "bytes": 12570,
+      "sha256": "2da5d13d47f9a604c950f9a5405e750fb62491e86b2ae527088b2118417557dc"
+    },
+    {
+      "path": "oj-code-lab/resources/js/dashboard.js",
+      "bytes": 10697,
+      "sha256": "d41bb12a0ec36fa7d23a812a59166b6a355debb9c6a64f7b4a2c2ad7585f83cd"
+    },
+    {
+      "path": "oj-code-lab/resources/js/datasets-admin.js",
+      "bytes": 15825,
+      "sha256": "ab12ed288d561aa76d8b8114f795ad1bb058ebfcf2d5bd735bca1c5c884660ac"
+    },
+    {
+      "path": "oj-code-lab/resources/js/lab.js",
+      "bytes": 55233,
+      "sha256": "fe3b79879b1a1639b62598da6af704fc6cce7b5b2fa3e310945a73d29c504457"
+    },
+    {
+      "path": "oj-code-lab/resources/js/markdown.js",
+      "bytes": 3452,
+      "sha256": "ea60c7417658a89ed1141570aa2a1b4e7742946d61bed144b09ce8258f0d8454"
+    },
+    {
+      "path": "oj-code-lab/resources/js/pyodide-worker.js",
+      "bytes": 21426,
+      "sha256": "b8a1d5f61888bc1c5402fa783777fbaeaf4958c70b788d4f0910eda9ebb439d5"
+    },
+    {
+      "path": "oj-code-lab/resources/js/settings-admin.js",
+      "bytes": 4152,
+      "sha256": "cd6bc0b091adf3f1c9fefea13967f052c9465472e753dd4922f93d87d7931a87"
+    },
+    {
+      "path": "oj-code-lab/resources/js/text-cell.js",
+      "bytes": 14840,
+      "sha256": "f4a63f2d4696e717218eae622b227a87037c29ec8d1aa5cd2683ee4e051ef8be"
+    },
+    {
+      "path": "oj-code-lab/resources/js/worker-runtime.js",
+      "bytes": 8937,
+      "sha256": "c1182322cbb28408790df7101fc0079cfdf2e69012f59eb28bc0a8324cd0f721"
+    },
+    {
+      "path": "oj-code-lab/resources/sample-datasets/penguins.csv",
+      "bytes": 13478,
+      "sha256": "e07636bd8af74260099ea2f8678e2eabbf35def579940cc76f67061ee16c06c1"
+    },
+    {
+      "path": "oj-code-lab/resources/vendor/markdown-it/DEPENDENCY-LICENSES.txt",
+      "bytes": 7243,
+      "sha256": "ed7515a8afff19d9677dd1b0eba05588fcb7fe696212fee5905b7c14dc662b9d"
+    },
+    {
+      "path": "oj-code-lab/resources/vendor/markdown-it/LICENSE.txt",
+      "bytes": 1073,
+      "sha256": "792c48c5a849a15fdf9e37e8bcf9e6d1dd13b32b46c642a748a0a46a9919d473"
+    },
+    {
+      "path": "oj-code-lab/resources/vendor/markdown-it/markdown-it.js",
+      "bytes": 100786,
+      "sha256": "391f2aa638e75e6c7859d0a5c5650ef0956722a45998f17e05b83bc655778e1e"
+    },
+    {
+      "path": "oj-code-lab/src/Addon/Console_Dashboard_Page_Handler.php",
+      "bytes": 3898,
+      "sha256": "0274b2e242935c521e5f07e173242deec79c500075547307d26b197be48d0866"
+    },
+    {
+      "path": "oj-code-lab/src/Addon/Console_Datasets_Page_Handler.php",
+      "bytes": 8491,
+      "sha256": "f07e89c10be62f7c841a6101e38843428f5680cf2c70d3ff28cbe1b45441caab"
+    },
+    {
+      "path": "oj-code-lab/src/Addon/Console_Settings_Page_Handler.php",
+      "bytes": 4240,
+      "sha256": "0d1735680d9ab361f0fcac47f4c1c3b07ce467eb4c7581b66c1489041c6b62ca"
+    },
+    {
+      "path": "oj-code-lab/src/Addon/Context_Resolver.php",
+      "bytes": 3409,
+      "sha256": "4601bac0cc7b2d17fa112032f100a8e4e42e5c2d5e981a035eabd6a9f1c7d8ff"
+    },
+    {
+      "path": "oj-code-lab/src/Addon/Lab_Page_Handler.php",
+      "bytes": 7577,
+      "sha256": "2cad8e51c3598faecbb794966eb946350e2859f4fab30965bc4611acbb28a0fd"
+    },
+    {
+      "path": "oj-code-lab/src/Addon/Oj_Platform_Registration.php",
+      "bytes": 10043,
+      "sha256": "7f7619687fa07071e2a2bad195bb27c79040824e0e4d539e92d5189b789cbe58"
+    },
+    {
+      "path": "oj-code-lab/src/Addon/Page_Response.php",
+      "bytes": 1325,
+      "sha256": "938cd7fe347f3d17b6c51b9014a60dac10702eba8ea5ce68af34adbb0a556ae7"
+    },
+    {
+      "path": "oj-code-lab/src/Addon/Runtime_Bridge.php",
+      "bytes": 1957,
+      "sha256": "5861ced33474d69862db17aff352d8d724a96d2222591f549e8d5c3e8a750c3d"
+    },
+    {
+      "path": "oj-code-lab/src/Core/Autoloader.php",
+      "bytes": 778,
+      "sha256": "1a8c952bd501e1f52b0323231b1108c94b1da7f06af218b502f6bd34f60b74dd"
+    },
+    {
+      "path": "oj-code-lab/src/Core/Plugin.php",
+      "bytes": 1280,
+      "sha256": "3df753249f1ecd7ca4bff7abb51cebb3974b680802f6f7cbb7375b52801d1a0d"
+    },
+    {
+      "path": "oj-code-lab/src/Database/Dataset_Repository.php",
+      "bytes": 5727,
+      "sha256": "f9b5b6c51ec41dff23cc36db93228cade804cea5d7e6b5817c1b887a167ce93f"
+    },
+    {
+      "path": "oj-code-lab/src/Database/Installer.php",
+      "bytes": 8255,
+      "sha256": "2c8088f1e10d9d7011994f1d1d7cd4d22309e8f9deeb073458c6174507b98070"
+    },
+    {
+      "path": "oj-code-lab/src/Database/Notebook_Repository.php",
+      "bytes": 7153,
+      "sha256": "2049c4eb1e44a43521e94d72bc77b1242f8842a03f519019ccf67fb632c29d22"
+    },
+    {
+      "path": "oj-code-lab/src/Datasets/Dataset_Cache.php",
+      "bytes": 2032,
+      "sha256": "51627799bc1da190b57b9c6273171459fa05a7c2fa150f323a1e6c0a4a900e8a"
+    },
+    {
+      "path": "oj-code-lab/src/Datasets/Kaggle_Client.php",
+      "bytes": 12378,
+      "sha256": "d3afd09a6f539ca1c596389361dd096742abb94a734786b157624c44bc167d34"
+    },
+    {
+      "path": "oj-code-lab/src/Datasets/Kaggle_Settings.php",
+      "bytes": 2912,
+      "sha256": "69de70e4341c1a8cd7ae7da64b31168fada26f4e9e7f08a8f50a61af30ec66e0"
+    },
+    {
+      "path": "oj-code-lab/src/Datasets/Sample_Dataset_Seeder.php",
+      "bytes": 8501,
+      "sha256": "47b33d69b25d13d69910541df63e22d1a2e22effd46d2964fdb0e4998b9acb54"
+    },
+    {
+      "path": "oj-code-lab/src/Datasets/Upload_Store.php",
+      "bytes": 6279,
+      "sha256": "5f4cf30b0b3add3690ef7d78e331f75f9928e116538cf69709eca7a0b426a708"
+    },
+    {
+      "path": "oj-code-lab/src/Datasets/Url_Source.php",
+      "bytes": 4659,
+      "sha256": "058df97e67d054b35327d83b50a74f01e796daa086b42789d6f28fd11bafd0bb"
+    },
+    {
+      "path": "oj-code-lab/src/Jobs/Dataset_Cache_Cleanup.php",
+      "bytes": 1709,
+      "sha256": "e901d7dce040a26d0cd3b8edfc95936bbac1e54939deaa45617e138984a9b51f"
+    },
+    {
+      "path": "oj-code-lab/src/Rest/Api.php",
+      "bytes": 747,
+      "sha256": "7492c512611771b248ce7a7bb208ccbe7f38357f5bc8158ff05d7af62394acca"
+    },
+    {
+      "path": "oj-code-lab/src/Rest/Controllers/Contexts_Controller.php",
+      "bytes": 1306,
+      "sha256": "f8f9e9f7741925ff758194fade2efae4df9a81f6a344fe9110887dafbbdea874"
+    },
+    {
+      "path": "oj-code-lab/src/Rest/Controllers/Dataset_Controller.php",
+      "bytes": 18740,
+      "sha256": "caadd8011af82b2f5c064ad19f178707f243db441997e99e66e6e606d269664d"
+    },
+    {
+      "path": "oj-code-lab/src/Rest/Controllers/Notebook_Controller.php",
+      "bytes": 6449,
+      "sha256": "df71b963c675024f7c906825c22459bb40daf42c32904728601433641f034858"
+    },
+    {
+      "path": "oj-code-lab/src/Rest/Controllers/Roster_Controller.php",
+      "bytes": 7073,
+      "sha256": "8d9e610efefd1cbc9299771e742bf5387f148752ae7a872526128d43f7e14d99"
+    },
+    {
+      "path": "oj-code-lab/src/Rest/Controllers/Settings_Controller.php",
+      "bytes": 2720,
+      "sha256": "a31f546091215ac3e4114386e899236c563bd614f06c26ef3fd3d032ce3a29c9"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Capabilities.php",
+      "bytes": 1993,
+      "sha256": "450529b352a9d338d877160554350a0e0346b2e40725425001269b5d53eecabf"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Cross_Origin_Isolation.php",
+      "bytes": 2058,
+      "sha256": "a3582d3b786a13a4589dbc89d34642f4d445d6c6b5d57156dca372477d4dcf9d"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Csv_Encoding.php",
+      "bytes": 1785,
+      "sha256": "b785688e46ac9dda266784f912dbe31ebaaea83d255d4d323248061104f34a36"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Database_Lock.php",
+      "bytes": 812,
+      "sha256": "02322fcb5d1c22c8ba2728e5e56e8e6e7b7b430e430a25f3b0ee44784b265856"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Database_Packet.php",
+      "bytes": 1106,
+      "sha256": "1d0799569685acd7c8696cf1723aa4c1bfb469f4ac96cfbe3250ccbc87b8a241"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Dataset_Archive.php",
+      "bytes": 13284,
+      "sha256": "d0cc42d8ec65c9b6a273843d87bf21818d4898429093f485a8269d912889bbe1"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Dataset_File.php",
+      "bytes": 3993,
+      "sha256": "acd61b1f92599efca9c2152f9c2babdfd6731991757edddfb374fbce5f8f18f6"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Dataset_Limits.php",
+      "bytes": 3288,
+      "sha256": "0346f2a7c1805654984cd2c6b15be79de6c9d61be41a268d241978e603731518"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Operations.php",
+      "bytes": 3440,
+      "sha256": "da1bed613e0bee45e6fa67c672ad3d3b859e4aa3fa108df1ade156c645513a34"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Privacy.php",
+      "bytes": 2858,
+      "sha256": "a467e6d1c7d24ca872287db6debddc8468b722ab7c7e8d037a2526b70030df16"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Request_Limits.php",
+      "bytes": 1517,
+      "sha256": "939890d176283913a4a6e7917d8cbe6f034dc2b225e4cdaa0cd8aa7b2aa878c0"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Secret_Cipher.php",
+      "bytes": 2091,
+      "sha256": "d93ef1d7c8151d9786f3ce0b63fee260b58425e5b4dd10a8fa8388b7ba991ebf"
+    },
+    {
+      "path": "oj-code-lab/src/Support/Worker_Script_Route.php",
+      "bytes": 4660,
+      "sha256": "38ede00205291c3ab602168b8f652f9e55472ed1a4cfdf0c958b025cfcc7d821"
+    },
+    {
+      "path": "oj-code-lab/uninstall.php",
+      "bytes": 1510,
+      "sha256": "545eb76d19a018248eca887b022a76a656ce9a28b6fbacfe84601db49fd260ae"
+    }
+  ],
+  "additional_permission": {
+    "id": "OJ-Code-Lab-Platform-Linking-Permission-1.0",
+    "file": "PLATFORM-LINKING-EXCEPTION.txt",
+    "sha256": "ac7d17b40c50a405b3571b8a025c86587709dc169a140b536e129c6cf0056943",
+    "covered_files": [
+      "oj-code-lab.php",
+      "plugin-package.php",
+      "resources/css/console.css",
+      "resources/css/lab.css",
+      "resources/css/markdown.css",
+      "resources/js/cell-editor.js",
+      "resources/js/dashboard.js",
+      "resources/js/datasets-admin.js",
+      "resources/js/lab.js",
+      "resources/js/markdown.js",
+      "resources/js/pyodide-worker.js",
+      "resources/js/settings-admin.js",
+      "resources/js/text-cell.js",
+      "resources/js/worker-runtime.js",
+      "src/Addon/Console_Dashboard_Page_Handler.php",
+      "src/Addon/Console_Datasets_Page_Handler.php",
+      "src/Addon/Console_Settings_Page_Handler.php",
+      "src/Addon/Context_Resolver.php",
+      "src/Addon/Lab_Page_Handler.php",
+      "src/Addon/Oj_Platform_Registration.php",
+      "src/Addon/Page_Response.php",
+      "src/Addon/Runtime_Bridge.php",
+      "src/Core/Autoloader.php",
+      "src/Core/Plugin.php",
+      "src/Database/Dataset_Repository.php",
+      "src/Database/Installer.php",
+      "src/Database/Notebook_Repository.php",
+      "src/Datasets/Dataset_Cache.php",
+      "src/Datasets/Kaggle_Client.php",
+      "src/Datasets/Kaggle_Settings.php",
+      "src/Datasets/Sample_Dataset_Seeder.php",
+      "src/Datasets/Upload_Store.php",
+      "src/Datasets/Url_Source.php",
+      "src/Jobs/Dataset_Cache_Cleanup.php",
+      "src/Rest/Api.php",
+      "src/Rest/Controllers/Contexts_Controller.php",
+      "src/Rest/Controllers/Dataset_Controller.php",
+      "src/Rest/Controllers/Notebook_Controller.php",
+      "src/Rest/Controllers/Roster_Controller.php",
+      "src/Rest/Controllers/Settings_Controller.php",
+      "src/Support/Capabilities.php",
+      "src/Support/Cross_Origin_Isolation.php",
+      "src/Support/Csv_Encoding.php",
+      "src/Support/Database_Lock.php",
+      "src/Support/Database_Packet.php",
+      "src/Support/Dataset_Archive.php",
+      "src/Support/Dataset_File.php",
+      "src/Support/Dataset_Limits.php",
+      "src/Support/Operations.php",
+      "src/Support/Privacy.php",
+      "src/Support/Request_Limits.php",
+      "src/Support/Secret_Cipher.php",
+      "src/Support/Worker_Script_Route.php",
+      "uninstall.php"
+    ]
+  }
+}
