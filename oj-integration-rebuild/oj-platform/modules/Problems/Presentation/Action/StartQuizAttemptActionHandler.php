@@ -11,7 +11,9 @@ use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpResponse;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\ActionAccessGuard;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\ActionResponse;
 use CodingPanda\OjPlatform\Modules\Problems\Application\QuizService;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemNavigationContext;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\ProblemId;
+use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizRequestFactory;
 use CodingPanda\OjPlatform\Ui\Message\MessageTone;
 use CodingPanda\OjPlatform\Ui\Message\UiMessage;
 use DomainException;
@@ -34,6 +36,7 @@ final class StartQuizAttemptActionHandler implements ActionHandler
     {
         $userId = 0;
         $problemId = max(0, $request->bodyInt('problem_id'));
+        $navigation = QuizRequestFactory::navigation($request);
         try {
             $actor = $this->guard->authenticatedActor(self::ACTION, $request);
             $userId = $actor->userId();
@@ -46,11 +49,12 @@ final class StartQuizAttemptActionHandler implements ActionHandler
             $attempt = $this->quizzes->start(
                 $userId,
                 new ProblemId($problemId),
-                strtolower(trim($request->bodyString('attempt_key')))
+                strtolower(trim($request->bodyString('attempt_key'))),
+                $navigation->accessContext()
             );
             $path = $attempt->status() === 'graded'
-                ? '/quizzes/' . $problemId . '/attempts/' . $attempt->id()
-                : '/quizzes/' . $problemId . '/attempt';
+                ? $navigation->quizUrl($problemId, 'attempts/' . $attempt->id())
+                : $navigation->quizUrl($problemId, 'attempt');
 
             return $this->responses->redirect(
                 $path,
@@ -63,14 +67,15 @@ final class StartQuizAttemptActionHandler implements ActionHandler
                 $userId
             );
         } catch (DomainException | InvalidArgumentException $error) {
-            return $this->failure($error->getMessage(), $problemId, $userId);
+            return $this->failure($error->getMessage(), $problemId, $userId, $navigation);
         } catch (Throwable $error) {
             $this->errors->report($error);
 
             return $this->failure(
                 '퀴즈 응시를 시작하지 못했습니다.',
                 $problemId,
-                $userId
+                $userId,
+                $navigation
             );
         }
     }
@@ -78,9 +83,10 @@ final class StartQuizAttemptActionHandler implements ActionHandler
     private function failure(
         string $message,
         int $problemId,
-        int $userId
+        int $userId,
+        ProblemNavigationContext $navigation
     ): HttpResponse {
-        $path = $problemId > 0 ? '/quizzes/' . $problemId : '/quizzes';
+        $path = $problemId > 0 ? $navigation->quizUrl($problemId) : '/quizzes';
 
         return $this->responses->redirect(
             $path,

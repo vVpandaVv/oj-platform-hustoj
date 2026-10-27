@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "snapshotDate": "2026-10-27",
   "mode": "source-and-release",
-  "sourceBaseCommit": "903056c06aebb4c2ff808fdc09bf9e5c2fed162e",
+  "sourceBaseCommit": "7ea6abfc12849ddce44abf8f179f212e643fa473",
   "workingTreeIncluded": true,
   "sourceInventory": "Current Git index; existing regular files only",
   "ignoredTrackedFilesIncludedWhenAllowlisted": true,
@@ -252,8 +252,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7711,
-  "totalBytes": 199055660,
+  "fileCount": 7717,
+  "totalBytes": 205682677,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -2035,8 +2035,8 @@
     },
     {
       "path": "_release-kit/guides/oj-platform.md",
-      "size": 42156,
-      "sha256": "4262842358ed6e17f09b4d9963c0f8660663cf99e924700a072b88fbe4d91fd6",
+      "size": 43036,
+      "sha256": "d87a6b9f9fbd75fc25a21aac25de7a7f96223bfa0dc66d8986b5be5888344d26",
       "origin": "working-tree"
     },
     {
@@ -2220,6 +2220,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "_release-kit/tests/platform-problem-quiz-browser.cjs",
+      "origin": "working-tree",
+      "size": 7635,
+      "sha256": "96aa2663dc7c81e36c08971074f8a64ab2057466609559ad4fe1fe8dec1bc0b2"
+    },
+    {
       "path": "_release-kit/tests/platform-quiz-editor-browser.cjs",
       "origin": "working-tree",
       "size": 9472,
@@ -2246,7 +2252,7 @@
     {
       "path": "_releases/README.md",
       "size": 1592,
-      "sha256": "a7dfd27e2ee2f009eba2dcfc1838941b51b90f9be002557e2a6313380154d11c",
+      "sha256": "bb1f076d4f505466a4c8da6c4e59ed25ff186fce42a63e3e116fca0407379c3b",
       "origin": "generated"
     },
     {
@@ -2404,6 +2410,24 @@
       "origin": "working-tree",
       "size": 88,
       "sha256": "fb131ae20a03d1bb9b554077c3af3609c0b9a364c94e15e42c902c7aae85c56e"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.4/oj-platform-2.5.4.manifest.json",
+      "origin": "working-tree",
+      "size": 852,
+      "sha256": "9dbd4481af0c3be2f3a28c71ed06426dd8d8b14adbc07c5eb8dd78ec6622462b"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.4/oj-platform-2.5.4.zip",
+      "origin": "working-tree",
+      "size": 6586440,
+      "sha256": "fe64cf7e0559208658846580397af9c2b8e6cae0011f36aa1c19d30d936c4a7b"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.4/oj-platform-2.5.4.zip.sha256",
+      "origin": "working-tree",
+      "size": 88,
+      "sha256": "27006f5c6d76fb717847e4e7e2cee544c8ac04ae02d7c2c84a87c73fe3910630"
     },
     {
       "path": "_releases/oj-primm/.gitkeep",
@@ -2607,13 +2631,13 @@
       "path": "developer-kit/README.md",
       "origin": "working-tree",
       "size": 4899,
-      "sha256": "d7beb4301e665811cd6ea35e5589d22b6b0f08fd8ac751a17d195c69573aea6a"
+      "sha256": "bc49f9bf09c089481b202dfe95ac9591ea0d5e42d34a161b7f67a849c0d407b4"
     },
     {
       "path": "developer-kit/api-reference.json",
       "origin": "working-tree",
       "size": 337088,
-      "sha256": "d256c329a0e5df3d0e57dca4358810922065b59765f08577c1f12f936ca07711"
+      "sha256": "ae3db5696c2d2482c9fc9992852c4c1881579ef960414f3a09d2a5d18d37385c"
     },
     {
       "path": "developer-kit/examples/oj-addon-starter/LICENSE.txt",
@@ -2691,13 +2715,13 @@
       "path": "developer-kit/frontend-api.md",
       "origin": "working-tree",
       "size": 17008,
-      "sha256": "db653e0629ff5167234e7dbef9b69f75933a07c74205afe565014e727ab613e7"
+      "sha256": "737c1d6a67e6e33378149b940720e58d0bea8105a1de42f1b2404a1e84ebb8d2"
     },
     {
       "path": "developer-kit/php-api.md",
       "origin": "working-tree",
       "size": 26574,
-      "sha256": "e27868cd285cf3490822f0e18258d3d83650c7a2c0c1caa0705438ffe8f55b2f"
+      "sha256": "dba9035f30daa023b4e99f3fc30b32e60015dae36e7fb482d029333d9f37abe5"
     },
     {
       "path": "developer-kit/tests/starter.php",
@@ -25069,8 +25093,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/CHANGELOG.md",
-      "size": 45823,
-      "sha256": "628d0ed914fab0f5dd6f1587cac76b4486e8dd1f5284a167122ea177204c33cb",
+      "size": 46397,
+      "sha256": "d04303f0dcd869720553173e419bfe1eb58b5cc2a306311e870e4610c2ad63f5",
       "origin": "working-tree"
     },
     {
@@ -25087,8 +25111,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/composer.json",
-      "size": 8061,
-      "sha256": "3c910181666971f1d91ca1a36e049893372f09ee27f33137f109f3b78bb25de4",
+      "size": 8114,
+      "sha256": "367ffedc0f5948421bc4ec8861e0c02d0323c78c767dc3583f41582da9899494",
       "origin": "working-tree"
     },
     {
@@ -30025,8 +30049,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Application/QuizService.php",
-      "size": 11906,
-      "sha256": "89d116b2327913976e31490e1425bcd42adacb4ab77a08f3d2cdf3d30ef403f6",
+      "size": 12505,
+      "sha256": "b20ca180a9d77107665d76b3673f502c5930f7f9b3003099004d3b4f037ab7a9",
       "origin": "working-tree"
     },
     {
@@ -30181,8 +30205,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Contract/ProblemNavigationContext.php",
-      "size": 5074,
-      "sha256": "3f9411c034e6ad2bcad639e82c8eb8c5a8bdb7efead9da0e5bc45c058b2d7615",
+      "size": 5518,
+      "sha256": "e337fce4e7b8f311691a1b461fa3af7fa60c80cff4097ac542e727bff1db334e",
       "origin": "working-tree"
     },
     {
@@ -30943,14 +30967,14 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/Action/StartQuizAttemptActionHandler.php",
-      "size": 3282,
-      "sha256": "ee928a37342de71e0227d5363791cfc4508b0dee9cc07d1ff52bce4ad7e5da56",
+      "size": 3656,
+      "sha256": "9f981f88a47fdef65ed7bab4a995b6188a81bdd93f2349bae9e352016f5f4aa2",
       "origin": "working-tree"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/Action/SubmitQuizAttemptActionHandler.php",
-      "size": 3623,
-      "sha256": "1813395ed28108ed671e93333261797964a9c4ea2506da0a47bfa40d9f1e7395",
+      "size": 3958,
+      "sha256": "88df91a4beb66a3fa11e73c2c8009a6c9e46e9c91da17ec77597d8061049b24e",
       "origin": "working-tree"
     },
     {
@@ -31093,20 +31117,20 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/ProblemDetailPageLoader.php",
-      "size": 2206,
-      "sha256": "96b4e18301a68b37afc81dca991a1a9d272f3da8398b51304218fe1e8009c420",
+      "size": 2677,
+      "sha256": "f6b5cd412f41bd62f8034e14fed343ab246c985bca9dfabf3cacfcf741a159b7",
       "origin": "working-tree"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/ProblemDetailPageState.php",
-      "size": 1013,
-      "sha256": "9ab7f8518788bc851824375bc919f2545750c223b954d0962d8aa4324c2bd334",
+      "size": 1433,
+      "sha256": "fca7d1b435b37acba3a7caf3685565afbc4e0c88dcd1d7ace3f6650d67af06af",
       "origin": "working-tree"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/ProblemDetailPageView.php",
-      "size": 16810,
-      "sha256": "7449a7a2001990bf3c5757cd8408d9412f7f7f815a5fff3801013843b829b68b",
+      "size": 18318,
+      "sha256": "350b5ee88566485bbb5d90a03f7db986607f3a4968c0065569d31a251392f2f2",
       "origin": "working-tree"
     },
     {
@@ -31123,14 +31147,14 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/QuizHtml.php",
-      "size": 3197,
-      "sha256": "2fbab5a7849314c1f5288471edb2a9228c5f09829f6db27c5b56df0427ba310c",
+      "size": 4084,
+      "sha256": "1d759085e6335197231c8435d4df3f548c1950fc0d558b42979e5f3bd8add892",
       "origin": "working-tree"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/QuizRequestFactory.php",
-      "size": 9796,
-      "sha256": "7e8758225c2fce69e211f90b91786df6f4cf322088dd08e68eca8f0749c7e89c",
+      "size": 10464,
+      "sha256": "59752969277a061f345c5b5ab77d461df195a3e166d1dc37d5f24dbaaaa34af6",
       "origin": "working-tree"
     },
     {
@@ -31165,14 +31189,14 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/Route/QuizAttemptPageHandler.php",
-      "size": 5818,
-      "sha256": "7a043bf304b8521a1ff67c9adeec2d4b3c5777feb9e25c631bb337cab8f30652",
+      "size": 6159,
+      "sha256": "fab8d12ab9348825c13e57fde820378b360195666cbf0cca7d1fa1d024b8c5c0",
       "origin": "working-tree"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/Route/QuizDetailPageHandler.php",
-      "size": 7151,
-      "sha256": "bb0a2547aa31890b1032913bcd059540eb5f5dd9d3626aca54078ec229f6ed06",
+      "size": 7760,
+      "sha256": "3649158b1a443f35ea29649b7e4b37ca0970a9a923d2486bfc92014b911ed55c",
       "origin": "working-tree"
     },
     {
@@ -31183,14 +31207,14 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/Route/QuizResultPageHandler.php",
-      "size": 7601,
-      "sha256": "cfc2ccd63045dff517642a187f34b1101568f13ed998a3ea70cab4ea57aa3030",
+      "size": 8067,
+      "sha256": "d3feae8b8c296c7e3527b80f4cb7f59451c66dbb215090329d440b9f7dfecb6c",
       "origin": "working-tree"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/Route/QuizStatisticsPageHandler.php",
-      "size": 5385,
-      "sha256": "b374c893ee3c4ea981f651e09686100913a782da3b75b8960bc61749d2dcb7ed",
+      "size": 5629,
+      "sha256": "34df5c0867ebedd8a877860e15e82f058f1482a1475bbb27cfaef1906cfdacfc",
       "origin": "working-tree"
     },
     {
@@ -32750,7 +32774,7 @@
     {
       "path": "oj-integration-rebuild/oj-platform/oj-platform.php",
       "size": 2310,
-      "sha256": "951121b85d5ff2086d6a3515b2a85724849f85f2768edac3b47385565add4019",
+      "sha256": "c449edc19912040e02b1fd44837cd7b73e1457e12cb09f1e3ed00cd2fe4b381f",
       "origin": "working-tree"
     },
     {
@@ -33535,8 +33559,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/resources/ui/css/oj-ui-system.css",
-      "size": 201062,
-      "sha256": "fd7a878c4a3e1dc51849951055ee45cc077490061e5abab8781567941e6c1db2",
+      "size": 201332,
+      "sha256": "a8b63ea83c5af71c1a3431907a1a56cca8132a81184f5c2e38dd1174db7eaa0d",
       "origin": "working-tree"
     },
     {
@@ -35317,8 +35341,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/src/Kernel/Composition/ProblemsComposition.php",
-      "size": 49779,
-      "sha256": "120f97b2739cf234fcfcc61ebe55811f3ecf023238b583c2fa3c09ff651e7b58",
+      "size": 49831,
+      "sha256": "f1f86490f996aa45eb5ad92846228c5429ab7f4825f4003875f36229b399e7a6",
       "origin": "working-tree"
     },
     {
@@ -36522,6 +36546,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "oj-integration-rebuild/oj-platform/tests/Support/problem-quiz-navigation.php",
+      "origin": "working-tree",
+      "size": 10534,
+      "sha256": "2f11183841044a2aa35fb730a6eed0381e80033c600455a9004608e1a033c521"
+    },
+    {
       "path": "oj-integration-rebuild/oj-platform/tests/Support/render-code-ordering.php",
       "size": 3828,
       "sha256": "c156d27153a98a36804bdde3c86f7150a0abf30f072cb05d437fcd9edc482b4f",
@@ -36910,6 +36940,12 @@
       "size": 9826,
       "sha256": "e9e857e8f3c81f479e8315bcd9009f3a9ae649776af44c853fbf2f29c54fdc1f",
       "origin": "working-tree"
+    },
+    {
+      "path": "oj-integration-rebuild/oj-platform/tests/Unit/problem-quiz-navigation.php",
+      "origin": "working-tree",
+      "size": 12273,
+      "sha256": "3e5f04cd0c6a99a386aa1ee0f5cd1daae9fa35c90069b6cc42d528a6ab435d0b"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/tests/Unit/problems.php",

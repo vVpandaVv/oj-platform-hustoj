@@ -16,6 +16,7 @@ use CodingPanda\OjPlatform\Modules\Problems\Domain\ProblemId;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizQuestion;
 use CodingPanda\OjPlatform\Modules\Problems\Presentation\ProblemHtml;
 use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizHtml;
+use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizRequestFactory;
 use CodingPanda\OjPlatform\Modules\PublicUi\Contract\PageResponder;
 use DomainException;
 
@@ -36,14 +37,16 @@ final class QuizAttemptPageHandler implements RouteHandler
     {
         $problemId = new ProblemId((int) ($route->parameters()['problem_id'] ?? 0));
         $userId = $this->accounts->current()->identity()?->userId() ?? 0;
+        $navigation = QuizRequestFactory::navigation($request);
         try {
-            $context = $this->quizzes->attempt($userId, $problemId);
+            $context = $this->quizzes->attempt($userId, $problemId, null, $navigation->accessContext());
         } catch (DomainException) {
             return $this->pages->authenticated(
                 '진행 중인 응시 없음',
                 '<div class="ojp-empty-state"><h1>진행 중인 응시가 없습니다.</h1>'
-                    . '<a class="ojp-button" href="/quizzes/'
-                    . $problemId->value() . '">퀴즈 상세</a></div>',
+                    . '<a class="ojp-button" href="'
+                    . $this->html->escape($navigation->quizUrl($problemId->value()))
+                    . '">퀴즈 상세</a></div>',
                 $request,
                 404
             );
@@ -51,7 +54,7 @@ final class QuizAttemptPageHandler implements RouteHandler
         $attempt = $context['attempt'];
         if ($attempt->status() === 'graded') {
             return HttpResponse::redirect(
-                '/quizzes/' . $problemId->value() . '/attempts/' . $attempt->id()
+                $navigation->quizUrl($problemId->value(), 'attempts/' . $attempt->id())
             );
         }
         $questions = '';
@@ -66,16 +69,17 @@ final class QuizAttemptPageHandler implements RouteHandler
             . $this->html->escape($context['revision']->definition()->title())
             . '</h1><p>답안을 확인한 뒤 한 번만 최종 제출합니다.</p></div>'
             . '<span class="ojp-status-badge ojp-status-badge--warning">진행 중</span>'
-            . '</header>' . $this->html->tabs($problemId->value(), 'attempt')
+            . '</header>' . $this->html->tabs($problemId->value(), 'attempt', $navigation)
             . '<form class="ojp-stack" method="post" action="'
             . $this->html->escape($this->actionUrls->actionUrl())
             . '" data-oj-quiz-attempt>'
             . $this->security->hiddenFields('oj_quiz_submit_attempt')
+            . $this->html->navigationFields($navigation)
             . '<input type="hidden" name="problem_id" value="'
             . $problemId->value() . '"><input type="hidden" name="attempt_id" value="'
             . $attempt->id() . '">' . $questions
-            . '<div class="ojp-sticky-actions"><a class="ojp-button" href="/quizzes/'
-            . $problemId->value() . '">나중에 계속</a>'
+            . '<div class="ojp-sticky-actions"><a class="ojp-button" href="'
+            . $this->html->escape($navigation->quizUrl($problemId->value())) . '">나중에 계속</a>'
             . '<button class="ojp-button ojp-button--primary" type="submit">'
             . '최종 제출</button></div></form>';
 

@@ -13,10 +13,12 @@ use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpResponse;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\CurrentAccountProvider;
 use CodingPanda\OjPlatform\Modules\Problems\Application\QuizKeyFactory;
 use CodingPanda\OjPlatform\Modules\Problems\Application\QuizService;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemNavigationContext;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\ProblemId;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizAttempt;
 use CodingPanda\OjPlatform\Modules\Problems\Presentation\ProblemHtml;
 use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizHtml;
+use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizRequestFactory;
 use CodingPanda\OjPlatform\Modules\PublicUi\Contract\PageResponder;
 use DomainException;
 
@@ -38,8 +40,9 @@ final class QuizDetailPageHandler implements RouteHandler
     {
         $problemId = new ProblemId((int) ($route->parameters()['problem_id'] ?? 0));
         $userId = $this->accounts->current()->identity()?->userId() ?? 0;
+        $navigation = QuizRequestFactory::navigation($request);
         try {
-            $context = $this->quizzes->visible($userId, $problemId);
+            $context = $this->quizzes->visible($userId, $problemId, $navigation->accessContext());
         } catch (DomainException) {
             return $this->pages->authenticated(
                 '퀴즈 없음',
@@ -59,12 +62,13 @@ final class QuizDetailPageHandler implements RouteHandler
                 in_array($attempt->status(), ['in_progress', 'graded'], true)
         ));
         $start = $active instanceof QuizAttempt
-            ? '<a class="ojp-button ojp-button--primary" href="/quizzes/'
-                . $problemId->value() . '/attempt">응시 계속하기</a>'
+            ? '<a class="ojp-button ojp-button--primary" href="'
+                . $this->html->escape($navigation->quizUrl($problemId->value(), 'attempt'))
+                . '">응시 계속하기</a>'
             : ($used >= $definition->attemptLimit()
                 ? '<span class="ojp-status-badge ojp-status-badge--neutral">'
                     . '응시 횟수 사용 완료</span>'
-                : $this->startForm($problemId));
+                : $this->startForm($problemId, $navigation));
         $content = '<header class="ojp-page-header"><div><p class="ojp-eyebrow">'
             . '문제 ' . $problemId->value() . ' · 게시 버전 v'
             . $revision->revisionNumber() . '</p><h1>'
@@ -72,7 +76,7 @@ final class QuizDetailPageHandler implements RouteHandler
             . $this->html->escape($context['problem']->title())
             . '</p></div><div class="ojp-command-group">' . $start
             . '</div></header>'
-            . $this->html->tabs($problemId->value(), 'detail')
+            . $this->html->tabs($problemId->value(), 'detail', $navigation)
             . '<div class="ojp-metric-strip">'
             . '<span><strong>문항</strong> ' . $definition->questionCount() . '개</span>'
             . '<span><strong>총점</strong> '
@@ -87,10 +91,11 @@ final class QuizDetailPageHandler implements RouteHandler
                 ? '<p class="ojp-muted">별도의 안내가 없습니다.</p>'
                 : $this->problemHtml->richText($definition->description()))
             . '</section>'
-            . $this->attemptHistory($problemId, $attempts)
+            . $this->attemptHistory($problemId, $attempts, $navigation)
             . ($definition->publicStatistics()
-                ? '<div class="ojp-command-bar"><a class="ojp-button" href="/quizzes/'
-                    . $problemId->value() . '/statistics">익명 통계 보기</a></div>'
+                ? '<div class="ojp-command-bar"><a class="ojp-button" href="'
+                    . $this->html->escape($navigation->quizUrl($problemId->value(), 'statistics'))
+                    . '">익명 통계 보기</a></div>'
                 : '');
 
         return $this->pages->authenticated(
@@ -100,11 +105,14 @@ final class QuizDetailPageHandler implements RouteHandler
         );
     }
 
-    private function startForm(ProblemId $problemId): string
-    {
+    private function startForm(
+        ProblemId $problemId,
+        ProblemNavigationContext $navigation
+    ): string {
         return '<form method="post" action="'
             . $this->html->escape($this->actionUrls->actionUrl()) . '">'
             . $this->security->hiddenFields('oj_quiz_start_attempt')
+            . $this->html->navigationFields($navigation)
             . '<input type="hidden" name="problem_id" value="'
             . $problemId->value() . '">'
             . '<input type="hidden" name="attempt_key" value="'
@@ -116,13 +124,16 @@ final class QuizDetailPageHandler implements RouteHandler
     /**
      * @param list<QuizAttempt> $attempts
      */
-    private function attemptHistory(ProblemId $problemId, array $attempts): string
-    {
+    private function attemptHistory(
+        ProblemId $problemId,
+        array $attempts,
+        ProblemNavigationContext $navigation
+    ): string {
         $rows = '';
         foreach ($attempts as $index => $attempt) {
             $link = $attempt->status() === 'in_progress'
-                ? '/quizzes/' . $problemId->value() . '/attempt'
-                : '/quizzes/' . $problemId->value() . '/attempts/' . $attempt->id();
+                ? $navigation->quizUrl($problemId->value(), 'attempt')
+                : $navigation->quizUrl($problemId->value(), 'attempts/' . $attempt->id());
             $rows .= '<tr><td>' . (count($attempts) - $index) . '</td><td>'
                 . $this->html->status($attempt->status()) . '</td><td>'
                 . ($attempt->status() === 'graded'
@@ -134,7 +145,7 @@ final class QuizDetailPageHandler implements RouteHandler
                     $attempt->submittedAt()
                 )
                 . '</td><td><a class="ojp-button ojp-button--small" href="'
-                . $link . '">' . ($attempt->status() === 'in_progress' ? '계속' : '결과')
+                . $this->html->escape($link) . '">' . ($attempt->status() === 'in_progress' ? '계속' : '결과')
                 . '</a></td></tr>';
         }
         if ($rows === '') {

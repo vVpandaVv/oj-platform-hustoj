@@ -1,6 +1,6 @@
 # OJ Platform 애드온 개발
 
-**OJ Platform 2.5.3 · Addon API 1.8.0 · WordPress 6.6+ · PHP 8.3+**
+**OJ Platform 2.5.4 · Addon API 1.8.0 · WordPress 6.6+ · PHP 8.3+**
 
 이 폴더는 외부 플러그인을 만드는 데 필요한 공개 API 형식과 실행 예제를 모은 개발 자료입니다.
 

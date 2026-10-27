@@ -16,6 +16,7 @@ use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizChoice;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizQuestion;
 use CodingPanda\OjPlatform\Modules\Problems\Presentation\ProblemHtml;
 use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizHtml;
+use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizRequestFactory;
 use CodingPanda\OjPlatform\Modules\PublicUi\Contract\PageResponder;
 use DomainException;
 
@@ -35,14 +36,16 @@ final class QuizResultPageHandler implements RouteHandler
         $problemId = new ProblemId((int) ($route->parameters()['problem_id'] ?? 0));
         $attemptId = (int) ($route->parameters()['attempt_id'] ?? 0);
         $userId = $this->accounts->current()->identity()?->userId() ?? 0;
+        $navigation = QuizRequestFactory::navigation($request);
         try {
-            $context = $this->quizzes->attempt($userId, $problemId, $attemptId);
+            $context = $this->quizzes->attempt($userId, $problemId, $attemptId, $navigation->accessContext());
         } catch (DomainException) {
             return $this->pages->authenticated(
                 '퀴즈 결과 없음',
                 '<div class="ojp-empty-state"><h1>퀴즈 결과를 열 수 없습니다.</h1>'
-                    . '<a class="ojp-button" href="/quizzes/'
-                    . $problemId->value() . '">퀴즈 상세</a></div>',
+                    . '<a class="ojp-button" href="'
+                    . $this->html->escape($navigation->quizUrl($problemId->value()))
+                    . '">퀴즈 상세</a></div>',
                 $request,
                 404
             );
@@ -50,7 +53,7 @@ final class QuizResultPageHandler implements RouteHandler
         $attempt = $context['attempt'];
         if ($attempt->status() === 'in_progress') {
             return HttpResponse::redirect(
-                '/quizzes/' . $problemId->value() . '/attempt'
+                $navigation->quizUrl($problemId->value(), 'attempt')
             );
         }
         $revision = $context['revision'];
@@ -74,8 +77,11 @@ final class QuizResultPageHandler implements RouteHandler
             . '응시 결과 · 게시 버전 v' . $revision->revisionNumber()
             . '</p><h1>' . $this->html->escape($revision->definition()->title())
             . '</h1><p>' . $this->html->escape($context['problem']->title())
-            . '</p></div><a class="ojp-button" href="/quizzes/'
-            . $problemId->value() . '">퀴즈 상세</a></header>'
+            . '</p></div><div class="ojp-command-group"><a class="ojp-button" href="'
+            . $this->html->escape($navigation->detailUrl($problemId->value()))
+            . '">문제로 돌아가기</a><a class="ojp-button" href="'
+            . $this->html->escape($navigation->quizUrl($problemId->value()))
+            . '">퀴즈 상세</a></div></header>'
             . '<div class="ojp-result-summary"><span>점수</span><strong>'
             . $this->html->score($attempt->score()) . ' / '
             . $this->html->score($attempt->maxScore()) . '</strong><small>'

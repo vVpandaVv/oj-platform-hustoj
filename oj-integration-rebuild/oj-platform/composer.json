@@ -81,6 +81,7 @@
       "@php tests/Unit/problem-detail-view.php",
       "@php tests/Unit/quizzes.php",
       "@php tests/Unit/quiz-editor-forms.php",
+      "@php tests/Unit/problem-quiz-navigation.php",
       "@php tests/Unit/submissions.php",
       "@php tests/Unit/judge-execution.php",
       "@php tests/Unit/code-execution.php",

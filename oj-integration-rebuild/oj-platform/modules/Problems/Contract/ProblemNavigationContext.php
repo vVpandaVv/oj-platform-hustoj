@@ -80,6 +80,18 @@ final class ProblemNavigationContext
         return $this->scopedUrl('/submit/' . self::problemId($problemId));
     }
 
+    public function quizUrl(int $problemId, string $section = ''): string
+    {
+        if (preg_match('~^(?:attempt|statistics|attempts/[1-9][0-9]*)?$~D', $section) !== 1) {
+            throw new InvalidArgumentException('퀴즈 경로가 올바르지 않습니다.');
+        }
+
+        return $this->scopedUrl(
+            '/quizzes/' . self::problemId($problemId)
+                . ($section === '' ? '' : '/' . $section)
+        );
+    }
+
     public function returnUrl(): string
     {
         if ($this->classId !== null) {

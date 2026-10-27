@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CodingPanda\OjPlatform\Modules\Problems\Application;
 
 use CodingPanda\OjPlatform\Modules\Problems\Contract\QuizRepository;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemAccessContext;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\JudgeProblem;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\ProblemId;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizAttempt;
@@ -109,9 +110,12 @@ final class QuizService
      *     active:?QuizAttempt
      * }
      */
-    public function visible(int $userId, ProblemId $problemId): array
-    {
-        $problem = $this->catalog->findVisible($userId, $problemId);
+    public function visible(
+        int $userId,
+        ProblemId $problemId,
+        ?ProblemAccessContext $context = null
+    ): array {
+        $problem = $this->catalog->findVisible($userId, $problemId, $context);
         $revision = $this->quizzes->published($problemId);
         if (
             $problem === null
@@ -196,12 +200,13 @@ final class QuizService
     public function start(
         int $userId,
         ProblemId $problemId,
-        string $attemptKey
+        string $attemptKey,
+        ?ProblemAccessContext $context = null
     ): QuizAttempt {
         if (preg_match('/^[a-f0-9]{64}$/', $attemptKey) !== 1) {
             throw new DomainException('퀴즈 시작 확인 키가 올바르지 않습니다.');
         }
-        $visible = $this->visible($userId, $problemId);
+        $visible = $this->visible($userId, $problemId, $context);
         $active = $visible['active'];
         if ($active instanceof QuizAttempt) {
             return $active;
@@ -220,7 +225,8 @@ final class QuizService
     public function attempt(
         int $userId,
         ProblemId $problemId,
-        ?int $attemptId = null
+        ?int $attemptId = null,
+        ?ProblemAccessContext $context = null
     ): array {
         $attempt = $attemptId === null
             ? $this->quizzes->activeAttempt($problemId, $userId)
@@ -233,8 +239,10 @@ final class QuizService
             throw new DomainException('퀴즈 응시 기록을 열 수 없습니다.');
         }
         $revision = $this->quizzes->revision($attempt->revisionId());
-        $problem = $this->catalog->findVisible($userId, $problemId)
-            ?? $this->catalog->findManaged($userId, $problemId);
+        $problem = $this->catalog->findVisible($userId, $problemId, $context);
+        if ($problem === null && ($context === null || $context->isGeneral())) {
+            $problem = $this->catalog->findManaged($userId, $problemId);
+        }
         if ($revision === null || $problem === null) {
             throw new DomainException('퀴즈 응시 버전을 찾을 수 없습니다.');
         }
@@ -253,10 +261,11 @@ final class QuizService
         int $userId,
         ProblemId $problemId,
         int $attemptId,
-        array $answers
+        array $answers,
+        ?ProblemAccessContext $context = null
     ): QuizAttempt {
-        $context = $this->attempt($userId, $problemId, $attemptId);
-        $attempt = $context['attempt'];
+        $attemptContext = $this->attempt($userId, $problemId, $attemptId, $context);
+        $attempt = $attemptContext['attempt'];
         if ($attempt->userId() !== $userId) {
             throw new DomainException('본인의 퀴즈만 제출할 수 있습니다.');
         }
@@ -266,7 +275,7 @@ final class QuizService
         if ($attempt->status() !== 'in_progress') {
             throw new DomainException('현재 제출할 수 없는 퀴즈 응시입니다.');
         }
-        $result = $this->grader->grade($context['revision'], $answers);
+        $result = $this->grader->grade($attemptContext['revision'], $answers);
 
         return $this->quizzes->finalizeAttempt(
             $attempt->id(),
@@ -283,10 +292,13 @@ final class QuizService
     public function statistics(
         int $userId,
         ProblemId $problemId,
-        ?int $revisionId = null
+        ?int $revisionId = null,
+        ?ProblemAccessContext $context = null
     ): array {
-        $problem = $this->catalog->findVisible($userId, $problemId)
-            ?? $this->catalog->findManaged($userId, $problemId);
+        $problem = $this->catalog->findVisible($userId, $problemId, $context);
+        if ($problem === null && ($context === null || $context->isGeneral())) {
+            $problem = $this->catalog->findManaged($userId, $problemId);
+        }
         $revision = $revisionId === null
             ? $this->quizzes->published($problemId)
             : $this->quizzes->revision($revisionId);

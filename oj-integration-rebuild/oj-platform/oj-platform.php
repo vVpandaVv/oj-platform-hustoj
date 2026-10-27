@@ -3,7 +3,7 @@
  * Plugin Name: OJ Platform
  * Plugin URI: https://judge.codingpanda.kr
  * Description: 학습용 프로그래밍 문제, 제출, 채점 및 학습 공간을 통합합니다.
- * Version: 2.5.3
+ * Version: 2.5.4
  * Author: codingpanda
  * Author URI: https://judge.codingpanda.kr
  * Text Domain: oj-platform
@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
-define('OJ_PLATFORM_VERSION', '2.5.3');
+define('OJ_PLATFORM_VERSION', '2.5.4');
 define('OJ_PLATFORM_ADDON_API_VERSION', '1.8.0');
 define('OJ_PLATFORM_FILE', __FILE__);
 define('OJ_PLATFORM_PATH', __DIR__ . DIRECTORY_SEPARATOR);

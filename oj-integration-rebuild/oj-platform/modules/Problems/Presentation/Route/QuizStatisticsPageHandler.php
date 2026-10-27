@@ -12,6 +12,7 @@ use CodingPanda\OjPlatform\Modules\Auth\Contract\CurrentAccountProvider;
 use CodingPanda\OjPlatform\Modules\Problems\Application\QuizService;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\ProblemId;
 use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizHtml;
+use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizRequestFactory;
 use CodingPanda\OjPlatform\Modules\PublicUi\Contract\PageResponder;
 use DomainException;
 
@@ -29,14 +30,16 @@ final class QuizStatisticsPageHandler implements RouteHandler
     {
         $problemId = new ProblemId((int) ($route->parameters()['problem_id'] ?? 0));
         $userId = $this->accounts->current()->identity()?->userId() ?? 0;
+        $navigation = QuizRequestFactory::navigation($request);
         try {
-            $context = $this->quizzes->statistics($userId, $problemId);
+            $context = $this->quizzes->statistics($userId, $problemId, null, $navigation->accessContext());
         } catch (DomainException) {
             return $this->pages->authenticated(
                 '퀴즈 통계 없음',
                 '<div class="ojp-empty-state"><h1>퀴즈 통계를 열 수 없습니다.</h1>'
-                    . '<a class="ojp-button" href="/quizzes/'
-                    . $problemId->value() . '">퀴즈 상세</a></div>',
+                    . '<a class="ojp-button" href="'
+                    . $this->html->escape($navigation->quizUrl($problemId->value()))
+                    . '">퀴즈 상세</a></div>',
                 $request,
                 404
             );
@@ -83,7 +86,7 @@ final class QuizStatisticsPageHandler implements RouteHandler
             . '</p><h1>' . $this->html->escape(
                 $context['revision']->definition()->title()
             ) . ' 통계</h1><p>개인 답안이나 다른 사용자의 정보는 공개하지 않습니다.</p>'
-            . '</div></header>' . $this->html->tabs($problemId->value(), 'statistics')
+            . '</div></header>' . $this->html->tabs($problemId->value(), 'statistics', $navigation)
             . '<div class="ojp-metric-grid"><div class="ojp-metric"><span>완료 응시</span>'
             . '<strong>' . number_format($statistics['attempt_count']) . '</strong></div>'
             . '<div class="ojp-metric"><span>평균 점수</span><strong>'

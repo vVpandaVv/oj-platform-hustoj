@@ -6,6 +6,7 @@ namespace CodingPanda\OjPlatform\Modules\Problems\Presentation;
 
 use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpRequest;
 use CodingPanda\OjPlatform\Modules\Problems\Application\QuizKeyFactory;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemNavigationContext;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizChoice;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizDefinition;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizQuestion;
@@ -18,6 +19,18 @@ final class QuizRequestFactory
 
     public function __construct(private readonly QuizKeyFactory $keys)
     {
+    }
+
+    public static function navigation(HttpRequest $request): ProblemNavigationContext
+    {
+        return ProblemNavigationContext::fromQueryValues(
+            $request->method() === 'POST'
+                ? $request->bodyString('contest_id') : $request->queryString('contest_id'),
+            $request->method() === 'POST'
+                ? $request->bodyString('contest_problem_number') : $request->queryString('contest_problem_number'),
+            $request->method() === 'POST'
+                ? $request->bodyString('class_id') : $request->queryString('class_id')
+        );
     }
 
     public function definition(HttpRequest $request): QuizDefinition

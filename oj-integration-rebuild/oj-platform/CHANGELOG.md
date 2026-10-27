@@ -3,6 +3,16 @@
 All notable changes to the OJ Platform WordPress plugin are recorded here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.5.4] - 2026-10-27
+
+- Show published, enabled quizzes in problem headers and a linked quiz section.
+  Hide draft, disabled and feature-disabled quizzes without exposing answers.
+- Preserve class and contest access context through quiz details, attempts,
+  submissions, results and statistics, with links back to the original problem.
+  Recheck context permissions and retain existing per-problem attempt limits.
+- Keep mobile submission buttons on their own row when quiz links are present.
+  Defer quiz feature checks until problem loading so boot remains read-free.
+
 ## [2.5.3] - 2026-10-27
 
 - Replace the completion language key input with a supported-language selector.

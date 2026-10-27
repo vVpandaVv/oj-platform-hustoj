@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CodingPanda\OjPlatform\Modules\Problems\Presentation;
 
 use CodingPanda\OjPlatform\Modules\Problems\Domain\QuizResultPolicy;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemNavigationContext;
 use DateTimeImmutable;
 use Throwable;
 
@@ -78,18 +79,40 @@ final class QuizHtml
         return sprintf('%02d:%02d', intdiv($seconds, 60), $seconds % 60);
     }
 
-    public function tabs(int $problemId, string $active): string
+    public function navigationFields(ProblemNavigationContext $navigation): string
     {
+        $fields = [
+            'class_id' => $navigation->classId(),
+            'contest_id' => $navigation->contestId(),
+            'contest_problem_number' => $navigation->contestProblemNumber(),
+        ];
+        $html = '';
+        foreach ($fields as $name => $value) {
+            if ($value !== null) {
+                $html .= '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+            }
+        }
+
+        return $html;
+    }
+
+    public function tabs(
+        int $problemId,
+        string $active,
+        ?ProblemNavigationContext $navigation = null
+    ): string {
+        $navigation ??= ProblemNavigationContext::general();
         $items = [
-            'detail' => ['/quizzes/' . $problemId, '퀴즈'],
-            'attempt' => ['/quizzes/' . $problemId . '/attempt', '응시'],
-            'statistics' => ['/quizzes/' . $problemId . '/statistics', '통계'],
+            'problem' => [$navigation->detailUrl($problemId), '문제로 돌아가기'],
+            'detail' => [$navigation->quizUrl($problemId), '퀴즈'],
+            'attempt' => [$navigation->quizUrl($problemId, 'attempt'), '응시'],
+            'statistics' => [$navigation->quizUrl($problemId, 'statistics'), '통계'],
         ];
         $links = '';
         foreach ($items as $key => [$href, $label]) {
             $links .= '<a class="ojp-tab'
                 . ($key === $active ? ' is-active' : '')
-                . '" href="' . $href . '">' . $label . '</a>';
+                . '" href="' . $this->escape($href) . '">' . $label . '</a>';
         }
 
         return '<nav class="ojp-tabs" aria-label="퀴즈 보기">'

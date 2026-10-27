@@ -48,6 +48,7 @@ final class ProblemDetailPageView
             . ($submissionPanel === null ? '' : ' ojp-problem-detail-grid--with-submission')
             . '">'
             . '<article class="ojp-problem-detail-content">'
+            . $this->quizSection($state, $navigation)
             . $this->contentSection(
                 '문제',
                 $this->html->richText($problem->description()),
@@ -113,8 +114,10 @@ final class ProblemDetailPageView
             . $this->html->difficulty($state->metadata())
             . $this->html->topicBadges($state->metadata())
             . '</div></div>'
-            . '<div class="ojp-problem-detail-actions">'
+            . '<div class="ojp-problem-detail-actions'
+            . ($state->quiz() === null ? '' : ' ojp-problem-detail-actions--with-quiz') . '">'
             . $this->personalBookAction($state)
+            . ($state->quiz() === null ? '' : $this->quizLink($state, $navigation))
             . '<a class="ojp-button" href="'
             . $this->html->escape($navigation->returnUrl()) . '">'
             . $this->icon(IconName::ArrowLeft)
@@ -125,6 +128,35 @@ final class ProblemDetailPageView
             . '</div></div>'
             . $this->adminTools($state)
             . '</header>';
+    }
+
+    private function quizLink(
+        ProblemDetailPageState $state,
+        ProblemNavigationContext $navigation
+    ): string {
+        return '<a class="ojp-button" href="'
+            . $this->html->escape($navigation->quizUrl($state->problem()->id()->value()))
+            . '">' . $this->icon(IconName::Book) . '퀴즈 풀기</a>';
+    }
+
+    private function quizSection(
+        ProblemDetailPageState $state,
+        ProblemNavigationContext $navigation
+    ): string {
+        $quiz = $state->quiz();
+        if ($quiz === null) {
+            return '';
+        }
+        $definition = $quiz->definition();
+
+        return '<section class="ojp-content-section ojp-problem-quiz" '
+            . 'aria-labelledby="problem-quiz-heading">'
+            . '<div class="ojp-section-heading"><div><h2 id="problem-quiz-heading">연결된 퀴즈</h2>'
+            . '<p>' . $this->html->escape($definition->title()) . '</p></div>'
+            . $this->quizLink($state, $navigation) . '</div>'
+            . '<p class="ojp-muted">문항 ' . $definition->questionCount() . '개 · 총점 '
+            . rtrim(rtrim(number_format($definition->maxScore(), 2, '.', ','), '0'), '.')
+            . '점 · 최대 ' . $definition->attemptLimit() . '회 응시</p></section>';
     }
 
     private function adminTools(ProblemDetailPageState $state): string

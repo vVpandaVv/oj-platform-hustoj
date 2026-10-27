@@ -2294,6 +2294,15 @@ html[data-ojp-scheme="dark"]:not(:has([data-ojp-light-only])) {
   border-bottom: 1px solid var(--ojp-color-line);
 }
 
+.ojp-problem-quiz .ojp-section-heading {
+  margin-bottom: var(--ojp-space-2);
+}
+
+.ojp-problem-quiz .ojp-section-heading > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .ojp-content-section h2 {
   margin: 0 0 var(--ojp-space-4);
   font-size: 20px;
@@ -4864,6 +4873,10 @@ pre.ojp-code-block code {
     display: grid;
     grid-template-columns: 40px minmax(0, 1fr) minmax(0, 1fr);
     width: 100%;
+  }
+
+  .ojp-problem-detail-actions--with-quiz > .ojp-button--primary {
+    grid-column: 1 / -1;
   }
 
   .ojp-problem-detail-actions .ojp-button,

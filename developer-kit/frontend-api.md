@@ -1,6 +1,6 @@
 # 화면·JavaScript·REST API
 
-기준: **OJ Platform 2.5.3 / Addon API 1.8.0**, WordPress 6.6 이상, PHP 8.3 이상. 등록과 Runtime 사용법은 [PHP API](php-api.md), 실행 가능한 전체 코드는 [시작 예제](examples/oj-addon-starter/)를 참고합니다.
+기준: **OJ Platform 2.5.4 / Addon API 1.8.0**, WordPress 6.6 이상, PHP 8.3 이상. 등록과 Runtime 사용법은 [PHP API](php-api.md), 실행 가능한 전체 코드는 [시작 예제](examples/oj-addon-starter/)를 참고합니다.
 
 ## 1. 화면을 플랫폼 셸에 연결하기
 

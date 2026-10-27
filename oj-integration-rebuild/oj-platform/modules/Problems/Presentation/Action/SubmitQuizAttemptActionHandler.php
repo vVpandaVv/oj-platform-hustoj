@@ -11,6 +11,7 @@ use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpResponse;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\ActionAccessGuard;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\ActionResponse;
 use CodingPanda\OjPlatform\Modules\Problems\Application\QuizService;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemNavigationContext;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\ProblemId;
 use CodingPanda\OjPlatform\Modules\Problems\Presentation\QuizRequestFactory;
 use CodingPanda\OjPlatform\Ui\Message\MessageTone;
@@ -37,6 +38,7 @@ final class SubmitQuizAttemptActionHandler implements ActionHandler
         $userId = 0;
         $problemId = max(0, $request->bodyInt('problem_id'));
         $attemptId = max(0, $request->bodyInt('attempt_id'));
+        $navigation = QuizRequestFactory::navigation($request);
         try {
             $actor = $this->guard->authenticatedActor(self::ACTION, $request);
             $userId = $actor->userId();
@@ -49,7 +51,8 @@ final class SubmitQuizAttemptActionHandler implements ActionHandler
             $context = $this->quizzes->attempt(
                 $userId,
                 new ProblemId($problemId),
-                $attemptId
+                $attemptId,
+                $navigation->accessContext()
             );
             $attempt = $this->quizzes->submit(
                 $userId,
@@ -58,11 +61,12 @@ final class SubmitQuizAttemptActionHandler implements ActionHandler
                 $this->requests->answers(
                     $request,
                     $context['revision']->definition()
-                )
+                ),
+                $navigation->accessContext()
             );
 
             return $this->responses->redirect(
-                '/quizzes/' . $problemId . '/attempts/' . $attempt->id(),
+                $navigation->quizUrl($problemId, 'attempts/' . $attempt->id()),
                 new UiMessage(
                     'quizzes.attempt_submitted',
                     MessageTone::Success,
@@ -72,14 +76,15 @@ final class SubmitQuizAttemptActionHandler implements ActionHandler
                 $userId
             );
         } catch (DomainException | InvalidArgumentException $error) {
-            return $this->failure($error->getMessage(), $problemId, $userId);
+            return $this->failure($error->getMessage(), $problemId, $userId, $navigation);
         } catch (Throwable $error) {
             $this->errors->report($error);
 
             return $this->failure(
                 '퀴즈 답안을 제출하지 못했습니다.',
                 $problemId,
-                $userId
+                $userId,
+                $navigation
             );
         }
     }
@@ -87,10 +92,11 @@ final class SubmitQuizAttemptActionHandler implements ActionHandler
     private function failure(
         string $message,
         int $problemId,
-        int $userId
+        int $userId,
+        ProblemNavigationContext $navigation
     ): HttpResponse {
         $path = $problemId > 0
-            ? '/quizzes/' . $problemId . '/attempt'
+            ? $navigation->quizUrl($problemId, 'attempt')
             : '/quizzes';
 
         return $this->responses->redirect(

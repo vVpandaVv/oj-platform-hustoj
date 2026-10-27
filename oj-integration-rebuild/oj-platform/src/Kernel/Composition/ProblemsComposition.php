@@ -500,7 +500,9 @@ final class ProblemsComposition
             $catalog,
             $access,
             $bookService,
-            $errorReporter
+            $errorReporter,
+            $quizRepository,
+            $features
         );
         $detailView = new ProblemDetailPageView(
             $html,

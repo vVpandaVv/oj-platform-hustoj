@@ -1,6 +1,6 @@
 # PHP 애드온 API
 
-기준: **OJ Platform 2.5.3 · Addon API 1.8.0 · PHP 8.3 이상 · WordPress 6.6 이상**.
+기준: **OJ Platform 2.5.4 · Addon API 1.8.0 · PHP 8.3 이상 · WordPress 6.6 이상**.
 공개 타입의 namespace는 `CodingPanda\OjPlatform\AddonApi\V1`이다. `V1`은 API 주 버전이며, 실제 부 버전은 `OJ_PLATFORM_ADDON_API_VERSION`으로 확인한다.
 
 [개발 시작](README.md) · [전체 생성자·메서드·기본값 목록](api-reference.json) · [공개 PHP 타입 원본](../oj-integration-rebuild/oj-platform/src/AddonApi/V1/)

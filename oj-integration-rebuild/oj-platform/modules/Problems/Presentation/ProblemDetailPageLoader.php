@@ -9,7 +9,9 @@ use CodingPanda\OjPlatform\Modules\Problems\Application\ProblemAccessPolicy;
 use CodingPanda\OjPlatform\Modules\Problems\Application\ProblemBookService;
 use CodingPanda\OjPlatform\Modules\Problems\Application\ProblemCatalogService;
 use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemAccessContext;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\QuizRepository;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\ProblemId;
+use CodingPanda\OjPlatform\Modules\Settings\Contract\FeatureFlags;
 use Throwable;
 
 final class ProblemDetailPageLoader
@@ -18,7 +20,9 @@ final class ProblemDetailPageLoader
         private readonly ProblemCatalogService $catalog,
         private readonly ProblemAccessPolicy $access,
         private readonly ProblemBookService $books,
-        private readonly ErrorReporter $errors
+        private readonly ErrorReporter $errors,
+        private readonly ?QuizRepository $quizzes,
+        private readonly ?FeatureFlags $features = null
     ) {
     }
 
@@ -52,6 +56,11 @@ final class ProblemDetailPageLoader
             ),
             $this->optional(
                 fn (): bool => $this->books->hasPersonal($userId, $problemId),
+                null
+            ),
+            $this->optional(
+                fn () => $this->features !== null && ! $this->features->isEnabled('quizzes')
+                    ? null : $this->quizzes?->published($problemId),
                 null
             )
         );
