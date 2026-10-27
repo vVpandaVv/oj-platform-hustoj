@@ -556,7 +556,13 @@ main() {
     [[ -d /run/systemd/system && ! -f /.dockerenv ]] || fail 'Use an Ubuntu server with systemd.'
     command -v flock >/dev/null || fail 'util-linux is required.'
     exec 9>/run/oj-platform-installer.lock
-    flock -n 9 || fail 'Another installation is running.'
+    flock -n 9 || fail 'Installer lock is held. Check: sudo fuser -v /run/oj-platform-installer.lock'
+    # Bash retains the lock in a close-on-exec save descriptor while the
+    # stages run. Services started by any stage must not inherit the lock.
+    install_stages 9>&-
+}
+
+install_stages() {
     [[ ! -L $STATE && ! -L $HANDOFF ]] || fail 'Installer directories must not be symlinks.'
     export DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a
     if ((RESUME)); then

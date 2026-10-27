@@ -9,12 +9,14 @@ import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import stat
 import struct
 import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 import unittest
 import warnings
 import zipfile
@@ -189,6 +191,113 @@ with patch.object(pathlib.Path, 'read_text', synthetic_read):
         result = self.shell("printf 'source-only-ok\\n'\n")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), "source-only-ok")
+
+    def locked_stage_call(self) -> str:
+        source = INSTALLER.read_text(encoding="utf-8")
+        main = re.search(r"^main\(\) \{\n(.*?)^\}", source, re.MULTILINE | re.DOTALL)
+        self.assertIsNotNone(main, "Installer main entry is missing")
+        call = re.search(r"^\s*(install_stages 9>&-)\s*$", main.group(1), re.MULTILINE)
+        self.assertIsNotNone(call, "Installation stages must close the inherited lock descriptor")
+        return call.group(1)
+
+    def test_install_stages_close_child_lock_descriptor_and_restore_owner(self) -> None:
+        result = self.shell(r'''
+exec 9>"$TEST_DIRECTORY/owner-descriptor.txt"
+source "$TEST_INSTALLER"
+install_stages() {
+    if "$BASH" --noprofile --norc -c '(: <&9) 2>/dev/null'; then
+        printf 'Child inherited the installer lock descriptor\n' >&2
+        return 96
+    fi
+}
+''' + self.locked_stage_call() + r'''
+printf 'owner-descriptor-restored\n' >&9
+exec 9>&-
+''')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            (self.work / "owner-descriptor.txt").read_text(encoding="utf-8"),
+            "owner-descriptor-restored\n",
+        )
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "Linux flock semantics are required")
+    def test_lock_blocks_parallel_run_and_releases_while_daemon_lives(self) -> None:
+        self.assert_lock_lifetime(stage_exit_code=0)
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "Linux flock semantics are required")
+    def test_failed_stages_release_lock_and_preserve_exit_code(self) -> None:
+        self.assert_lock_lifetime(stage_exit_code=23)
+
+    def assert_lock_lifetime(self, *, stage_exit_code: int) -> None:
+        import fcntl
+
+        if not shutil.which("flock"):
+            self.skipTest("The util-linux flock command is required")
+        owner_script = self.work / "synthetic-lock-owner.sh"
+        owner_script.write_text(r'''#!/usr/bin/env bash
+set -Eeuo pipefail
+source "$TEST_INSTALLER"
+install_stages() {
+    "$BASH" --noprofile --norc -c '
+        printf "%s\n" "$BASHPID" > "$TEST_DAEMON_PID"
+        : > "$TEST_DAEMON_READY"
+        while [[ ! -e $TEST_DAEMON_STOP ]]; do sleep 0.02; done
+    ' </dev/null >/dev/null 2>&1 &
+    : > "$TEST_STAGE_READY"
+    while [[ ! -e $TEST_STAGE_STOP ]]; do sleep 0.02; done
+    return "$TEST_STAGE_EXIT"
+}
+exec 9>"$TEST_LOCK"
+flock -n 9
+''' + self.locked_stage_call() + "\n", encoding="utf-8")
+        paths = {
+            key: self.work / filename for key, filename in (
+                ("TEST_LOCK", "synthetic-installer.lock"),
+                ("TEST_DAEMON_PID", "daemon.pid"),
+                ("TEST_DAEMON_READY", "daemon.ready"),
+                ("TEST_DAEMON_STOP", "daemon.stop"),
+                ("TEST_STAGE_READY", "stage.ready"),
+                ("TEST_STAGE_STOP", "stage.stop"),
+            )
+        }
+        environment = os.environ.copy()
+        environment.update({key: str(path) for key, path in paths.items()})
+        environment["TEST_INSTALLER"] = str(INSTALLER)
+        environment["TEST_STAGE_EXIT"] = str(stage_exit_code)
+        owner = subprocess.Popen(
+            [self.bash, "--noprofile", "--norc", str(owner_script)], env=environment,
+            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            text=True, encoding="utf-8", start_new_session=True,
+        )
+        try:
+            deadline = time.monotonic() + 5
+            while not all(paths[key].exists() for key in ("TEST_STAGE_READY", "TEST_DAEMON_READY")):
+                if owner.poll() is not None:
+                    output, error = owner.communicate(timeout=1)
+                    self.fail("Synthetic owner exited before stages: " + output + error)
+                if time.monotonic() >= deadline:
+                    self.fail("Synthetic stages did not become ready")
+                time.sleep(0.01)
+            daemon_pid = int(paths["TEST_DAEMON_PID"].read_text(encoding="utf-8"))
+            with paths["TEST_LOCK"].open("a", encoding="utf-8") as contender:
+                with self.assertRaises(BlockingIOError):
+                    fcntl.flock(contender, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                paths["TEST_STAGE_STOP"].touch()
+                output, error = owner.communicate(timeout=5)
+                self.assertEqual(owner.returncode, stage_exit_code, output + error)
+                os.kill(daemon_pid, 0)
+                state = Path(f"/proc/{daemon_pid}/stat").read_text(encoding="utf-8")
+                self.assertNotEqual(state.rpartition(") ")[2].split()[0], "Z")
+                fcntl.flock(contender, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(contender, fcntl.LOCK_UN)
+        finally:
+            paths["TEST_STAGE_STOP"].touch()
+            paths["TEST_DAEMON_STOP"].touch()
+            try:
+                os.killpg(owner.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            owner.communicate(timeout=5)
 
     def test_argument_parser(self) -> None:
         result = self.shell(

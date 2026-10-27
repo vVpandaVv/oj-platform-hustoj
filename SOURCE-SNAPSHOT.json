@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "snapshotDate": "2026-10-26",
+  "snapshotDate": "2026-10-27",
   "mode": "source-and-release",
   "sourceBaseCommit": "cf0d56b151084f45de42975d0c0a2c50c34af41d",
   "workingTreeIncluded": true,
@@ -251,7 +251,7 @@
     "private-notes": 386
   },
   "fileCount": 7656,
-  "totalBytes": 148753344,
+  "totalBytes": 148758901,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -1997,8 +1997,8 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 59192,
-      "sha256": "6fba9f104429f4937ffac6a8846c542c7974b2f4e1343a0c984be76759d4cc78",
+      "size": 59514,
+      "sha256": "52833ba4c825c88794d5e77cd9908d201b589a7e9d5460af17898c1dbf3e0fd5",
       "origin": "working-tree"
     },
     {
@@ -2075,8 +2075,8 @@
     },
     {
       "path": "_release-kit/install/ubuntu24.sh",
-      "size": 30881,
-      "sha256": "1b6cd81086d03fd09fde3d48826879cde5b3f1ddac81f8b4fae930cfe3290ddd",
+      "size": 31119,
+      "sha256": "880ab7b2546f5da23de961082c70746d2a370bc2b9a7c5563e45689aee8e02ed",
       "origin": "working-tree"
     },
     {
@@ -2207,8 +2207,8 @@
     },
     {
       "path": "_release-kit/tests/ubuntu-installer.py",
-      "size": 24181,
-      "sha256": "d30a352181dedba928ecd0cca212abf4afc21c166b148ffaf19492de166cb9ec",
+      "size": 29178,
+      "sha256": "3aa4f03b7eaee3bf64ca8304a75b6e0379641722c61fb60404987e3b0624cc71",
       "origin": "working-tree"
     },
     {

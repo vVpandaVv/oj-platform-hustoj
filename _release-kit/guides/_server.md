@@ -92,8 +92,17 @@ sudo tail -n 40 -f /var/lib/oj-platform-installer/hustoj-install.log
 
 ```bash
 cd ~/oj-platform-hustoj
+git pull --ff-only
 sudo bash _release-kit/install/ubuntu24.sh --resume
 ```
+
+설치 잠금 오류가 나면 잠금을 보유한 프로세스를 확인합니다.
+
+```bash
+sudo fuser -v /run/oj-platform-installer.lock
+```
+
+이전 버전의 설치가 끝났는데 `judged`만 잠금을 보유한 경우, Ubuntu 서버를 재부팅한 후 위 명령으로 설치를 이어갑니다.
 
 아래는 수동 설치 절차입니다.
 
