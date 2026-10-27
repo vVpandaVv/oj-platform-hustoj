@@ -33,7 +33,7 @@ bash install.sh \
 | `--plugin-zip PATH` | 저장소에 동봉된 최신 OJ Platform ZIP | 사용할 설치 ZIP. 같은 폴더에 해당 `.zip.sha256` 파일을 둡니다. |
 | `--help`, `-h` | — | 도움말을 표시합니다. |
 
-설치 중 관리자 아이디와 비밀번호(앞뒤 공백 없이 8~128자)를 직접 입력합니다. 비밀번호는 화면에 표시되지 않으며 확인을 위해 두 번 입력합니다. 설치 후 다음 명령으로 접속 주소·아이디·비밀번호·DB 정보를 확인합니다.
+`Set new administrator username`에서 새 사이트 관리자 아이디를 정합니다. 비밀번호(앞뒤 공백 없이 8~128자)는 화면에 표시되지 않으며 확인을 위해 두 번 입력합니다. 설치 후 다음 명령으로 접속 주소·아이디·비밀번호·DB 정보를 확인합니다.
 
 ```bash
 sudo cat /var/lib/oj-platform-installer/credentials.txt
@@ -88,7 +88,7 @@ sudo tail -n 40 -f /var/lib/oj-platform-installer/hustoj-install.log
 
 ### 오류 해결 후 이어서 실행
 
-다운로드 파일 대신 내려받은 저장소의 **내부 설치기**에 `--resume`을 지정합니다. 저장된 주소·계정·완료 단계에서 이어서 확인하며 실행합니다.
+다운로드 오류로 중단된 경우에도 내려받은 저장소의 **내부 설치기**에 `--resume`을 지정합니다. 저장된 주소·계정·HUSTOJ 버전과 완료 단계에서 이어서 확인하며 실행합니다.
 
 ```bash
 cd ~/oj-platform-hustoj

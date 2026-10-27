@@ -26,7 +26,7 @@ sudo bash _release-kit/install/ubuntu24.sh [options]
   --site-url URL       WordPress address; default: http://server-IPv4
   --admin-email EMAIL  Admin/certificate contact; HTTP default: admin@example.test
                       HTTPS asks for a real email when omitted.
-  --admin-user NAME    WordPress administrator login; asks when omitted.
+  --admin-user NAME    New site administrator username; asks when omitted.
   --title TEXT         Site name; default: OJ Platform
   --plugin-zip PATH    Plugin ZIP; default: newest bundled ZIP + .zip.sha256
   --resume            Continue saved stages after resolving an error.
@@ -37,13 +37,13 @@ WP-CLI, OJ Platform, compilers/runtimes and SPJ tools.
 Host tools: GCC/G++, make, JDK, Python 3 (venv/pip, NumPy/pandas/Matplotlib),
 Node.js/npm, bubblewrap, prlimit, AppArmor and ACL.
 HTTPS: certificate issuance, nginx redirect and certbot.timer renewal.
-Admin: choose the login and password in the terminal; password entry is hidden.
+Admin: create the site administrator username and password; password entry is hidden.
 HUSTOJ: live redacted output plus 10-second elapsed/PID/status updates.
 TEXT
 }
 
 show_plan() {
-    printf '\nInstallation plan\n  Site: %s\n  Admin login: %s\n  Admin email: %s\n  Site title: %s\n' "$SITE_URL" "$ADMIN_USER" "$ADMIN_EMAIL" "$SITE_TITLE"
+    printf '\nInstallation plan\n  Site: %s\n  Admin username: %s\n  Admin email: %s\n  Site title: %s\n' "$SITE_URL" "$ADMIN_USER" "$ADMIN_EMAIL" "$SITE_TITLE"
     printf '  Stack: HUSTOJ, nginx, MariaDB, PHP 8.3, WordPress (ko_KR), WP-CLI, OJ Platform\n'
     printf '  Tools: GCC/G++, JDK, Python 3 and host libraries, Node.js/npm, SPJ sandbox\n'
     printf '  Databases: jol + oj_wordpress, using the account in judge.conf\n'
@@ -108,20 +108,21 @@ PY
 collect_admin_credentials() {
     local admin_terminal confirmation
     if ! { exec {admin_terminal}<>/dev/tty; } 2>/dev/null; then
-        fail 'Run the installer in a terminal to choose the administrator login and password.'
+        fail 'Run the installer in a terminal to create the site administrator username and password.'
     fi
+    printf '\nCreate the website administrator account.\n' >&"$admin_terminal"
     if [[ -z $ADMIN_USER ]]; then
         while :; do
-            printf 'Administrator login: ' >&"$admin_terminal"
+            printf 'Set new administrator username: ' >&"$admin_terminal"
             IFS= read -r -u "$admin_terminal" ADMIN_USER || fail 'Administrator input canceled.'
             [[ $ADMIN_USER =~ ^[a-zA-Z0-9_][a-zA-Z0-9_.-]{2,59}$ ]] && break
             printf 'Use 3-60 letters, numbers, _, . or -; start with a letter, number or _.\n' >&"$admin_terminal"
         done
     else
-        [[ $ADMIN_USER =~ ^[a-zA-Z0-9_][a-zA-Z0-9_.-]{2,59}$ ]] || fail 'Invalid administrator login.'
+        [[ $ADMIN_USER =~ ^[a-zA-Z0-9_][a-zA-Z0-9_.-]{2,59}$ ]] || fail 'Invalid administrator username.'
     fi
     while :; do
-        printf 'Administrator password (8-128 characters): ' >&"$admin_terminal"
+        printf 'Set new administrator password (8-128 characters): ' >&"$admin_terminal"
         if ! IFS= read -r -s -u "$admin_terminal" ADMIN_PASSWORD; then
             printf '\n' >&"$admin_terminal"
             fail 'Administrator input canceled.'
@@ -131,7 +132,7 @@ collect_admin_credentials() {
             printf 'Use 8-128 characters without leading/trailing spaces or control characters.\n' >&"$admin_terminal"
             continue
         fi
-        printf 'Confirm administrator password: ' >&"$admin_terminal"
+        printf 'Re-enter new administrator password: ' >&"$admin_terminal"
         if ! IFS= read -r -s -u "$admin_terminal" confirmation; then
             printf '\n' >&"$admin_terminal"
             fail 'Administrator input canceled.'
@@ -176,7 +177,7 @@ if p.scheme=='https':
     except ValueError: pass
     else: sys.exit('HTTPS requires a DNS hostname.')
 if not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+',email): sys.exit('Invalid administrator email.')
-if not re.fullmatch(r'[a-zA-Z0-9_][a-zA-Z0-9_.-]{2,59}',admin): sys.exit('Invalid administrator login.')
+if not re.fullmatch(r'[a-zA-Z0-9_][a-zA-Z0-9_.-]{2,59}',admin): sys.exit('Invalid administrator username.')
 if not title.strip() or any(ord(c)<32 for c in title): sys.exit('Invalid site title.')
 PY
     SITE_URL=${SITE_URL%/}
@@ -222,7 +223,49 @@ save_inputs() {
     chmod 600 "$STATE/config.env"
 }
 
-download() { curl --fail --location --proto '=https' --tlsv1.2 --retry 3 --connect-timeout 20 --output "$2" "$1"; }
+download() (
+    local url=$1 target=$2 part status=1 api
+    local -a options=(--ipv4 --http1.1 --fail --location --proto '=https' --proto-redir '=https' --tlsv1.2
+        --retry 2 --retry-delay 2 --connect-timeout 15 --max-time 600)
+    part=$(mktemp -- "$target.part.XXXXXXXX") || return
+    trap 'rm -f -- "$part"' EXIT
+    if [[ $url =~ ^https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/([^/]+)/(.+)$ ]]; then
+        api="https://api.github.com/repos/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}/contents/${BASH_REMATCH[4]}?ref=${BASH_REMATCH[3]}"
+        printf 'Downloading from GitHub API: %s\n' "$api" >&2
+        if curl "${options[@]}" --header 'Accept: application/vnd.github.raw+json' --output "$part" "$api" && [[ -s $part ]]; then
+            mv -f -- "$part" "$target" || return
+            return 0
+        else
+            status=$?
+            printf 'GitHub API request failed (exit %s); trying the original URL.\n' "$status" >&2
+        fi
+    fi
+    printf 'Downloading: %s\n' "$url" >&2
+    : > "$part" || return
+    if curl "${options[@]}" --output "$part" "$url"; then
+        [[ -s $part ]] || return 1
+        mv -f -- "$part" "$target"
+    else
+        status=$?
+        printf 'Download failed (exit %s): %s\n' "$status" "$url" >&2
+        return "$status"
+    fi
+)
+
+resolve_hustoj_revision() {
+    local commit
+    if [[ -e $STATE/hustoj-commit || -L $STATE/hustoj-commit ]]; then
+        [[ -f $STATE/hustoj-commit && ! -L $STATE/hustoj-commit ]] || fail 'Invalid saved HUSTOJ revision file.'
+        IFS= read -r commit < "$STATE/hustoj-commit" || fail 'The saved HUSTOJ revision is empty.'
+    else
+        download https://api.github.com/repos/zhblue/hustoj/commits/master "$STATE/hustoj-commit.json" || return
+        commit=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["sha"])' "$STATE/hustoj-commit.json") || return
+        [[ $commit =~ ^[0-9a-f]{40}$ ]] || fail 'Invalid official HUSTOJ revision.'
+        printf '%s\n' "$commit" > "$STATE/hustoj-commit" || return
+    fi
+    [[ $commit =~ ^[0-9a-f]{40}$ ]] || fail 'Invalid saved HUSTOJ revision.'
+    printf '%s\n' "$commit"
+}
 wp_root() { "$PHP" "$WP" --allow-root --path="$1" "${@:2}"; }
 wp_site() {
     # WP-CLI can spawn another process; its working directory must be
@@ -271,10 +314,7 @@ install_hustoj() {
     step 1 'Install official HUSTOJ'
     if [[ ! -e $STATE/hustoj-started ]]; then
         local commit
-        download https://api.github.com/repos/zhblue/hustoj/commits/master "$STATE/hustoj-commit.json"
-        commit=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["sha"])' "$STATE/hustoj-commit.json")
-        [[ $commit =~ ^[0-9a-f]{40}$ ]] || fail 'Invalid official HUSTOJ revision.'
-        printf '%s\n' "$commit" > "$STATE/hustoj-commit"
+        commit=$(resolve_hustoj_revision)
         download "https://raw.githubusercontent.com/zhblue/hustoj/$commit/trunk/install/install-ubuntu24.04.sh" "$STATE/hustoj-upstream.sh"
         download "https://codeload.github.com/zhblue/hustoj/tar.gz/$commit" "$STATE/hustoj-source.tar.gz"
         bash -n "$STATE/hustoj-upstream.sh"

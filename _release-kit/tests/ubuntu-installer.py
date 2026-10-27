@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import os
 from pathlib import Path
 import re
@@ -192,6 +193,166 @@ with patch.object(pathlib.Path, 'read_text', synthetic_read):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), "source-only-ok")
 
+    def download_case(
+        self, responses: list[dict[str, object]], *,
+        url: str = "https://downloads.example.test/official-source.txt",
+    ) -> tuple[subprocess.CompletedProcess[str], Path, list[dict[str, object]]]:
+        """Use a local fake curl; only files in the synthetic output directory change."""
+        output = self.work / "download output"
+        output.mkdir()
+        target = output / "official-source.txt"
+        target.write_bytes(b"previous complete version")
+        configuration = self.work / "curl-responses.json"
+        configuration.write_text(json.dumps(responses), encoding="utf-8")
+        calls_path = self.work / "curl-calls.json"
+        fixture = self.work / "fake-curl.py"
+        fixture.write_text('''import json, os, pathlib, sys
+configuration = pathlib.Path(os.environ['CASE_CURL_RESPONSES'])
+calls_path = pathlib.Path(os.environ['CASE_CURL_CALLS'])
+target = pathlib.Path(os.environ['CASE_DOWNLOAD_TARGET'])
+responses = json.loads(configuration.read_text(encoding='utf-8'))
+calls = json.loads(calls_path.read_text(encoding='utf-8')) if calls_path.exists() else []
+arguments = sys.argv[1:]
+output = None
+for index, argument in enumerate(arguments):
+    if argument in ('--output', '-o'):
+        output = arguments[index + 1]
+    elif argument.startswith('--output='):
+        output = argument.partition('=')[2]
+if output is None or len(calls) >= len(responses):
+    sys.exit('Unexpected synthetic curl invocation')
+response = responses[len(calls)]
+candidate = pathlib.Path(output)
+if candidate.parent.resolve() != target.parent.resolve():
+    sys.exit('Download candidate must stay beside its destination')
+candidate.write_bytes(str(response.get('body', '')).encode('utf-8'))
+calls.append({'arguments': arguments, 'output': str(candidate),
+              'published_during_transfer': target.read_text(encoding='utf-8')})
+calls_path.write_text(json.dumps(calls), encoding='utf-8')
+sys.exit(int(response['status']))
+''', encoding="utf-8")
+        result = self.shell(r'''
+curl() { "$TEST_PYTHON" "$CASE_CURL_FIXTURE" "$@"; }
+rm() {
+    local candidate
+    for candidate in "$@"; do
+        [[ $candidate == -f || $candidate == -- ]] && continue
+        [[ $candidate == "$CASE_DOWNLOAD_DIRECTORY/"* ]] || return 96
+    done
+    command rm "$@"
+}
+download "$CASE_DOWNLOAD_URL" "$CASE_DOWNLOAD_TARGET"
+''', CASE_DOWNLOAD_DIRECTORY=output.as_posix(), CASE_DOWNLOAD_TARGET=target.as_posix(),
+            CASE_CURL_RESPONSES=configuration.as_posix(), CASE_CURL_CALLS=calls_path.as_posix(),
+            CASE_CURL_FIXTURE=fixture.as_posix(), CASE_DOWNLOAD_URL=url,
+        )
+        calls = json.loads(calls_path.read_text(encoding="utf-8")) if calls_path.exists() else []
+        return result, target, calls
+
+    def test_download_publishes_atomically_with_verified_bounded_https(self) -> None:
+        result, target, calls = self.download_case([{"status": 0, "body": "complete official source"}])
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(target.read_bytes(), b"complete official source")
+        self.assertEqual(list(target.parent.iterdir()), [target])
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0]["published_during_transfer"], "previous complete version")
+        self.assert_verified_download_transport(calls[0]["arguments"])
+
+    def assert_verified_download_transport(self, arguments: list[str]) -> None:
+        self.assertTrue("--ipv4" in arguments or "-4" in arguments)
+        self.assertIn("--fail", arguments)
+        self.assertIn("--location", arguments)
+        self.assertEqual(arguments[arguments.index("--proto") + 1], "=https")
+        self.assertEqual(arguments[arguments.index("--proto-redir") + 1], "=https")
+        self.assertIn("--tlsv1.2", arguments)
+        for option, maximum in (("--connect-timeout", 60), ("--max-time", 900), ("--retry", 3)):
+            value = int(arguments[arguments.index(option) + 1])
+            self.assertGreater(value, 0)
+            self.assertLessEqual(value, maximum)
+        self.assertFalse({"-k", "--insecure", "--proxy-insecure"}.intersection(arguments))
+
+    def test_failed_download_preserves_destination_and_removes_partial_file(self) -> None:
+        result, target, calls = self.download_case([{"status": 28, "body": "incomplete response"}])
+        self.assertEqual(result.returncode, 28, result.stderr)
+        self.assertEqual(target.read_bytes(), b"previous complete version")
+        self.assertEqual(list(target.parent.iterdir()), [target])
+        self.assertEqual(len(calls), 1)
+
+    def test_raw_source_download_uses_same_revision_official_api(self) -> None:
+        commit = "a" * 40
+        result, target, calls = self.download_case(
+            [{"status": 0, "body": "official API source"}],
+            url=f"https://raw.githubusercontent.com/example/project/{commit}/trunk/install/source.sh",
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(target.read_bytes(), b"official API source")
+        self.assertEqual(len(calls), 1)
+        arguments = calls[0]["arguments"]
+        self.assertIn(
+            f"https://api.github.com/repos/example/project/contents/trunk/install/source.sh?ref={commit}",
+            arguments,
+        )
+        self.assertIn("Accept: application/vnd.github.raw+json", arguments)
+        self.assert_verified_download_transport(arguments)
+
+    def test_raw_source_download_falls_back_without_publishing_failed_response(self) -> None:
+        commit = "b" * 40
+        url = f"https://raw.githubusercontent.com/example/project/{commit}/trunk/install/source.sh"
+        result, target, calls = self.download_case(
+            [{"status": 28, "body": "partial API body"}, {"status": 0, "body": "complete raw source"}],
+            url=url,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(target.read_bytes(), b"complete raw source")
+        self.assertEqual(list(target.parent.iterdir()), [target])
+        self.assertEqual(len(calls), 2)
+        self.assertIn("Accept: application/vnd.github.raw+json", calls[0]["arguments"])
+        self.assertIn(url, calls[1]["arguments"])
+        for call in calls:
+            self.assertEqual(call["published_during_transfer"], "previous complete version")
+            self.assert_verified_download_transport(call["arguments"])
+
+    def test_all_download_routes_failed_preserves_last_error_and_previous_file(self) -> None:
+        result, target, calls = self.download_case(
+            [{"status": 22, "body": "API error"}, {"status": 28, "body": "raw timeout"}],
+            url="https://raw.githubusercontent.com/example/project/master/source.sh",
+        )
+        self.assertEqual(result.returncode, 28, result.stderr)
+        self.assertEqual(target.read_bytes(), b"previous complete version")
+        self.assertEqual(list(target.parent.iterdir()), [target])
+        self.assertEqual(len(calls), 2)
+
+    def test_saved_hustoj_revision_is_reused_without_network(self) -> None:
+        state = self.work / "saved revision state"
+        state.mkdir()
+        commit = "c" * 40
+        (state / "hustoj-commit").write_bytes((commit + "\n").encode("ascii"))
+        result = self.shell(r'''
+STATE=$CASE_REVISION_STATE
+download() { printf 'UNEXPECTED REVISION DOWNLOAD\n' >&2; return 96; }
+resolve_hustoj_revision
+''', CASE_REVISION_STATE=state.as_posix())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, commit + "\n")
+        self.assertEqual(result.stderr, "")
+
+    def test_failed_revision_download_never_uses_stale_json(self) -> None:
+        state = self.work / "stale revision state"
+        state.mkdir()
+        stale = state / "hustoj-commit.json"
+        stale.write_text(json.dumps({"sha": "d" * 40}), encoding="utf-8")
+        result = self.shell(r'''
+STATE=$CASE_REVISION_STATE
+download() { return 28; }
+python3() { printf 'STALE REVISION JSON WAS PARSED\n' >&2; return 96; }
+resolve_hustoj_revision
+''', CASE_REVISION_STATE=state.as_posix())
+        self.assertEqual(result.returncode, 28, result.stderr)
+        self.assertEqual(result.stdout, "")
+        self.assertEqual(result.stderr, "")
+        self.assertFalse((state / "hustoj-commit").exists())
+        self.assertEqual(json.loads(stale.read_text(encoding="utf-8")), {"sha": "d" * 40})
+
     def admin_terminal(
         self, steps: list[tuple[bytes, bytes, bool]], *, administrator: str = ""
     ) -> tuple[int, bytes, Path]:
@@ -289,9 +450,9 @@ printf '\nADMIN_SELECTION_SAVED\n'
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "Linux PTY semantics are required")
     def test_administrator_can_choose_credentials_without_password_echo(self) -> None:
-        login_prompt = b"Administrator login: "
-        password_prompt = b"Administrator password (8-128 characters): "
-        confirmation_prompt = b"Confirm administrator password: "
+        login_prompt = b"Set new administrator username: "
+        password_prompt = b"Set new administrator password (8-128 characters): "
+        confirmation_prompt = b"Re-enter new administrator password: "
         password = b"Chosen ' & $\\ Password9"
         for supplied_administrator in ("", "chosen_teacher"):
             with self.subTest(explicit_administrator=bool(supplied_administrator)):
@@ -311,9 +472,9 @@ printf '\nADMIN_SELECTION_SAVED\n'
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "Linux PTY semantics are required")
     def test_administrator_retries_invalid_values_and_password_mismatch(self) -> None:
-        login_prompt = b"Administrator login: "
-        password_prompt = b"Administrator password (8-128 characters): "
-        confirmation_prompt = b"Confirm administrator password: "
+        login_prompt = b"Set new administrator username: "
+        password_prompt = b"Set new administrator password (8-128 characters): "
+        confirmation_prompt = b"Re-enter new administrator password: "
         final_password = b"FinalChosen9"
         steps = [
             (login_prompt, b"\n", False),
@@ -352,8 +513,8 @@ printf '\nADMIN_SELECTION_SAVED\n'
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "Linux PTY semantics are required")
     def test_administrator_input_eof_stops_without_saving_credentials(self) -> None:
-        password_prompt = b"Administrator password (8-128 characters): "
-        confirmation_prompt = b"Confirm administrator password: "
+        password_prompt = b"Set new administrator password (8-128 characters): "
+        confirmation_prompt = b"Re-enter new administrator password: "
         for confirmation_eof in (False, True):
             with self.subTest(confirmation=confirmation_eof):
                 steps = [(password_prompt, b"SyntheticPassword9\n", True)] if confirmation_eof else []
@@ -375,7 +536,7 @@ printf '\nADMIN_SELECTION_SAVED\n'
             start_new_session=True,
         )
         self.assert_rejected(result)
-        self.assertNotIn("Administrator password", result.stdout)
+        self.assertNotIn("Set new administrator password", result.stdout)
 
     def test_wp_site_uses_web_root_for_children_and_preserves_callers_directory(self) -> None:
         web_root = self.work / "web root"

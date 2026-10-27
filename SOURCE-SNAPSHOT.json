@@ -251,7 +251,7 @@
     "private-notes": 386
   },
   "fileCount": 7656,
-  "totalBytes": 148772244,
+  "totalBytes": 148782580,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -1997,8 +1997,8 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 59719,
-      "sha256": "3461c5fcce26ef73cd180ee0a9d396d9ddfea04c09d19481f6fd52e1abb00145",
+      "size": 59771,
+      "sha256": "2443490ba5d3269647e9d7a0b84a7b272c6585e10aeb06cf95b7d2fde481be5a",
       "origin": "working-tree"
     },
     {
@@ -2063,8 +2063,8 @@
     },
     {
       "path": "_release-kit/install/github-ubuntu24.sh",
-      "size": 3096,
-      "sha256": "d0e7e329fdb0be36399559ba8537333e195d7b19e3a337269f42bc60d23056ef",
+      "size": 3090,
+      "sha256": "eabf3be82f69dfe1439b4d8b4f225bd5867fb81c0fd070172df2219b1cffccde",
       "origin": "working-tree"
     },
     {
@@ -2075,8 +2075,8 @@
     },
     {
       "path": "_release-kit/install/ubuntu24.sh",
-      "size": 33304,
-      "sha256": "237ce8672fe6b7425b1ef48b1e4ebe508f5907ae5a8225fbe811d5b71379feef",
+      "size": 35132,
+      "sha256": "eba22e8080aa68118af00d22426a67b3d74a91e3d2c127fbd98e8211a569337c",
       "origin": "working-tree"
     },
     {
@@ -2207,8 +2207,8 @@
     },
     {
       "path": "_release-kit/tests/ubuntu-installer.py",
-      "size": 39709,
-      "sha256": "c2a65fc5ee2153775e9b715ff0f35b66a238b76648706ad55689b38bbb3d81e0",
+      "size": 48177,
+      "sha256": "123b7f811e932fc4150e38896b819389e398e33a5e61d812d7a6b175c0cdacc9",
       "origin": "working-tree"
     },
     {
@@ -5603,8 +5603,8 @@
     },
     {
       "path": "install.sh",
-      "size": 3096,
-      "sha256": "d0e7e329fdb0be36399559ba8537333e195d7b19e3a337269f42bc60d23056ef",
+      "size": 3090,
+      "sha256": "eabf3be82f69dfe1439b4d8b4f225bd5867fb81c0fd070172df2219b1cffccde",
       "origin": "working-tree"
     },
     {
