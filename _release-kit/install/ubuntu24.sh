@@ -433,7 +433,7 @@ PY
     # Copy the already validated package where the unprivileged WP process can read it.
     install -o root -g www-data -m 640 "$PLUGIN_ZIP" "$HANDOFF/oj-platform.zip"
     wp_site plugin install "$HANDOFF/oj-platform.zip" --activate --force
-    wp_site --user="$ADMIN_USER" eval-file "$HANDOFF/configure-platform.php" "$HANDOFF/settings.json"
+    wp_site --user="$ADMIN_USER" eval-file "$HANDOFF/configure-platform.php" "$HANDOFF/settings.json" --use-include
     rm -f -- "$HANDOFF/settings.json" "$HANDOFF/oj-platform.zip" "$HANDOFF/configure-platform.php"
     wp_site rewrite flush
     wp_site plugin is-active oj-platform

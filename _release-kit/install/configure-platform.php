@@ -1,7 +1,7 @@
 <?php
 /**
  * Initialize an already activated OJ Platform on a fresh WordPress site.
- * Usage: wp eval-file configure-platform.php /private/config.json --user=ADMIN
+ * Usage: wp eval-file configure-platform.php /private/config.json --user=ADMIN --use-include
  * The installer must hand the JSON to the web user with mode 0600 and remove it
  * afterwards. Credentials are passed to SecretVault, never printed or saved as
  * a plain WordPress option. No existing installation state is reset.
