@@ -1113,7 +1113,7 @@
     var form = root.closest('form');
     var schemaInput = root.querySelector('[data-ojp-completion-schema]');
     var template = root.querySelector('textarea[name="starter_code"]');
-    var language = root.querySelector('input[name="completion_language_key"]');
+    var language = root.querySelector('[name="completion_language_key"]');
     var addButton = root.querySelector('[data-ojp-add-blank]');
     var list = root.querySelector('[data-ojp-blank-list]');
     var toolbar = root.querySelector('.ojp-code-completion__toolbar');
@@ -1166,7 +1166,11 @@
       };
     }
 
-    language.value = language.value || schema.language_key;
+    if (language.tagName !== 'SELECT' || Array.prototype.some.call(language.options, function (option) {
+      return option.value === schema.language_key;
+    })) {
+      language.value = language.value || schema.language_key;
+    }
 
     function showMessage(text, isError) {
       message.textContent = text;
@@ -1299,6 +1303,7 @@
         return mode.checked;
       });
       root.hidden = Boolean(selected) && selected.value !== 'code_completion';
+      language.required = !root.hidden;
       root.querySelectorAll('input, textarea, select, button').forEach(function (control) {
         // Full-code mode still owns its existing starter text; ordering never posts it.
         control.disabled = root.hidden && !(selected && selected.value === 'full_code' && control.name === 'starter_code');
@@ -1339,6 +1344,7 @@
     });
 
     language.addEventListener('input', writeSchema);
+    language.addEventListener('change', writeSchema);
     modes.forEach(function (mode) {
       mode.addEventListener('change', updateMode);
     });
@@ -1669,6 +1675,10 @@
 
     function updateQuestionType(question) {
       var type = questionType(question);
+      var typeLabel = question.querySelector('[data-oj-quiz-type-label]');
+      if (typeLabel) {
+        typeLabel.textContent = { single_choice: '단일 선택', multi_choice: '다중 답', short_answer: '단답형' }[type] || '단일 선택';
+      }
       var choicesSection = question.querySelector('[data-oj-quiz-choices-section]');
       var choicesList = question.querySelector('[data-oj-quiz-choices]');
       var answersSection = question.querySelector('[data-oj-quiz-accepted-answers-section]');
@@ -1677,9 +1687,18 @@
       }
       if (choicesList) {
         choicesList.hidden = type === 'short_answer';
+        choicesList.querySelectorAll('input, textarea, select').forEach(function (field) {
+          field.disabled = type === 'short_answer';
+        });
       }
       if (answersSection) {
         answersSection.hidden = type !== 'short_answer';
+        answersSection.querySelectorAll('input, textarea, select').forEach(function (field) {
+          field.disabled = type !== 'short_answer';
+          if (field.matches('[data-oj-quiz-question-field="accepted_answers_text"]')) {
+            field.required = type === 'short_answer';
+          }
+        });
       }
       var correctInputs = Array.prototype.slice.call(
         question.querySelectorAll('[data-oj-quiz-correct]')
@@ -1706,6 +1725,7 @@
         questionsContainer.querySelectorAll('[data-oj-quiz-question]')
       );
       questions.forEach(function (question, questionIndex) {
+        updateQuestionType(question);
         var number = question.querySelector('[data-oj-quiz-question-number]');
         if (number) {
           number.textContent = String(questionIndex + 1);

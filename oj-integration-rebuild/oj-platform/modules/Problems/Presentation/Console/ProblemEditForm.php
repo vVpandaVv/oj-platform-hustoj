@@ -152,11 +152,7 @@ final class ProblemEditForm
                 . $this->textarea('suffix_code', '제출 코드 뒤에 붙일 코드 (줄 끝 #hidden: 비공개)', $problem?->suffixCode() ?? '', 8)
                 . '</div>'
                 . '<div class="ojp-code-completion" data-ojp-code-completion>'
-                . $this->input(
-                    'completion_language_key',
-                    '빈칸 완성 언어 키',
-                    $this->schemaLanguage($schema)
-                )
+                . $this->completionLanguageSelector($schema)
                 . $this->textarea('starter_code', '시작 코드 또는 빈칸 완성 템플릿', $problem?->starterCode() ?? '', 16)
                 . '<div class="ojp-code-completion__toolbar">'
                 . '<button class="ojp-button" type="button" data-ojp-add-blank>선택 영역을 빈칸으로 만들기</button>'
@@ -508,6 +504,28 @@ final class ProblemEditForm
             . '<p class="ojp-form-note">사이트 제출 설정에서도 허용된 언어만 실제 제출 화면에 표시됩니다.</p>'
             . '<div class="ojp-check-grid">' . $checks . '</div>'
             . '</fieldset>';
+    }
+
+    private function completionLanguageSelector(string $schema): string
+    {
+        $current = $this->schemaLanguage($schema);
+        $currentId = null;
+        $options = ['' => '언어 선택'];
+        if ($current !== '') {
+            try {
+                $currentId = $this->languages->idForKey($current);
+            } catch (\DomainException) {
+                $current = '';
+                $options[''] = '저장된 언어를 다시 선택해 주세요';
+            }
+        }
+        foreach ($this->languages->keyedLanguages() as $key => $label) {
+            // Preserve saved aliases so merely reopening a problem does not change its hash.
+            $value = $currentId === $this->languages->idForKey($key) ? $current : $key;
+            $options[$value] = $label;
+        }
+
+        return $this->select('completion_language_key', '빈칸 문제 언어', $current, $options);
     }
 
     /**

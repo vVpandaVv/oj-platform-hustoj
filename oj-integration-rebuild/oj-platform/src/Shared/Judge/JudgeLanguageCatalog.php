@@ -65,6 +65,21 @@ final class JudgeLanguageCatalog
         return self::LANGUAGES[$languageId] ?? '언어 ' . $languageId;
     }
 
+    /** @return array<string, string> */
+    public function keyedLanguages(): array
+    {
+        $options = [];
+        $seen = [];
+        foreach (self::KEYS as $key => $languageId) {
+            if (! isset($seen[$languageId])) {
+                $options[$key] = self::LANGUAGES[$languageId];
+                $seen[$languageId] = true;
+            }
+        }
+
+        return $options;
+    }
+
     public function idForKey(string $languageKey): int
     {
         $key = strtolower(trim($languageKey));

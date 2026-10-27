@@ -1,0 +1,24 @@
+{
+    "schema_version":  1,
+    "plugin":  "oj-platform",
+    "version":  "2.5.3",
+    "package":  "oj-platform-2.5.3.zip",
+    "sha256":  "5e187967dd3e129b0ffc71400a0cfcf3c24756f6c312722b37d3c5f8f1a82f25",
+    "bytes":  6584871,
+    "entries":  1743,
+    "source_commit":  "903056c06aebb4c2ff808fdc09bf9e5c2fed162e",
+    "source_dirty":  false,
+    "source_tag":  "oj-platform-v2.5.3",
+    "tests":  "test:fast passed; required PHP extensions verified",
+    "built_at_utc":  "2026-10-27T10:31:14Z",
+    "included":  [
+                     "THIRD_PARTY_NOTICES.txt",
+                     "LICENSE.txt",
+                     "composer.json",
+                     "oj-platform.php",
+                     "config/",
+                     "modules/",
+                     "resources/",
+                     "src/"
+                 ]
+}

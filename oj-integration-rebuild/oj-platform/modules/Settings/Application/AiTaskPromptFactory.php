@@ -6,6 +6,7 @@ namespace CodingPanda\OjPlatform\Modules\Settings\Application;
 
 use CodingPanda\OjPlatform\Kernel\Addon\AddonAiTaskContributions;
 use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemMetadataOutputContract;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemAuthoringOutputContract;
 use CodingPanda\OjPlatform\Shared\Ai\AiTaskRequest;
 use DomainException;
 use JsonException;
@@ -123,8 +124,12 @@ final class AiTaskPromptFactory
                 . 'difficulty_score, topic_keys, confidence, rationale만 가진 JSON 객체로 답하세요. '
                 . '주어진 출력 Schema를 따르고 코드 펜스나 JSON 밖 설명을 붙이지 마세요.',
             'problem_authoring_generate' =>
-                '요청된 프로그래밍 문제 초안을 한국어로 작성하세요. 입력 계약에 따라 title 또는 '
-                . 'title, description, input, output, sample_input, sample_output, hint를 가진 JSON 객체로 답하세요.',
+                '요청된 프로그래밍 문제 초안을 한국어로 작성하세요. input.mode가 title_only이면 title만, '
+                . 'full_draft이면 title, description, input, output, sample_input, sample_output, hint를 모두 가진 JSON 객체로 답하세요. '
+                . '각 필드 값은 반드시 문자열이어야 하며 배열·객체·숫자·null을 반환하거나 필드를 생략하지 마세요. '
+                . '입력이 없는 문제는 input에 입력이 없다는 설명 또는 빈 문자열을, sample_input에는 빈 문자열을 쓰세요. '
+                . '힌트가 없으면 hint는 빈 문자열로 두세요. 제목·본문·출력 설명·예시 출력은 비우지 마세요. '
+                . '예시 문자열의 공백·줄바꿈을 보존하고 Schema를 따르며 JSON 밖 설명이나 코드 펜스를 붙이지 마세요.',
             'problem_testcase_generate' =>
                 '문제 제약과 공개 예시를 바탕으로 입력·출력 파일 쌍을 만드세요. '
                 . 'files 배열의 각 항목은 name과 contents를 가지며 rationale을 포함한 JSON 객체로 답하세요.',
@@ -153,6 +158,7 @@ final class AiTaskPromptFactory
             'problem_authoring_generate' => [
                 'mode' => 'title_only',
                 'requirements' => '반복문을 연습할 수 있는 문제 제목 하나',
+                'output_contract' => ProblemAuthoringOutputContract::forMode('title_only'),
             ],
             'problem_testcase_generate' => [
                 'title' => '두 수의 합',

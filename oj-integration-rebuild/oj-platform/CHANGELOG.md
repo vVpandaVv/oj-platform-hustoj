@@ -3,6 +3,27 @@
 All notable changes to the OJ Platform WordPress plugin are recorded here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.5.3] - 2026-10-27
+
+- Replace the completion language key input with a supported-language selector.
+  Preserve existing aliases and schema hashes when the selection is unchanged.
+- Separate quiz draft saves from question-bank import and export forms so
+  create, save and publish buttons retain their correct form and nonce.
+- Disable inactive question inputs during validation and submission, honor
+  hidden quiz panels in CSS, and keep question type headings synchronized.
+  Preserve choice contents when switching between choice and short answers.
+
+## [2.5.2] - 2026-10-27
+
+- Allow empty input descriptions and sample inputs in AI-generated problems
+  that require no input, while rejecting missing keys and non-string values.
+- Send a shared mode-specific authoring output schema with generation and
+  title probe requests without changing queued input hashes or Addon API 1.8.
+- Identify the rejected draft field and distinguish missing values, incorrect
+  types, empty required content, invalid encoding and excessive byte lengths
+  without exposing raw model output. Preserve sample whitespace and explicit
+  review before saving any problem.
+
 ## [2.5.1] - 2026-10-26
 
 - Add independent, enabled-by-default code copy/cut and paste settings for

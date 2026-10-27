@@ -116,14 +116,9 @@ final class QuizEditForm
             . ' 단답형 문항은 정답을 1개 이상 등록해야 합니다.</p></div>'
             . '<button class="ojp-button" type="button" data-oj-quiz-add-question>'
             . '문항 추가</button></div>'
-            . $this->bankImportPicker($problem->id()->value(), $bankItems)
+            . $this->bankImportPicker($bankItems)
             . '<div class="ojp-quiz-questions" data-oj-quiz-questions>'
             . $questionHtml . '</div></section>'
-            . '<form id="ojp-quiz-export-form" method="post" action="'
-            . $this->html->escape($this->actionUrls->actionUrl()) . '" hidden>'
-            . $this->security->hiddenFields('oj_quiz_export_to_bank')
-            . '<input type="hidden" name="problem_id" value="'
-            . $problem->id()->value() . '"></form>'
             . '<div class="ojp-sticky-actions"><a class="ojp-button" href="'
             . ($draft === null
                 ? '/oj-console/quizzes'
@@ -137,13 +132,23 @@ final class QuizEditForm
                 ? ''
                 : '<button class="ojp-button ojp-button--success" type="submit"'
                     . ' name="intent" value="publish">새 버전 게시</button>')
-            . '</div></form>';
+            . '</div></form>'
+            . $this->actionForm('ojp-quiz-export-form', 'oj_quiz_export_to_bank', $problem->id()->value())
+            . ($bankItems === [] ? '' : $this->actionForm('ojp-quiz-import-form', 'oj_quiz_import_bank_question', $problem->id()->value()));
+    }
+
+    private function actionForm(string $id, string $actionKey, int $problemId): string
+    {
+        return '<form id="' . $this->html->escape($id) . '" method="post" action="'
+            . $this->html->escape($this->actionUrls->actionUrl()) . '" hidden>'
+            . $this->security->hiddenFields($actionKey)
+            . '<input type="hidden" name="problem_id" value="' . $problemId . '"></form>';
     }
 
     /**
      * @param list<QuizBankQuestion> $bankItems
      */
-    private function bankImportPicker(int $problemId, array $bankItems): string
+    private function bankImportPicker(array $bankItems): string
     {
         if ($bankItems === []) {
             return '<div class="ojp-notice ojp-notice--info"><strong>문항 은행이 비어 있습니다.</strong>'
@@ -156,14 +161,12 @@ final class QuizEditForm
                 . $this->html->escape($item->question()->title()) . '</option>';
         }
 
-        return '<form class="ojp-filter-bar" method="post" action="'
-            . $this->html->escape($this->actionUrls->actionUrl()) . '">'
-            . $this->security->hiddenFields('oj_quiz_import_bank_question')
-            . '<input type="hidden" name="problem_id" value="' . $problemId . '">'
+        return '<div class="ojp-filter-bar">'
             . '<label class="ojp-field ojp-filter-bar__primary"><span class="ojp-label">'
-            . '문항 은행에서 가져오기</span><select class="ojp-select" name="bank_id" required>'
+            . '문항 은행에서 가져오기</span><select class="ojp-select" name="bank_id"'
+            . ' form="ojp-quiz-import-form" required>'
             . $options . '</select></label>'
-            . '<button class="ojp-button" type="submit">가져오기</button></form>';
+            . '<button class="ojp-button" type="submit" form="ojp-quiz-import-form">가져오기</button></div>';
     }
 
     public function renderBankItem(?QuizQuestion $item, string $actionKey, ?int $bankId): string
@@ -218,7 +221,7 @@ final class QuizEditForm
         return '<article class="ojp-quiz-question" data-oj-quiz-question>'
             . '<div class="ojp-section-heading"><div><p class="ojp-eyebrow">'
             . '문항 <span data-oj-quiz-question-number>'
-            . ($questionIndex + 1) . '</span></p><h3>'
+            . ($questionIndex + 1) . '</span></p><h3 data-oj-quiz-type-label>'
             . $this->html->escape($this->typeLabel($type)) . '</h3></div>'
             . '<div class="ojp-command-group">' . $exportButton
             . '<button class="ojp-icon-button" type="button"'

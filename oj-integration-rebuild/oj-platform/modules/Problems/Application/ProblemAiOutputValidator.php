@@ -119,8 +119,9 @@ final class ProblemAiOutputValidator
             throw new DomainException('AI 문제 작성 방식이 올바르지 않습니다.');
         }
         $draft = [
-            'title' => $this->text(
-                $output['title'] ?? null,
+            'title' => $this->authoringText(
+                $output,
+                'title',
                 255,
                 '문제 제목',
                 false,
@@ -130,39 +131,79 @@ final class ProblemAiOutputValidator
         if ($mode === 'title_only') {
             return $draft;
         }
-        $draft['description'] = $this->text(
-            $output['description'] ?? null,
+        $draft['description'] = $this->authoringText(
+            $output,
+            'description',
             1048576,
             '문제 설명'
         );
-        $draft['input'] = $this->text(
-            $output['input'] ?? null,
+        $draft['input'] = $this->authoringText(
+            $output,
+            'input',
             262144,
-            '입력 설명'
+            '입력 설명',
+            true
         );
-        $draft['output'] = $this->text(
-            $output['output'] ?? null,
+        $draft['output'] = $this->authoringText(
+            $output,
+            'output',
             262144,
             '출력 설명'
         );
-        $draft['sample_input'] = $this->text(
-            $output['sample_input'] ?? null,
+        $draft['sample_input'] = $this->authoringText(
+            $output,
+            'sample_input',
             262144,
-            '예시 입력'
+            '예시 입력',
+            true
         );
-        $draft['sample_output'] = $this->text(
-            $output['sample_output'] ?? null,
+        $draft['sample_output'] = $this->authoringText(
+            $output,
+            'sample_output',
             262144,
             '예시 출력'
         );
-        $draft['hint'] = $this->text(
-            $output['hint'] ?? null,
+        $draft['hint'] = $this->authoringText(
+            $output,
+            'hint',
             262144,
             '힌트',
             true
         );
 
         return $draft;
+    }
+
+    /** @param array<string,mixed> $output */
+    private function authoringText(
+        array $output,
+        string $key,
+        int $maximumBytes,
+        string $label,
+        bool $allowEmpty = false,
+        bool $trimResult = false
+    ): string {
+        $field = $label . '(' . $key . ')';
+        if (! array_key_exists($key, $output)) {
+            throw new DomainException($field . ' 필드가 누락되었습니다.');
+        }
+        $value = $output[$key];
+        if (! is_string($value)) {
+            $type = get_debug_type($value);
+            $type = in_array($type, ['null', 'array', 'bool', 'int', 'float'], true) ? $type : 'object';
+            throw new DomainException($field . '은 문자열이어야 합니다. 반환 형식: ' . $type . '.');
+        }
+        if (! $allowEmpty && trim($value) === '') {
+            throw new DomainException($field . ' 내용이 비어 있습니다.');
+        }
+        if (preg_match('//u', $value) !== 1) {
+            throw new DomainException($field . '은 UTF-8 문자열이어야 합니다.');
+        }
+        if (strlen($value) > $maximumBytes) {
+            throw new DomainException($field . '은 ' . $maximumBytes . '바이트 이하여야 합니다.');
+        }
+
+        return $trimResult ? trim($value) : $value;
     }
 
     /**

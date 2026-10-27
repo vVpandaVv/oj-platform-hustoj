@@ -3029,6 +3029,10 @@ html[data-ojp-scheme="dark"]:not(:has([data-ojp-light-only])) {
   gap: var(--ojp-space-5);
 }
 
+[data-oj-quiz-editor] [hidden] {
+  display: none;
+}
+
 .ojp-quiz-question,
 .ojp-quiz-attempt-question,
 .ojp-quiz-result-question {

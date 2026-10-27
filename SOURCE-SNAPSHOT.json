@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "snapshotDate": "2026-10-27",
   "mode": "source-and-release",
-  "sourceBaseCommit": "cf0d56b151084f45de42975d0c0a2c50c34af41d",
+  "sourceBaseCommit": "903056c06aebb4c2ff808fdc09bf9e5c2fed162e",
   "workingTreeIncluded": true,
   "sourceInventory": "Current Git index; existing regular files only",
   "ignoredTrackedFilesIncludedWhenAllowlisted": true,
@@ -252,8 +252,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7701,
-  "totalBytes": 192423251,
+  "fileCount": 7711,
+  "totalBytes": 199055660,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -2035,8 +2035,8 @@
     },
     {
       "path": "_release-kit/guides/oj-platform.md",
-      "size": 40241,
-      "sha256": "2145a9a852436620028e36a02c76e49897e585bf4757ffba2efde355f52b48af",
+      "size": 42156,
+      "sha256": "4262842358ed6e17f09b4d9963c0f8660663cf99e924700a072b88fbe4d91fd6",
       "origin": "working-tree"
     },
     {
@@ -2190,6 +2190,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "_release-kit/tests/platform-completion-language-browser.cjs",
+      "origin": "working-tree",
+      "size": 6121,
+      "sha256": "b6aedb1c6b77b3df2dde00ffb7ba5cd6174fce41ce0f5cccb0026a6f1b2ae56f"
+    },
+    {
       "path": "_release-kit/tests/platform-error-diagnostics-browser.cjs",
       "size": 3395,
       "sha256": "a7979edff8a77cae6db198738220146ab098612661407ed684e9d874af58f992",
@@ -2214,6 +2220,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "_release-kit/tests/platform-quiz-editor-browser.cjs",
+      "origin": "working-tree",
+      "size": 9472,
+      "sha256": "b29541d5d61dfb1621d79711df3d9a969489a46fa2d17bb28bfcae9a20b57f69"
+    },
+    {
       "path": "_release-kit/tests/platform-submission-clipboard-browser.cjs",
       "size": 5895,
       "sha256": "f8818c30dae1fdc1501e41e83508a9ed4bd10cf5194056f2f9440e9d717349a9",
@@ -2234,7 +2246,7 @@
     {
       "path": "_releases/README.md",
       "size": 1592,
-      "sha256": "d5a64df1cf80005f6ee098f3506e94e4e7c8213b171abd3061a14c67a989ad39",
+      "sha256": "a7dfd27e2ee2f009eba2dcfc1838941b51b90f9be002557e2a6313380154d11c",
       "origin": "generated"
     },
     {
@@ -2374,6 +2386,24 @@
       "size": 88,
       "sha256": "2388b0f08360fab7f8e789f80c9871dc7a94e64df70ee6c8b9fcdab26a34f422",
       "origin": "release-kit"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.3/oj-platform-2.5.3.manifest.json",
+      "origin": "working-tree",
+      "size": 852,
+      "sha256": "03626353c813174dfe7cda1e9c77dacf6c2eeb9699f65f385ed5687d94ebe6d8"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.3/oj-platform-2.5.3.zip",
+      "origin": "working-tree",
+      "size": 6584871,
+      "sha256": "5e187967dd3e129b0ffc71400a0cfcf3c24756f6c312722b37d3c5f8f1a82f25"
+    },
+    {
+      "path": "_releases/oj-platform/2.5.3/oj-platform-2.5.3.zip.sha256",
+      "origin": "working-tree",
+      "size": 88,
+      "sha256": "fb131ae20a03d1bb9b554077c3af3609c0b9a364c94e15e42c902c7aae85c56e"
     },
     {
       "path": "_releases/oj-primm/.gitkeep",
@@ -2577,13 +2607,13 @@
       "path": "developer-kit/README.md",
       "origin": "working-tree",
       "size": 4899,
-      "sha256": "9bd815e2084297dce252504096a5d6f9d12be0a98e7c37952a08a95e88f06fcb"
+      "sha256": "d7beb4301e665811cd6ea35e5589d22b6b0f08fd8ac751a17d195c69573aea6a"
     },
     {
       "path": "developer-kit/api-reference.json",
       "origin": "working-tree",
       "size": 337088,
-      "sha256": "9948700f80a720a9577cd8782c2767fc6f35321ff6be91018369c2cef16cfd22"
+      "sha256": "d256c329a0e5df3d0e57dca4358810922065b59765f08577c1f12f936ca07711"
     },
     {
       "path": "developer-kit/examples/oj-addon-starter/LICENSE.txt",
@@ -2661,13 +2691,13 @@
       "path": "developer-kit/frontend-api.md",
       "origin": "working-tree",
       "size": 17008,
-      "sha256": "51bb41f4f18d7e7382404fd2c9c6ea9fc844380496fbada6f31207e0afedd8f1"
+      "sha256": "db653e0629ff5167234e7dbef9b69f75933a07c74205afe565014e727ab613e7"
     },
     {
       "path": "developer-kit/php-api.md",
       "origin": "working-tree",
       "size": 26574,
-      "sha256": "88838bd2633981b2902a0a00ffea9134bfcd47d9b36879516a7deb3fe03a2438"
+      "sha256": "e27868cd285cf3490822f0e18258d3d83650c7a2c0c1caa0705438ffe8f55b2f"
     },
     {
       "path": "developer-kit/tests/starter.php",
@@ -25039,8 +25069,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/CHANGELOG.md",
-      "size": 44667,
-      "sha256": "475e2f1c7bae8288c4fc0022486a5892ad2717841571ecc96d409f162d6cb29c",
+      "size": 45823,
+      "sha256": "628d0ed914fab0f5dd6f1587cac76b4486e8dd1f5284a167122ea177204c33cb",
       "origin": "working-tree"
     },
     {
@@ -25057,8 +25087,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/composer.json",
-      "size": 7798,
-      "sha256": "0bf0764720e83e8f864138f9cc11e35b4eb6f65d1349642e98828eb1ec4f43e8",
+      "size": 8061,
+      "sha256": "3c910181666971f1d91ca1a36e049893372f09ee27f33137f109f3b78bb25de4",
       "origin": "working-tree"
     },
     {
@@ -25705,8 +25735,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/docs/development-ds-10-operations.html",
-      "size": 37821,
-      "sha256": "7c2f8b9c3f9125d244c23d648b3a8b6f3f8e308321537a2b676377db850d71e3",
+      "size": 39027,
+      "sha256": "06582a3ce7c2ebc8dcb9d4af8d6b1f11becc2f0baeda3e148be7906d070704fc",
       "origin": "working-tree"
     },
     {
@@ -29755,8 +29785,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Application/ProblemAiOutputValidator.php",
-      "size": 10571,
-      "sha256": "b02f7b75280b58c6bfea185eba116303ab016078e0e45441ee027b0ac606130a",
+      "size": 12009,
+      "sha256": "50a9f47a3ad0dbd81c67fcda12a7d62c1c1070e34f4263247da6e3415a5f24bd",
       "origin": "working-tree"
     },
     {
@@ -29773,8 +29803,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Application/ProblemAuthoringGenerateJobHandler.php",
-      "size": 6051,
-      "sha256": "e69644c4bea5dc49bb738bf49b9b65c928544f8bb3f7afcc2b56b64c92b75122",
+      "size": 6375,
+      "sha256": "a0922a99336a778e1fdfda75631b8f084289024c1dffd580393efc7d9e9f1ed3",
       "origin": "working-tree"
     },
     {
@@ -30064,6 +30094,12 @@
       "size": 853,
       "sha256": "08d608b3009e668449b6535912b86ee65be0f3b4cb3333bd577c5b8af143bcea",
       "origin": "working-tree"
+    },
+    {
+      "path": "oj-integration-rebuild/oj-platform/modules/Problems/Contract/ProblemAuthoringOutputContract.php",
+      "origin": "working-tree",
+      "size": 1931,
+      "sha256": "cbbbe99f11280264e9077add6db22bc50f465b632c73f2ca25757f89e700b2c6"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Contract/ProblemBookRepository.php",
@@ -30949,8 +30985,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/Console/ProblemEditForm.php",
-      "size": 27357,
-      "sha256": "ab5207e9dea3725d262beb1da106a3debb76df34fec41317574d7a699108cd5a",
+      "size": 28128,
+      "sha256": "1c24a95ef5a8559f08d4ac54879e3e0059e8eeff16a7965b79fb67f0feb3d993",
       "origin": "working-tree"
     },
     {
@@ -31027,8 +31063,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Problems/Presentation/Console/QuizEditForm.php",
-      "size": 22466,
-      "sha256": "9d646e194e714e6d812b30655463170a742a23ce6f87d60e2be1f64a83b412f9",
+      "size": 22588,
+      "sha256": "b117a38ee23f8b1116f6ed68b45c247a2b706edd52e4a78c932cf4f7caac306d",
       "origin": "working-tree"
     },
     {
@@ -31459,8 +31495,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/modules/Settings/Application/AiTaskPromptFactory.php",
-      "size": 12588,
-      "sha256": "439aedafed31c3e5f994925b52b854ef9c60cd5eeede76d1b3b5040a47178371",
+      "size": 13407,
+      "sha256": "82a5a93b504af5450ba8d248fb2773701a0f0be3b3fad02d2a2ab58656516b1d",
       "origin": "working-tree"
     },
     {
@@ -32714,7 +32750,7 @@
     {
       "path": "oj-integration-rebuild/oj-platform/oj-platform.php",
       "size": 2310,
-      "sha256": "d29d0735013425a8808eb5ab81f951e1486bdb9784f7f8ab7860c88448005197",
+      "sha256": "951121b85d5ff2086d6a3515b2a85724849f85f2768edac3b47385565add4019",
       "origin": "working-tree"
     },
     {
@@ -33499,8 +33535,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/resources/ui/css/oj-ui-system.css",
-      "size": 201009,
-      "sha256": "c96fb2c3544b2d7606280dc65b02b2c6f62b6cdd02b093d833cf9c52fa7bf956",
+      "size": 201062,
+      "sha256": "fd7a878c4a3e1dc51849951055ee45cc077490061e5abab8781567941e6c1db2",
       "origin": "working-tree"
     },
     {
@@ -34087,8 +34123,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/resources/ui/js/oj-ui.js",
-      "size": 111347,
-      "sha256": "5a11a723f648b0a1e378baed292abf5556f1b30854e5662107d6cfc9a93e6f55",
+      "size": 112369,
+      "sha256": "ff08247de465609de39392505810a16d4537277d023b49c0e35f95613f70edf9",
       "origin": "working-tree"
     },
     {
@@ -36043,8 +36079,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/src/Shared/Judge/JudgeLanguageCatalog.php",
-      "size": 3663,
-      "sha256": "b873adf88d999f5c279519508e19be4d10b6e787b53f784b14c11ee95e110c2f",
+      "size": 4061,
+      "sha256": "f3f76ffdb26ba1609b6f6a7d946109551934a9321e9e876fdf22ed76141221d3",
       "origin": "working-tree"
     },
     {
@@ -36498,6 +36534,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "oj-integration-rebuild/oj-platform/tests/Support/render-quiz-editor.php",
+      "origin": "working-tree",
+      "size": 4332,
+      "sha256": "185e0ca2cc3182a9ea951406fc5092a38c1398960ae382374d8ef74f7e01fc77"
+    },
+    {
       "path": "oj-integration-rebuild/oj-platform/tests/Support/render-test-data-workbench.php",
       "size": 3432,
       "sha256": "e4846edca19bd9a2ee210d3280863375d3ddcdfc5c340318077b5c6004af6767",
@@ -36553,8 +36595,8 @@
     },
     {
       "path": "oj-integration-rebuild/oj-platform/tests/Unit/ai-structured-output.php",
-      "size": 21026,
-      "sha256": "9995a940d5576dc9d489bb6b4d8b265dcdcba9ee83ff1cdf8aaf27c89eb976d4",
+      "size": 22442,
+      "sha256": "ba74832bfe5c595485702f54030fa5a6c48a3dcc664621d7a5bb93bb17f6c1e2",
       "origin": "working-tree"
     },
     {
@@ -36622,6 +36664,12 @@
       "size": 56938,
       "sha256": "7e2da7c97916cf51b1cea2f27d3827b7cb1cf5c2bfae864a08cd06de39f6fb3f",
       "origin": "working-tree"
+    },
+    {
+      "path": "oj-integration-rebuild/oj-platform/tests/Unit/completion-language-selector.php",
+      "origin": "working-tree",
+      "size": 4076,
+      "sha256": "0bd80fdf45fbc9c80fc17cc5fa0055e14cc310cd1bcaa67c3563cfdfebc1f784"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/tests/Unit/console-menus.php",
@@ -36834,6 +36882,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "oj-integration-rebuild/oj-platform/tests/Unit/problem-ai-authoring.php",
+      "origin": "working-tree",
+      "size": 7798,
+      "sha256": "12a2ac900900d1faf7630352375e7eb97b9887a5be06bff759e32e3e3850f113"
+    },
+    {
       "path": "oj-integration-rebuild/oj-platform/tests/Unit/problem-ai-topics.php",
       "size": 24951,
       "sha256": "657b8e12c209f270958101be9fc86197a34495145e7c677413de859741369540",
@@ -36874,6 +36928,12 @@
       "size": 13948,
       "sha256": "5795c7be91b58d266bc01cdf643824bcde975e7a0c7b2bbb659d781a883d7a8e",
       "origin": "working-tree"
+    },
+    {
+      "path": "oj-integration-rebuild/oj-platform/tests/Unit/quiz-editor-forms.php",
+      "origin": "working-tree",
+      "size": 1965,
+      "sha256": "25559716915435e010048fdf04f7cc437bac8959b52cfa1c6b469b0c63e93e3a"
     },
     {
       "path": "oj-integration-rebuild/oj-platform/tests/Unit/quizzes.php",

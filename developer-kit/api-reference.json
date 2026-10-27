@@ -1,6 +1,6 @@
 {
     "schemaVersion": 1,
-    "platformVersion": "2.5.1",
+    "platformVersion": "2.5.3",
     "addonApiVersion": "1.8.0",
     "namespace": "CodingPanda\\OjPlatform\\AddonApi\\V1",
     "sourceHashFormat": "SHA-256 of UTF-8 source with LF line endings",

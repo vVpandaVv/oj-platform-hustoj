@@ -9,6 +9,7 @@ use CodingPanda\OjPlatform\Modules\Jobs\Contract\JobHandler;
 use CodingPanda\OjPlatform\Modules\Jobs\Contract\JobHandlerResult;
 use CodingPanda\OjPlatform\Modules\Jobs\Contract\JobWorkItem;
 use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemGateway;
+use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemAuthoringOutputContract;
 use CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemMetadataRepository;
 use CodingPanda\OjPlatform\Modules\Problems\Domain\ProblemId;
 use CodingPanda\OjPlatform\Modules\Settings\Contract\AiProviderException;
@@ -85,10 +86,13 @@ final class ProblemAuthoringGenerateJobHandler implements JobHandler
             $mode = is_string($context['input']['mode'] ?? null)
                 ? $context['input']['mode']
                 : '';
+            // Keep queued snapshots unchanged; derive constraints only after their verification.
+            $providerInput = $context['input'];
+            $providerInput['output_contract'] = ProblemAuthoringOutputContract::forMode($mode);
             $response = $this->support->execute(
                 $context['assignment'],
                 ProblemAiInputFactory::AUTHORING_CONTRACT_VERSION,
-                $context['input']
+                $providerInput
             );
             $draftPayload = [
                 'mode' => $mode,

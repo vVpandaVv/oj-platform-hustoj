@@ -85,7 +85,7 @@
             <thead><tr><th>Job 종류</th><th>입력·결과</th><th>반영 조건</th><th>원본 보호</th></tr></thead>
             <tbody>
               <tr><td><code>problem_metadata_generate</code></td><td>저장된 문제 원문과 현재 2단계 주제 사전 → 난이도 1~5, 세부 주제 0~3, 신뢰도 <code>confidence</code>(0~1), 생성 근거 <code>rationale</code>. 네 필드 모두 필수. 기존 분류와 정답·제출 통계는 AI 입력에서 제외</td><td>분야가 아닌 활성 세부 주제 키 또는 정확한 항목이 없을 때의 빈 배열, Schema·사전 버전 해시·입력 해시 통과 후 저장 또는 비교 승인. 연결 후보 검사도 신뢰도·생성 근거의 누락과 형식 오류를 거부</td><td>AI의 새 분야·세부 주제 생성과 기존 수동값 자동 덮어쓰기 금지. 누락한 신뢰도를 임의 기본값으로 채우지 않음</td></tr>
-              <tr><td><code>problem_authoring_generate</code></td><td><code>title_only</code> 또는 제목·본문·입출력·예시·힌트 전체 초안</td><td>필드별 비교·선택 뒤 일반 문제 저장 POST</td><td>Judge <code>problem</code> 직접 쓰기 금지</td></tr>
+              <tr><td><code>problem_authoring_generate</code></td><td><code>title_only</code>는 <code>title</code>만, <code>full_draft</code>는 <code>title/description/input/output/sample_input/sample_output/hint</code> 일곱 문자열 필드. 입력이 없는 문제는 <code>input/sample_input</code>의 빈 문자열 허용</td><td>모드별 출력 Schema·문자열·크기 검증 후 필드별 비교·선택, 일반 문제 저장 POST</td><td>Judge <code>problem</code> 직접 쓰기 금지. 누락·null·배열·객체를 빈 문자열로 보정하지 않음</td></tr>
               <tr><td><code>problem_testcase_generate</code></td><td>단일 파일 또는 생성기 실행 결과의 암호화 초안</td><td>Jobs 임시 영역에서 생성한 뒤 확장자·파일명·크기·구문·경로·원본 해시 검증</td><td>생성기 소스와 검증 전 결과의 문제 데이터 디렉터리 직접 쓰기 금지</td></tr>
               <tr><td><code>problem_testcase_apply</code></td><td>검증된 초안과 적용 계획</td><td>별도 확인, 임시 파일 쓰기, 원자 교체, 사후 해시 확인</td><td>충돌 시 원본 유지</td></tr>
               <tr><td><code>problem_number_change</code></td><td>원본·대상 번호와 다중 저장소 영향 계획</td><td>전역 권한, 잠금, 단계별 체크포인트와 사후 검증</td><td>DDL 금지, 실패 단계 보상</td></tr>
@@ -93,6 +93,7 @@
             </tbody>
           </table>
         </div>
+        <div class="callout"><strong>문제 초안 응답 계약 보완:</strong> <code>ProblemAuthoringOutputContract</code>의 모드별 Schema를 실제 Provider 요청과 제목 연결 후보 검사에 사용한다. 모든 필드는 문자열이며 제목·본문·출력 설명·예시 출력은 비어 있으면 거절한다. 입력 설명·예시 입력·힌트는 빈 문자열을 허용하되 키 자체는 필수다. 예시 공백·줄바꿈을 보존하고 잘못된 형식은 필드명·반환 형식·누락·인코딩·크기 원인으로 구분하며 응답 원문은 오류에 노출하지 않는다. 스키마는 큐 스냅샷 검증 이후 전송 사본에만 추가하므로 기존 입력 해시와 <code>problem-authoring-v1</code> 필드명, 공개 Addon API는 유지한다. 실패 응답은 저장하거나 숨은 추가 호출로 자동 수리하지 않고 검토를 요청한다.</div>
         <div class="flow">
           <article><span>1 · 등록</span><strong>권한·대상·입력 해시 고정</strong><p>Controller는 타입 입력을 만들고 Job ID를 반환한다.</p></article>
           <article><span>2 · 실행</span><strong>Worker 재검증</strong><p>현재 권한과 원본 버전이 같을 때만 AI 또는 유지보수 작업을 실행한다.</p></article>

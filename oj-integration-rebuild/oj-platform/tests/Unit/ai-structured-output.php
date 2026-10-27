@@ -175,6 +175,22 @@ $gemini->generateStructured($profilesByAdapter['gemini'], $adapterMessages, 1200
 i06AiSame(0.2, $geminiHttp->requests[0]['body']['generationConfig']['temperature'], 'Ollama task overrides must not affect Gemini.');
 i06AiAssert(! isset($geminiHttp->requests[0]['body']['options']), 'Gemini request format is unchanged.');
 
+$authoringHttp = new StructuredTransport();
+$authoringClient = new Clients\OllamaClient(new Clients\AiHttpJson($authoringHttp));
+$authoringPrompts = new AI\AiTaskPromptFactory();
+foreach (['title_only', 'full_draft'] as $mode) {
+    $authoringContract = \CodingPanda\OjPlatform\Modules\Problems\Contract\ProblemAuthoringOutputContract::forMode($mode);
+    $authoringOutput = $mode === 'title_only' ? ['title' => 'Hello 출력'] : [
+        'title' => 'Hello 출력', 'description' => 'Hello를 출력하세요.', 'input' => '',
+        'output' => 'Hello를 출력합니다.', 'sample_input' => '', 'sample_output' => "Hello\n", 'hint' => '',
+    ];
+    $authoringHttp->content = json_encode($authoringOutput, JSON_THROW_ON_ERROR);
+    $authoringInput = ['mode' => $mode, 'brief' => 'Hello 출력', 'output_contract' => $authoringContract];
+    $authoringMessages = $authoringPrompts->messages(new AiTaskRequest('problem_authoring_generate', 'problem-authoring-v1', $authoringInput));
+    i06AiSame($authoringOutput, $authoringClient->generateStructured($profilesByAdapter['ollama'], $authoringMessages, 1200, AiStructuredOutput::fromInput($authoringInput), []), 'Native Ollama preserves valid no-input authoring output.');
+    i06AiSame($authoringContract['json_schema'], $authoringHttp->bodies[array_key_last($authoringHttp->bodies)]['format'], 'Authoring mode schema reaches the actual Ollama HTTP request.');
+}
+
 $metadataHttp = new StructuredTransport();
 $metadataOutput = ['difficulty_score' => 2, 'topic_keys' => ['arithmetic'], 'confidence' => 0.8, 'rationale' => 'Basic arithmetic.'];
 $metadataHttp->content = json_encode($metadataOutput, JSON_THROW_ON_ERROR);
