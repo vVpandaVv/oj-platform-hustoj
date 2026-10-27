@@ -9,6 +9,7 @@ WordPress 기반 프로그래밍 수업 플랫폼입니다.
 | [source/](source/) | 플랫폼·애드온별 코드 |
 | [_releases/](_releases/) | 플러그인별 배포 ZIP |
 | [_release-kit/guides/](_release-kit/guides/) | 설치 안내 |
+| [developer-kit/](developer-kit/) | 공개 API 명세·애드온 개발 예제 |
 | [docs/](docs/) | 개발 문서 |
 
 ## 설치 환경

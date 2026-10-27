@@ -39,7 +39,8 @@
       "docs",
       "_notes/readcontents-server-import-2026-09-12/editor-source/assets/src",
       "_notes/readcontents-server-import-2026-09-12/editor-source/tests",
-      "source"
+      "source",
+      "developer-kit"
     ],
     "includeFiles": [
       ".editorconfig",
@@ -251,8 +252,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 7683,
-  "totalBytes": 191954629,
+  "fileCount": 7701,
+  "totalBytes": 192423251,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -288,8 +289,8 @@
     },
     {
       "path": "README.md",
-      "size": 2383,
-      "sha256": "6900e2a292778f5faa46f732f7ce337d18e7e0a6c06e6077cc5d14547dcebdf7",
+      "size": 2465,
+      "sha256": "411bb73412903fb2f59d9e3a40a7bcca8fc1694fae2c401e1ea319bc1ec246f9",
       "origin": "working-tree"
     },
     {
@@ -2571,6 +2572,114 @@
       "size": 5833,
       "sha256": "52954ec8cc7f8082dbfbbb11e0c2e6e70f76abf45daeadef63fb5d366f960fa1",
       "origin": "working-tree"
+    },
+    {
+      "path": "developer-kit/README.md",
+      "origin": "working-tree",
+      "size": 4899,
+      "sha256": "9bd815e2084297dce252504096a5d6f9d12be0a98e7c37952a08a95e88f06fcb"
+    },
+    {
+      "path": "developer-kit/api-reference.json",
+      "origin": "working-tree",
+      "size": 337088,
+      "sha256": "9948700f80a720a9577cd8782c2767fc6f35321ff6be91018369c2cef16cfd22"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/LICENSE.txt",
+      "origin": "working-tree",
+      "size": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/README.md",
+      "origin": "working-tree",
+      "size": 5067,
+      "sha256": "d7455c4551ffa5645da065110880ac5db7cb7388762c4be09920108cb0546812"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/oj-addon-starter.php",
+      "origin": "working-tree",
+      "size": 670,
+      "sha256": "beb63642e30b90d3a22dff7bb352013c78784989ee34237bd644bfe92f693e16"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/plugin-package.php",
+      "origin": "working-tree",
+      "size": 300,
+      "sha256": "e0bece175f59fd299d6ecd8f2b52f91a3e365bbf1f9363230e3c20e9639c16a6"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/resources/css/note.css",
+      "origin": "working-tree",
+      "size": 589,
+      "sha256": "945ab78448bbc800473e92902eda7a9a375775c50df9c859cdbd7d80257c5bab"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/resources/js/note.js",
+      "origin": "working-tree",
+      "size": 3441,
+      "sha256": "b65978a9792d9749fba0d62c90c7f90bf6a8fae113455477e183547c178500f4"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/src/Core/Autoloader.php",
+      "origin": "working-tree",
+      "size": 713,
+      "sha256": "6e52fb53ecb70e2dfd050be9523343ed2c5d9dd1dd58694ba7cd77a7235b9329"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/src/Core/Plugin.php",
+      "origin": "working-tree",
+      "size": 4362,
+      "sha256": "a61e17c54141e13f6ef9a60f4634290d94529c44b0c6531180b87d8b93526733"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/src/Page/NotePage.php",
+      "origin": "working-tree",
+      "size": 2300,
+      "sha256": "bd26a0c108bdde43c307f3b6dec88987ca17a92722b22f68612a9d0700324cc8"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/src/Rest/NoteApi.php",
+      "origin": "working-tree",
+      "size": 2641,
+      "sha256": "2b8563b7d43e60318a3b7b37647aed573fc8b3c16dac1f8b889fc63cac997aff"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/src/Storage/NoteRepository.php",
+      "origin": "working-tree",
+      "size": 1689,
+      "sha256": "b7d43f3d30ac5c55d9263071a9d258888a83b414e42e85e8937f97b9ef331326"
+    },
+    {
+      "path": "developer-kit/examples/oj-addon-starter/uninstall.php",
+      "origin": "working-tree",
+      "size": 217,
+      "sha256": "696e837b5ba8cef0d5f5608d2279284138b013292cc0c0f106a8de08b9129910"
+    },
+    {
+      "path": "developer-kit/frontend-api.md",
+      "origin": "working-tree",
+      "size": 17008,
+      "sha256": "51bb41f4f18d7e7382404fd2c9c6ea9fc844380496fbada6f31207e0afedd8f1"
+    },
+    {
+      "path": "developer-kit/php-api.md",
+      "origin": "working-tree",
+      "size": 26574,
+      "sha256": "88838bd2633981b2902a0a00ffea9134bfcd47d9b36879516a7deb3fe03a2438"
+    },
+    {
+      "path": "developer-kit/tests/starter.php",
+      "origin": "working-tree",
+      "size": 20708,
+      "sha256": "d435df7972f5cd3fbc07bceaaf6ce97467290e8b6fde251d455b7a39451f52c5"
+    },
+    {
+      "path": "developer-kit/tools/export-api.php",
+      "origin": "working-tree",
+      "size": 5125,
+      "sha256": "9b79222bc0c5829bc7001188de296f179fe8f73e2e45990e70f8037b176fe609"
     },
     {
       "path": "docs/github-management.md",

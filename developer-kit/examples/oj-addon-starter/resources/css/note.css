@@ -1,0 +1,23 @@
+.oj-addon-starter .ojp-fieldset {
+    background: var(--ojp-color-surface);
+    border: 1px solid var(--ojp-color-line);
+    border-radius: var(--ojp-radius-md);
+    padding: var(--ojp-space-5);
+}
+
+.oj-addon-starter .ojp-textarea {
+    width: 100%;
+    min-height: 12rem;
+    box-sizing: border-box;
+    color: var(--ojp-color-ink);
+    background: var(--ojp-color-elevated);
+}
+
+.oj-addon-starter .oj-addon-starter__status {
+    min-height: 1.5em;
+    color: var(--ojp-color-muted);
+}
+
+.oj-addon-starter .oj-addon-starter__status[data-error="true"] {
+    color: var(--ojp-color-danger);
+}
