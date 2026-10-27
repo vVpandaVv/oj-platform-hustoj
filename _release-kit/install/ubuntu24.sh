@@ -185,7 +185,14 @@ save_inputs() {
 
 download() { curl --fail --location --proto '=https' --tlsv1.2 --retry 3 --connect-timeout 20 --output "$2" "$1"; }
 wp_root() { "$PHP" "$WP" --allow-root --path="$1" "${@:2}"; }
-wp_site() { runuser -u www-data -- env HOME=/var/cache/oj-wp-cli "$PHP" "$WP" --path="$WEB_ROOT" "$@"; }
+wp_site() {
+    # WP-CLI can spawn another process; its working directory must be
+    # accessible to www-data even when the installer was started in a private home.
+    (
+        cd -- "$WEB_ROOT" &&
+        runuser -u www-data -- env HOME=/var/cache/oj-wp-cli "$PHP" "$WP" --path="$WEB_ROOT" "$@"
+    )
+}
 
 load_judge_credentials() {
     local -a credentials=()

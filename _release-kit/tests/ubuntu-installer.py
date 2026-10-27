@@ -192,6 +192,41 @@ with patch.object(pathlib.Path, 'read_text', synthetic_read):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), "source-only-ok")
 
+    def test_wp_site_uses_web_root_for_children_and_preserves_callers_directory(self) -> None:
+        web_root = self.work / "web root"
+        caller = self.work / "private caller"
+        web_root.mkdir()
+        caller.mkdir()
+        result = self.shell(r'''
+WEB_ROOT=$CASE_WEB_ROOT
+cd -- "$CASE_CALLER"
+caller_directory=$PWD
+expected_web_directory=$(cd -- "$WEB_ROOT" && pwd -P)
+runuser() {
+    [[ $PWD == "$expected_web_directory" ]] || return 94
+    export EXPECTED_WEB_DIRECTORY=$expected_web_directory
+    "$BASH" --noprofile --norc -c '[[ $PWD == "$EXPECTED_WEB_DIRECTORY" ]]' || return 95
+    printf '%s\0' "$@"
+}
+wp_site rewrite structure '/%postname%/' --hard
+[[ $PWD == "$caller_directory" ]]
+''', CASE_WEB_ROOT=web_root.as_posix(), CASE_CALLER=caller.as_posix())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.split("\0"), [
+            "-u", "www-data", "--", "env", "HOME=/var/cache/oj-wp-cli",
+            "/usr/bin/php8.3", "/usr/local/bin/wp", "--path=" + web_root.as_posix(),
+            "rewrite", "structure", "/%postname%/", "--hard", "",
+        ])
+
+    def test_wp_site_missing_web_root_fails_before_starting_user_command(self) -> None:
+        result = self.shell(r'''
+WEB_ROOT=$CASE_WEB_ROOT
+runuser() { : > "$TEST_DIRECTORY/unexpected-runuser"; }
+wp_site core version
+''', CASE_WEB_ROOT=(self.work / "missing web root").as_posix())
+        self.assert_rejected(result)
+        self.assertFalse((self.work / "unexpected-runuser").exists())
+
     def locked_stage_call(self) -> str:
         source = INSTALLER.read_text(encoding="utf-8")
         main = re.search(r"^main\(\) \{\n(.*?)^\}", source, re.MULTILINE | re.DOTALL)
