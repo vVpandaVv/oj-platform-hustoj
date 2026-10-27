@@ -28,12 +28,12 @@ bash install.sh \
 | --- | --- | --- |
 | `--site-url URL` | 서버 IPv4의 `http://` 주소 | WordPress 주소와 nginx 호스트 이름. `https://` 주소이면 인증서 발급·적용과 HTTP → HTTPS 이동을 설정합니다. |
 | `--admin-email EMAIL` | HTTP 테스트는 `admin@example.test` | WordPress 관리자 연락처와 인증서 연락처. HTTPS에서 생략하면 실제 이메일을 한 번 입력받습니다. |
-| `--admin-user NAME` | `ojadmin` | 처음 만들 WordPress 관리자 로그인 아이디 |
+| `--admin-user NAME` | 설치 중 입력 | 처음 만들 WordPress 관리자 로그인 아이디. 지정하면 아이디 질문을 생략합니다. |
 | `--title "이름"` | `OJ Platform` | WordPress 사이트 이름 |
 | `--plugin-zip PATH` | 저장소에 동봉된 최신 OJ Platform ZIP | 사용할 설치 ZIP. 같은 폴더에 해당 `.zip.sha256` 파일을 둡니다. |
 | `--help`, `-h` | — | 도움말을 표시합니다. |
 
-관리자 비밀번호는 자동 생성합니다. 설치 후 다음 명령으로 접속 주소·아이디·비밀번호·DB 정보를 확인합니다.
+설치 중 관리자 아이디와 비밀번호(앞뒤 공백 없이 8~128자)를 직접 입력합니다. 비밀번호는 화면에 표시되지 않으며 확인을 위해 두 번 입력합니다. 설치 후 다음 명령으로 접속 주소·아이디·비밀번호·DB 정보를 확인합니다.
 
 ```bash
 sudo cat /var/lib/oj-platform-installer/credentials.txt

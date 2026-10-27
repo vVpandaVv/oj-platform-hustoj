@@ -14,7 +14,7 @@ WP_DB_USER= WP_DB_PASSWORD= WP_DB_HOST=
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 REPOSITORY=$(cd -- "$SCRIPT_DIR/../.." && pwd -P)
 SITE_URL= ADMIN_EMAIL= PLUGIN_ZIP=
-ADMIN_USER=ojadmin
+ADMIN_USER= ADMIN_PASSWORD=
 SITE_TITLE='OJ Platform'
 RESUME=0
 
@@ -26,7 +26,7 @@ sudo bash _release-kit/install/ubuntu24.sh [options]
   --site-url URL       WordPress address; default: http://server-IPv4
   --admin-email EMAIL  Admin/certificate contact; HTTP default: admin@example.test
                       HTTPS asks for a real email when omitted.
-  --admin-user NAME    WordPress administrator login; default: ojadmin
+  --admin-user NAME    WordPress administrator login; asks when omitted.
   --title TEXT         Site name; default: OJ Platform
   --plugin-zip PATH    Plugin ZIP; default: newest bundled ZIP + .zip.sha256
   --resume            Continue saved stages after resolving an error.
@@ -37,6 +37,7 @@ WP-CLI, OJ Platform, compilers/runtimes and SPJ tools.
 Host tools: GCC/G++, make, JDK, Python 3 (venv/pip, NumPy/pandas/Matplotlib),
 Node.js/npm, bubblewrap, prlimit, AppArmor and ACL.
 HTTPS: certificate issuance, nginx redirect and certbot.timer renewal.
+Admin: choose the login and password in the terminal; password entry is hidden.
 HUSTOJ: live redacted output plus 10-second elapsed/PID/status updates.
 TEXT
 }
@@ -102,6 +103,44 @@ PY
             ADMIN_EMAIL=admin@example.test
         fi
     fi
+}
+
+collect_admin_credentials() {
+    local admin_terminal confirmation
+    if ! { exec {admin_terminal}<>/dev/tty; } 2>/dev/null; then
+        fail 'Run the installer in a terminal to choose the administrator login and password.'
+    fi
+    if [[ -z $ADMIN_USER ]]; then
+        while :; do
+            printf 'Administrator login: ' >&"$admin_terminal"
+            IFS= read -r -u "$admin_terminal" ADMIN_USER || fail 'Administrator input canceled.'
+            [[ $ADMIN_USER =~ ^[a-zA-Z0-9_][a-zA-Z0-9_.-]{2,59}$ ]] && break
+            printf 'Use 3-60 letters, numbers, _, . or -; start with a letter, number or _.\n' >&"$admin_terminal"
+        done
+    else
+        [[ $ADMIN_USER =~ ^[a-zA-Z0-9_][a-zA-Z0-9_.-]{2,59}$ ]] || fail 'Invalid administrator login.'
+    fi
+    while :; do
+        printf 'Administrator password (8-128 characters): ' >&"$admin_terminal"
+        if ! IFS= read -r -s -u "$admin_terminal" ADMIN_PASSWORD; then
+            printf '\n' >&"$admin_terminal"
+            fail 'Administrator input canceled.'
+        fi
+        printf '\n' >&"$admin_terminal"
+        if [[ ${#ADMIN_PASSWORD} -lt 8 || ${#ADMIN_PASSWORD} -gt 128 || $ADMIN_PASSWORD == *[[:cntrl:]]* || $ADMIN_PASSWORD == [[:space:]]* || $ADMIN_PASSWORD == *[[:space:]] ]]; then
+            printf 'Use 8-128 characters without leading/trailing spaces or control characters.\n' >&"$admin_terminal"
+            continue
+        fi
+        printf 'Confirm administrator password: ' >&"$admin_terminal"
+        if ! IFS= read -r -s -u "$admin_terminal" confirmation; then
+            printf '\n' >&"$admin_terminal"
+            fail 'Administrator input canceled.'
+        fi
+        printf '\n' >&"$admin_terminal"
+        [[ $ADMIN_PASSWORD == "$confirmation" ]] && break
+        printf 'Passwords do not match. Try again.\n' >&"$admin_terminal"
+    done
+    exec {admin_terminal}>&-
 }
 
 assert_web_root() {
@@ -393,7 +432,7 @@ prepare_wordpress() {
 CREATE DATABASE IF NOT EXISTS $WP_DATABASE CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 GRANT ALL PRIVILEGES ON $WP_DATABASE.* TO '$WP_DB_USER'@'$account_host';
 SQL
-        printf '%s\n' "$WP_DB_PASSWORD" | wp_root "$WEB_ROOT" config create --dbname="$WP_DATABASE" --dbuser="$WP_DB_USER" --dbhost="$WP_DB_HOST" --dbprefix=wp_ --prompt=dbpass
+        printf '%s\n' "$WP_DB_PASSWORD" | wp_root "$WEB_ROOT" config create --dbname="$WP_DATABASE" --dbuser="$WP_DB_USER" --dbhost="$WP_DB_HOST" --dbprefix=wp_ --prompt=dbpass --quiet
     fi
     wp_root "$WEB_ROOT" config set DISABLE_WP_CRON true --raw
     wp_root "$WEB_ROOT" config set DISALLOW_FILE_EDIT true --raw
@@ -403,7 +442,7 @@ SQL
     find "$WEB_ROOT" -type f -exec chmod 644 {} +
     chmod 640 "$WEB_ROOT/wp-config.php"
     if ! wp_site core is-installed >/dev/null 2>&1; then
-        printf '%s\n' "$ADMIN_PASSWORD" | wp_site core install --url="$SITE_URL" --title="$SITE_TITLE" --admin_user="$ADMIN_USER" --admin_email="$ADMIN_EMAIL" --prompt=admin_password --skip-email
+        printf '%s\n' "$ADMIN_PASSWORD" | wp_site core install --url="$SITE_URL" --title="$SITE_TITLE" --admin_user="$ADMIN_USER" --admin_email="$ADMIN_EMAIL" --prompt=admin_password --skip-email --quiet
     fi
     wp_site option update timezone_string Asia/Seoul
     wp_site rewrite structure '/%postname%/'
@@ -590,9 +629,9 @@ install_stages() {
         apt-get update
         apt-get install -y ca-certificates curl wget python3 openssl tar util-linux iproute2 hostname
         set_default_inputs
+        collect_admin_credentials
         validate_inputs
         validate_package
-        ADMIN_PASSWORD=$(openssl rand -hex 18)
         BACKUP=/var/backups/oj-platform/$(date -u +%Y%m%dT%H%M%SZ)
         install -d -o root -g root -m 700 "$STATE"
         install -o root -g root -m 600 "$PLUGIN_ZIP" "$STATE/oj-platform.zip"

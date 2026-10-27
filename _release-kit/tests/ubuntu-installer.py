@@ -192,6 +192,191 @@ with patch.object(pathlib.Path, 'read_text', synthetic_read):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), "source-only-ok")
 
+    def admin_terminal(
+        self, steps: list[tuple[bytes, bytes, bool]], *, administrator: str = ""
+    ) -> tuple[int, bytes, Path]:
+        """Drive only the credential collector through a synthetic Linux TTY."""
+        import fcntl
+        import pty
+        import select
+        import termios
+
+        result_path = self.work / "chosen-administrator.bin"
+        environment = os.environ.copy()
+        environment.update(
+            TEST_INSTALLER=str(INSTALLER), TEST_DIRECTORY=str(self.work),
+            TEST_ADMIN_USER=administrator, TEST_ADMIN_RESULT=str(result_path),
+            LC_ALL="C.UTF-8",
+        )
+        script = r'''
+set -Eeuo pipefail
+apt-get() { printf 'FORBIDDEN INSTALL ACTION\n' >&2; exit 97; }
+systemctl() { printf 'FORBIDDEN INSTALL ACTION\n' >&2; exit 97; }
+runuser() { printf 'FORBIDDEN INSTALL ACTION\n' >&2; exit 97; }
+curl() { printf 'FORBIDDEN INSTALL ACTION\n' >&2; exit 97; }
+source "$TEST_INSTALLER"
+ADMIN_USER=$TEST_ADMIN_USER
+collect_admin_credentials
+STATE=$TEST_DIRECTORY/admin-state
+mkdir -p "$STATE"
+DOMAIN=example.test
+PLUGIN_SHA=synthetic-package-checksum
+BACKUP=/synthetic-backup
+save_inputs
+ADMIN_USER= ADMIN_PASSWORD=
+source "$STATE/config.env"
+printf '%s\0%s\0' "$ADMIN_USER" "$ADMIN_PASSWORD" > "$TEST_ADMIN_RESULT"
+printf '\nADMIN_SELECTION_SAVED\n'
+'''
+        master, slave = pty.openpty()
+
+        def controlling_terminal() -> None:
+            os.setsid()
+            fcntl.ioctl(1, termios.TIOCSCTTY, 0)
+
+        process = subprocess.Popen(
+            [self.bash, "--noprofile", "--norc", "-c", script],
+            env=environment, cwd=REPOSITORY, stdin=subprocess.DEVNULL,
+            stdout=slave, stderr=slave, preexec_fn=controlling_terminal,
+        )
+        os.close(slave)
+        transcript = bytearray()
+        pending = bytearray()
+
+        def receive(timeout: float) -> bool:
+            ready, _, _ = select.select([master], [], [], timeout)
+            if not ready:
+                return False
+            try:
+                data = os.read(master, 4096)
+            except OSError as error:
+                if error.errno == 5:  # A closed PTY reports EIO on Linux.
+                    return False
+                raise
+            transcript.extend(data)
+            pending.extend(data)
+            return bool(data)
+
+        try:
+            for prompt, reply, hidden in steps:
+                deadline = time.monotonic() + 5
+                while prompt not in pending:
+                    if time.monotonic() >= deadline or process.poll() is not None:
+                        self.fail("Credential prompt did not arrive: " + prompt.decode("ascii"))
+                    receive(0.05)
+                del pending[:pending.index(prompt) + len(prompt)]
+                if hidden:
+                    # The prompt is printed just before read -s changes the TTY.
+                    deadline = time.monotonic() + 1
+                    while termios.tcgetattr(master)[3] & termios.ECHO:
+                        if time.monotonic() >= deadline:
+                            self.fail("Administrator password input still has terminal echo enabled")
+                        time.sleep(0.01)
+                os.write(master, reply)
+            deadline = time.monotonic() + 5
+            while process.poll() is None:
+                if time.monotonic() >= deadline:
+                    self.fail("Credential collector did not finish")
+                receive(0.05)
+            while receive(0):
+                pass
+            return process.wait(timeout=1), bytes(transcript), result_path
+        finally:
+            if process.poll() is None:
+                os.killpg(process.pid, signal.SIGTERM)
+                process.wait(timeout=3)
+            os.close(master)
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "Linux PTY semantics are required")
+    def test_administrator_can_choose_credentials_without_password_echo(self) -> None:
+        login_prompt = b"Administrator login: "
+        password_prompt = b"Administrator password (8-128 characters): "
+        confirmation_prompt = b"Confirm administrator password: "
+        password = b"Chosen ' & $\\ Password9"
+        for supplied_administrator in ("", "chosen_teacher"):
+            with self.subTest(explicit_administrator=bool(supplied_administrator)):
+                steps = [] if supplied_administrator else [(login_prompt, b"chosen_teacher\n", False)]
+                steps += [
+                    (password_prompt, password + b"\n", True),
+                    (confirmation_prompt, password + b"\n", True),
+                ]
+                status, output, selected = self.admin_terminal(steps, administrator=supplied_administrator)
+                self.assertEqual(status, 0, "Credential collection failed")
+                self.assertEqual(selected.read_bytes(), b"chosen_teacher\0" + password + b"\0")
+                self.assertNotIn(password, output)
+                self.assertIn(b"ADMIN_SELECTION_SAVED", output)
+                self.assertNotIn(b"FORBIDDEN INSTALL ACTION", output)
+                if supplied_administrator:
+                    self.assertNotIn(login_prompt, output)
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "Linux PTY semantics are required")
+    def test_administrator_retries_invalid_values_and_password_mismatch(self) -> None:
+        login_prompt = b"Administrator login: "
+        password_prompt = b"Administrator password (8-128 characters): "
+        confirmation_prompt = b"Confirm administrator password: "
+        final_password = b"FinalChosen9"
+        steps = [
+            (login_prompt, b"\n", False),
+            (login_prompt, b"bad user\n", False),
+            (login_prompt, b"chosen_teacher\n", False),
+            (password_prompt, b"short\n", True),
+            (password_prompt, b" " * 8 + b"\n", True),
+            (password_prompt, b"x" * 129 + b"\n", True),
+            (password_prompt, b"bad\tpass9\n", True),
+            (password_prompt, b" leading9\n", True),
+            (password_prompt, b"trailing9 \n", True),
+            (password_prompt, b"FirstChoice9\n", True),
+            (confirmation_prompt, b"OtherChoice9\n", True),
+            (password_prompt, final_password + b"\n", True),
+            (confirmation_prompt, final_password + b"\n", True),
+        ]
+        status, output, selected = self.admin_terminal(steps)
+        self.assertEqual(status, 0, "Credential retry flow failed")
+        self.assertEqual(selected.read_bytes(), b"chosen_teacher\0" + final_password + b"\0")
+        for secret in (
+            b"short", b"x" * 129, b"bad\tpass9", b" leading9", b"trailing9 ",
+            b"FirstChoice9", b"OtherChoice9", final_password,
+        ):
+            self.assertNotIn(secret, output)
+        self.assertIn(b"Passwords do not match", output)
+
+    def test_wp_cli_secret_prompts_suppress_argument_logging(self) -> None:
+        # Some WP-CLI versions log the arguments populated by --prompt.
+        lines = [line for line in INSTALLER.read_text(encoding="utf-8").splitlines() if "--prompt=" in line]
+        self.assertEqual(
+            {re.search(r"--prompt=([A-Za-z_]+)", line).group(1) for line in lines},
+            {"dbpass", "admin_password"},
+        )
+        for line in lines:
+            self.assertRegex(line, r"(?:^|\s)--quiet(?:\s|$)")
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "Linux PTY semantics are required")
+    def test_administrator_input_eof_stops_without_saving_credentials(self) -> None:
+        password_prompt = b"Administrator password (8-128 characters): "
+        confirmation_prompt = b"Confirm administrator password: "
+        for confirmation_eof in (False, True):
+            with self.subTest(confirmation=confirmation_eof):
+                steps = [(password_prompt, b"SyntheticPassword9\n", True)] if confirmation_eof else []
+                steps.append((confirmation_prompt if confirmation_eof else password_prompt, b"\x04", True))
+                status, output, selected = self.admin_terminal(steps, administrator="chosen_teacher")
+                self.assertEqual(status, 1)
+                self.assertFalse(selected.exists())
+                self.assertNotIn(b"SyntheticPassword9", output)
+                self.assertIn(b"Administrator input canceled", output)
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "Linux session semantics are required")
+    def test_administrator_selection_requires_a_terminal(self) -> None:
+        environment = os.environ.copy()
+        environment["TEST_INSTALLER"] = str(INSTALLER)
+        result = subprocess.run(
+            [self.bash, "--noprofile", "--norc", "-c", 'source "$TEST_INSTALLER"; collect_admin_credentials'],
+            env=environment, stdin=subprocess.DEVNULL, capture_output=True,
+            text=True, encoding="utf-8", errors="replace", timeout=5,
+            start_new_session=True,
+        )
+        self.assert_rejected(result)
+        self.assertNotIn("Administrator password", result.stdout)
+
     def test_wp_site_uses_web_root_for_children_and_preserves_callers_directory(self) -> None:
         web_root = self.work / "web root"
         caller = self.work / "private caller"

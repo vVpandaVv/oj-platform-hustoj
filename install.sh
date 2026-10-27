@@ -10,7 +10,7 @@ bash install.sh [options]
   --site-url URL       WordPress address; default: http://server-IPv4
   --admin-email EMAIL  Admin/certificate contact; HTTP default: admin@example.test
                       HTTPS asks for a real email when omitted.
-  --admin-user NAME    WordPress administrator login; default: ojadmin
+  --admin-user NAME    WordPress administrator login; asks when omitted.
   --title TEXT         Site name; default: OJ Platform
   --plugin-zip PATH    OJ Platform ZIP; default: newest bundled ZIP + .zip.sha256
   --help, -h          Show this help without installing anything.
@@ -20,6 +20,7 @@ WordPress (ko_KR), WP-CLI, OJ Platform, compilers/runtimes and SPJ tools.
 Host tools: GCC/G++, make, JDK, Python 3 (venv/pip, NumPy/pandas/Matplotlib),
 Node.js/npm, bubblewrap, prlimit, AppArmor and ACL.
 An HTTPS URL also enables certificate issuance, redirect and automatic renewal.
+Choose the administrator login and password in the terminal during installation.
 HUSTOJ output is shown live with elapsed/PID/status updates every 10 seconds.
 
 Resume an existing run with the downloaded internal installer:

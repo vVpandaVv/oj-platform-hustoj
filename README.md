@@ -21,13 +21,13 @@ Ubuntu 24.04 LTS · HUSTOJ 공식 최신 배포 · WordPress 6.6 이상 · PHP 8
 curl -fL https://github.com/vVpandaVv/oj-platform-hustoj/raw/main/install.sh -o install.sh && bash install.sh
 ```
 
-기본값은 서버 IP의 HTTP 주소와 테스트 이메일입니다.
+기본값은 서버 IP의 HTTP 주소와 테스트 이메일입니다. 관리자 아이디와 비밀번호(앞뒤 공백 없이 8~128자)는 설치 중 직접 입력합니다. 비밀번호는 화면에 표시되지 않으며 확인을 위해 두 번 입력합니다.
 
 | 주요 옵션 | 기본값 |
 | --- | --- |
 | `--site-url URL` | 서버 IP의 HTTP 주소 |
 | `--admin-email EMAIL` | `admin@example.test` (HTTPS는 실제 연락처 입력) |
-| `--admin-user NAME` | `ojadmin` |
+| `--admin-user NAME` | 설치 중 입력. 지정하면 아이디 질문 생략 |
 | `--title "이름"` | `OJ Platform` |
 | `--plugin-zip PATH` | 동봉된 최신 OJ Platform ZIP |
 
