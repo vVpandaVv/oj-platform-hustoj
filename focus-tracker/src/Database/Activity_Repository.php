@@ -9,6 +9,16 @@ namespace FocusTracker\Database;
  * per-activity scoring weights used by Scoring\Activity_Score_Service.
  */
 final class Activity_Repository {
+    /** Caller owns a transaction; acquire before activity locks or plain reads. */
+    public static function lock_mutations(): bool {
+        global $wpdb;
+        // Readiness guarantees this existing unique option row. Using a point
+        // lock serializes teacher mutations before an RR view can become stale,
+        // while learners keep sharing schedule rows without joining this mutex.
+        $version = $wpdb->get_var($wpdb->prepare('SELECT option_value FROM ' . $wpdb->options . ' WHERE option_name = %s FOR UPDATE', 'focus_tracker_db_version'));
+        return $version === FOCUS_TRACKER_VERSION && '' === (string) $wpdb->last_error;
+    }
+
     public const STATUS_SCHEDULED = 'scheduled';
     public const STATUS_ACTIVE = 'active';
     public const STATUS_CLOSED = 'closed';

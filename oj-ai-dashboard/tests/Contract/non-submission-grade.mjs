@@ -1,0 +1,51 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
+
+const window = {};
+const document = { querySelector: () => null };
+vm.runInNewContext(await readFile('resources/js/submission-evaluation-review-workbench.js', 'utf8'), { window, document, URLSearchParams });
+const { buildRosterItems, rosterCounts, nonSubmissionScoreDownloadRow, readScoreDownload, evaluationListScore } = window.OJAISubmissionEvaluationReviewWorkbench;
+const scored = { candidate: { id: 'result', score: '8', maximum_score: '20' }, latest_run: { operation: 'manual_prepare' }, review: { official_scope: 'this_evaluation', official_score: '0' } };
+assert.equal(evaluationListScore(scored).score, '0', 'Confirmed manual zero must be displayed.');
+scored.review = { official_scope: 'none', latest_decision: 'draft', latest_score: '12', latest_result_id: 'result' };
+assert.equal(evaluationListScore(scored).score, '12', 'Saved manual draft must be displayed.');
+assert.equal(evaluationListScore(scored).source, '저장 점수 · 미확정');
+scored.review.latest_result_id = 'old-result';
+assert.equal(evaluationListScore(scored), null, 'Stale teacher draft must not replace current score.');
+scored.latest_run.operation = 'score';
+assert.equal(evaluationListScore(scored).score, '8');
+scored.review = { official_scope: 'this_evaluation', official_score: '14' };
+assert.equal(evaluationListScore(scored).score, '14', 'Confirmed adjustment must override the AI candidate.');
+scored.review.official_scope = 'other_evaluation';
+assert.equal(evaluationListScore(scored).score, '8', 'Another evaluation\'s official score must not be used.');
+const context = { type: 'group', id: 'group:1', revision: 'rev', label: '1반' };
+const assignment = { id: 'assignment', title: '평가' };
+const row = { id: 'target', assigned: true, status: 'not_started', current_member: true,
+  learner: { user_id: 1, display_name: '학생' }, submission: null,
+  grading: { allowed: true, maximum_score: '20', publication_hash: 'hash' },
+  non_submission_grade: { target_id: 'target', assignment_id: 'assignment', publication_hash: 'hash', status: 'confirmed', category: 'not_submitted', score: '0', maximum_score: '20' } };
+const options = { context, assignment, label: learner => learner.display_name };
+const item = () => buildRosterItems([row], [], [], assignment)[0];
+assert.equal(item().kind, 'roster');
+assert.equal(item().state, 'reviewed');
+assert.equal(item().submissionStatus, 'not_submitted');
+assert.equal(rosterCounts([item()]).submitted, 0);
+assert.deepEqual(Array.from(nonSubmissionScoreDownloadRow(item(), options).slice(6, 12)), ['', '0.0000', '20.0000', '확정 · 미제출', 0, '']);
+const download = await readScoreDownload({ ...options, onlyOfficial: true, allPages: async () => [], request: async () => ({ data: { items: [row] } }) });
+assert.equal(download.rows.length, 1);
+assert.equal(download.excluded, 0);
+row.non_submission_grade.status = 'withdrawn';
+assert.equal(nonSubmissionScoreDownloadRow(item(), options), null);
+assert.equal(item().state, '');
+row.non_submission_grade.status = 'confirmed';
+row.submission = { id: 'submission', official_revision_id: 'official' };
+assert.equal(nonSubmissionScoreDownloadRow(item(), options), null, 'Actual submissions supersede the old grade.');
+assert.equal(item().state, '');
+row.submission = null;
+row.assigned = false;
+assert.equal(nonSubmissionScoreDownloadRow(item(), options), null, 'Revoked targets are excluded.');
+row.assigned = true;
+row.non_submission_grade.assignment_id = 'foreign';
+assert.throws(() => nonSubmissionScoreDownloadRow(item(), options));
+console.log('PASS non-submission UI projection: score 0, unchanged submission status/counts, confirmed CSV, withdrawal, supersession and scope.');

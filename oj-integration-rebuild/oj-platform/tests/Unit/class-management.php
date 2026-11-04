@@ -212,6 +212,56 @@ $empty = $classHtml->reportTable(new ClassReport($classRepo->items[1], [], [], [
 learningAccessAssert(str_contains($empty, 'colspan="2"'), 'Empty matrices retain the two identity/summary columns.');
 learningAccessAssert(! str_contains($classHtml->classTable([$classRepo->items[1]], false, true), 'copy_from'), 'Public lists never expose management copy controls.');
 
+
+// Native addon metadata must follow the existing class page gates.
+$nativeSpy = new class implements \CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog {
+    public array $calls = [];
+    public function hasProviders(bool $teacher = false): bool { return true; }
+    public function showsProgramming(HttpRequest $request, bool $teacher = false): bool { return true; }
+    public function problemFilters(HttpRequest $request, bool $teacher = false): string { return ''; }
+    public function problems(HttpRequest $request, bool $teacher = false): string { return ''; }
+    public function classAssignments(HttpRequest $request, int $classId, bool $teacher): string { $this->calls[] = [$classId, $teacher]; return '<p>외부 실습 적용 및 결과</p>'; }
+};
+$nativeClassPage = new ClassManagementPageHandler($classPages, $classAccounts, $classService, $classActions, $classSecurity, $classHtml, $classGroups, new PaginationView(), $nativeSpy);
+$classAccounts->actor = 10;
+$nativeClassPage->handle($classRoute('new'), new HttpRequest('GET', '/oj-console/classes/new'));
+learningAccessAssert($nativeSpy->calls === [], 'A new unsaved class must not query external assignments.');
+$nativeBody = $nativeClassPage->handle($classRoute('edit', ['class_id' => '1']), new HttpRequest('GET', '/oj-console/classes/1/edit'))->body();
+learningAccessAssert($nativeSpy->calls === [[1, true]] && str_contains($nativeBody, '외부 실습 적용 및 결과'), 'Native class edit exposes scoped apply/results links, even when no core problems are linked.');
+$classAccounts->actor = 99;
+$before = count($nativeSpy->calls);
+learningAccessAssert($nativeClassPage->handle($classRoute('edit', ['class_id' => '1']), new HttpRequest('GET', '/oj-console/classes/1/edit'))->status() === 403 && count($nativeSpy->calls) === $before, 'Native class authority denies external metadata before invoking providers.');
+$classAccounts->actor = 10;
+$publicClassPages = new class implements \CodingPanda\OjPlatform\Modules\PublicUi\Contract\PageResponder {
+    public function guest(string $title, string $content, HttpRequest $request, int $status = 200): HttpResponse { return HttpResponse::html($content, $status); }
+    public function authenticated(string $title, string $content, HttpRequest $request, int $status = 200): HttpResponse { return HttpResponse::html($content, $status); }
+};
+$restrictedMode = new class implements \CodingPanda\OjPlatform\Modules\Submissions\Contract\PerformanceModePolicy {
+    public bool $restricted = true;
+    public function restrictsOwnSubmissionDetails(int $userId): bool { return $this->restricted; }
+};
+$nativeReport = new \CodingPanda\OjPlatform\Modules\Classes\Presentation\Route\ClassReportPageHandler($publicClassPages, $classAccounts, $classService, $restrictedMode, $classHtml, $nativeSpy);
+$publicReportRoute = new RouteMatch(RouteDefinition::fromArray(['name' => 'classes.submissions', 'owner_module' => 'classes', 'feature_key' => 'classes', 'path' => '/classes/{class_id}/submissions', 'area' => 'public', 'methods' => ['GET'], 'authentication' => 'authenticated', 'response_type' => 'html']), ['class_id' => '1']);
+$before = count($nativeSpy->calls);
+$restrictedBody = $nativeReport->handle($publicReportRoute, new HttpRequest('GET', '/classes/1/submissions'))->body();
+learningAccessAssert(str_contains($restrictedBody, '수행 모드') && !str_contains($restrictedBody, '외부 실습 적용 및 결과') && count($nativeSpy->calls) === $before, 'Restricted native submission pages must not render or query addon links.');
+$restrictedMode->restricted = false;
+$openBody = $nativeReport->handle($publicReportRoute, new HttpRequest('GET', '/classes/1/submissions'))->body();
+learningAccessAssert(str_contains($openBody, '외부 실습 적용 및 결과') && count($nativeSpy->calls) === $before + 1, 'Unrestricted class submissions may query one scoped addon section.');
+
+
+$nativeOverview = new \CodingPanda\OjPlatform\Modules\Classes\Presentation\Route\ClassCatalogPageHandler($publicClassPages, $classAccounts, $classService, $classActions, $classSecurity, $classHtml, new PaginationView(), $nativeSpy, $restrictedMode);
+$publicOverviewRoute = new RouteMatch(RouteDefinition::fromArray(['name' => 'classes.show', 'owner_module' => 'classes', 'feature_key' => 'classes', 'path' => '/classes/{class_id}', 'area' => 'public', 'methods' => ['GET'], 'authentication' => 'authenticated', 'response_type' => 'html']), ['class_id' => '1']);
+$classAccounts->actor = 30;
+$restrictedMode->restricted = true;
+$before = count($nativeSpy->calls);
+$overviewBody = $nativeOverview->handle($publicOverviewRoute, new HttpRequest('GET', '/classes/1'))->body();
+learningAccessAssert(!str_contains($overviewBody, '외부 실습 적용 및 결과') && count($nativeSpy->calls) === $before, 'Performance-mode learners must not receive newly introduced history/detail links from native class overviews.');
+$restrictedMode->restricted = false;
+$overviewBody = $nativeOverview->handle($publicOverviewRoute, new HttpRequest('GET', '/classes/1'))->body();
+learningAccessAssert(str_contains($overviewBody, '외부 실습 적용 및 결과') && count($nativeSpy->calls) === $before + 1 && end($nativeSpy->calls) === [1, false], 'An authorized unrestricted learner receives exactly one student-scoped native assignment section.');
+$classAccounts->actor = 10;
+
 printf("Class management: %d checks passed.\n", $learningAccessAssertions - $startChecks);
 if (($argv[1] ?? '') === '--render' && isset($argv[2])) {
     for ($index = 1; $index <= 35; ++$index) {

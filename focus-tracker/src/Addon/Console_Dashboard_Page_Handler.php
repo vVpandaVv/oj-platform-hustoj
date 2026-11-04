@@ -35,7 +35,7 @@ final class Console_Dashboard_Page_Handler implements AddonPageHandlerV1 {
                     <p class="ojp-eyebrow"><?php esc_html_e('수업', 'focus-tracker'); ?></p>
                     <h1><?php esc_html_e('집중도 평가', 'focus-tracker'); ?></h1>
                     <p><?php esc_html_e('화면 활성 상태와 편집·제출 신호로 학습 참여 지표를 계산합니다. 생각하기·읽기·풀이의 질은 이 기록만으로 판단할 수 없습니다.', 'focus-tracker'); ?></p>
-                    <p class="ojp-muted"><?php esc_html_e('학생이 속한 학급·그룹의 활동 시간에만 대상 문제의 기록을 수집하고 자동 학습 확인을 제시합니다. 활동이 끝나면 기록과 문항 제시를 중단합니다.', 'focus-tracker'); ?></p>
+                    <p class="ojp-muted"><?php esc_html_e('학생이 속한 학급·그룹의 활동 시간에만 문제·자료·실습·게임·토론 등 허용된 학습 페이지의 기록을 수집합니다. 자동 학습 확인은 문제 학습 페이지에서 제시하며 활동이 끝나면 기록과 문항 제시를 중단합니다. 페이지 범주 이동만으로 감점하지 않습니다.', 'focus-tracker'); ?></p>
                 </div>
             </header>
 
@@ -68,7 +68,7 @@ final class Console_Dashboard_Page_Handler implements AddonPageHandlerV1 {
                     <div class="ojp-field">
                         <label for="ftk-problem-ids"><?php esc_html_e('대상 문제 번호 (선택)', 'focus-tracker'); ?></label>
                         <input class="ojp-input" id="ftk-problem-ids" type="text" data-field="problem-ids" placeholder="1001, 1002" aria-describedby="ftk-problem-ids-help">
-                        <p class="ojp-field-help" id="ftk-problem-ids-help"><?php esc_html_e('쉼표로 구분합니다. 비우면 모든 문제를 기록합니다.', 'focus-tracker'); ?></p>
+                        <p class="ojp-field-help" id="ftk-problem-ids-help"><?php esc_html_e('쉼표로 구분하며 비우면 모든 문제를 기록합니다. 문제 번호가 확인되는 페이지에만 적용하고, 같은 활동의 허용된 자료·실습·게임·토론 등 페이지는 계속 기록합니다.', 'focus-tracker'); ?></p>
                     </div>
                     <fieldset class="ojp-fieldset">
                         <legend><?php esc_html_e('가중치', 'focus-tracker'); ?></legend>
@@ -128,7 +128,8 @@ final class Console_Dashboard_Page_Handler implements AddonPageHandlerV1 {
                     <p class="ojp-field-help" data-field="schedule-timezone"></p>
                     <div class="ojp-field">
                         <label for="ftk-edit-problem-ids"><?php esc_html_e('대상 문제 번호 (선택)', 'focus-tracker'); ?></label>
-                        <input class="ojp-input" id="ftk-edit-problem-ids" type="text" data-field="edit-problem-ids" placeholder="1001, 1002">
+                        <input class="ojp-input" id="ftk-edit-problem-ids" type="text" data-field="edit-problem-ids" placeholder="1001, 1002" aria-describedby="ftk-edit-problem-ids-help">
+                        <p class="ojp-field-help" id="ftk-edit-problem-ids-help"><?php esc_html_e('문제 번호가 확인되는 페이지에만 적용합니다. 같은 활동의 허용된 자료·실습·게임·토론 등 페이지는 계속 기록합니다.', 'focus-tracker'); ?></p>
                     </div>
                     <fieldset class="ojp-fieldset">
                         <legend><?php esc_html_e('가중치', 'focus-tracker'); ?></legend>
@@ -150,7 +151,7 @@ final class Console_Dashboard_Page_Handler implements AddonPageHandlerV1 {
 
             <section class="ftk-section" data-field="scores-panel" aria-labelledby="ftk-scores-title" hidden>
                 <h2 id="ftk-scores-title" data-field="scores-title"></h2>
-                <p class="ojp-muted"><?php esc_html_e('진행 중 지표는 변합니다. 관측 자료가 없거나 일부 누락된 경우 성적으로 해석하지 마세요. 입력이 적어도 읽거나 생각하는 중일 수 있어 검토가 필요합니다.', 'focus-tracker'); ?></p>
+                <p class="ojp-muted"><?php esc_html_e('진행 중 지표는 변합니다. 관측 자료가 없거나 일부 누락된 경우 성적으로 해석하지 마세요. 자료·실습·게임·토론 등 코드 편집 신호를 지원하지 않는 페이지의 입력·제출 활동률은 미평가입니다. 유효한 가중치가 있는 화면 활성·복귀 기록으로 참여 지표를 계산하며, 평가할 항목이 없으면 참여 지표도 미평가입니다.', 'focus-tracker'); ?></p>
                 <div class="ojp-table-wrap">
                     <table class="ojp-table">
                         <thead>

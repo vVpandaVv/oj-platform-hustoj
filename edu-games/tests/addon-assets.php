@@ -49,12 +49,11 @@ foreach(EduGames\Learning\Catalog::PROVIDERS as $game=>$provider) {
 }
 $ranking=$builder->assets['addon.edu_games.ranking_assets']->scripts();
 asset_check($ranking[0]==='assets/rankings/pager.js','Ranking pager dependency');
-asset_check(in_array('assets/learning/view.js',$ranking,true)&&in_array('assets/warehouse/view.js',$ranking,true),'Ranking runtime');
-asset_check(array_search('assets/strategy/board-views.js',$ranking,true)<array_search('assets/strategy/view.js',$ranking,true),'Ranking strategy dependency order');
-asset_check(count($builder->pages)===15,'Existing game/hub/rank routes retained');
+asset_check($ranking===array('assets/rankings/pager.js','assets/rankings/page.js'),'Dedicated ranking page loads no game engines or duplicate report runtimes');
+asset_check(count($builder->pages)===18,'Personal game/hub/rank routes retained with independent team routes and projector');
 foreach($builder->pages as $key=>$page){
     $game=substr($key,strlen('addon.edu_games.games.'));
-    $needsPlay=isset(EduGames\Play\Catalog::GAMES[$game])||$key==='addon.edu_games.ranking';
+    $needsPlay=isset(EduGames\Play\Catalog::GAMES[$game]);
     asset_check(in_array('addon.edu_games.play_assets',$page->assetBundles(),true)===$needsPlay,'Shared runtime only on play/ranking pages '.$key);
     if(!$needsPlay)continue;
     $scripts=array();foreach($page->assetBundles() as $id)$scripts=array_merge($scripts,$builder->assets[$id]->scripts());
@@ -86,10 +85,10 @@ $ledger=new class implements Kernel\AddonNamespaceLedger {
 };
 $entries=(new Kernel\AddonManifestValidator('2.0.0-dev.30','1.0.0',$core,$ledger))->validate($gateway->close());
 asset_check(count($entries)===1&&$entries[0]->isAccepted(),'Manifest accepted: '.($entries[0]->code()??'no entry'));
-asset_check(count($entries[0]->manifest()->publicPages())===15,'Validator preserves all public pages');
-asset_check(count($entries[0]->manifest()->consolePages())===3,'Validator preserves management/report pages');
+asset_check(count($entries[0]->manifest()->publicPages())===18,'Validator preserves all public pages');
+asset_check(count($entries[0]->manifest()->consolePages())===4,'Validator preserves management/report and team operations pages');
 asset_check(count($entries[0]->manifest()->consoleMenus())===1,'One console menu (D-010)');
-asset_check(array_map(fn($item)=>$item->route(),$entries[0]->manifest()->consoleLocalNav())===array('addon.edu_games.manage','addon.edu_games.report','addon.edu_games.ai_model_lab_report'),'Console pages reached through local navigation');
+asset_check(array_map(fn($item)=>$item->route(),$entries[0]->manifest()->consoleLocalNav())===array('addon.edu_games.manage','addon.edu_games.team_games','addon.edu_games.report','addon.edu_games.ai_model_lab_report'),'Console pages reached through local navigation');
 
 function wp_register_script($handle,$url,$dependencies,$version,$footer):void {
     $GLOBALS['addon_test_scripts'][$handle]=array('url'=>$url,'dependencies'=>$dependencies);
@@ -156,6 +155,28 @@ foreach(array('addon.edu_games.games','addon.edu_games.ranking') as $key){
     $page=$builder->pages[$key];
     $request=new Api\AddonPageRequestV1($key,7,array(),array(),'ko_KR','test-scheme');
     asset_check($page->handler()->handle($request)->supportsDarkMode(),'Public page follows screen mode '.$key);
+    if($key==='addon.edu_games.ranking'){
+        $html=$page->handler()->handle($request)->body();
+        asset_check(str_contains($html,'data-rankings-page'),'Dedicated ranking page renders');
+        asset_check(!str_contains($html,'data-play')&&!str_contains($html,'data-learning')&&!str_contains($html,'data-group-leaderboard'),'Ranking page never appends older game/report interfaces');
+        $games=EduGames\Blocks\Ranking_Page_Renderer::games();
+        $missing=array_values(array_filter($games,fn($g)=>$g['id']==='missing-values'))[0];
+        asset_check(array_column($missing['variants'],'id')===array('play','arcade','strategy','assessment'),'Current and historical records stay in separate sources');
+    }
+}
+$page=$builder->pages['addon.edu_games.binary_team'];
+$request=new Api\AddonPageRequestV1($page->key(),7,array(),array(),'ko_KR','binary-team');
+$response=$page->handler()->handle($request);
+asset_check($response->supportsDarkMode()&&str_contains($response->body(),'data-binary-team'),'Independent team page renders with shared theme');
+asset_check(!str_contains($response->body(),'data-binary-arcade'),'Team page never initializes personal game');
+$page=$builder->pages['addon.edu_games.device_team'];
+$response=$page->handler()->handle(new Api\AddonPageRequestV1($page->key(),7,array(),array(),'ko_KR','device-team'));
+asset_check($response->supportsDarkMode()&&str_contains($response->body(),'device-team')&&!str_contains($response->body(),'data-device-matching'),'Device team has its own themed runtime');
+$GLOBALS['caps']=array('edu_games_play','edu_games_manage');
+foreach(array('binary-conversion','device-matching') as $game){
+    $html=EduGames\Blocks\Binary_Team_Renderer::render_game($game);
+    asset_check(!str_contains($html,'교사 운영실')&&!str_contains($html,'/oj-console/addons/edu-games/team-games'),'Public team page never advertises teacher operations, including teachers');
+    asset_check(str_contains(EduGames\Blocks\Binary_Team_Renderer::render_game($game,false,'teacher'),'교사 운영실'),'Console renderer retains teacher operations');
 }
 
 echo "PASS: $checks addon checks, including registration and 30 game page/shortcode/block renders; no live WordPress site.\n";

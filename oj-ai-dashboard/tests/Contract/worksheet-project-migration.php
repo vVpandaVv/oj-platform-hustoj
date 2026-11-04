@@ -34,6 +34,7 @@ project_assert( $before_migration === $snapshot(), 'Failed migration rewrote exi
 $migration_db->fail_revision = false;
 $adopted                     = $migration_repo->adopt_worksheet( 41, $unlinked->worksheet_id() );
 project_assert( 'draft' === $adopted['state'] && array() === $adopted['configuration']['criteria'], 'Migration fabricated or approved missing criteria' );
+project_assert( ! array_key_exists( 'exception_scores', $adopted['configuration'] ), 'Migration fabricated exception scores for a legacy worksheet' );
 project_assert( $before_migration === $snapshot(), 'Migration modified a non-project table' );
 project_assert( $adopted['project_id'] === $migration_repo->adopt_worksheet( 41, $unlinked->worksheet_id() )['project_id'], 'Migration replay created another project' );
 $migration_repo->migrate_unlinked();
@@ -69,7 +70,7 @@ $rubric         = $rubric_profile->prepare(
 	array(
 		'subject_type' => 'student_submission',
 		'total_points' => $config['total_points'],
-		'value'        => array( 'criteria' => $config['criteria'] ),
+		'value'        => array( 'criteria' => $config['criteria'] ) + array_intersect_key( $config, array( 'exception_scores' => true ) ),
 	),
 	true
 );

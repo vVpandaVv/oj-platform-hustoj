@@ -1,0 +1,10 @@
+{
+  "apiVersion": 3,
+  "name": "edu-games/device-team",
+  "title": "장치 카드 매칭 팀전",
+  "category": "widgets",
+  "icon": "groups",
+  "textdomain": "edu-games",
+  "render": "file:./render.php",
+  "supports": { "html": false }
+}

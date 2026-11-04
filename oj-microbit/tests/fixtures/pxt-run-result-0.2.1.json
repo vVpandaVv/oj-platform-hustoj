@@ -1,0 +1,578 @@
+{
+  "request": {
+    "project": {
+      "name": "핀 실습",
+      "files": {
+        "main.ts": "\nbasic.forever(function () {\n  pins.i2cWriteNumber(32, 0, NumberFormat.UInt8BE, true)\n  let angle = pins.i2cReadNumber(32, NumberFormat.UInt8BE, false)\n  pins.servoWritePin(AnalogPin.P1, angle)\n  pins.i2cWriteNumber(32, 256 + angle, NumberFormat.UInt16BE, false)\n  basic.pause(500)\n})\n",
+        "pxt.json": "{\"name\":\"핀 실습\",\"description\":\"\",\"dependencies\":{\"core\":\"*\",\"microphone\":\"*\",\"radio\":\"*\"},\"files\":[\"main.ts\"],\"preferredEditor\":\"tsprj\"}"
+      }
+    },
+    "exercise": {
+      "connections": [
+        {
+          "pin": 1,
+          "direction": "output",
+          "signal": "servo",
+          "device": "servo",
+          "label": "서보"
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "peripherals",
+          "name": "장치 입출력",
+          "visible": true,
+          "durationMs": 1400,
+          "inputs": [],
+          "assertions": [
+            {
+              "pin": 1,
+              "signal": "servo",
+              "expected": 30,
+              "afterMs": 0,
+              "withinMs": 100,
+              "holdMs": 100,
+              "tolerance": 0
+            },
+            {
+              "pin": 1,
+              "signal": "servo",
+              "expected": 90,
+              "afterMs": 500,
+              "withinMs": 100,
+              "holdMs": 100,
+              "tolerance": 0
+            },
+            {
+              "pin": 1,
+              "signal": "servo",
+              "expected": 150,
+              "afterMs": 1000,
+              "withinMs": 100,
+              "holdMs": 100,
+              "tolerance": 0
+            }
+          ],
+          "i2cInputs": [
+            {
+              "atMs": 400,
+              "address": 32,
+              "register": 0,
+              "value": 90
+            },
+            {
+              "atMs": 900,
+              "address": 32,
+              "register": 0,
+              "value": 150
+            }
+          ],
+          "i2cAssertions": [
+            {
+              "address": 32,
+              "operation": "write",
+              "data": [
+                0
+              ],
+              "repeated": true,
+              "afterMs": 0,
+              "withinMs": 100
+            },
+            {
+              "address": 32,
+              "operation": "read",
+              "data": [
+                30
+              ],
+              "repeated": false,
+              "afterMs": 0,
+              "withinMs": 100
+            },
+            {
+              "address": 32,
+              "operation": "write",
+              "data": [
+                1,
+                30
+              ],
+              "repeated": false,
+              "afterMs": 0,
+              "withinMs": 100
+            },
+            {
+              "address": 32,
+              "operation": "write",
+              "data": [
+                0
+              ],
+              "repeated": true,
+              "afterMs": 500,
+              "withinMs": 100
+            },
+            {
+              "address": 32,
+              "operation": "read",
+              "data": [
+                90
+              ],
+              "repeated": false,
+              "afterMs": 500,
+              "withinMs": 100
+            },
+            {
+              "address": 32,
+              "operation": "write",
+              "data": [
+                1,
+                90
+              ],
+              "repeated": false,
+              "afterMs": 500,
+              "withinMs": 100
+            },
+            {
+              "address": 32,
+              "operation": "write",
+              "data": [
+                0
+              ],
+              "repeated": true,
+              "afterMs": 1000,
+              "withinMs": 100
+            },
+            {
+              "address": 32,
+              "operation": "read",
+              "data": [
+                150
+              ],
+              "repeated": false,
+              "afterMs": 1000,
+              "withinMs": 100
+            },
+            {
+              "address": 32,
+              "operation": "write",
+              "data": [
+                1,
+                150
+              ],
+              "repeated": false,
+              "afterMs": 1000,
+              "withinMs": 100
+            }
+          ]
+        }
+      ],
+      "i2cDevices": [
+        {
+          "address": 32,
+          "label": "I²C 장치",
+          "registers": [
+            {
+              "register": 0,
+              "value": 30,
+              "writable": false
+            },
+            {
+              "register": 1,
+              "value": 0,
+              "writable": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "result": {
+    "runtimeVersion": "pxt-microbit/9.1.1;pxt-core/13.0.1;oj-gpio/2",
+    "projectHash": "cdcab1e4554424a0daaaf34c6f7733ff6620cd18198f67a511df7d7521a8255d",
+    "trace": [
+      {
+        "atMs": 0,
+        "pin": 1,
+        "signal": "servo",
+        "value": 30,
+        "kind": "write"
+      },
+      {
+        "atMs": 520,
+        "pin": 1,
+        "signal": "servo",
+        "value": 90,
+        "kind": "write"
+      },
+      {
+        "atMs": 1040,
+        "pin": 1,
+        "signal": "servo",
+        "value": 150,
+        "kind": "write"
+      }
+    ],
+    "i2cTrace": [
+      {
+        "atMs": 0,
+        "address": 32,
+        "operation": "write",
+        "data": [
+          0
+        ],
+        "repeated": true,
+        "kind": "i2c"
+      },
+      {
+        "atMs": 0,
+        "address": 32,
+        "operation": "read",
+        "data": [
+          30
+        ],
+        "repeated": false,
+        "kind": "i2c"
+      },
+      {
+        "atMs": 0,
+        "address": 32,
+        "operation": "write",
+        "data": [
+          1,
+          30
+        ],
+        "repeated": false,
+        "kind": "i2c"
+      },
+      {
+        "atMs": 520,
+        "address": 32,
+        "operation": "write",
+        "data": [
+          0
+        ],
+        "repeated": true,
+        "kind": "i2c"
+      },
+      {
+        "atMs": 520,
+        "address": 32,
+        "operation": "read",
+        "data": [
+          90
+        ],
+        "repeated": false,
+        "kind": "i2c"
+      },
+      {
+        "atMs": 520,
+        "address": 32,
+        "operation": "write",
+        "data": [
+          1,
+          90
+        ],
+        "repeated": false,
+        "kind": "i2c"
+      },
+      {
+        "atMs": 1040,
+        "address": 32,
+        "operation": "write",
+        "data": [
+          0
+        ],
+        "repeated": true,
+        "kind": "i2c"
+      },
+      {
+        "atMs": 1040,
+        "address": 32,
+        "operation": "read",
+        "data": [
+          150
+        ],
+        "repeated": false,
+        "kind": "i2c"
+      },
+      {
+        "atMs": 1040,
+        "address": 32,
+        "operation": "write",
+        "data": [
+          1,
+          150
+        ],
+        "repeated": false,
+        "kind": "i2c"
+      }
+    ],
+    "traceScenarioId": "peripherals",
+    "status": "graded",
+    "passed": true,
+    "score": 100,
+    "scenarios": [
+      {
+        "id": "peripherals",
+        "name": "장치 입출력",
+        "passed": true,
+        "error": null,
+        "assertions": [
+          {
+            "pin": 1,
+            "signal": "servo",
+            "expected": 30,
+            "afterMs": 0,
+            "withinMs": 100,
+            "holdMs": 100,
+            "tolerance": 0,
+            "passed": true,
+            "matchedAtMs": 0,
+            "observed": {
+              "signal": "servo",
+              "value": 30,
+              "atMs": 0
+            }
+          },
+          {
+            "pin": 1,
+            "signal": "servo",
+            "expected": 90,
+            "afterMs": 500,
+            "withinMs": 100,
+            "holdMs": 100,
+            "tolerance": 0,
+            "passed": true,
+            "matchedAtMs": 520,
+            "observed": {
+              "signal": "servo",
+              "value": 90,
+              "atMs": 520
+            }
+          },
+          {
+            "pin": 1,
+            "signal": "servo",
+            "expected": 150,
+            "afterMs": 1000,
+            "withinMs": 100,
+            "holdMs": 100,
+            "tolerance": 0,
+            "passed": true,
+            "matchedAtMs": 1040,
+            "observed": {
+              "signal": "servo",
+              "value": 150,
+              "atMs": 1040
+            }
+          }
+        ],
+        "i2cAssertions": [
+          {
+            "address": 32,
+            "operation": "write",
+            "data": [
+              0
+            ],
+            "repeated": true,
+            "afterMs": 0,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 0,
+            "observed": {
+              "atMs": 0,
+              "address": 32,
+              "operation": "write",
+              "data": [
+                0
+              ],
+              "repeated": true,
+              "kind": "i2c"
+            }
+          },
+          {
+            "address": 32,
+            "operation": "read",
+            "data": [
+              30
+            ],
+            "repeated": false,
+            "afterMs": 0,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 0,
+            "observed": {
+              "atMs": 0,
+              "address": 32,
+              "operation": "read",
+              "data": [
+                30
+              ],
+              "repeated": false,
+              "kind": "i2c"
+            }
+          },
+          {
+            "address": 32,
+            "operation": "write",
+            "data": [
+              1,
+              30
+            ],
+            "repeated": false,
+            "afterMs": 0,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 0,
+            "observed": {
+              "atMs": 0,
+              "address": 32,
+              "operation": "write",
+              "data": [
+                1,
+                30
+              ],
+              "repeated": false,
+              "kind": "i2c"
+            }
+          },
+          {
+            "address": 32,
+            "operation": "write",
+            "data": [
+              0
+            ],
+            "repeated": true,
+            "afterMs": 500,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 520,
+            "observed": {
+              "atMs": 520,
+              "address": 32,
+              "operation": "write",
+              "data": [
+                0
+              ],
+              "repeated": true,
+              "kind": "i2c"
+            }
+          },
+          {
+            "address": 32,
+            "operation": "read",
+            "data": [
+              90
+            ],
+            "repeated": false,
+            "afterMs": 500,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 520,
+            "observed": {
+              "atMs": 520,
+              "address": 32,
+              "operation": "read",
+              "data": [
+                90
+              ],
+              "repeated": false,
+              "kind": "i2c"
+            }
+          },
+          {
+            "address": 32,
+            "operation": "write",
+            "data": [
+              1,
+              90
+            ],
+            "repeated": false,
+            "afterMs": 500,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 520,
+            "observed": {
+              "atMs": 520,
+              "address": 32,
+              "operation": "write",
+              "data": [
+                1,
+                90
+              ],
+              "repeated": false,
+              "kind": "i2c"
+            }
+          },
+          {
+            "address": 32,
+            "operation": "write",
+            "data": [
+              0
+            ],
+            "repeated": true,
+            "afterMs": 1000,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 1040,
+            "observed": {
+              "atMs": 1040,
+              "address": 32,
+              "operation": "write",
+              "data": [
+                0
+              ],
+              "repeated": true,
+              "kind": "i2c"
+            }
+          },
+          {
+            "address": 32,
+            "operation": "read",
+            "data": [
+              150
+            ],
+            "repeated": false,
+            "afterMs": 1000,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 1040,
+            "observed": {
+              "atMs": 1040,
+              "address": 32,
+              "operation": "read",
+              "data": [
+                150
+              ],
+              "repeated": false,
+              "kind": "i2c"
+            }
+          },
+          {
+            "address": 32,
+            "operation": "write",
+            "data": [
+              1,
+              150
+            ],
+            "repeated": false,
+            "afterMs": 1000,
+            "withinMs": 100,
+            "passed": true,
+            "matchedAtMs": 1040,
+            "observed": {
+              "atMs": 1040,
+              "address": 32,
+              "operation": "write",
+              "data": [
+                1,
+                150
+              ],
+              "repeated": false,
+              "kind": "i2c"
+            }
+          }
+        ]
+      }
+    ],
+    "diagnostics": []
+  }
+}

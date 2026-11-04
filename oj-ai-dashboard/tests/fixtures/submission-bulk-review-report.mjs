@@ -1,5 +1,5 @@
 // In-memory server contract for browser checks. No real AI or student data.
-export function installBulkFixture({ stage, mode = 'normal' }) {
+export function installBulkFixture({ stage, mode = 'normal', teacher = false }) {
   const hash = 'a'.repeat(64);
   const context = { type: 'group', id: 'group:10', revision: 'membership-4', label: '검증 1학년 1반', selectable: true };
   const assignment = { id: 'assignment-1', worksheet_id: 'worksheet-1', title: '디지털 사회 탐구', state: 'open', schedule_version: 1 };
@@ -27,6 +27,13 @@ export function installBulkFixture({ stage, mode = 'normal' }) {
     } else {
       if (n === 3) { detail.selected_result.abstained = true; detail.selected_result.items[0].candidate_points = null; }
       if (n === 4) { evaluation.state = 'reviewed'; evaluation.review.official_id = 'already-reviewed'; }
+    }
+    if (teacher) {
+      detail.selected_result.provider_status = 'not_requested';
+      detail.selected_result.items[0].candidate_points = null;
+      detail.review_precondition.expected_review_no = 1;
+      detail.reviews = [{ id: `draft-${n}`, result_id: `result-${n}`, review_no: 1, decision: 'draft', official_score: n === 1 ? '12' : '0',
+        score_decisions: { value: { items: n === 3 ? [] : [{ binding_key: hash, source: 'teacher_assigned', official_points: n === 1 ? '12.0000' : '0.0000', reason_code: 'manual_assessment', reason_note: '답안을 확인함.' }] } } }];
     }
     if (n === 5) evaluation.submission.is_source_current = false;
     details.set(id, detail);
@@ -59,7 +66,7 @@ export function installBulkFixture({ stage, mode = 'normal' }) {
       if (path.endsWith('/review')) {
         d.evaluation.state = 'reviewed';
         d.evaluation.review = { official_scope: 'this_evaluation', official_id: `official-${id}` };
-        result = envelope({ evaluation: { id }, result: { id: body.expected.expected_result_id, hash: body.expected.expected_result_hash }, review: { id: `official-${id}`, decision: 'accepted' }, official_review: { id: `official-${id}` } });
+        result = envelope({ evaluation: { id }, result: { id: body.expected.expected_result_id, hash: body.expected.expected_result_hash }, review: { id: `official-${id}`, decision: body.payload.decision }, official_review: { id: `official-${id}` } });
       } else {
         const operation = path.endsWith('/generate-feedback') ? 'feedback_draft' : 'special_note_draft';
         d.runs.unshift({ id: `new-${id}`, state: 'queued', operation });

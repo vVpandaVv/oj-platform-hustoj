@@ -7,6 +7,7 @@ namespace CodingPanda\OjPlatform\Kernel\Composition;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\UserProfileRepository;
 use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressManagedUserNameGuard;
 use CodingPanda\OjPlatform\Kernel\Addon\AcceptedAddonCatalog;
+use CodingPanda\OjPlatform\Kernel\Addon\AcceptedAddonLearnerCapabilities;
 use CodingPanda\OjPlatform\Kernel\Addon\AddonAiTaskContributions;
 use CodingPanda\OjPlatform\Kernel\Addon\AddonAiTaskContributor;
 use CodingPanda\OjPlatform\Kernel\Addon\AddonCapabilityContributor;
@@ -513,6 +514,7 @@ final class CompositionRoot
         $addonPublicMenus = new AddonPublicMenuContributions();
         $addonDocuments = new AddonDocumentExtensions(new WordPressAddonAssetRenderer());
         $addonPrivacy = new AddonPrivacyInventory();
+        $addonCatalog = new AcceptedAddonCatalog();
         $accountShell = (new AccountShellComposition())->assemble(
             $this->environment,
             $this->hooks,
@@ -544,8 +546,10 @@ final class CompositionRoot
             $addonPublicMenus,
             $capabilities,
             $addonDocuments,
-            $addonPrivacy
+            $addonPrivacy,
+            new AcceptedAddonLearnerCapabilities($addonCatalog)
         );
+        $nativeLearning = new \CodingPanda\OjPlatform\Kernel\Addon\NativeLearningCatalog($addonCatalog, $accountShell->currentAccounts(), $permissionService, $routeUrlGenerator, $featureService);
         $addonAiTasks = new AddonAiTaskContributions();
         $operations = (new OperationsComposition())->assemble(
             $runtimeErrorReporter,
@@ -589,7 +593,8 @@ final class CompositionRoot
             $aiTaskRouter,
             $siteClock,
             $accountShell,
-            $this->environment->pluginDirectory() . 'resources/features'
+            $this->environment->pluginDirectory() . 'resources/features',
+            $nativeLearning
         );
         $migration = (new MigrationComposition())->assemble(
             $runtimeErrorReporter,
@@ -649,7 +654,8 @@ final class CompositionRoot
             $groupChoices,
             $clock,
             $siteClock,
-            $featureService
+            $featureService,
+            $nativeLearning
         );
         $contests = (new ContestsComposition())->assemble(
             $runtimeErrorReporter,
@@ -955,7 +961,6 @@ final class CompositionRoot
             $migration->module(),
         ]);
         $manifest->assertLoadedCatalog($modules);
-        $addonCatalog = new AcceptedAddonCatalog();
         $addonCorrelations = new AddonCorrelationIdFactory();
         $addonAiLedger = new \CodingPanda\OjPlatform\Kernel\Integration\Operations\PlatformAddonAiRequestLedger($applicationDatabase);
         $accountShell->accountErasureParticipants()->register(new \CodingPanda\OjPlatform\Kernel\Integration\Operations\AddonAiLedgerAccountErasure($addonAiLedger));
@@ -999,10 +1004,11 @@ final class CompositionRoot
                 $accountShell->currentAccounts(),
                 $permissionService,
                 $addonCorrelations,
-                $routeUrlGenerator,
+                new \CodingPanda\OjPlatform\Modules\AccessRouter\Infrastructure\WordPress\WordPressBrowserRouteUrlProvider($routeUrlGenerator, $routeTransport),
                 $accountShell->consolePages(),
                 $accountShell->publicPages(),
-                new WordPressAddonAssetRenderer()
+                new WordPressAddonAssetRenderer(),
+                $accountShell->consoleMenuVisibility()
             ),
             new AddonMenuContributor($menus, $addonPublicMenus),
             new AddonAiTaskContributor($addonAiTasks),

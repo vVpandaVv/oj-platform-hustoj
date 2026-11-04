@@ -279,16 +279,13 @@ async function inspectRubricScoring(browser, viewport, label, manual) {
     if (manual) {
       await page.locator('[data-item-type="candidate"]').click();
       assert.equal(await page.locator('[data-review-action="evaluate-submission"]').count(), 0, 'Reviewer-only users do not need AI permission');
-      await page.getByRole('button', { name: '교사 직접 채점', exact: true }).click();
       await page.getByRole('button', { name: '채점 점수 확정', exact: true }).waitFor();
       await page.waitForFunction(() => document.querySelector('[data-review-field="rubric-level"]')?.disabled === false);
       assert.equal(await page.locator('[data-review-field="rubric-level"]:checked').count(), 0, 'Manual score starts blank, not zero');
       assert.equal(await page.locator('[data-review-action="accept"], [data-review-action="retry-score"]').count(), 0);
       await page.getByRole('button', { name: '채점 점수 확정', exact: true }).click();
       assert.equal(await page.evaluate(() => window.__reviewRequests.length), 0, 'Incomplete manual scores must not be saved');
-      const request = await page.evaluate(() => window.__manualRequests[0]);
-      assert.equal(request.body.expected.expected_official_revision_id, '01K5A00000000000000000000K');
-      assert.equal(request.headers['X-WP-Nonce'], 'submission-review-visual-nonce');
+      assert.equal(await page.evaluate(() => window.__manualRequests.length), 0, 'Opening or incomplete grading must not prepare a persisted score sheet');
     } else {
       await page.evaluate(() => {
         const result = window.__reviewFixture.selected_result;
@@ -326,6 +323,9 @@ async function inspectRubricScoring(browser, viewport, label, manual) {
     assert.equal(Number(review.item_decisions[0].official_points), 0);
     assert.equal(review.item_decisions[0].source, 'teacher_assigned');
     if (manual) {
+      const request = await page.evaluate(() => window.__manualRequests[0]);
+      assert.equal(request.body.expected.expected_official_revision_id, '01K5A00000000000000000000K');
+      assert.equal(request.headers['X-WP-Nonce'], 'submission-review-visual-nonce');
       assert.ok(review.item_decisions.every(item => item.source === 'teacher_assigned' && item.reason_code === 'manual_assessment'));
       assert.equal(await page.evaluate(() => window.__evaluationRequests.length), 0, 'Manual grading must not enqueue AI');
       assert.ok((await page.locator('[data-review-role="detail"]').innerText()).includes('교사 채점 확정 완료'));
@@ -358,7 +358,7 @@ try {
   }
   await browser.close();
 } catch (error) {
-  errors.push(`Playwright submission review check failed: ${error.message}`);
+  errors.push(`Playwright submission review check failed: ${error.stack || error.message}`);
 }
 
 if (errors.length > 0) {

@@ -46,6 +46,7 @@
     var pagePresent = true;
     var sessionAllowedUntil = Infinity;
     var sessionContext = { context_type: 'general', context_id: null };
+    var sessionPage = { key: config.page && config.page.key || null, token: config.page && config.page.token || null };
     var state;
     var flushTimer = null;
     var heartbeatTimer = null;
@@ -72,6 +73,7 @@
         if (next.active && pagePresent) {
             sessionAllowedUntil = Math.min(Number(next.activeUntilMs) || Infinity, Number(next.validUntilMs) || Infinity);
             sessionContext = { context_type: next.contextType || 'general', context_id: next.contextId === undefined ? null : next.contextId };
+            if (typeof next.pageContextToken === 'string' && next.pageContextToken) { sessionPage.token = next.pageContextToken; }
             if (!active) { startSession(); }
         } else if (active) {
             endSession(Math.min(now(), sessionAllowedUntil));
@@ -94,6 +96,11 @@
     function readState() {
         var visible = document.visibilityState !== 'hidden';
         return { visible: visible, focused: visible && (typeof document.hasFocus !== 'function' || document.hasFocus()) };
+    }
+
+    function focusedWithinFrame() {
+        var element = document.activeElement;
+        return element && String(element.tagName).toLowerCase() === 'iframe' && readState().focused;
     }
 
     function removeEntry(key) {
@@ -169,6 +176,8 @@
             problem_id: config.problemId || null,
             context_type: sessionContext.context_type,
             context_id: sessionContext.context_id,
+            page_key: sessionPage.key,
+            page_context: sessionPage.token,
             session_started_at: sessionStartedAt,
             queued_at: now(),
             event: { type: type, occurred_at: timestamp, seq: sequence, meta: meta || null },
@@ -195,7 +204,12 @@
             return null;
         }
         var first = outbox[keys[0]];
-        keys = keys.filter(function (key) { return outbox[key].session_uid === first.session_uid; }).slice(0, BATCH_SIZE);
+        keys = keys.filter(function (key) {
+            var value = outbox[key];
+            return value.session_uid === first.session_uid && value.problem_id === first.problem_id
+                && value.context_type === first.context_type && value.context_id === first.context_id
+                && value.page_key === first.page_key && value.page_context === first.page_context;
+        }).slice(0, BATCH_SIZE);
         var events = keys.map(function (key) { return outbox[key].event; });
         return {
             keys: keys,
@@ -205,6 +219,7 @@
                 problem_id: first.problem_id,
                 context_type: first.context_type,
                 context_id: first.context_id,
+                page_context: first.page_context || null,
                 session_started_at: first.session_started_at,
                 is_final: events.some(function (event) { return event.type === 'session_end'; }),
                 events: events,
@@ -377,10 +392,16 @@
 
     function onWindowBlur() {
         if (canCapture() && state.focused) {
-            commitEdits();
-            state.focused = false;
-            pushEvent('blur', stateMeta());
-            flush(false);
+            var previousSession = sessionUid;
+            // Focus entering an embedded tool can fire parent-window blur before
+            // activeElement has settled. Never inspect the frame's document.
+            setTimeout(function () {
+                if (!canCapture() || sessionUid !== previousSession || !state.focused || focusedWithinFrame()) { return; }
+                commitEdits();
+                state.focused = false;
+                pushEvent('blur', stateMeta());
+                flush(false);
+            }, 0);
         }
     }
 
@@ -405,7 +426,12 @@
         pushEvent('session_start', stateMeta());
         flushTimer = setInterval(function () { flush(false); }, config.flushMs || 7000);
         heartbeatTimer = setInterval(function () {
-            if (canCapture()) { pushEvent('heartbeat', stateMeta()); }
+            if (canCapture()) {
+                if (!state.focused && focusedWithinFrame()) {
+                    state = readState(); pushEvent('focus', stateMeta());
+                }
+                pushEvent('heartbeat', stateMeta());
+            }
         }, config.heartbeatMs || 15000);
         blocklyTimer = setInterval(bindBlocklyChanges, 1000);
         bindBlocklyChanges();

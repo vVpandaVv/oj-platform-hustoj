@@ -398,7 +398,8 @@ final class GroupService implements
      *   user_login: string,
      *   success: bool,
      *   temporary_password: ?string,
-     *   reason: string
+     *   reason: string,
+     *   diagnostic?: \CodingPanda\OjPlatform\Modules\Auth\Contract\AccountProtectionDiagnostic
      * }>
      */
     public function resetMemberPasswords(

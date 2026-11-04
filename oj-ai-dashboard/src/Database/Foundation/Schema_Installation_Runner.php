@@ -186,7 +186,9 @@ final class Schema_Installation_Runner implements Schema_Installer_Port_Interfac
 				$resume_issues,
 				$resume_missing_installation
 			);
-			$gate                        = $resumable_initial_create ? null : $this->gate_before_lock( $initial, $is_repair, $correlation_id, $resume_issues );
+			$resumable_policy_amendment  = ! $is_repair && $this->can_resume_completed_exception_policy( $initial );
+			$gate                        = $resumable_initial_create || $resumable_policy_amendment
+				? null : $this->gate_before_lock( $initial, $is_repair, $correlation_id, $resume_issues );
 			if ( null !== $gate ) {
 				return $gate;
 			}
@@ -218,18 +220,20 @@ final class Schema_Installation_Runner implements Schema_Installer_Port_Interfac
 		$resume_missing_installation = false;
 
 		try {
-			$current                  = $this->inspect_state();
-			$resume_issues            = array();
-			$resumable_initial_create = ! $is_repair && $this->can_resume_initial_create(
+			$current                    = $this->inspect_state();
+			$resume_issues              = array();
+			$resumable_initial_create   = ! $is_repair && $this->can_resume_initial_create(
 				$current,
 				$resume_issues,
 				$resume_missing_installation
 			);
-			$gate                     = $resumable_initial_create ? null : $this->gate_before_lock( $current, $is_repair, $correlation_id, $resume_issues );
+			$resumable_policy_amendment = ! $is_repair && $this->can_resume_completed_exception_policy( $current );
+			$gate                       = $resumable_initial_create || $resumable_policy_amendment
+				? null : $this->gate_before_lock( $current, $is_repair, $correlation_id, $resume_issues );
 			if ( null !== $gate ) {
 				return $gate;
 			}
-			$is_upgrade = $this->is_supported_upgrade_state( $current );
+			$is_upgrade = $resumable_policy_amendment || $this->is_supported_upgrade_state( $current );
 
 			$names                  = $current['names'];
 			$installation_available = in_array( 'oj_ai_installations', $names, true ) && null !== $current['installation'];
@@ -245,6 +249,11 @@ final class Schema_Installation_Runner implements Schema_Installer_Port_Interfac
 					$ledger_issues
 				);
 			}
+			$postcondition_records = $records;
+			if ( $resumable_policy_amendment ) {
+				// The full catalog already proved these columns exist; keep the stored failure until resumed below.
+				$postcondition_records['202611040001_assignment_exception_policy']['state'] = Migration_Ledger_State::APPLIED;
+			}
 
 			foreach ( $this->plan->migrations() as $migration ) {
 				$active_migration  = $migration;
@@ -254,7 +263,7 @@ final class Schema_Installation_Runner implements Schema_Installer_Port_Interfac
 
 				if ( is_array( $existing_record ) && Migration_Ledger_State::APPLIED === (string) ( $existing_record['state'] ?? '' ) ) {
 					$postcondition = $this->verifier->verify_definitions(
-						$this->plan->postcondition_definitions( $migration, $records )
+						$this->plan->postcondition_definitions( $migration, $postcondition_records )
 					);
 					if ( ! $postcondition->passed() ) {
 						return new Schema_Installation_Result(
@@ -875,6 +884,61 @@ final class Schema_Installation_Runner implements Schema_Installer_Port_Interfac
 		$source_names = array_keys( $this->plan->upgrade_source_tables( $state['installation'] ) );
 		return array() === array_diff( $source_names, $state['names'] )
 			&& array() === array_diff( $state['names'], $source_names );
+	}
+
+	/**
+	 * Resume only the 1.2.24 column-order false failure after its DDL completed.
+	 *
+	 * Full physical validation and the immutable ledger must pass before and
+	 * after acquiring the lock. The normal runner then verifies the amendment
+	 * without repeating ALTER or changing business data.
+	 *
+	 * @param array{names:array<int,string>,installation:?array<string,mixed>,preflight:Schema_Preflight_Result} $state State.
+	 * @return bool
+	 */
+	private function can_resume_completed_exception_policy( array $state ): bool {
+		$installation = $state['installation'];
+		if ( ! is_array( $installation )
+			|| '1.0.6' !== ( $installation['schema_version'] ?? null )
+			|| Installation_State::MAINTENANCE_REQUIRED !== ( $installation['state'] ?? null )
+			|| 1 !== $this->ledger->installation_row_count()
+			|| array() !== $this->ownership_issues( $installation, $state['preflight'] )
+			|| array() !== array_diff( $this->catalog->table_names(), $state['names'] ) ) {
+			return false;
+		}
+		$migrations = $this->plan->migrations();
+		$last       = $migrations[ count( $migrations ) - 1 ];
+		if ( '202611040001_assignment_exception_policy' !== $last->id() ) {
+			return false;
+		}
+		$records = $this->ledger->all_migrations();
+		if ( count( $records ) !== count( $migrations ) || array() !== $this->ledger_issues( $records, false ) ) {
+			return false;
+		}
+		foreach ( $migrations as $migration ) {
+			$record = $records[ $migration->id() ] ?? null;
+			if ( ! is_array( $record ) ) {
+				return false;
+			}
+			if ( $migration->id() !== $last->id() ) {
+				if ( Migration_Ledger_State::APPLIED !== ( $record['state'] ?? null ) ) {
+					return false;
+				}
+				continue;
+			}
+			$checkpoint = Schema_Migration_Checkpoint::validated_payload( $last, $record );
+			if ( Migration_Ledger_State::REPAIR_REQUIRED !== ( $record['state'] ?? null )
+				|| 'schema_postcondition_failed' !== ( $record['error_code'] ?? null )
+				|| ! is_array( $checkpoint )
+				|| false !== ( $checkpoint['repair'] ?? null )
+				|| 'failed' !== ( $checkpoint['phase'] ?? null )
+				|| 'failed' !== ( $checkpoint['postcondition'] ?? null )
+				|| 0 !== ( $checkpoint['cursor'] ?? null )
+				|| 'oj_ai_assignments' !== ( $checkpoint['next_table'] ?? null ) ) {
+				return false;
+			}
+		}
+		return $this->verifier->verify_catalog()->passed();
 	}
 
 	/**

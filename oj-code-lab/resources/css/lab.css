@@ -272,6 +272,20 @@
 }
 
 /* Outputs */
+.ocl-output-tools {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--ojp-space-1, 4px) var(--ojp-space-3, 12px);
+    border-bottom: 1px solid var(--ojp-color-line);
+}
+
+.ocl-execution-notice {
+    margin: 0;
+    padding: var(--ojp-space-2, 8px) var(--ojp-space-3, 12px);
+    color: var(--ojp-color-muted);
+    font-size: var(--ojp-text-footnote, 12px);
+}
+
 .ocl-output {
     padding: 0 var(--ojp-space-3, 12px);
 }

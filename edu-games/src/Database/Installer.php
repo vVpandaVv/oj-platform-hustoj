@@ -16,12 +16,13 @@ final class Installer {
         self::create_scores_table();
         self::create_sessions_table();
         self::create_teams_tables();
+        $binary_ready = \EduGames\Multiplayer\Wpdb_Repository::install();
         $ai_ready = self::create_ai_model_lab_attempts_table();
         global $wpdb;
         $index = $wpdb->get_row("SHOW INDEX FROM " . self::scores_table() . " WHERE Key_name = 'best_attempt'", ARRAY_A);
         $tables_ready = self::scores_table_exists() && self::table_exists(self::sessions_table())
             && self::table_exists(self::teams_table()) && self::table_exists(self::team_members_table());
-        if ($ai_ready && $tables_ready && is_array($index)) {
+        if ($ai_ready && $binary_ready && $tables_ready && is_array($index)) {
             update_option('edu_games_db_version', EDU_GAMES_VERSION);
         }
     }

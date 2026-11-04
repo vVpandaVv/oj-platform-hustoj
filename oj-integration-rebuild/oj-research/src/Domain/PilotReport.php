@@ -76,6 +76,7 @@ final class PilotReport
     public static function number(?float $v):string {return $v===null?'미수집':number_format($v,2);}
     public static function sections(array $s,array $report):array
     {
+        if(ClassroomProtocol::is($s)){return ClassroomReport::sections($s,$report);}
         $p=$s['data']['protocol'];$note=static fn($key)=>$p['notes'][$key]!==''?$p['notes'][$key]:'[연구자가 작성할 항목]';
         $materials=[];
         foreach(array_unique(array_merge($p['practice'],$p['pretest'],$p['posttest']))as$id){$m=$p['materials'][$id]??[];

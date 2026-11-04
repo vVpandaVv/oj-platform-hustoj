@@ -87,7 +87,9 @@ deletion_assert($ingested instanceof WP_REST_Response && $ingested->data['stored
 deletion_expect(array($id), Participation_Repository::activity_ids($ingested->data['participation_id']), 'Automatic participation is linked to its eligible activity');
 $pending = deletion_question($id);
 $pending_before = Checks::find($pending['id'], 2);
-Activity_Score_Service::score_for_learner(Activities::find($id), 2);
+// Seed a legacy/retention snapshot explicitly: ordinary live views no longer
+// persist a cache that they cannot reuse. Deletion must still clear such rows.
+Activity_Score_Service::score_for_learner(Activities::find($id), 2, true, true);
 deletion_assert(Score_Repository::get($id, 2) !== null, 'Mutable activity cache exists before deletion');
 $committed = deletion_question($id, 3);
 $committed_row = Checks::find($committed['id'], 3);

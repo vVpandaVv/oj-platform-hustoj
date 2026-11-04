@@ -1,0 +1,258 @@
+[
+  [
+    "nvme-ssd",
+    "NVMe SSD",
+    "플래시 메모리에 파일을 저장하며, M.2 슬롯을 통해 빠르게 데이터를 주고받는 보조 기억 장치입니다.",
+    "storage",
+    "저장 장치",
+    "Samsung 980 PRO SSD top"
+  ],
+  [
+    "hard-disk",
+    "하드디스크",
+    "회전하는 자기 디스크에 파일을 저장하는 보조 기억 장치입니다.",
+    "storage",
+    "저장 장치",
+    "hard disk drive opened platter"
+  ],
+  [
+    "motherboard",
+    "메인보드",
+    "CPU, 메모리, 저장 장치와 확장 카드를 연결하는 컴퓨터의 중심 회로 기판입니다.",
+    "component",
+    "컴퓨터 부품",
+    "File:ASUS Prime X570-P.jpg"
+  ],
+  [
+    "power-supply",
+    "전원 공급 장치",
+    "외부 전원을 컴퓨터 부품에서 사용할 수 있는 전압으로 바꾸어 공급합니다.",
+    "component",
+    "컴퓨터 부품",
+    "ATX computer power supply unit"
+  ],
+  [
+    "network-card",
+    "유선 랜 카드",
+    "컴퓨터를 이더넷 케이블로 네트워크에 연결하는 확장 장치입니다.",
+    "network",
+    "네트워크 장치",
+    "PCI express network interface card ethernet"
+  ],
+  [
+    "usb-hub",
+    "USB 허브",
+    "하나의 USB 연결을 여러 포트로 늘려 주변 장치를 연결합니다.",
+    "peripheral",
+    "주변 장치",
+    "File:4-port USB hub.jpg"
+  ],
+  [
+    "sd-card",
+    "SD 메모리 카드",
+    "카메라 등에서 사진과 파일을 저장하는 작은 탈착식 저장 매체입니다.",
+    "storage",
+    "저장 장치",
+    "File:SAMSUNG SD CARD PRO PLUS 256 GB (2021 EDITION) FRONT.jpg"
+  ],
+  [
+    "microphone",
+    "마이크",
+    "소리를 전기 신호로 바꾸어 녹음이나 음성 입력에 사용하는 장치입니다.",
+    "peripheral",
+    "주변 장치",
+    "USB condenser microphone"
+  ],
+  [
+    "speakers",
+    "스피커",
+    "컴퓨터의 소리 신호를 사람이 들을 수 있는 소리로 내보내는 출력 장치입니다.",
+    "peripheral",
+    "주변 장치",
+    "computer loudspeakers"
+  ],
+  [
+    "headphones",
+    "헤드폰",
+    "귀에 착용해 소리를 듣는 개인용 출력 장치입니다.",
+    "peripheral",
+    "주변 장치",
+    "over ear headphones"
+  ],
+  [
+    "projector",
+    "프로젝터",
+    "컴퓨터의 화면을 빛으로 투사해 벽이나 스크린에 크게 보여 줍니다.",
+    "output",
+    "출력 장치",
+    "digital video projector"
+  ],
+  [
+    "scanner",
+    "스캐너",
+    "종이에 있는 문서나 사진을 읽어 디지털 이미지로 입력합니다.",
+    "peripheral",
+    "주변 장치",
+    "flatbed scanner"
+  ],
+  [
+    "gamepad",
+    "게임 컨트롤러",
+    "버튼과 스틱으로 게임에 방향과 명령을 입력하는 조작 장치입니다.",
+    "peripheral",
+    "주변 장치",
+    "Xbox Series controller"
+  ],
+  [
+    "pen-tablet",
+    "펜 태블릿",
+    "전용 펜의 위치와 누르는 힘을 읽어 그림 그리기 등에 사용하는 입력 장치입니다.",
+    "peripheral",
+    "주변 장치",
+    "Wacom Intuos tablet pen"
+  ],
+  [
+    "barcode-scanner",
+    "바코드 리더",
+    "바코드를 빛으로 읽어 상품 번호 등의 데이터를 입력합니다.",
+    "peripheral",
+    "주변 장치",
+    "handheld barcode scanner"
+  ],
+  [
+    "smartphone",
+    "스마트폰",
+    "터치 화면과 통신 기능을 갖추고 다양한 앱을 실행하는 휴대용 컴퓨팅 장치입니다.",
+    "computing",
+    "컴퓨팅 장치",
+    "Pixel 8"
+  ],
+  [
+    "smartwatch",
+    "스마트워치",
+    "손목에 착용해 알림을 확인하고 센서 데이터를 수집하는 소형 컴퓨팅 장치입니다.",
+    "computing",
+    "컴퓨팅 장치",
+    "smartwatch watch display"
+  ],
+  [
+    "digital-camera",
+    "디지털 카메라",
+    "빛을 이미지 센서로 받아 사진이나 동영상을 디지털 데이터로 저장합니다.",
+    "peripheral",
+    "주변 장치",
+    "mirrorless digital camera front"
+  ],
+  [
+    "vr-headset",
+    "VR 헤드셋",
+    "눈앞의 화면과 움직임 감지 기능으로 가상 공간을 체험하게 하는 장치입니다.",
+    "output",
+    "출력 장치",
+    "Meta Quest 3"
+  ],
+  [
+    "network-switch",
+    "네트워크 스위치",
+    "여러 유선 네트워크 장치를 연결하고 목적지에 맞는 포트로 데이터를 전달합니다.",
+    "network",
+    "네트워크 장치",
+    "ethernet switch 8 port"
+  ],
+  [
+    "ethernet-cable",
+    "랜 케이블",
+    "이더넷 포트를 가진 장치 사이에 네트워크 데이터를 전달하는 케이블입니다.",
+    "network",
+    "네트워크 장치",
+    "File:EthernetCableGreen.jpg"
+  ],
+  [
+    "hdmi-cable",
+    "HDMI 케이블",
+    "컴퓨터와 화면 장치 사이에 디지털 영상과 소리를 전달하는 케이블입니다.",
+    "peripheral",
+    "주변 장치",
+    "HDMI cable connectors"
+  ],
+  [
+    "rfid-reader",
+    "RFID 리더 모듈",
+    "전자기장을 이용해 가까이 있는 RFID 태그의 식별 정보를 읽습니다.",
+    "sensor",
+    "센서",
+    "RFID RC522 module"
+  ],
+  [
+    "relay-module",
+    "릴레이 모듈",
+    "작은 제어 신호로 접점을 열거나 닫아 다른 회로를 켜고 끄는 장치입니다.",
+    "actuator",
+    "액추에이터",
+    "File:SRD-05VDC-SL-C 5V one-channel relay module.jpg"
+  ],
+  [
+    "push-button",
+    "누름 버튼",
+    "손으로 누를 때 접점 상태가 바뀌어 명령을 입력하는 스위치입니다.",
+    "sensor",
+    "센서",
+    "File:Tact switches.JPG"
+  ],
+  [
+    "potentiometer",
+    "가변 저항",
+    "손잡이를 돌려 저항값을 바꾸며, 조절값을 입력하는 데 사용하는 부품입니다.",
+    "sensor",
+    "센서",
+    "File:Electronic-Component-Potentiometer.jpg"
+  ],
+  [
+    "imu-module",
+    "가속도·자이로 센서",
+    "가속도와 회전 운동을 측정해 물체의 움직임을 알아내는 센서 모듈입니다.",
+    "sensor",
+    "센서",
+    "GY-521 MPU-6050 module"
+  ],
+  [
+    "solar-panel",
+    "태양 전지 패널",
+    "빛 에너지를 전기 에너지로 바꾸어 전원을 공급하는 장치입니다.",
+    "component",
+    "전자 부품",
+    "small solar cell"
+  ],
+  [
+    "jumper-wires",
+    "점퍼선",
+    "브레드보드와 보드의 핀을 연결해 전원과 신호가 흐르는 경로를 만듭니다.",
+    "physical-computing",
+    "피지컬 컴퓨팅",
+    "jumper wires"
+  ],
+  [
+    "rgb-led",
+    "RGB LED 모듈",
+    "빨강·초록·파랑 발광 소자의 밝기를 조절해 여러 색의 빛을 표시합니다.",
+    "output",
+    "출력 장치",
+    "RGB LED"
+  ],
+  [
+    "robot-wheel",
+    "로봇 구동 바퀴",
+    "모터 축에 연결해 회전 운동을 이동으로 바꾸는 로봇의 구동 부품입니다.",
+    "actuator",
+    "액추에이터",
+    "File:GTF-omni drectional robot wheel-B.jpg"
+  ],
+  [
+    "arduino-nano",
+    "아두이노 나노",
+    "작은 크기의 입출력 보드로, 브레드보드에 꽂아 센서와 출력 장치를 제어할 수 있습니다.",
+    "physical-computing",
+    "피지컬 컴퓨팅",
+    "Arduino Nano"
+  ]
+]

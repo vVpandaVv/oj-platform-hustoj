@@ -9,6 +9,8 @@
     };
     var checkLabels = { correct: '정답 확인', incorrect: '오답', unknown: '모름', skipped: '건너뛰기',
         unanswered: '무응답', pending: '응답 대기', invalidated: '취소' };
+    var categoryLabels = { problem: '문제 풀이', submission: '제출·결과', material: '학습자료',
+        practice: '실습·학습도구', game: '교육게임', discussion: '질문·토론', other: '기타 내부 학습', unclassified: '이전 기록·미분류' };
 
     function node(tag, className, text) {
         var result = document.createElement(tag);
@@ -31,6 +33,10 @@
     function minutes(value) { return finite(value) ? (value / 60).toFixed(1) + '분' : '—'; }
     function percentage(value) { return finite(value) ? (Math.max(0, Math.min(1, value)) * 100).toFixed(1) + '%' : '—'; }
     function count(value) { return finite(value) ? String(value) + '회' : '—'; }
+    function categoryLabel(value) {
+        if (value.category === 'practice') { return value.subtype === 'ml' ? 'ML 실습' : '실습·학습도구(ML 제외)'; }
+        return categoryLabels[value.category] || '분류 확인 필요';
+    }
     function isoDate(value) { return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value); }
     function offsetDate(value, period, direction) {
         if (!isoDate(value)) { return ''; }
@@ -50,7 +56,7 @@
         var teacher = root.getAttribute('data-mode') === 'teacher';
         var state = { period: 'week', date: '', today: '', selected: null, sequence: 0, last: null };
         var title = field('h2', 'title', '', teacher ? '학생별 누적 기록' : '주간·월간 누적 기록');
-        var help = node('p', 'ojp-muted', '화면 활성과 학습 활동의 누적 기록입니다. 실제 집중·이해를 직접 측정하지 않습니다.');
+        var help = node('p', 'ojp-muted', '활동 시간 안에서 관측한 화면 활성과 페이지 범주별 열람 기록입니다. 실제 집중·이해를 직접 측정하지 않습니다.');
         var toolbar = node('div', 'ftk-statistics-toolbar');
         var periodLabel = node('label', 'ftk-statistics-field', '조회 단위');
         var period = field('select', 'period', 'ojp-select');
@@ -146,9 +152,62 @@
             }).join(' · ');
             var checksNote = node('p', 'ojp-muted', '확인 문항의 정답·오답·무응답은 집중 점수와 별개이며 미집중으로 단정하지 않습니다.');
             results.replaceChildren(metrics, detail, quality, checks, checksNote);
+            renderCategories(Array.isArray(data.pageCategories) ? data.pageCategories : totals.pageCategories);
             var days = Array.isArray(data.days) ? data.days : [];
             renderChart(days);
             renderTable(days);
+        }
+        function renderCategories(values) {
+            var section = field('section', 'categories', 'ftk-statistics-categories');
+            section.appendChild(node('h3', '', '페이지 범주별 누적 기록'));
+            section.appendChild(node('p', 'ojp-muted', '관측된 열람 시간에는 화면 활성 시간이 포함됩니다. 열린 페이지에서 관측된 체류 구간이며 실제 읽기나 이해를 뜻하지 않습니다. ML 실습은 실습 계열의 별도 행이며 일반 실습에 중복 합산하지 않습니다. 페이지 범주를 옮겼다는 이유로 감점하거나 미집중으로 판단하지 않습니다.'));
+            if (!Array.isArray(values) || !values.length) {
+                section.appendChild(node('p', 'ojp-muted', '페이지 분류 기록이 없습니다. 분류 기능이 적용되기 전 기록은 추정해 채우지 않습니다.'));
+                results.appendChild(section); return;
+            }
+            var figure = field('figure', 'category-chart', 'ftk-statistics-chart');
+            figure.appendChild(node('figcaption', '', '범주별 시간(분) · 진한 막대: 화면 활성 · 옅은 막대: 관측된 열람(활성 포함). 수치 표에서 같은 기록을 확인할 수 있습니다.'));
+            var width = 900; var left = 170; var right = 72; var top = 30; var rowHeight = 48;
+            var max = Math.max(1, Math.ceil(Math.max.apply(null, values.map(function (value) { return finite(value.observedSeconds) ? value.observedSeconds / 60 : 0; }))));
+            var chart = svgNode('svg', { viewBox: '0 0 ' + width + ' ' + (top + values.length * rowHeight + 30), role: 'img',
+                'aria-label': '페이지 범주별 화면 활성과 관측된 열람 시간. 열람 시간에 활성 시간이 포함되며 합쳐 더하지 않습니다.' });
+            chart.appendChild(svgNode('title', {}, '페이지 범주별 누적 시간. 아래 범주별 수치 표에서 같은 정보를 확인할 수 있습니다.'));
+            [0, 0.5, 1].forEach(function (part) {
+                var x = left + (width - left - right) * part;
+                chart.appendChild(svgNode('line', { x1: x, x2: x, y1: top - 10, y2: top + values.length * rowHeight, class: 'ftk-stat-grid' }));
+                chart.appendChild(svgNode('text', { x: x, y: top + values.length * rowHeight + 20, 'text-anchor': 'middle', class: 'ftk-stat-axis' }, (max * part).toFixed(max < 10 ? 1 : 0)));
+            });
+            var wrap = node('div', 'ojp-table-wrap');
+            var table = field('table', 'category-table', 'ojp-table');
+            table.appendChild(node('caption', '', '페이지 범주별 화면 활성·열람 시간'));
+            var head = node('thead'); var header = node('tr');
+            ['페이지 범주', '화면 활성 시간', '관측된 열람 시간(활성 포함)', '기록 상태'].forEach(function (text) {
+                var th = node('th', '', text); th.setAttribute('scope', 'col'); header.appendChild(th);
+            });
+            head.appendChild(header); table.appendChild(head); var body = node('tbody');
+            values.forEach(function (value, index) {
+                var label = categoryLabel(value); var y = top + index * rowHeight;
+                chart.appendChild(svgNode('text', { x: left - 12, y: y + 16, 'text-anchor': 'end', class: 'ftk-stat-axis' }, label));
+                if (finite(value.observedSeconds)) {
+                    var observed = svgNode('rect', { x: left, y: y, width: Math.max(0, value.observedSeconds) / 60 / max * (width - left - right), height: 30,
+                        class: 'ftk-stat-category-observed' });
+                    observed.appendChild(svgNode('title', {}, label + ' · 관측된 열람 ' + minutes(value.observedSeconds))); chart.appendChild(observed);
+                } else chart.appendChild(svgNode('text', { x: left + 8, y: y + 20, class: 'ftk-stat-gap' }, '—'));
+                if (finite(value.activeSeconds)) {
+                    var active = svgNode('rect', { x: left, y: y + 8, width: Math.max(0, value.activeSeconds) / 60 / max * (width - left - right), height: 14,
+                        class: 'ftk-stat-category-active' });
+                    active.appendChild(svgNode('title', {}, label + ' · 화면 활성 ' + minutes(value.activeSeconds))); chart.appendChild(active);
+                }
+                var tr = node('tr'); tr.setAttribute('data-stat-category', String(value.category || 'unknown') + (value.subtype ? ':' + String(value.subtype) : ''));
+                [label, minutes(value.activeSeconds), minutes(value.observedSeconds), (statuses[value.status] || '기록 상태 확인 필요') + (value.coverageUnknown ? ' · 분류 자료 부족' : '')].forEach(function (text, cellIndex) {
+                    var cell = node(cellIndex === 0 ? 'th' : 'td', '', text); if (cellIndex === 0) cell.setAttribute('scope', 'row'); tr.appendChild(cell);
+                });
+                body.appendChild(tr);
+            });
+            figure.appendChild(chart); section.appendChild(figure);
+            table.appendChild(body); wrap.appendChild(table); section.appendChild(wrap);
+            if (values.some(function (value) { return value.coverageUnknown; })) section.appendChild(node('p', 'ojp-muted', '일부 기록은 보관 기간이나 분류 이전 자료 때문에 페이지 범주를 확인할 수 없습니다. 빈칸은 활동하지 않았다는 뜻이 아닙니다.'));
+            results.appendChild(section);
         }
         function renderChart(days) {
             var figure = field('figure', 'chart', 'ftk-statistics-chart');

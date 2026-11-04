@@ -66,7 +66,7 @@ final class PageResponder implements PageResponderContract
                 $identity,
                 $this->menus->resolve($identity),
                 $canAccessConsole,
-                $request->path()
+                $request->navigationPath()
             ),
             $status
         );

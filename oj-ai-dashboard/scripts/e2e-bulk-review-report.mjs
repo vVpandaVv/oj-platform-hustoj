@@ -17,7 +17,7 @@ const { chromium } = await loadPlaywright();
 const browser = await chromium.launch(browserLaunchOptions());
 const artifacts = new URL('../tests/artifacts/', import.meta.url);
 await mkdir(artifacts, { recursive: true });
-async function pageFor(stage, viewport, mode = 'normal') {
+async function pageFor(stage, viewport, mode = 'normal', teacher = false) {
   const page = await browser.newPage({ viewport });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -29,7 +29,7 @@ async function pageFor(stage, viewport, mode = 'normal') {
     }
     return route.fulfill({ contentType: 'text/html', body: html });
   });
-  await page.addInitScript(installBulkFixture, { stage, mode });
+  await page.addInitScript(installBulkFixture, { stage, mode, teacher });
   await page.goto(`https://example.test/bulk?stage=${stage}&assignment_id=assignment-1&context_type=group&context_id=group%3A10&context_revision=membership-4`);
   await page.waitForFunction(() => document.querySelector('[data-review-field="assignment"] option[value="0"]') && !document.querySelector('[data-review-field="assignment"]').disabled);
   if (await page.locator('[data-review-field="assignment"]').inputValue() !== '0') {
@@ -52,13 +52,19 @@ async function preview(page, action, count) {
 }
 try {
   for (const [name, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
-    for (const action of ['accept', 'feedback', 'note']) {
-      const { page, errors } = await pageFor(action === 'accept' ? 'assessment' : 'report', viewport);
+    for (const action of ['accept', 'teacher', 'feedback', 'note']) {
+      const approval = ['accept', 'teacher'].includes(action);
+      const { page, errors } = await pageFor(approval ? 'assessment' : 'report', viewport, 'normal', action === 'teacher');
       await page.locator('[data-review-field="search"]').fill('없는 학생');
       await preview(page, action, 2);
       const confirm = page.locator('[data-workflow-control="confirm"]');
-      assert.equal(await confirm.isDisabled(), action === 'accept');
-      if (action === 'accept') await page.locator('[data-review-role="workflow-reviewed"]').check();
+      assert.equal(await confirm.isDisabled(), approval);
+      if (approval) await page.locator('[data-review-role="workflow-reviewed"]').check();
+      if (action === 'teacher') {
+        assert.match(await page.locator('[data-review-role="workflow-targets"]').textContent(), /12점/);
+        assert.match(await page.locator('[data-review-role="workflow-targets"]').textContent(), /0점/);
+        assert.doesNotMatch(await page.locator('[data-review-role="workflow-attestation"]').textContent(), /AI 점수/);
+      }
       await page.locator('[data-review-role="workflow-select-all"]').uncheck();
       assert.equal(await confirm.isDisabled(), true);
       await page.locator('[data-review-role="workflow-select-all"]').check();
@@ -72,6 +78,11 @@ try {
       assert.equal(posts.length, 2);
       assert.ok(posts.every(post => post.key === post.body.command_id));
       assert.ok(posts.every(post => !/approve-feedback|student-notes.*approve|release/.test(post.path)));
+      if (action === 'teacher') {
+        assert.ok(posts.every(post => post.body.payload.decision === 'adjusted'));
+        assert.deepEqual(posts.map(post => post.body.payload.item_decisions[0].official_points), ['12.0000', '0.0000']);
+        assert.ok(posts.every(post => post.body.payload.item_decisions[0].reason_note === '답안을 확인함.'));
+      }
       assert.ok((await page.evaluate(() => window.__bulkReads)).some(path => path.includes('cursor=page2')));
       assert.deepEqual(errors, []);
       await page.close();

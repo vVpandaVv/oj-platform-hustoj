@@ -1034,9 +1034,9 @@ sudo chmod 2775 /home/judge/data/_capture
 
 # C. 선택
 
-## 18. Teaching Tools 공통 실시간 서버 (선택)
+## 18. 공통 실시간 서버 (선택)
 
-티칭툴의 판서와 수업 신호를 실시간으로 전달하는 서버를 설치합니다. Node.js 24 이상, Ubuntu/Debian, systemd, 기존 nginx 사이트가 필요합니다. Node가 없거나 오래되었으면 설치기가 24를 설치합니다.
+티칭툴의 판서·수업 신호 및 에듀게임 이진수·장치 카드 팀전을 전달하는 공용 서버입니다. 앱별 등록을 추가하므로 플러그인 간 설치 순서는 없습니다. Node.js 24 이상, Ubuntu/Debian, systemd, 기존 nginx 사이트가 필요합니다. Node가 없거나 오래되었으면 설치기가 24를 설치합니다.
 
 **변경 파일**
 
@@ -1081,6 +1081,29 @@ curl http://127.0.0.1:3210/classroom-live/healthz
 ```
 
 **확인**: 설정 화면의 **버전·연결 다시 확인**에서 앱 등록·비밀키 인증까지 성공하고, 설치된 티칭툴 모듈·공통 서버가 동봉 버전보다 낮지 않은지 확인합니다. 업데이트 필요 안내가 남으면 `--update` 명령을 실행합니다. 참여 코드로 학생을 연결해 교사 판서가 전달되는지도 확인합니다. 서버가 없거나 연결이 끊기면 REST 폴링으로 대체되며, 실시간 연결 중에도 저장본 복구 조회를 유지합니다.
+
+### 18-3. Edu Games 실시간 팀전 등록·업데이트
+
+필요 플러그인은 Edu Games뿐입니다. 사이트 관리자로 **학습 활동 → 교육 게임 → 실시간 팀전 WebSocket**에서 연결을 켜고 `wss://oj.school.kr/edu-games-live`를 저장합니다. 실제 사이트 도메인을 사용하고, HTTP 사이트는 `ws://`를 사용합니다. **공용 서버에 에듀게임 등록**의 설정 코드를 준비한 뒤 SSH에서 실행합니다.
+
+```bash
+sudo bash /home/judge/src/web/wp-content/plugins/edu-games/realtime-server/install.sh
+```
+
+설치기가 요청하면 `ojhub1...` 설정 코드를 숨김 입력으로 붙여 넣습니다. 다른 nginx 사이트 파일이면 명령 끝에 `/etc/nginx/sites-enabled/oj.school.kr`처럼 실제 파일 경로를 붙입니다. 기존 공용 서버가 있으면 다른 앱의 등록·인증키·데이터를 보존하면서 `edu-games`를 추가하고, 없으면 동일한 공용 서비스를 설치합니다.
+
+변경 대상은 `/opt/oj-realtime-hub/config.json`, `/opt/oj-realtime-hub/modules/edu-games/`, `/etc/nginx/snippets/oj-realtime-edu-games.conf`, `/etc/nginx/sites-enabled/default`(또는 인자로 전달한 사이트 파일)입니다. `/edu-games-live` 경로를 추가하고 공용 `oj-realtime-hub` 서비스를 재시작한 뒤 nginx를 다시 불러옵니다. 수업·경기가 없는 시간에 실행하세요. 기존 등록 후 주소·인증키 변경 없이 코드만 갱신할 때는 새 ZIP을 올리고 다음을 실행합니다.
+
+```bash
+sudo bash /home/judge/src/web/wp-content/plugins/edu-games/realtime-server/install.sh --update
+```
+
+```bash
+sudo systemctl status oj-realtime-hub --no-pager
+curl http://127.0.0.1:3210/edu-games-live/healthz
+```
+
+**확인**: 에듀게임의 **연결 상태 확인**이 앱·인증키까지 정상인지 확인하고 기존 게임 탭을 새로 고침합니다. 학생 두 계정으로 같은 팀 게임판을 열어 연결이 **WebSocket**으로 표시되고 한쪽 비트·담당 변경이 다른 쪽에 반영되는지 확인합니다. 다른 팀에는 상대 게임판을 표시하지 않습니다. 연결 실패 시 **REST**로 전환하며 경기·기록은 유지합니다. 실제 동시 접속 처리량은 운영 서버에서 별도 확인합니다.
 
 ### nginx 충돌 시
 
@@ -1227,3 +1250,281 @@ AI 설치기는 `oj-ai-dashboard`에 있으며 `ai`·`clamav`를 제공합니다
 설치·폴더 권한·서비스 재시작은 `install.sh`가 담당하고, `wp-config-helper.php`는 WordPress 설정 파일 검사·백업·수정만 담당합니다. 서버 작업에는 웹 PHP 버전과 같은 CLI를 사용하며 웹 PHP 버전을 자동 변경하지 않습니다.
 
 OJ 서버 설치는 상시 메뉴에 두지 않습니다. 필수 준비가 빠진 업로드된 플러그인에만 설치 안내를 표시합니다. 활성화 전에는 플러그인 목록의 안내를 사용하고, 활성화 후에는 OJ 콘솔 첫 화면의 안내에서 해당 플러그인 설정으로 이동합니다. 필수 저장소·확장을 준비하면 안내는 자동으로 사라집니다. 선택 기능 설치는 사용 여부를 확인한 뒤 진행합니다.
+
+## 22. 마이크로비트 실행기 — OJ Microbit
+
+**필요한 플러그인:** OJ Microbit. MakeCode 편집·HEX 다운로드·USB 업로드는 학생 브라우저에서 처리하며, 센서 입력 실험과 자동 채점을 사용하려면 이 실행기가 필요합니다. 아래는 WordPress와 같은 Ubuntu 24.04 amd64 서버에 설치하는 순서입니다. 실행 서비스는 loopback에만 연결하고 학생 코드는 네트워크 없는 일회성 Docker 작업에서 실행합니다. Docker daemon 접근 권한이 필요한 서비스이므로 중요한 다른 애플리케이션과 분리한 실행기 호스트 배치도 지원합니다. 별도 호스트 연결은 HTTPS와 WordPress 서버만 허용하는 방화벽을 사용합니다.
+
+**바꾸는 파일:** `/opt/oj-microbit/1.0.0-rc.9/runner/`, `/etc/oj-microbit/runner.env`, `/etc/systemd/system/oj-microbit-runner.service`. 업데이트 때는 새 버전 폴더에 배치하고 서비스의 `WorkingDirectory`와 이미지 이름을 바꿉니다. 기존 버전 폴더·인증키는 덮어쓰지 않습니다.
+
+### 22-0. 한 명령 자동 설치 — 권장
+
+WordPress에 현재 ZIP을 설치·활성화한 뒤 SSH에서 다음 명령을 실행합니다. Ubuntu 24.04 amd64·systemd·기존 PHP 8.3 CLI·같은 호스트의 단일 WordPress를 지원합니다. 웹 관리자에서 관리자 권한 명령을 실행하지 않으며 **설정 → OJ Microbit**에서도 사이트의 실제 경로에 맞는 명령을 복사할 수 있습니다.
+
+```bash
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh
+```
+
+동봉 `runner/install.sh`가 전용 Node 24.22.1 준비, Docker가 완전히 없을 때만 공식 저장소·필요 패키지 설치, 실행기 배치·이미지 빌드, 인증키 재사용/생성, 전용 systemd 등록·재시작, 실제 GPIO high/low 채점, WordPress 연결 설정까지 진행합니다. 실행기는 `127.0.0.1:3037`만 사용하며 외부 포트를 열지 않습니다. 기존 HUSTOJ Docker가 있으면 APT·저장소·Docker 시작/재시작 없이 재사용하고 필요한 curl·tar·xz·sha256sum·ss·CA가 없으면 중단합니다. 중단된 Docker와 충돌 패키지는 자동 수리·제거하지 않습니다. 사이트의 전역 Node는 교체하지 않습니다.
+
+포트가 다른 프로세스 소유이면 종료하지 않고 중단하므로 `--port 4040`처럼 실행기 포트만 바꿉니다. 활성화 직전에도 소유권을 재검사합니다. npm·이미지 빌드 전에 설치 경로·Docker 데이터 파일시스템의 여유가 각각 4GiB 이상이어야 합니다. 이미지 빌드·채점은 HUSTOJ와 CPU·메모리·디스크 I/O를 공유하므로 최초 빌드는 점검 시간에 진행하고 동봉 `docs/HUSTOJ-COEXISTENCE.md`의 전후 자원·병행 부하를 확인합니다. 유닛은 Docker를 암묵적으로 시작하는 Requires 의존성을 넣지 않습니다.
+
+사전 포트 검사에 쓰는 `ss`(iproute2)는 신규 Docker 호스트에도 먼저 필요합니다. 기본 Ubuntu 서버와 다른 최소 설치에서 없다면 설치기가 패키지 변경 전에 중단합니다. 아래 명령으로 확인하고, 없을 때만 별도 점검 시간에 준비합니다. 기존 Docker 서버의 다른 도구 누락도 자동 패키지 갱신으로 해결하지 않습니다.
+
+```bash
+command -v ss
+sudo apt install -y iproute2
+```
+
+WordPress가 다른 위치이면 `--wp-root`를 지정합니다. 소유 계정을 자동 판별하지 못하면 `--wp-user`도 지정합니다. WordPress 부트스트랩은 해당 일반 계정으로 실행하며 root로 실행하지 않습니다.
+
+```bash
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh --wp-root /home/judge/src/web --wp-user www-data
+```
+
+변경 계획만 확인하거나 설치 후 상태를 진단할 수 있습니다. `--dry-run`은 설치·네트워크·잠금 파일을 만들지 않고, `--check`는 설정을 바꾸거나 학습 코드를 실행하지 않습니다.
+
+```bash
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh --dry-run
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh --check
+```
+
+기존 인증키는 명령행에 넣지 않습니다. 환경 파일·서비스 파일·WordPress 옵션의 기존 값은 `/opt/oj-microbit/backups/` 아래 root 전용 디렉터리에 보존합니다. 같은 소스의 동일 버전은 재사용하고, 다른 소스가 같은 버전/이미지에 있으면 덮어쓰지 않습니다. 설치 중 관리자가 WordPress 설정을 바꾸면 그 변경을 덮어쓰지 않고 중단합니다. 일반 검증 실패는 이전 서비스 설정·활성 상태를 복구합니다. 설치 중 Docker가 중단되면 이를 다시 시작하지 않도록 이전 파일을 복원하고 마이크로비트 서비스만 중지하며 수동 복구를 안내합니다. 새로 준비한 OS 패키지·Node·이미지와 버전 폴더는 보존합니다. 강제 전원 종료나 DB 응답 유실 때는 백업과 현재 상태를 대조해야 합니다.
+
+**다시 불러오기:** 자동 설치기가 systemd 재시작과 연결 설정까지 처리합니다. **확인:** 마지막 GPIO 점검·WordPress 연결 성공 후 설정 화면의 준비 상태와 학생 채점을 확인합니다. 현재 개발 PC에서는 실제 Ubuntu/systemd/Docker 설치를 검증하지 않았으므로 운영 전 시험 서버에서 실행합니다. 상세 동작·오류 코드는 동봉 `docs/INSTALLER.md`를 참고합니다.
+
+아래 22-1~22-4는 수동 설치·검토용 대안입니다. 자동 설치와 같은 버전 디렉터리에 수동 파일을 섞지 않습니다.
+
+### 22-1. Docker와 Node.js 준비
+
+이미 운영 중인 Docker가 있으면 설치 부분을 건너뛰고 `sudo docker version`을 확인합니다. 새 서버는 [Docker 공식 Ubuntu 설치 안내](https://docs.docker.com/engine/install/ubuntu/)에 따라 다음 저장소를 추가합니다. 기존 Docker·containerd 패키지와 충돌하면 먼저 공식 안내의 충돌 패키지 항목을 확인하고 운영 중인 컨테이너의 점검 시간에 처리합니다.
+
+```bash
+sudo apt update
+sudo apt install -y ca-certificates curl xz-utils
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo vi /etc/apt/sources.list.d/docker.sources
+```
+
+새 파일에 다음 내용을 넣습니다. 기존 파일이면 `/URIs:`로 Docker 저장소를 찾아 같은 항목이 이미 있는지 확인합니다.
+
+```text
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: noble
+Components: stable
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/docker.asc
+```
+
+```bash
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable --now docker
+sudo docker version
+```
+
+Node.js는 실행기 전용 경로에 [고정 검증 버전 24.22.1](https://nodejs.org/en/blog/release/v24.22.1)을 설치합니다. 이는 최신 보안 버전이라는 뜻이 아니며, 운영 업데이트 시 현재 보안 패치와 실행기 검증을 함께 진행합니다. 사이트의 다른 Node 설치는 바꾸지 않습니다.
+
+```bash
+mkdir -p ~/oj-microbit-node-download
+cd ~/oj-microbit-node-download
+curl -fLO https://nodejs.org/dist/v24.22.1/node-v24.22.1-linux-x64.tar.xz
+curl -fLO https://nodejs.org/dist/v24.22.1/SHASUMS256.txt
+sha256sum --ignore-missing -c SHASUMS256.txt
+```
+
+다운로드한 tar 파일의 검사가 `OK`인 경우에만 다음 명령을 실행합니다.
+
+```bash
+sudo install -d -m 0755 /opt/oj-microbit-node-24.22.1
+sudo tar -xJf node-v24.22.1-linux-x64.tar.xz --strip-components=1 -C /opt/oj-microbit-node-24.22.1
+/opt/oj-microbit-node-24.22.1/bin/node --version
+```
+
+### 22-2. 실행기 배치와 이미지 빌드
+
+WordPress 관리자에서 OJ Microbit ZIP을 설치한 뒤 SSH에서 진행합니다. 아래 전용 계정이 이미 있으면 `useradd` 줄은 건너뜁니다.
+
+```bash
+getent passwd oj-microbit
+sudo useradd --system --user-group --home-dir /opt/oj-microbit --shell /usr/sbin/nologin oj-microbit
+sudo usermod -aG docker oj-microbit
+sudo install -d -m 0755 /opt/oj-microbit/1.0.0-rc.9
+sudo cp -a /home/judge/src/web/wp-content/plugins/oj-microbit/runner /opt/oj-microbit/1.0.0-rc.9/runner
+sudo chown -R root:root /opt/oj-microbit/1.0.0-rc.9
+cd /opt/oj-microbit/1.0.0-rc.9/runner
+sudo env PATH=/opt/oj-microbit-node-24.22.1/bin:/usr/bin:/bin /opt/oj-microbit-node-24.22.1/bin/npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+sudo chmod -R go-w /opt/oj-microbit/1.0.0-rc.9
+sudo docker build -t oj-microbit-worker:1.0.0-rc.9 .
+```
+
+플러그인 ZIP은 실행기 소스와 lockfile을 포함하며 node_modules는 포함하지 않습니다. 운영 서버의 코드 실행 모드는 `docker`를 유지합니다. 개발용 `process` 모드는 운영 요청에 사용하지 않습니다.
+
+### 22-3. 인증키와 systemd 서비스
+
+```bash
+sudo install -d -m 0750 -o root -g oj-microbit /etc/oj-microbit
+openssl rand -hex 32
+sudo vi /etc/oj-microbit/runner.env
+```
+
+새 파일에 아래 내용을 넣고 `인증키를_여기에_입력` 부분을 바로 앞에서 생성한 값으로 바꿉니다. 기존 설정을 갱신할 때는 `/MICROBIT_RUNNER_TOKEN`으로 찾아 의도한 키만 변경합니다. 실제 키를 채팅·이슈·소스 저장소에 붙이지 않습니다.
+
+```text
+MICROBIT_RUNNER_TOKEN=인증키를_여기에_입력
+MICROBIT_RUNNER_HOST=127.0.0.1
+MICROBIT_RUNNER_PORT=3037
+MICROBIT_RUNNER_MODE=docker
+MICROBIT_WORKER_IMAGE=oj-microbit-worker:1.0.0-rc.9
+NODE_ENV=production
+```
+
+```bash
+sudo chown root:oj-microbit /etc/oj-microbit/runner.env
+sudo chmod 0640 /etc/oj-microbit/runner.env
+sudo vi /etc/systemd/system/oj-microbit-runner.service
+```
+
+새 파일에 다음 내용을 넣습니다. 업데이트할 때는 `/WorkingDirectory`와 `/MICROBIT` 환경 파일 안의 이미지 버전을 함께 확인합니다.
+
+```ini
+[Unit]
+Description=OJ Microbit isolated grading service
+After=network.target docker.service
+
+[Service]
+Type=simple
+User=oj-microbit
+Group=oj-microbit
+SupplementaryGroups=docker
+WorkingDirectory=/opt/oj-microbit/1.0.0-rc.9/runner
+EnvironmentFile=/etc/oj-microbit/runner.env
+Environment=PATH=/opt/oj-microbit-node-24.22.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+Environment=DOCKER_HOST=unix:///var/run/docker.sock
+ExecStart=/opt/oj-microbit-node-24.22.1/bin/node src/server.mjs
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now oj-microbit-runner
+sudo systemctl status oj-microbit-runner --no-pager
+```
+
+**다시 불러오기:** 서비스 파일 또는 환경값을 바꿨으면 `sudo systemctl daemon-reload` 후 `sudo systemctl restart oj-microbit-runner`를 실행합니다. 실행기 이미지를 바꿀 때도 서비스를 재시작합니다. WordPress 설정만 변경한 경우 PHP-FPM 재시작은 필요하지 않습니다.
+
+### 22-4. WordPress 연결과 확인
+
+WordPress **설정 → OJ Microbit**에서 `http://127.0.0.1:3037`과 같은 인증키를 저장합니다. 실행 서비스 상태가 준비됨이고 `pxt-microbit/9.1.1;pxt-core/13.0.1;oj-gpio/3`이 표시되어야 합니다. 인증키를 브라우저 설정에 넣거나 실행기 포트를 인터넷에 공개하지 않습니다.
+
+같은 릴리스의 실행기와 이미지를 함께 갱신합니다. WordPress는 상태·채점 응답 모두 `sandbox=docker-no-network`인 경우만 수용하며 개발용 `test-process`는 거부합니다. 준비 상태는 이미지 존재를 5초간 캐시한 값으로 실제 컴파일·실행 성공을 대신하지 않습니다. 반드시 아래 예제 채점을 실제로 실행합니다. 작업 이미지 내부에도 40초 제한이 있고 원격 이미지 pull은 금지하지만, 서비스 강제 재시작·OOM·시간 초과 후 잔여 컨테이너가 없는지 운영 호스트에서 확인해야 합니다.
+
+**확인 항목:** 교사 계정으로 예제 과제를 공개하고 학생 계정에서 센서 실험·자동 채점을 실행합니다. Docker 작업이 네트워크 없음·읽기 전용·비루트·메모리/CPU/PID 제한으로 시작되는지, 시간 초과 시 회수되는지 확인합니다. 이미지를 삭제하거나 실행 서비스를 중지한 경우에는 성공 점수가 저장되지 않아야 합니다. 운영 데이터베이스에서 본인 프로젝트 복원과 교사별 관리 권한도 확인합니다.
+
+실제 기기는 플러그인의 `docs/VALIDATION.md`에 있는 목록대로 별도 확인합니다. HEX 드라이브 복사, USB 장치 선택·전송·취소·재연결, V1/V2 보드, 실제 핀 배선·PWM 동작이 대상입니다.
+
+서비스를 더 이상 사용하지 않으면 다음 명령으로 자동 시작과 실행을 중지합니다. WordPress 플러그인 삭제만으로 서비스와 이미지는 제거되지 않습니다. 학습 기록·인증키·기존 버전 폴더를 먼저 백업하고, 서버 파일과 이미지의 영구 삭제는 별도로 결정합니다.
+
+```bash
+sudo systemctl disable --now oj-microbit-runner
+```
+
+### 22-5. RC 시험 서버 검증 — 기능 동결 후
+
+**필요한 플러그인:** OJ Microbit 출시 후보와 OJ Platform. **실행 환경:** 운영과 분리한 Ubuntu 24.04 amd64 시험 서버/VM·호스트 직접 설치 WordPress·PHP 8.3/POSIX·Python 3·활성 rootful `docker.service`·기존 HUSTOJ입니다. **변경 범위:** 표식 파일, 웹 루트 밖 비공개 시험 설정·결과, 명시적으로 허용한 마이크로비트 설치/서비스와 자기 시험 자료입니다. HUSTOJ 컨테이너·daemon·DB를 변경하는 도구가 아닙니다.
+
+일반 기능은 0.5.1에서 동결했습니다. 코드 결함은 새 rc 번호로 수정하고 ZIP을 덮어쓰지 않습니다. 동봉 `docs/ACCEPTANCE-CHECKLIST.md`와 `docs/ACCEPTANCE-REPORT-TEMPLATE.md`에 각 근거를 채웁니다. `PENDING`, `SKIP`, `manual_approval_pending`과 명령 종료 코드 0은 정식 1.0 승인과 다릅니다.
+
+먼저 **20단계의 DB·웹·서버 설정 백업**과 별도 시험 환경의 복원 수단을 확보하고, 설치 ZIP과 동봉 체크섬을 같은 폴더에서 확인합니다. WordPress ZIP은 설치·활성화하되 실패 복원 시험 전에 기존 실행기를 유지합니다. 신규 서버에 기존 실행기가 없으면 롤백 시험은 별도 이전 버전 기준 환경에서 수행합니다.
+
+```bash
+sha256sum --check oj-microbit-1.0.0-rc.9.zip.sha256
+sudo install -d -m 0700 /root/oj-microbit-acceptance
+sudo install -d -m 0700 -o www-data -g www-data /var/lib/oj-microbit-acceptance
+sudo vi /home/judge/src/web/wp-content/oj-microbit-acceptance.json
+```
+
+파일에 다음 내용을 넣고 주소를 실제 시험 WordPress 주소로 바꿉니다. `https://microbit-trial.example.org/`는 예시입니다. 마지막 `/`까지 비공개 설정의 `baseUrl`과 같아야 하며 표식에는 비밀값을 넣지 않습니다.
+
+```json
+{"testServer":true,"marker":"oj-microbit-acceptance-v1","baseUrl":"https://microbit-trial.example.org/"}
+```
+
+```bash
+sudo chmod 0644 /home/judge/src/web/wp-content/oj-microbit-acceptance.json
+sudo docker ps --no-trunc --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}'
+```
+
+아래 `hustoj-judge`도 예시이므로 위에서 확인한 정확한 이름 또는 전체 64자리 ID로 바꿉니다. 여러 컨테이너면 `--hustoj-container`를 반복합니다(최대 8개). 보고서는 새 파일/디렉터리로 만들며 덮어쓰지 않습니다.
+
+```bash
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/host-check.sh snapshot --label before --wp-root /home/judge/src/web --hustoj-container hustoj-judge --output /root/oj-microbit-acceptance/before.json
+bash /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/install-cycle.sh plan
+```
+
+**다음 두 명령은 시험 서버의 마이크로비트 서비스·설치를 실제로 변경합니다.** `rollback`은 새 서비스 활성화 후 canary를 의도적으로 실패시켜 기존 env/unit·활성/자동 시작 상태·인증 health·WordPress 연결 복원을 확인합니다. 기존 실행기가 활성이고 파일이 root로 보호돼 있어야 합니다. `install`은 실제 설치·재실행·진단을 수행합니다. 각각 원래 설치기의 OS/Node/이미지 보존 정책을 따르며 DB/웹 백업 복구·전원 차단 복원을 대신하지 않습니다.
+
+```bash
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/install-cycle.sh rollback --wp-root /home/judge/src/web --wp-user www-data --output-dir /root/oj-microbit-acceptance/rollback-rc6 --allow-test-service-changes
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/install-cycle.sh install --wp-root /home/judge/src/web --wp-user www-data --output-dir /root/oj-microbit-acceptance/install-rc6 --allow-test-service-changes
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/host-check.sh snapshot --label after --wp-root /home/judge/src/web --hustoj-container hustoj-judge --output /root/oj-microbit-acceptance/after-install.json
+sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/host-check.sh compare --before /root/oj-microbit-acceptance/before.json --after /root/oj-microbit-acceptance/after-install.json --output /root/oj-microbit-acceptance/compare-install.json
+```
+
+**다시 불러오기:** 위 설치 시험이 마이크로비트 서비스를 재시작합니다. 읽기 전용 도구는 HUSTOJ·Docker·nginx·PHP-FPM을 재시작하지 않습니다. 재부팅·VM 복원·DB 복구는 별도 시험 복제 환경에서 수동 확인하며, 전체 VM 복원은 HUSTOJ도 되돌릴 수 있어 무변경 비교와 분리합니다.
+
+DB 도구는 일반 WordPress OS 계정으로 실행합니다. 도구의 쿼리는 읽기 전용이며 SHORTINIT을 사용합니다. 실제 SQL의 EXPLAIN과 쿼리/Repository p50/p95를 구분해 출력하고 자료 원문·DB 오류·키를 덤프하지 않습니다.
+
+```bash
+sudo -u www-data /usr/bin/php8.3 /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/wp-db-check.php --wp-root /home/judge/src/web --iterations 5
+```
+
+최종 측정은 실제 대표 교사·과제·학생·중간 커서·그룹·기존 수업 번호로 반복합니다. 아래 숫자는 예시입니다. --class-id는 수업 번호(기존 배포와 새 수업 목록), --assignment-id는 새 수업 배정 번호, --group-id는 기존 그룹 제한 배포 번호입니다. 실제 존재하는 범위를 지정하고 없는 범위 옵션은 뺍니다. 첫/중간/끝 페이지와 편중 자료를 기록하고, 빈 결과의 빠른 측정만으로 승인하지 않습니다. 새 파일 리다이렉션은 `set -C`로 덮어쓰기를 거부합니다.
+
+```bash
+sudo sh -c 'umask 077; set -C; runuser -u www-data -- /usr/bin/php8.3 /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/wp-db-check.php --wp-root /home/judge/src/web --owner-id 10 --exercise-id 25 --learner-id 20 --before-id 5000 --group-id 7 --class-id 9 --assignment-id 12 --iterations 5 > /root/oj-microbit-acceptance/db-middle.json'
+```
+
+REST 시험에는 서로 다른 비관리자 시험 계정 4명을 준비합니다. 교사 A/B는 실습 교사 권한, 학생 A/B는 실습 참여 권한만 부여합니다. 교사 A가 관리하는 실제 수업(class)에 학생 A만 참여시키고 학생 B는 그 수업 밖에 둡니다. 두 수업 격리를 확인하려면 교사 A가 관리하는 수업을 두 개 준비합니다. 그룹은 실제 학급 구성원이며 수업이 연결한 그룹의 참여 규칙은 플랫폼이 적용합니다. 각 계정 프로필에서 시험용 Application Password를 만들고 아래 비공개 파일에만 적습니다. root는 WordPress를 부트스트랩하지 않습니다.
+
+```bash
+sudo -u www-data sh -c 'umask 077; set -C; cat /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/config.example.json > /var/lib/oj-microbit-acceptance/accounts.json'
+sudo -u www-data vi /var/lib/oj-microbit-acceptance/accounts.json
+```
+
+`baseUrl`, 시험 사용자명·앱 암호, 실제 `classIds.teacherA/studentA/studentB`, HUSTOJ 읽기 주소를 채웁니다. 예시 암호는 실제 자격이 아닙니다. HUSTOJ probe는 같은 호스트의 `/` 또는 `status.php/problemset.php/index.php` GET만 허용하고 실제 제출은 하지 않습니다. 생성 도구는 표식·실제 siteurl·4명 권한을 확인하고 세션 없는 nonce를 새 0600 파일에 넣습니다. 이 과정은 명시적 허용 후 정상 WordPress를 부트스트랩하므로 일반 플러그인/사용자 hooks는 쓸 수 있습니다. 실제 앱 암호 인증은 REST 도구에서 검사합니다.
+
+```bash
+sudo -u www-data /usr/bin/php8.3 /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/wp-nonce.php --wp-root /home/judge/src/web --config /var/lib/oj-microbit-acceptance/accounts.json --output /var/lib/oj-microbit-acceptance/accounts-with-nonces.json --allow-wordpress-bootstrap
+sudo -u www-data /opt/oj-microbit-node-24.22.1/bin/node /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/rest-check.mjs --config /var/lib/oj-microbit-acceptance/accounts-with-nonces.json --report /var/lib/oj-microbit-acceptance/rest-readonly.json
+sudo -u www-data /opt/oj-microbit-node-24.22.1/bin/node /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/rest-check.mjs --config /var/lib/oj-microbit-acceptance/accounts-with-nonces.json --report /var/lib/oj-microbit-acceptance/rest-writes.json --allow-test-writes
+sudo -u www-data /opt/oj-microbit-node-24.22.1/bin/node /home/judge/src/web/wp-content/plugins/oj-microbit/scripts/acceptance/rest-check.mjs --config /var/lib/oj-microbit-acceptance/accounts-with-nonces.json --report /var/lib/oj-microbit-acceptance/rest-load.json --allow-test-writes --load
+```
+
+REST 기본 읽기 전용은 GET만 보내고 도구가 시험 자료를 바꾸지 않는다는 뜻이며 WordPress/캐시 hooks의 내부 쓰기까지 막는 것은 아닙니다. 쓰기 시험은 실행 중 만든 과제의 ID·소유자를 재확인한 자료만 수정·회수합니다. 부하는 기본 동시 2·초당 2·20건, 상한 전체 200요청·동시 4·초당 5·부하 60건·5분입니다. 네 계정의 제한된 시험이므로 예상 학급 전체 동시 세션 검증은 별도로 수행합니다.
+
+**스키마 5 복구:** 실행기 `install-cycle rollback`은 서비스·환경·연결의 실패 복원을 시험하며 WordPress 플러그인/DB를 이전 버전으로 되돌리지 않습니다. 별도 복제 환경에서 코드·DB를 같은 시점 백업으로 복원해 일반/수업 프로젝트·배정·점수 분리를 대조합니다. rc.2 이하 코드를 새 수업 기록이 있는 DB에 그대로 적용하면 수업 식별자 필터를 적용하지 못하므로 코드만 낮추지 않습니다.
+
+**HUSTOJ 병행 부하 확인:** 도구가 실행되는 동안 별도 시험 계정으로 HUSTOJ의 알려진 정답·오답·시간 초과 문제를 실제 제출하고 제출 번호·기대/실제 판정·대기/완료 시간·CPU/RAM/I/O·디스크를 기록합니다. HTTP GET 지연을 judged 처리량으로 승인하지 않습니다. 그룹 탈퇴·기존 수업 접근·공개 회수·실제 MySQL 동시 행 잠금·DB/웹 백업 복원·Docker OOM/시간 제한·잔여 작업·재부팅도 동봉 체크리스트에서 수동 근거를 채웁니다.
+
+REST cleanup은 **archive만** 수행합니다. 관련 프로젝트·시도는 보관되므로 보고서의 `cleanupPending/creationOutcomeUncertain`을 확인하고 시험 VM 복원 또는 시험 계정 개인정보 삭제의 배치 완료를 따로 검증합니다. 종료 후 시험용 Application Password를 폐기하고 표식·자격 파일만 개별 제거합니다. 비밀 없는 결과는 보관합니다.
+
+```bash
+sudo rm -- /home/judge/src/web/wp-content/oj-microbit-acceptance.json
+sudo -u www-data rm -- /var/lib/oj-microbit-acceptance/accounts.json /var/lib/oj-microbit-acceptance/accounts-with-nonces.json
+```
+
+**확인·판정:** 현장 보고서와 `docs/ACCEPTANCE-REPORT-TEMPLATE.md`를 대조해 필수 항목·지원 규모·검수자를 채웁니다. USB를 정식 지원에 포함하면 V1/V2·Chrome/Edge의 실제 전송/실행/취소/분리/재연결도 기록합니다. 현재 동봉된 로컬 모의 시험 결과는 실제 서버 승인을 대신하지 않습니다.

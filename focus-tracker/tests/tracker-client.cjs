@@ -173,6 +173,38 @@ test('site-asset JSON config starts tracking and legacy config remains supported
     }
 });
 
+test('signed non-problem pages preserve their issued context in the durable outbox across category navigation', async () => {
+    const storage = new Storage();
+    const gate = { active: true, activeUntilMs: 1100000, validUntilMs: 1100000, contextType: 'group', contextId: 'group:2' };
+    const first = runtime({ storage, gate, config: { problemId: null, page: { key: 'material:7', token: 'signed-material', category: 'material' } },
+        responder: () => Promise.resolve({ ok: false }) });
+    await first.settle(); first.dispatch('window', 'pagehide'); await first.settle();
+    assert.ok(first.pending().every(([, raw]) => JSON.parse(raw).page_context === 'signed-material'));
+    const second = runtime({ storage, gate, config: { problemId: null, page: { key: 'game:8', token: 'signed-game', category: 'game' } } });
+    await second.advance(16000);
+    const material = second.requests.filter(request => request.payload.page_context === 'signed-material');
+    const game = second.requests.filter(request => request.payload.page_context === 'signed-game');
+    assert.ok(material.length && game.length, 'navigation replays old evidence and starts the new signed page separately');
+    assert.ok(material.every(request => request.payload.problem_id === null && request.payload.context_id === 'group:2'));
+    assert.notEqual(material[0].payload.session_uid, game[0].payload.session_uid);
+    assert.ok(!JSON.stringify(second.requests).includes('material:7'), 'only the signed token, not a client classification claim, goes to ingest');
+});
+
+test('a renewed page token applies only to new events and never rewrites already queued evidence', async () => {
+    const gate = { active: true, activeUntilMs: 1100000, validUntilMs: 1100000, contextType: 'class', contextId: 'class:1' };
+    const app = runtime({ gate, config: { page: { key: 'problem:7', token: 'issued-token' } }, responder: () => Promise.resolve({ ok: false }) });
+    await app.settle();
+    app.setGate({ pageContextToken: 'renewed-token' });
+    app.dispatch('document', 'input', { target: control('source') });
+    const values = app.pending().map(([, raw]) => JSON.parse(raw));
+    assert.equal(values.find(value => value.event.seq === 1).page_context, 'issued-token');
+    assert.equal(values.find(value => value.event.seq === 2).page_context, 'renewed-token');
+    app.respondWith(() => Promise.resolve({ ok: true, json: async () => ({ acknowledged: true }) }));
+    await app.advance(16000);
+    assert.ok(app.requests.some(request => request.payload.page_context === 'issued-token' && request.payload.events.every(event => event.seq === 1)));
+    assert.ok(app.requests.some(request => request.payload.page_context === 'renewed-token' && request.payload.events.some(event => event.seq === 2)));
+});
+
 test('configured schedule gating fails closed before authorization and while the shared gate is missing', async () => {
     const missing = runtime({ config: { activityGate: { url: '/tracking/state' } } });
     missing.dispatch('document', 'input', { target: control('source') });
@@ -310,6 +342,18 @@ test('an initially hidden tab and blurred visible window retain correct state on
     await app.advance(8000);
     assert.ok(!app.events().some(event => event.type === 'focus'));
     assert.ok(!app.events().some(event => event.type === 'activity'));
+});
+
+test('focus inside an embedded learning frame remains active but leaving the browser window remains blurred', async () => {
+    const app = runtime(); await app.settle();
+    app.document.activeElement = { tagName: 'IFRAME' };
+    app.dispatch('window', 'blur'); await app.advance(22000);
+    assert.ok(!app.events().some(event => event.type === 'blur'));
+    assert.equal(app.events().find(event => event.type === 'heartbeat').meta.focused, true);
+    app.document.focused = false; app.dispatch('window', 'blur'); await app.advance(22000);
+    assert.ok(app.events().some(event => event.type === 'blur'));
+    assert.equal(app.events().filter(event => event.type === 'heartbeat').at(-1).meta.focused, false);
+    assert.ok(!app.events().some(event => event.type === 'activity'), 'frame focus is page state, not fabricated learning action');
 });
 
 test('BFCache restoration starts a fresh session and suspends timers during page absence', async () => {

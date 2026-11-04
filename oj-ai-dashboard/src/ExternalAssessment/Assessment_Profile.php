@@ -124,28 +124,130 @@ class Assessment_Profile {
 			$snapshot['rubric']
 		);
 		return array(
-			'schema'      => self::CONTRACT,
-			'assignment'  => array(
+			'schema'          => self::CONTRACT,
+			'assignment'      => array(
 				'title'        => $snapshot['assignment']['title'],
 				'instructions' => $snapshot['assignment']['instructions'],
 			),
-			'rubric'      => $rubric,
-			'evidence'    => array(
+			'rubric'          => $rubric,
+			'evidence'        => array(
 				'project'   => $snapshot['evidence']['project'] ?? array(),
 				'portfolio' => $snapshot['evidence']['portfolio'] ?? array(),
 			),
-			'limitations' => array_values( array_unique( array_merge( $snapshot['limitations'], array( '성능 지표는 학생 제출 기록이며 서버에서 재실행해 검증한 값이 아닙니다.' ) ) ) ),
+			'limitations'     => array_values( array_unique( array_merge( $snapshot['limitations'], array( '성능 지표는 학생 제출 기록이며 서버에서 재실행해 검증한 값이 아닙니다.' ) ) ) ),
+			'output_contract' => array( 'json_schema' => self::output_schema( $rubric ) ),
+		);
+	}
+
+	/**
+	 * Keep full evidence while explicitly simplifying native schema generation.
+	 * Ordinary structured requests retain their existing input and digest.
+	 *
+	 * @param array  $snapshot Authorized evidence.
+	 * @param string $output_mode Explicit teacher-selected output mode.
+	 * @return array
+	 * @throws InvalidArgumentException If the mode is unsupported for this profile.
+	 */
+	public static function request_input( array $snapshot, string $output_mode = 'structured' ): array {
+		if ( ! in_array( $output_mode, array( 'structured', 'json_compat' ), true ) || ( static::class !== self::class && 'structured' !== $output_mode ) ) {
+			throw new InvalidArgumentException( 'ml_ai_invalid_output_mode' );
+		}
+		$input = static::input( $snapshot );
+		if ( 'json_compat' === $output_mode ) {
+			// Keep the platform's whole-context guard with a basic object schema.
+			// Full rubric guidance and final output validation remain unchanged.
+			$input['output_schema_guidance']         = $input['output_contract']['json_schema'];
+			$input['output_contract']['json_schema'] = array( 'type' => 'object' );
+		}
+		return $input;
+	}
+
+	/**
+	 * Guide native structured generation; the output validator remains authoritative.
+	 * Each branch binds one current criterion and its score range. Null is an
+	 * intentional abstention, never a generated default or a zero score.
+	 *
+	 * @param array $rubric Server-owned rubric.
+	 * @return array
+	 */
+	private static function output_schema( array $rubric ): array {
+		$items = array_map(
+			static fn( array $criterion ): array => array(
+				'type'                 => 'object',
+				'additionalProperties' => false,
+				'required'             => array( 'id', 'score', 'feedback', 'evidence' ),
+				'properties'           => array(
+					'id'       => array(
+						'type' => 'string',
+						'enum' => array( $criterion['id'] ),
+					),
+					'score'    => array(
+						'anyOf' => array(
+							array(
+								'type'    => 'number',
+								'minimum' => 0,
+								'maximum' => $criterion['max_score'],
+							),
+							array( 'type' => 'null' ),
+						),
+					),
+					'feedback' => array(
+						'type'      => 'string',
+						'minLength' => 1,
+						'maxLength' => 500,
+					),
+					'evidence' => array(
+						'type'      => 'string',
+						'minLength' => 1,
+						'maxLength' => 1000,
+					),
+				),
+			),
+			$rubric
+		);
+		return array(
+			'type'                 => 'object',
+			'additionalProperties' => false,
+			'required'             => array( 'schema', 'needs_review', 'criteria', 'summary', 'limitations' ),
+			'properties'           => array(
+				'schema'       => array(
+					'type' => 'string',
+					'enum' => array( self::CONTRACT ),
+				),
+				'needs_review' => array( 'type' => 'boolean' ),
+				'criteria'     => array(
+					'type'     => 'array',
+					'minItems' => count( $rubric ),
+					'maxItems' => count( $rubric ),
+					'items'    => array( 'anyOf' => $items ),
+				),
+				'summary'      => array(
+					'type'      => 'string',
+					'minLength' => 1,
+					'maxLength' => 1200,
+				),
+				'limitations'  => array(
+					'type'     => 'array',
+					'maxItems' => 20,
+					'items'    => array(
+						'type'      => 'string',
+						'minLength' => 1,
+						'maxLength' => 250,
+					),
+				),
+			),
 		);
 	}
 
 	/**
 	 * Bind the original artifact and all educational inputs to one digest.
 	 *
-	 * @param array $snapshot snapshot.
+	 * @param array  $snapshot snapshot.
+	 * @param string $output_mode Explicit output mode bound to this digest.
 	 * @return string
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
-	public static function digest( array $snapshot ): string {
+	public static function digest( array $snapshot, string $output_mode = 'structured' ): string {
 		return hash(
 			'sha256',
 			self::encode(
@@ -153,7 +255,7 @@ class Assessment_Profile {
 					'prompt_sha256' => static::PROMPT_SHA256,
 					'source_id'     => $snapshot['source_id'],
 					'source_sha256' => $snapshot['source_sha256'],
-					'input'         => static::input( $snapshot ),
+					'input'         => static::request_input( $snapshot, $output_mode ),
 				)
 			)
 		);

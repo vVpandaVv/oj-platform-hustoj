@@ -1,0 +1,17 @@
+{
+  "name": "oj-microbit-runner",
+  "version": "1.0.0-rc.9",
+  "private": true,
+  "description": "Isolated PXT micro:bit GPIO grading service",
+  "type": "module",
+  "engines": { "node": ">=22 <25" },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:integration": "node --test tests/pxt.integration.test.mjs"
+  },
+  "dependencies": {
+    "pxt-microbit": "9.1.1",
+    "pxt-core": "13.0.1"
+  }
+}

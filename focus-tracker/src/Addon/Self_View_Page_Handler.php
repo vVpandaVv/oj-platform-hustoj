@@ -27,7 +27,7 @@ final class Self_View_Page_Handler implements AddonPageHandlerV1 {
                 <div>
                     <p class="ojp-eyebrow"><?php esc_html_e('수업', 'focus-tracker'); ?></p>
                     <h1><?php esc_html_e('내 집중도 요약', 'focus-tracker'); ?></h1>
-                    <p><?php esc_html_e('최근 활동의 화면 활성·복귀·입력과 제출 기록입니다. 읽기·생각하기·학습의 질이나 실제 집중을 직접 측정하지 않습니다.', 'focus-tracker'); ?></p>
+                    <p><?php esc_html_e('최근 활동과 문제·자료·실습·게임·토론 등 페이지 범주별 활성·열람 기록입니다. 범주 이동만으로 감점하지 않으며 읽기·생각하기·학습의 질이나 실제 집중을 직접 측정하지 않습니다.', 'focus-tracker'); ?></p>
                 </div>
             </header>
             <div data-field="summary" aria-live="polite">

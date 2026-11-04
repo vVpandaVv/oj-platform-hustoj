@@ -1,0 +1,88 @@
+{
+  "candidateVersion": "1.0.0-rc.3",
+  "date": "2026-11-03",
+  "ok": true,
+  "checks": [
+    "Public library independent of lesson membership and public explanation before editor",
+    "Global temporary save and submission capture the live iframe source without a lesson result",
+    "Unsaved cancellation keeps the exact lesson context and source",
+    "One public problem has independent general practice and two lesson projects and results",
+    "Lesson submission history reload retains exact assignment attribution",
+    "Teacher latest-result roster distinguishes score zero, compile error and never submitted",
+    "390px lesson results keep horizontal scrolling within table wrappers",
+    "Roster paging retains opaque cursor and context and roster revisions",
+    "Teacher applies another author public problem without changing the source or public accessibility",
+    "Unassigned lesson retains read-only submission history without creating general practice",
+    "Revoked lesson context never falls back to a general project or grading request"
+  ],
+  "pageErrors": 0,
+  "projectScopes": [
+    "exercises/3",
+    "assignments/11",
+    "assignments/12"
+  ],
+  "submissionScopes": [
+    "exercises/3",
+    "assignments/11",
+    "assignments/12"
+  ],
+  "environment": {
+    "node": "v24.22.1",
+    "browser": "Chromium1223 headless Playwright",
+    "server": "127.0.0.1 local fixture",
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualDatabase": false,
+    "actualRunner": false,
+    "actualHardware": false
+  },
+  "screenshotScope": "Product CSS with a minimal fixture shell; production OJ Platform theme is not reproduced. Screenshots were refreshed after strict roster protocol and submitted-version label checks.",
+  "screenshots": [
+    "lesson-results-1.0.0-rc.3.png",
+    "lesson-results-mobile-1.0.0-rc.3.png"
+  ],
+  "limitations": "Only loopback controlled REST and iframe protocol fixtures were used. This is not certification of real WordPress authentication, actual class/group membership, MySQL, Docker, PXT grading, HUSTOJ coexistence or USB. PXT regression runs separately.",
+  "frontendChecks": 77,
+  "followupChecks": [
+    "Continuation -> first roster page omits continuation-only rosterRevision and preserves contextRevision",
+    "First-page result detail -> roster return follows the same strict public API contract"
+  ],
+  "followupVerification": {
+    "date": "2026-11-03",
+    "ok": true,
+    "pageErrors": 0,
+    "strictProtocol": "Public AddonAssignmentRosterQueryV1 requires rosterRevision only for a nonempty continuation cursor; first-page returns retain contextRevision and obtain a fresh roster snapshot",
+    "queries": [
+      {
+        "limit": "20"
+      },
+      {
+        "limit": "20",
+        "cursor": "opaque/a+b=",
+        "contextRevision": "class-1",
+        "rosterRevision": "roster-1"
+      },
+      {
+        "limit": "20",
+        "contextRevision": "class-1"
+      },
+      {
+        "limit": "20",
+        "contextRevision": "class-1"
+      }
+    ]
+  },
+  "totalVerifiedFlows": 13,
+  "verificationRuns": [
+    {
+      "kind": "full_workflow_before_protocol_followup",
+      "flows": 11,
+      "ok": true
+    },
+    {
+      "kind": "targeted_after_protocol_and_version_label_fix",
+      "flows": 2,
+      "ok": true
+    }
+  ]
+}

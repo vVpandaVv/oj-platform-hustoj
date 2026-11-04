@@ -153,7 +153,7 @@ final class Release_Acceptance_Fixture {
 			return $cases + array(
 				'header-version'   => 'Plugin release marker is missing:',
 				'constant-version' => 'Plugin release marker is missing:',
-				'schema-version'   => 'The target schema is not 1.0.4.',
+				'schema-version'   => 'The target schema is not 1.0.6.',
 			);
 		}
 		throw new RuntimeException( 'Unknown release contract.' );
@@ -199,7 +199,7 @@ final class Release_Acceptance_Fixture {
 			$this->write( $path, $this->baseline[ $path ] . "\n# AllowDirty\n" );
 		} elseif ( 'schema-version' === $scenario ) {
 			$path = 'src/Database/Foundation/Schema_Catalog.php';
-			$this->write( $path, str_replace( "SCHEMA_VERSION = '1.0.4'", "SCHEMA_VERSION = '0.0.0'", $this->baseline[ $path ] ) );
+			$this->write( $path, str_replace( "SCHEMA_VERSION = '1.0.6'", "SCHEMA_VERSION = '0.0.0'", $this->baseline[ $path ] ) );
 		} elseif ( 'header-version' === $scenario || 'constant-version' === $scenario ) {
 			$needle      = 'header-version' === $scenario ? 'Version: ' . $this->version : "OJ_AI_DASHBOARD_VERSION', '" . $this->version . "'";
 			$replacement = 'header-version' === $scenario ? $needle . '-invalid' : "OJ_AI_DASHBOARD_VERSION', '" . $this->version . "-invalid'";

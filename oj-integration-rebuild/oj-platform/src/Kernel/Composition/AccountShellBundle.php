@@ -195,6 +195,11 @@ final class AccountShellBundle
         return $this->typedService(SystemSettingsService::class);
     }
 
+    public function consoleMenuVisibility(): \CodingPanda\OjPlatform\Modules\AdminConsole\Contract\ConsoleMenuVisibility
+    {
+        return $this->typedService(\CodingPanda\OjPlatform\Modules\AdminConsole\Navigation\ConsoleMenuResolver::class);
+    }
+
     public function consolePages(): ConsolePageResponder
     {
         return $this->typedService(ConsolePageResponder::class);

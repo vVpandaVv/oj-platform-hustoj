@@ -268,7 +268,7 @@ final class Submission_Evaluation_Review_Rest_Controller {
 		if (
 			! is_string( $command_id ) || ! is_string( $result_id ) || ! is_string( $result_hash )
 			|| ! is_int( $review_no ) || $review_no < 0
-			|| ! is_string( $review_decision ) || ! in_array( $review_decision, array( 'accepted', 'adjusted', 'rejected', 'withdrawn' ), true )
+			|| ! is_string( $review_decision ) || ! in_array( $review_decision, array( 'accepted', 'adjusted', 'draft', 'rejected', 'withdrawn' ), true )
 			|| ! is_array( $items ) || ! array_is_list( $items ) || count( $items ) > Submission_Score_Input_Builder::MAXIMUM_BINDINGS
 			|| ( null !== $reason && ! is_string( $reason ) )
 			|| ( null === $official_id ) !== ( null === $official_hash )

@@ -112,7 +112,7 @@ final class WordPress_Worksheet_Publication_Configuration implements \OJAI\Dashb
 					'criteria_schema, criteria_version, criteria_json, criteria_hash, total_points'
 				);
 				$criteria   = $this->payload( $rubric_row, 'criteria', 'oj_ai.student_submission_rubric' );
-				$this->exact_keys( $criteria, array( 'criteria' ) );
+				$this->exact_keys( $criteria, array_key_exists( 'exception_scores', $criteria ) ? array( 'criteria', 'exception_scores' ) : array( 'criteria' ) );
 				if ( ! is_array( $criteria['criteria'] ?? null ) || ! array_is_list( $criteria['criteria'] ) || ! is_string( $rubric_row['total_points'] ?? null ) ) {
 					throw Worksheet_Failure::publication_configuration_unavailable();
 				}
@@ -125,7 +125,13 @@ final class WordPress_Worksheet_Publication_Configuration implements \OJAI\Dashb
 					'content_hash' => $project['rubric_content_hash'],
 					'total_points' => $project['configuration']['total_points'],
 				);
-				$criteria   = array( 'criteria' => $project['configuration']['criteria'] );
+				$criteria   = array_intersect_key(
+					$project['configuration'],
+					array(
+						'criteria'         => true,
+						'exception_scores' => true,
+					)
+				);
 			}
 			$review_row = $this->one_by_id(
 				self::TABLE_REVIEWS,
@@ -170,7 +176,7 @@ final class WordPress_Worksheet_Publication_Configuration implements \OJAI\Dashb
 					'criteria'     => $criteria['criteria'],
 					'revision_id'  => $guard['rubric_revision_id'],
 					'total_points' => (string) $rubric_row['total_points'],
-				),
+				) + array_intersect_key( $criteria, array( 'exception_scores' => true ) ),
 			);
 		} catch ( Worksheet_Failure $failure ) {
 			throw $failure;

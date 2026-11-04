@@ -111,11 +111,13 @@ final class WordPress_Assignment_Evaluation_Batch_Source implements Assignment_E
 			. 's.official_revision_public_id, s.submitted_at_utc, r.content_hash AS official_revision_hash, '
 			. 'EXISTS (SELECT 1 FROM ' . self::TABLE_EVALUATIONS . ' e '
 			. 'WHERE e.submission_revision_public_id = s.official_revision_public_id '
-			. 'AND e.submission_revision_hash = r.content_hash) AS has_evaluation, '
+			. 'AND e.submission_revision_hash = r.content_hash '
+			. "AND (s.official_review_public_id IS NOT NULL OR NOT EXISTS (SELECT 1 FROM oj_ai_evaluation_runs manual WHERE manual.subject_type = 'submission_evaluation' AND manual.evaluation_public_id = e.public_id AND manual.operation_key = 'manual_prepare'))) AS has_evaluation, "
 			. '(SELECT e.public_id FROM ' . self::TABLE_EVALUATIONS . ' e '
 			. "WHERE e.submission_revision_public_id = s.official_revision_public_id AND e.submission_revision_hash = r.content_hash AND e.state = 'failed' "
 			. 'AND NOT EXISTS (SELECT 1 FROM ' . self::TABLE_EVALUATIONS . ' protected '
-			. "WHERE protected.submission_revision_public_id = s.official_revision_public_id AND protected.submission_revision_hash = r.content_hash AND protected.state <> 'failed') "
+			. "WHERE protected.submission_revision_public_id = s.official_revision_public_id AND protected.submission_revision_hash = r.content_hash AND protected.state <> 'failed' "
+			. "AND (s.official_review_public_id IS NOT NULL OR NOT EXISTS (SELECT 1 FROM oj_ai_evaluation_runs protected_run WHERE protected_run.subject_type = 'submission_evaluation' AND protected_run.evaluation_public_id = protected.public_id AND protected_run.operation_key = 'manual_prepare'))) "
 			. 'ORDER BY e.id DESC LIMIT 1) AS failed_evaluation_id '
 			. 'FROM ' . self::TABLE_TARGETS . ' t '
 			. 'LEFT JOIN ' . self::TABLE_SUBMISSIONS . ' s ON s.assignment_id = t.assignment_id AND s.learner_user_id = t.learner_user_id '

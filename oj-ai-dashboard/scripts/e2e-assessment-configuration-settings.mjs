@@ -200,8 +200,12 @@ async function inspectPage(browser, viewport, label) {
   await page.getByRole('button', { name: '평가 항목 추가', exact: true }).click();
   criteria = await page.locator('[data-config-item="criterion"]').count();
   if (criteria !== 2) errors.push(`${label}: adding a student criterion failed`);
+  await page.locator('[data-exception-score="not_submitted"]').fill('0');
+  await page.locator('[data-exception-score="long_absence"]').fill('5');
   await page.getByRole('button', { name: '새 초안 저장', exact: true }).click();
   await page.waitForFunction(() => document.querySelector('[data-config-role="rubric-revisions"]')?.textContent.includes('2차'));
+  const exceptions = await page.evaluate(() => [...window.__settingsRequests].reverse().find(entry => entry.method === 'POST' && entry.url.endsWith('/settings/rubrics/revisions'))?.body?.payload?.value?.exception_scores);
+  if (exceptions?.not_submitted !== '0' || exceptions?.long_absence !== '5') errors.push(`${label}: shared rubric exception scores were not saved`);
   await page.getByRole('button', { name: '사용하기', exact: true }).click();
   await page.waitForFunction(() => document.querySelector('[data-config-role="rubric-summary"]')?.textContent === '사용 중 · 2차');
 

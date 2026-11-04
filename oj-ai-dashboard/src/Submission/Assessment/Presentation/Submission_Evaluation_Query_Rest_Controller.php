@@ -22,7 +22,9 @@ use OJAI\Dashboard\Security\Policy\Context_Scope;
 use OJAI\Dashboard\Security\Policy\Object_Scope;
 use OJAI\Dashboard\Submission\Assignment\Application\Assignment_Failure;
 use OJAI\Dashboard\Submission\Assessment\Application\Read_Submission_Evaluations;
+use OJAI\Dashboard\Submission\Assessment\Application\Read_Submission_Rubric;
 use OJAI\Dashboard\Submission\Assessment\Application\Read_Submission_Evaluation_Roster;
+use OJAI\Dashboard\Submission\Assessment\Application\Manage_Non_Submission_Grade;
 use OJAI\Dashboard\Submission\Assessment\Application\Submission_Evaluation_Failure;
 use OJAI\Dashboard\Submission\Teacher\Application\Read_Teacher_Submissions;
 use OJAI\Dashboard\Submission\Teacher\Infrastructure\WordPress_Teacher_Learner_Labels;
@@ -66,6 +68,8 @@ final class Submission_Evaluation_Query_Rest_Controller {
 	 * @param Correlation_Id_Factory                 $correlations Correlations.
 	 * @param Read_Submission_Evaluation_Roster|null $roster Complete student status reader.
 	 * @param WordPress_Teacher_Learner_Labels|null  $learner_labels Teacher-only account labels.
+	 * @param Manage_Non_Submission_Grade|null       $grades Teacher-only grade commands.
+	 * @param Read_Submission_Rubric|null            $rubrics Read-only rubric preview.
 	 */
 	public function __construct(
 		private Rest_Permission_Handoff $permissions,
@@ -74,7 +78,9 @@ final class Submission_Evaluation_Query_Rest_Controller {
 		private Rest_Envelope_Factory $envelopes,
 		private Correlation_Id_Factory $correlations,
 		private ?Read_Submission_Evaluation_Roster $roster = null,
-		private ?WordPress_Teacher_Learner_Labels $learner_labels = null
+		private ?WordPress_Teacher_Learner_Labels $learner_labels = null,
+		private ?Manage_Non_Submission_Grade $grades = null,
+		private ?Read_Submission_Rubric $rubrics = null
 	) {
 	}
 
@@ -92,6 +98,24 @@ final class Submission_Evaluation_Query_Rest_Controller {
 			throw new LogicException( 'WordPress REST route registration is unavailable.' );
 		}
 		$this->registered = true;
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/assignment-exception-scores',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'save_policy' ),
+				'permission_callback' => array( $this, 'permissions_grade' ),
+			)
+		);
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/assignment-target-grades',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'save_grade' ),
+				'permission_callback' => array( $this, 'permissions_grade' ),
+			)
+		);
 		register_rest_route(
 			self::REST_NAMESPACE,
 			self::ROUTE_ROSTER,
@@ -137,6 +161,97 @@ final class Submission_Evaluation_Query_Rest_Controller {
 				'permission_callback' => array( $this, 'permissions_candidate' ),
 			)
 		);
+	}
+
+	/**
+	 * Authorize a teacher grade without requiring a student submission.
+	 *
+	 * @param object $request REST request.
+	 * @return true|\WP_Error
+	 */
+	public function permissions_grade( object $request ) {
+		try {
+			$query = $this->roster_query( $request );
+			return $this->permissions->check(
+				$request,
+				Access_Policy_Request::SHELL_CONSOLE,
+				'assignment.target.grade',
+				array( Addon_Capabilities::REVIEW_ASSESSMENTS ),
+				$this->context_scope( $query ),
+				new Object_Scope( Object_Scope::TYPE_ASSIGNMENT, $query['assignment_id'], 'evaluate_submissions' )
+			);
+		} catch ( Throwable ) {
+			return $this->problem( 422, $this->correlations->create() );
+		}
+	}
+
+	/**
+	 * Save a teacher decision in the exact granted context.
+	 *
+	 * @param object $request REST request.
+	 * @return \WP_REST_Response|\WP_Error
+	 * @throws Throwable Propagates unavailable permission infrastructure.
+	 */
+	public function save_grade( object $request ) {
+		return $this->save_decision( $request, false );
+	}
+
+	/**
+	 * Save assignment exception settings without grading any learner.
+	 *
+	 * @param object $request Authorized REST request.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function save_policy( object $request ) {
+		return $this->save_decision( $request, true );
+	}
+
+	/**
+	 * Apply the shared teacher, context and idempotency guards to grading commands.
+	 *
+	 * @param object $request Authorized REST request.
+	 * @param bool   $policy Save settings instead of a student score.
+	 * @return \WP_REST_Response|\WP_Error
+	 * @throws Throwable Propagates unavailable permission infrastructure.
+	 */
+	private function save_decision( object $request, bool $policy ) {
+		$grant = $this->permissions->take( $request );
+		if ( null === $grant || null === $this->grades ) {
+			return $this->problem( 503, $this->correlations->create() );
+		}
+		$authorization = $grant->authorization();
+		$correlation   = $authorization->correlation_id();
+		$idempotency   = $authorization->idempotency_key();
+		$object        = $authorization->policy_decision()->object();
+		if ( null === $idempotency || null === $object || ! $object->is_allowed() ) {
+			return $this->problem( 503, $correlation );
+		}
+		try {
+			$query = $this->roster_query( $request );
+			$this->assert_granted_context( $authorization->policy_decision()->context(), $query );
+			$input = method_exists( $request, 'get_json_params' ) ? $request->get_json_params() : null;
+			if ( ! is_array( $input ) || array_is_list( $input ) ) {
+				throw new InvalidArgumentException( 'Grade body is invalid.' );
+			}
+			$result = $policy
+				? $this->grades->configure( $grant->metadata()->actor_user_id(), $query, $input, $idempotency->fingerprint(), $correlation )
+				: $this->grades->execute( $grant->metadata()->actor_user_id(), $query, $input, $idempotency->fingerprint(), $correlation );
+			return $this->envelopes->success(
+				$result,
+				$correlation,
+				200,
+				array(
+					'student_visible'   => false,
+					'idempotent_replay' => $result['replayed'],
+				)
+			);
+		} catch ( InvalidArgumentException ) {
+			return $this->envelopes->problem( Rest_Problem::operation( 422, $policy ? 'exception_policy_invalid' : 'non_submission_grade_invalid', $policy ? '배점 이내의 점수와 변경 사유를 입력해 주세요.' : '점수 범위와 입력 내용을 확인해 주세요.', $correlation ) );
+		} catch ( Assignment_Failure ) {
+			return $this->envelopes->problem( Rest_Problem::operation( 409, $policy ? 'exception_policy_conflict' : 'non_submission_grade_conflict', '배포·제출 또는 점수 설정이 변경되었습니다. 새로고침 후 확인해 주세요.', $correlation ) );
+		} catch ( Throwable ) {
+			return $this->problem( 503, $correlation );
+		}
 	}
 
 	/**
@@ -499,8 +614,12 @@ final class Submission_Evaluation_Query_Rest_Controller {
 			if ( null !== $this->learner_labels ) {
 				$result['submission'] = $this->learner_labels->present( $result['submission'] );
 			}
+			$preview = null !== $this->rubrics && ! empty( $result['submission']['official_revision'] )
+				? $this->rubrics->read( $result['submission'], $query ) : null;
 		} catch ( InvalidArgumentException ) {
 			return $this->problem( 422, $correlation_id );
+		} catch ( Submission_Evaluation_Failure $failure ) {
+			return $this->evaluation_problem( $failure, $correlation_id );
 		} catch ( Assignment_Failure $failure ) {
 			return $this->assignment_problem( $failure, $correlation_id );
 		} catch ( Throwable ) {
@@ -508,7 +627,10 @@ final class Submission_Evaluation_Query_Rest_Controller {
 		}
 
 		return $this->envelopes->success(
-			array( 'submission' => $result['submission'] ),
+			array(
+				'submission'     => $result['submission'],
+				'rubric_preview' => $preview,
+			),
 			$correlation_id,
 			200,
 			array(

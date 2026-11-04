@@ -1,6 +1,6 @@
 # 화면·JavaScript·REST API
 
-기준: **OJ Platform 2.5.4 / Addon API 1.8.0**, WordPress 6.6 이상, PHP 8.3 이상. 등록과 Runtime 사용법은 [PHP API](php-api.md), 실행 가능한 전체 코드는 [시작 예제](examples/oj-addon-starter/)를 참고합니다.
+기준: **OJ Platform 2.5.9 / Addon API 1.9.0**, WordPress 6.6 이상, PHP 8.3 이상. 등록과 Runtime 사용법은 [PHP API](php-api.md), 실행 가능한 전체 코드는 [시작 예제](examples/oj-addon-starter/)를 참고합니다.
 
 ## 1. 화면을 플랫폼 셸에 연결하기
 
@@ -30,6 +30,24 @@ return AddonPageResponseV1::page(
 `layout`의 기본값은 `standard`, 다크 모드 지원 기본값은 `false`입니다. `wide`는 콘텐츠 폭을 넓히고 `immersive`는 사이드바를 접습니다. 화면 처리 실패를 표현할 때는 `AddonPageResponseV1::unavailable($message, $code)`를 반환하면 503 화면이 표시됩니다. 반환 HTML은 애드온이 직접 escaping합니다.
 
 원문: [페이지 요청](../oj-integration-rebuild/oj-platform/src/AddonApi/V1/AddonPageRequestV1.php), [페이지 응답](../oj-integration-rebuild/oj-platform/src/AddonApi/V1/AddonPageResponseV1.php), [로컬 내비 정의](../oj-integration-rebuild/oj-platform/src/AddonApi/V1/AddonConsoleLocalNavItemV1.php).
+
+### 기본 문제·수업 메뉴와 연결 (API 1.9)
+
+`AddonPublicPageDefinitionV1`과 `AddonConsolePageDefinitionV1`은 선택적 마지막 인자 `navigationMenuKey: 'problems.index'` 또는 `'classes.index'`로 상세 화면의 상위 메뉴를 선택합니다. 기본값은 `null`입니다. `AddonConsoleMenuDefinitionV1`의 선택적 마지막 인자 `fallbackForNativeMenu`에 같은 값을 주면, 해당 기본 메뉴에 접근 가능한 사용자는 기본 메뉴를 사용하고 애드온 전용 권한을 가진 사용자는 대체 메뉴를 사용합니다.
+
+페이지 처리기는 `$request->navigationUrls()`로 현재 사용자가 열 수 있는 같은 애드온 페이지와 기본 문제·수업 메뉴의 URL 맵을 받습니다. URL은 `/school` 같은 WordPress 설치 경로까지 반영한 내부 절대 경로입니다. 필요한 key가 있는지 확인하고, 서버 HTML에서는 `esc_url()`로 출력합니다.
+
+```php
+$navigationUrls = $request->navigationUrls();
+if (isset($navigationUrls['problems.index'])) {
+    $html .= '<a class="ojp-button" href="'
+        . esc_url($navigationUrls['problems.index']) . '">문제 목록</a>';
+}
+```
+
+브라우저에서도 이 맵을 JSON config로 내려받아 URL을 그대로 사용합니다. 자료 ID가 들어가는 목록 링크는 PHP의 `AddonNativeLearningLinkV1`에 route key·매개변수를 지정하면 호스트가 생성합니다. 메뉴 선택은 화면의 위치를 정하며, 실제 데이터·REST·상세 페이지는 기존 권한 검사를 수행합니다.
+
+기본 문제 목록·수업 과제에 자신의 자료를 표시하려면 PHP의 `nativeLearningProvider()`를 등록합니다. 제공자는 제목·유형·상태와 같은 표시용 값, 자기 애드온의 등록 페이지 링크를 반환하고 호스트가 공통 목록을 렌더링합니다. [PHP API의 제공자 형식](php-api.md)과 [API 1.9 계약](../oj-integration-rebuild/oj-platform/docs/addon-api-1.9.md)을 참고하세요.
 
 ## 2. CSS·JavaScript 파일 선언
 

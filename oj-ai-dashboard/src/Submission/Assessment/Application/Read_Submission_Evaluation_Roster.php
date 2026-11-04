@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OJAI\Dashboard\Submission\Assessment\Application;
 
 use RuntimeException;
+use OJAI\Dashboard\Submission\Assessment\Port\Non_Submission_Grade_Repository_Port_Interface;
 use OJAI\Dashboard\Submission\Assignment\Port\Assignment_Roster_Port_Interface;
 use OJAI\Dashboard\Submission\Assignment\Port\Learner_Display_Snapshot_Port_Interface;
 use OJAI\Dashboard\Submission\Teacher\Application\Read_Teacher_Submissions;
@@ -25,14 +26,16 @@ final class Read_Submission_Evaluation_Roster {
 	/**
 	 * Initialize authorized read sources.
 	 *
-	 * @param Read_Teacher_Submissions                $submissions Submission status reader.
-	 * @param Assignment_Roster_Port_Interface        $roster Authorized platform roster.
-	 * @param Learner_Display_Snapshot_Port_Interface $displays Learner display names.
+	 * @param Read_Teacher_Submissions                            $submissions Submission status reader.
+	 * @param Assignment_Roster_Port_Interface                    $roster Authorized platform roster.
+	 * @param Learner_Display_Snapshot_Port_Interface             $displays Learner display names.
+	 * @param Non_Submission_Grade_Repository_Port_Interface|null $grades Teacher-only target grades.
 	 */
 	public function __construct(
 		private Read_Teacher_Submissions $submissions,
 		private Assignment_Roster_Port_Interface $roster,
-		private Learner_Display_Snapshot_Port_Interface $displays
+		private Learner_Display_Snapshot_Port_Interface $displays,
+		private ?Non_Submission_Grade_Repository_Port_Interface $grades = null
 	) {
 	}
 
@@ -107,6 +110,23 @@ final class Read_Submission_Evaluation_Roster {
 				'status'         => 'not_assigned',
 				'submission'     => null,
 			);
+		}
+		if ( null !== $this->grades ) {
+			$grades = $this->grades->read(
+				array(
+					'assignment_id'    => $assignment_id,
+					'context_type'     => $context_type,
+					'context_id'       => $context_id,
+					'context_revision' => $context_revision,
+				)
+			);
+			foreach ( $rows as &$row ) {
+				if ( $row['assigned'] && empty( $row['submission']['official_revision_id'] ) && isset( $grades[ $row['id'] ] ) ) {
+					$row['non_submission_grade'] = $grades[ $row['id'] ]['grade'];
+					$row['grading']              = $grades[ $row['id'] ]['grading'];
+				}
+			}
+			unset( $row );
 		}
 		return array( 'items' => array_values( $rows ) );
 	}

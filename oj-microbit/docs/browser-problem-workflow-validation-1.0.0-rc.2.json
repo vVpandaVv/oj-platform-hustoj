@@ -1,0 +1,38 @@
+{
+  "candidateVersion": "1.0.0-rc.2",
+  "date": "2026-11-03",
+  "ok": true,
+  "environment": {
+    "node": "24.22.1",
+    "browser": "Chromium 1223, headless Playwright",
+    "server": "Temporary HTTP server bound only to 127.0.0.1",
+    "wordPressApi": "Local fixtures emulate exercise, project, group and submission responses",
+    "editor": "Local iframe fixture emulates MakeCode workspacesync, workspacesave and saveproject acknowledgements",
+    "realWordPress": false,
+    "realMakeCode": false,
+    "realRunnerOrGrading": false,
+    "realDatabase": false,
+    "realHardware": false
+  },
+  "checks": [
+    "Problem list -> explanation -> editor -> submit -> submission history",
+    "Public sensor inputs are visible and hidden scenario names are absent",
+    "Iframe protocol captures the latest edited source before saving and submitting",
+    "Temporary project saving creates no submission; submitting creates one recorded result",
+    "Cancelling unsaved navigation preserves the current editor, source and URL",
+    "Reloading history and browser Back restore the appropriate deep-linked view",
+    "Group selector uses bounded cursor pages and retains selections without remapping lesson IDs",
+    "A 390px viewport has no document-level horizontal overflow"
+  ],
+  "projectSaves": 1,
+  "submissions": 1,
+  "pageErrors": 0,
+  "desktopViewport": { "width": 1280, "height": 900 },
+  "mobileViewport": { "width": 390, "height": 844 },
+  "screenshots": [
+    "problem-workflow-1.0.0-rc.2.png",
+    "problem-workflow-mobile-1.0.0-rc.2.png"
+  ],
+  "screenshotScope": "Local synthetic student problem. Product CSS is loaded with minimal fixture styling; production OJ Platform shell and theme styling are not reproduced.",
+  "limitations": "This verifies browser workflow and the iframe protocol boundary with controlled fixtures. It does not certify actual MakeCode, WordPress authentication, group membership, database plans, real grading, USB or operational server acceptance."
+}

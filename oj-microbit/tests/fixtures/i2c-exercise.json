@@ -1,0 +1,186 @@
+{
+  "title": "I²C 센서 값을 읽어 서보 제어하기",
+  "description": "주소 32(0x20)의 레지스터 0을 UInt8BE로 읽어 P1 서보 각도로 사용합니다. 읽은 값은 같은 장치의 레지스터 1에도 씁니다. 레지스터 선택 write → read → 결과 write 순서와 repeated 조건을 함께 검사합니다.",
+  "status": "draft",
+  "connections": [
+    {
+      "pin": 1,
+      "direction": "output",
+      "signal": "servo",
+      "device": "servo",
+      "label": "센서 연동 서보"
+    }
+  ],
+  "i2cDevices": [
+    {
+      "address": 32,
+      "label": "I²C 레지스터 센서",
+      "registers": [
+        {
+          "register": 0,
+          "value": 30,
+          "writable": false
+        },
+        {
+          "register": 1,
+          "value": 0,
+          "writable": true
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "i2c-servo",
+      "name": "I²C 읽기·쓰기와 서보 연동",
+      "visible": true,
+      "durationMs": 1500,
+      "inputs": [],
+      "assertions": [
+        {
+          "pin": 1,
+          "signal": "servo",
+          "expected": 30,
+          "afterMs": 0,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        },
+        {
+          "pin": 1,
+          "signal": "servo",
+          "expected": 90,
+          "afterMs": 500,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        },
+        {
+          "pin": 1,
+          "signal": "servo",
+          "expected": 150,
+          "afterMs": 1000,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        }
+      ],
+      "i2cInputs": [
+        {
+          "atMs": 400,
+          "address": 32,
+          "register": 0,
+          "value": 90
+        },
+        {
+          "atMs": 900,
+          "address": 32,
+          "register": 0,
+          "value": 150
+        }
+      ],
+      "i2cAssertions": [
+        {
+          "address": 32,
+          "operation": "write",
+          "data": [
+            0
+          ],
+          "repeated": true,
+          "afterMs": 0,
+          "withinMs": 100
+        },
+        {
+          "address": 32,
+          "operation": "read",
+          "data": [
+            30
+          ],
+          "repeated": false,
+          "afterMs": 0,
+          "withinMs": 100
+        },
+        {
+          "address": 32,
+          "operation": "write",
+          "data": [
+            1,
+            30
+          ],
+          "repeated": false,
+          "afterMs": 0,
+          "withinMs": 100
+        },
+        {
+          "address": 32,
+          "operation": "write",
+          "data": [
+            0
+          ],
+          "repeated": true,
+          "afterMs": 500,
+          "withinMs": 100
+        },
+        {
+          "address": 32,
+          "operation": "read",
+          "data": [
+            90
+          ],
+          "repeated": false,
+          "afterMs": 500,
+          "withinMs": 100
+        },
+        {
+          "address": 32,
+          "operation": "write",
+          "data": [
+            1,
+            90
+          ],
+          "repeated": false,
+          "afterMs": 500,
+          "withinMs": 100
+        },
+        {
+          "address": 32,
+          "operation": "write",
+          "data": [
+            0
+          ],
+          "repeated": true,
+          "afterMs": 1000,
+          "withinMs": 100
+        },
+        {
+          "address": 32,
+          "operation": "read",
+          "data": [
+            150
+          ],
+          "repeated": false,
+          "afterMs": 1000,
+          "withinMs": 100
+        },
+        {
+          "address": 32,
+          "operation": "write",
+          "data": [
+            1,
+            150
+          ],
+          "repeated": false,
+          "afterMs": 1000,
+          "withinMs": 100
+        }
+      ]
+    }
+  ],
+  "starterProject": {
+    "name": "I2C 서보 제어",
+    "files": {
+      "main.ts": "basic.forever(function () {\n    pins.i2cWriteNumber(32, 0, NumberFormat.UInt8BE, true)\n    let angle = pins.i2cReadNumber(32, NumberFormat.UInt8BE, false)\n    pins.servoWritePin(AnalogPin.P1, angle)\n    pins.i2cWriteNumber(32, 256 + angle, NumberFormat.UInt16BE, false)\n    basic.pause(500)\n})\n",
+      "pxt.json": "{\n  \"name\": \"I2C 서보 제어\",\n  \"dependencies\": {\n    \"core\": \"*\"\n  },\n  \"files\": [\n    \"main.ts\"\n  ],\n  \"preferredEditor\": \"tsprj\"\n}"
+    }
+  }
+}

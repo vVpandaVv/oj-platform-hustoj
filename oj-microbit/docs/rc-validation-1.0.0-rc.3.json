@@ -1,0 +1,76 @@
+{
+  "candidateVersion": "1.0.0-rc.3",
+  "date": "2026-11-03",
+  "status": "local_verification_passed_live_acceptance_pending",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "featureFreeze": "feature-freeze-1.0.0-rc.3.json",
+  "checks": {
+    "php": 1180,
+    "frontend": 77,
+    "installerShell": 26,
+    "runner": 91,
+    "freeze": 4,
+    "acceptanceRest": 15,
+    "acceptancePython": 26,
+    "total": 1419
+  },
+  "browser": {
+    "report": "browser-public-lessons-validation-1.0.0-rc.3.json",
+    "flows": 13,
+    "fullFlows": 11,
+    "targetedContractFlows": 2,
+    "pageErrors": 0,
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualDatabase": false,
+    "actualRunner": false,
+    "actualHardware": false
+  },
+  "environment": {
+    "php": "8.5.5 Windows, PDO SQLite",
+    "node": "24.22.1 Windows",
+    "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+    "python": "3.14 Windows",
+    "shell": "Git Bash; nonprivileged command/filesystem fixtures"
+  },
+  "verified": [
+    "New public library is site-only and works without membership provider; new restricted creations are rejected",
+    "Existing restricted records remain restricted until deliberate public conversion and publication review",
+    "Any teacher managing a lesson may apply another author public problem",
+    "General practice and two lesson contexts have separate saved projects, attempts and latest results",
+    "Source authors cannot bypass lesson permissions using general attempt routes",
+    "Latest zero/error submissions differ from unsubmitted roster rows; latest score is not historical best",
+    "Roster pages use public context/roster revisions, correct first-page and continuation protocol",
+    "Source and assignment metadata locks protect atomic project/attempt/latest-result writes and rollback",
+    "Archived/unpublished/missing-source lessons retain authorized history without fallback to general submissions",
+    "Learner lesson lists bound class candidate keys before joining source availability",
+    "20000 assignment metadata rows and 50000 attempts use actual SQLite queries and plans",
+    "New unique assignment index must actually be unique; same-name nonunique index fails readiness",
+    "Private data export/erasure and retention cover new stores with bounded batches and creator anonymization",
+    "PXT GPIO/PWM/servo/I2C/sequence grading and installer coexistence regression remain intact"
+  ],
+  "actualTrialServer": false,
+  "actualWordPress": false,
+  "actualMySQL": false,
+  "actualDocker": false,
+  "actualHustojParallelLoad": false,
+  "actualBackupRestore": false,
+  "actualHardware": false,
+  "pending": [
+    "Actual WordPress/PHP8.3 schema upgrade and private configuration",
+    "Actual class/group ledger permissions and concurrent revocation",
+    "MySQL/MariaDB plans, unique migration, transactions, concurrent locks and workload",
+    "Representative lessons and student sessions with actual HUSTOJ judging",
+    "Matched plugin/database backup restore and privacy/retention completion",
+    "Physical HEX/WebUSB if official device support is included"
+  ],
+  "limitations": [
+    "SQLite and fake dbDelta/POSIX/WordPress do not certify actual MySQL or WordPress authentication",
+    "Browser uses controlled loopback REST and iframe messages, not the actual MakeCode service",
+    "Platform roster gateway may load its complete bounded ledger before returning one page; actual load remains unmeasured",
+    "A disabled lesson cannot provide a current roster through the public API; authorized teachers use retained submission history",
+    "External membership authorization cannot share the local recording transaction; extreme concurrent ledger revocation remains an actual-server test",
+    "Code-only downgrade to rc.2 or older does not understand lesson scopes; restore a matching database snapshot too"
+  ]
+}

@@ -7,9 +7,12 @@ namespace CodingPanda\OjPlatform\Modules\Auth\Application;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\AdminActionAuditLog;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\AuthorizedPasswordResetter;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\PasswordResetTargetPolicy;
+use CodingPanda\OjPlatform\Modules\Auth\Contract\PasswordResetTargetDiagnostics;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\UserProfileRepository;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\WordPressUserGateway;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\AccessStatus;
+use CodingPanda\OjPlatform\Modules\Auth\Contract\UserIdentity;
+use CodingPanda\OjPlatform\Modules\Auth\Domain\UserProfile;
 use InvalidArgumentException;
 use Throwable;
 
@@ -70,19 +73,23 @@ final class PasswordResetService implements AuthorizedPasswordResetter
 
             $identity = $this->users->findById($targetUserId);
             $profile = $this->profiles->find($targetUserId);
-            if (
-                $identity === null
-                || $profile === null
-                || $profile->accessStatus() !== AccessStatus::Active
-                || ! $this->targetPolicy->allows($actorUserId, $identity, $profile)
-            ) {
+            $reason = $this->unavailableReason($targetUserId, $identity, $profile);
+            $diagnostic = null;
+            if ($reason === null && ! $this->targetPolicy->allows($actorUserId, $identity, $profile)) {
+                $diagnostic = $this->targetPolicy instanceof PasswordResetTargetDiagnostics
+                    ? $this->targetPolicy->inspectTarget($identity) : null;
+                $reason = ($diagnostic?->isProtected() ?? $this->targetPolicy->protectsTarget($identity))
+                    ? 'target_protected' : 'actor_not_allowed';
+            }
+            if ($reason !== null) {
                 $results[] = new PasswordResetItemResult(
                     $targetUserId,
                     false,
                     null,
-                    'target_not_allowed'
+                    $reason,
+                    $reason === 'target_protected' ? $diagnostic : null
                 );
-                $this->recordAudit($actorUserId, 'global', $targetUserId, 'target_not_allowed');
+                $this->recordAudit($actorUserId, 'global', $targetUserId, $reason);
                 continue;
             }
 
@@ -136,20 +143,25 @@ final class PasswordResetService implements AuthorizedPasswordResetter
         foreach ($targetUserIds as $targetUserId) {
             $identity = $this->users->findById($targetUserId);
             $profile = $this->profiles->find($targetUserId);
-            if (
-                $targetUserId === $actorUserId
-                || $identity === null
-                || $profile === null
-                || $profile->accessStatus() !== AccessStatus::Active
-                || $this->targetPolicy->protectsTarget($identity)
-            ) {
+            $reason = $targetUserId === $actorUserId
+                ? 'self_reset_forbidden'
+                : $this->unavailableReason($targetUserId, $identity, $profile);
+            $diagnostic = null;
+            if ($reason === null) {
+                $diagnostic = $this->targetPolicy instanceof PasswordResetTargetDiagnostics
+                    ? $this->targetPolicy->inspectTarget($identity) : null;
+                if ($diagnostic?->isProtected() ?? $this->targetPolicy->protectsTarget($identity)) {
+                    $reason = 'target_protected';
+                }
+            }
+            if ($reason !== null) {
                 $results[] = [
                     'user_id' => $targetUserId,
                     'success' => false,
                     'temporary_password' => null,
-                    'reason' => 'target_not_allowed',
-                ];
-                $this->recordAudit($actorUserId, $scope, $targetUserId, 'target_not_allowed');
+                    'reason' => $reason,
+                ] + ($reason === 'target_protected' && $diagnostic !== null ? ['diagnostic' => $diagnostic] : []);
+                $this->recordAudit($actorUserId, $scope, $targetUserId, $reason);
                 continue;
             }
 
@@ -179,6 +191,25 @@ final class PasswordResetService implements AuthorizedPasswordResetter
         }
 
         return $results;
+    }
+
+    private function unavailableReason(
+        int $targetUserId,
+        ?UserIdentity $identity,
+        ?UserProfile $profile
+    ): ?string {
+        if ($identity === null || $identity->userId() !== $targetUserId) {
+            return 'account_not_found';
+        }
+        if ($profile === null || $profile->userId() !== $targetUserId) {
+            return 'profile_missing';
+        }
+
+        return match ($profile->accessStatus()) {
+            AccessStatus::Pending => 'account_pending',
+            AccessStatus::Suspended => 'account_suspended',
+            AccessStatus::Active => null,
+        };
     }
 
     private function recordAudit(

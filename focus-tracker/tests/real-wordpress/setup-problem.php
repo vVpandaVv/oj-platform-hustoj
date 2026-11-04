@@ -35,8 +35,12 @@ try {
     $configPath = $argv[1] ?? dirname(__DIR__, 3) . '/_notes/tmp/focus-tracker-real-wp/config.json';
     $config = json_decode((string) file_get_contents($configPath), true, 512, JSON_THROW_ON_ERROR);
     $workspace = realpath(dirname(__DIR__, 3));
-    $runRoot = realpath($workspace . '/_notes/tmp/focus-tracker-real-wp');
     $wpPath = realpath((string) ($config['wpPath'] ?? ''));
+    $runRoot = false;
+    foreach (array('focus-tracker-real-wp', 'focus-tracker-mysql8') as $suite) {
+        $candidateRoot = realpath($workspace . '/_notes/tmp/' . $suite);
+        if ($candidateRoot !== false && $wpPath !== false && focus_real_problem_path($wpPath) === focus_real_problem_path($candidateRoot . '/wordpress')) { $runRoot = $candidateRoot; break; }
+    }
     focus_real_problem_assert($runRoot !== false && $wpPath !== false && focus_real_problem_path($wpPath) === focus_real_problem_path($runRoot . '/wordpress'), 'This fixture only supports its isolated workspace WordPress root.');
     $baseUrl = rtrim((string) ($config['baseUrl'] ?? $config['home'] ?? ''), '/');
     $url = parse_url($baseUrl);
@@ -78,7 +82,7 @@ try {
             $definition = match ($type) {
                 'int', 'bigint', 'tinyint', 'smallint' => strtoupper($type) . ' NOT NULL DEFAULT 0',
                 'char', 'varchar' => "VARCHAR(255) NOT NULL DEFAULT ''",
-                'text', 'mediumtext', 'longtext' => "LONGTEXT NOT NULL DEFAULT ''",
+                'text', 'mediumtext', 'longtext' => "LONGTEXT NOT NULL DEFAULT ('')",
                 'decimal', 'float', 'double' => 'DOUBLE NOT NULL DEFAULT 0',
                 'datetime', 'timestamp' => 'DATETIME NULL DEFAULT NULL',
                 default => throw new RuntimeException('Unsupported native judge column type.'),
@@ -88,7 +92,7 @@ try {
             if ($table . '.' . $column === 'solution.valid') { $definition = strtoupper($type) . ' NOT NULL DEFAULT 1'; }
             $definitions[] = '`' . $column . '` ' . $definition;
         }
-        if ($table === 'problem') { $definitions[] = '`in_date` DATETIME NULL'; $definitions[] = "`credits` LONGTEXT NOT NULL DEFAULT ''"; }
+        if ($table === 'problem') { $definitions[] = '`in_date` DATETIME NULL'; $definitions[] = "`credits` LONGTEXT NOT NULL DEFAULT ('')"; }
         if ($table === 'solution') { $definitions[] = '`class_id` BIGINT NOT NULL DEFAULT 0'; }
         if ($table === 'users') { $definitions[] = "`password` VARCHAR(255) NOT NULL DEFAULT ''"; $definitions[] = "`nick` VARCHAR(255) NOT NULL DEFAULT ''"; $definitions[] = "`defunct` CHAR(1) NOT NULL DEFAULT 'N'"; }
         $connection->query('CREATE TABLE IF NOT EXISTS `' . $table . '` (' . implode(', ', $definitions) . ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');

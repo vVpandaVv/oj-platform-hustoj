@@ -221,6 +221,16 @@ final class WordPress_Assessment_Store implements Assessment_Store {
 	}
 
 	/**
+	 * Check for queued work without claiming or repeating a provider request.
+	 *
+	 * @return bool
+	 * @throws RuntimeException If owned queue storage is unavailable.
+	 */
+	public function has_pending(): bool {
+		return null !== $this->call( 'get_var', $this->sql( "SELECT id FROM oj_ai_outbox_events WHERE aggregate_type = %s AND event_type = 'external_ml.queued' ORDER BY id ASC LIMIT 1", self::AGGREGATE ) );
+	}
+
+	/**
 	 * Write a normalized result into AI-owned private storage.
 	 *
 	 * @param array $run run.

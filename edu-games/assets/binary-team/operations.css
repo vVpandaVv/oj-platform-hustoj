@@ -1,0 +1,76 @@
+.binary-team .bt-game-tabs a {padding:8px 12px;color:var(--eg-muted);text-decoration:none;border-bottom:2px solid transparent;}
+.binary-team .bt-game-tabs a[aria-current] {color:var(--eg-accent);border-color:var(--eg-accent);}
+.binary-team .bt-ops-heading {display:flex;align-items:center;justify-content:space-between;gap:24px;padding:12px 0 18px;border-bottom:1px solid var(--eg-line);}
+.binary-team .bt-ops-heading h3 {margin:6px 0;font-size:21px;}
+.binary-team .bt-ops-heading span,.binary-team .bt-project-time small {color:var(--eg-muted);font-size:13px;}
+.binary-team .bt-project-code,.binary-team .bt-project-time {display:grid;gap:3px;text-align:center;flex-shrink:0;}
+.binary-team .bt-project-code strong {font-family:ui-monospace,monospace;font-size:32px;letter-spacing:0;}
+.binary-team .bt-project-time strong {font-size:28px;font-variant-numeric:tabular-nums;}
+.binary-team .bt-ops-actions {margin:14px 0;}
+.binary-team .bt-ops-teams {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:16px;margin:16px 0;}
+.binary-team .bt-ops-team {min-width:0;border:1px solid var(--eg-line);border-radius:8px;padding:14px;background:var(--eg-surface);}
+.binary-team .bt-ops-team>header {display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.binary-team .bt-ops-team h4 {margin:0;font-size:16px;}
+.binary-team .bt-ops-team h4 span {font-size:12px;color:var(--eg-muted);font-weight:400;}
+.binary-team .bt-team-total {display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:12px 0;flex-wrap:wrap;}
+.binary-team .bt-team-total>strong {font-size:28px;font-variant-numeric:tabular-nums;}
+.binary-team .bt-team-total small {font-size:12px;margin-left:4px;}
+.binary-team .bt-team-total>span {font-size:12px;color:var(--eg-muted);}
+.binary-team .bt-activity {display:grid;gap:3px;margin:12px 0;}
+.binary-team .bt-activity-cards {grid-template-columns:repeat(8,1fr);}
+.binary-team .bt-activity-bits {grid-template-columns:repeat(8,1fr);}
+.binary-team .bt-activity i {height:14px;border-radius:2px;background:var(--eg-line);border:1px solid var(--eg-line);}
+.binary-team .bt-activity .is-empty {background:transparent;}
+.binary-team .bt-activity .is-active,.binary-team .bt-activity .is-down {background:var(--eg-fill);}
+.binary-team .bt-activity .is-matched {background:var(--eg-success);}
+.binary-team .bt-activity .is-miss {background:var(--eg-danger);}
+.binary-team .bt-activity .is-open,.binary-team .bt-activity .has-owner.is-active {background:var(--eg-accent);}
+.binary-team .bt-ops-team progress {width:100%;height:6px;accent-color:var(--eg-success);}
+.binary-team .bt-ops-roster {margin:8px 0;}
+.binary-team .bt-ops-roster .bt-player {flex-wrap:wrap;padding:7px 0;}
+.binary-team .bt-ops-roster .bt-player strong {font-size:13px;overflow-wrap:anywhere;}
+.binary-team .bt-ops-roster select {max-width:92px;min-height:32px;}
+.binary-team .bt-ops-roster .bt-player button {min-width:30px;min-height:30px;padding:2px;}
+.binary-team .bt-waiting {padding:12px 0;border-bottom:1px solid var(--eg-line);}
+.binary-team .bt-waiting h4 {margin:0 0 8px;}
+.binary-team .bt-waiting-roster {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;}
+.binary-team .bt-waiting>span {display:inline-block;margin:6px;}
+.binary-team .bt-feed {padding:12px 0;border-top:1px solid var(--eg-line);}
+.binary-team .bt-feed h4 {margin:0 0 8px;}
+.binary-team .bt-feed ol {list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:13px;}
+.binary-team .bt-feed time {font-variant-numeric:tabular-nums;color:var(--eg-muted);margin-right:8px;}
+.binary-team .bt-board-entry {max-width:420px;margin:24px auto;}
+.binary-team[data-team-screen=teacher] .bt-entry {grid-template-columns:minmax(0,3fr) minmax(0,2fr);}
+.binary-team[data-team-screen=teacher] .bt-options {grid-template-columns:repeat(2,minmax(0,1fr));}
+.binary-team[data-team-screen=board] .bt-ops-heading {padding:4px 0 10px;}
+.binary-team[data-team-screen=board] .bt-ops-heading>div:first-child {display:grid;gap:2px;}
+.binary-team[data-team-screen=board] .bt-ops-heading h3 {font-size:18px;line-height:24px;margin:0;}
+.binary-team[data-team-screen=board] .bt-ops-heading span {font-size:12px;line-height:18px;}
+.binary-team[data-team-screen=board] .bt-project-code strong {font-size:26px;line-height:32px;}
+.binary-team[data-team-screen=board] .bt-project-time strong {font-size:24px;line-height:30px;}
+.binary-team[data-team-screen=board] .bt-ops-teams {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0;}
+.binary-team[data-team-screen=board]:is([data-team-count="4"],[data-team-count="5"],[data-team-count="6"]) .bt-ops-teams {grid-template-columns:repeat(3,minmax(0,1fr));}
+.binary-team[data-team-screen=board] .bt-ops-team {padding:8px;}
+.binary-team[data-team-screen=board] .bt-ops-team h4 {margin:0;font-size:14px;line-height:20px;}
+.binary-team[data-team-screen=board] .bt-team-total {margin:4px 0;line-height:26px;}
+.binary-team[data-team-screen=board] .bt-team-total>strong {font-size:22px;line-height:26px;}
+.binary-team[data-team-screen=board] .bt-ops-team progress {display:block;height:4px;margin:4px 0;}
+.binary-team[data-team-screen=board] .bt-ops-roster {margin:4px 0 0;}
+.binary-team[data-team-screen=board] .bt-player {min-height:20px;line-height:20px;padding:0;}
+.binary-team[data-team-screen=board] .bt-activity {gap:2px;margin:4px 0;}
+.binary-team[data-team-screen=board] .bt-activity-cards i {height:5px;}
+.binary-team[data-team-screen=board] .bt-feed {padding:8px 0;}
+.binary-team[data-team-screen=board] .bt-feed h4 {font-size:13px;line-height:18px;margin:0 0 4px;}
+.binary-team[data-team-screen=board] .bt-feed ol {font-size:12px;line-height:16px;gap:2px;}
+@media(max-width:900px) {
+    .binary-team[data-team-screen=board]:is([data-team-count="4"],[data-team-count="5"],[data-team-count="6"]) .bt-ops-teams {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:640px) {
+    .binary-team .bt-ops-heading {flex-wrap:wrap;gap:12px;}
+    .binary-team .bt-ops-heading>div:first-child {flex-basis:100%;}
+    .binary-team .bt-project-code strong {font-size:28px;}
+    .binary-team .bt-ops-teams {gap:10px;}
+    .binary-team .bt-ops-actions {gap:8px;}
+    .binary-team[data-team-screen=teacher] .bt-entry {grid-template-columns:minmax(0,1fr);}
+    .binary-team[data-team-screen=board] .bt-ops-teams,.binary-team[data-team-screen=board]:is([data-team-count="4"],[data-team-count="5"],[data-team-count="6"]) .bt-ops-teams {grid-template-columns:minmax(0,1fr);}
+}

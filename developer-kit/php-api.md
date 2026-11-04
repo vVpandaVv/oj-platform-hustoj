@@ -1,6 +1,6 @@
 # PHP 애드온 API
 
-기준: **OJ Platform 2.5.4 · Addon API 1.8.0 · PHP 8.3 이상 · WordPress 6.6 이상**.
+기준: **OJ Platform 2.5.9 · Addon API 1.9.0 · PHP 8.3 이상 · WordPress 6.6 이상**.
 공개 타입의 namespace는 `CodingPanda\OjPlatform\AddonApi\V1`이다. `V1`은 API 주 버전이며, 실제 부 버전은 `OJ_PLATFORM_ADDON_API_VERSION`으로 확인한다.
 
 [개발 시작](README.md) · [전체 생성자·메서드·기본값 목록](api-reference.json) · [공개 PHP 타입 원본](../oj-integration-rebuild/oj-platform/src/AddonApi/V1/)
@@ -85,9 +85,9 @@ return [
 | builder 메서드 | 전달 DTO와 생성자 |
 | --- | --- |
 | `capability($definition): void` | `AddonCapabilityDefinitionV1(string $key, string $label, string $audience)` |
-| `consolePage($definition): void` | `AddonConsolePageDefinitionV1(string $key, string $path, AddonPageHandlerV1 $handler, string $capability, array $assetBundles = [])` |
-| `publicPage($definition): void` | `AddonPublicPageDefinitionV1(string $key, string $path, AddonPageHandlerV1 $handler, string $capability, array $assetBundles = [])` |
-| `consoleMenu($definition): void` | `AddonConsoleMenuDefinitionV1(string $key, string $label, string $anchor, string $route, string $capability, int $order, string $icon = '')` |
+| `consolePage($definition): void` | `AddonConsolePageDefinitionV1(string $key, string $path, AddonPageHandlerV1 $handler, string $capability, array $assetBundles = [], ?string $navigationMenuKey = null)` |
+| `publicPage($definition): void` | `AddonPublicPageDefinitionV1(string $key, string $path, AddonPageHandlerV1 $handler, string $capability, array $assetBundles = [], ?string $navigationMenuKey = null)` |
+| `consoleMenu($definition): void` | `AddonConsoleMenuDefinitionV1(string $key, string $label, string $anchor, string $route, string $capability, int $order, string $icon = '', ?string $fallbackForNativeMenu = null)` |
 | `publicMenu($definition): void` | `AddonPublicMenuDefinitionV1(string $key, string $label, string $parent, string $route, string $capability, int $order, string $scope, bool $mobile = true, bool $defaultEnabled = true)` |
 | `assetBundle($definition): void` | `AddonAssetBundleDefinitionV1(string $key, string $handle, array $styles, array $scripts, array $dependencies, string $version)` |
 
@@ -97,6 +97,7 @@ return [
 - 동적 경로: `/oj-console/addons/oj-example/items/{id}`처럼 `{id}`를 쓴다. 매개변수는 중복 없이 최대 8개다.
 - 페이지의 `capability`는 이 manifest에서 선언한 capability여야 한다. `assetBundles`는 선언한 bundle key의 목록이며 최대 4개다.
 - 메뉴의 `route`는 URL이 아니라 페이지의 기여 key다. 메뉴와 해당 페이지의 capability가 같아야 한다.
+- API 1.9의 `navigationMenuKey`는 `problems.index` 또는 `classes.index`를 받아 상세 화면의 상위 메뉴를 선택한다. `fallbackForNativeMenu`에 같은 값을 지정하면 기본 메뉴에 접근 가능한 사용자에게 대체 애드온 메뉴를 숨긴다. 두 인자의 기본값은 `null`이며 기존 호출도 사용할 수 있다.
 - `anchor`는 플랫폼 콘솔 상위 메뉴 key다. 예: `classes`, `problems`, `learning_support`, `community`, `users`, `operations`. 현재 목록은 [콘솔 메뉴](../oj-integration-rebuild/oj-platform/config/menus.php)의 `parent=null`인 항목이다.
 - `parent`는 학습자 기본 메뉴의 상위 key다. `scope`는 `learner`다. 학습자 메뉴에 연결하는 페이지 경로에는 `{id}` 같은 필수 매개변수를 넣지 않는다.
 - 자산 경로는 메인 PHP 파일 기준 상대 경로다. `styles`는 `.css`, `scripts`는 `.js` 파일 목록이며 각각 최대 8개다. 실제 파일이 존재해야 한다. `dependencies`는 WordPress 자산 handle 목록(최대 32개)이다.
@@ -116,6 +117,7 @@ return [
 | `query()` | 쿼리 `array<string,string\|list<string>>` |
 | `locale()` | locale `string` |
 | `correlationId()` | 진단 추적 ID `string` |
+| `navigationUrls()` | API 1.9. 현재 사용자에게 허용된 같은 애드온 페이지와 기본 문제·수업 메뉴의 `array<string,string>` URL 맵 |
 
 경로·쿼리 값은 문자열이다. 숫자 ID 범위와 해당 자료의 소유권은 처리기에서 다시 검사한다.
 
@@ -148,7 +150,7 @@ AddonPageResponseV1::unavailable(string $message, string $code): self;
 
 `layout`은 `standard`, `wide`, `immersive`다. `supportsDarkMode=true`는 애드온 CSS가 플랫폼 색상 토큰을 따를 때 사용한다. HTML 응답 상태는 `200`, `403`, `404`, `409`, `422`, `503` 중 하나다. HTML 본문은 2MiB 이내이며, 처리기가 텍스트·URL을 각각 `esc_html()`, `esc_url()` 등으로 이스케이프한다. `redirect()`의 `$route`는 등록한 페이지 key, `$parameters`는 문자열 경로 매개변수 맵이며 결과 상태는 302다. `unavailable()`는 안전한 메시지와 플랫폼 오류 코드(예: `addon_runtime_unavailable`)로 503을 반환한다.
 
-애드온 내부 링크는 `home_url('/oj-console/addons/oj-example')`, API 주소는 `rest_url('oj-example/v1/...')`로 만든다. WordPress가 하위 경로에 설치된 경우에도 사이트 설정을 따른다.
+API 1.9에서는 등록 페이지 링크를 `$request->navigationUrls()`에서 얻는다. key가 존재하는지 확인하고 URL을 그대로 사용하면 WordPress 하위 경로 설치도 반영된다. 필요한 경로 매개변수가 있어 바로 생성할 수 없는 페이지는 맵에서 빠질 수 있다. `AddonPageRequestV1`의 선택적 7번째 생성자 인자 `array $navigationUrls = []`도 이전 호출과 호환된다. REST 주소는 `rest_url('oj-example/v1/...')`로 만든다.
 
 ### 콘솔 페이지 안의 탭
 
@@ -320,6 +322,77 @@ new AddonActivityPageV1(bool $successful, array $items, ?AddonApiProblemV1 $prob
 `url`은 HTTP(S) 또는 `/`로 시작하는 사이트 경로다. 활동 DTO는 같은 이름의 접근자(`key()`, `title()` 등)를 제공한다. `contentType`을 쓰면 `text/html` 같은 MIME 형식을 사용한다.
 
 전역 자산 config 제공자는 `config(int $actorUserId): array`를 구현한다. 빈 배열이면 그 사용자에게 자산을 렌더링하지 않는다. `configElementId`는 고유한 DOM ID이며 소문자로 시작하는 소문자·숫자·하이픈 3~80자다. config에 현재 사용자에게 전달할 값만 넣는다. `privacyData()`는 실제 보관 항목과 기간을 플랫폼 관리 화면에 알리는 재고이며, 애드온의 삭제 처리는 애드온이 구현한다.
+
+### 기본 문제·수업 목록 제공 (API 1.9)
+
+`$builder instanceof AddonNativeLearningManifestBuilderV1` 확인 후 `nativeLearningProvider()`로 등록한다. 제공자는 `AddonNativeLearningProviderV1::query(AddonNativeLearningQueryV1 $query): AddonNativeLearningPageV1`를 구현한다. 사용하려면 manifest에 `requiresPlatform: '>=2.5.9 <3.0.0'`, `requiresAddonApi: '^1.9'`를 선언한다.
+
+아래는 시작 예제의 `Plugin::manifest($addon)` 안에 추가할 수 있는 한 행짜리 제공자다. 현재 계정의 교사 문제 목록에 기존 개인 메모 화면을 연결한다.
+
+```php
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningManifestBuilderV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningProviderDefinitionV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningProviderV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningQueryV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningPageV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningItemV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningLinkV1;
+
+if ($addon instanceof AddonNativeLearningManifestBuilderV1) {
+    $addon->nativeLearningProvider(new AddonNativeLearningProviderDefinitionV1(
+        'addon.addon_starter.catalog',
+        '시작 예제',
+        new class implements AddonNativeLearningProviderV1 {
+            public function query(AddonNativeLearningQueryV1 $query): AddonNativeLearningPageV1
+            {
+                if ($query->actorUserId() !== get_current_user_id()
+                    || ! \OjAddonStarter\Core\Plugin::can_use()
+                    || $query->surface() !== 'problems.teacher'
+                    || $query->beforeId() > 0) {
+                    return new AddonNativeLearningPageV1();
+                }
+                return new AddonNativeLearningPageV1([
+                    new AddonNativeLearningItemV1(
+                        'addon_starter:note:1', '개인 메모', '시작 예제',
+                        new AddonNativeLearningLinkV1('addon.addon_starter.note', '열기')
+                    ),
+                ]);
+            }
+        }
+    ));
+}
+```
+
+`use` 선언은 PHP 파일 상단에 놓고, 등록 부분은 manifest를 만드는 메서드에 넣는다. 실제 자료 목록은 같은 방식으로 현재 actor와 소유권·수업 권한을 검사한 서비스에서 조회한다. 등록 단계의 manifest를 로그인 계정에 따라 바꾸지 않는다.
+
+| query의 `surface()` | `contextId()` | 목록 |
+| --- | --- | --- |
+| `problems.public` | `0` | 로그인한 사용자의 기본 공개 문제 목록 |
+| `problems.teacher` | `0` | 교사 문제 목록 |
+| `class.student` | 양의 수업 ID | 수업 학습자의 과제 |
+| `class.teacher` | 양의 수업 ID | 수업 교사의 과제·적용·결과 |
+
+전체 생성자 형식:
+
+```text
+AddonNativeLearningProviderDefinitionV1(string $key, string $label,
+    AddonNativeLearningProviderV1 $provider, int $order = 50)
+AddonNativeLearningQueryV1(int $actorUserId, string $surface,
+    int $contextId = 0, int $beforeId = 0, int $limit = 20)
+AddonNativeLearningPageV1(array $items = [], ?int $nextBeforeId = null,
+    array $actions = [], bool $available = true, string $message = '')
+AddonNativeLearningItemV1(string $externalId, string $title, string $typeLabel,
+    AddonNativeLearningLinkV1 $primaryLink, array $secondaryLinks = [], string $statusLabel = '')
+AddonNativeLearningLinkV1(string $routeKey, string $label,
+    array $parameters = [], array $query = [])
+```
+
+- 호스트가 현재 로그인 actor를 정하고, 기본적으로 `limit=20`으로 호출한다. 제공자는 받은 `limit()`을 지키며 계약 범위는 1~50이다. `beforeId()=0`이 첫 페이지이고, 다음 페이지는 내림차순 ID의 `nextBeforeId()`를 사용한다. 다음 cursor는 양수 또는 `null`이다. 이미 양수 cursor를 받은 페이지에서는 그보다 작은 값을 반환한다.
+- `items()`는 `AddonNativeLearningItemV1` 목록, `actions()`는 행 밖에 표시할 `AddonNativeLearningLinkV1` 목록이다. 페이지는 최대 50행·4개 작업, 각 행의 `secondaryLinks()`는 최대 3개다. `isAvailable()=false`일 때는 행·작업·cursor를 비우고 `message()`로 안내한다.
+- `externalId()`는 `addon_starter:note:1`처럼 manifest namespace와 `:`로 시작한다. 링크에는 같은 애드온이 선언한 public/console 페이지의 route key와 경로·쿼리 매개변수를 전달한다. 호스트가 URL 생성·현재 권한 검사·escaping을 담당한다.
+- 애드온당 최대 4개 제공자를 선언하며, 호스트는 `order`·key 순으로 한 화면에서 최대 4개를 호출한다. `order`는 0~999이고 기본값은 50이다. 매 조회에서 자료 공개 상태와 현재 접근 권한을 확인하고, 해당 수업의 수행 모드·열람 제한을 따른다. 목록에는 제목·유형·상태·등록 페이지 링크 같은 표시용 메타데이터만 반환한다.
+
+원본: [API 1.9 계약](../oj-integration-rebuild/oj-platform/docs/addon-api-1.9.md), [query](../oj-integration-rebuild/oj-platform/src/AddonApi/V1/AddonNativeLearningQueryV1.php), [결과 page](../oj-integration-rebuild/oj-platform/src/AddonApi/V1/AddonNativeLearningPageV1.php).
 
 ## 7. 학습·코드 실행 확장
 

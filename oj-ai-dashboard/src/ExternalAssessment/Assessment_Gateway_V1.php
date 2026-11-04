@@ -90,11 +90,12 @@ final class Assessment_Gateway_V1 {
 			$run      = $this->store->latest( $source, $source_id );
 			$result   = null;
 			if ( null !== $run ) {
-				$result = array_intersect_key( $run, array_flip( array( 'run_id', 'state', 'input_hash', 'source_sha256', 'created_at', 'error_code' ) ) );
+				$result                = array_intersect_key( $run, array_flip( array( 'run_id', 'state', 'input_hash', 'source_sha256', 'created_at', 'error_code' ) ) );
+				$result['output_mode'] = $run['output_mode'] ?? 'structured';
 				if ( Assessment_Profile::SOURCE !== $source && str_starts_with( $result['error_code'], 'ml_ai_' ) ) {
 					$result['error_code'] = self::code( $source, substr( $result['error_code'], 6 ) );
 				}
-				if ( ! hash_equals( $run['input_hash'], $profile::digest( $snapshot ) ) ) {
+				if ( ! hash_equals( $run['input_hash'], $profile::digest( $snapshot, $result['output_mode'] ) ) ) {
 					$result['state']      = 'stale';
 					$result['error_code'] = self::code( $source, 'source_changed' );
 				} elseif ( is_array( $route ) && ! hash_equals( $run['routing_fingerprint'], $route['fingerprint'] ) ) {
@@ -114,6 +115,7 @@ final class Assessment_Gateway_V1 {
 				'available'           => is_array( $route ),
 				'code'                => is_array( $route ) ? '' : self::code( $source, 'routing_required' ),
 				'consent_fingerprint' => is_array( $route ) ? $route['fingerprint'] : '',
+				'output_modes'        => Assessment_Profile::SOURCE === $source ? array( 'structured', 'json_compat' ) : array( 'structured' ),
 				'result'              => $result,
 			);
 		} catch ( Throwable ) {
@@ -155,13 +157,18 @@ final class Assessment_Gateway_V1 {
 				|| ! hash_equals( $route['fingerprint'], $consent['routingFingerprint'] ) ) {
 				return self::failure( self::code( $source, 'consent_required' ) );
 			}
+			$mode = $consent['outputMode'] ?? 'structured';
+			if ( ! is_string( $mode ) || ! in_array( $mode, array( 'structured', 'json_compat' ), true ) || ( Assessment_Profile::SOURCE !== $source && 'structured' !== $mode ) ) {
+				return self::failure( self::code( $source, 'invalid_output_mode' ) );
+			}
 			$this->store->enqueue(
 				array(
 					'source'              => $source,
 					'source_id'           => $source_id,
 					'actor_id'            => $actor,
 					'source_sha256'       => $snapshot['source_sha256'],
-					'input_hash'          => $profile::digest( $snapshot ),
+					'input_hash'          => $profile::digest( $snapshot, $mode ),
+					'output_mode'         => $mode,
 					'routing_fingerprint' => $route['fingerprint'],
 					'consent_version'     => Assessment_Profile::SOURCE === $source ? 'ml_external_ai.v1' : 'external_assessment_ai.v1',
 					'consented_at'        => gmdate( 'Y-m-d H:i:s' ),
@@ -187,8 +194,9 @@ final class Assessment_Gateway_V1 {
 			if ( null === $run ) {
 				return; }
 			$profile  = Assessment_Profile::for_source( $run['source'] );
+			$mode     = $run['output_mode'] ?? 'structured';
 			$snapshot = $this->snapshot( $run['source'], $run['source_id'], $run['actor_id'] );
-			if ( ! hash_equals( $run['input_hash'], $profile::digest( $snapshot ) ) ) {
+			if ( ! hash_equals( $run['input_hash'], $profile::digest( $snapshot, $mode ) ) ) {
 				$this->store->finish( $run, 'stale', null, self::code( $run['source'], 'source_changed' ) );
 				return;
 			}
@@ -197,19 +205,28 @@ final class Assessment_Gateway_V1 {
 				$this->store->finish( $run, 'failed', null, self::code( $run['source'], 'consent_changed' ) );
 				return;
 			}
-			$reply = ( $this->execution )( $run, $profile::input( $snapshot ) );
+			$reply = ( $this->execution )( $run, $profile::request_input( $snapshot, $mode ) );
 			if ( ! is_array( $reply ) || true !== ( $reply['success'] ?? null ) || ! is_array( $reply['output'] ?? null ) ) {
-				$this->store->finish( $run, 'failed', null, self::code( $run['source'], 'provider_failed' ) );
+				$suffix = Assessment_Profile::SOURCE === $run['source'] ? self::provider_failure( $reply ) : 'provider_failed';
+				$this->store->finish( $run, 'failed', null, self::code( $run['source'], $suffix ) );
 				return;
 			}
 			if ( ! hash_equals( $run['routing_fingerprint'], (string) ( $reply['routing_fingerprint'] ?? '' ) ) ) {
 				$this->store->finish( $run, 'failed', null, self::code( $run['source'], 'consent_changed' ) );
 				return;
 			}
-			$output = $profile::output( $reply['output'], $snapshot );
+			try {
+				$output = $profile::output( $reply['output'], $snapshot );
+			} catch ( \InvalidArgumentException ) {
+				// Distinguish malformed AI output from abstention or storage failure,
+				// without persisting provider text, exception messages or student data.
+				$suffix = Assessment_Profile::SOURCE === $run['source'] ? 'invalid_output' : 'review_required';
+				$this->store->finish( $run, 'failed', null, self::code( $run['source'], $suffix ) );
+				return;
+			}
 			// A teacher can lose access or the rubric can change while the model runs.
 			$current = $this->snapshot( $run['source'], $run['source_id'], $run['actor_id'] );
-			if ( ! hash_equals( $run['input_hash'], $profile::digest( $current ) ) ) {
+			if ( ! hash_equals( $run['input_hash'], $profile::digest( $current, $mode ) ) ) {
 				$this->store->finish( $run, 'stale', null, self::code( $run['source'], 'source_changed' ) );
 				return;
 			}
@@ -260,6 +277,31 @@ final class Assessment_Gateway_V1 {
 	 */
 	private static function code( string $source, string $suffix ): string {
 		return ( Assessment_Profile::SOURCE === $source ? 'ml_ai_' : 'assessment_' ) . $suffix;
+	}
+
+	/**
+	 * Preserve only fixed public failure categories, never provider messages.
+	 *
+	 * @param mixed $reply Execution result from the public platform gateway.
+	 * @return string
+	 */
+	private static function provider_failure( mixed $reply ): string {
+		$code = is_array( $reply ) ? ( $reply['error_code'] ?? null ) : null;
+		return match ( $code ) {
+			'invalid_request' => 'provider_invalid_request',
+			'authentication_failed' => 'provider_authentication_failed',
+			'model_not_found' => 'provider_model_not_found',
+			'timeout' => 'provider_timeout',
+			'rate_limited' => 'provider_rate_limited',
+			'provider_unavailable' => 'provider_unavailable',
+			'context_too_small' => 'provider_context_too_small',
+			'output_truncated' => 'provider_output_truncated',
+			'invalid_response' => 'provider_invalid_response',
+			'addon_ai_request_pending' => 'provider_request_pending',
+			'addon_ai_outcome_uncertain' => 'provider_outcome_uncertain',
+			'addon_ai_task_unroutable' => 'routing_required',
+			default => 'provider_failed',
+		};
 	}
 
 	/**

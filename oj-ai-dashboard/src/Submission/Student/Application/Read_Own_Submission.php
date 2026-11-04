@@ -37,11 +37,13 @@ final class Read_Own_Submission {
 	 * @param Student_Assignment_Repository_Port_Interface $submissions Submissions.
 	 * @param Learning_Context_Query_Port_Interface        $contexts Contexts.
 	 * @param callable|null                                $clock Clock.
+	 * @param Finalize_Expired_Own_Submission|null         $deadline Optional deadline recovery.
 	 */
 	public function __construct(
 		private Student_Assignment_Repository_Port_Interface $submissions,
 		private Learning_Context_Query_Port_Interface $contexts,
-		?callable $clock = null
+		?callable $clock = null,
+		private ?Finalize_Expired_Own_Submission $deadline = null
 	) {
 		$this->clock = null === $clock ? static fn (): string => gmdate( 'Y-m-d H:i:s' ) : Closure::fromCallable( $clock );
 	}
@@ -76,7 +78,12 @@ final class Read_Own_Submission {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Propagates an exception object; presentation boundaries map stable errors and escape displayed text.
 			throw Assignment_Failure::because( Assignment_Failure::NOT_FOUND );
 		}
-		$result = $this->submissions->find_submission_for_actor( $submission_id, $actor_user_id, $context, $this->now() );
+		$now    = $this->now();
+		$result = $this->submissions->find_submission_for_actor( $submission_id, $actor_user_id, $context, $now );
+		if ( null !== $result && null !== $this->deadline
+			&& $this->deadline->finalize( $result['submission'], $actor_user_id, $snapshot['context_revision'], $now ) ) {
+			$result = $this->submissions->find_submission_for_actor( $submission_id, $actor_user_id, $context, $now );
+		}
 		if ( null === $result ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Propagates an exception object; presentation boundaries map stable errors and escape displayed text.
 			throw Assignment_Failure::because( Assignment_Failure::NOT_FOUND );

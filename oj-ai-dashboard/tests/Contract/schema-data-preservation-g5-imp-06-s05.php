@@ -507,7 +507,7 @@ try {
 	g5_s05_same( Schema_Installation_Result::UPGRADED, $upgrade_result->status(), 'The 1.0.0 preservation fixture did not upgrade.' );
 	g5_s05_same( $upgrade_before, $upgrade_plane->snapshot(), 'Sequential upgrade changed protected rows, settings, files, or receipts.' );
 	g5_s05_same( $ledger_before, array_slice( $upgrade_store->migrations, 0, 2, true ), 'Sequential upgrade rewrote prior migration receipts.' );
-	g5_s05_same( 6, count( $upgrade_store->statements ), 'Sequential upgrade executed an unexpected DDL count.' );
+	g5_s05_same( 8, count( $upgrade_store->statements ), 'Sequential upgrade executed an unexpected DDL count.' );
 	$ready_snapshot = $upgrade_plane->snapshot();
 	$already_ready  = $upgrade_runner->install( 91, 'upgrade:data-preservation-ready' );
 	g5_s05_same( Schema_Installation_Result::ALREADY_READY, $already_ready->status(), 'Target reactivation was not a no-op.' );
@@ -570,8 +570,8 @@ try {
 	);
 	$repair_result                 = $service->execute( $command );
 	g5_s05_same( 'schema_repaired', $repair_result->code(), 'C75 preservation repair did not complete.' );
-	g5_s05_same( 6, count( $repair_store->statements ), 'Partial upgrade plus C75 must execute three ALTER and three CREATE statements.' );
-	g5_s05_same( 6, count( array_unique( $repair_store->statements ) ), 'C75 repeated a forward DDL statement.' );
+	g5_s05_same( 8, count( $repair_store->statements ), 'Partial upgrade plus C75 must execute five ALTER and three CREATE statements.' );
+	g5_s05_same( 8, count( array_unique( $repair_store->statements ) ), 'C75 repeated a forward DDL statement.' );
 	g5_s05_same( $repair_protected_before, $repair_plane->protected_snapshot(), 'C75 changed business rows, settings, private bytes, options, or source data.' );
 	g5_s05_same( $audit_before, array_slice( $repair_plane->rows['oj_ai_audit_events'], 0, count( $audit_before ) ), 'C75 rewrote prior audit history.' );
 	g5_s05_same( $outbox_before, array_slice( $repair_plane->rows['oj_ai_outbox_events'], 0, count( $outbox_before ) ), 'C75 rewrote prior outbox receipts.' );
@@ -590,7 +590,7 @@ try {
 		$all_statements = array_merge( $all_statements, $migration->statements() );
 	}
 	$alter_statements = array_values( array_filter( $all_statements, static fn ( string $sql ): bool => str_starts_with( $sql, 'ALTER TABLE ' ) ) );
-	g5_s05_same( 3, count( $alter_statements ), 'The preservation gate requires exactly three frozen forward ALTER statements.' );
+	g5_s05_same( 5, count( $alter_statements ), 'The preservation gate requires exactly five frozen forward ALTER statements.' );
 	foreach ( $all_statements as $statement ) {
 		g5_s05_assert( 1 === preg_match( '/^(?:CREATE TABLE|ALTER TABLE) /D', $statement ), 'Migration plan contains a statement outside CREATE or ALTER.' );
 		g5_s05_assert( 0 === preg_match( '/\b(?:DROP TABLE|DROP COLUMN|DROP KEY|RENAME TABLE|TRUNCATE TABLE|CHANGE COLUMN)\b/i', $statement ), 'Migration plan contains data-destructive DDL.' );
@@ -600,6 +600,8 @@ try {
 	g5_s05_assert( str_contains( $alter_statements[0], 'ADD COLUMN `active_identity_key` VARCHAR(191) NULL' ), 'The 1.0.1 delta stopped being additive.' );
 	g5_s05_assert( str_contains( $alter_statements[1], 'MODIFY COLUMN `prompt_contract_version` VARCHAR(64) NOT NULL' ), 'The 1.0.2 widening delta changed.' );
 	g5_s05_assert( str_contains( $alter_statements[2], 'ADD COLUMN `last_error_message` VARCHAR(500) NULL' ), 'The 1.0.3 delta stopped being additive.' );
+	g5_s05_assert( str_contains( $alter_statements[3], 'ADD COLUMN `non_submission_grade_json` LONGTEXT NULL' ), 'The 1.0.5 delta stopped being additive.' );
+	g5_s05_assert( str_contains( $alter_statements[4], 'ADD COLUMN `exception_policy_json` LONGTEXT NULL' ), 'The 1.0.6 delta stopped being additive.' );
 	foreach ( $catalog->table_names() as $table_name ) {
 		g5_s05_assert( 1 === preg_match( '/^oj_ai_[a-z0-9_]+$/D', $table_name ), 'A schema table is not literal oj_ai_*.' );
 	}

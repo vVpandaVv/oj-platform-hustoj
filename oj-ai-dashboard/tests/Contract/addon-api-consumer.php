@@ -63,8 +63,8 @@ use OJAI\Dashboard\Security\Policy\Port\Actor_Authorization_Port_Interface;
 use OJAI\Dashboard\Security\Policy\Port\Context_Authorization_Port_Interface;
 use OJAI\Dashboard\Security\Policy\Port\Object_Authorization_Port_Interface;
 
-$sourceRoot   = dirname( __DIR__, 2 );
-$addonRoot    = isset( $argv[1] ) ? realpath( $argv[1] ) : $sourceRoot;
+$sourceRoot = dirname( __DIR__, 2 );
+$addonRoot  = isset( $argv[1] ) ? realpath( $argv[1] ) : $sourceRoot;
 if ( ! is_string( $addonRoot ) || ! is_dir( $addonRoot ) ) {
 	throw new RuntimeException( 'The add-on source or staged package directory was not found.' );
 }
@@ -157,7 +157,11 @@ final class G1RegistrationGateway implements AddonRegistrationGatewayV1 {
 	 * @var mixed
 	 */
 	public mixed $onReady = null; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase -- This property spelling belongs to an external PHP, WordPress or provider contract.
-	/** @var string Registration failure retained for diagnostics. */
+	/**
+	 * Registration failure retained for diagnostics.
+	 *
+	 * @var string
+	 */
 	public string $failure = '';
 
 	/**
@@ -175,6 +179,7 @@ final class G1RegistrationGateway implements AddonRegistrationGatewayV1 {
 	 * @param string   $addonId Addon id.
 	 * @param callable $build Build.
 	 * @return void
+	 * @throws Throwable Propagates manifest registration failures.
 	 */
 	public function register( string $addonId, callable $build ): void {
 		$builder = new AddonManifestBuilder();

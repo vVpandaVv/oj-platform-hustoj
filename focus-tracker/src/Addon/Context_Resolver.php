@@ -56,9 +56,10 @@ final class Context_Resolver {
     }
 
     /**
+     * @param list<string> $types Current class/group memberships to query.
      * @return list<array{type: string, id: string, label: string}>
      */
-    public static function list_learning_contexts(int $actor_user_id, ?bool &$successful = null): array {
+    public static function list_learning_contexts(int $actor_user_id, ?bool &$successful = null, array $types = array('class', 'group')): array {
         $successful = false;
         $gateway = Runtime_Bridge::learning_gateway();
         if (null === $gateway) {
@@ -69,7 +70,7 @@ final class Context_Resolver {
         $cursor = '';
         $seen_cursors = array();
         do {
-            $page = $gateway->listLearningContexts(new AddonLearningContextQueryV1($actor_user_id, array('class', 'group'), '', $cursor, 100));
+            $page = $gateway->listLearningContexts(new AddonLearningContextQueryV1($actor_user_id, $types, '', $cursor, 100));
             if (! $page->isSuccessful()) {
                 return array();
             }

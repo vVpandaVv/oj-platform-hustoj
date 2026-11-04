@@ -70,6 +70,7 @@
         }
 
         var runGeneration = 0;
+        var executionNoticePrefix = '';
         var Runtime = new window.OclWorkerRuntime({
             url: config.workerUrl,
             indexUrl: PYODIDE_INDEX_URL,
@@ -79,6 +80,9 @@
 
         function showInlineInput(cellId, onSubmit, onCancel) {
             var cell = cellId ? findCell(cellId) : null;
+            var inputGeneration = runGeneration;
+            var inputActive = true;
+            if (pendingInput) { pendingInput.dispose(); }
             var outputEl = cellId ? cellElOutput(cellId) : null;
             if (!outputEl) {
                 // No cell context (shouldn't normally happen) — still let the
@@ -126,8 +130,11 @@
             // "저장" — otherwise it's indistinguishable from a value that
             // was never recorded at all once the cell finishes running.
             function finish(text) {
+                if (!inputActive || inputGeneration !== runGeneration) { return false; }
+                inputActive = false;
                 pendingInput = null;
                 wrap.remove();
+                markDirty();
 
                 if (inlineTarget) {
                     // Folded into the same stream entry (not a separate
@@ -136,7 +143,7 @@
                     // this same block correctly.
                     lastOutput.text += text + '\n';
                     inlineTarget.appendChild(document.createTextNode(text + '\n'));
-                    return;
+                    return true;
                 }
 
                 var output = { type: 'input', text: '> ' + text };
@@ -144,21 +151,38 @@
                     cell.outputs.push(output);
                 }
                 appendOutputEl(outputEl, output);
+                return true;
             }
 
             wrap.addEventListener('submit', function (event) {
                 event.preventDefault();
                 var value = input.value;
-                finish(value);
-                onSubmit(value);
+                if (finish(value)) { onSubmit(value); }
             });
 
             function cancelInput() {
-                finish('(입력 취소됨 — EOFError)');
-                onCancel();
+                if (finish('(입력 취소됨 — EOFError)')) { onCancel(); }
             }
-            pendingInput = { cellId: cellId, cancel: cancelInput };
+            pendingInput = {
+                cellId: cellId, input: input, cancel: cancelInput,
+                dispose: function () { inputActive = false; wrap.remove(); },
+                rebase: function (target, restoreFocus) {
+                    // The old inline prompt/output was cleared. Keep the same
+                    // input node, but record its eventual answer as a fresh item.
+                    if (inlineTarget) {
+                        var label = document.createElement('label');
+                        label.textContent = '입력을 기다리는 중입니다 (input())';
+                        wrap.insertBefore(label, wrap.children[0] || null);
+                    }
+                    inlineTarget = null;
+                    lastOutput = null;
+                    wrap.className = 'ocl-input-request';
+                    target.appendChild(wrap);
+                    if (restoreFocus) { input.focus(); }
+                }
+            };
             wrap.querySelector('[data-action="cancel"]').addEventListener('click', cancelInput);
+            setCellExecutionNotice(cellId, executionNoticePrefix + '입력을 기다리고 있습니다. 실행을 다시 누르면 이 입력 대기를 취소하고 새로 실행합니다.');
         }
 
         // ---- Cells --------------------------------------------------------
@@ -307,7 +331,24 @@
 
             wrap.appendChild(toolbar);
             wrap.appendChild(textarea);
-            if (cell.type === 'code') { wrap.appendChild(output); }
+            if (cell.type === 'code') {
+                var notice = document.createElement('p');
+                notice.className = 'ocl-execution-notice';
+                notice.setAttribute('role', 'status');
+                notice.hidden = true;
+                wrap.appendChild(notice);
+                var outputTools = document.createElement('div');
+                outputTools.className = 'ocl-output-tools';
+                var clearButton = document.createElement('button');
+                clearButton.type = 'button';
+                clearButton.className = 'ojp-button ojp-button--plain ojp-button--small ocl-btn-clear-output';
+                clearButton.textContent = '출력 지우기';
+                clearButton.title = '이 셀의 출력만 지웁니다. 코드, 변수와 입력 대기는 유지됩니다.';
+                clearButton.addEventListener('click', function () { clearCellOutput(cell.id); });
+                outputTools.appendChild(clearButton);
+                wrap.appendChild(outputTools);
+                wrap.appendChild(output);
+            }
 
             return wrap;
         }
@@ -373,6 +414,27 @@
             return wrap ? wrap.querySelector('.ocl-output') : null;
         }
 
+        function setCellExecutionNotice(id, text) {
+            var wrap = cellElement(id);
+            var notice = wrap ? wrap.querySelector('.ocl-execution-notice') : null;
+            if (notice) { notice.textContent = text || ''; notice.hidden = !text; }
+        }
+
+        function clearCellOutput(id) {
+            var cell = findCell(id);
+            var output = cellElOutput(id);
+            if (!cell || !output) { return; }
+            var input = pendingInput && pendingInput.cellId === id ? pendingInput : null;
+            var restoreFocus = input && document.activeElement === input.input;
+            var running = output.querySelector('.ocl-output-running');
+            cell.outputs = [];
+            output.innerHTML = '';
+            if (running) { output.appendChild(running); }
+            if (input) { input.rebase(output, restoreFocus); }
+            markDirty();
+            setStatus('이 셀의 출력을 지웠습니다. 코드, 변수와 입력 대기는 유지됩니다.');
+        }
+
         function deleteCell(id) {
             if (activeDebug && activeDebug.cellId === id) { stop(); }
             onCellEdited(id);
@@ -417,27 +479,32 @@
         // earlier input's echoed value disappear the moment the cell
         // finished, and what made everything printed before a later
         // input() call invisible until the entire cell was done.
-        function runOneCell(cell, debug) {
+        function runOneCell(cell, debug, generation, replacementNotice) {
+            if (generation === undefined) { generation = runGeneration; }
+            function current() { return generation === runGeneration && findCell(cell.id) === cell; }
             var outputEl;
             var runningIndicator = null;
             var lastStreamEl = null;
             var session = null;
             function begin() {
+                if (!current()) { return; }
                 outputEl = cellElOutput(cell.id);
                 cell.outputs = [];
                 markDirty();
-            if (outputEl) {
-                outputEl.innerHTML = '';
-                runningIndicator = document.createElement('p');
-                runningIndicator.className = 'ocl-output-running';
-                runningIndicator.textContent = debug ? '디버그 실행 중…' : '실행 중…';
-                outputEl.appendChild(runningIndicator);
-            }
+                if (outputEl) {
+                    outputEl.innerHTML = '';
+                    runningIndicator = document.createElement('p');
+                    runningIndicator.className = 'ocl-output-running';
+                    runningIndicator.textContent = debug ? '디버그 실행 중…' : '실행 중…';
+                    outputEl.appendChild(runningIndicator);
+                }
                 if (debugReview && debugReview.cellId === cell.id) { closeDebugSession(debugReview); }
                 if (debug) { session = startDebugSession(cell, outputEl); }
+                setCellExecutionNotice(cell.id, (replacementNotice || '') + (debug ? '이 셀을 디버깅하고 있습니다.' : '이 셀을 실행하고 있습니다.'));
             }
 
             function appendOutput(output) {
+                if (!current()) { return; }
                 markDirty();
                 // Consecutive stream chunks merge into one growing text
                 // block instead of one <pre> per individual write() call
@@ -465,10 +532,11 @@
             };
             var execution = debug
                 ? Runtime.debug(cell.id, cell.code, onStream, begin, function (snapshot, resume) {
-                    if (session) { showDebugPause(session, snapshot, resume); }
+                    if (current() && session) { showDebugPause(session, snapshot, resume); }
                 }, cellBreakpoints(cell.id))
                 : Runtime.run(cell.id, cell.code, onStream, begin);
             return execution.then(function (result) {
+                if (!current()) { return; }
                 if (session && result.debugEnd) { recordDebugStep(session, result.debugEnd); }
                 if (result.error) {
                     appendOutput({ type: 'error', text: result.error });
@@ -476,13 +544,17 @@
                 (result.images || []).forEach(function (image) {
                     appendOutput({ type: 'image', image: image });
                 });
+                setCellExecutionNotice(cell.id, (replacementNotice || '') + (result.error ? '실행 중 오류가 발생했습니다.' : '실행이 끝났습니다.'));
             }).catch(function (error) {
-                if (!error.cancelled) { appendOutput({ type: 'error', text: String((error && error.message) || error) }); }
+                if (current() && !error.cancelled) {
+                    appendOutput({ type: 'error', text: String((error && error.message) || error) });
+                    setCellExecutionNotice(cell.id, (replacementNotice || '') + '실행을 시작하지 못했습니다. 출력의 오류를 확인해 주세요.');
+                }
             }).finally(function () {
                 // A queued run may already have started in the same cell.
                 // Remove only the indicator created for this completed run.
                 if (runningIndicator) { runningIndicator.remove(); }
-                if (session) { finishDebugSession(session); }
+                if (current() && session) { finishDebugSession(session); }
             });
         }
 
@@ -503,8 +575,8 @@
         function debugCell(id) {
             var cell = findCell(id);
             if (!cell || cell.type !== 'code') { return; }
-            if (activeDebug) { setStatus('이미 디버깅 중인 셀이 있습니다. 먼저 끝내거나 중단해 주세요.'); return; }
-            runOneCell(cell, true).then(function () { markDirty(); });
+            var request = prepareExecution(cell.id);
+            runOneCell(cell, true, request.generation, request.notice);
         }
 
         function cellBreakpoints(cellId) {
@@ -762,25 +834,39 @@
                 return;
             }
 
-            runOneCell(cell).then(function () {
-                markDirty();
-            });
+            var request = prepareExecution(id);
+            runOneCell(cell, false, request.generation, request.notice);
         }
 
         function runAll() {
-            var generation = runGeneration;
+            var request = prepareExecution(null);
+            var generation = request.generation;
             var chain = Promise.resolve();
             cells.filter(function (cell) { return cell.type === 'code'; }).forEach(function (cell) {
                 chain = chain.then(function () {
-                    if (generation === runGeneration && findCell(cell.id)) { return runOneCell(cell); }
+                    if (generation === runGeneration && findCell(cell.id) === cell) { return runOneCell(cell, false, generation, request.notice); }
                 });
             });
-            chain.then(function () { markDirty(); });
+            chain.then(function () { if (generation === runGeneration) { setStatus(request.notice + '전체 실행이 끝났습니다.'); } });
         }
 
-        function stop() {
+        function prepareExecution(id) {
+            // Invalidate even a Run All chain whose first microtask has not run.
             runGeneration += 1;
+            var busy = Runtime.isBusy();
+            var notice = busy ? '이전 실행과 입력 대기를 중단했습니다. 변수와 불러온 데이터가 초기화되었습니다. ' : '';
+            executionNoticePrefix = notice;
+            if (busy) { stopRuntime(); }
+            else if (activeDebug) { closeDebugSession(activeDebug); }
+            if (id) { setCellExecutionNotice(id, notice + '이 셀의 실행을 준비하고 있습니다.'); }
+            setStatus(notice + (id ? '선택한 셀의 실행을 준비하고 있습니다.' : '전체 실행을 준비하고 있습니다.'));
+            return { generation: runGeneration, notice: notice };
+        }
+
+        function stopRuntime() {
+            var interruptedId = Runtime.active && Runtime.active.callbacks.cellId;
             Runtime.stop();
+            if (pendingInput) { pendingInput.dispose(); }
             pendingInput = null;
             if (activeDebug) { closeDebugSession(activeDebug); }
             if (debugReview) { closeDebugSession(debugReview); }
@@ -788,6 +874,12 @@
                 var output = cellElOutput(cell.id);
                 if (output) { renderOutputs(output, cell.outputs); }
             });
+            if (interruptedId) { setCellExecutionNotice(interruptedId, '실행과 입력 대기를 중단했습니다.'); }
+        }
+
+        function stop() {
+            runGeneration += 1;
+            stopRuntime();
             setStatus('실행을 중단했습니다. 코드와 실행 결과는 유지됩니다.');
         }
 
@@ -1001,12 +1093,14 @@
         }
 
         function importDataset(path, body) {
+            var generation = runGeneration;
             setStatus('데이터를 가져오는 중…');
             return apiJson(path, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
             }).then(function (result) {
+                if (generation !== runGeneration) { return; }
                 if (!result || typeof result.content !== 'string') {
                     throw new Error('데이터 응답 형식이 올바르지 않습니다.');
                 }
@@ -1017,6 +1111,7 @@
                 }
                 var bytes = new TextEncoder().encode(result.content);
                 return Runtime.writeFile(fileName, bytes).then(function (filePath) {
+                    if (generation !== runGeneration) { return; }
                     var read = format === 'jsonl'
                         ? 'pd.read_json(' + JSON.stringify(filePath) + ', lines=True)'
                         : 'pd.read_csv(' + JSON.stringify(filePath) + ')';
@@ -1027,11 +1122,12 @@
                     );
                     datasetsPanel.hidden = true;
                     setStatus((result.label ? result.label + ' ' : '') + '데이터를 가져왔습니다.');
-                    window.setTimeout(function () { setStatus(''); }, 2500);
-                    runCell(cell.id);
+                    // Automatic previews belong to the import's generation;
+                    // they must never replace a newer manually selected run.
+                    return runOneCell(cell, false, generation);
                 });
             }).catch(function (error) {
-                setStatus(error.message || '데이터를 가져오지 못했습니다.');
+                if (generation === runGeneration && !error.cancelled) { setStatus(error.message || '데이터를 가져오지 못했습니다.'); }
             });
         }
 

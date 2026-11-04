@@ -48,7 +48,8 @@ final class AddonMenuContributor
                 'all_capabilities',
                 [],
                 self::SECTIONS[$menu->anchor()] ?? null,
-                $menu->icon()
+                $menu->icon(),
+                $menu->fallbackForNativeMenu()
             ));
         }
 

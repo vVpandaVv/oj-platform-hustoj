@@ -1,0 +1,87 @@
+{
+  "candidateVersion": "1.0.0-rc.5",
+  "date": "2026-11-04",
+  "status": "local_verification_passed_live_acceptance_pending",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "featureFreeze": "feature-freeze-1.0.0-rc.5.json",
+  "requiresPlatform": ">=2.5.9 <3.0.0",
+  "requiresAddonApi": "^1.9",
+  "checks": {
+    "php": 1227,
+    "frontend": 95,
+    "installerShell": 26,
+    "runner": 91,
+    "freeze": 4,
+    "acceptanceRest": 15,
+    "acceptancePython": 26,
+    "total": 1484
+  },
+  "navigation": {
+    "nativeCatalogProvidersRegistered": 0,
+    "consolePages": 3,
+    "publicPages": 2,
+    "consoleMenus": 2,
+    "publicMenus": 2,
+    "teacherProblemLocalNavItems": 2,
+    "coreMenuAliases": 0
+  },
+  "platform": {
+    "version": "2.5.9",
+    "addonApi": "1.9.0",
+    "productCodeChanged": false,
+    "existingPackageSha256": "a7ab51aac9728826f26ce67c3abe45f9e1d931550f41a7d061f858708a7f82ee"
+  },
+  "browser": {
+    "report": "browser-ui-ux-validation-1.0.0-rc.5.json",
+    "flows": 15,
+    "pageErrors": 0,
+    "actualPlatformCss": true,
+    "actualPhpHostRenderer": true,
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualDatabase": false,
+    "actualRunner": false,
+    "actualHardware": false
+  },
+  "environment": {
+    "php": "8.5.5 Windows, PDO SQLite",
+    "node": "24.22.1 Windows",
+    "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+    "python": "3.14 Windows",
+    "shell": "Git Bash; nonprivileged command/filesystem fixtures"
+  },
+  "verified": [
+    "Independent public and console microbit problem and lesson menus, plus actual teacher creation route and problem local navigation",
+    "No provider registration or navigation aliases into core problem/class pages; all four native catalog surfaces emit no microbit content or links",
+    "Actual teacher creation shell selects its own problem menu and only the creation segment",
+    "Problem, lesson and creation routes preserve typed scope identifiers and WordPress subdirectory paths",
+    "New problems and allowed sequence/servo/I2C templates load on the creation route without unsaved in-memory handoff",
+    "Draft/publication save redirects to saved problem editor; blocked post-save navigation retains saved ID and revision to prevent duplicate creation",
+    "Cancelling a menu transition preserves unsaved code; approved navigation consumes a single beforeunload bypass",
+    "Existing schema 5, public/general/lesson scope isolation, bounded metadata queries and GPIO/PWM/servo/I2C/sequence grading remain intact"
+  ],
+  "actualTrialServer": false,
+  "actualWordPress": false,
+  "actualMySQL": false,
+  "actualDocker": false,
+  "actualHustojParallelLoad": false,
+  "actualBackupRestore": false,
+  "actualHardware": false,
+  "pending": [
+    "Actual WordPress theme, persisted menu visibility/order, roles and subdirectory routing",
+    "Actual group/class ledger permissions and concurrent revocation",
+    "MySQL/MariaDB plans, transactions, concurrent locks and workload",
+    "Representative lessons and student sessions with actual HUSTOJ judging",
+    "Matched plugin/database backup restore and privacy/retention completion",
+    "Physical HEX/WebUSB if official device support is included",
+    "Evaluation policy for independent addon result pages"
+  ],
+  "limitations": [
+    "SQLite and WordPress/POSIX/command fixtures do not certify actual MySQL or WordPress authentication",
+    "Browser uses real platform styles and PHP renderer with controlled loopback REST and iframe messages, not the actual MakeCode service",
+    "Existing group and class permission ledgers are reused by independent menus rather than copied into new module tables",
+    "Core programming performance-mode policies are not automatically applied to independent addon pages",
+    "Code-only downgrade to rc.2 or older does not understand lesson scopes; restore a matching database snapshot too"
+  ]
+}

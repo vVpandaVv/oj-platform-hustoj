@@ -14,8 +14,10 @@ final class AddonPublicPageDefinitionV1
         private readonly string $path,
         private readonly AddonPageHandlerV1 $handler,
         private readonly string $capability,
-        private readonly array $assetBundles = []
+        private readonly array $assetBundles = [],
+        private readonly ?string $navigationMenuKey = null
     ) {
+        if ($this->navigationMenuKey !== null) { ValueValidator::oneOf($this->navigationMenuKey, ['problems.index', 'classes.index'], 'navigationMenuKey'); }
         ValueValidator::contributionKey($this->key);
         ValueValidator::routePath($this->path);
         ValueValidator::capabilityKey($this->capability);
@@ -24,6 +26,8 @@ final class AddonPublicPageDefinitionV1
             ValueValidator::contributionKey($assetBundle, 'assetBundles');
         }
     }
+
+    public function navigationMenuKey(): ?string { return $this->navigationMenuKey; }
 
     public function key(): string
     {

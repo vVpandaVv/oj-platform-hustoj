@@ -91,10 +91,10 @@ assert.equal(buttons(status).length, 0);
 assert.equal(vm.runInContext('reviewActions(state.detail)', runtime), null);
 state.detail.evaluation.state = 'failed'; state.detail.evaluation.latest_run.state = 'failed';
 assert.ok(textOf(vm.runInContext('renderScoreStatus(state.detail)', runtime)).includes('평가 실패'), 'A failed regrade must stay retryable even with an older result.');
-assert.equal(buttons(vm.runInContext('renderScoreStatus(state.detail)', runtime)).length, 1);
+assert.deepEqual(buttons(vm.runInContext('renderScoreStatus(state.detail)', runtime)).map(button => button.dataset.reviewAction), ['retry-evaluation', 'manual-assessment'], 'After a failed regrade the teacher can retry AI or reopen the rubric.');
 state.detail.evaluation.state = 'review_required'; state.detail.evaluation.latest_run.state = 'succeeded';
 state.detail.selected_result.id = 'result-B'; state.detail.evaluation.candidate.id = 'result-B';
-assert.equal(vm.runInContext('renderScoreStatus(state.detail)', runtime), null);
+assert.equal(buttons(vm.runInContext('renderScoreStatus(state.detail)', runtime))[0].text, 'AI 재채점', 'A valid new result remains retryable until confirmation.');
 assert.equal(vm.runInContext('canAccept(state.detail)', runtime), true);
 assert.equal(state.detail.reviews.length, 1, 'Old reviews must remain after a new result.');
 
@@ -132,5 +132,5 @@ assert.equal(requests.filter(request => request.url).length, 1, 'A pending job m
 const reviewSource = source.slice(source.indexOf('  async function submitReview('), source.indexOf('  function openRejectDialog('));
 assert.doesNotMatch(reviewSource, /commands\/retry|retryEvaluation\(/, 'Rejecting alone must not transmit student work to AI.');
 assert.match(reviewSource, /decision === 'rejected' && selectedScoreRejection\(detail\)/);
-assert.match(source, /action === 'retry-evaluation'\) retryEvaluation\(\)/);
+assert.match(source, /action === 'retry-evaluation'\) requestAiEvaluation\(\)/);
 console.log('PASS score rejection: result-scoped status, reason, regrade action, no duplicate rejection, CAS request, permission/source/pending guards, double-click protection, retained history and resumed polling.');

@@ -1,0 +1,63 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const { savePublished } = require('./browser-publication.cjs');
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+(async () => {
+  const { fixture } = await import('./browser-server.mjs');
+  const output = path.resolve(__dirname, '../../_notes/tmp/oj-microbit-steps'); fs.mkdirSync(output, { recursive: true });
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined });
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } }), page = await context.newPage(), errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const state = fixture(); await new Promise(resolve => state.server.listen(0, '127.0.0.1', resolve));
+  const origin = 'http://127.0.0.1:' + state.server.address().port;
+  const ready = () => page.waitForFunction(() => document.querySelector('[data-oj-microbit]').ojMicrobit.driver?.loaded, null, { timeout: 150000 });
+  const closeServer = server => new Promise(resolve => { server.close(resolve); server.closeAllConnections(); });
+  try {
+    await page.goto(origin + '/?mode=teacher'); await page.getByRole('button', { name: '과제 편집', exact: true }).click(); await ready();
+    let first = page.locator('[data-mb-step]').first(); assert.equal(await page.locator('[data-mb-step]').count(), 3);
+    assert.equal(await page.locator('[data-mb-advanced]').evaluate(node => node.open), false);
+    const value = first.locator('.ojmicrobit-step-side').first().locator('input'); await value.fill('800');
+    assert.equal(await value.evaluate(node => document.activeElement === node), true);
+    await first.locator('.ojmicrobit-step-side').nth(1).locator('select').nth(1).selectOption('1');
+    await first.locator('.ojmicrobit-step-side').nth(1).locator('input').fill('800');
+    await first.locator('.ojmicrobit-step-summary').getByText(/800/).waitFor();
+    await first.screenshot({ path: path.join(output, 'gpio-first-card.png') });
+    const advanced = page.locator('[data-mb-advanced]').first(); await advanced.locator('summary').click();
+    let raw = advanced.locator('tbody').first().locator('tr').first().locator('td').nth(3).locator('input'); await raw.waitFor(); assert.equal(await raw.inputValue(), '800');
+    await raw.fill('801'); await advanced.locator('summary').click(); first = page.locator('[data-mb-step]').first();
+    await page.waitForFunction(() => document.querySelector('[data-mb-step] .ojmicrobit-step-side input').value === '801');
+    assert.equal(await first.locator('.ojmicrobit-step-side').first().locator('input').inputValue(), '801');
+    await first.locator('.ojmicrobit-step-side').first().locator('input').fill('800');
+    await first.locator('[data-mb-time] summary').click(); const duration = first.locator('[data-mb-time-field=lengthMs]'); await duration.fill('0.625'); await duration.press('Tab');
+    await page.waitForFunction(() => document.querySelector('[data-oj-microbit]').ojMicrobit.exercise.scenarios[0].inputs[1].atMs === 625);
+    assert.equal(await page.locator('[data-mb-time]').first().evaluate(node => node.open), true);
+    await page.locator('[data-mb-step]').first().getByRole('button', { name: '단계 복제', exact: true }).click(); assert.equal(await page.locator('[data-mb-step]').count(), 4);
+    await page.locator('[data-mb-step]').nth(1).getByRole('button', { name: '단계 삭제', exact: true }).click(); assert.equal(await page.locator('[data-mb-step]').count(), 3);
+    await page.getByRole('button', { name: '처음부터 검사할 예시 추가', exact: true }).click();
+    const example = page.locator('.ojmicrobit-example').nth(1); await example.getByRole('button', { name: '이어서 바꾸기 · 다음 단계', exact: true }).click();
+    const next = page.locator('.ojmicrobit-example').nth(1).locator('[data-mb-step]').nth(1);
+    await next.locator('.ojmicrobit-step-side').first().locator('input').fill('800');
+    await next.locator('.ojmicrobit-step-side').nth(1).locator('select').nth(1).selectOption('1');
+    await next.locator('.ojmicrobit-step-side').nth(1).locator('input').fill('800');
+    await savePublished(page);
+    const stored = state.exercise(); assert.equal(stored.scenarios.length, 2); assert.equal(stored.scenarios[0].inputs[1].atMs, 625); assert.equal(stored.scenarios[0].assertions[0].withinMs, 100); assert.equal(stored.scenarios[1].durationMs, 2000);
+    assert(stored.scenarios[1].assertions.every(entry => entry.withinMs === 500 && entry.holdMs === 100));
+    await page.locator('[data-mb-time]').first().evaluate(node => { node.open = false; });
+    await page.locator('[data-mb-scenarios]').screenshot({ path: path.join(output, 'gpio-cards.png') });
+    await page.screenshot({ path: path.join(output, 'teacher.png'), fullPage: true });
+    await page.goto(origin); await page.getByRole('button', { name: '실습 시작', exact: true }).click(); await ready();
+    await page.getByRole('button', { name: '자동 채점', exact: true }).click(); await page.getByText('모든 테스트를 통과했습니다.', { exact: true }).waitFor({ timeout: 60000 });
+    assert.equal(state.attempts.at(-1).result.score, 100); assert.equal(errors.length, 0);
+    process.stdout.write('[steps] actual MakeCode → PHP schema save → real PXT grade 100\n');
+    const i2cState = fixture('i2c'); await new Promise(resolve => i2cState.server.listen(0, '127.0.0.1', resolve));
+    try { await page.goto('http://127.0.0.1:' + i2cState.server.address().port + '/?mode=teacher'); await page.getByRole('button', { name: '과제 편집', exact: true }).click(); await ready();
+      assert.equal(await page.locator('[data-mb-step]').count(), 3); await page.locator('[data-mb-scenarios]').screenshot({ path: path.join(output, 'i2c-cards.png') });
+      await page.locator('[data-mb-step]').nth(1).screenshot({ path: path.join(output, 'i2c-single-card.png') });
+    } finally { await closeServer(i2cState.server); }
+    assert.equal(errors.length, 0);
+    fs.writeFileSync(path.join(output, 'result.json'), JSON.stringify({ primaryCards: true, independentExamples: 2, sequentialSteps: true, stageDuplicateDelete: true, secondsPrecisionMs: 625, bidirectionalViews: true, phpProjectAndExerciseSchema: true, phpRunnerResultSchema: true, actualMakeCodeSourceSave: true, realPxtGrade: 100, i2cCards: 3, uiErrors: errors, database: 'memory REST fixture' }, null, 2) + '\n', 'utf8');
+  } catch (error) {
+    await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true }).catch(() => {}); process.stdout.write('[steps] ' + (await page.locator('body').innerText()).slice(-4000) + '\n'); throw error;
+  } finally { await browser.close(); await closeServer(state.server); }
+})().catch(error => { console.error(error.stack); process.exitCode = 1; });

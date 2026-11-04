@@ -357,6 +357,7 @@ use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_External_Ai_Con
 use OJAI\Dashboard\Submission\Assessment\Presentation\Submission_External_Ai_Consent_Rest_Module;
 use OJAI\Dashboard\Submission\Student\Application\Autosave_Own_Submission;
 use OJAI\Dashboard\Submission\Student\Application\Read_Own_Submission;
+use OJAI\Dashboard\Submission\Student\Application\Finalize_Expired_Own_Submission;
 use OJAI\Dashboard\Submission\Student\Application\Read_Student_Assignments;
 use OJAI\Dashboard\Submission\Student\Application\Remove_Own_Staged_Attachment;
 use OJAI\Dashboard\Submission\Student\Application\Run_Auto_Submit_Due;
@@ -1211,16 +1212,17 @@ final class Composition_Root {
 		$submission_evaluation_routing                = new Platform_Submission_Evaluation_Routing( $runtime );
 		$evaluation_dispatcher                        = WordPress_Evaluation_Queue_Dispatcher::from_globals();
 		$submission_evaluation_queue                  = new WordPress_Submission_Evaluation_Queue_Wakeup( $evaluation_dispatcher );
+		$submission_score_inputs                      = new Submission_Score_Input_Builder(
+			$canonical,
+			new Submission_Revision_Integrity( $canonical ),
+			new Submission_Response_Validator( $canonical )
+		);
 		$enqueue_submission_evaluation                = new Enqueue_Submission_Evaluation(
 			$submission_evaluation_sources,
 			$submission_evaluation_routing,
 			new WordPress_Submission_Evaluation_Repository( $canonical ),
 			$submission_evaluation_queue,
-			new Submission_Score_Input_Builder(
-				$canonical,
-				new Submission_Revision_Integrity( $canonical ),
-				new Submission_Response_Validator( $canonical )
-			),
+			$submission_score_inputs,
 			$ids,
 			$canonical
 		);
@@ -1258,14 +1260,17 @@ final class Composition_Root {
 			$envelopes,
 			$correlations
 		);
+		$non_submission_grades                        = new \OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Non_Submission_Grade_Repository( $canonical, $ids );
 		$submission_evaluation_query_rest             = new Submission_Evaluation_Query_Rest_Controller(
 			$permissions,
 			new Read_Submission_Evaluations( $submission_evaluation_queries ),
 			$read_teacher_submissions,
 			$envelopes,
 			$correlations,
-			new Read_Submission_Evaluation_Roster( $read_teacher_submissions, new Platform_Assignment_Roster( $runtime ), new WordPress_Learner_Display_Snapshot() ),
-			$teacher_learner_labels
+			new Read_Submission_Evaluation_Roster( $read_teacher_submissions, new Platform_Assignment_Roster( $runtime ), new WordPress_Learner_Display_Snapshot(), $non_submission_grades ),
+			$teacher_learner_labels,
+			new \OJAI\Dashboard\Submission\Assessment\Application\Manage_Non_Submission_Grade( $non_submission_grades, $canonical ),
+			new \OJAI\Dashboard\Submission\Assessment\Application\Read_Submission_Rubric( $submission_evaluation_sources, $submission_score_inputs )
 		);
 		$submission_external_ai_consent_repository    = new WordPress_Submission_External_Ai_Consent_Repository( $canonical, $ids );
 		$submission_external_ai_consent               = new Manage_Submission_External_Ai_Consent(
@@ -1532,7 +1537,7 @@ final class Composition_Root {
 			$current_actor,
 			$student_assignments,
 			new Read_Student_Assignments( $student_assignments, $learning_contexts ),
-			new Read_Own_Submission( $student_assignments, $learning_contexts ),
+			new Read_Own_Submission( $student_assignments, $learning_contexts, null, new Finalize_Expired_Own_Submission( $student_submission_commits, $ids ) ),
 			new Start_Own_Submission( $student_assignments, $learning_contexts, $ids ),
 			new Autosave_Own_Submission( $student_assignments, $learning_contexts, $ids ),
 			new Submit_Own_Submission(
@@ -1564,7 +1569,7 @@ final class Composition_Root {
 			$correlations,
 			new \OJAI\Dashboard\Submission\Student\Application\Read_Student_File_Content(
 				new Read_Student_Assignments( $student_assignments, $learning_contexts ),
-				new Read_Own_Submission( $student_assignments, $learning_contexts ),
+				new Read_Own_Submission( $student_assignments, $learning_contexts, null, new Finalize_Expired_Own_Submission( $student_submission_commits, $ids ) ),
 				new \OJAI\Dashboard\Submission\Student\Infrastructure\WordPress_Student_File_Query(),
 				$private_files
 			),

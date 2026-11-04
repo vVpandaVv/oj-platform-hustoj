@@ -108,7 +108,7 @@ final class Console_Settings_Page_Handler implements AddonPageHandlerV1 {
                 <div class="ojp-field">
                     <label for="ftk-url-patterns"><?php esc_html_e('기록할 페이지 주소 패턴', 'focus-tracker'); ?></label>
                     <textarea class="ojp-textarea" id="ftk-url-patterns" name="tracked_url_patterns" rows="4" aria-describedby="ftk-url-patterns-help"><?php echo esc_textarea(implode("\n", $settings['tracked_url_patterns'])); ?></textarea>
-                    <p class="ojp-field-help" id="ftk-url-patterns-help"><?php esc_html_e('정규식을 한 줄에 하나씩 적습니다. 예: #^/(problems|submit)(/|$)# — 맞는 경로에서만 기록합니다. 잘못된 식은 저장하지 않습니다.', 'focus-tracker'); ?></p>
+                    <p class="ojp-field-help" id="ftk-url-patterns-help"><?php esc_html_e('정규식을 한 줄에 하나씩 적습니다. 기본 범위는 지원되는 문제·자료·실습·교육게임·게시판 화면입니다. 지정한 범위에서도 지원하는 내부 학습 페이지와 그룹 활동 시간에만 기록합니다. 로그인·개인설정·관리 화면은 수집하지 않습니다.', 'focus-tracker'); ?></p>
                 </div>
 
                 <div class="ojp-form-actions">

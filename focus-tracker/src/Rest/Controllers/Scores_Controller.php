@@ -100,6 +100,12 @@ final class Scores_Controller {
         if ($activity === null || $activity['status'] === Activity_Repository::STATUS_DELETED) { return new WP_Error('focus_tracker_not_found', __('활동을 찾을 수 없습니다.', 'focus-tracker'), array('status' => 404)); }
         $scores = Activity_Score_Service::scores_for_activity($activity, $learner_ids, $force_refresh);
 
+        // Prime the same WordPress user/meta caches get_userdata() already uses.
+        // The authorized roster is bounded; no cross-request addon cache or
+        // separate authorization result is introduced here.
+        if (function_exists('cache_users')) {
+            foreach (array_chunk(array_values(array_unique(array_map('intval', $learner_ids))), 100) as $ids) { cache_users($ids); }
+        }
         $rows = array();
         foreach ($learner_ids as $learner_id) {
             $metrics = $scores[$learner_id];
@@ -144,21 +150,22 @@ final class Scores_Controller {
             return new WP_Error('focus_tracker_not_found', __('활동을 찾을 수 없습니다.', 'focus-tracker'), array('status' => 404));
         }
 
-        $participations = Participation_Repository::list_for_activity_and_user($activity_id, $target_user_id);
-        $metrics = Activity_Score_Service::score_for_learner($activity, $target_user_id);
-        $now = Clock::now_ms();
-        $participations = Activity_Score_Service::participations_for_activity($activity, $participations, $now);
+        $source = Activity_Score_Service::score_and_inputs_for_learner($activity, $target_user_id);
+        $metrics = $source['metrics'];
+        $now = $source['nowMs'];
         $start = Clock::mysql_to_ms((string) $activity['starts_at']);
         $end = max($start, min($now, Clock::mysql_to_ms((string) $activity['ends_at'])));
         $timeline = array('intervals' => array(), 'markers' => array());
+        $page_timeline = array('categorySpans' => array(), 'pageCategories' => array(), 'pages' => array(), 'pagesTruncated' => false);
         if (in_array($metrics['data_status'], array('complete', 'provisional', 'incomplete'), true)) {
             $inputs = array_values(array_filter(
-                Activity_Score_Service::participation_inputs($participations),
+                $source['inputs'],
                 static fn (array $p): bool => ! empty($p['events'])
             ));
             $timeline = Score_Calculator::timeline_for_participations(
                 $inputs, $start, $end, $now
             );
+            $page_timeline = Score_Calculator::page_timeline_for_participations($inputs, $start, $end, $now);
         }
 
         return rest_ensure_response(array(
@@ -166,6 +173,10 @@ final class Scores_Controller {
             'windowEndsAtMs' => $end,
             'spans' => $timeline['intervals'],
             'markers' => $timeline['markers'],
+            'categorySpans' => $page_timeline['categorySpans'],
+            'pageCategories' => $page_timeline['pageCategories'],
+            'pages' => $page_timeline['pages'],
+            'pageRecordsTruncated' => $page_timeline['pagesTruncated'],
             'dataStatus' => $metrics['data_status'],
             'needsReview' => $metrics['needs_review'],
             'finalized' => $metrics['finalized'],
@@ -186,7 +197,9 @@ final class Scores_Controller {
             'scoreFocus' => $metrics['score_focus'],
             'scoreSelfreg' => $metrics['score_selfreg'],
             'scoreActivity' => $metrics['score_activity'],
+            'activityEligible' => (bool) ($metrics['activity_eligible'] ?? true),
             'scoreTotal' => $metrics['score_total'],
+            'scoreEligible' => (bool) ($metrics['score_eligible'] ?? true),
             'needsReview' => $metrics['needs_review'],
             'dataStatus' => $metrics['data_status'],
             'finalized' => $metrics['finalized'],

@@ -166,15 +166,15 @@ final class G5_S02_Installer implements Schema_Installer_Port_Interface {
 }
 
 g5_s02_assert(
-	str_contains( $foundation_output, 'fresh 1.0.4 install, supported upgrades through 1.0.3' ),
+	str_contains( $foundation_output, 'fresh 1.0.6 install, supported upgrades through 1.0.5' ),
 	'The constituent database infrastructure contract did not run.'
 );
 
 $catalog    = new Schema_Catalog();
 $plan       = new Migration_Plan( $catalog );
 $migrations = $plan->migrations();
-g5_s02_same( '1.0.4', Schema_Catalog::SCHEMA_VERSION, 'The target schema version changed without an S02 contract update.' );
-g5_s02_same( 6, count( $migrations ), 'The immutable migration count changed.' );
+g5_s02_same( '1.0.6', Schema_Catalog::SCHEMA_VERSION, 'The target schema version changed without an S02 contract update.' );
+g5_s02_same( 8, count( $migrations ), 'The immutable migration count changed.' );
 g5_s02_same(
 	array(
 		'202608140001_bootstrap_schema_ledger',
@@ -183,6 +183,8 @@ g5_s02_same(
 		'202608230001_expand_submission_prompt_contract',
 		'202608300001_add_evaluation_run_last_error_message',
 		'202609070001_assessment_projects',
+		'202611030001_assignment_target_grades',
+		'202611040001_assignment_exception_policy',
 	),
 	array_map( static fn ( $migration ): string => $migration->id(), $migrations ),
 	'The sequential migration order changed.'
@@ -200,11 +202,11 @@ $baseline_history                    = $baseline_store->migrations;
 $baseline_result                     = $baseline_runner->install( 19, 'upgrade:1.0.0-20260825' );
 g5_s02_same( Schema_Installation_Result::UPGRADED, $baseline_result->status(), 'The exact 1.0.0 source did not upgrade.' );
 g5_s02_same(
-	array( 'oj_ai_export_jobs', 'oj_ai_submission_evaluations', 'oj_ai_evaluation_runs', 'oj_ai_assessment_projects', 'oj_ai_assessment_project_revisions', 'oj_ai_assessment_project_worksheets' ),
+	array( 'oj_ai_export_jobs', 'oj_ai_submission_evaluations', 'oj_ai_evaluation_runs', 'oj_ai_assessment_projects', 'oj_ai_assessment_project_revisions', 'oj_ai_assessment_project_worksheets', 'oj_ai_assignment_targets', 'oj_ai_assignments' ),
 	$baseline_result->completed_tables(),
 	'The 1.0.0 upgrade completed the wrong physical targets.'
 );
-g5_s02_same( 6, count( $baseline_store->statements ), 'The 1.0.0 source must execute three ALTER and three CREATE statements.' );
+g5_s02_same( 8, count( $baseline_store->statements ), 'The 1.0.0 source must execute five ALTER and three CREATE statements.' );
 g5_s02_assert( str_starts_with( $baseline_store->statements[0], 'ALTER TABLE `oj_ai_export_jobs`' ), 'The 1.0.1 delta order changed.' );
 g5_s02_assert( str_starts_with( $baseline_store->statements[1], 'ALTER TABLE `oj_ai_submission_evaluations`' ), 'The 1.0.2 delta order changed.' );
 g5_s02_assert( str_starts_with( $baseline_store->statements[2], 'ALTER TABLE `oj_ai_evaluation_runs`' ), 'The 1.0.3 delta order changed.' );
@@ -214,7 +216,7 @@ g5_s02_same( 1, $baseline_lock->releases, 'The 1.0.0 upgrade must release its na
 g5_s02_same( Schema_Catalog::SCHEMA_VERSION, $baseline_store->installation['schema_version'], 'The target version was not stored.' );
 g5_s02_same( $catalog->fingerprint(), $baseline_store->installation['schema_fingerprint'], 'The target fingerprint was not stored.' );
 g5_s02_same( Installation_State::REGISTRATION_PENDING, $baseline_store->installation['state'], 'Upgrade must stop at registration_pending.' );
-g5_s02_same( 6, count( $baseline_store->migrations ), 'The 1.0.0 upgrade did not finish the six-record ledger.' );
+g5_s02_same( 8, count( $baseline_store->migrations ), 'The 1.0.0 upgrade did not finish the eight-record ledger.' );
 
 $baseline_statement_count = count( $baseline_store->statements );
 $baseline_ready           = $baseline_runner->install( 19, 'upgrade:1.0.2-ready-20260825' );
@@ -234,15 +236,15 @@ $previous_history                    = $previous_store->migrations;
 [ $previous_runner, $previous_lock ] = database_infrastructure_runner( $catalog, $previous_store );
 $previous_result                     = $previous_runner->install( 19, 'upgrade:1.0.1-20260825' );
 g5_s02_same( Schema_Installation_Result::UPGRADED, $previous_result->status(), 'The exact 1.0.1 source did not upgrade.' );
-g5_s02_same( array( 'oj_ai_submission_evaluations', 'oj_ai_evaluation_runs', 'oj_ai_assessment_projects', 'oj_ai_assessment_project_revisions', 'oj_ai_assessment_project_worksheets' ), $previous_result->completed_tables(), 'The 1.0.1 source applied more than its minimum delta.' );
-g5_s02_same( 5, count( $previous_store->statements ), 'The 1.0.1 source must execute two ALTER and three CREATE statements.' );
+g5_s02_same( array( 'oj_ai_submission_evaluations', 'oj_ai_evaluation_runs', 'oj_ai_assessment_projects', 'oj_ai_assessment_project_revisions', 'oj_ai_assessment_project_worksheets', 'oj_ai_assignment_targets', 'oj_ai_assignments' ), $previous_result->completed_tables(), 'The 1.0.1 source applied more than its minimum delta.' );
+g5_s02_same( 7, count( $previous_store->statements ), 'The 1.0.1 source must execute four ALTER and three CREATE statements.' );
 g5_s02_assert( str_starts_with( $previous_store->statements[0], 'ALTER TABLE `oj_ai_submission_evaluations`' ), 'The 1.0.1 source targeted the wrong table.' );
 g5_s02_assert( str_starts_with( $previous_store->statements[1], 'ALTER TABLE `oj_ai_evaluation_runs`' ), 'The 1.0.1 source targeted the wrong table for the error message delta.' );
 g5_s02_same( $previous_history, array_slice( $previous_store->migrations, 0, 3, true ), 'The 1.0.1 applied history was rewritten.' );
 g5_s02_same( 1, $previous_lock->acquisitions, 'The 1.0.1 upgrade must acquire one named lock.' );
 g5_s02_same( 1, $previous_lock->releases, 'The 1.0.1 upgrade must release its named lock.' );
 
-$future_store = g5_s02_store( $catalog, $catalog->tables(), '1.0.5', $catalog->fingerprint(), 6 );
+$future_store = g5_s02_store( $catalog, $catalog->tables(), '1.0.7', $catalog->fingerprint(), 8 );
 g5_s02_assert_blocked_without_writes( $catalog, $future_store, 'upgrade:future-20260825', 'schema_preflight_blocked' );
 
 $unknown_store = g5_s02_store( $catalog, $plan->baseline_tables(), '0.9.9', Migration_Plan::BASELINE_SCHEMA_FINGERPRINT, 2 );
@@ -373,6 +375,6 @@ foreach ( array( '$wpdb->prefix', '$wpdb->base_prefix', 'wp_oj_ai_' ) as $forbid
 g5_s02_assert( ! str_contains( $upgrade_sources, 'OJ\\Platform\\' ), 'Sequential upgrade source depends on a platform implementation namespace.' );
 
 echo "G5-IMP-06-S02 sequential upgrade contract passed.\n";
-echo "- supported 1.0.0 through 1.0.3 sources -> 1.0.4 paths\n";
+echo "- supported 1.0.0 through 1.0.5 sources -> 1.0.6 paths\n";
 echo "- target no-op and unsupported source, ledger, checksum, table, and physical drift fail closed\n";
 echo "- literal oj_ai_* DDL only, immutable applied history, ordered activation, and no platform writes\n";

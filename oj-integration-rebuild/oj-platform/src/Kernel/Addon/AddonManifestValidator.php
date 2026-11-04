@@ -166,6 +166,7 @@ final class AddonManifestValidator
             'activity_provider' => 8,
             'site_asset' => 4,
             'privacy_data' => 16,
+            'native_learning_provider' => 4,
         ];
         foreach ($limits as $kind => $limit) {
             if (($counts[$kind] ?? 0) > $limit) {
@@ -437,7 +438,8 @@ final class AddonManifestValidator
             $manifest->aiTasks(),
             $manifest->activityProviders(),
             $manifest->siteAssets(),
-            $manifest->privacyData()
+            $manifest->privacyData(),
+            $manifest->nativeLearningProviders()
         );
     }
 

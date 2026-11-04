@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Focus Tracker
- * Description: Tracks tab focus and in-page learning activity while students work on OJ problems, and scores it as an oj-platform addon.
- * Version: 1.0.1
+ * Description: Records scheduled learning-page categories, screen activity and weekly/monthly participation statistics as an OJ Platform addon.
+ * Version: 1.1.2
  * Requires at least: 6.6
  * Requires PHP: 8.3
  * Requires Plugins: oj-platform
@@ -17,7 +17,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-define('FOCUS_TRACKER_VERSION', '1.0.1');
+define('FOCUS_TRACKER_VERSION', '1.1.2');
 define('FOCUS_TRACKER_FILE', __FILE__);
 define('FOCUS_TRACKER_PATH', plugin_dir_path(__FILE__));
 define('FOCUS_TRACKER_URL', plugin_dir_url(__FILE__));

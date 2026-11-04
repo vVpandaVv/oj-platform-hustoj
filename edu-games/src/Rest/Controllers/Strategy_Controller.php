@@ -65,7 +65,7 @@ final class Strategy_Controller {
         $progress=self::progress($game);if(is_wp_error($progress))return $progress;global $wpdb;
         $p=self::input($r);
         if(isset($p['page'])) {
-            $result=\EduGames\Rankings\Run_Leaderboard::page($game,Catalog::version($game),'strategy',$level,$p['page'],$p['perPage']??20);
+            $result=\EduGames\Rankings\Run_Leaderboard::page($game,Catalog::version($game),'strategy',$level,$p['page'],$p['perPage']??20,!empty($p['overview']));
             return is_wp_error($result)?$result:rest_ensure_response($progress+$result+array('level'=>$level));
         }
         $rows=$wpdb->get_results($wpdb->prepare('SELECT user_id, MAX(score) AS score FROM '.Installer::table()." WHERE game_slug=%s AND content_version=%s AND mode='strategy' AND level=%s AND completed_at IS NOT NULL GROUP BY user_id ORDER BY score DESC, user_id ASC",$game,Catalog::version($game),$level),ARRAY_A);

@@ -71,22 +71,26 @@ if ($mode === 'platform') {
     if (is_wp_error($result)) { throw new RuntimeException($result->get_error_message()); }
     echo "Focus activated; defaults apply in the next real init.\n";
 } elseif ($mode === 'install-zip') {
+    $version = $argv[4] ?? '1.0.0';
+    if (! preg_match('/^[0-9]+\.[0-9]+\.[0-9]+(?:-[a-z0-9.]+)?$/D', $version)) { throw new RuntimeException('Invalid release version.'); }
     $zip = realpath($argv[3] ?? '');
-    $releaseRoot = realpath(dirname(__DIR__, 3) . '/_releases/focus-tracker/1.0.0');
+    $releaseRoot = realpath(dirname(__DIR__, 3) . '/_releases/focus-tracker/' . $version);
     $destination = realpath(WP_PLUGIN_DIR . '/focus-tracker');
     $expected = realpath($wpPath . '/wp-content/plugins') . DIRECTORY_SEPARATOR . 'focus-tracker';
-    if ($zip === false || $releaseRoot === false || dirname($zip) !== $releaseRoot || basename($zip) !== 'focus-tracker-1.0.0.zip'
+    if ($zip === false || $releaseRoot === false || dirname($zip) !== $releaseRoot || basename($zip) !== 'focus-tracker-' . $version . '.zip'
         || $destination === false || $destination !== $expected || wp_get_environment_type() !== 'local') {
         throw new RuntimeException('Refusing an unexpected ZIP or replacement target.');
     }
     require_once ABSPATH . 'wp-admin/includes/file.php';
     require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-    wp_set_current_user((int) get_user_by('login', $config['admin']['username'])->ID);
+    $administrator = get_user_by('login', $config['admin']['login'] ?? $config['admin']['username']);
+    if (! $administrator instanceof WP_User || ! user_can($administrator, 'update_plugins')) { throw new RuntimeException('The native installer requires its disposable site administrator.'); }
+    wp_set_current_user((int) $administrator->ID);
     $skin = new Automatic_Upgrader_Skin();
     $upgrader = new Plugin_Upgrader($skin);
     $result = $upgrader->install($zip, ['overwrite_package' => true, 'clear_update_cache' => false]);
     if ($result !== true) {
         throw new RuntimeException('Native WordPress ZIP replacement failed: ' . (is_wp_error($result) ? $result->get_error_message() : wp_json_encode($skin->get_errors())));
     }
-    echo "Official 1.0.0 ZIP installed by the native WordPress Plugin_Upgrader; verify in a new request.\n";
+    echo "Official " . $version . " ZIP installed by the native WordPress Plugin_Upgrader; verify in a new request.\n";
 } else { throw new RuntimeException('Unknown mode.'); }

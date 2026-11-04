@@ -96,7 +96,7 @@ Assert-Markers 'tests\Contract\failure-restart-g5-imp-06-s03.php' @(
     'CREATE, ALTER, postcondition, checkpoint write, ledger finish, and final state failures'
     'schema_checkpoint_json_noncanonical'
     'repair:restart-success-20260825'
-    '51, count( array_unique( $restart_store->statements ) )'
+    '52, count( array_unique( $restart_store->statements ) )'
     'fail_once_at_operation'
 ) 'contract fixture'
 Assert-Markers 'docs\ai-assessment\g5-imp-06-s03-failure-restart.html' @(

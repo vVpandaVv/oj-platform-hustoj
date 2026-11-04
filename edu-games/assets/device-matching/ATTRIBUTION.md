@@ -57,3 +57,42 @@ Fourteen additional photographs, bringing the matching pool to 38 devices. These
 | linear-actuator.jpg | [LCA25.jpg](https://commons.wikimedia.org/wiki/File:LCA25.jpg) | CC BY-SA 3.0 | smacmca |
 
 Additional license terms: [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/), [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/), [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/), [CC BY-SA 2.5](https://creativecommons.org/licenses/by-sa/2.5/), [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
+
+## Team Catalog Expansion (2026-11-03)
+
+32 additional device photographs, bringing the local catalog to 70 devices. Commons-generated thumbnails are distributed without additional editing. Diagrams, unrelated scenes and ambiguous component closeups were excluded. Source URLs, authors, licenses, download URLs and SHA-256 hashes are preserved in `team-sources.json`. These photographs illustrate device categories and are not a claim of newest-model availability.
+
+| Asset | Source | Author | License |
+| --- | --- | --- | --- |
+| nvme-ssd.jpg | [Samsung 980 PRO PCIe 4.0 NVMe SSD 1TB-top PNr°0915.jpg](https://commons.wikimedia.org/wiki/File:Samsung_980_PRO_PCIe_4.0_NVMe_SSD_1TB-top_PNr%C2%B00915.jpg) | D-Kuru | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| hard-disk.jpg | [Hard disk drive platter, Samsung MP0402H.jpg](https://commons.wikimedia.org/wiki/File:Hard_disk_drive_platter,_Samsung_MP0402H.jpg) | Mk2010 | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) |
+| power-supply.jpg | [ATX Computer power supply unit.jpg](https://commons.wikimedia.org/wiki/File:ATX_Computer_power_supply_unit.jpg) | Dmitry Makeev | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| network-card.jpg | [An Intel 82574L Gigabit Ethernet NIC, PCI Express x1 card.jpg](https://commons.wikimedia.org/wiki/File:An_Intel_82574L_Gigabit_Ethernet_NIC,_PCI_Express_x1_card.jpg) | Dsimic | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) |
+| microphone.jpg | [Blue Snowflake USB microphone.jpg](https://commons.wikimedia.org/wiki/File:Blue_Snowflake_USB_microphone.jpg) | Marie-Lan Nguyen | [CC BY 2.5](https://creativecommons.org/licenses/by/2.5) |
+| headphones.jpg | [Sony WH-CH510 Bluetooth Over-Ear Headphone.jpg](https://commons.wikimedia.org/wiki/File:Sony_WH-CH510_Bluetooth_Over-Ear_Headphone.jpg) | RPSkokie | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| projector.jpg | [InFocus IN34.jpg](https://commons.wikimedia.org/wiki/File:InFocus_IN34.jpg) | Dave Pape | [Public domain](https://commons.wikimedia.org/wiki/File:InFocus_IN34.jpg) |
+| scanner.jpg | [Scanner.view.750pix.jpg](https://commons.wikimedia.org/wiki/File:Scanner.view.750pix.jpg) | Users Boffy b, Arpingstone on en.wikipedia | [Public domain](https://commons.wikimedia.org/wiki/File:Scanner.view.750pix.jpg) |
+| pen-tablet.jpg | [Wacom Intuos4 Pen Tablet.jpg](https://commons.wikimedia.org/wiki/File:Wacom_Intuos4_Pen_Tablet.jpg) | Joe Ravi | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) |
+| barcode-scanner.jpg | [Honeywell 4600g-8661.jpg](https://commons.wikimedia.org/wiki/File:Honeywell_4600g-8661.jpg) | Raimond Spekking | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| smartwatch.jpg | [Samsung Galaxy Watch 2026-08-11 Ultra 2.jpg](https://commons.wikimedia.org/wiki/File:Samsung_Galaxy_Watch_2026-08-11_Ultra_2.jpg) | P1898 | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) |
+| digital-camera.jpg | [Sony Alpha 7R IV elevated front view of camera body with exposed sensor.jpg](https://commons.wikimedia.org/wiki/File:Sony_Alpha_7R_IV_elevated_front_view_of_camera_body_with_exposed_sensor.jpg) | Franz van Duns | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| network-switch.jpg | [8-Port Gigabit Switch HP 1810G-8.jpg](https://commons.wikimedia.org/wiki/File:8-Port_Gigabit_Switch_HP_1810G-8.jpg) | Harke | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) |
+| hdmi-cable.jpg | [HDMI Cable 1.JPG](https://commons.wikimedia.org/wiki/File:HDMI_Cable_1.JPG) | Kannan shanmugam,shanmugam studio, Kollam | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| rfid-reader.jpg | [RFID module RC522.jpg](https://commons.wikimedia.org/wiki/File:RFID_module_RC522.jpg) | Goga504 | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| imu-module.jpg | [GY-521 MPU-6050 Module 3 Axis Gyroscope + Accelerometer 0487.jpg](https://commons.wikimedia.org/wiki/File:GY-521_MPU-6050_Module_3_Axis_Gyroscope_%2B_Accelerometer_0487.jpg) | Nevit Dilmen (talk) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) |
+| speakers.jpg | [Bose Computer MusicMonitor.jpg](https://commons.wikimedia.org/wiki/File:Bose_Computer_MusicMonitor.jpg) | Ben Stassen's | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0) |
+| gamepad.jpg | [Xbox Series Controller Carbon Black.jpg](https://commons.wikimedia.org/wiki/File:Xbox_Series_Controller_Carbon_Black.jpg) | uKER | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| smartphone.jpg | [Google Pixel 8 Rose rear bottom-left.jpg](https://commons.wikimedia.org/wiki/File:Google_Pixel_8_Rose_rear_bottom-left.jpg) | IXTA9839 | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| vr-headset.jpg | [Meta Quest 3 display unit.jpg](https://commons.wikimedia.org/wiki/File:Meta_Quest_3_display_unit.jpg) | IHazACatNamedMax | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| rgb-led.jpg | [RGB LED 5mm.jpg](https://commons.wikimedia.org/wiki/File:RGB_LED_5mm.jpg) | Mister rf | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| arduino-nano.jpg | [Iskra Nano Pro (Arduino Nano clone) top.jpg](https://commons.wikimedia.org/wiki/File:Iskra_Nano_Pro_(Arduino_Nano_clone)_top.jpg) | Retired electrician | [CC0](http://creativecommons.org/publicdomain/zero/1.0/deed.en) |
+| sd-card.jpg | [SAMSUNG SD CARD PRO PLUS 256 GB (2021 EDITION) FRONT.jpg](https://commons.wikimedia.org/wiki/File:SAMSUNG_SD_CARD_PRO_PLUS_256_GB_(2021_EDITION)_FRONT.jpg) | Dinkun Chen | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| relay-module.jpg | [SRD-05VDC-SL-C 5V one-channel relay module.jpg](https://commons.wikimedia.org/wiki/File:SRD-05VDC-SL-C_5V_one-channel_relay_module.jpg) | Suyash Dwivedi | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| push-button.jpg | [Tact switches.JPG](https://commons.wikimedia.org/wiki/File:Tact_switches.JPG) | Kszapsza | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| solar-panel.jpg | [Small solar cell.jpg](https://commons.wikimedia.org/wiki/File:Small_solar_cell.jpg) | Santeri Viinamäki | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| jumper-wires.jpg | [Jumper Wires with Crocodile Clips.jpg](https://commons.wikimedia.org/wiki/File:Jumper_Wires_with_Crocodile_Clips.jpg) | oomlout | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0) |
+| robot-wheel.jpg | [GTF-omni drectional robot wheel-B.jpg](https://commons.wikimedia.org/wiki/File:GTF-omni_drectional_robot_wheel-B.jpg) | Aika.robotic | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| motherboard.jpg | [ASUS Prime X570-P.jpg](https://commons.wikimedia.org/wiki/File:ASUS_Prime_X570-P.jpg) | Oligopolism | [CC0](http://creativecommons.org/publicdomain/zero/1.0/deed.en) |
+| ethernet-cable.jpg | [EthernetCableGreen.jpg](https://commons.wikimedia.org/wiki/File:EthernetCableGreen.jpg) | Raysonho @ Open Grid Scheduler / Grid Engine | [CC0](http://creativecommons.org/publicdomain/zero/1.0/deed.en) |
+| potentiometer.jpg | [Electronic-Component-Potentiometer.jpg](https://commons.wikimedia.org/wiki/File:Electronic-Component-Potentiometer.jpg) | Evan-Amos | [Public domain](https://commons.wikimedia.org/wiki/File:Electronic-Component-Potentiometer.jpg) |
+| usb-hub.jpg | [4-port USB hub.jpg](https://commons.wikimedia.org/wiki/File:4-port_USB_hub.jpg) | Maksym Kozlenko | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |

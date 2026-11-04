@@ -53,7 +53,7 @@
             })
             .then(function (data) {
                 if (!data.hasActivity) {
-                    emptyState('아직 기록된 활동이 없습니다', '선생님이 연 활동에서 문제를 풀면 여기에 점수가 표시됩니다.');
+                    emptyState('아직 기록된 활동이 없습니다', '선생님이 연 활동 시간에 학습 페이지를 이용하면 여기에 참여 기록이 표시됩니다.');
                     renderChecks(data.learningChecks);
                     return;
                 }
@@ -70,16 +70,23 @@
                     + '<p data-f="status" class="ojp-muted"></p>';
 
                 var available = data.dataStatus !== 'no_data' && data.dataStatus !== 'unavailable';
-                var scoreAvailable = available && data.dataStatus !== 'incomplete' && !data.hasDeliveryGaps && !data.hasObservationGaps;
+                var scoreAvailable = available && data.dataStatus !== 'incomplete' && !data.hasDeliveryGaps && !data.hasObservationGaps
+                    && data.scoreEligible !== false && typeof data.scoreTotal === 'number';
                 summaryEl.querySelector('h2').textContent = data.activityName;
                 summaryEl.querySelector('[data-f="focus"]').textContent = available ? Number(data.focusRatio).toFixed(1) + '%' : '—';
                 summaryEl.querySelector('[data-f="blur"]').textContent = available ? data.blurCount + '회' : '—';
                 summaryEl.querySelector('[data-f="recovery"]').textContent = available ? Number(data.avgRecoverySeconds).toFixed(1) + '초' : '—';
-                summaryEl.querySelector('[data-f="activity"]').textContent = available ? Number(data.activityWindowRatio).toFixed(1) + '%' : '—';
-                summaryEl.querySelector('[data-f="total"]').textContent = scoreAvailable ? Number(data.scoreTotal).toFixed(1) : '—';
+                summaryEl.querySelector('[data-f="activity"]').textContent = available && data.activityEligible === false ? '미평가'
+                    : (available && typeof data.activityWindowRatio === 'number' ? Number(data.activityWindowRatio).toFixed(1) + '%' : '—');
+                summaryEl.querySelector('[data-f="total"]').textContent = available && data.scoreEligible === false ? '미평가' : (scoreAvailable ? Number(data.scoreTotal).toFixed(1) : '—');
                 var label = ({ provisional: '진행 중인 지표입니다.', complete: '활동 종료 후 계산한 지표입니다.', incomplete: '기록 일부가 누락되어 지표를 확정할 수 없습니다.',
                     archived: '보관 기간이 끝나 최종 집계만 남아 있습니다.', no_data: '관측 자료가 없습니다. 미참여로 단정할 수 없습니다.', unavailable: '원시 기록이 없어 지표를 계산할 수 없습니다.' })[data.dataStatus] || '';
-                summaryEl.querySelector('[data-f="status"]').textContent = label + (data.needsReview ? ' 선생님이 수업 맥락과 함께 확인해야 합니다.' : '');
+                summaryEl.querySelector('[data-f="status"]').textContent = label
+                    + (available && data.activityEligible === false ? ' 이 활동의 페이지는 입력·제출 활동률을 평가하지 않습니다.' : '')
+                    + (available && data.scoreEligible === false ? ' 설정된 가중치에 평가할 항목이 없어 참여 지표를 산출하지 않습니다.'
+                        : (available && data.activityEligible === false ? ' 화면 활성·복귀 기록으로 참여 지표를 계산합니다.' : ''))
+                    + ' 페이지 범주 이동만으로 감점하거나 미집중으로 판단하지 않습니다.'
+                    + (data.needsReview ? ' 선생님이 수업 맥락과 함께 확인해야 합니다.' : '');
                 renderChecks(data.learningChecks);
             })
             .catch(function () {

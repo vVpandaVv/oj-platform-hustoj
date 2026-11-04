@@ -10,6 +10,8 @@ declare(strict_types=1);
 require __DIR__ . '/student-submission-submit-g3-imp-06-s01.php';
 
 use OJAI\Dashboard\Submission\Student\Application\Run_Auto_Submit_Due;
+use OJAI\Dashboard\Submission\Student\Application\Finalize_Expired_Own_Submission;
+use OJAI\Dashboard\Submission\Student\Domain\Submission_Revision_Integrity;
 use OJAI\Dashboard\Submission\Assignment\Application\Assignment_Failure;
 use OJAI\Dashboard\Submission\Student\Application\Run_Auto_Submit_Due_Result;
 use OJAI\Dashboard\Submission\Student\Domain\Auto_Submit_Assignment_Work_Item;
@@ -270,6 +272,86 @@ $empty_runner                                   = new Run_Auto_Submit_Due(
 );
 g3_same( Run_Auto_Submit_Due_Result::COMPLETED, $empty_runner->run_once()->state(), 'Not-started learners must not create empty submissions.' );
 g3_same( 0, count( $empty['database']->tables['oj_ai_submission_receipts'] ), 'Not-started learners received an empty auto-submit receipt.' );
+
+foreach ( array( 'missing', 'short', 'unchecked' ) as $partial_kind ) {
+	$partial  = c26_fixture();
+	$revision = &$partial['database']->tables['oj_ai_submission_revisions'][0];
+	$response = json_decode( $revision['response_json'], true, 512, JSON_THROW_ON_ERROR );
+	if ( 'missing' === $partial_kind ) {
+		unset( $response['answers'][ c26_id( 8 ) ] );
+	} elseif ( 'short' === $partial_kind ) {
+		$response['answers'][ c26_id( 8 ) ] = 'a';
+	} else {
+		$response['answers'][ c26_id( 9 ) ] = false;
+	}
+	$revision['response_json'] = $partial['canonical']->encode( $response );
+	$revision['response_hash'] = hash( 'sha256', $revision['response_json'] );
+	$revision['content_hash']  = ( new Submission_Revision_Integrity( $partial['canonical'] ) )->content_hash(
+		$partial['submission_id'],
+		1,
+		null,
+		'saved',
+		'1.0.0',
+		$revision['response_hash'],
+		$revision['attachment_set_hash']
+	);
+	unset( $revision );
+	$before = $partial['database']->tables;
+	g3_failure( static fn () => c26_service( $partial )->execute( c26_command( $partial, 'partial-' . $partial_kind ) ), Assignment_Failure::SUBMISSION_VALIDATION_FAILED, 'Manual submission must still enforce required/minimum answers: ' . $partial_kind );
+	g3_same( $before, $partial['database']->tables, 'Rejected manual submission must preserve the draft.' );
+	$partial_runner = new Run_Auto_Submit_Due(
+		new Auto_Submit_Test_Assignments( $partial['database'], $partial ),
+		new WordPress_Student_Submission_Commit_Repository( $partial['database'], $partial['canonical'] ),
+		auto_submit_ids(),
+		static fn (): string => '2026-08-22 12:05:00',
+		static fn (): string => 'dddddddd-dddd-4ddd-addd-dddddddddddd'
+	);
+	g3_same( Run_Auto_Submit_Due_Result::COMPLETED, $partial_runner->run_once()->state(), 'Saved partial answers must finalize at deadline: ' . $partial_kind );
+	g3_same( $before['oj_ai_submission_revisions'], $partial['database']->tables['oj_ai_submission_revisions'], 'Automatic submission must preserve exact answer bytes and hashes.' );
+	g3_same( '2026-08-22 12:00:00', $partial['database']->tables['oj_ai_submissions'][0]['submitted_at_utc'], 'Delayed partial submission must retain close time.' );
+}
+
+foreach ( array( 'success', 'before_close', 'disabled', 'pending_file', 'wrong_actor', 'revoked', 'withdrawn', 'stale_schedule', 'tampered', 'no_revision' ) as $case ) {
+	$recovery   = c26_fixture();
+	$db         = $recovery['database'];
+	$projection = array(
+		'id'               => $recovery['submission_id'],
+		'assignment_id'    => $recovery['assignment_id'],
+		'state'            => 'draft',
+		'lock_version'     => 1,
+		'current_revision' => array( 'id' => $recovery['revision_id'] ),
+		'schedule'         => array(
+			'version'       => 1,
+			'hash'          => $recovery['schedule_hash'],
+			'closes_at_utc' => '2026-08-22 12:00:00',
+		),
+	);
+	if ( 'disabled' === $case ) {
+		$db->tables['oj_ai_assignments'][0]['auto_submit_enabled'] = 0; }
+	if ( 'pending_file' === $case ) {
+		$db->tables['oj_ai_private_files'][0]['scan_state'] = 'pending'; }
+	if ( 'revoked' === $case ) {
+		$db->tables['oj_ai_assignment_targets'][0]['state'] = 'revoked'; }
+	if ( 'withdrawn' === $case ) {
+		$db->tables['oj_ai_assignments'][0]['state'] = 'withdrawn'; }
+	if ( 'stale_schedule' === $case ) {
+		$projection['schedule']['version'] = 2; }
+	if ( 'tampered' === $case ) {
+		$db->tables['oj_ai_submission_revisions'][0]['content_hash'] = str_repeat( '0', 64 ); }
+	if ( 'no_revision' === $case ) {
+		$projection['current_revision'] = null; }
+	$before  = $db->tables;
+	$recover = new Finalize_Expired_Own_Submission( new WordPress_Student_Submission_Commit_Repository( $db, $recovery['canonical'] ), auto_submit_ids() );
+	$recover->finalize( $projection, 'wrong_actor' === $case ? 99 : 7, 'target-r1', 'before_close' === $case ? '2026-08-22 11:59:59' : '2026-08-22 12:20:00' );
+	if ( 'success' !== $case ) {
+		g3_same( $before, $db->tables, 'Recovery must preserve policy, ownership and integrity: ' . $case );
+		continue;
+	}
+	g3_same( 'auto_submitted', $db->tables['oj_ai_submissions'][0]['state'], 'Authorized self-read recovery must finalize the saved revision.' );
+	g3_same( 1, count( $db->tables['oj_ai_submission_receipts'] ), 'Recovery must create one receipt.' );
+	$recover->finalize( $projection, 7, 'target-r1', '2026-08-22 12:20:01' );
+	g3_same( 1, count( $db->tables['oj_ai_submission_receipts'] ), 'Concurrent cron and self-read recovery must not duplicate receipts.' );
+}
 
 $addon_root = dirname( __DIR__, 2 );
 $sources    = array(

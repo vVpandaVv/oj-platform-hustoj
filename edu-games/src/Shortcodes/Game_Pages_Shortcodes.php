@@ -5,6 +5,10 @@ namespace EduGames\Shortcodes;
 
 final class Game_Pages_Shortcodes {
     public static function register(): void {
+        add_shortcode('binary_team', array(\EduGames\Blocks\Binary_Team_Renderer::class, 'render'));
+        add_shortcode('device_team', array(\EduGames\Blocks\Device_Team_Renderer::class, 'render'));
+        add_shortcode('oj_device_team', array(\EduGames\Blocks\Device_Team_Renderer::class, 'render'));
+        add_shortcode('oj_binary_team', array(\EduGames\Blocks\Binary_Team_Renderer::class, 'render'));
         add_shortcode('game_hub', array(__CLASS__, 'render_hub'));
         add_shortcode('oj_game_hub', array(__CLASS__, 'render_hub'));
         add_shortcode('game_leaderboard', array(__CLASS__, 'render_leaderboard'));

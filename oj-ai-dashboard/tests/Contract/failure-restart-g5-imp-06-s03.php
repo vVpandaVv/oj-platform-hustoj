@@ -236,8 +236,8 @@ $repaired                       = $restart_runner->repair(
 );
 g5_s03_same( Schema_Installation_Result::REPAIRED, $repaired->status(), 'Authorized restart did not complete.' );
 g5_s03_same( 3, $restart_store->migrations[ $restart_migration->id() ]['attempt_count'], 'Successful restart did not increment attempt exactly once.' );
-g5_s03_same( 51, count( $restart_store->statements ), 'Restart did not finish the exact 48 CREATE and three ALTER statements.' );
-g5_s03_same( 51, count( array_unique( $restart_store->statements ) ), 'Restart repeated a forward DDL statement.' );
+g5_s03_same( 53, count( $restart_store->statements ), 'Restart did not finish the exact 48 CREATE and five ALTER statements.' );
+g5_s03_same( 53, count( array_unique( $restart_store->statements ) ), 'Restart repeated a forward DDL statement.' );
 g5_s03_same( 3, $restart_lock->acquisitions, 'Restart acquired the wrong number of named locks.' );
 g5_s03_same( 3, $restart_lock->releases, 'Restart did not release every named lock.' );
 g5_s03_same( Installation_State::REGISTRATION_PENDING, $restart_store->installation['state'], 'Restart did not return to registration_pending.' );
@@ -322,8 +322,8 @@ foreach ( array( 'save_checkpoint', 'finish_migration', 'update_installation' ) 
 		database_infrastructure_authorization( $catalog, 'repair:' . $operation . '-20260825' )
 	);
 	g5_s03_same( Schema_Installation_Result::REPAIRED, $operation_repaired->status(), 'Failure point did not resume: ' . $operation );
-	g5_s03_same( 51, count( $operation_store->statements ), 'Failure point did not finish exact forward DDL: ' . $operation );
-	g5_s03_same( 51, count( array_unique( $operation_store->statements ) ), 'Failure point repeated DDL: ' . $operation );
+	g5_s03_same( 53, count( $operation_store->statements ), 'Failure point did not finish exact forward DDL: ' . $operation );
+	g5_s03_same( 53, count( array_unique( $operation_store->statements ) ), 'Failure point repeated DDL: ' . $operation );
 	g5_s03_same( 2, $operation_lock->acquisitions, 'Repair acquired the wrong lock count: ' . $operation );
 	g5_s03_same( 2, $operation_lock->releases, 'Repair did not release the lock: ' . $operation );
 }
@@ -336,7 +336,7 @@ g5_s03_same( Migration_Ledger_State::REPAIR_REQUIRED, $alter_store->migrations[ 
 $alter_store->fail_at_attempt = null;
 $alter_repaired               = $alter_runner->repair( database_infrastructure_authorization( $catalog, 'repair:alter-failure-20260825' ) );
 g5_s03_same( Schema_Installation_Result::REPAIRED, $alter_repaired->status(), 'ALTER failure did not resume.' );
-g5_s03_same( 51, count( array_unique( $alter_store->statements ) ), 'ALTER restart repeated DDL.' );
+g5_s03_same( 53, count( array_unique( $alter_store->statements ) ), 'ALTER restart repeated DDL.' );
 g5_s03_same( 2, $alter_lock->releases, 'ALTER restart did not release both locks.' );
 
 $postcondition_store                           = new Database_Infrastructure_Test_Store( $catalog );
@@ -383,8 +383,8 @@ g5_s03_same( 1, $missing_marker_lock->acquisitions, 'Drifted ownerless table acq
 $missing_marker_store->tables['oj_ai_installations']['engine'] = 'InnoDB';
 $missing_marker_resume = $missing_marker_runner->install( 23, 'activation:missing-marker-resume-20260827' );
 g5_s03_same( Schema_Installation_Result::INSTALLED, $missing_marker_resume->status(), 'Verified empty initial ledger did not resume.' );
-g5_s03_same( 51, count( $missing_marker_store->statements ), 'Missing-marker resume did not finish exact forward DDL.' );
-g5_s03_same( 51, count( array_unique( $missing_marker_store->statements ) ), 'Missing-marker resume repeated DDL.' );
+g5_s03_same( 53, count( $missing_marker_store->statements ), 'Missing-marker resume did not finish exact forward DDL.' );
+g5_s03_same( 53, count( array_unique( $missing_marker_store->statements ) ), 'Missing-marker resume repeated DDL.' );
 g5_s03_same( 2, $missing_marker_lock->acquisitions, 'Missing-marker resume used the wrong lock count.' );
 g5_s03_same( Installation_State::REGISTRATION_PENDING, $missing_marker_store->installation['state'], 'Missing-marker resume did not finish registration_pending.' );
 
@@ -441,8 +441,8 @@ $compatibility_store->installation['state'] = Installation_State::INSTALLING;
 unset( $compatibility_store->migrations[ $compatibility_migration->id() ]['checkpoint'] );
 $compatibility_resume = $compatibility_runner->install( 23, 'activation:known-postcondition-resume-20260826' );
 g5_s03_same( Schema_Installation_Result::INSTALLED, $compatibility_resume->status(), 'Verified initial CREATE postcondition failure did not resume.' );
-g5_s03_same( 51, count( $compatibility_store->statements ), 'Compatibility resume did not finish the exact forward DDL.' );
-g5_s03_same( 51, count( array_unique( $compatibility_store->statements ) ), 'Compatibility resume repeated a DDL statement.' );
+g5_s03_same( 53, count( $compatibility_store->statements ), 'Compatibility resume did not finish the exact forward DDL.' );
+g5_s03_same( 53, count( array_unique( $compatibility_store->statements ) ), 'Compatibility resume repeated a DDL statement.' );
 g5_s03_same( 2, $compatibility_lock->acquisitions, 'Compatibility resume used the wrong lock count.' );
 g5_s03_same( Installation_State::REGISTRATION_PENDING, $compatibility_store->installation['state'], 'Compatibility resume did not restore registration_pending.' );
 g5_s03_assert( isset( $compatibility_store->migrations[ $compatibility_migration->id() ]['checkpoint_json'] ), 'Compatibility resume did not use the persisted checkpoint envelope.' );

@@ -3,7 +3,7 @@
  * Plugin Name: OJ AI Dashboard
  * Plugin URI: https://codingpanda.kr/
  * Description: OJ Platform add-on for worksheet authoring, AI assessment, review, feedback, and reports.
- * Version: 1.2.15
+ * Version: 1.2.26
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Requires Plugins: oj-platform
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OJ_AI_DASHBOARD_VERSION', '1.2.15' );
+define( 'OJ_AI_DASHBOARD_VERSION', '1.2.26' );
 define( 'OJ_AI_DASHBOARD_FILE', __FILE__ );
 define( 'OJ_AI_DASHBOARD_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OJ_AI_DASHBOARD_URL', plugin_dir_url( __FILE__ ) );

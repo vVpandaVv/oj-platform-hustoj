@@ -209,7 +209,8 @@ final class ProblemsComposition
         AiTaskRouter $aiTaskRouter,
         Clock $clock,
         AccountShellBundle $accountShell,
-        string $featureResourceDirectory
+        string $featureResourceDirectory,
+        ?\CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog $nativeLearning = null
     ): ProblemsBundle {
         $database = ProblemPlatformDatabase::fromGlobals();
         $accountErasure = new ProblemAccountErasureParticipant($applicationDatabase);
@@ -547,7 +548,8 @@ final class ProblemsComposition
             $accountShell->publicPages(),
             $catalog,
             $html,
-            $paginationView
+            $paginationView,
+            $nativeLearning
         ));
         $routes->register('problems.show', new ProblemDetailPageHandler(
             $accountShell->publicPages(),
@@ -629,7 +631,8 @@ final class ProblemsComposition
             $accountShell->actionSecurity(),
 
             $html,
-            $paginationView
+            $paginationView,
+            $nativeLearning
 
         ));
         $routes->register('console.problems.new', new ProblemNewPageHandler(

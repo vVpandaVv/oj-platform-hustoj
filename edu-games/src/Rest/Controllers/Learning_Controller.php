@@ -73,7 +73,7 @@ final class Learning_Controller {
         foreach($history as &$row){$row['summary']=Run::summary(json_decode($row['state_json'],true,512,JSON_THROW_ON_ERROR));unset($row['state_json']);}unset($row);
         $p=self::input($request);
         if(isset($p['page'])) {
-            $result=\EduGames\Rankings\Run_Leaderboard::page($game,Catalog::VERSION,'assessment',$level,$p['page'],$p['perPage']??20);
+            $result=\EduGames\Rankings\Run_Leaderboard::page($game,Catalog::VERSION,'assessment',$level,$p['page'],$p['perPage']??20,!empty($p['overview']));
             return is_wp_error($result)?$result:rest_ensure_response($result+array('history'=>$history,'version'=>Catalog::VERSION,'level'=>$level));
         }
         $leaders=$wpdb->get_results($wpdb->prepare("SELECT user_id, MAX(score) AS score FROM {$table} WHERE game_slug=%s AND content_version=%s AND mode='assessment' AND level=%s AND completed_at IS NOT NULL GROUP BY user_id ORDER BY score DESC, user_id ASC",$game,Catalog::VERSION,$level),ARRAY_A);

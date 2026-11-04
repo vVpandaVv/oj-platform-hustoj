@@ -1564,6 +1564,38 @@ html[data-ojp-scheme="dark"]:not(:has([data-ojp-light-only])) {
 .ojp-license-notice summary { cursor: pointer; color: var(--ojp-color-primary); }
 .ojp-license-text { padding: 16px; max-height: 480px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--ojp-font-mono); font-size: 12px; line-height: 1.6; background: var(--ojp-color-subtle); }
 
+.ojp-account-protection-diagnostic {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ojp-account-protection-diagnostic details > summary {
+  cursor: pointer;
+}
+
+.ojp-account-protection-diagnostic .ojp-detail-list > div:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.ojp-table--password-resets {
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.ojp-table--password-resets th:first-child {
+  width: 9rem;
+}
+
+.ojp-table--password-resets th:nth-child(2) {
+  width: 5rem;
+}
+
+@media (max-width: 640px) {
+  .ojp-table--password-resets th:first-child { width: 5rem; }
+  .ojp-table--password-resets th:nth-child(2) { width: 4.5rem; }
+  .ojp-table--password-resets .ojp-detail-list { grid-template-columns: minmax(0, 1fr); }
+}
+
 .ojp-detail-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -136,7 +136,7 @@ function g4_s03_id(): string {
  * @return array{root:array<string,mixed>,input:array<string,mixed>,result:array<string,mixed>,items:array<int,array<string,mixed>>,runs:array<int,array<string,mixed>>}
  */
 function g4_s03_fixture( Canonical_Json $canonical, ?array $levels = null, bool $abstain = false, string $abstain_reason = 'insufficient_evidence' ): array {
-	$manual = $abstain && 'not_requested' === $abstain_reason;
+	$manual           = $abstain && 'not_requested' === $abstain_reason;
 	$evaluation_id    = g4_s03_id();
 	$submission_id    = g4_s03_id();
 	$revision_id      = g4_s03_id();
@@ -689,6 +689,33 @@ g4_s03_same( array( 'low_confidence' ), $list['priority']['reasons'], 'Priority 
 g4_s03_same( 'Student A', $list['learner']['display_name'], 'Safe learner display projection drifted.' );
 g4_s03_same( true, $list['submission']['is_source_current'], 'Official source pointer drifted.' );
 
+$score_row = array_replace(
+	$fixture['root'],
+	array(
+		'review_count'            => '1',
+		'latest_review_id'        => '01K5A000000000000000000009',
+		'latest_review_no'        => '1',
+		'latest_review_decision'  => 'draft',
+		'latest_review_score'     => '8.0000',
+		'latest_review_result_id' => $fixture['root']['latest_result_id'],
+	)
+);
+g4_s03_same( '8.0000', $projector->list_item( $score_row )['review']['latest_score'], 'Saved teacher score is missing from the list.' );
+$score_row = array_replace(
+	$score_row,
+	array(
+		'latest_review_decision'   => 'adjusted',
+		'latest_review_score'      => '0.0000',
+		'official_review_id'       => $score_row['latest_review_id'],
+		'official_review_hash'     => str_repeat( 'a', 64 ),
+		'official_local_review_no' => '1',
+		'official_local_score'     => '0.0000',
+	)
+);
+g4_s03_same( '0.0000', $projector->list_item( $score_row )['review']['official_score'], 'Confirmed zero must remain visible.' );
+g4_s03_stored_failure( fn () => $projector->list_item( array_replace( $score_row, array( 'official_local_score' => '11.0000' ) ) ), 'Over-maximum display score must fail closed.' );
+g4_s03_stored_failure( fn () => $projector->list_item( array_replace( $score_row, array( 'official_local_review_no' => null ) ) ), 'A foreign official score must not be projected.' );
+
 try {
 	$detail = $projector->detail( $fixture['root'], $fixture['input'], $fixture['result'], $fixture['items'], $fixture['runs'], array(), array(), array() );
 } catch ( Submission_Evaluation_Failure $failure ) {
@@ -1073,8 +1100,26 @@ $denied         = $denied_handoff->check_any(
 );
 g4_s03_assert( $denied instanceof WP_Error && 403 === ( $denied->data['status'] ?? null ), 'Missing both alternatives must remain a 403 denial.' );
 
-$manual_fixture = g4_s03_fixture( $canonical, array( array( 'label' => 'Complete', 'points' => '10.0000', 'level_key' => g4_s03_id(), 'position' => 0 ), array( 'label' => 'Absent', 'points' => '0.0000', 'level_key' => g4_s03_id(), 'position' => 1 ) ), true, 'not_requested' );
-$manual_detail = $projector->detail( $manual_fixture['root'], $manual_fixture['input'], $manual_fixture['result'], $manual_fixture['items'], $manual_fixture['runs'], array(), array(), array() );
+$manual_fixture = g4_s03_fixture(
+	$canonical,
+	array(
+		array(
+			'label'     => 'Complete',
+			'points'    => '10.0000',
+			'level_key' => g4_s03_id(),
+			'position'  => 0,
+		),
+		array(
+			'label'     => 'Absent',
+			'points'    => '0.0000',
+			'level_key' => g4_s03_id(),
+			'position'  => 1,
+		),
+	),
+	true,
+	'not_requested'
+);
+$manual_detail  = $projector->detail( $manual_fixture['root'], $manual_fixture['input'], $manual_fixture['result'], $manual_fixture['items'], $manual_fixture['runs'], array(), array(), array() );
 g4_s03_same( 'not_requested', $manual_detail['selected_result']['provider_status'], 'Manual rubric is not an AI response.' );
 g4_s03_same( null, $manual_detail['selected_result']['candidate_score'], 'Manual rubric must remain unscored.' );
 g4_s03_same( 'manual_prepare', $manual_detail['evaluation']['latest_run']['operation'], 'Inbox identifies teacher preparation.' );

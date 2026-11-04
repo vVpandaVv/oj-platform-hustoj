@@ -102,6 +102,10 @@ final class Assessment_Module implements Module_Interface {
 		}
 		try {
 			$this->gateway->run_once();
+			if ( $this->store->has_pending() && false === wp_next_scheduled( self::WAKE ) ) {
+				// One leased job per invocation; the store's serial lock still applies.
+				wp_schedule_single_event( time() + 1, self::WAKE );
+			}
 		} catch ( Throwable ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- Durable metadata and lease expiry preserve interrupted work without logging student content.
 			/* Metadata lease permits a safe manual retry. */
 		}
@@ -171,7 +175,11 @@ final class Assessment_Module implements Module_Interface {
 			)
 		);
 		if ( ! $result->isSuccessful() ) {
-			return array( 'success' => false ); }
+			return array(
+				'success'    => false,
+				'error_code' => $result->problem()?->code(),
+			);
+		}
 		return array(
 			'success'             => true,
 			'output'              => $result->output(),

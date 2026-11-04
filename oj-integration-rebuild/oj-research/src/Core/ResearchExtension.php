@@ -46,7 +46,7 @@ final class ResearchExtension implements ResearchExtensionV1
     private function assets(): string
     {
         if (! function_exists('plugins_url')) { return ''; }
-        $version = defined('OJ_RESEARCH_VERSION') ? OJ_RESEARCH_VERSION : '1.0.0';
+        $version = defined('OJ_RESEARCH_VERSION') ? OJ_RESEARCH_VERSION : '1.3.1';
         $escape = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         return '<link rel="stylesheet" href="' . $escape(plugins_url('assets/research.css', $this->file) . '?ver=' . $version) . '">'
             . '<script defer src="' . $escape(plugins_url('assets/research.js', $this->file) . '?ver=' . $version) . '"></script>';

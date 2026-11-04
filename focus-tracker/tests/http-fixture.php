@@ -5,6 +5,7 @@ require __DIR__ . '/test-bootstrap.php';
 require __DIR__ . '/platform-fixture.php';
 require __DIR__ . '/statistics-fixture.php';
 require __DIR__ . '/student-role-fixture.php';
+require __DIR__ . '/page-category-fixture.php';
 platform_fixture_apply_check_config(platform_fixture_check_config());
 statistics_fixture_load();
 platform_fixture_connect_runtime(1, isset($GLOBALS['focus_test_statistics_contexts']) ? array(1, 2) : array(1));
@@ -145,6 +146,10 @@ if ($path === '/__test/reset') {
     return;
 } elseif ($path === '/favicon.ico') {
     http_response_code(204);
+    return;
+} elseif (($category_document = page_category_fixture_document($path)) !== null) {
+    header('Content-Type: text/html; charset=utf-8');
+    echo $category_document;
     return;
 } else {
     header('Content-Type: text/html; charset=utf-8');

@@ -27,7 +27,7 @@ for ($index = 0; $index < $archive->numFiles; ++$index) {
     $source = $root . '/' . $relative;
     package_check(is_file($source) && hash('sha256', (string) $archive->getFromIndex($index)) === hash_file('sha256', $source), 'Packaged bytes match the tested source: ' . $relative);
 }
-foreach (array('focus-tracker.php', 'plugin-package.php', 'uninstall.php', 'README.md', 'docs/RC-ACCEPTANCE.md', 'docs/VERIFICATION.md', 'docs/REAL-WORDPRESS.md', 'src/Privacy/Privacy_Guard.php', 'src/Privacy/Personal_Data.php', 'src/Support/Release_Readiness.php', 'resources/css/activity-status.css') as $required) {
+foreach (array('focus-tracker.php', 'plugin-package.php', 'uninstall.php', 'README.md', 'docs/RC-ACCEPTANCE.md', 'docs/VERIFICATION.md', 'docs/REAL-WORDPRESS.md', 'docs/MYSQL8-LOAD.md', 'docs/DB-OPTIMIZATION.md', 'src/Privacy/Privacy_Guard.php', 'src/Privacy/Personal_Data.php', 'src/Support/Release_Readiness.php', 'resources/css/activity-status.css') as $required) {
     package_check(isset($seen[$required]), 'Required runtime and release documentation are included: ' . $required);
 }
 foreach (array('src', 'resources', 'docs') as $directory) {

@@ -201,6 +201,82 @@
           "_notes/"
         ]
       }
+    },
+    {
+      "id": "oj-microbit",
+      "order": 11,
+      "source": "oj-microbit",
+      "mainFile": "oj-microbit.php",
+      "guide": "guides/oj-microbit.md",
+      "platformRequires": ">=2.5.9 <3.0.0",
+      "builder": {
+        "type": "generic",
+        "preScript": "scripts/verify.ps1",
+        "include": [
+          "oj-microbit.php",
+          "plugin-package.php",
+          "uninstall.php",
+          "README.md",
+          "CHANGELOG.md",
+          "LICENSE.txt",
+          "docs",
+          "src",
+          "resources/css",
+          "resources/js",
+          "resources/vendor",
+          "resources/tools/build.mjs",
+          "resources/tools/usb-entry.js",
+          "resources/tools/package.json",
+          "resources/tools/package-lock.json",
+          "runner/src",
+          "runner/package.json",
+          "runner/package-lock.json",
+          "runner/Dockerfile",
+          "runner/.dockerignore",
+          "runner/README.md",
+          "runner/install.sh",
+          "runner/install-tools",
+          "scripts/acceptance"
+        ],
+        "forbid": [
+          "tests/",
+          "_notes/",
+          "runner/node_modules/",
+          "resources/tools/node_modules/"
+        ]
+      },
+      "uiLintExclude": [
+        "resources/vendor/*"
+      ]
+    },
+    {
+      "id": "oj-research",
+      "order": 12,
+      "source": "oj-integration-rebuild/oj-research",
+      "mainFile": "oj-research.php",
+      "guide": "guides/oj-research.md",
+      "platformRequires": ">=2.0.5 <3.0.0",
+      "builder": {
+        "type": "generic",
+        "preScript": "tools/verify.ps1",
+        "include": [
+          "oj-research.php",
+          "plugin-package.php",
+          "README.md",
+          "src",
+          "config",
+          "assets"
+        ],
+        "forbid": [
+          "tests/",
+          "tools/",
+          "docs/",
+          "_notes/"
+        ]
+      },
+      "uiLintExclude": [
+        "docs/preview/*"
+      ]
     }
   ]
 }

@@ -221,4 +221,18 @@ gate_expect($atomic_before['ends_at'], Activity_Repository::find($atomic)['ends_
 gate_user(11);
 gate_expect('pending', gate_row($atomic_question)['status'], 'Failed schedule edit leaves pending question and policy consistent');
 
+// The schedule mutex must already exist as part of a ready installation.
+// Neither endpoint may proceed unlocked when that durable marker disappears.
+$installed_version = get_option('focus_tracker_db_version');
+delete_option('focus_tracker_db_version');
+gate_user(1);
+try {
+    $missing_mutex_update = \FocusTracker\Rest\Controllers\Activities_Controller::update(new WP_REST_Request(array('status' => 'closed'), array('id' => $atomic)));
+    $missing_mutex_delete = \FocusTracker\Rest\Controllers\Activities_Controller::delete(new WP_REST_Request(array(), array('id' => $atomic, '_wpnonce' => 'focus-test-nonce')));
+    gate_assert($missing_mutex_update instanceof WP_Error && $missing_mutex_update->get_error_data()['status'] === 503, 'A missing installation mutex fails activity edits closed');
+    gate_assert($missing_mutex_delete instanceof WP_Error && $missing_mutex_delete->get_error_data()['status'] === 503, 'A missing installation mutex fails activity deletion closed');
+    gate_expect($atomic_before, Activity_Repository::find($atomic), 'Failed mutex acquisition changes no schedule fields');
+    gate_expect('pending', Check_Repository::find($atomic_question['id'], 11)['status'], 'Failed mutex acquisition leaves the original verified question unchanged');
+} finally { update_option('focus_tracker_db_version', $installed_version); }
+
 echo 'check-gate: ' . $checks . " SQL-backed schedule checks passed\n";

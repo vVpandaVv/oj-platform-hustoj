@@ -164,7 +164,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 			if ( null !== $release ) {
 				$this->insert_stale_release( $release );
 			}
-			if ( 'rejected' !== $record['decision'] ) {
+			if ( ! in_array( $record['decision'], array( 'rejected', 'draft' ), true ) ) {
 				$this->advance_evaluation( $snapshot, $record );
 				$this->advance_submission( $snapshot, $record, $release );
 			}
@@ -386,7 +386,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 				array( $result_pk )
 			)
 		);
-		$result_items         = $this->result_items( $normalized['items'] ?? null, $item_rows );
+		$result_items         = $this->result_items( $normalized['items'] ?? null, $item_rows, 'not_requested' === ( $normalized['provider_status'] ?? null ) );
 		$normalized_candidate = $this->nullable_decimal( $normalized['candidate_score'] ?? null );
 		$normalized_maximum   = $this->decimal( $normalized['maximum_score'] ?? null );
 		$normalized_abstained = $this->boolean( $normalized['abstained'] ?? null );
@@ -416,7 +416,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 			$previous_review_id = $this->nullable_public_id( $row['previous_review_id'] ?? null );
 			$latest_decision    = $this->review_decision( $row['latest_review_decision'] ?? null );
 			$latest_score       = $this->nullable_decimal( $row['latest_official_score'] ?? null );
-			$latest_profile     = $this->score_profile( $row );
+			$latest_profile     = $this->score_profile( $row, 'draft' === $latest_decision );
 			$latest_reason      = $this->nullable_reason_value( $row['latest_review_reason'] ?? null );
 			$latest_result_id   = $this->public_id( $row['latest_review_result_id'] ?? null );
 			$latest_result_hash = $this->hash_value( $row['latest_review_result_hash'] ?? null );
@@ -565,7 +565,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 	 */
 	private function stale_release_transition( array $snapshot, array $record ): ?array {
 		if (
-			'rejected' === $record['decision']
+			in_array( $record['decision'], array( 'rejected', 'draft' ), true )
 			|| ! in_array( $snapshot['current_release_state'], array( 'released', 'corrected' ), true )
 		) {
 			return null;
@@ -780,15 +780,15 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 					'current_release_hash' => null === $release ? $snapshot['current_release_hash'] : $release['content_hash'],
 					'current_release_id'   => null === $release ? $snapshot['current_release_id'] : $release['public_id'],
 					'decision'             => $result->decision(),
-					'evaluation_lock'      => 'rejected' === $record['decision']
+					'evaluation_lock'      => in_array( $record['decision'], array( 'rejected', 'draft' ), true )
 						? $snapshot['evaluation_lock_version'] : (int) $snapshot['evaluation_lock_version'] + 1,
-					'evaluation_state'     => 'rejected' === $record['decision'] ? $snapshot['evaluation_state'] : ( 'withdrawn' === $record['decision'] ? 'review_required' : 'reviewed' ),
+					'evaluation_state'     => in_array( $record['decision'], array( 'rejected', 'draft' ), true ) ? $snapshot['evaluation_state'] : ( 'withdrawn' === $record['decision'] ? 'review_required' : 'reviewed' ),
 					'official_review_hash' => $result->official_review_hash(),
 					'official_review_id'   => $result->official_review_id(),
 					'review_hash'          => $result->review_hash(),
 					'review_id'            => $result->review_id(),
 					'review_no'            => $result->review_no(),
-					'submission_lock'      => 'rejected' === $record['decision']
+					'submission_lock'      => in_array( $record['decision'], array( 'rejected', 'draft' ), true )
 						? $snapshot['submission_lock_version'] : (int) $snapshot['submission_lock_version'] + 1,
 				)
 			)
@@ -972,7 +972,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 	 * @return Submission_Evaluation_Review_Result
 	 */
 	private function result_from_record( array $record, bool $replayed ): Submission_Evaluation_Review_Result {
-		$advanced      = 'rejected' !== $record['decision'];
+		$advanced      = ! in_array( $record['decision'], array( 'rejected', 'draft' ), true );
 		$official_id   = 'withdrawn' === $record['decision'] ? null : ( $advanced ? $record['review_public_id'] : $record['expected_official_review_public_id'] );
 		$official_hash = 'withdrawn' === $record['decision'] ? null : ( $advanced ? $record['content_hash'] : $record['expected_official_review_hash'] );
 		return new Submission_Evaluation_Review_Result(
@@ -1015,7 +1015,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 		$review_no     = $this->positive_integer( $row['review_no'] ?? null );
 		$decision      = $this->review_decision( $row['decision'] ?? null );
 		$score         = $this->nullable_decimal( $row['official_score'] ?? null );
-		$profile       = $this->score_profile( $row );
+		$profile       = $this->score_profile( $row, 'draft' === $decision );
 		$reason        = $this->nullable_reason_value( $row['reason'] ?? null );
 		$previous      = $this->nullable_public_id( $row['previous_review_id'] ?? null );
 		if (
@@ -1125,7 +1125,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 				array( $record['evaluation_public_id'], $record['review_public_id'] )
 			)
 		);
-		$advanced               = 'rejected' !== $record['decision'];
+		$advanced               = ! in_array( $record['decision'], array( 'rejected', 'draft' ), true );
 		$expected_official_id   = 'withdrawn' === $record['decision'] ? null : ( $advanced ? $record['review_public_id'] : $record['expected_official_review_public_id'] );
 		$expected_official_hash = 'withdrawn' === $record['decision'] ? null : ( $advanced ? $record['content_hash'] : $record['expected_official_review_hash'] );
 		$expected_release_id    = null === $release ? $record['expected_current_release_public_id'] : $release['public_id'];
@@ -1240,7 +1240,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 			|| ! is_int( $record['expected_review_no'] ) || $record['expected_review_no'] < 0
 			|| ! is_int( $record['review_no'] ) || $record['review_no'] !== $record['expected_review_no'] + 1
 			|| ! in_array( $record['expected_evaluation_state'], array( 'review_required', 'reviewed' ), true )
-			|| ! in_array( $record['decision'], array( 'accepted', 'adjusted', 'rejected', 'withdrawn' ), true )
+			|| ! in_array( $record['decision'], array( 'accepted', 'adjusted', 'draft', 'rejected', 'withdrawn' ), true )
 		) {
 			throw new InvalidArgumentException( 'Submission evaluation review record identity is invalid.' );
 		}
@@ -1253,7 +1253,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 		$this->pointer_argument( $record['expected_current_release_public_id'] ?? null, $record['expected_current_release_hash'] ?? null );
 		$current_state = $record['expected_current_release_state'];
 		$has_current   = null !== $record['expected_current_release_public_id'];
-		$should_stale  = 'rejected' !== $record['decision'] && in_array( $current_state, array( 'released', 'corrected' ), true );
+		$should_stale  = ! in_array( $record['decision'], array( 'rejected', 'draft' ), true ) && in_array( $current_state, array( 'released', 'corrected' ), true );
 		if (
 			$has_current !== ( null !== $current_state )
 			|| ( null !== $current_state && ! in_array( $current_state, array( 'released', 'corrected', 'withdrawn', 'stale' ), true ) )
@@ -1284,7 +1284,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 				throw new InvalidArgumentException( 'Official submission review record is incomplete.' );
 			}
 			$this->assert_hash_argument( $profile_hash );
-			$normalized = $this->score_decisions( $decisions );
+			$normalized = $this->score_decisions( $decisions, 'draft' === $record['decision'] );
 			$payload    = $this->decode_canonical_argument( (string) $record['score_decisions_json'], $profile_hash );
 			$this->exact_keys( $payload, array( 'schema_id', 'schema_version', 'items' ) );
 			if (
@@ -1317,10 +1317,11 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 	 *
 	 * @param mixed                          $normalized Normalized.
 	 * @param array<int,array<string,mixed>> $rows Rows.
+	 * @param bool                           $manual Whether the result is a local teacher score sheet.
 	 * @return array<int,array<string,mixed>>
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
-	private function result_items( $normalized, array $rows ): array {
+	private function result_items( $normalized, array $rows, bool $manual = false ): array {
 		if (
 			! is_array( $normalized ) || ! array_is_list( $normalized ) || array() === $normalized
 			|| count( $normalized ) !== count( $rows ) || count( $normalized ) > Submission_Score_Input_Builder::MAXIMUM_BINDINGS
@@ -1379,7 +1380,9 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Propagates an exception object; presentation boundaries map stable errors and escape displayed text.
 				throw $this->stored_invalid( 'result_items[' . $position . '].evidence (stored evidence row vs normalized evidence)' );
 			}
-			$item_hash = hash(
+			// Earlier manual sheets hashed the original decimal text, before DB padding.
+			$hash_maximum = $manual && 'not_requested' === $abstain_reason ? $item['maximum_points'] : $maximum;
+			$item_hash    = hash(
 				'sha256',
 				$this->canonical->encode(
 					array(
@@ -1388,7 +1391,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 						'criterion_key'    => $criterion,
 						'evidence_hash'    => $evidence_hash,
 						'flags'            => $stored_flags,
-						'maximum_points'   => $maximum,
+						'maximum_points'   => $hash_maximum,
 						'position'         => $position,
 						'question_key'     => $response,
 					)
@@ -1419,10 +1422,11 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 	 * Score profile.
 	 *
 	 * @param array<string,mixed> $row Row.
+	 * @param bool                $draft Whether the profile may contain a subset of rubric items.
 	 * @return array{hash:string,items:array<int,array<string,mixed>>}|null
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
-	private function score_profile( array $row ): ?array {
+	private function score_profile( array $row, bool $draft = false ): ?array {
 		$values  = array( $row['score_overrides_schema'] ?? null, $row['score_overrides_version'] ?? null, $row['score_overrides_json'] ?? null, $row['score_overrides_hash'] ?? null );
 		$present = array_filter( $values, static fn ( $value ): bool => null !== $value );
 		if ( array() === $present ) {
@@ -1444,7 +1448,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 		}
 		return array(
 			'hash'  => $hash,
-			'items' => $this->score_decisions( $payload['items'] ?? null ),
+			'items' => $this->score_decisions( $payload['items'] ?? null, $draft ),
 		);
 	}
 
@@ -1452,15 +1456,17 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 	 * Score decisions.
 	 *
 	 * @param mixed $value Value.
+	 * @param bool  $draft Whether original rubric positions may have gaps.
 	 * @return array<int,array<string,mixed>>
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
-	private function score_decisions( $value ): array {
+	private function score_decisions( $value, bool $draft = false ): array {
 		if ( ! is_array( $value ) || ! array_is_list( $value ) || array() === $value || count( $value ) > Submission_Score_Input_Builder::MAXIMUM_BINDINGS ) {
 			throw new InvalidArgumentException( 'Submission evaluation score decisions are invalid.' );
 		}
-		$result = array();
-		$seen   = array();
+		$result            = array();
+		$seen              = array();
+		$previous_position = -1;
 		foreach ( $value as $position => $item ) {
 			if ( ! is_array( $item ) || array_is_list( $item ) ) {
 				throw new InvalidArgumentException( 'Submission evaluation score decision is invalid.' );
@@ -1476,7 +1482,8 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 			$reason_code = $item['reason_code'] ?? null;
 			$reason_note = $this->nullable_reason_argument( $item['reason_note'] ?? null );
 			if (
-				isset( $seen[ $key ] ) || $position !== ( $item['position'] ?? null )
+				isset( $seen[ $key ] ) || ( ! $draft && $position !== ( $item['position'] ?? null ) )
+				|| ! is_int( $item['position'] ?? null ) || $item['position'] <= $previous_position || $item['position'] >= Submission_Score_Input_Builder::MAXIMUM_BINDINGS
 				|| ! in_array( $scope, array( 'response', 'submission' ), true ) || ( 'response' === $scope ) !== ( null !== $response )
 				|| ! in_array( $source, array( 'ai_accepted', 'teacher_assigned' ), true )
 				|| $this->decimal_units( $points ) > $this->decimal_units( $maximum )
@@ -1486,13 +1493,14 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 			) {
 				throw new InvalidArgumentException( 'Submission evaluation score decision evidence is invalid.' );
 			}
-			$seen[ $key ] = true;
-			$result[]     = array(
+			$previous_position = $item['position'];
+			$seen[ $key ]      = true;
+			$result[]          = array(
 				'binding_key'     => $key,
 				'criterion_id'    => $criterion,
 				'response_id'     => $response,
 				'scope'           => $scope,
-				'position'        => $position,
+				'position'        => $item['position'],
 				'source'          => $source,
 				'official_points' => $points,
 				'maximum_points'  => $maximum,
@@ -1742,7 +1750,7 @@ final class WordPress_Submission_Evaluation_Review_Repository implements Submiss
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
 	private function review_decision( $value ): string {
-		if ( ! is_string( $value ) || ! in_array( $value, array( 'accepted', 'adjusted', 'rejected', 'withdrawn' ), true ) ) {
+		if ( ! is_string( $value ) || ! in_array( $value, array( 'accepted', 'adjusted', 'draft', 'rejected', 'withdrawn' ), true ) ) {
 			throw $this->stored_invalid();
 		}
 		return $value;

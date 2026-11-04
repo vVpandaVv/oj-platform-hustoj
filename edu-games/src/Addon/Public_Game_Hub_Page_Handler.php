@@ -34,6 +34,12 @@ final class Public_Game_Hub_Page_Handler implements AddonPageHandlerV1 {
 
         $ranking_link = '<a class="ojp-button ojp-button--tinted" href="' . esc_url(home_url('/oj-addons/edu-games/ranking')) . '">'
             . esc_html__('게임 순위', 'edu-games') . '</a>';
+        if (Game_Visibility::is_open('binary-conversion') || $can_preview_closed) {
+            $ranking_link .= '<a class="ojp-button ojp-button--primary" href="'.esc_url(home_url('/oj-addons/edu-games/binary-team')).'">'.esc_html__('이진수 팀전','edu-games').'</a>';
+        }
+        if (Game_Visibility::is_open('device-matching') || $can_preview_closed) {
+            $ranking_link .= '<a class="ojp-button ojp-button--primary" href="'.esc_url(home_url('/oj-addons/edu-games/device-team')).'">'.esc_html__('장치 카드 팀전','edu-games').'</a>';
+        }
 
         ob_start();
         ?>

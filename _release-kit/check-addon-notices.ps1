@@ -18,6 +18,9 @@ $required = @(
     'teaching-tools/resources/vendor/pdfjs/README.md'
 )
 if ($registered -contains 'oj-code-arena') { $required += 'oj-code-arena/LICENSE.txt' }
+if ($registered -contains 'oj-microbit') {
+    $required += @('oj-microbit/LICENSE.txt', 'oj-microbit/resources/vendor/README.md', 'oj-microbit/resources/vendor/THIRD_PARTY_NOTICES.txt')
+}
 # The Plate builder replaces this legacy bundle. Keep enforcing its notice
 # in checkouts that still distribute it, without requiring a removed asset.
 if (Test-Path -LiteralPath (Join-Path $root 'oj-ai-dashboard/resources/assets/builder/dash.all.min.js') -PathType Leaf) {

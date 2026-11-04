@@ -12,6 +12,8 @@ use CodingPanda\OjPlatform\Modules\AdminConsole\Contract\ConsoleResponder;
 use CodingPanda\OjPlatform\Modules\Auth\Application\CurrentAccountService;
 use CodingPanda\OjPlatform\Modules\Auth\Application\UserDirectoryService;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\AccessStatus;
+use CodingPanda\OjPlatform\Modules\Auth\Contract\PasswordResetTargetDiagnostics;
+use CodingPanda\OjPlatform\Ui\Component\AccountProtectionDiagnosticView;
 use CodingPanda\OjPlatform\Modules\Permission\Contract\RoleDefinition;
 use CodingPanda\OjPlatform\Modules\Permission\Contract\Authorization;
 use CodingPanda\OjPlatform\Kernel\Registry\DefinitionRegistry;
@@ -26,7 +28,8 @@ final class UserDetailPageHandler implements RouteHandler
         private readonly Authorization $permissions,
         /** @var DefinitionRegistry<RoleDefinition> */
         private readonly DefinitionRegistry $roles,
-        private readonly SiteDateFormatter $dates
+        private readonly SiteDateFormatter $dates,
+        private readonly ?PasswordResetTargetDiagnostics $protectionDiagnostics = null
     ) {
     }
 
@@ -84,12 +87,27 @@ final class UserDetailPageHandler implements RouteHandler
             . '<div><dt>역할</dt><dd>' . $this->escape($this->roleLabels($identity->roles())) . '</dd></div>'
             . '</dl></section>';
 
-        return $this->pages->respond(
+        $canInspect = $this->protectionDiagnostics !== null && (
+            $this->permissions->can($actorUserId, 'oj_edit_users')
+            || $this->permissions->can($actorUserId, 'oj_manage_roles')
+        );
+        if ($canInspect) {
+            $content .= '<section class="ojp-section" aria-labelledby="account-protection-diagnostic">'
+                . '<h2 id="account-protection-diagnostic">계정 보호 진단</h2>'
+                . (new AccountProtectionDiagnosticView())->render($this->protectionDiagnostics->inspectTarget($identity))
+                . '</section>';
+        }
+
+        $response = $this->pages->respond(
             $identity->displayName(),
             $content,
             'users.index',
             $request
         );
+
+        return $canInspect ? new HttpResponse($response->status(), array_replace($response->headers(), [
+            'Cache-Control' => 'private, no-store', 'X-Robots-Tag' => 'noindex, nofollow',
+        ]), $response->body()) : $response;
     }
 
     private function userId(RouteMatch $route): int

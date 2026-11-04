@@ -12,7 +12,7 @@ use CodingPanda\OjPlatform\Modules\Permission\Contract\Authorization;
 use CodingPanda\OjPlatform\Modules\Settings\Contract\FeatureFlags;
 use Throwable;
 
-final class ConsoleMenuResolver
+final class ConsoleMenuResolver implements \CodingPanda\OjPlatform\Modules\AdminConsole\Contract\ConsoleMenuVisibility
 {
     /**
      * @param list<array{key: string, label: string, members: list<array{0: string, 1: string, 2?: string}>}> $localNavGroups
@@ -154,8 +154,18 @@ final class ConsoleMenuResolver
         return $folded;
     }
 
+    public function canAccessMenu(int $userId, string $menuKey): bool
+    {
+        if (!in_array($menuKey, ['problems.index', 'classes.index'], true)) { return false; }
+        $menu = $this->menus->find($menuKey);
+        return $menu !== null && $this->isAccessible($menu, $userId);
+    }
+
     private function isAccessible(MenuDefinition $menu, int $userId): bool
     {
+        if ($menu->fallbackForNativeMenu() !== null && $this->canAccessMenu($userId, $menu->fallbackForNativeMenu())) {
+            return false;
+        }
         if (
             $menu->policy() === 'super_admin_only'
             && ! $this->permissions->isSuperAdmin($userId)

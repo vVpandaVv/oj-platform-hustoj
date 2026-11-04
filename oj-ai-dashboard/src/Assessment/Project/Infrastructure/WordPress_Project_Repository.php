@@ -442,6 +442,8 @@ final class WordPress_Project_Repository implements \OJAI\Dashboard\Assessment\P
 					}
 					$config['criteria']     = $original_config['criteria'];
 					$config['total_points'] = $original_config['total_points'];
+					unset( $config['exception_scores'] );
+					$config += array_intersect_key( $original_config, array( 'exception_scores' => true ) );
 					if ( array() === $config['achievement_standards'] ) {
 						$config['achievement_standards'] = $original_config['achievement_standards'];
 					}
@@ -542,6 +544,7 @@ final class WordPress_Project_Repository implements \OJAI\Dashboard\Assessment\P
 			}
 			$config['criteria']     = $rubric['value']['criteria'];
 			$config['total_points'] = $rubric['total_points'];
+			$config                += array_intersect_key( $rubric['value'], array( 'exception_scores' => true ) );
 		}
 		return $this->profile->normalize( $config, false );
 	}

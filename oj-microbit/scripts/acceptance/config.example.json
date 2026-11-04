@@ -1,0 +1,44 @@
+{
+  "baseUrl": "https://microbit-trial.example.org/",
+  "testServer": true,
+  "accounts": {
+    "teacherA": {
+      "username": "microbit_teacher_a",
+      "applicationPassword": "REPLACE_WITH_TEST_APPLICATION_PASSWORD"
+    },
+    "teacherB": {
+      "username": "microbit_teacher_b",
+      "applicationPassword": "REPLACE_WITH_TEST_APPLICATION_PASSWORD"
+    },
+    "studentA": {
+      "username": "microbit_student_a",
+      "applicationPassword": "REPLACE_WITH_TEST_APPLICATION_PASSWORD"
+    },
+    "studentB": {
+      "username": "microbit_student_b",
+      "applicationPassword": "REPLACE_WITH_TEST_APPLICATION_PASSWORD"
+    }
+  },
+  "classIds": {
+    "teacherA": [],
+    "teacherB": [],
+    "studentA": [],
+    "studentB": []
+  },
+  "groupIds": {
+    "teacherA": [],
+    "teacherB": [],
+    "studentA": [],
+    "studentB": []
+  },
+  "load": {
+    "concurrency": 2,
+    "rps": 2,
+    "totalRequests": 20
+  },
+  "hustojProbe": {
+    "url": "https://microbit-trial.example.org/JudgeOnline/status.php",
+    "allowReadOnlyGet": true,
+    "baselineRequests": 3
+  }
+}

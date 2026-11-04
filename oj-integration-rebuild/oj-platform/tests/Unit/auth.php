@@ -1165,7 +1165,7 @@ authAssert(
     $profiles->find($target->userId())?->mustChangePassword() === true,
     '초기화 사용자는 다음 로그인에서 비밀번호를 바꿔야 합니다.'
 );
-authSame('target_not_allowed', $resetResults[2]->resultCode(), '보호 역할을 제외해야 합니다.');
+authSame('target_protected', $resetResults[2]->resultCode(), '보호 역할을 제외해야 합니다.');
 authAssert(
     in_array($target->userId(), $users->invalidatedSessions, true),
     '비밀번호 초기화 뒤 기존 세션을 폐기해야 합니다.'
@@ -1261,12 +1261,12 @@ $authorizedResults = $passwords->resetAuthorized(
 );
 authAssert($authorizedResults[0]['success'], '문맥에서 승인한 일반 계정은 초기화해야 합니다.');
 authSame(
-    'target_not_allowed',
+    'target_protected',
     $authorizedResults[1]['reason'],
     '문맥 초기화에서도 WordPress 관리자 계정을 보호해야 합니다.'
 );
 authSame(
-    'target_not_allowed',
+    'target_protected',
     $authorizedResults[2]['reason'],
     '문맥 초기화에서도 OJ 운영 역할 계정을 보호해야 합니다.'
 );

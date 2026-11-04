@@ -4,7 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const defaultPlatformRoot = path.resolve(root, '..', 'oj-integration-rebuild', 'oj-platform');
+const defaultPlatformRoot = process.env.OJ_PLATFORM_SOURCE
+  ? path.resolve(process.env.OJ_PLATFORM_SOURCE)
+  : path.resolve(root, '..', 'oj-integration-rebuild', 'oj-platform');
 const verifyIndex = process.argv.indexOf('--verify');
 const platformIndex = process.argv.indexOf('--platform-root');
 const manifestPath = path.resolve(

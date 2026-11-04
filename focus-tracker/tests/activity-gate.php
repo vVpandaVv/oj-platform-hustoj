@@ -26,12 +26,16 @@ $gateway = new class implements Api\AddonLearningContextGatewayV1 {
     public bool $member = true;
     public bool $failed = false;
     public bool $partial = false;
+    public array $requestedTypes = array();
+    public array $unavailableTypes = array();
     public array $contexts = array(array('class', 'class:1'), array('group', 'group:10'), array('group', 'group:20'));
     public function listLearningContexts(Api\AddonLearningContextQueryV1 $query): Api\AddonContextPageV1 {
-        if ($this->failed || ($this->partial && $query->cursor() !== '')) {
+        $this->requestedTypes[] = $query->types();
+        if ($this->failed || array_intersect($query->types(), $this->unavailableTypes) !== array() || ($this->partial && $query->cursor() !== '')) {
             return new Api\AddonContextPageV1(false, array(), '', new Api\AddonApiProblemV1('addon_context_unavailable', 'Unavailable', 'gate-context', true));
         }
-        $items = $this->member ? array_map(static fn (array $value): Api\AddonContextSummaryV1 => new Api\AddonContextSummaryV1($value[0], $value[1], '학습 그룹', 'active', 'revision-1'), $this->contexts) : array();
+        $contexts = array_values(array_filter($this->contexts, static fn (array $value): bool => in_array($value[0], $query->types(), true)));
+        $items = $this->member ? array_map(static fn (array $value): Api\AddonContextSummaryV1 => new Api\AddonContextSummaryV1($value[0], $value[1], '학습 그룹', 'active', 'revision-1'), $contexts) : array();
         return new Api\AddonContextPageV1(true, $items, $this->partial ? 'later' : '', null);
     }
     public function listTeachingContexts(Api\AddonTeachingContextQueryV1 $query): Api\AddonContextPageV1 { throw new LogicException('unused'); }
@@ -73,6 +77,7 @@ gate_check(Tracking::authorize(new WP_REST_Request(array('user_id' => 2), array(
 $future = $make($now + 30000, $now + 60000);
 $scheduled = Gate::state(1, 123, 'group', '10', $now);
 gate_check(! $scheduled['active'] && $scheduled['nextStartsAtMs'] === $now + 30000 && count($scheduled['windows']) === 1, 'A page opened early gets only a future wake-up boundary.');
+gate_check(end($gateway->requestedTypes) === array('group'), 'A scoped group page reads only current group memberships through the existing contract.');
 gate_check($scheduled['validUntilMs'] <= $now + 10000, 'An inactive response is not a permanent future authorization.');
 $start = Gate::state(1, 123, 'group', 'group:10', $now + 30000);
 gate_check($start['active'] && $start['windowStartsAtMs'] === $now + 30000 && $start['contextId'] === 'group:10', 'The start boundary is inclusive and typed numeric IDs normalize to the authorized opaque ID.');
@@ -81,6 +86,19 @@ gate_check(! Gate::state(1, 123, 'group', '10', $now + 60000)['active'], 'The ex
 gate_check(! Gate::state(1, 999, 'group', '10', $now + 30000)['active'], 'A schedule cannot authorize another problem.');
 gate_check(! Gate::state(1, 123, 'group', '20', $now + 30000)['active'], 'A page explicitly belonging to another group cannot borrow a matching schedule.');
 gate_check(! Gate::state(1, 123, 'contest', '1', $now + 30000)['active'], 'A contest page does not inherit unrelated class/group authorization.');
+$classSchedule = $make($now + 30000, $now + 60000, 'class', 'class:1');
+$classState = Gate::state(1, 123, 'class', 'class:1', $now + 40000);
+gate_check($classState['active'] && $classState['activityIds'] === array($classSchedule) && end($gateway->requestedTypes) === array('class'), 'A scoped class reads class memberships and cannot borrow the group schedule.');
+$generalState = Gate::state(1, 123, 'general', null, $now + 40000);
+gate_check($generalState['active'] && count($generalState['activityIds']) === 2 && end($gateway->requestedTypes) === array('class', 'group'), 'A general page keeps both current membership kinds and their matching schedules.');
+$savedContexts = $gateway->contexts;
+$gateway->contexts = array_values(array_filter($gateway->contexts, static fn (array $context): bool => $context !== array('group', 'group:10')));
+gate_check(! Gate::state(1, 123, 'group', '10', $now + 40000)['active'], 'Revoking this group immediately stops its lease even while other memberships remain.');
+$gateway->contexts = $savedContexts;
+$gateway->unavailableTypes = array('class');
+gate_check(Gate::state(1, 123, 'group', '10', $now + 40000)['active'], 'A group lease does not call an unrelated unavailable class provider.');
+gate_check(Gate::state(1, 123, 'general', null, $now + 40000) instanceof WP_Error, 'A general page still fails closed when either requested membership provider is unavailable.');
+$gateway->unavailableTypes = array();
 $overlap = $make($now + 50000, $now + 90000);
 $adjacent = $make($now + 90000, $now + 120000);
 $component = Gate::state(1, 123, 'group', '10', $now + 70000);

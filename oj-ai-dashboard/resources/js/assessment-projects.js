@@ -81,6 +81,7 @@
     content.innerHTML=state.stage==='criteria'?`<div data-stage-content>${criteriaForm()}</div>`:(!p.worksheets.length?'<p class="empty">이 평가에 등록된 활동지가 없습니다.</p>':'');
     window.OJAIWorkflow?.setSelection({projectId:p.project_id,projectTitle:p.title,worksheetId:state.worksheetId});
     window.OJAIWorkflow?.setStage(state.stage);
+    mountExceptionScores();
   }
   function criteriaForm() {
     const d=state.draft;
@@ -90,7 +91,13 @@
     return `<div class="criterion"><div class="criterion-fields"><label>평가 항목 ${i+1}<input data-kind="criterion" data-prop="label" data-index="${i}" maxlength="120" value="${escape(c.label)}"></label>${remove('remove-criterion','평가 항목 삭제',`data-index="${i}"`)}</div><label>평가 방법<textarea data-kind="criterion" data-prop="description" data-index="${i}" maxlength="1000">${escape(c.description)}</textarea></label><div class="levels">${c.levels.map((l,j)=>`<div class="level"><label>등급별 수행 기준 ${j+1}<textarea data-kind="level" data-prop="label" data-index="${i}" data-level="${j}" maxlength="500">${escape(l.label)}</textarea></label><label>점수<input type="number" min="0" max="100000" step="0.01" data-kind="level" data-prop="points" data-index="${i}" data-level="${j}" value="${escape(l.points)}"></label>${remove('remove-level','등급 삭제',`data-index="${i}" data-level="${j}"`)}</div>`).join('')}${button('add-level','등급 추가',`data-index="${i}"`)}</div></div>`;
   }
   function totals(){let sum=0;for(const [i,c] of state.draft.criteria.entries()){c.position=i;for(const [j,l] of c.levels.entries())l.position=j;const max=Math.max(0,...c.levels.map(l=>Math.round(Number(l.points)*100)));c.maximum_points=Number.isFinite(max)?String(max/100):'';sum+=max;}state.draft.total_points=Number.isFinite(sum)?String(sum/100):'';const node=root.querySelector('[data-total]');if(node)node.textContent=state.draft.total_points;}
-  function repaintCriteria(){totals();root.querySelector('[data-stage-content]').innerHTML=criteriaForm();}
+  function mountExceptionScores() {
+    const footer=root.querySelector('[data-criteria-form] > footer');
+    if(!footer)return;
+    const scores=state.draft.exception_scores||{};
+    footer.insertAdjacentHTML('beforebegin',`<section class="band" data-exception-scores><h2>별도 점수</h2><div class="paired">${[['not_submitted','미제출 점수'],['long_absence','장기결석 점수']].map(([key,label])=>`<label>${label}<input type="number" min="0" max="${escape(state.draft.total_points)}" step="0.0001" placeholder="미설정" data-kind="exception" data-prop="${key}" value="${escape(scores[key]??'')}"></label>`).join('')}</div></section>`);
+  }
+  function repaintCriteria(){totals();root.querySelector('[data-stage-content]').innerHTML=criteriaForm();mountExceptionScores();}
   async function save(confirmed) {
     if(!root.querySelector('[data-criteria-form]').reportValidity())return;
     totals(); const title=root.querySelector('[data-field=title]').value.trim();
@@ -160,7 +167,10 @@
     openDialog('공통 기준 가져오기',`<label>기준 버전<select name="revision">${templates.map((r,i)=>`<option value="${i}">${r.revision_no}차 · ${escape(r.state==='active'?'사용 중':r.state==='retired'?'이전 버전':'초안')}</option>`).join('')}</select></label>`,'가져오기',async form=>{
       const chosen=templates[Number(form.get('revision'))];if(!chosen)throw Error('기준을 선택해 주세요.');
       if(state.draft.criteria.length&&!(await ask({title:'평가 항목을 교체할까요?',message:'현재 평가 항목을 선택한 공통 기준의 복사본으로 교체합니다.',confirmLabel:'교체'},'현재 평가 항목을 선택한 공통 기준의 복사본으로 교체할까요?')))return;
-      state.draft.criteria=copy(chosen.value.criteria).map(c=>({...c,criterion_id:id(),description:c.description||'',levels:(c.levels||[]).map(l=>({...l,level_key:id()}))}));changed();repaintCriteria();
+      state.draft.criteria=copy(chosen.value.criteria).map(c=>({...c,criterion_id:id(),description:c.description||'',levels:(c.levels||[]).map(l=>({...l,level_key:id()}))}));
+      delete state.draft.exception_scores;
+      if(chosen.value.exception_scores)state.draft.exception_scores=copy(chosen.value.exception_scores);
+      changed();repaintCriteria();
     });
   }
   async function copyWorksheet() {
@@ -187,7 +197,9 @@
     else if(kind==='standard')state.draft.achievement_standards[i][e.dataset.prop]=e.value;
     else if(kind==='criterion')state.draft.criteria[i][e.dataset.prop]=e.value;
     else if(kind==='level')state.draft.criteria[i].levels[j][e.dataset.prop]=e.value;
+    else if(kind==='exception'){state.draft.exception_scores??={not_submitted:null,long_absence:null};state.draft.exception_scores[e.dataset.prop]=e.value===''?null:e.value;}
     else return;changed();totals();
+    root.querySelectorAll('[data-kind="exception"]').forEach(control=>{control.max=state.draft.total_points;});
   });
   root.addEventListener('click',async event=>{
     if(event.target.closest('[data-project-stage-body]'))return;

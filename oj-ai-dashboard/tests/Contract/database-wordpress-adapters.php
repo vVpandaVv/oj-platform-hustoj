@@ -359,7 +359,44 @@ $unexpected_verification = ( new Schema_Postcondition_Verifier(
 database_wordpress_adapter_assert( ! $unexpected_verification->passed(), 'An unrelated duplicate index was normalized away.' );
 
 $ledger_db = new Database_WordPress_Ledger_Wpdb();
-$ledger    = new WordPress_Schema_Ledger( $ledger_db );
+
+$assignment_metadata = Schema_Metadata_Contract::expected( $catalog->table( 'oj_ai_assignments' ) );
+$policy_columns      = array();
+foreach ( array( 'exception_policy_schema', 'exception_policy_version', 'exception_policy_json', 'exception_policy_hash' ) as $column ) {
+	$policy_columns[ $column ] = $assignment_metadata['columns'][ $column ];
+	unset( $assignment_metadata['columns'][ $column ] );
+}
+$assignment_metadata['columns'] += $policy_columns;
+foreach ( array( 'physical_order', 'missing', 'extra', 'type', 'nullability', 'default', 'index_order' ) as $case ) {
+	$observed = $assignment_metadata;
+	switch ( $case ) {
+		case 'missing':
+			unset( $observed['columns']['exception_policy_hash'] );
+			break;
+		case 'extra':
+			$observed['columns']['unknown_policy_hash'] = $observed['columns']['exception_policy_hash'];
+			break;
+		case 'type':
+			$observed['columns']['exception_policy_hash']['type'] = 'VARCHAR(64)';
+			break;
+		case 'nullability':
+			$observed['columns']['exception_policy_hash']['nullable'] = false;
+			break;
+		case 'default':
+			$observed['columns']['exception_policy_hash']['default'] = 'unexpected';
+			break;
+		case 'index_order':
+			$observed['indexes']['ix_assignment_context']['columns'] = array_reverse( $observed['indexes']['ix_assignment_context']['columns'] );
+			break;
+	}
+	$result = ( new Schema_Postcondition_Verifier(
+		$catalog,
+		new WordPress_Schema_Inspector( new Database_WordPress_Metadata_Wpdb( 'oj_ai_assignments', $observed ) )
+	) )->verify_tables( array( 'oj_ai_assignments' ) );
+	database_wordpress_adapter_assert( ( 'physical_order' === $case ) === $result->passed(), 'Column order normalization changed semantic schema validation: ' . $case );
+}
+
+$ledger = new WordPress_Schema_Ledger( $ledger_db );
 database_wordpress_adapter_assert( 0 === $ledger->installation_row_count(), 'Empty installation ledger count changed.' );
 $ledger->create_installation(
 	$catalog->owner_marker(),

@@ -164,12 +164,32 @@ final class Leaderboard_Service {
         return array('leaderboard'=>$rows,'pagination'=>$meta);
     }
 
-    public static function rank_for_user(string $game_slug, int $user_id): ?int {
+    public static function overview(string $game,?array $users=null): array|\WP_Error {
+        global $wpdb;$table=Installer::scores_table();$game=sanitize_key($game);$scope='';
+        if($users!==null){
+            $users=array_values(array_unique(array_filter(array_map('intval',$users),static fn($id)=>$id>0)));
+            if(!$users)return array('topScore'=>null,'personal'=>null);
+            $scope=$wpdb->prepare(' AND scores.user_id IN ('.implode(',',array_fill(0,count($users),'%d')).')',...$users);
+        }
+        $stats=$wpdb->get_row($wpdb->prepare("SELECT MAX(scores.score) AS top_score, MAX(CASE WHEN scores.user_id=%d THEN scores.score END) AS my_score FROM {$table} scores WHERE scores.game_slug=%s".$scope,get_current_user_id(),$game),ARRAY_A);
+        if(!is_array($stats)||!empty($wpdb->last_error))return Page::error();
+        $rank=$stats['my_score']===null?null:self::rank_for_user($game,get_current_user_id(),$users);
+        if(!empty($wpdb->last_error))return Page::error();
+        return array('topScore'=>$stats['top_score']===null?null:(float)$stats['top_score'],'personal'=>$rank===null?null:array('score'=>(float)$stats['my_score'],'rank'=>$rank));
+    }
+
+    public static function rank_for_user(string $game_slug, int $user_id,?array $users=null): ?int {
         if ($user_id <= 0) {
             return null;
         }
 
         global $wpdb;
+        $scope='';
+        if($users!==null){
+            $users=array_values(array_unique(array_filter(array_map('intval',$users),static fn($id)=>$id>0)));
+            if(!in_array($user_id,$users,true))return null;
+            $scope=$wpdb->prepare(' AND scores.user_id IN ('.implode(',',array_fill(0,count($users),'%d')).')',...$users);
+        }
 
         $game_slug = sanitize_key($game_slug);
         $table = Installer::scores_table();
@@ -198,7 +218,7 @@ final class Leaderboard_Service {
                     AND scores.id = (
                         " . self::best_row_id_subquery($table, 'best_scores', 'scores', false) . "
                     )
-                    AND (
+                    {$scope} AND (
                         scores.score > %d
                         OR (scores.score = %d AND scores.accuracy > %f)
                         OR (scores.score = %d AND scores.accuracy = %f AND scores.duration_seconds < %d)

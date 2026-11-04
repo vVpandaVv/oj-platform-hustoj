@@ -33,7 +33,8 @@ final class ClassManagementPageHandler implements RouteHandler
         private readonly ActionSecurity $security,
         private readonly ClassHtml $html,
         private readonly ChoiceProvider $groupChoices,
-        private readonly PaginationView $pagination
+        private readonly PaginationView $pagination,
+        private readonly ?\CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog $nativeLearning = null
     ) {
     }
 
@@ -154,6 +155,7 @@ final class ClassManagementPageHandler implements RouteHandler
                 . '<strong>새 수업으로 저장됩니다.</strong>'
                 . '<p>문제 구성과 연결 가능한 그룹을 가져왔습니다. 참여자·학습 기록·공동 강사·비밀번호·기간은 복사하지 않습니다. '
                 . '새 수업 주소를 입력하고 공개 범위와 운영 여부를 확인해 주세요.</p></div>')
+            . ($class === null ? '' : ($this->nativeLearning?->classAssignments($request, $classId, true) ?? ''))
             . $this->form($class, $userId, $copy);
 
         return $this->pages->respond(

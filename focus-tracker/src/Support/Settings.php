@@ -23,6 +23,12 @@ final class Settings {
         if (! array_key_exists('check_retention_days', $stored)) {
             $stored['check_retention_days'] = max(1, (int) ($stored['retention_days'] ?? 60));
         }
+        // Upgrade only the old built-in scope. Deliberate custom patterns
+        // remain intact, including a later explicitly saved narrow scope.
+        if (! isset($stored['page_scope_version'])
+            && ($stored['tracked_url_patterns'] ?? null) === array('#^/(problems|submit)(/|$)#')) {
+            $stored['tracked_url_patterns'] = self::defaults()['tracked_url_patterns'];
+        }
         return array_merge(self::defaults(), $stored);
     }
 
@@ -36,6 +42,7 @@ final class Settings {
     public static function update(array $values): void {
         $current = self::all();
         $merged = array_merge($current, array_intersect_key($values, self::defaults()));
+        $merged['page_scope_version'] = 1;
         $error = self::retention_error($merged);
         if ($error !== null) { throw new InvalidArgumentException($error); }
         foreach (array('retention_days', 'check_retention_days', 'aggregate_retention_days') as $key) { $merged[$key] = (int) $merged[$key]; }
@@ -75,7 +82,12 @@ final class Settings {
             'retention_days' => 60,
             'check_retention_days' => 60,
             'aggregate_retention_days' => 0,
-            'tracked_url_patterns' => array('#^/(problems|submit)(/|$)#'),
+            'tracked_url_patterns' => array(
+                '#^/(?:problems|problem-books|submit|submissions|quizzes|classes|groups|board|notices|contests|learning-spaces|ranking|dashboard)(?:/|$)#',
+                '#^/oj-addons/(?:learning-materials|readcontents-library|teaching-tools|oj-code-lab|oj-primm|edu-games|oj-ml-playgrounds)(?:/|$)#',
+                '#^/$#',
+            ),
+            'page_scope_version' => 1,
             'activity_window_seconds' => 30,
             'checks_enabled' => true,
             'check_cooldown_seconds' => 300,

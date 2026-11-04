@@ -60,6 +60,7 @@
       "@php tests/Unit/open-source.php",
       "@php tests/Unit/guardian-consent.php",
       "@php tests/Unit/login-security.php",
+      "@php tests/Unit/attempt-limiter-concurrency.php",
       "@php tests/Unit/wordpress-login-entry.php",
       "@php tests/Unit/migration.php",
       "@php tests/Unit/console-menus.php",
@@ -118,6 +119,7 @@
     "test:contract": [
       "@php tests/Contract/registry-policy-matrix.php",
       "@php tests/Contract/addon-api-v1.php",
+      "@php tests/Contract/addon-native-learning.php",
       "@php tests/Contract/addon-extension-registration.php",
       "@php tests/Contract/addon-editor-runtime.php",
       "@php tests/Contract/addon-learning-check-runtime.php",

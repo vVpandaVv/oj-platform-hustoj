@@ -3,7 +3,7 @@ Tags: education, python, notebook
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -11,7 +11,7 @@ OJ Platform 2.x에서 학생별 Python 노트북과 교사 읽기 전용 열람�
 
 == Release status ==
 
-1.4.0은 GPL-2.0-or-later로 제공하는 Code Lab 단독 직접 배포판입니다. OJ Platform은 별도로 준비해야 하며 이 ZIP에 포함하지 않습니다. WordPress.org 디렉터리 등록이나 그 심사 통과를 의미하지 않습니다.
+1.4.1은 GPL-2.0-or-later로 제공하는 Code Lab 단독 직접 배포판입니다. OJ Platform은 별도로 준비해야 하며 이 ZIP에 포함하지 않습니다. WordPress.org 디렉터리 등록이나 그 심사 통과를 의미하지 않습니다.
 
 PLATFORM-LINKING-EXCEPTION.txt는 자체 코드와 플랫폼 공개 Addon API 연동에 한정한 추가 허락입니다. 플랫폼·WordPress·제3자 자료의 라이선스나 재배포 권리를 변경하지 않으며 Code Lab의 소스 제공·고지 의무는 유지합니다.
 
@@ -21,7 +21,7 @@ Python 코드를 브라우저 Worker에서 실행하고 코드·텍스트 메모
 
 기본 팔머펭귄 CSV의 출처·CC0 및 변환 내용은 docs/PUBLIC_DATASETS.md에 있습니다. 교사 업로드·파일 URL과 선택적인 Kaggle 연동에서 CSV·JSONL·NDJSON·ZIP을 지원합니다. JSONL·NDJSON은 pd.read_json(..., lines=True)로 읽고 미리보기 코드를 자동 실행하여 표를 출력합니다. 교사는 ‘파일 선택’ 또는 목록의 ‘첫 지원 파일 추가’로 추천 자료를 등록합니다.
 
-1.4.0은 DB 스키마 2와 노트북 형식 2를 유지합니다. OJ Platform 코드는 이번 릴리즈에서 수정하지 않으며 기존 공개 Editor API와 Ace 자산을 사용합니다. 검사 환경과 결과는 ZIP 옆 공개 검증 보고서를 참조하세요.
+1.4.1은 DB 스키마 2와 노트북 형식 2를 유지합니다. OJ Platform 코드는 이번 릴리즈에서 수정하지 않으며 기존 공개 Editor API와 Ace 자산을 사용합니다. 검사 환경과 결과는 ZIP 옆 공개 검증 보고서를 참조하세요.
 
 텍스트 셀은 마크다운 도구 막대와 실시간 미리보기로 작성합니다. 닫기를 누르면 서식만 보이고 편집 버튼이나 두 번 클릭으로 다시 수정합니다. 원문을 저장하며 교사 화면에도 같은 서식을 표시합니다.
 
@@ -68,6 +68,10 @@ Pyodide 0.26.4에 포함된 패키지(numpy, pandas, matplotlib, scipy, scikit-l
 사용 권한·학급 소속·개인정보 요청은 사이트 운영자에게 문의하세요. 코드 오류는 이 ZIP을 제공한 배포자에게 버전과 최소 재현 절차를 전달하세요. 오류 신고에 비밀키·학생 정보·전체 로그를 포함하지 마세요. docs/SUPPORT.md를 참조하세요.
 
 == Changelog ==
+
+= 1.4.1 =
+* 각 코드 셀의 ‘출력 지우기’로 출력·오류·그래프 기록을 지웁니다. 코드·변수와 입력 중인 값은 유지합니다.
+* 실행 중 다시 누르면 이전 실행과 입력 대기를 중단하고 마지막으로 누른 셀만 실행합니다. 중복 실행 대기열을 만들지 않으며 변수·데이터 초기화를 안내합니다. 정상 완료 뒤의 실행은 변수를 유지합니다.
 
 = 1.4.0 =
 * 텍스트 셀에 마크다운 도구 막대, 실시간 미리보기, 편집/닫기를 추가합니다. 제목·강조·목록·인용·코드·링크·이미지·표를 지원합니다.

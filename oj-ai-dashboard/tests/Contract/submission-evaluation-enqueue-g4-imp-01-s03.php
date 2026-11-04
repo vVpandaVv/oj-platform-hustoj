@@ -267,7 +267,11 @@ final class G4_S03_Database {
 	 * @var array<int,string>
 	 */
 	public array $transaction_log = array();
-	/** @var array<string,mixed>|null Current official submission for manual preparation. */
+	/**
+	 * Current official submission for manual preparation.
+	 *
+	 * @var array<string,mixed>|null
+	 */
 	public ?array $manual_source = null;
 	/**
 	 * Next ids.
@@ -284,11 +288,13 @@ final class G4_S03_Database {
 
 	/**
 	 * Initialize g4 s03 database dependencies and state.
+	 *
+	 * @param bool $manual Whether to include teacher-prepared result tables.
 	 */
 	public function __construct( bool $manual = false ) {
 		if ( $manual ) {
 			$this->tables['oj_ai_submission_evaluation_results'] = array();
-			$this->tables['oj_ai_submission_evaluation_items'] = array();
+			$this->tables['oj_ai_submission_evaluation_items']   = array();
 		}
 		foreach ( array_keys( $this->tables ) as $table ) {
 			$this->next_ids[ $table ] = 1;
@@ -538,6 +544,7 @@ final class G4_S03_Source_Port implements Submission_Evaluation_Source_Port_Inte
 	 *
 	 * @param string $submission_id Submission public identifier.
 	 * @param string $official_revision_id Official revision id.
+	 * @param bool   $manual Whether the request prepares a teacher review.
 	 * @return Submission_Evaluation_Source|null
 	 */
 	public function find_official( string $submission_id, string $official_revision_id, bool $manual = false ): ?Submission_Evaluation_Source {
@@ -1101,11 +1108,15 @@ g4_s03_assert( ! str_contains( $routing_source, '->execute(' ), 'C29 enqueue mus
 
 echo "G4-IMP-01-S03 passed: strict C29, official CAS, evaluate policy, atomic root/input/run/audit/outbox, exact and semantic replay, rollback, and public routing.\n";
 
-$manual_db = new G4_S03_Database( true );
-$manual_db->manual_source = array( 'official_revision_public_id' => $revision_id, 'content_hash' => $revision_hash, 'official_review_public_id' => null );
+$manual_db                = new G4_S03_Database( true );
+$manual_db->manual_source = array(
+	'official_revision_public_id' => $revision_id,
+	'content_hash'                => $revision_hash,
+	'official_review_public_id'   => null,
+);
 [ $manual_app, $manual_sources, $manual_routing, $manual_queue ] = g4_s03_application( $manual_db, $source, $canonical, $builder, 20000 );
 $manual_command = new Enqueue_Submission_Evaluation_Command( 42, $submission_id, 'manual-command-001', $revision_id, $revision_hash, hash( 'sha256', 'manual-001' ), 'manual-correlation', 'class', $context_id, $context_revision, '3', 'submitted', 'context_staff', $canonical, true );
-$manual_result = $manual_app->execute( $manual_command );
+$manual_result  = $manual_app->execute( $manual_command );
 g4_s03_same( 'review_required', $manual_result->evaluation_state(), 'Manual preparation must open teacher scoring immediately.' );
 g4_s03_same( 0, $manual_routing->calls, 'Manual preparation must never resolve AI routing.' );
 g4_s03_same( 0, $manual_queue->calls, 'Manual preparation must never enqueue AI work.' );
@@ -1121,45 +1132,119 @@ $before = $manual_db->tables;
 g4_s03_same( true, $manual_app->execute( $manual_command )->replayed(), 'Manual retry must replay.' );
 g4_s03_same( $before, $manual_db->tables, 'Manual retry must not duplicate a score sheet.' );
 g4_s03_same( 0, $manual_queue->calls, 'Manual retry must not wake an AI worker.' );
-$rollback_db = new G4_S03_Database( true );
+$rollback_db                = new G4_S03_Database( true );
 $rollback_db->manual_source = $manual_db->manual_source;
-$rollback_db->fail_table = 'oj_ai_submission_evaluation_items';
-[ $rollback_app ] = g4_s03_application( $rollback_db, $source, $canonical, $builder, 21000 );
+$rollback_db->fail_table    = 'oj_ai_submission_evaluation_items';
+[ $rollback_app ]           = g4_s03_application( $rollback_db, $source, $canonical, $builder, 21000 );
 g4_s03_failure( fn () => $rollback_app->execute( $manual_command ), Submission_Evaluation_Failure::STORAGE_UNAVAILABLE, 'Manual item failure must roll back.' );
 g4_s03_same( 0, array_sum( array_map( 'count', $rollback_db->tables ) ), 'No partial manual roots, runs, scores, or audit on failure.' );
 $rollback_db->manual_source['official_review_public_id'] = $manual_result->evaluation_id();
 g4_s03_failure( fn () => $rollback_app->execute( $manual_command ), Submission_Evaluation_Failure::SOURCE_STALE, 'Existing approval must be withdrawn before a new manual assessment.' );
 
 $manual_controller = new Submission_Evaluation_Rest_Controller( $permissions, $manual_app, $canonical, $envelopes, $correlations );
-$manual_request = new G4_S03_Request( array( 'X-WP-Nonce' => 'valid-g4-s03-nonce', 'Idempotency-Key' => 'manual-rest-001' ), g4_s03_body( 'manual-rest-001', $revision_id, $revision_hash ), $submission_id, array( 'context_type' => 'class', 'context_id' => $context_id, 'context_revision' => $context_revision ) );
+$manual_request    = new G4_S03_Request(
+	array(
+		'X-WP-Nonce'      => 'valid-g4-s03-nonce',
+		'Idempotency-Key' => 'manual-rest-001',
+	),
+	g4_s03_body( 'manual-rest-001', $revision_id, $revision_hash ),
+	$submission_id,
+	array(
+		'context_type'     => 'class',
+		'context_id'       => $context_id,
+		'context_revision' => $context_revision,
+	)
+);
 g4_s03_same( true, $manual_controller->permissions_manual( $manual_request ), 'Manual REST allows teacher review capability with submission/context scope.' );
 g4_s03_same( array( Addon_Capabilities::REVIEW_ASSESSMENTS ), $policy->last_request->required_capabilities(), 'Manual grading does not require AI assessment capability.' );
 $manual_response = $manual_controller->manual( $manual_request );
 g4_s03_assert( $manual_response instanceof WP_REST_Response && 200 === $manual_response->get_status(), 'Manual REST semantic replay responds immediately, not as a queued AI job.' );
 g4_s03_same( 0, $manual_routing->calls, 'Manual REST does not resolve AI routing.' );
 g4_s03_same( 0, $manual_queue->calls, 'Manual REST does not wake AI workers.' );
-$invalid_nonce = new G4_S03_Request( array( 'X-WP-Nonce' => 'invalid', 'Idempotency-Key' => 'manual-rest-invalid' ), g4_s03_body( 'manual-rest-invalid', $revision_id, $revision_hash ), $submission_id, array( 'context_type' => 'class', 'context_id' => $context_id, 'context_revision' => $context_revision ) );
+$invalid_nonce = new G4_S03_Request(
+	array(
+		'X-WP-Nonce'      => 'invalid',
+		'Idempotency-Key' => 'manual-rest-invalid',
+	),
+	g4_s03_body( 'manual-rest-invalid', $revision_id, $revision_hash ),
+	$submission_id,
+	array(
+		'context_type'     => 'class',
+		'context_id'       => $context_id,
+		'context_revision' => $context_revision,
+	)
+);
 g4_s03_assert( $manual_controller->permissions_manual( $invalid_nonce ) instanceof WP_Error, 'Manual grading retains nonce enforcement.' );
 
 // Exercise the real attachment adapter without any AI representations or private-file reads.
 $expected_attachments = $validator->validate_complete( $publication['response_schema'], $official_revision['response']['answers'] )['attachments'];
-$attachment_db = new class {
+$attachment_db        = new class() {
+	/**
+	 * Database error retained by the fixture.
+	 *
+	 * @var string
+	 */
 	public string $last_error = '';
+	/**
+	 * Bound original attachment rows.
+	 *
+	 * @var array<int,array<string,mixed>>
+	 */
 	public array $rows = array();
-	public function prepare( string $sql, ...$args ): string { return $sql; }
-	public function get_row( string $sql, $mode ): ?array { throw new RuntimeException( 'Manual preparation must not read AI-derived files.' ); }
-	public function get_results( string $sql, $mode ): array { return $this->rows; }
+	/**
+	 * Preserve the fixture query.
+	 *
+	 * @param string $sql Query text.
+	 * @param mixed  ...$args Query arguments.
+	 * @return string
+	 */
+	public function prepare( string $sql, ...$args ): string {
+		return $sql; }
+	/**
+	 * Reject reads of AI-derived file data.
+	 *
+	 * @param string $sql Query text.
+	 * @param mixed  $mode Row format.
+	 * @return array<string,mixed>|null
+	 * @throws RuntimeException Always rejects AI-derived file reads.
+	 */
+	public function get_row( string $sql, $mode ): ?array {
+		throw new RuntimeException( 'Manual preparation must not read AI-derived files.' ); }
+	/**
+	 * Return the fixture attachment rows.
+	 *
+	 * @param string $sql Query text.
+	 * @param mixed  $mode Row format.
+	 * @return array<int,array<string,mixed>>
+	 */
+	public function get_results( string $sql, $mode ): array {
+		return $this->rows; }
 };
 foreach ( $expected_attachments as $attachment_id => $definition ) {
-	$attachment_db->rows[] = array( 'public_id' => $attachment_id, 'response_key' => $definition['response_id'], 'state' => 'bound', 'mime_type' => $definition['mime_types'][0], 'byte_size' => 100, 'sha256' => hash( 'sha256', 'source-' . $attachment_id ), 'ai_representation_json' => null );
+	$attachment_db->rows[] = array(
+		'public_id'              => $attachment_id,
+		'response_key'           => $definition['response_id'],
+		'state'                  => 'bound',
+		'mime_type'              => $definition['mime_types'][0],
+		'byte_size'              => 100,
+		'sha256'                 => hash( 'sha256', 'source-' . $attachment_id ),
+		'ai_representation_json' => null,
+	);
 }
-$source_class = new ReflectionClass( \OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Source::class );
+$source_class       = new ReflectionClass( \OJAI\Dashboard\Submission\Assessment\Infrastructure\WordPress_Submission_Evaluation_Source::class );
 $attachment_adapter = $source_class->newInstanceWithoutConstructor();
-foreach ( array( 'canonical' => $canonical, 'responses' => $validator, 'database' => $attachment_db ) as $property => $value ) {
+foreach ( array(
+	'canonical' => $canonical,
+	'responses' => $validator,
+	'database'  => $attachment_db,
+) as $property => $value ) {
 	$source_class->getProperty( $property )->setValue( $attachment_adapter, $value );
 }
 $attachment_method = $source_class->getMethod( 'artifacts' );
-$manual_artifacts = $attachment_method->invoke( $attachment_adapter, $submission_id, $revision_id, $official_revision, $publication, true );
+$manual_artifacts  = $attachment_method->invoke( $attachment_adapter, $submission_id, $revision_id, $official_revision, $publication, true );
+$partial_artifacts = $attachment_method->invoke( $attachment_adapter, $submission_id, $revision_id, $partial_revision, $publication, true );
+g4_s03_same( $manual_artifacts, $partial_artifacts, 'Missing required text in an official deadline answer must not block teacher attachment access.' );
+g4_s03_failure( fn () => $attachment_method->invoke( $attachment_adapter, $submission_id, $revision_id, $partial_revision, $publication, false ), Submission_Evaluation_Failure::ARTIFACT_NOT_READY, 'Partial official answers must pass response validation while retaining AI representation safety.' );
 g4_s03_same( count( $expected_attachments ), count( $manual_artifacts ), 'Manual preparation retains each original attachment.' );
 g4_s03_same( 'teacher_original_review', $manual_artifacts[0]['representation']['reason_code'], 'Manual provenance must not masquerade as AI extraction.' );
 $attachment_input = $builder->build( $evaluation_ref, $submission_id, $revision_id, $official_revision, $publication, $configuration, $manual_artifacts );

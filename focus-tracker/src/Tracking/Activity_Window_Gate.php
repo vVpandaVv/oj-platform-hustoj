@@ -15,9 +15,9 @@ final class Activity_Window_Gate {
     private const HORIZON_MS = 86400000;
     private const MAX_WINDOWS = 128;
 
-    public static function state(int $user_id, ?int $problem_id, string $context_type = 'general', string|int|null $context_id = null, ?int $now_ms = null, bool $lock = false): array|WP_Error {
+    public static function state(int $user_id, ?int $problem_id, string $context_type = 'general', string|int|null $context_id = null, ?int $now_ms = null, bool $lock = false, bool $allow_nonproblem = false): array|WP_Error {
         $now_ms = $now_ms ?? Clock::now_ms();
-        $windows = self::windows($user_id, $problem_id, $now_ms - self::HORIZON_MS, $now_ms + self::HORIZON_MS, $context_type, $context_id, $lock);
+        $windows = self::windows($user_id, $problem_id, $now_ms - self::HORIZON_MS, $now_ms + self::HORIZON_MS, $context_type, $context_id, $lock, $allow_nonproblem);
         if ($windows instanceof WP_Error) { return $windows; }
         $active = null;
         $next = null;
@@ -43,17 +43,21 @@ final class Activity_Window_Gate {
     }
 
     /** @return list<array{activityId:int,startMs:int,endMs:int,contextType:string,contextId:string}>|WP_Error */
-    public static function windows(int $user_id, ?int $problem_id, int $from_ms, int $until_ms, string $context_type = 'general', string|int|null $context_id = null, bool $lock = false): array|WP_Error {
+    public static function windows(int $user_id, ?int $problem_id, int $from_ms, int $until_ms, string $context_type = 'general', string|int|null $context_id = null, bool $lock = false, bool $allow_nonproblem = false): array|WP_Error {
         if ($user_id < 1 || $user_id !== get_current_user_id()) { return new WP_Error('focus_tracker_account_changed', '로그인 계정이 변경되었습니다.', array('status' => 403)); }
         if (! in_array($context_type, array('general', 'class', 'group', 'contest'), true)
             || ($context_type === 'general' ? $context_id !== null && $context_id !== '' : $context_id === null || (string) $context_id === '')
             || ($context_id !== null && (strlen((string) $context_id) > 160 || preg_match('/^[A-Za-z0-9][A-Za-z0-9_.:@-]*$/D', (string) $context_id) !== 1))) {
             return new WP_Error('focus_tracker_invalid_context', '학습 문맥이 올바르지 않습니다.', array('status' => 400));
         }
-        if ($problem_id === null || $problem_id < 1 || $until_ms <= $from_ms || $context_type === 'contest') { return array(); }
+        if (($problem_id === null && ! $allow_nonproblem) || ($problem_id !== null && $problem_id < 1) || $until_ms <= $from_ms || $context_type === 'contest') { return array(); }
         try {
             $successful = false;
-            $contexts = Context_Resolver::list_learning_contexts($user_id, $successful);
+            // A signed class/group page needs only that context kind. Keep
+            // membership fresh without reading the unrelated provider on
+            // every lease, ingestion or check; general pages still need both.
+            $types = $context_type === 'general' ? array('class', 'group') : array($context_type);
+            $contexts = Context_Resolver::list_learning_contexts($user_id, $successful, $types);
             if (! $successful) { return self::unavailable(); }
             $windows = array();
             $authorized_contexts = array();
@@ -74,7 +78,7 @@ final class Activity_Window_Gate {
                     $end = min($end, Clock::mysql_to_ms($activity['updated_at']));
                 }
                 if ($start >= $until_ms || $end <= $from_ms || $end <= $start
-                    || ($activity['problem_ids'] !== null && ! in_array($problem_id, $activity['problem_ids'], true))) { continue; }
+                    || ($problem_id !== null && $activity['problem_ids'] !== null && ! in_array($problem_id, $activity['problem_ids'], true))) { continue; }
                 $windows[$activity['id']] = array('activityId' => $activity['id'], 'startMs' => $start, 'endMs' => $end,
                     'contextType' => $activity['context_type'], 'contextId' => $activity['context_id']);
                 if (count($windows) > self::MAX_WINDOWS) { return self::unavailable(); }

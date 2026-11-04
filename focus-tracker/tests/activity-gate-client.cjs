@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
-const gateSource = fs.readFileSync(path.join(__dirname, '../resources/js/activity-gate.js'), 'utf8');
+const gateSource = fs.readFileSync(process.env.FOCUS_GATE_TEST_SOURCE || path.join(__dirname, '../resources/js/activity-gate.js'), 'utf8');
 const trackerSource = fs.readFileSync(path.join(__dirname, '../resources/js/tracker.js'), 'utf8');
 
 class StatusElement {
@@ -40,7 +40,7 @@ function control(kind = 'source') {
 function runtime(options = {}) {
     let elapsed = 0; let wall = options.wall ?? 1000000; let taskId = 0; let uuid = 0;
     const serverBase = options.serverBase ?? 1000000;
-    const tasks = new Map(); const requests = []; const beacons = []; const storage = new Map();
+    const tasks = new Map(); const requests = []; const beacons = []; const storage = new Map(); let gateInFlight = 0; let peakGateInFlight = 0;
     const handlers = { document: new Map(), window: new Map() };
     const windows = options.windows || [{ activityId: 1, startMs: serverBase, endMs: serverBase + 60000, contextType: 'class', contextId: 'class:1' }];
     function policy() {
@@ -54,7 +54,13 @@ function runtime(options = {}) {
             windowStartsAtMs: activeWindows.length ? Math.min(...activeWindows.map(item => item.startMs)) : null,
         };
     }
-    let responder = options.responder || (() => Promise.resolve({ ok: true, json: async () => policy() }));
+    function delayedResponse(ms, makePolicy = policy) {
+        return new Promise(resolve => { tasks.set(++taskId, { at: elapsed + ms, repeat: false,
+            fn() { const data = makePolicy(); resolve({ ok: true, json: async () => data }); } }); });
+    }
+    let responder = options.responder || (options.responseDelay
+        ? request => delayedResponse(options.responseDelay(request.startedAt - serverBase, requests.length))
+        : () => Promise.resolve({ ok: true, json: async () => policy() }));
     const config = { userId: 11, problemId: 7, serverNowMs: options.initialServer ?? serverBase,
         restUrl: '/events', nonce: 'nonce-value', activityGate: { url: '/tracking/state', pollMs: 5000, timeoutMs: 5000 }, noticeText: null,
         ...options.config };
@@ -75,10 +81,14 @@ function runtime(options = {}) {
         },
         addEventListener(type, fn) { listen('window', type, fn); },
         fetch(url, init) {
-            const request = { url, ...init, payload: JSON.parse(init.body) }; requests.push(request);
-            return url === '/tracking/state' ? responder(request) : Promise.resolve({ ok: true, json: async () => ({ acknowledged: true }) });
+            const request = { url, ...init, startedAt: serverBase + elapsed, payload: JSON.parse(init.body) }; requests.push(request);
+            if (url !== '/tracking/state') return Promise.resolve({ ok: true, json: async () => ({ acknowledged: true }) });
+            gateInFlight += 1; peakGateInFlight = Math.max(peakGateInFlight, gateInFlight);
+            try { return Promise.resolve(responder(request)).finally(() => { gateInFlight -= 1; }); }
+            catch (error) { gateInFlight -= 1; throw error; }
         },
     };
+    if (options.withoutFetch) delete window.fetch;
     class TestDate extends Date { static now() { return wall + elapsed; } }
     const context = vm.createContext({ document, window, Date: TestDate, Intl, Promise, Object, Array, Number, Math, JSON, String, encodeURIComponent,
         navigator: { sendBeacon(url, body) { beacons.push({ url, payload: JSON.parse(body.body) }); return true; } },
@@ -92,8 +102,8 @@ function runtime(options = {}) {
     if (options.tracker) vm.runInContext(trackerSource, context, { filename: 'tracker.js' });
     const settle = async () => { for (let count = 0; count < 30; count += 1) await Promise.resolve(); };
     return {
-        config, window, document, requests, beacons, policy, settle,
-        gate: window.FocusTrackerActivityGate,
+        config, window, document, requests, beacons, policy, settle, delayedResponse,
+        gate: window.FocusTrackerActivityGate, peakGateInFlight: () => peakGateInFlight,
         respondWith(fn) { responder = fn; }, shiftWall(ms) { wall += ms; },
         dispatch(target, type, event = {}) { (handlers[target].get(type) || []).forEach(fn => fn({ defaultPrevented: false, ...event })); },
         async advance(ms) {
@@ -146,6 +156,22 @@ test('initial state fails closed, waits for DOM context and sends only matching 
     assert.ok(!JSON.stringify(app.requests).includes('source'));
 });
 
+test('signed pages without a problem send the issued token and adopt renewed tokens for later probes', async () => {
+    const app = runtime({ config: { problemId: null, page: { category: 'practice', subtype: 'ml', label: '머신러닝 실습', key: 'practice:ml:4', token: 'first-token', expiresAtMs: 9999999 } },
+        forms: [], dom: true });
+    await app.settle();
+    assert.equal(app.requests[0].payload.problem_id, null);
+    assert.equal(app.requests[0].payload.page_context, 'first-token');
+    assert.match(app.document.body.textContent, /페이지 범주: ML 실습/);
+    assert.match(app.document.body.textContent, /범주 이동만으로 미집중을 판단하거나 감점하지 않습니다/);
+    app.respondWith(() => Promise.resolve({ ok: true, json: async () => ({ ...app.policy(), pageContextToken: 'renewed-token', pageContextExpiresAtMs: 8888888 }) }));
+    await app.advance(5000);
+    assert.equal(app.window.FocusTrackerActivityGate.state().pageContextToken, 'renewed-token');
+    await app.advance(5000);
+    assert.equal(app.requests.at(-1).payload.page_context, 'renewed-token');
+    assert.ok(!JSON.stringify(app.requests).includes('머신러닝 실습'), 'labels are display metadata, not client classification claims');
+});
+
 test('a cached future schedule never opens collection until a fresh start probe; a known end closes exactly without waiting for polling', async () => {
     const app = runtime({ tracker: true, windows: [{ activityId: 1, startMs: 1002000, endMs: 1008000 }] });
     await app.settle(); app.dispatch('document', 'input', { target: control() });
@@ -169,6 +195,95 @@ test('ordinary short-lease renewals preserve one continuous run and one tracker 
     assert.equal(app.events().filter(event => event.type === 'session_start').length, 1);
     assert.ok(app.events().some(event => event.type === 'heartbeat'));
     assert.ok(app.requests.filter(item => item.url === '/tracking/state').length >= 4);
+});
+
+for (const slowMs of [2406, 2436, 2996]) {
+    test(`end-clipped 90-second lease renews before expiry for ${slowMs}ms then 300ms RTT`, async () => {
+        // Replay the final 9.6 seconds of a real 90-second activity. The first
+        // response matches the three measured long RTTs; later replies are fast.
+        const end = 1009600;
+        const app = runtime({ tracker: true, windows: [{ activityId: 1, startMs: 919600, endMs: end }],
+            responseDelay: (_at, count) => count === 1 ? slowMs : 300 });
+        await app.advance(10600);
+        assert.equal(app.events().filter(event => event.type === 'session_start').length, 1,
+            'a conservative end must not cause an avoidable off/on session tail');
+        assert.equal(app.events().filter(event => event.type === 'session_end').length, 1);
+        assert.equal(app.gate.state().active, false);
+        assert.ok(app.events().every(event => event.occurred_at <= end));
+        const starts = app.requests.filter(request => request.url === '/tracking/state').map(request => request.startedAt);
+        assert.ok(starts.slice(1).every((at, index) => at - starts[index] >= 500), 'short leases keep at least 500ms between request starts');
+        assert.equal(app.peakGateInFlight(), 1, 'proactive renewal never overlaps a live fetch');
+    });
+}
+
+for (const vector of [
+    { label: '1538-1395-1055', offset: 71370, rtts: [1538, 1395, 1055, 1709] },
+    { label: '1268-1383-1022', offset: 71369, rtts: [1268, 1383, 1022, 1754] },
+]) {
+    test(`end-clipped 80-second jitter ${vector.label} reserves a full fetch budget before the last short lease`, async () => {
+        let index = 0; const end = 1000000 + 80000 - vector.offset;
+        const app = runtime({ tracker: true, windows: [{ activityId: 1, startMs: 1000000 - vector.offset, endMs: end }],
+            responseDelay: () => vector.rtts[index++] ?? 300 });
+        await app.advance(12000);
+        assert.equal(app.events().filter(event => event.type === 'session_start').length, 1, 'early renewal must cover the next measured RTT, not only the last RTT');
+        assert.equal(app.events().filter(event => event.type === 'session_end').length, 1);
+        assert.equal(app.gate.state().active, false); assert.equal(app.peakGateInFlight(), 1);
+        assert.ok(app.events().every(event => event.occurred_at <= end));
+        const starts = app.requests.filter(request => request.url === '/tracking/state').map(request => request.startedAt);
+        assert.ok(starts.slice(1).every((at, atIndex) => at - starts[atIndex] >= 500));
+    });
+}
+
+test('slow successful renewals use request-start cadence and two 90-second tabs stay within the normal request budget', async () => {
+    const apps = [0, 1].map(() => runtime({ tracker: true, windows: [{ activityId: 1, startMs: 1000000, endMs: 1090000 }], responseDelay: () => 3000 }));
+    for (const app of apps) {
+        await app.advance(95000);
+        const starts = app.requests.filter(request => request.url === '/tracking/state').map(request => request.startedAt);
+        assert.ok(starts.slice(1).every((at, index) => at - starts[index] >= 500 && at - starts[index] <= 5000), 'successful RTT is not added to the five-second cadence');
+        assert.equal(app.events().filter(event => event.type === 'session_start').length, 1);
+        assert.equal(app.gate.state().active, false);
+        assert.equal(app.peakGateInFlight(), 1);
+    }
+    const starts = apps.flatMap(app => app.requests.filter(request => request.url === '/tracking/state').map(request => request.startedAt));
+    assert.ok(starts.every(at => starts.filter(other => other >= at && other < at + 60000).length <= 180), 'normal two-tab renewal never creates a 180/min polling storm');
+});
+
+test('an in-flight renewal still expires at the known end and a late reply cannot revive collection', async () => {
+    const app = runtime({ tracker: true, windows: [{ activityId: 1, startMs: 1000000, endMs: 1007500 }],
+        responseDelay: (_at, count) => count === 1 ? 3000 : 6000 });
+    // The initial three-second RTT keeps the safe end at 4.5s, even while
+    // the subsequent request's five-second fetch deadline has not elapsed.
+    await app.advance(4500); assert.equal(app.gate.state().active, false);
+    assert.ok(app.events().some(event => event.type === 'session_end' && event.occurred_at === 1004500));
+    await app.advance(8000); assert.equal(app.gate.state().active, false);
+    assert.equal(app.events().filter(event => event.type === 'session_start').length, 1);
+});
+
+test('an active response whose RTT leaves no usable lease is unavailable rather than a claimed activity end', async () => {
+    const app = runtime({ dom: true, windows: [{ activityId: 1, startMs: 1000000, endMs: 1004000 }], responseDelay: () => 3000 });
+    await app.advance(3000);
+    assert.equal(app.gate.state().active, false); assert.equal(app.gate.state().reason, 'unavailable');
+    assert.match(app.document.body.textContent, /연결 오류로 중단/);
+    assert.doesNotMatch(app.document.body.textContent, /활동 종료/);
+});
+
+test('an unavailable fetch API fails closed without a zero-delay polling loop', async () => {
+    const app = runtime({ tracker: true, dom: true, withoutFetch: true }); await app.advance(20000);
+    assert.equal(app.gate.state().active, false); assert.equal(app.gate.state().reason, 'unavailable');
+    assert.equal(app.requests.length, 0); assert.equal(app.events().length, 0);
+    assert.match(app.document.body.textContent, /연결 오류로 중단/);
+});
+
+test('fresh end extensions and a later activity remain accepted without cached authorization across their gap', async () => {
+    const windows = [{ activityId: 1, startMs: 1000000, endMs: 1006000 }, { activityId: 2, startMs: 1025000, endMs: 1030000 }];
+    const app = runtime({ tracker: true, windows }); await app.settle();
+    await app.advance(2000); windows[0].endMs = 1020000;
+    await app.advance(5000); assert.equal(app.gate.state().active, true); assert.equal(app.gate.state().activeUntilMs, 1020000);
+    await app.advance(13000); assert.equal(app.gate.state().active, false);
+    const before = app.events().length; await app.advance(4999); assert.equal(app.events().length, before);
+    await app.advance(1); assert.equal(app.gate.state().active, true);
+    assert.equal(app.events().filter(event => event.type === 'session_start').length, 2);
+    await app.advance(5000); assert.equal(app.gate.state().active, false);
 });
 
 test('a failed renewal closes the gate, and a hung renewal cannot survive the ten-second lease', async () => {
@@ -224,12 +339,13 @@ test('a response delayed beyond its authorization cannot revive the gate after a
     assert.equal(app.events().length, 0);
 });
 
-test('a stale in-flight response cannot reactivate after page suspension, while a resume immediately requests fresh state', async () => {
+test('a stale suspended response cannot reactivate, and a resume requires a fresh probe within the minimum start interval', async () => {
     const pending = []; const app = runtime({ responder: () => new Promise(resolve => pending.push(resolve)) });
     const stale = app.policy(); app.dispatch('window', 'pagehide');
     app.dispatch('window', 'pageshow', { persisted: true });
     pending[0]({ ok: true, json: async () => stale }); await app.settle();
-    assert.equal(app.gate.state().active, false); assert.equal(pending.length, 2);
+    assert.equal(app.gate.state().active, false); assert.equal(pending.length, 1);
+    await app.advance(500); assert.equal(pending.length, 2);
     pending[1]({ ok: true, json: async () => app.policy() }); await app.settle();
     assert.equal(app.gate.state().active, true);
 });

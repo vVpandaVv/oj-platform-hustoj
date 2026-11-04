@@ -96,7 +96,7 @@
     if (typeof commandId !== 'string' || !commandId || !precondition || typeof precondition !== 'object') {
       throw new TypeError('검토 요청 정보가 없습니다.');
     }
-    if (!['accepted', 'adjusted', 'rejected', 'withdrawn'].includes(decision)) {
+    if (!['accepted', 'adjusted', 'draft', 'rejected', 'withdrawn'].includes(decision)) {
       throw new TypeError('검토 결정을 확인해 주세요.');
     }
     return {
@@ -141,6 +141,27 @@
     return item.abstain_reason === 'safety_review'
       ? '안전 관련 확인이 필요해 AI 점수를 보류했습니다.'
       : 'AI가 점수를 판단하지 못했습니다.';
+  }
+
+  function reviewAttentionItems(detail) {
+    if (!detail || manualScore(detail) || scoreApproved(detail)) return [];
+    return (detail.selected_result?.items || []).filter(item => item.candidate_points == null || item.flags?.length);
+  }
+
+  function reviewAttentionReasons(item) {
+    const messages = [];
+    if (item.candidate_points == null) messages.push(abstainMessage(item) || 'AI 점수가 없어 학생 답변과 평가 기준을 대조한 교사 채점이 필요합니다.');
+    const guidance = {
+      artifact_quality_issue: '첨부 확인: 첨부파일 원본을 열어 내용이 선명하고 채점 근거로 충분한지 확인해 주세요.',
+      evidence_limited: /^evidence_/.test(item.abstain_reason || '')
+        ? '근거 검증 실패: AI가 연결한 근거를 원문에서 검증하지 못했습니다. 학생 답변이 부족하다는 뜻은 아닙니다.'
+        : '근거 부족: 학생 답변과 첨부자료가 해당 평가 기준의 점수를 뒷받침하는지 확인해 주세요.',
+      response_ambiguous: '응답 확인: 답변을 여러 의미로 해석할 수 있어 문항의 요구와 학생 답변의 의미를 대조해 주세요.',
+      safety_review_required: '안전 확인: 안전 관련 내용을 직접 확인하고 최종 점수와 확인 사유·메모를 작성해 주세요.',
+      teacher_review_required: '교사 확인: 채점 결과에 추가 확인 표시가 있습니다. 학생 답변·인용 근거·평가 기준을 대조해 점수가 적절한지 확인해 주세요.',
+    };
+    (item.flags || []).forEach(flag => messages.push(guidance[flag] || '추가 확인: 학생 답변과 평가 기준을 대조해 최종 점수를 확인해 주세요.'));
+    return [...new Set(messages)];
   }
 
   function feedbackExpected(precondition, feedbackRevision = null) {
@@ -482,10 +503,11 @@
     return { category: 'not_submitted', label: row.status === 'draft' ? '미제출 · 작성 중' : row.status === 'conflict' ? '미제출 · 저장 충돌' : '미제출' };
   }
 
-  function buildRosterItems(rows, evaluations, candidates, assignment) {
+  function buildRosterItems(rows, evaluations, candidates, assignment, preferredId = '') {
     // Match the official answer revision, never an older evaluation or display name.
     const evaluated = new Map();
-    [...evaluations].sort((a, b) => String(b.requested_at_utc || b.created_at_utc || b.updated_at_utc || '').localeCompare(String(a.requested_at_utc || a.created_at_utc || a.updated_at_utc || '')) || String(b.id).localeCompare(String(a.id)))
+    [...evaluations].sort((a, b) => Number(b.id === preferredId) - Number(a.id === preferredId)
+      || String(b.updated_at_utc || b.requested_at_utc || b.created_at_utc || '').localeCompare(String(a.updated_at_utc || a.requested_at_utc || a.created_at_utc || '')) || String(b.id).localeCompare(String(a.id)))
       .forEach(item => {
         if (item.assignment?.id !== assignment.id) return;
         const key = `${item.learner?.user_id}:${item.submission?.id}:${item.submission?.source_revision_id}`;
@@ -499,7 +521,7 @@
       const evaluation = row.assigned && row.submission?.official_revision_id ? evaluated.get(key) : null;
       const candidate = row.assigned && row.submission?.official_revision_id ? pending.get(key) : null;
       return {
-        ...(evaluation || candidate || { id: row.id, state: '', submission: row.submission }),
+        ...(evaluation || candidate || { id: row.id, state: row.assigned && !row.submission?.official_revision_id && row.non_submission_grade?.status === 'confirmed' ? 'reviewed' : '', submission: row.submission }),
         kind: evaluation ? 'evaluation' : candidate ? 'candidate' : 'roster',
         learner: row.learner, assignment,
         roster: row, submissionStatus: submissionState.category, submissionLabel: submissionState.label,
@@ -557,6 +579,19 @@
     return [headers, ...rows].map(row => row.map(cell).join(',')).join('\r\n') + '\r\n';
   }
 
+  function nonSubmissionScoreDownloadRow(item, { context, assignment, label }) {
+    const grade = item.roster?.non_submission_grade;
+    if (!item.roster?.assigned || item.submissionStatus !== 'not_submitted' || grade?.status !== 'confirmed') return null;
+    if (grade.target_id !== item.roster.id || grade.assignment_id !== assignment.id
+      || grade.publication_hash !== item.roster.grading?.publication_hash) throw new Error('미제출 점수의 배포 정보를 확인하지 못했습니다.');
+    const maximum = normalizeDecimal(grade.maximum_score);
+    const score = normalizeDecimal(grade.score, maximum);
+    const learner = item.learner;
+    return [context.label, assignment.title, label(learner), learner.labels?.management_name || '',
+      learner.labels?.login || '', learner.labels?.display_name || learner.display_name || '',
+      '', score, maximum, '확정 · 미제출', 0, ''];
+  }
+
   function scoreDownloadFilename(context, assignment, date = new Date()) {
     const name = `${context.label || 'AI평가'}_${assignment.title || '점수'}`
       .replace(/[<>:"/\\|?*\u0000-\u001f\u007f]/g, '_').replace(/^[.\s]+|[.\s]+$/g, '').slice(0, 100);
@@ -593,12 +628,13 @@
     await Promise.all(Array.from({ length: Math.min(4, candidates.length) }, readNext));
     if (!isCurrent()) throw new Error('점수 다운로드가 취소되었습니다.');
     if (failure) throw failure;
-    const included = rows.filter(Boolean);
+    const included = rows.filter(Boolean).concat(items.map(item => nonSubmissionScoreDownloadRow(item, { context, assignment, label })).filter(Boolean));
     return { rows: included, excluded: items.length - included.length };
   }
 
   function bulkCandidateCount(items) {
-    return items.filter(item => (item.kind === 'candidate' || (item.kind === 'evaluation' && item.state === 'failed')) && item.submissionStatus === 'submitted'
+    return items.filter(item => (item.kind === 'candidate' || (item.kind === 'evaluation' && (item.state === 'failed'
+      || (item.latest_run?.operation === 'manual_prepare' && !item.review?.official_id)))) && item.submissionStatus === 'submitted'
       && item.roster?.assigned && ['submitted', 'auto_submitted', 'proxy_submitted', 'locked'].includes(item.roster.status)).length;
   }
 
@@ -664,11 +700,55 @@
     return Object.freeze({ run, snapshot, stop: () => { stopped = true; } });
   }
 
+  function evaluationListScore(item) {
+    const review = item.review;
+    const maximum = item.candidate?.maximum_score;
+    if (review?.official_scope === 'this_evaluation' && review.official_score != null) {
+      return { score: review.official_score, maximum, source: '확정 점수' };
+    }
+    if (review?.latest_decision === 'draft' && review.latest_score != null && review.latest_result_id === item.candidate?.id) {
+      return { score: review.latest_score, maximum, source: '저장 점수 · 미확정' };
+    }
+    if (item.latest_run?.operation === 'manual_prepare' || !item.candidate) return null;
+    return { score: item.candidate.score, maximum, source: 'AI 점수' };
+  }
+
   const WORKFLOW_BULK = Object.freeze({
-    accept: { label: 'AI 점수 일괄 승인', endpoint: 'review', operation: null },
+    accept: { label: 'AI 점수 일괄 승인', endpoint: 'review', operation: null, approval: true },
+    teacher: { label: '교사 점수 일괄 승인', endpoint: 'review', operation: null, approval: true },
     feedback: { label: '피드백 일괄 요청', endpoint: 'generate-feedback', operation: 'feedback_draft' },
     note: { label: '특기사항 일괄 요청', endpoint: 'generate-student-note', operation: 'special_note_draft' },
   });
+
+  function savedTeacherBulkItems(detail) {
+    const result = detail.selected_result;
+    const latest = (detail.reviews || []).reduce((previous, review) => !previous || review.review_no > previous.review_no ? review : previous, null);
+    if (latest?.decision !== 'draft' || latest.result_id !== result?.id
+      || !Number.isInteger(latest.review_no) || latest.review_no < 1
+      || latest.review_no !== detail.review_precondition.expected_review_no) throw new Error('현재 채점표에 저장한 교사 점수 없음');
+    const saved = latest.score_decisions?.value?.items;
+    if (!Array.isArray(saved) || !result?.items?.length || saved.length !== result.items.length) throw new Error('일부 평가 항목 미채점');
+    const byKey = new Map(saved.map(item => [item.binding_key, item]));
+    if (byKey.size !== saved.length) throw new Error('저장 점수 확인 필요');
+    return result.items.map(item => {
+      const value = byKey.get(item.binding_key);
+      if (!value) throw new Error('현재 평가 항목과 저장 점수 불일치');
+      byKey.delete(item.binding_key);
+      const maximum = normalizeDecimal(item.maximum_points);
+      const points = normalizeDecimal(value.official_points, maximum);
+      if (Array.isArray(item.levels) && !item.levels.some(level => normalizeDecimal(level.points, maximum) === points)) throw new Error('루브릭 수준 확인 필요');
+      const safety = item.flags?.includes('safety_review_required');
+      if (value.source === 'ai_accepted') {
+        if (safety || normalizeDecimal(item.candidate_points, maximum) !== points
+          || value.reason_code != null || value.reason_note != null) throw new Error('AI 점수 또는 안전 확인 필요');
+      } else if (value.source === 'teacher_assigned') {
+        if (!REASONS.some(([code]) => code === value.reason_code)) throw new Error('교사 채점 사유 확인 필요');
+        if ((safety || value.reason_code === 'other') && !value.reason_note?.trim()) throw new Error('교사 확인 메모 필요');
+      } else throw new Error('저장 점수 출처 확인 필요');
+      return { binding_key: value.binding_key, source: value.source, official_points: points,
+        reason_code: value.reason_code ?? null, reason_note: value.reason_note ?? null };
+    });
+  }
 
   function workflowBulkReason(action, detail, hasNote = false) {
     const evaluation = detail?.evaluation;
@@ -676,11 +756,18 @@
     if (!WORKFLOW_BULK[action] || !evaluation || !expected) return '평가 정보 확인 필요';
     if (evaluation.submission?.is_source_current !== true
       || !['submitted', 'auto_submitted', 'proxy_submitted', 'locked'].includes(evaluation.submission?.state)) return '제출 변경 또는 재제출 중';
-    if (action === 'accept') {
+    if (WORKFLOW_BULK[action].approval) {
       if (evaluation.state !== 'review_required') return '검토 대기 아님';
       if (expected.expected_official_review_id || evaluation.review?.official_id) return '기존 확정 점수 있음';
       if (selectedScoreRejection(detail)) return '반려된 점수';
       const result = detail.selected_result;
+      if (action === 'teacher') {
+        if (!result?.id || result.id !== expected.expected_result_id || result.id !== evaluation.candidate?.id) return '현재 채점표 확인 필요';
+        try { savedTeacherBulkItems(detail); }
+        catch (error) { return error.message; }
+        return '';
+      }
+      if ((detail.reviews || []).some(review => review.decision === 'draft' && review.result_id === result?.id)) return '교사 채점 저장됨 · 교사 점수 승인 대상';
       if (!result?.items?.length || result.id !== expected.expected_result_id || result.id !== evaluation.candidate?.id) return '현재 AI 결과 확인 필요';
       if (result.abstained || result.safety_flagged || evaluation.priority?.review_needed_count > 0
         || result.items.some(item => item.decision !== 'score' || item.abstain_reason || item.flags?.length)) return '판단 보류 또는 개별 확인 필요';
@@ -698,6 +785,12 @@
 
   function workflowBulkCommand(action, detail, commandId) {
     if (action === 'accept') return reviewCommand(commandId, detail.review_precondition, 'accepted');
+    if (action === 'teacher') {
+      const items = savedTeacherBulkItems(detail);
+      return items.some(item => item.source === 'teacher_assigned')
+        ? reviewCommand(commandId, detail.review_precondition, 'adjusted', items)
+        : reviewCommand(commandId, detail.review_precondition, 'accepted');
+    }
     if (action === 'feedback') return generateFeedbackCommand(commandId, detail.review_precondition);
     if (action === 'note') return generateStudentNoteCommand(commandId, {
       id: detail.review_precondition.expected_official_review_id,
@@ -708,9 +801,9 @@
 
   function workflowBulkReceipt(action, id, body, envelope) {
     const data = envelope?.data;
-    if (action === 'accept') {
+    if (WORKFLOW_BULK[action].approval) {
       return data?.evaluation?.id === id && data?.result?.id === body.expected.expected_result_id
-        && data?.result?.hash === body.expected.expected_result_hash && data?.review?.decision === 'accepted'
+        && data?.result?.hash === body.expected.expected_result_hash && data?.review?.decision === body.payload.decision
         && Boolean(data?.review?.id) && data?.official_review?.id === data.review.id;
     }
     return data?.evaluation_id === id && data?.official_review?.id === body.expected.expected_official_review_id
@@ -753,8 +846,8 @@
             // A lost response must replay the original command, not generate a second request.
             const response = await send(pending.path, { method: 'POST', idempotencyKey: pending.body.command_id, body: pending.body });
             if (!workflowBulkReceipt(action, target.id, pending.body, response)) throw new Error('처리 응답을 확인하지 못했습니다. 이어하기로 확인해 주세요.');
-            const failedRun = action !== 'accept' && ['failed', 'cancelled'].includes(response.data.run.state);
-            results.push({ ...target, status: failedRun ? 'failed' : 'succeeded', reason: failedRun ? '생성 작업 실패 또는 취소 · 개별 확인 필요' : action === 'accept' ? '승인 완료' : '생성 요청 등록' });
+            const failedRun = !WORKFLOW_BULK[action].approval && ['failed', 'cancelled'].includes(response.data.run.state);
+            results.push({ ...target, status: failedRun ? 'failed' : 'succeeded', reason: failedRun ? '생성 작업 실패 또는 취소 · 개별 확인 필요' : WORKFLOW_BULK[action].approval ? '승인 완료' : '생성 요청 등록' });
           } catch (error) {
             if (![404, 409, 422].includes(error?.status)) throw error;
             results.push({ ...target, status: 'failed', reason: error.status === 409 ? '변경 충돌 · 개별 확인 필요' : error.status === 404 ? '접근 대상 없음' : '입력·처리 조건 확인 필요' });
@@ -878,6 +971,7 @@
 
   const adapter = Object.freeze({
     scoreDownloadRow,
+    nonSubmissionScoreDownloadRow,
     scoreDownloadCsv,
     scoreDownloadFilename,
     readScoreDownload,
@@ -904,6 +998,10 @@
     normalizeDecimal,
     officialTotalLabel,
     abstainMessage,
+    reviewAttentionItems,
+    reviewAttentionReasons,
+    priorityLabel,
+    evaluationListScore,
     reviewCommand,
     feedbackExpected,
     generateFeedbackCommand,
@@ -1273,7 +1371,7 @@
       if (item.roster) {
         if (fields.submissionStatus?.value && item.submissionStatus !== fields.submissionStatus.value) return false;
         const evaluationState = itemType(item) === 'candidate' ? 'not_evaluated' : item.state;
-        if (fields.state.value && (itemType(item) === 'roster' || evaluationState !== fields.state.value)) return false;
+        if (fields.state.value && evaluationState !== fields.state.value) return false;
       }
       const value = `${item?.assignment?.title || ''} ${learnerLabels.searchText(item?.learner)}`.toLocaleLowerCase();
       return value.includes(term);
@@ -1435,12 +1533,15 @@
     runBatch(batch);
   }
 
-  function priorityLabel(item) {
+  function priorityLabel(item, detail = null) {
     if (item?.kind === 'candidate') return '';
-    if (item?.latest_run?.operation === 'manual_prepare') return item.review?.official_scope === 'this_evaluation' ? '교사 채점 완료' : '교사 채점 대기';
+    const currentDetail = detail?.evaluation?.id === item?.id && detail?.selected_result?.id === item?.candidate?.id ? detail : null;
+    if (item?.latest_run?.operation === 'manual_prepare' || (currentDetail && manualScore(currentDetail))) return scoreApproved({ evaluation: item }) ? '교사 채점 완료' : '교사 채점 대기';
+    if (scoreApproved({ evaluation: item })) return '';
     if (item?.candidate?.safety_flagged) return '안전 확인';
     if (item?.candidate?.abstained) return '판단 보류';
-    if (item?.priority?.review_needed_count > 0) return `${item.priority.review_needed_count}개 확인`;
+    const count = currentDetail ? reviewAttentionItems(currentDetail).length : item?.priority?.review_needed_count || 0;
+    if (count > 0) return `확인 필요 · 평가 항목 ${count}개`;
     return '';
   }
 
@@ -1460,7 +1561,7 @@
   function updateWorkflowBulkButtons() {
     root.querySelectorAll('[data-workflow-bulk]').forEach(control => {
       const action = control.dataset.workflowBulk;
-      control.hidden = !workflowPermission(action) || (action === 'accept' ? workflowStage !== 'assessment' : workflowStage !== 'report');
+      control.hidden = !workflowPermission(action) || (WORKFLOW_BULK[action].approval ? workflowStage !== 'assessment' : workflowStage !== 'report');
       control.disabled = control.hidden || !currentAssignment() || assignmentsUnavailable || !currentContext()
         || state.submitting || workflowBusy() || Boolean(state.batch && !state.batch.controller.snapshot().done);
       control.title = !currentAssignment() ? '배포를 선택하세요.' : WORKFLOW_BULK[action].label;
@@ -1495,8 +1596,8 @@
     all.disabled = state.workflowPreparing || !boxes.length;
     const confirm = root.querySelector('[data-workflow-control="confirm"]');
     confirm.disabled = state.workflowPreparing || !count || !state.workflowPlan
-      || (state.workflowPlan.action === 'accept' && !workflowNode('reviewed').checked);
-    confirm.textContent = state.workflowPlan?.action === 'accept' ? `${count}명 승인` : `${count}명 요청`;
+      || (WORKFLOW_BULK[state.workflowPlan.action].approval && !workflowNode('reviewed').checked);
+    confirm.textContent = WORKFLOW_BULK[state.workflowPlan?.action]?.approval ? `${count}명 승인` : `${count}명 요청`;
   }
 
   async function openWorkflowBulk(action) {
@@ -1511,10 +1612,14 @@
     state.workflowPreparing = true;
     workflowNode('title').textContent = WORKFLOW_BULK[action].label;
     workflowNode('scope').textContent = `${context.label} · ${assignment.title} · 배포 전체 (검색·상태 필터와 무관)`;
-    workflowNode('policy').textContent = action === 'accept'
+    workflowNode('policy').textContent = action === 'teacher'
+      ? '저장된 교사 점수만 확정합니다. 미채점 항목·기존 확정 점수·변경된 제출은 제외하며 학생에게 공개하지 않습니다.'
+      : action === 'accept'
       ? '기존 확정 점수·반려·판단 보류·개별 확인 대상 제외. 점수만 확정하며 학생에게 공개하지 않습니다.'
       : '점수 확정·초안 없는 학생 대상. 기존 초안·승인 기록·생성 중인 작업 제외. 생성 후 개별 검토가 필요하며 자동 승인·공개하지 않습니다.';
-    workflowNode('attestation').hidden = action !== 'accept';
+    workflowNode('attestation').hidden = !WORKFLOW_BULK[action].approval;
+    workflowNode('attestation').querySelector('span').textContent = action === 'teacher'
+      ? '선택한 학생의 저장 점수와 채점 근거를 검토했습니다.' : '선택한 학생의 AI 점수와 채점 근거를 검토했습니다.';
     workflowNode('reviewed').checked = false;
     workflowNode('targets').replaceChildren();
     workflowNode('exclusions').replaceChildren();
@@ -1539,7 +1644,10 @@
             const { detail, hasNote } = await readWorkflowTarget(action, target, context);
             reason = workflowBulkReason(action, detail, hasNote);
             if (detail.evaluation.assignment?.id !== assignment.id || detail.evaluation.submission?.source_revision_id !== target.revisionId) reason = '제출 또는 배포 변경';
-            if (!reason) target.body = workflowBulkCommand(action, detail, token(`bulk-${action}`));
+            if (!reason) {
+              target.body = workflowBulkCommand(action, detail, token(`bulk-${action}`));
+              if (action === 'teacher') target.scoreLabel = officialTotalLabel(savedTeacherBulkItems(detail).map(item => item.official_points));
+            }
           } catch (error) {
             if (![404, 409, 422].includes(error?.status)) throw error;
             reason = '평가 조회 불가 · 개별 확인 필요';
@@ -1553,7 +1661,8 @@
       plan.targets.forEach((target, index) => {
         const label = node('label', 'oj-ai-submission-review__bulk-check');
         const checkbox = node('input'); checkbox.type = 'checkbox'; checkbox.checked = true; checkbox.value = String(index);
-        append(label, checkbox, learnerNameNode('span', target.learner));
+        const score = action === 'teacher' ? ` · ${target.scoreLabel}` : '';
+        append(label, checkbox, learnerNameNode('span', target.learner, score));
         workflowNode('targets').appendChild(label);
       });
       plan.excluded.forEach(item => workflowNode('exclusions').appendChild(learnerNameNode('li', item.learner, ` · ${item.reason}`)));
@@ -1576,7 +1685,7 @@
     const progress = job.controller.snapshot();
     elements.workflowProgress.hidden = false;
     const count = status => progress.results.filter(item => item.status === status).length;
-    workflowNode('progress-status').textContent = `${WORKFLOW_BULK[job.action].label} · ${progress.done ? '처리 완료' : progress.running ? '처리 중' : '중지됨'} · ${progress.results.length}/${progress.total}명 · ${job.action === 'accept' ? '승인' : '요청 등록'} ${count('succeeded')}명 · 제외 ${count('skipped')}명 · 실패 ${count('failed')}명${job.error ? ` · ${job.error}` : ''}`;
+    workflowNode('progress-status').textContent = `${WORKFLOW_BULK[job.action].label} · ${progress.done ? '처리 완료' : progress.running ? '처리 중' : '중지됨'} · ${progress.results.length}/${progress.total}명 · ${WORKFLOW_BULK[job.action].approval ? '승인' : '요청 등록'} ${count('succeeded')}명 · 제외 ${count('skipped')}명 · 실패 ${count('failed')}명${job.error ? ` · ${job.error}` : ''}`;
     workflowNode('results').replaceChildren(...progress.results.map(item => learnerNameNode('li', item.learner, ` · ${item.reason}`)));
     root.querySelector('[data-workflow-control="resume"]').hidden = progress.running || progress.done || job.blocked;
     root.querySelector('[data-workflow-control="stop"]').hidden = !progress.running;
@@ -1685,16 +1794,21 @@
       append(title, learnerNameNode('strong', item.learner), item.roster
         ? badge(item.submissionLabel, item.submissionStatus === 'submitted' ? 'success' : item.submissionStatus === 'not_submitted' ? 'attention' : 'neutral')
         : badge(labelFor(STATE_LABELS, item.state), toneForState(item.state)));
+      const displayed = type === 'evaluation' ? evaluationListScore(item) : null;
       const score = type === 'candidate'
         ? '채점 전'
-        : type === 'roster' ? (item.submissionStatus === 'submitted' ? '평가 가능 상태 확인 필요' : '채점 대상 아님') : item.latest_run?.operation === 'manual_prepare' ? '교사 직접 채점' : item.candidate
-          ? scoreLabel(item.candidate.score, item.candidate.maximum_score)
-          : '결과 대기';
+        : type === 'roster' ? (item.roster.non_submission_grade?.status === 'confirmed' ? scoreLabel(item.roster.non_submission_grade.score, item.roster.non_submission_grade.maximum_score)
+          : item.roster.grading?.allowed ? '교사 채점 가능' : item.submissionStatus === 'submitted' ? '평가 가능 상태 확인 필요' : '채점 대상 아님') : displayed
+          ? scoreLabel(displayed.score, displayed.maximum)
+          : item.latest_run?.operation === 'manual_prepare' ? '채점 전' : '결과 대기';
       const meta = node('div', 'oj-ai-submission-review__list-meta');
-      append(meta, node('span', '', score), node('span', '', dateLabel(item.submission?.submitted_at_utc)));
-      const attention = priorityLabel(item);
+      const scoreNode = node('span', '', score);
+      if (displayed) { scoreNode.title = displayed.source; scoreNode.setAttribute('aria-label', `${displayed.source}: ${score}`); }
+      append(meta, scoreNode, node('span', '', dateLabel(item.submission?.submitted_at_utc)));
+      const attention = priorityLabel(item, state.detail);
       append(entry, title, node('span', 'oj-ai-submission-review__assignment', item.assignment?.title || '활동지'), meta);
       if (item.roster && type === 'evaluation') entry.appendChild(badge(labelFor(STATE_LABELS, item.state), toneForState(item.state)));
+      if (type === 'roster' && item.roster.non_submission_grade?.status === 'confirmed') entry.appendChild(badge('교사 확정', 'success'));
       if (item.roster && !item.roster.current_member) entry.appendChild(node('span', 'oj-ai-submission-review__assignment', '현재 그룹·수업 명단에서 제외됨'));
       if (attention) entry.appendChild(node('span', 'oj-ai-submission-review__priority', attention));
       elements.list.appendChild(entry);
@@ -1715,6 +1829,11 @@
     state.selectedType = 'roster';
     state.detail = null;
     state.candidateDetail = null;
+    if (workflowStage === 'assessment' && item.submissionStatus === 'not_submitted' && item.roster.grading) {
+      renderNonSubmissionGrade(item);
+      renderList();
+      return;
+    }
     const messages = {
       not_submitted: item.roster.status === 'draft' ? '답안을 작성 중이며 아직 제출하지 않았습니다.' : '아직 제출한 답안이 없습니다.',
       not_assigned: item.roster.target_state === 'revoked' ? '선택한 배포의 대상에서 해제되었습니다.' : '선택한 배포에 포함되지 않은 학생입니다.',
@@ -1723,6 +1842,253 @@
     renderEmptyDetail('', messages[item.submissionStatus]);
     learnerLabels.bind(elements.detail.querySelector('strong'), item.learner, ` · ${item.submissionLabel}`);
     renderList();
+  }
+
+  function renderNonSubmissionGrade(item) {
+    const grade = item.roster.non_submission_grade;
+    const confirmed = grade?.status === 'confirmed';
+    const editable = state.canReview && item.roster.grading.allowed;
+    const fragment = document.createDocumentFragment();
+    const header = node('header', 'oj-ai-submission-review__detail-header');
+    const identity = node('div');
+    append(identity, node('h2', '', item.assignment.title), learnerNameNode('p', item.learner));
+    append(header, identity, badge(item.submissionLabel, 'attention'));
+    append(fragment, header);
+    const history = answerHistoryPanel(item.submission?.id, item.roster.grading.bindings);
+    append(fragment, history);
+    if (editable) append(fragment, exceptionPolicySettings(item));
+    const form = node('form', 'oj-ai-submission-review__missing-grade');
+    form.dataset.targetGrade = item.id;
+    const heading = node('h3', '', confirmed ? '점수 승인 완료' : '미제출 학생 채점');
+    append(form, heading);
+    if (confirmed) {
+      append(form, node('p', 'oj-ai-submission-review__official-score', `${targetGradeLabel(grade.category)}: ${scoreLabel(grade.score, grade.maximum_score)}`));
+      if (grade.category === 'rubric') append(form, targetRubricFields(item, grade, true));
+      if (grade.memo) append(form, node('p', '', grade.memo));
+      append(form, node('p', 'oj-ai-submission-review__muted', `확정 일시: ${dateLabel(grade.updated_at_utc)}`));
+      if (editable) append(form, button('점수 승인 회수', 'withdraw-missing-grade', 'oj-ai-submission-review__secondary'));
+    } else if (editable) {
+      const modes = node('fieldset', 'oj-ai-submission-review__grade-modes');
+      append(modes, node('legend', '', '채점 방식'));
+      for (const category of ['rubric', 'not_submitted', 'long_absence']) {
+        const control = node('input'); control.type = 'radio'; control.name = 'category'; control.value = category;
+        control.checked = category === 'rubric';
+        const configured = category === 'rubric' || item.roster.grading.exception_scores?.[category] != null;
+        control.dataset.unavailable = configured ? '0' : '1'; control.disabled = !configured;
+        const label = node('label');
+        append(label, control, node('span', '', `${targetGradeLabel(category)}${configured ? '' : ' (미설정)'}`));
+        append(modes, label);
+      }
+      append(form, modes, targetRubricFields(item, grade, false));
+      const score = node('input'); score.name = 'score'; score.type = 'number'; score.readOnly = true; score.tabIndex = -1;
+      score.max = item.roster.grading.maximum_score;
+      const memo = node('textarea'); memo.name = 'memo'; memo.maxLength = 500; memo.rows = 3; memo.value = grade?.memo || '';
+      for (const [text, control] of [[`최종 점수 (배점 ${score.max}점)`, score], ['채점 메모', memo]]) {
+        const label = node('label'); append(label, node('span', '', text), control); append(form, label);
+      }
+      const submit = button('점수 확정', '', 'oj-ai-submission-review__primary'); submit.type = 'submit'; append(form, submit);
+      form.addEventListener('submit', event => { event.preventDefault(); saveNonSubmissionGrade(item, 'confirm', form); });
+      form.addEventListener('change', event => {
+        if (event.target.name === 'category' && event.target.value !== 'rubric') {
+          form.querySelectorAll('[data-target-level]').forEach(control => { control.checked = false; });
+          form.querySelectorAll('[data-target-points]').forEach(control => { control.value = ''; });
+        }
+        syncTargetGrade(item, form);
+      });
+      form.addEventListener('input', () => syncTargetGrade(item, form));
+      syncTargetGrade(item, form);
+    } else append(form, node('p', '', '현재 점수를 입력할 수 없습니다.'));
+    append(fragment, form);
+    replaceDetail(fragment);
+  }
+
+  function targetGradeLabel(category) {
+    return { rubric: '루브릭 채점', not_submitted: '미제출 점수', long_absence: '장기결석 점수', base: '기본점수' }[category] || '교사 점수';
+  }
+
+  function exceptionPolicySettings(item) {
+    const limits = item.roster.grading;
+    const details = node('details', 'oj-ai-submission-review__exception-policy');
+    append(details, node('summary', '', '이 배포의 별도 점수 설정'));
+    const form = node('form', 'oj-ai-submission-review__missing-grade');
+    form.dataset.exceptionPolicy = '';
+    const status = node('p', 'oj-ai-submission-review__muted'); status.dataset.policyStatus = '';
+    append(form, status);
+    for (const category of ['not_submitted', 'long_absence']) {
+      const control = node('input'); control.type = 'number'; control.name = category;
+      control.min = '0'; control.max = limits.maximum_score; control.step = '0.0001'; control.placeholder = '미설정';
+      control.value = limits.exception_scores?.[category] ?? '';
+      const label = node('label'); append(label, node('span', '', `${targetGradeLabel(category)} (배점 ${limits.maximum_score}점)`), control); append(form, label);
+    }
+    const reason = node('textarea'); reason.name = 'reason'; reason.rows = 2; reason.maxLength = 500; reason.required = true;
+    const label = node('label'); append(label, node('span', '', '변경 사유'), reason); append(form, label);
+    const save = button('별도 점수 저장', '', 'oj-ai-submission-review__secondary'); save.type = 'submit'; append(form, save);
+    const reset = button('변경 취소', '', 'oj-ai-submission-review__secondary');
+    reset.addEventListener('click', () => {
+      for (const key of ['not_submitted', 'long_absence']) form.elements[key].value = item.roster.grading.exception_scores?.[key] ?? '';
+      form.elements.reason.value = '';
+      form.dataset.baseline = policyInputs(form);
+    });
+    append(form, reset);
+    form.dataset.baseline = policyInputs(form);
+    updatePolicyStatus(form, limits.exception_policy);
+    form.addEventListener('submit', event => { event.preventDefault(); saveExceptionPolicy(item, form); });
+    append(details, form);
+    return details;
+  }
+
+  function policyInputs(form) {
+    return JSON.stringify([...form.querySelectorAll('input,textarea')].map(control => control.value));
+  }
+
+  function updatePolicyStatus(form, policy) {
+    form.querySelector('[data-policy-status]').textContent = policy
+      ? `${policy.revision}차 · ${dateLabel(policy.updated_at_utc)} · ${policy.reason}` : '배포 당시 설정';
+  }
+
+  async function saveExceptionPolicy(item, form) {
+    const context = currentContext(); const assignment = currentAssignment();
+    if (state.submitting || !state.canReview || !item.roster.grading.allowed || item.id !== state.selectedId || !context || assignment?.id !== item.assignment.id) return;
+    const body = {
+      scores: Object.fromEntries(['not_submitted', 'long_absence'].map(key => [key, form.elements[key].value === '' ? null : form.elements[key].value])),
+      reason: form.elements.reason.value.trim(),
+      expected_hash: item.roster.grading.exception_policy?.hash ?? null,
+      publication_hash: item.roster.grading.publication_hash,
+    };
+    if (!body.reason) { form.elements.reason.focus(); return; }
+    const signature = JSON.stringify(body);
+    if (form.dataset.commandSignature !== signature) { form.dataset.commandSignature = signature; form.dataset.commandId = token('idem'); }
+    state.submitting = true;
+    const controls = [...elements.detail.querySelectorAll('button,input,select,textarea')].map(control => [control, control.disabled]);
+    controls.forEach(([control]) => { control.disabled = true; });
+    updateBatchButton();
+    try {
+      const response = await request(`/assignment-exception-scores?${contextQuery(context, { assignment_id: assignment.id })}`, { method: 'POST', idempotencyKey: form.dataset.commandId, body });
+      if (currentContext() !== context || currentAssignment()?.id !== assignment.id || state.selectedId !== item.id || !form.isConnected) return;
+      const policy = response.data?.policy;
+      if (!policy || policy.assignment_id !== assignment.id || policy.publication_hash !== body.publication_hash || !policy.scores || !policy.hash) throw new Error('별도 점수 설정을 확인하지 못했습니다. 새로고침해 주세요.');
+      for (const row of state.items) {
+        if (row.assignment?.id === assignment.id && row.roster?.grading) {
+          row.roster.grading.exception_policy = policy;
+          row.roster.grading.exception_scores = policy.scores;
+        }
+      }
+      for (const key of ['not_submitted', 'long_absence']) form.elements[key].value = policy.scores[key] ?? '';
+      form.elements.reason.value = '';
+      form.dataset.baseline = policyInputs(form);
+      updatePolicyStatus(form, policy);
+      showNotice('별도 점수를 저장했습니다. 기존 확정 점수는 유지됩니다.');
+    } catch (error) {
+      showNotice(problemMessage(error, '별도 점수를 저장하지 못했습니다.'), 'error');
+    } finally {
+      state.submitting = false;
+      controls.forEach(([control, disabled]) => { if (control.isConnected) control.disabled = disabled; });
+      const gradeForm = elements.detail.querySelector('[data-target-grade]');
+      if (gradeForm?.dataset.targetGrade === item.id) syncTargetGrade(item, gradeForm);
+      updateBatchButton();
+    }
+  }
+
+  function targetRubricFields(item, grade, readonly) {
+    const container = node('div', 'oj-ai-submission-review__target-rubric');
+    const previous = new Map((grade?.category === 'rubric' ? grade.items || [] : []).map(decision => [decision.binding_key, decision]));
+    for (const binding of item.roster.grading.bindings || []) {
+      const fieldset = node('fieldset', 'oj-ai-submission-review__rubric-levels');
+      fieldset.dataset.targetBinding = binding.binding_key;
+      fieldset.disabled = readonly;
+      append(fieldset, node('legend', '', `${binding.label} · ${binding.maximum_points}점`));
+      if (binding.levels?.length) {
+        for (const level of binding.levels) {
+          const label = node('label', 'oj-ai-submission-review__rubric-level');
+          const control = node('input'); control.type = 'radio'; control.name = `target-${binding.binding_key}`;
+          control.dataset.targetLevel = level.level_key; control.dataset.points = level.points; control.value = level.level_key;
+          control.checked = previous.get(binding.binding_key)?.level_key === level.level_key;
+          control.required = !readonly;
+          append(label, control, node('span', '', level.label), node('strong', '', `${level.points}점`));
+          append(fieldset, label);
+        }
+      } else {
+        const control = node('input'); control.type = 'number'; control.min = '0'; control.max = binding.maximum_points;
+        control.step = '0.0001'; control.dataset.targetPoints = ''; control.required = !readonly;
+        control.value = previous.get(binding.binding_key)?.score ?? '';
+        control.setAttribute('aria-label', `${binding.label} 점수`); append(fieldset, control);
+      }
+      append(container, fieldset);
+    }
+    return container;
+  }
+
+  function targetGradeItems(form) {
+    return [...form.querySelectorAll('[data-target-binding]')].map(fieldset => {
+      const selected = fieldset.querySelector('[data-target-level]:checked');
+      return { binding_key: fieldset.dataset.targetBinding, level_key: selected?.dataset.targetLevel ?? null,
+        score: selected?.dataset.points ?? fieldset.querySelector('[data-target-points]')?.value ?? '' };
+    });
+  }
+
+  function syncTargetGrade(item, form) {
+    const category = form.elements.category?.value;
+    if (!category || !form.elements.score) return;
+    const rubric = category === 'rubric';
+    form.querySelectorAll('[data-target-binding]').forEach(fieldset => { fieldset.disabled = !rubric || state.submitting; });
+    form.querySelectorAll('input[name="category"]').forEach(control => {
+      const available = control.value === 'rubric' || item.roster.grading.exception_scores?.[control.value] != null;
+      control.dataset.unavailable = available ? '0' : '1';
+      control.disabled = state.submitting || !available;
+      control.closest('label').querySelector('span').textContent = `${targetGradeLabel(control.value)}${available ? '' : ' (미설정)'}`;
+    });
+    const items = targetGradeItems(form);
+    form.elements.score.value = rubric
+      ? (items.length && items.every(item => item.score !== '') ? String(items.reduce((sum, item) => sum + Math.round(Number(item.score) * 10000), 0) / 10000) : '')
+      : item.roster.grading.exception_scores?.[category] ?? '';
+    const submit = form.querySelector('[type="submit"]');
+    if (submit) submit.disabled = state.submitting || form.elements.score.value === '';
+  }
+
+  async function saveNonSubmissionGrade(item, action, form) {
+    const context = currentContext();
+    const assignment = currentAssignment();
+    if (state.submitting || !state.canReview || !item.roster.grading?.allowed || item.id !== state.selectedId
+      || !context || assignment?.id !== item.assignment.id) return;
+    const policyForm = elements.detail.querySelector('[data-exception-policy]');
+    if (policyForm && policyInputs(policyForm) !== policyForm.dataset.baseline) {
+      showNotice('별도 점수 설정의 변경 내용을 먼저 저장하거나 취소해 주세요.', 'error');
+      return;
+    }
+    const grade = item.roster.non_submission_grade;
+    const body = {
+      target_id: item.roster.id, action,
+      category: action === 'withdraw' ? grade.category : form.elements.category.value,
+      score: action === 'withdraw' ? grade.score : form.elements.score.value,
+      memo: action === 'withdraw' ? grade.memo : form.elements.memo.value.trim(),
+      expected_hash: grade?.hash ?? null, publication_hash: item.roster.grading.publication_hash,
+      exception_policy_hash: item.roster.grading.exception_policy?.hash ?? null,
+      items: action === 'withdraw' ? grade.items || [] : form.elements.category.value === 'rubric' ? targetGradeItems(form) : [],
+    };
+    // Keep the same key after uncertain network delivery; the server replays the receipt.
+    const signature = JSON.stringify(body);
+    if (form.dataset.commandSignature !== signature) { form.dataset.commandSignature = signature; form.dataset.commandId = token('idem'); }
+    state.submitting = true;
+    form.querySelectorAll('button,input,select,textarea').forEach(control => { control.disabled = true; });
+    updateBatchButton();
+    try {
+      await request(`/assignment-target-grades?${contextQuery(context, { assignment_id: assignment.id })}`, { method: 'POST', idempotencyKey: form.dataset.commandId, body });
+      if (currentContext() !== context || currentAssignment()?.id !== assignment.id || state.selectedId !== item.id) return;
+      detailBaseline = null;
+      await loadEvaluations(false, item.id, 'roster');
+      showNotice(action === 'withdraw' ? '점수 승인을 회수했습니다.' : '교사 점수를 확정했습니다.');
+    } catch (error) {
+      showNotice(problemMessage(error, '점수를 저장하지 못했습니다.'), 'error');
+    } finally {
+      state.submitting = false;
+      if (form.isConnected) {
+        form.querySelectorAll('button,input,select,textarea').forEach(control => { control.disabled = false; });
+        syncTargetGrade(item, form);
+      }
+      const activeForm = elements.detail.querySelector('[data-target-grade]');
+      if (activeForm && activeForm !== form && activeForm.dataset.targetGrade === item.id) syncTargetGrade(item, activeForm);
+      updateBatchButton();
+    }
   }
 
   function section(title, count = null) {
@@ -1767,19 +2133,54 @@
     const result = detail.selected_result;
     const release = evaluation.release?.state ? labelFor(RELEASE_LABELS, evaluation.release.state) : '미공개';
     const official = scoreApproved(detail) ? officialReview(detail) : null;
+    const attention = reviewAttentionItems(detail);
+    const saved = (detail.reviews || []).at(-1);
+    const draft = saved?.decision === 'draft' && saved.result_id === result?.id ? saved : null;
+    const neededCount = manualScore(detail) ? (result?.items || []).filter(item => item.candidate_points == null && !latestReviewItems(detail).has(item.binding_key)).length
+      : result ? attention.length : evaluation.priority?.review_needed_count ?? 0;
     const values = [
-      [official ? '확정 점수' : manualScore(detail) ? '교사 채점' : selectedScoreRejection(detail) ? 'AI 점수 (반려)' : 'AI 점수', official ? scoreLabel(official.official_score, result?.maximum_score) : manualScore(detail) ? '채점 전' : result ? scoreLabel(result.candidate_score, result.maximum_score) : '-'],
+      [official ? '확정 점수' : draft ? '저장 점수 · 미확정' : manualScore(detail) ? '교사 채점' : selectedScoreRejection(detail) ? 'AI 점수 (반려)' : 'AI 점수', official ? scoreLabel(official.official_score, result?.maximum_score) : draft ? scoreLabel(draft.official_score, result?.maximum_score) : manualScore(detail) ? '채점 전' : result ? scoreLabel(result.candidate_score, result.maximum_score) : '-'],
       ['AI 신뢰도', result && !manualScore(detail) ? `${Math.round(Number(result.overall_confidence) * 100)}%` : '-'],
-      [official ? '검토 상태' : '확인 필요', official ? '승인 완료' : evaluation.priority?.review_needed_count ?? 0],
+      [official ? '검토 상태' : manualScore(detail) ? '채점 필요' : '확인 필요', official ? '승인 완료' : neededCount],
       ['학생 공개', release],
     ];
     const container = node('div', 'oj-ai-submission-review__metrics');
-    values.forEach(([label, value]) => {
+    values.forEach(([label, value], index) => {
       const metric = node('div', 'oj-ai-submission-review__metric');
-      append(metric, node('span', '', label), node('strong', '', value));
+      const control = index === 2 && workflowStage === 'assessment' && attention.length
+        ? button(`${value}개`, 'attention-summary', 'oj-ai-submission-review__attention-count') : node('strong', '', value);
+      if (control.tagName === 'BUTTON') {
+        control.appendChild(icon('arrow-right'));
+        control.title = '교사 확인 항목 보기';
+        control.setAttribute('aria-label', `교사 확인 항목 ${value}개 보기`);
+      }
+      append(metric, node('span', '', label), control);
       container.appendChild(metric);
     });
     return container;
+  }
+
+  function renderReviewAttention(detail) {
+    const items = reviewAttentionItems(detail);
+    if (!items.length) return null;
+    const value = section('교사 확인 항목', `${items.length}개`);
+    value.dataset.reviewRole = 'attention-summary';
+    value.tabIndex = -1;
+    const list = node('ul', 'oj-ai-submission-review__attention-list');
+    items.forEach(item => {
+      const row = node('li', 'oj-ai-submission-review__attention-item');
+      const content = node('div');
+      append(content, node('h4', '', bindingLabel(detail, item)), node('p', 'oj-ai-submission-review__attention-response', responseLabel(detail, item)));
+      const reasons = node('ul', 'oj-ai-submission-review__attention-reasons');
+      reviewAttentionReasons(item).forEach(reason => reasons.appendChild(node('li', '', reason)));
+      content.appendChild(reasons);
+      const jump = iconButton('arrow-right', 'attention-item', 'oj-ai-submission-review__icon-button', `${bindingLabel(detail, item)} 점수와 근거 확인`);
+      jump.dataset.attentionBinding = item.binding_key;
+      append(row, content, jump);
+      list.appendChild(row);
+    });
+    value.appendChild(list);
+    return value;
   }
 
   function renderTableAnswer(answer) {
@@ -1832,6 +2233,120 @@
     return String(value);
   }
 
+  function answerHistoryPanel(submissionId, bindings = []) {
+    const panel = section('학생 작성 내용 · 저장 이력');
+    panel.dataset.answerHistory = '';
+    if (!submissionId) {
+      append(panel, node('p', 'oj-ai-submission-review__muted', '서버에 저장된 작성 내용이 없습니다.'));
+      return panel;
+    }
+    const requestId = state.detailRequest;
+    const selection = state.selectedId;
+    const context = currentContext();
+    const current = () => panel.isConnected && requestId === state.detailRequest && selection === state.selectedId && context === currentContext();
+    const toolbar = node('div', 'oj-ai-submission-review__history-toolbar');
+    const older = iconButton('arrow-left', '', 'oj-ai-submission-review__icon-button', '이전 저장 시점');
+    const newer = iconButton('arrow-right', '', 'oj-ai-submission-review__icon-button', '다음 저장 시점');
+    const refresh = iconButton('refresh-cw', '', 'oj-ai-submission-review__icon-button', '작성 내용 새로고침');
+    const select = node('select'); select.setAttribute('aria-label', '저장 시점');
+    const compare = node('input'); compare.type = 'checkbox';
+    const compareLabel = node('label'); append(compareLabel, compare, node('span', '', '이전 내용 비교'));
+    const status = node('p', 'oj-ai-submission-review__muted', '저장 내용을 불러오는 중입니다.'); status.setAttribute('role', 'status');
+    const body = node('div', 'oj-ai-submission-review__responses');
+    append(toolbar, older, select, newer, refresh, compareLabel); append(panel, toolbar, status, body);
+    let revisions = [], cursor = '', index = 0, busy = false, attachments = new Map(), snapshot = null;
+    const seenCursors = new Set();
+    const label = revision => `${dateLabel(revision.created_at_utc)} · ${revision.revision_no}차${revision.is_current ? ' · 현재 저장본' : ''}${revision.is_official ? ' · 공식 제출본' : ''}${revision.state === 'conflict' ? ' · 저장 충돌' : ''}`;
+    function controls() {
+      older.disabled = busy || (index >= revisions.length - 1 && !cursor);
+      newer.disabled = busy || index === 0;
+      select.disabled = busy || !revisions.length; refresh.disabled = busy;
+      compare.disabled = busy || (index >= revisions.length - 1 && !cursor);
+      panel.setAttribute('aria-busy', String(busy));
+    }
+    function render() {
+      const revision = revisions[index];
+      select.replaceChildren(...revisions.map((entry, i) => option(String(i), label(entry), i === index)));
+      body.replaceChildren(); controls();
+      if (!revision) { status.textContent = '서버에 저장된 작성 내용이 없습니다.'; return; }
+      const before = revisions[index + 1];
+      const answers = revision.response?.answers || {};
+      const old = before?.response?.answers || {};
+      const ids = [...new Set([...Object.keys(answers), ...(compare.checked ? Object.keys(old) : [])])];
+      const changed = before ? new Set([...Object.keys(answers), ...Object.keys(old)].filter(key => JSON.stringify(answers[key]) !== JSON.stringify(old[key]))) : null;
+      status.textContent = `${label(revision)}${changed ? ` · 이전 저장 대비 ${changed.size}개 응답 변경` : ''}`;
+      if (!ids.length) append(body, node('p', '', '작성 내용이 없습니다.'));
+      ids.forEach((id, i) => {
+        const article = node('article', 'oj-ai-submission-review__response');
+        const title = bindings.find(binding => binding.response_id === id)?.label || `응답 ${i + 1}`;
+        const heading = node('h4', '', title);
+        if (changed?.has(id)) append(heading, badge('변경', 'attention'));
+        append(article, heading);
+        if (compare.checked && before && changed?.has(id)) {
+          append(article, node('h5', '', '이전 저장 내용'), node('p', 'oj-ai-submission-review__answer', submissionAnswerText(old[id], attachments)), node('h5', '', '선택한 시점의 내용'));
+        }
+        append(article, node('p', 'oj-ai-submission-review__answer', submissionAnswerText(answers[id], attachments)));
+        append(body, article);
+      });
+    }
+    async function page(first) {
+      if (busy || !context) return false;
+      busy = true; controls();
+      try {
+        if (first) {
+          const detail = await request(`/submissions/${encodeURIComponent(submissionId)}?${contextQuery(context)}`);
+          if (!current()) return false;
+          snapshot = detail.data?.submission;
+          attachments = new Map((snapshot?.attachments || []).map(file => [file.id, file.name || '첨부 파일']));
+        }
+        const after = first ? '' : cursor;
+        const result = await request(`/submissions/${encodeURIComponent(submissionId)}/revisions?${contextQuery(context, { limit: '20', ...(after ? { cursor: after } : {}) })}`);
+        if (!current()) return false;
+        const rows = result.data?.revisions;
+        if (!Array.isArray(rows)) throw new Error('저장 이력 응답을 확인할 수 없습니다.');
+        const next = result.meta?.next_cursor || '';
+        if (next && (next === after || (!first && seenCursors.has(next)))) throw new Error('저장 이력을 다시 불러와 주세요.');
+        if (first) { revisions = []; index = 0; seenCursors.clear(); }
+        if (next) seenCursors.add(next);
+        const known = new Set(revisions.map(entry => entry.id));
+        revisions.push(...rows.filter(entry => !known.has(entry.id)));
+        if (first) {
+          const saved = revisions.findIndex(entry => entry.id === snapshot?.current_revision?.id);
+          if (saved >= 0) index = saved;
+        }
+        cursor = next;
+        render();
+        return true;
+      } catch (error) {
+        if (current()) {
+          status.textContent = problemMessage(error, '작성 이력을 불러오지 못했습니다. 새로고침해 주세요.');
+          if (!revisions.length && snapshot?.current_revision) {
+            revisions = [{ ...snapshot.current_revision, is_current: true, is_official: snapshot.current_revision.id === snapshot.official_revision?.id }];
+            render();
+            status.textContent += ' · 이력 조회 실패';
+          }
+        }
+        return false;
+      } finally { busy = false; if (current()) controls(); }
+    }
+    older.addEventListener('click', async () => {
+      if (busy) return;
+      if (index + 1 >= revisions.length && cursor && !await page(false)) return;
+      if (current() && index + 1 < revisions.length) { index++; render(); }
+    });
+    newer.addEventListener('click', () => { if (!busy && index > 0) { index--; render(); } });
+    select.addEventListener('change', () => { index = Number(select.value); render(); });
+    compare.addEventListener('change', async () => {
+      if (compare.checked && index + 1 >= revisions.length && cursor && !await page(false)) return;
+      if (current()) render();
+    });
+    refresh.addEventListener('click', () => page(true));
+    controls();
+    // The fragment is mounted synchronously by the caller before requests settle.
+    void page(true);
+    return panel;
+  }
+
   function candidateDetailHeader(submission) {
     const header = node('header', 'oj-ai-submission-review__detail-header');
     const identity = node('div');
@@ -1879,16 +2394,12 @@
     }
     responses.appendChild(list);
     fragment.appendChild(responses);
+    fragment.appendChild(answerHistoryPanel(submission.id));
 
     const actions = node('div', 'oj-ai-submission-review__review-actions');
     const status = node('div');
     append(status, node('strong', '', 'AI 평가 전'), node('span', '', '공식 제출본'));
     const controls = node('div');
-    if (state.canReview) {
-      const manual = button('교사 직접 채점', 'manual-assessment', 'oj-ai-submission-review__primary');
-      manual.disabled = state.submitting;
-      controls.appendChild(manual);
-    }
     if (state.canAssess) {
       const evaluate = button('AI 평가 시작', 'evaluate-submission', 'oj-ai-submission-review__primary');
       evaluate.disabled = state.submitting;
@@ -1896,7 +2407,22 @@
     }
     append(actions, status, controls);
     fragment.appendChild(actions);
+    const preview = state.candidateDetail.rubric_preview;
+    if (state.canReview && preview?.items?.length) {
+      const detail = {
+        is_preview: true,
+        evaluation: { state: 'not_evaluated' },
+        source: { bindings: preview.bindings || [] },
+        selected_result: { provider_status: 'not_requested', items: preview.items },
+      };
+      const criteria = section('점수와 근거', preview.items.length);
+      const list = node('div', 'oj-ai-submission-review__criteria');
+      preview.items.forEach(item => list.appendChild(renderCriterion(detail, item)));
+      append(criteria, list, reviewActions(detail));
+      fragment.appendChild(criteria);
+    }
     replaceDetail(fragment);
+    updateOfficialTotal();
   }
 
   function latestReviewItems(detail) {
@@ -2014,6 +2540,7 @@
 
   function renderCriterion(detail, item, previous) {
     const article = node('article', 'oj-ai-submission-review__criterion');
+    article.tabIndex = -1;
     article.dataset.bindingKey = item.binding_key;
     article.dataset.candidatePoints = item.candidate_points ?? '';
     article.dataset.maximumPoints = item.maximum_points;
@@ -2044,7 +2571,8 @@
       article.appendChild(flags);
     }
 
-    const editable = state.canReview && !scoreApproved(detail) && !foreignApproval(detail);
+    const editable = state.canReview && !scoreApproved(detail) && !foreignApproval(detail)
+      && (detail.is_preview || ['review_required', 'reviewed'].includes(detail.evaluation?.state));
     const selectedPoints = previous?.official_points ?? item.candidate_points ?? null;
     const hasLevels = Array.isArray(item.levels) && item.levels.length;
     if (hasLevels) article.appendChild(rubricChoices(item, selectedPoints, editable));
@@ -2101,7 +2629,7 @@
   }
 
   function reviewActions(detail) {
-    if (!state.canReview || !detail.review_precondition || !['review_required', 'reviewed'].includes(detail.evaluation?.state)) return null;
+    if (!state.canReview || (!detail.is_preview && (!detail.review_precondition || !['review_required', 'reviewed'].includes(detail.evaluation?.state)))) return null;
     if (foreignApproval(detail)) return node('p', 'oj-ai-submission-review__official-score', '다른 채점 이력에서 점수가 확정되어 있습니다. 확정된 채점의 승인을 먼저 회수해 주세요.');
     const value = node('div', 'oj-ai-submission-review__review-actions');
     if (scoreApproved(detail)) {
@@ -2123,6 +2651,7 @@
     const reject = button('반려', 'reject', 'oj-ai-submission-review__danger-link');
     reject.disabled = state.submitting || Boolean(selectedScoreRejection(detail));
     if (!manualScore(detail)) actions.appendChild(accept);
+    actions.appendChild(button('채점 저장', 'save-score', 'oj-ai-submission-review__secondary'));
     actions.appendChild(button(manualScore(detail) ? '채점 점수 확정' : '선택 점수 확정', 'adjust', 'oj-ai-submission-review__primary'));
     if (!manualScore(detail)) actions.appendChild(reject);
     append(value, total, actions);
@@ -2139,7 +2668,7 @@
       append(
         item,
         node('strong', '', `검토 ${review.review_no}`),
-        node('span', '', review.decision === 'accepted' ? 'AI 점수 승인' : review.decision === 'adjusted' ? '점수 조정' : review.decision === 'withdrawn' ? '점수 승인 회수' : '반려'),
+        node('span', '', review.decision === 'draft' ? `교사 채점 저장 · ${Number(review.official_score)}점 · 미확정` : review.decision === 'accepted' ? 'AI 점수 승인' : review.decision === 'adjusted' ? '점수 조정' : review.decision === 'withdrawn' ? '점수 승인 회수' : '반려'),
         node('span', '', dateLabel(review.created_at_utc))
       );
       if (review.reason) item.appendChild(node('p', '', review.reason));
@@ -2652,9 +3181,10 @@
 
   let detailBaseline = null;
   let detailScrollSelection = '';
-  const detailInputs = () => JSON.stringify([...elements.detail.querySelectorAll('input,textarea,select')].map(control => [control.name, control.type, control.value, control.checked]));
-  const hasDetailChanges = () => detailBaseline !== null && detailInputs() !== detailBaseline;
-  const canLeaveDetail = () => !hasDetailChanges() || window.confirm('저장하지 않은 점수 또는 보고서 변경이 있습니다. 변경 내용을 버리고 이동할까요?');
+  const detailInputs = () => JSON.stringify([...elements.detail.querySelectorAll('input,textarea,select')].filter(control => !control.closest('[data-answer-history],[data-exception-policy]')).map(control => [control.name, control.type, control.value, control.checked]));
+  const hasDetailChanges = () => (detailBaseline !== null && detailInputs() !== detailBaseline)
+    || [...elements.detail.querySelectorAll('[data-exception-policy]')].some(form => policyInputs(form) !== form.dataset.baseline);
+  const canLeaveDetail = () => !state.submitting && (!hasDetailChanges() || window.confirm('저장하지 않은 점수 또는 보고서 변경이 있습니다. 변경 내용을 버리고 이동할까요?'));
   function replaceDetail(content) {
     const selection = `${state.selectedType}:${state.selectedId}`;
     if (selection !== detailScrollSelection) {
@@ -2695,8 +3225,15 @@
   }
 
   function renderScoreStatus(detail) {
-    if (scoreApproved(detail)) return null;
-    if (manualScore(detail)) return null;
+    if (scoreApproved(detail) || foreignApproval(detail)) return null;
+    if (manualScore(detail) || (!scorePending(detail) && detail.selected_result && !selectedScoreRejection(detail) && !detail.selected_result.abstained)) {
+      if (!state.canAssess || !detail.evaluation?.submission?.is_source_current) return null;
+      const actions = node('div', 'oj-ai-submission-review__review-actions');
+      const evaluate = button(manualScore(detail) ? 'AI 평가 시작' : 'AI 재채점', manualScore(detail) ? 'evaluate-submission' : 'retry-evaluation', 'oj-ai-submission-review__primary');
+      evaluate.disabled = state.submitting;
+      actions.appendChild(evaluate);
+      return actions;
+    }
     const evaluation = detail.evaluation;
     const rejection = selectedScoreRejection(detail);
     const failed = evaluation.state === 'failed';
@@ -2718,8 +3255,8 @@
       retry.disabled = state.submitting;
       status.appendChild(retry);
     }
-    if (state.canReview && !detail.selected_result && !pending && evaluation.submission?.is_source_current) {
-      const manual = button('교사 직접 채점', 'manual-assessment', 'oj-ai-submission-review__secondary');
+    if (state.canReview && (!detail.selected_result || failed || cancelled) && !pending && evaluation.submission?.is_source_current) {
+      const manual = button('채점 루브릭 열기', 'manual-assessment', 'oj-ai-submission-review__secondary');
       manual.disabled = state.submitting;
       status.appendChild(manual);
     }
@@ -2768,6 +3305,7 @@
       replaceDetail(fragment);
       return;
     }
+    append(fragment, renderReviewAttention(detail));
     if (!scoreApproved(detail) && !manualScore(detail) && (result.safety_flagged || result.abstained)) {
       const warning = node('div', 'oj-ai-submission-review__warning');
       warning.dataset.tone = result.safety_flagged ? 'danger' : 'attention';
@@ -2782,6 +3320,7 @@
     const responses = section('학생 답변', detail.source?.responses?.length || 0);
     responses.appendChild(renderResponses(detail));
     fragment.appendChild(responses);
+    if (workflowStage === 'assessment') fragment.appendChild(answerHistoryPanel(detail.evaluation.submission?.id));
     const criteria = section('점수와 근거', result.items?.length || 0);
     const previous = latestReviewItems(detail);
     const list = node('div', 'oj-ai-submission-review__criteria');
@@ -2824,7 +3363,11 @@
     try {
       const envelope = await request(`/submission-evaluations/${encodeURIComponent(evaluationId)}?${contextQuery(context, extra)}`);
       if (requestId !== state.detailRequest) return;
+      if (envelope.data?.evaluation?.id !== evaluationId) throw new Error('평가 응답을 확인할 수 없습니다.');
       state.detail = envelope.data;
+      state.items = state.items.map(row => row.id === evaluationId && itemType(row) === 'evaluation'
+        ? { ...row, ...state.detail.evaluation } : row);
+      renderList();
       state.studentNote = null;
       const detailAssignment = state.detail?.evaluation?.assignment;
       const assignment = state.assignments.find((value) => value.id === detailAssignment?.id);
@@ -2857,6 +3400,7 @@
     state.selectedId = submissionId;
     state.selectedType = 'candidate';
     state.detail = null;
+    state.candidateDetail = null;
     state.studentNote = null;
     state.draftPollToken += 1;
     state.pollingOperation = null;
@@ -2872,8 +3416,10 @@
       elements.detail.scrollTop = scrollTop;
     } catch (error) {
       if (requestId !== state.detailRequest) return;
-      state.candidateDetail = null;
-      renderEmptyDetail('제출을 불러오지 못했습니다.', problemMessage(error, '잠시 후 다시 시도해 주세요.'));
+      if (state.candidateDetail) {
+        renderCandidateDetail();
+        showNotice(problemMessage(error, '채점 루브릭을 열지 못했습니다. 다시 시도해 주세요.'), 'error');
+      } else renderEmptyDetail('제출을 불러오지 못했습니다.', problemMessage(error, '잠시 후 다시 시도해 주세요.'));
     }
   }
 
@@ -2979,7 +3525,7 @@
       ]);
       if (requestId !== state.listRequest) return;
       if (!Array.isArray(rosterEnvelope?.data?.items)) throw new Error('학생 명단 응답을 확인하지 못했습니다.');
-      state.items = buildRosterItems(rosterEnvelope.data.items, evaluations, candidates, assignment);
+      state.items = buildRosterItems(rosterEnvelope.data.items, evaluations, candidates, assignment, preferredId);
       state.rosterCutoff = rosterEnvelope.meta?.server_time_utc || '';
       state.rosterReady = true;
       updateBatchButton();
@@ -3204,11 +3750,12 @@
     }
   }
 
-  function collectAdjustedItems() {
+  function collectAdjustedItems(partial = false) {
     const articles = [...elements.detail.querySelectorAll('[data-binding-key]')];
     if (!articles.length) throw new Error('확정할 점수 항목이 없습니다.');
     const items = articles.map((article) => {
       const input = article.querySelector('[data-review-field="official-points"]');
+      if (partial && !input?.value.trim()) return null;
       if (!input?.value.trim()) throw new Error('모든 평가 항목의 루브릭을 선택하거나 점수를 입력해 주세요.');
       const points = normalizeDecimal(input?.value, article.dataset.maximumPoints);
       const teacher = itemNeedsTeacher(article);
@@ -3226,12 +3773,22 @@
         reason_code: reason,
         reason_note: note || null,
       };
-    });
+    }).filter(Boolean);
+    if (!items.length) throw new Error('저장할 루브릭 점수를 선택해 주세요.');
     return items;
   }
 
   function setReviewButtons(disabled) {
-    elements.detail.querySelectorAll('[data-review-action="accept"], [data-review-action="adjust"], [data-review-action="reject"], [data-review-action="withdraw-score"]').forEach((item) => {
+    elements.detail.querySelectorAll('[data-review-field="rubric-level"], [data-review-field="official-points"], [data-review-field="reason-code"], [data-review-field="reason-note"]').forEach((input) => {
+      if (disabled) {
+        input.dataset.reviewSaving = input.disabled ? '1' : '0';
+        input.disabled = true;
+      } else if (input.dataset.reviewSaving !== undefined) {
+        input.disabled = input.dataset.reviewSaving === '1';
+        delete input.dataset.reviewSaving;
+      }
+    });
+    elements.detail.querySelectorAll('[data-review-action="accept"], [data-review-action="adjust"], [data-review-action="save-score"], [data-review-action="reject"], [data-review-action="withdraw-score"], [data-review-action="evaluate-submission"], [data-review-action="retry-evaluation"]').forEach((item) => {
       item.disabled = disabled || (item.dataset.reviewAction === 'accept' && !canAccept(state.detail))
         || (item.dataset.reviewAction === 'accept' && [...elements.detail.querySelectorAll('[data-binding-key]')].some(itemNeedsTeacher))
         || (item.dataset.reviewAction === 'reject' && Boolean(selectedScoreRejection(state.detail)));
@@ -3315,34 +3872,34 @@
     renderList();
   }
 
-  async function submitCandidateEvaluation(manual = false) {
+  async function submitCandidateEvaluation() {
     const context = currentContext();
-    const submission = state.candidateDetail?.submission || (manual && state.detail?.evaluation?.submission.is_source_current ? {
+    const submission = state.candidateDetail?.submission || (state.detail?.evaluation?.submission?.is_source_current ? {
       id: state.detail.evaluation.submission.id,
       official_revision_id: state.detail.evaluation.submission.source_revision_id,
-      official_revision: { content_hash: state.detail.source.submission_revision.content_hash },
+      official_revision: { id: state.detail.evaluation.submission.source_revision_id, content_hash: state.detail.source.submission_revision.content_hash },
     } : null);
-    if (state.submitting || !(manual ? state.canReview : state.canAssess) || !context || !submission?.id || !canLeaveDetail()) return;
+    if (state.submitting || !state.canAssess || !context || !submission?.id || !canLeaveDetail()) return;
+    if (state.detail && (scoreApproved(state.detail) || foreignApproval(state.detail))) return;
+    let retryExisting = false;
     state.submitting = true;
     if (state.candidateDetail) renderCandidateDetail();
-    showNotice(manual ? '교사 채점표를 여는 중입니다.' : 'AI 평가 작업을 만드는 중입니다.');
+    showNotice('AI 평가 작업을 만드는 중입니다.');
     try {
       const commandId = token('evaluate');
-      const endpoint = manual ? 'start-manual-assessment' : 'evaluate';
-      const envelope = await request(`/submissions/${encodeURIComponent(submission.id)}/commands/${endpoint}?${contextQuery(context)}`, {
+      const envelope = await request(`/submissions/${encodeURIComponent(submission.id)}/commands/evaluate?${contextQuery(context)}`, {
         method: 'POST',
         idempotencyKey: commandId,
         body: evaluateSubmissionCommand(commandId, submission),
       });
       const evaluationId = String(envelope.data?.evaluation?.id || '');
-      fields.state.value = '';
       await loadEvaluations(false, evaluationId, 'evaluation');
-      showNotice(manual ? '교사 직접 채점을 시작합니다.' : 'AI 평가를 시작했습니다.', 'success');
+      retryExisting = envelope.meta?.idempotent_replay === true && state.detail?.evaluation?.id === evaluationId && canRetryScore(state.detail);
+      showNotice('AI 평가를 시작했습니다.', 'success');
     } catch (error) {
-      const message = problemMessage(error, manual ? '교사 채점을 시작하지 못했습니다.' : 'AI 평가를 시작하지 못했습니다.');
-      if (error?.status === 403) { if (manual) revokeReviewPermission(); else revokeAssessPermission(); }
+      const message = problemMessage(error, 'AI 평가를 시작하지 못했습니다.');
+      if (error?.status === 403) revokeAssessPermission();
       if (error?.status === 409) {
-        fields.state.value = '';
         await loadEvaluations();
       }
       showNotice(message, 'error');
@@ -3353,6 +3910,18 @@
       else if (state.detail) renderDetail();
       scorePoller.start();
     }
+    if (retryExisting) await retryEvaluation();
+  }
+
+  async function requestAiEvaluation() {
+    if (state.submitting || !state.canAssess || (state.detail && (scoreApproved(state.detail) || foreignApproval(state.detail)))) return;
+    if (hasDetailChanges()) {
+      try {
+        if (!await submitReview('draft', collectAdjustedItems(true))) return;
+      } catch (error) { showNotice(error.message, 'error'); return; }
+    }
+    if (state.candidateDetail || manualScore(state.detail)) await submitCandidateEvaluation();
+    else await retryEvaluation();
   }
 
   async function retryEvaluation() {
@@ -3373,7 +3942,6 @@
         idempotencyKey: commandId,
         body: refreshed?.body || retryScoreCommand(state.detail, commandId),
       });
-      fields.state.value = '';
       await loadEvaluations(false, String(envelope.data?.evaluation?.id || evaluation.id), 'evaluation');
       showNotice('AI 평가를 다시 시작했습니다.', 'success');
     } catch (error) {
@@ -3396,6 +3964,7 @@
     closeFeedbackRejectDialog();
     closeReleaseDialog();
     if (state.detail) renderDetail();
+    else if (state.candidateDetail) renderCandidateDetail();
   }
 
   function revokeStudentNotePermission() {
@@ -3406,6 +3975,7 @@
   }
 
   async function submitReview(decision, items = [], reason = null) {
+    if (state.candidateDetail) return saveCandidateReview(decision, items);
     const context = currentContext();
     const detail = state.detail;
     if (state.submitting || !state.canReview || !context || !detail?.review_precondition) return;
@@ -3423,9 +3993,9 @@
         idempotencyKey: commandId,
         body: reviewCommand(commandId, detail.review_precondition, decision, items, reason),
       });
-      if (decision !== 'rejected') fields.state.value = decision === 'withdrawn' ? 'review_required' : 'reviewed';
       await loadEvaluations(false, detail.evaluation.id);
-      showNotice(decision === 'withdrawn' ? '점수 승인을 회수했습니다. 검토 대기 상태입니다.' : decision === 'rejected' ? '평가를 반려했습니다.' : '점수를 확정했습니다.', 'success');
+      showNotice(decision === 'draft' ? '채점 점수를 저장했습니다. 아직 확정되지 않았습니다.' : decision === 'withdrawn' ? '점수 승인을 회수했습니다. 검토 대기 상태입니다.' : decision === 'rejected' ? '평가를 반려했습니다.' : '점수를 확정했습니다.', 'success');
+      return state.detail?.evaluation?.id === detail.evaluation.id;
     } catch (error) {
       const message = problemMessage(error, '검토를 저장하지 못했습니다.');
       if (error?.status === 403) {
@@ -3436,8 +4006,61 @@
         showNotice(message, 'error');
       } else {
         showNotice(message, 'error');
-        if (state.detail) renderDetail();
       }
+      return false;
+    } finally {
+      state.submitting = false;
+      updateBatchButton();
+      setReviewButtons(false);
+      if (state.detail && state.detail !== detail) renderDetail();
+      scorePoller.start();
+    }
+  }
+
+  async function saveCandidateReview(decision, items) {
+    const context = currentContext();
+    const candidate = state.candidateDetail;
+    if (state.submitting || !state.canReview || !context || !candidate?.rubric_preview?.items?.length
+      || !['draft', 'adjusted'].includes(decision) || !items.length) return false;
+    state.submitting = true;
+    setReviewButtons(true);
+    showNotice('채점 점수를 저장하는 중입니다.');
+    try {
+      // Preparation starts only after an explicit save. Keep the receipt for safe retries.
+      if (!candidate.gradingPreparation) {
+        const commandId = candidate.preparationCommandId ||= token('rubric-save');
+        const prepared = await request(`/submissions/${encodeURIComponent(candidate.submission.id)}/commands/start-manual-assessment?${contextQuery(context)}`, {
+          method: 'POST', idempotencyKey: commandId,
+          body: evaluateSubmissionCommand(commandId, candidate.submission),
+        });
+        const evaluationId = prepared.data?.evaluation?.id;
+        if (!evaluationId) throw new Error('채점표를 확인할 수 없습니다.');
+        const envelope = await request(`/submission-evaluations/${encodeURIComponent(evaluationId)}?${contextQuery(context)}`);
+        const detail = envelope.data;
+        const rubricIdentity = entries => JSON.stringify((entries || []).map(item => [item.binding_key, Number(item.maximum_points),
+          (item.levels || []).map(level => [level.label, Number(level.points)])]));
+        if (detail?.evaluation?.id !== evaluationId || !manualScore(detail) || !detail.review_precondition
+          || detail.review_precondition.expected_review_no !== 0 || scoreApproved(detail) || foreignApproval(detail)
+          || rubricIdentity(detail.selected_result.items) !== rubricIdentity(candidate.rubric_preview.items)) {
+          throw Object.assign(new Error('채점 내용이 변경되었습니다. 새로고침한 뒤 다시 확인해 주세요.'), { status: 409 });
+        }
+        candidate.gradingPreparation = detail;
+      }
+      const detail = candidate.gradingPreparation;
+      const signature = JSON.stringify([decision, items]);
+      if (candidate.saveAttempt?.signature !== signature) candidate.saveAttempt = { signature, id: token('review') };
+      const commandId = candidate.saveAttempt.id;
+      await request(`/submission-evaluations/${encodeURIComponent(detail.evaluation.id)}/commands/review?${contextQuery(context)}`, {
+        method: 'POST', idempotencyKey: commandId,
+        body: reviewCommand(commandId, detail.review_precondition, decision, items, null),
+      });
+      await loadEvaluations(false, detail.evaluation.id);
+      showNotice(decision === 'draft' ? '채점 점수를 저장했습니다. 아직 확정되지 않았습니다.' : '점수를 확정했습니다.', 'success');
+      return state.detail?.evaluation?.id === detail.evaluation.id;
+    } catch (error) {
+      if (error?.status === 403) revokeReviewPermission();
+      showNotice(problemMessage(error, '채점 점수를 저장하지 못했습니다.'), 'error');
+      return false;
     } finally {
       state.submitting = false;
       updateBatchButton();
@@ -3836,6 +4459,17 @@
     const target = event.target.closest('[data-review-action]');
     if (!target || !root.contains(target)) return;
     const action = target.dataset.reviewAction;
+    if (action === 'attention-summary' || action === 'attention-item') {
+      const destination = action === 'attention-summary' ? elements.detail.querySelector('[data-review-role="attention-summary"]')
+        : [...elements.detail.querySelectorAll('[data-binding-key]')].find(item => item.dataset.bindingKey === target.dataset.attentionBinding);
+      destination?.scrollIntoView({ block: 'nearest' });
+      destination?.focus({ preventScroll: true });
+      return;
+    }
+    if (action === 'withdraw-missing-grade') {
+      const item = state.items.find(row => row.id === state.selectedId && row.kind === 'roster');
+      if (item) saveNonSubmissionGrade(item, 'withdraw', target.closest('form'));
+    }
     if (action === 'download-scores') openScoreDownload();
     if (action === 'confirm-score-download') downloadScores();
     if (action === 'bulk-grade') openBatchDialog();
@@ -3864,9 +4498,15 @@
     if (action === 'select' && !['candidate', 'roster'].includes(target.dataset.itemType)) loadDetail(target.dataset.itemId);
     if (action === 'detail-refresh' && state.selectedType === 'candidate') loadCandidateDetail(state.selectedId);
     if (action === 'detail-refresh' && state.selectedType === 'evaluation') loadDetail(state.selectedId);
-    if (action === 'evaluate-submission') submitCandidateEvaluation();
-    if (action === 'manual-assessment') submitCandidateEvaluation(true);
-    if (action === 'retry-evaluation') retryEvaluation();
+    if (action === 'evaluate-submission') requestAiEvaluation();
+    if (action === 'manual-assessment' && state.canReview && canLeaveDetail()) {
+      loadCandidateDetail(state.candidateDetail?.submission?.id || state.detail?.evaluation?.submission?.id);
+    }
+    if (action === 'retry-evaluation') requestAiEvaluation();
+    if (action === 'save-score') {
+      try { submitReview('draft', collectAdjustedItems(true)); }
+      catch (error) { showNotice(error.message, 'error'); }
+    }
     if (action === 'accept') submitReview('accepted');
     if (action === 'adjust') {
       try {

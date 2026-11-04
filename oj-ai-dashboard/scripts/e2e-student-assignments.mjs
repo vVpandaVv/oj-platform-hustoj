@@ -32,7 +32,7 @@ async function inspectViewport(browser, viewport, label) {
   listPage.on('console', (message) => { if (message.type() === 'error') pageErrors.push(message.text()); });
   await listPage.goto(fixture, { waitUntil: 'load' });
   await listPage.waitForFunction(() => document.querySelectorAll('.oj-ai-student-card').length === 2);
-  if ((await listPage.getByRole('tab').count()) !== 3) errors.push(`${label}: the three task tabs are missing`);
+  if ((await listPage.getByRole('tab').count()) !== 4) errors.push(`${label}: the four task tabs are missing`);
   if ((await listPage.getByRole('tablist', { name: '활동지 상태', exact: true }).count()) !== 1) errors.push(`${label}: status tabs do not have an accessible group name`);
   const todoTitles = await listPage.locator('.oj-ai-student-card__title').allTextContents();
   if (JSON.stringify(todoTitles) !== JSON.stringify(['분수 비교 활동지', '도형 관찰 기록'])) errors.push(`${label}: todo tab drifted: ${JSON.stringify(todoTitles)}`);
@@ -50,6 +50,9 @@ async function inspectViewport(browser, viewport, label) {
   const resultLinks = await listPage.getByRole('link', { name: '결과 확인', exact: true }).evaluateAll((nodes) => nodes.map((node) => node.getAttribute('href')));
   if (JSON.stringify(resultLinks) !== JSON.stringify(['/oj-addons/oj-ai-dashboard/results/00000000000000000000000091', '/oj-addons/oj-ai-dashboard/results/00000000000000000000000092'])) errors.push(`${label}: published result links must target the exact releases`);
   const listLayout = await layoutSnapshot(listPage, '.oj-ai-student-page');
+  await listPage.getByRole('tab', { name: '종료', exact: true }).click();
+  if ((await listPage.locator('.oj-ai-student-card').count()) !== 1 || (await listPage.locator('.oj-ai-student-card__title').textContent()) !== '종료된 미제출 활동') errors.push(`${label}: expired drafts disappeared from all tabs`);
+  if ((await listPage.getByRole('link', { name: '저장 답안 보기', exact: true }).count()) !== 1) errors.push(`${label}: expired drafts must have a read-only access link`);
   if (Object.values(listLayout).some(Boolean)) errors.push(`${label}: invalid list layout ${JSON.stringify(listLayout)}`);
   await listPage.screenshot({ path: path.join(artifactDir, `student-assignments-list-${label}.png`), fullPage: true });
   await listPage.close();
@@ -322,12 +325,53 @@ async function inspectConfirmationBoundaries(browser) {
   } finally { await page.close(); }
 }
 
+async function inspectDeadline(browser, viewport, label) {
+  for (const scenario of ['automatic', 'local-only', 'disabled']) {
+    const page = await browser.newPage({ viewport });
+    page.on('pageerror', (error) => errors.push(`${label} deadline: ${error.message}`));
+    try {
+      await page.clock.install();
+      await page.goto(`${fixture}?mode=detail`);
+      await page.getByRole('button', { name: '시작', exact: true }).click();
+      const answer = page.locator('[data-response-id="response-short"] input');
+      await answer.fill('종료 전에 저장한 미완성 답안');
+      await page.waitForFunction(() => document.querySelector('[data-role="save-indicator"]')?.dataset.state === 'saved');
+      await page.evaluate((enabled) => window.__studentSetDeadline(4000, enabled), scenario !== 'disabled');
+      await page.waitForFunction(() => document.querySelector('[data-role="save-indicator"]')?.dataset.state === 'saved');
+      if (scenario === 'local-only') {
+        await page.evaluate(() => { window.__studentAutosaveMode = 'offline'; });
+        await answer.fill('아직 서버에 저장하지 못한 내용');
+        await page.waitForFunction(() => document.querySelector('[data-role="save-indicator"]')?.dataset.state === 'offline');
+      }
+      const posts = await page.evaluate(() => window.__studentAutosaveRequests.length);
+      await page.clock.fastForward(5000);
+      await page.getByRole('heading', { name: scenario === 'disabled' ? '작성 시간이 종료되었습니다' : '자동 제출되었습니다', exact: true }).waitFor();
+      if (!(await answer.isDisabled())) errors.push(`${label}: deadline must disable editing (${scenario})`);
+      if (await page.getByRole('button', { name: '제출', exact: true }).isVisible()) errors.push(`${label}: closed assignment still offers manual submit`);
+      const counters = await page.evaluate(() => ({ saves: window.__studentAutosaveRequests.length, submits: window.__studentSubmitRequests.length }));
+      if (counters.saves !== posts || counters.submits !== 0) errors.push(`${label}: deadline recovery must only refresh server state, never POST late answers`);
+      if (scenario === 'local-only') {
+        if (await answer.inputValue() !== '아직 서버에 저장하지 못한 내용') errors.push(`${label}: deadline discarded device-only work`);
+        await page.getByText('서버에 저장된 답안만 제출 대상입니다. 기기에 남은 미저장 내용은 제출되지 않았습니다.', { exact: true }).waitFor();
+        const preserved = await page.evaluate(() => Object.keys(localStorage).some((key) => key.startsWith('oj_ai_submission_recovery_v1:') && localStorage.getItem(key).includes('아직 서버에 저장하지 못한 내용')));
+        if (!preserved) errors.push(`${label}: unsaved device recovery was removed at deadline`);
+      }
+      const layout = await layoutSnapshot(page, '.oj-ai-student-page');
+      if (Object.values(layout).some(Boolean)) errors.push(`${label}: deadline layout ${JSON.stringify(layout)}`);
+      await page.screenshot({ path: path.join(artifactDir, `student-deadline-${scenario}-${label}.png`), fullPage: true });
+    } finally { await page.close(); }
+  }
+  console.log(`[OK] deadline ${label}: automatic partial answer, device-only recovery, disabled policy`);
+}
+
 try {
   const playwright = await loadPlaywright();
   const browser = await playwright.chromium.launch(browserLaunchOptions());
   await inspectViewport(browser, { width: 1280, height: 900 }, 'desktop');
   await inspectViewport(browser, { width: 390, height: 844 }, 'mobile');
   await inspectConfirmationBoundaries(browser);
+  await inspectDeadline(browser, { width: 1280, height: 900 }, 'desktop');
+  await inspectDeadline(browser, { width: 390, height: 844 }, 'mobile');
   await browser.close();
 } catch (error) { errors.push(`Playwright student assignment check failed: ${error.message}`); }
 

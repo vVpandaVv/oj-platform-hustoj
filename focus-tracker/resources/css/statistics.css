@@ -81,6 +81,25 @@
     fill: var(--ojp-color-info);
 }
 
+.ftk-statistics .ftk-stat-category-observed {
+    fill: var(--ojp-color-primary);
+    opacity: 0.25;
+}
+
+.ftk-statistics .ftk-stat-category-active {
+    fill: var(--ojp-color-primary);
+}
+
+.ftk-statistics .ftk-statistics-categories {
+    margin-top: var(--ojp-space-5, 24px);
+    min-width: 0;
+}
+
+.ftk-statistics .ftk-statistics-categories caption {
+    text-align: start;
+    padding: var(--ojp-space-2, 8px) 0;
+}
+
 .ftk-statistics .ftk-statistics-table summary {
     cursor: pointer;
     padding: var(--ojp-space-2, 8px) 0;

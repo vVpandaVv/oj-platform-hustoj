@@ -18,6 +18,9 @@
     var timer = null;
     var requestTimer = null;
     var busy = false;
+    var lastRequestStartedAt = -Infinity;
+    var nextProbeAt = 0;
+    var lastRoundTripMs = 0;
     var refreshPending = false;
     var suspended = false;
     var stopped = false;
@@ -38,6 +41,8 @@
         activeUntilMs: null, windowStartsAtMs: null, windowEndsAtMs: null, validUntilMs: 0,
         nextStartsAtMs: null, contextType: 'general', contextId: null, problemId: Number(config.problemId) || null,
         runKey: '', revision: 0, nowMs: epochStart };
+    current.pageContextToken = config.page && config.page.token || null;
+    current.pageContextExpiresAtMs = config.page && config.page.expiresAtMs || null;
 
     function monotonic() {
         return window.performance && typeof window.performance.now === 'function' ? window.performance.now() : Date.now();
@@ -89,13 +94,30 @@
     function schedule(delay) {
         clearTimeout(timer);
         if (!available() || stopped) { return; }
-        var at = Math.max(50, delay);
-        if (current.active) { at = Math.min(at, Math.max(0, Math.min(current.validUntilMs, current.activeUntilMs) - now())); }
+        var at;
+        var remaining = current.active ? Math.max(0, Math.min(current.validUntilMs, current.activeUntilMs) - now()) : Infinity;
+        if (busy) {
+            // An in-flight fetch never postpones expiry. Its own five-second
+            // deadline schedules the next attempt when no lease is active.
+            if (!current.active) { return; }
+            timer = setTimeout(function () { expire(); if (busy && current.active) { schedule(0); } }, remaining);
+            return;
+        }
+        at = Math.min(Math.max(0, delay), Math.max(0, nextProbeAt - monotonic()));
+        if (current.active) {
+            // RTT is already deducted from the authorization. Reserve a full
+            // fetch deadline even at a clipped end: the next RTT can be slower
+            // than the last. The 500ms start interval bounds short renewals.
+            var lead = timeoutMs + 250;
+            at = Math.min(at, Math.max(0, remaining - lead));
+        }
+        // At most one request per 500 ms, including very short end leases.
+        at = Math.max(at, Math.max(0, 500 - (monotonic() - lastRequestStartedAt)));
+        at = Math.min(at, remaining);
         if (current.nextStartsAtMs !== null && current.nextStartsAtMs > now()) { at = Math.min(at, current.nextStartsAtMs - now()); }
         timer = setTimeout(function () {
             expire();
-            if (!busy) { probe(false); }
-            else { schedule(100); }
+            probe(false);
         }, Math.max(0, at));
     }
     function validWindow(value) {
@@ -142,7 +164,11 @@
             if (lastStoppedAtMs) { time = '종료 확인: ' + formatTime(lastStoppedAtMs); }
         } else {
             label = '활동 없음';
-            detail = '현재 이 문제에서 참여할 지정 활동이 없습니다. 학습 기록과 초안을 수집하지 않습니다.';
+            detail = '현재 이 페이지에서 참여할 지정 활동이 없습니다. 학습 기록과 초안을 수집하지 않습니다.';
+        }
+        if (config.page && typeof config.page.label === 'string') {
+            var pageLabel = config.page.category === 'practice' && config.page.subtype === 'ml' ? 'ML 실습' : config.page.label;
+            detail += ' 페이지 범주: ' + pageLabel + '. 범주 이동만으로 미집중을 판단하거나 감점하지 않습니다.';
         }
         var signature = [label, detail, time].join('\n');
         if (signature === lastStatusText) { return; }
@@ -179,6 +205,10 @@
     function accept(data, pageContext, roundTripMs) {
         if (!data || !Number.isFinite(Number(data.serverNowMs)) || typeof data.active !== 'boolean'
             || !Number.isFinite(Number(data.validUntilMs)) || !Array.isArray(data.windows)) { throw new Error('Invalid activity lease'); }
+        if (typeof data.pageContextToken === 'string' && data.pageContextToken) {
+            current.pageContextToken = data.pageContextToken;
+            current.pageContextExpiresAtMs = Number(data.pageContextExpiresAtMs) || current.pageContextExpiresAtMs;
+        }
         var clock = Number(data.serverNowMs);
         // Each fresh response recalibrates monotonic time; browser wall-clock
         // adjustments cannot lengthen the server's authorization lease.
@@ -206,7 +236,7 @@
             if (Number.isFinite(declaredEnd) && declaredEnd > clock) { unionEnd = Math.min(unionEnd, declaredEnd); }
         }
         var allowed = data.active && activeWindows.length > 0 && unionEnd > clock && lease > clock && available();
-        publish({ active: allowed, reason: allowed ? 'active' : String(data.reason || 'outside_schedule'), windows: windows,
+        publish({ active: allowed, reason: allowed ? 'active' : (data.active ? 'unavailable' : String(data.reason || 'outside_schedule')), windows: windows,
             activityIds: allowed ? activeWindows.map(function (window) { return window.activityId; }) : [],
             activeUntilMs: unionEnd, windowEndsAtMs: unionEnd,
             windowStartsAtMs: Number(data.windowStartsAtMs) || (activeWindows.length ? Math.min.apply(null, activeWindows.map(function (window) { return window.startMs; })) : null),
@@ -221,14 +251,23 @@
             publish({ active: false, reason: 'refreshing' });
             if (busy) { refreshPending = true; }
         }
-        if (!available() || stopped || busy || typeof window.fetch !== 'function') { schedule(pollMs); return; }
+        if (!available() || stopped || busy) { schedule(pollMs); return; }
+        if (typeof window.fetch !== 'function') {
+            publish({ active: false, reason: 'unavailable' });
+            nextProbeAt = monotonic() + pollMs;
+            schedule(pollMs); return;
+        }
+        if (monotonic() - lastRequestStartedAt < 500) { schedule(500 - (monotonic() - lastRequestStartedAt)); return; }
         expire();
         busy = true;
         var requestGeneration = generation;
         var requestStartedAt = monotonic();
+        lastRequestStartedAt = requestStartedAt;
+        nextProbeAt = requestStartedAt + pollMs;
         var pageContext = context();
         var payload = { user_id: Number(config.userId), problem_id: Number(config.problemId) || null,
             context_type: pageContext.context_type, context_id: pageContext.context_id };
+        if (current.pageContextToken) { payload.page_context = current.pageContextToken; }
         var controller = typeof window.AbortController === 'function' ? new window.AbortController() : null;
         var deadline = new Promise(function (resolve, reject) {
             requestTimer = setTimeout(function () { if (controller) { controller.abort(); } reject(new Error('Activity lease timed out')); }, timeoutMs);
@@ -246,8 +285,12 @@
                 });
         } catch (error) { fetchRequest = Promise.reject(error); }
         Promise.race([fetchRequest, deadline]).then(function (data) {
-            if (requestGeneration === generation && available()) { accept(data, pageContext, monotonic() - requestStartedAt); }
+            if (requestGeneration === generation && available()) {
+                lastRoundTripMs = Math.max(0, monotonic() - requestStartedAt);
+                accept(data, pageContext, lastRoundTripMs);
+            }
         }).catch(function () {
+            nextProbeAt = monotonic() + pollMs;
             if (requestGeneration === generation) { publish({ active: false, reason: stopped ? 'account_changed' : 'unavailable' }); }
         }).then(function () {
             clearTimeout(requestTimer); busy = false;

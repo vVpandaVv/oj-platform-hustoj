@@ -15,8 +15,12 @@ final class AddonConsoleMenuDefinitionV1
         private readonly string $route,
         private readonly string $capability,
         private readonly int $order,
-        private readonly string $icon = ''
+        private readonly string $icon = '',
+        private readonly ?string $fallbackForNativeMenu = null
     ) {
+        if ($this->fallbackForNativeMenu !== null && ! in_array($this->fallbackForNativeMenu, ['problems.index', 'classes.index'], true)) {
+            throw new \InvalidArgumentException('Unsupported native fallback menu.');
+        }
         ValueValidator::contributionKey($this->key);
         ValueValidator::label($this->label);
         ValueValidator::simpleKey($this->anchor, 'anchor');
@@ -34,4 +38,5 @@ final class AddonConsoleMenuDefinitionV1
     public function capability(): string { return $this->capability; }
     public function order(): int { return $this->order; }
     public function icon(): string { return $this->icon; }
+    public function fallbackForNativeMenu(): ?string { return $this->fallbackForNativeMenu; }
 }

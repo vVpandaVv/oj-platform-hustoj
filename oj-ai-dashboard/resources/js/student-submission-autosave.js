@@ -65,6 +65,9 @@
     suppressInput: false,
     mountSequence: 0,
     recoveryKey: '',
+    deadlineTimer: null,
+    deadlineRefreshing: false,
+    deadlineAttempts: 0,
   };
   let submissionDialog = null;
 
@@ -286,7 +289,7 @@
     const canSubmit = isObject(submission) && Array.isArray(submission.actions) && submission.actions.includes('submission.submit');
     if (button) {
       button.hidden = !canSubmit;
-      button.disabled = state.submitting === true;
+      button.disabled = state.submitting === true || state.deadlineRefreshing;
       button.textContent = state.submitting ? '제출 중...' : '제출';
     }
     if (label) {
@@ -904,7 +907,91 @@
     setResponseEnabled(state.editable);
     updateSubmitUi();
     dispatchSubmissionStatus(submission);
+    scheduleDeadlineRefresh();
   };
+
+  const deadlineTime = () => {
+    const value = state.submission?.schedule?.closes_at_utc;
+    return value ? Date.parse(`${String(value).replace(' ', 'T')}Z`) : NaN;
+  };
+  const deadlinePending = () => state.submission?.id
+    && ['draft', 'reopened', 'conflict'].includes(state.submission.state)
+    && Number.isFinite(deadlineTime());
+  const deadlineDue = () => deadlinePending() && deadlineTime() <= Date.now();
+  const scheduleDeadlineRefresh = () => {
+    window.clearTimeout(state.deadlineTimer);
+    if (!deadlinePending() || state.deadlineAttempts >= 4) return;
+    const remaining = deadlineTime() - Date.now();
+    const delay = remaining > 0 ? Math.min(remaining + 250, 86400000) : 15000;
+    const sequence = state.mountSequence;
+    state.deadlineTimer = window.setTimeout(() => {
+      if (sequence !== state.mountSequence) return;
+      if (deadlineDue()) refreshDeadline();
+      else scheduleDeadlineRefresh();
+    }, delay);
+  };
+
+  // Only the server finalizes its saved revision; never POST unsaved answers after the deadline.
+  async function refreshDeadline() {
+    if (!deadlinePending() || state.deadlineRefreshing) return;
+    if (state.saving || state.submitting || state.attachmentBusy) {
+      scheduleDeadlineRefresh();
+      return;
+    }
+    const sequence = state.mountSequence;
+    state.deadlineRefreshing = true;
+    state.deadlineAttempts += 1;
+    window.clearTimeout(state.saveTimer);
+    submissionDialog?.close('cancel');
+    setResponseEnabled(false);
+    updateSubmitUi();
+    setSaveState('saving', '종료 후 제출 상태 확인 중');
+    try {
+      const fresh = await latestSubmission();
+      if (sequence !== state.mountSequence) return;
+      const local = collectAnswers();
+      const dirty = fingerprint(local) !== fingerprint(state.serverAnswers);
+      if (dirty && fresh.actions?.includes('submission.autosave')
+        && fingerprint(currentAnswers(fresh)) !== fingerprint(state.serverAnswers)) {
+        openConflictWith(local, fresh);
+        return;
+      }
+      if (dirty) persistRecovery(local);
+      acceptLatest(fresh);
+      if (dirty) {
+        state.workingAnswers = clone(local);
+        writeAnswers(local);
+        persistRecovery(local);
+      }
+      if (state.editable) {
+        if (deadlineTime() > Date.now()) state.deadlineAttempts = 0;
+        if (dirty) scheduleSave();
+        setSaveState(dirty ? 'local_only' : 'saved', dirty ? '기기에 보관됨' : '저장됨');
+      } else {
+        state.pendingOperation = null;
+        state.conflict = null;
+        const panel = root.querySelector('[data-role="save-conflict"]');
+        if (panel) panel.hidden = true;
+        const unsaved = dirty || [...drawingBoards.values()].some((board) => board.dirty) || state.pendingUpload;
+        const finalized = ['submitted', 'auto_submitted', 'proxy_submitted', 'locked'].includes(fresh.state);
+        setSaveState(unsaved ? 'failed' : finalized ? 'saved' : 'failed', unsaved
+          ? '서버에 저장된 답안만 제출 대상입니다. 기기에 남은 미저장 내용은 제출되지 않았습니다.'
+          : finalized ? (fresh.state === 'auto_submitted' ? '자동 제출 완료' : '제출 완료')
+            : '작성 시간이 종료되었습니다. 저장 답안의 제출 상태를 다시 확인해 주세요.', !finalized);
+      }
+    } catch (error) {
+      if (sequence !== state.mountSequence) return;
+      persistRecovery(collectAnswers());
+      setSaveState(error.network ? 'offline' : 'failed', '제출 상태를 확인하지 못했습니다. 연결 후 다시 시도해 주세요.', true);
+    } finally {
+      if (sequence === state.mountSequence) {
+        state.deadlineRefreshing = false;
+        setResponseEnabled(state.editable);
+        updateSubmitUi();
+        scheduleDeadlineRefresh();
+      }
+    }
+  }
 
   const openConflictWith = (local, submission) => {
     acceptLatest(submission);
@@ -955,7 +1042,7 @@
 
   async function saveNow() {
     if (state.savePromise) return state.savePromise;
-    if (state.conflict || state.attachmentBusy || !state.serverReady || !state.editable) return;
+    if (state.conflict || state.attachmentBusy || state.deadlineRefreshing || !state.serverReady || !state.editable) return;
     const promise = performSave().finally(() => {
       if (state.savePromise === promise) state.savePromise = null;
     });
@@ -1266,6 +1353,9 @@
     submissionDialog?.close('cancel');
     state.confirmingSubmit = false;
     window.clearTimeout(state.saveTimer);
+    window.clearTimeout(state.deadlineTimer);
+    state.deadlineRefreshing = false;
+    state.deadlineAttempts = 0;
     state.assignment = assignment;
     state.items = responseItems(assignment);
     mountDrawings();
@@ -1295,7 +1385,9 @@
       if (sequence !== state.mountSequence) return;
       acceptLatest(submission);
       const savedAt = formatSavedTime(submission.current_revision?.created_at_utc);
-      setSaveState('saved', submission.current_revision ? `저장됨${savedAt ? ` · ${savedAt}` : ''}` : '작성 중');
+      setSaveState('saved', submission.state === 'auto_submitted' ? '자동 제출 완료'
+        : submission.availability === 'closed' && deadlinePending() ? '작성 종료 · 저장 답안 확인'
+          : submission.current_revision ? `저장됨${savedAt ? ` · ${savedAt}` : ''}` : '작성 중');
       showRecoveryIfNeeded();
     } catch (error) {
       if (sequence !== state.mountSequence) return;
@@ -1348,7 +1440,8 @@
     } else if (['attach-ready', 'check-attachment', 'remove-answer-attachment'].includes(button.dataset.action)) {
       manageAttachment(button);
     } else if (button.dataset.action === 'retry-save') {
-      if (state.conflict && !state.conflict.server) refreshConflict(state.conflict.local);
+      if (deadlineDue()) refreshDeadline();
+      else if (state.conflict && !state.conflict.server) refreshConflict(state.conflict.local);
       else if (!state.serverReady && state.workingAnswers && state.submission) {
         latestSubmission().then((submission) => openConflictWith(state.workingAnswers, submission)).catch(() => setSaveState('failed', '다시 확인하지 못했습니다', true));
       } else if (state.pendingUpload) uploadFiles();
@@ -1374,11 +1467,15 @@
   });
 
   window.addEventListener('online', () => {
-    if (state.conflict && !state.conflict.server) refreshConflict(state.conflict.local);
+    if (deadlineDue()) refreshDeadline();
+    else if (state.conflict && !state.conflict.server) refreshConflict(state.conflict.local);
     else if (!state.serverReady && state.submission) {
       const local = clone(state.workingAnswers);
       latestSubmission().then((submission) => openConflictWith(local, submission)).catch(() => setSaveState('failed', '저장 내용을 확인하지 못했습니다', true));
     } else if (state.pendingOperation || fingerprint(state.workingAnswers) !== fingerprint(state.serverAnswers)) saveNow();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && deadlineDue()) refreshDeadline();
   });
   window.addEventListener('offline', () => {
     if (state.pendingOperation || fingerprint(state.workingAnswers) !== fingerprint(state.serverAnswers)) {

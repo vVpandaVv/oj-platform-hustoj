@@ -21,6 +21,8 @@ const document = { querySelector: () => null };
 vm.runInNewContext(source, { window, document, URLSearchParams, console }, { filename: scriptPath });
 const adapter = window.OJAISubmissionEvaluationReviewWorkbench;
 assert.ok(adapter, 'The pure student review adapter must be exported without a DOM root.');
+assert.equal([...source.matchAll(/fields\.state\.value\s*=(?!=)/g)].length, 1, 'Only initial report/release setup may assign the evaluation filter; grading commands must preserve the user selection.');
+assert.match(source, /if \(workflowStage !== 'assessment'\) \{[\s\S]*?fields\.state\.value = 'reviewed';/);
 
 const bindingFailure = { operation: 'score', state: 'failed', last_error_code: 'output_domain_invalid', last_error_message: '$.items[0].binding_key (unknown or duplicate)' };
 assert.match(adapter.runFailureMessage(bindingFailure, 'AI 평가'), /평가 항목.*연결/);
@@ -154,7 +156,8 @@ for (const marker of [
   '/submission-evaluations?',
   '/submission-evaluation-candidates?',
   '/submission-evaluation-candidates/',
-  "manual ? 'start-manual-assessment' : 'evaluate'",
+  '/commands/start-manual-assessment?',
+  'saveCandidateReview(decision, items)',
   '/commands/review?',
   "'X-WP-Nonce'",
   "headers['Idempotency-Key']",
@@ -177,6 +180,8 @@ for (const marker of [
   assert.ok(source.includes(marker), `Student review script marker is missing: ${marker}`);
 }
 assert.ok(!source.includes('.innerHTML'), 'The review UI must not inject HTML from API projections.');
+const candidateLoader = source.slice(source.indexOf('async function loadCandidateDetail('), source.indexOf('async function findStudentNoteSummary('));
+assert.ok(!candidateLoader.includes("method: 'POST'") && !candidateLoader.includes('start-manual-assessment'), 'Opening a student rubric must never start grading or write a review.');
 assert.ok(!source.includes('insertAdjacentHTML'), 'The review UI must not append untrusted HTML.');
 
 for (const marker of [

@@ -1,0 +1,483 @@
+{
+  "date": "2026-11-03",
+  "ok": true,
+  "checks": [
+    "Actual shell CSS shows the selected public tab and a readable compact empty state",
+    "Public detail retains the public navigation context",
+    "Assigned detail retains the lesson navigation context",
+    "Teacher report keeps zero and unsubmitted rows legible with actual shell CSS",
+    "390px list, empty state, header and report have no document-level overflow",
+    "Action button foreground/background contrast is at least 4.5:1",
+    "Keyboard focus follows both local navigation choices",
+    "Native problem page uses real problem-menu breadcrumbs without duplicate tabs",
+    "Native lesson page starts in lessons and links to the real lesson menu",
+    "Legacy assignment links redirect to the lesson page with scope intact",
+    "320px, 390px, 440px and desktop widths retain bounded content without horizontal overflow",
+    "Dark theme uses actual platform tokens with an unambiguous current tab",
+    "Native menu cancel preserves a draft and approved navigation triggers no duplicate beforeunload dialog",
+    "Read failures show a readable error instead of a blank problem card",
+    "Actual PHP host-renderer problem tabs select the microbit type and stay keyboard-accessible without mobile overflow"
+  ],
+  "pageErrors": 0,
+  "metrics": [
+    {
+      "label": "empty-desktop",
+      "items": [
+        {
+          "text": "공개 문제",
+          "current": "page",
+          "background": "rgb(231, 243, 242)",
+          "color": "rgb(6, 106, 102)",
+          "border": "3px"
+        },
+        {
+          "text": "내 수업",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(110, 110, 115)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "empty",
+      "text": "공개된 마이크로비트 문제가 없습니다.문제가 공개되면 이 목록에서 설명과 예시를 확인하고 풀 수 있습니다.",
+      "box": {
+        "x": 30,
+        "y": 412.625,
+        "width": 1220,
+        "height": 101,
+        "top": 412.625,
+        "right": 1250,
+        "bottom": 513.625,
+        "left": 30
+      },
+      "children": [
+        {
+          "text": "공개된 마이크로비트 문제가 없습니다.",
+          "rect": {
+            "x": 51,
+            "y": 433.625,
+            "width": 1178,
+            "height": 27,
+            "top": 433.625,
+            "right": 1229,
+            "bottom": 460.625,
+            "left": 51
+          },
+          "color": "rgb(29, 29, 31)"
+        },
+        {
+          "text": "문제가 공개되면 이 목록에서 설명과 예시를 확인하고 풀 수 있습니다.",
+          "rect": {
+            "x": 51,
+            "y": 468.625,
+            "width": 1178,
+            "height": 24,
+            "top": 468.625,
+            "right": 1229,
+            "bottom": 492.625,
+            "left": 51
+          },
+          "color": "rgb(110, 110, 115)"
+        }
+      ]
+    },
+    {
+      "label": "public-detail",
+      "items": [
+        {
+          "text": "공개 문제",
+          "current": "page",
+          "background": "rgb(231, 243, 242)",
+          "color": "rgb(6, 106, 102)",
+          "border": "3px"
+        },
+        {
+          "text": "내 수업",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(110, 110, 115)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "lesson-detail",
+      "items": [
+        {
+          "text": "공개 문제",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(110, 110, 115)",
+          "border": "3px"
+        },
+        {
+          "text": "내 수업",
+          "current": "page",
+          "background": "rgb(231, 243, 242)",
+          "color": "rgb(6, 106, 102)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "dark-public",
+      "items": [
+        {
+          "text": "공개 문제",
+          "current": "page",
+          "background": "rgba(60, 196, 187, 0.16)",
+          "color": "rgb(90, 208, 200)",
+          "border": "3px"
+        },
+        {
+          "text": "내 수업",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(161, 161, 166)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "native-catalog-tabs",
+      "items": [
+        {
+          "text": "전체 유형",
+          "current": null,
+          "active": false,
+          "background": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "text": "프로그래밍",
+          "current": null,
+          "active": false,
+          "background": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "text": "마이크로비트",
+          "current": "page",
+          "active": true,
+          "background": "rgba(118, 118, 128, 0.12)"
+        }
+      ]
+    }
+  ],
+  "layoutMetrics": [
+    {
+      "label": "layout",
+      "viewport": 1280,
+      "documentWidth": 1280,
+      "contentWidth": 1220,
+      "root": {
+        "x": 30,
+        "y": 30,
+        "width": 1220,
+        "height": 936.765625,
+        "top": 30,
+        "right": 1250,
+        "bottom": 966.765625,
+        "left": 30
+      }
+    },
+    {
+      "label": "layout",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 948.015625,
+        "top": 22,
+        "right": 378,
+        "bottom": 970.015625,
+        "left": 12
+      }
+    },
+    {
+      "label": "layout",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 601.328125,
+        "top": 22,
+        "right": 378,
+        "bottom": 623.328125,
+        "left": 12
+      },
+      "empty": {
+        "x": 12,
+        "y": 412.75,
+        "width": 366,
+        "height": 113.78125,
+        "top": 412.75,
+        "right": 378,
+        "bottom": 526.53125,
+        "left": 12
+      }
+    },
+    {
+      "label": "layout",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 628.140625,
+        "top": 22,
+        "right": 378,
+        "bottom": 650.140625,
+        "left": 12
+      }
+    },
+    {
+      "label": "empty-320",
+      "viewport": 320,
+      "documentWidth": 320,
+      "contentWidth": 296,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 296,
+        "height": 650.4375,
+        "top": 22,
+        "right": 308,
+        "bottom": 672.4375,
+        "left": 12
+      },
+      "empty": {
+        "x": 12,
+        "y": 434.859375,
+        "width": 296,
+        "height": 140.78125,
+        "top": 434.859375,
+        "right": 308,
+        "bottom": 575.640625,
+        "left": 12
+      }
+    },
+    {
+      "label": "problems-320",
+      "viewport": 320,
+      "documentWidth": 320,
+      "contentWidth": 296,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 296,
+        "height": 683.421875,
+        "top": 22,
+        "right": 308,
+        "bottom": 705.421875,
+        "left": 12
+      }
+    },
+    {
+      "label": "empty-440",
+      "viewport": 440,
+      "documentWidth": 440,
+      "contentWidth": 416,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 416,
+        "height": 578.9375,
+        "top": 22,
+        "right": 428,
+        "bottom": 600.9375,
+        "left": 12
+      },
+      "empty": {
+        "x": 12,
+        "y": 412.75,
+        "width": 416,
+        "height": 91.390625,
+        "top": 412.75,
+        "right": 428,
+        "bottom": 504.140625,
+        "left": 12
+      }
+    },
+    {
+      "label": "problems-440",
+      "viewport": 440,
+      "documentWidth": 440,
+      "contentWidth": 416,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 416,
+        "height": 628.140625,
+        "top": 22,
+        "right": 428,
+        "bottom": 650.140625,
+        "left": 12
+      }
+    },
+    {
+      "label": "empty-1280",
+      "viewport": 1280,
+      "documentWidth": 1280,
+      "contentWidth": 1220,
+      "root": {
+        "x": 30,
+        "y": 30,
+        "width": 1220,
+        "height": 580.421875,
+        "top": 30,
+        "right": 1250,
+        "bottom": 610.421875,
+        "left": 30
+      },
+      "empty": {
+        "x": 30,
+        "y": 412.625,
+        "width": 1220,
+        "height": 101,
+        "top": 412.625,
+        "right": 1250,
+        "bottom": 513.625,
+        "left": 30
+      }
+    },
+    {
+      "label": "problems-1280",
+      "viewport": 1280,
+      "documentWidth": 1280,
+      "contentWidth": 1220,
+      "root": {
+        "x": 30,
+        "y": 30,
+        "width": 1220,
+        "height": 639.640625,
+        "top": 30,
+        "right": 1250,
+        "bottom": 669.640625,
+        "left": 30
+      }
+    },
+    {
+      "label": "dark-problems",
+      "viewport": 1280,
+      "documentWidth": 1280,
+      "contentWidth": 1220,
+      "root": {
+        "x": 30,
+        "y": 30,
+        "width": 1220,
+        "height": 639.640625,
+        "top": 30,
+        "right": 1250,
+        "bottom": 669.640625,
+        "left": 30
+      }
+    }
+  ],
+  "actualFonts": true,
+  "nativeHostFixtureSha256": "3e5dac490c4ae557eb6fbe67cc2dcb0661bf9589db19eea6d32d1f1bd05169e8",
+  "actualShellCss": "oj-integration-rebuild/oj-platform/resources/ui/css/oj-ui-system.css",
+  "shellCssSha256": "c67bfc7c54a8face97b5ab041a0b6139e096769ed1f8f506a867001de5b89cdc",
+  "actualWordPress": false,
+  "actualMakeCode": false,
+  "actualDatabase": false,
+  "actualGrading": false,
+  "limitations": "Actual core CSS and local fonts with controlled loopback REST, fixture PageResponse markup, and a real PHP host-renderer component fixture. This is not a full WordPress installation. No actual MakeCode service, database, grading server, USB device, or HUSTOJ workload was exercised.",
+  "candidateVersion": "1.0.0-rc.4",
+  "frontendChecks": 89,
+  "baseline": {
+    "source": "Immutable _releases/oj-microbit/1.0.0-rc.3/oj-microbit-1.0.0-rc.3.zip assets, rendered with actual core CSS and local Pretendard fonts",
+    "metrics": [
+      {
+        "label": "empty-desktop",
+        "items": [
+          {
+            "text": "공개 문제",
+            "current": "page",
+            "background": "rgb(255, 255, 255)",
+            "color": "rgb(29, 29, 31)",
+            "border": "1px"
+          },
+          {
+            "text": "내 수업",
+            "current": null,
+            "background": "rgba(118, 118, 128, 0.12)",
+            "color": "rgb(29, 29, 31)",
+            "border": "1px"
+          }
+        ]
+      },
+      {
+        "label": "empty",
+        "text": "공개된 마이크로비트 문제가 없습니다.공개된 문제는 수업 소속과 관계없이 풀고 채점할 수 있습니다.",
+        "box": {
+          "x": 30,
+          "y": 408.609375,
+          "width": 1220,
+          "height": 190.578125,
+          "top": 408.609375,
+          "right": 1250,
+          "bottom": 599.1875,
+          "left": 30
+        },
+        "children": [
+          {
+            "text": "공개된 마이크로비트 문제가 없습니다.",
+            "rect": {
+              "x": 473.453125,
+              "y": 459.28125,
+              "width": 333.078125,
+              "height": 35.546875,
+              "top": 459.28125,
+              "right": 806.53125,
+              "bottom": 494.828125,
+              "left": 473.453125
+            },
+            "color": "rgb(110, 110, 115)"
+          },
+          {
+            "text": "공개된 문제는 수업 소속과 관계없이 풀고 채점할 수 있습니다.",
+            "rect": {
+              "x": 460.984375,
+              "y": 528.5,
+              "width": 358.03125,
+              "height": 23.6875,
+              "top": 528.5,
+              "right": 819.015625,
+              "bottom": 552.1875,
+              "left": 460.984375
+            },
+            "color": "rgb(110, 110, 115)"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "findings": [
+    "Legacy current navigation used a white surface while the inactive default button used a gray pill, reversing visual selection. Dedicated scoped navigation now uses current foreground, accent fill and underline.",
+    "The desktop empty panel text was centered beyond the left 440px crop. Empty panel text is now compact and left aligned; document width is verified at 320, 390, 440 and 1280px.",
+    "Native routes use real problem and lesson menu links, retain the scope of assignments, and redirect mismatched historical bookmarks before data loading."
+  ],
+  "screenshots": [
+    "ui-before-1.0.0-rc.4.png",
+    "ui-empty-mobile-1.0.0-rc.4.png",
+    "ui-problems-mobile-1.0.0-rc.4.png",
+    "ui-problems-dark-1.0.0-rc.4.png",
+    "ui-native-problems-mobile-1.0.0-rc.4.png"
+  ],
+  "rerun": {
+    "command": "node oj-microbit/tests/browser-ui-ux.cjs",
+    "dependencies": "External Playwright cache and Chromium, loopback permission, and PHP-generated _notes/tmp/native-catalog.html native catalog fixture. OJ_MICROBIT_NATIVE_CATALOG_FIXTURE can select another generated fixture; OJ_MICROBIT_UI_BASELINE=1 renders the immutable baseline.",
+    "nativeFixtureCommand": "From oj-integration-rebuild/oj-platform: D:/php/php.exe tests/Contract/addon-native-learning.php --render"
+  },
+  "evidenceCapture": "Native catalog screenshot taken after keyboard assertions and explicit blur, so focus styling does not obscure the current type selection."
+}

@@ -377,7 +377,7 @@ foreach (
 		'Migration ledger diagnostics are missing: ' . $issue_code
 	);
 }
-runtime_schema_same( 6, count( $ledger_plan->migrations() ), 'The Runtime test fixture must cover the frozen plan.' );
+runtime_schema_same( 8, count( $ledger_plan->migrations() ), 'The Runtime test fixture must cover the frozen plan.' );
 
 list( , , $throwing_inspector, , $throwing_verifier ) = runtime_schema_fixture();
 $throwing_inspector->throw_on_names                   = true;
@@ -396,13 +396,13 @@ $read_database = new Runtime_Read_Only_Database_Fixture(
 );
 $reader        = new WordPress_Schema_Ledger_Reader( $read_database );
 runtime_schema_same( Schema_Catalog::ADDON_ID, $reader->find_installation()['addon_id'] ?? '', 'Reader owner lookup failed.' );
-runtime_schema_same( 6, count( $reader->all_migrations() ), 'Reader migration lookup failed.' );
+runtime_schema_same( 8, count( $reader->all_migrations() ), 'Reader migration lookup failed.' );
 foreach ( $read_database->queries as $query ) {
 	runtime_schema_assert( str_starts_with( ltrim( $query ), 'SELECT ' ), 'Runtime ledger queries must be SELECT-only.' );
 	runtime_schema_assert( ! str_contains( $query, 'wp_oj_ai_' ), 'Runtime ledger queries must not use a WP prefix.' );
 }
 runtime_schema_same( 48, count( $reader_catalog->table_names() ), 'Reader fixture must use the exact frozen catalog.' );
-runtime_schema_same( 6, count( $reader_plan->migrations() ), 'Reader fixture must use the exact frozen plan.' );
+runtime_schema_same( 8, count( $reader_plan->migrations() ), 'Reader fixture must use the exact frozen plan.' );
 
 $database_provider_calls = 0;
 new WordPress_Schema_Runtime_Readiness(

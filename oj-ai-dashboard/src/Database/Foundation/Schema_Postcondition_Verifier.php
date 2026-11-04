@@ -143,6 +143,11 @@ final class Schema_Postcondition_Verifier {
 
 			$expected = Schema_Metadata_Contract::expected( $definitions[ $table_name ] );
 			$actual   = $metadata[ $table_name ];
+			// Columns are addressed by name. ADD COLUMN may change physical order only.
+			ksort( $expected['columns'], SORT_STRING );
+			if ( isset( $actual['columns'] ) && is_array( $actual['columns'] ) ) {
+				ksort( $actual['columns'], SORT_STRING );
+			}
 			if ( isset( $actual['indexes'] ) && is_array( $actual['indexes'] ) ) {
 				$actual['indexes'] = Schema_Metadata_Contract::normalize_observed_indexes( $definitions[ $table_name ], $actual['indexes'] );
 			}

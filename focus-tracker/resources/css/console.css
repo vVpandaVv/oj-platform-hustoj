@@ -113,6 +113,24 @@
     fill: var(--ojp-color-muted);
 }
 
+.ftk-console .ftk-category-problem { fill: var(--ojp-color-primary); }
+.ftk-console .ftk-category-submission { fill: var(--ojp-color-info); }
+.ftk-console .ftk-category-material { fill: var(--ojp-color-success); }
+.ftk-console .ftk-category-practice { fill: var(--ojp-color-warning); }
+.ftk-console .ftk-category-game { fill: var(--ojp-color-primary); fill-opacity: 0.6; }
+.ftk-console .ftk-category-discussion { fill: var(--ojp-color-info); fill-opacity: 0.6; }
+.ftk-console .ftk-category-other,
+.ftk-console .ftk-category-unclassified { fill: var(--ojp-color-muted); }
+.ftk-console .ftk-tl-category-label { fill: var(--ojp-color-muted); font-size: 12px; }
+.ftk-console .ftk-category-transitions { margin-top: var(--ojp-space-3, 12px); }
+.ftk-console .ftk-category-transitions summary { cursor: pointer; }
+.ftk-console .ftk-category-transitions li { overflow-wrap: anywhere; }
+.ftk-console .ftk-page-visits { margin-top: var(--ojp-space-3, 12px); }
+.ftk-console .ftk-page-visits summary { cursor: pointer; }
+.ftk-console .ftk-page-visits td,
+.ftk-console .ftk-page-visits th { overflow-wrap: anywhere; }
+.ftk-console .ftk-page-visits caption { text-align: start; padding: var(--ojp-space-2, 8px) 0; }
+
 .ftk-console .ftk-timeline-legend {
     display: flex;
     flex-wrap: wrap;

@@ -69,8 +69,10 @@ $pdo->exec( 'CREATE TABLE oj_ai_assignment_targets (public_id TEXT, state TEXT, 
 $pdo->exec( 'CREATE TABLE oj_ai_submissions (id INTEGER, public_id TEXT, lock_version INTEGER, state TEXT, official_revision_public_id TEXT, submitted_at_utc TEXT, assignment_id INTEGER, learner_user_id INTEGER)' );
 $pdo->exec( 'CREATE TABLE oj_ai_submission_revisions (submission_id INTEGER, public_id TEXT, content_hash TEXT)' );
 $pdo->exec( 'CREATE TABLE oj_ai_submission_evaluations (submission_revision_public_id TEXT, submission_revision_hash TEXT, state TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT, public_id TEXT)' );
-$insert_target     = $pdo->prepare( 'INSERT INTO oj_ai_assignment_targets VALUES (?, ?, 71, ?)' );
-$insert_submission = $pdo->prepare( 'INSERT INTO oj_ai_submissions VALUES (?, ?, 3, ?, ?, ?, 71, ?)' );
+$insert_target = $pdo->prepare( 'INSERT INTO oj_ai_assignment_targets VALUES (?, ?, 71, ?)' );
+$pdo->exec( 'ALTER TABLE oj_ai_submissions ADD COLUMN official_review_public_id TEXT' );
+$pdo->exec( 'CREATE TABLE oj_ai_evaluation_runs (subject_type TEXT, evaluation_public_id TEXT, operation_key TEXT)' );
+$insert_submission = $pdo->prepare( 'INSERT INTO oj_ai_submissions VALUES (?, ?, 3, ?, ?, ?, 71, ?, NULL)' );
 $insert_revision   = $pdo->prepare( 'INSERT INTO oj_ai_submission_revisions VALUES (?, ?, ?)' );
 $insert_evaluation = $pdo->prepare( 'INSERT INTO oj_ai_submission_evaluations (submission_revision_public_id, submission_revision_hash, state, public_id) VALUES (?, ?, ?, ?)' );
 foreach ( array( 'queued', 'running', 'failed', 'review_required', 'reviewed', 'cancelled', 'old_revision', 'wrong_hash' ) as $index => $evaluation_state ) {
@@ -96,3 +98,11 @@ $insert_evaluation->execute( array( $revision_ids[2], $hash( 'revision-2' ), 're
 $observed_rows = array_column( $pdo->query( $source_database->last_sql )->fetchAll( PDO::FETCH_ASSOC ), null, 'submission_id' );
 g4_s04_same( null, $observed_rows[ $submission_ids[2] ]['failed_evaluation_id'], 'A completed evaluation of the same source prevents retrying an older failed evaluation.' );
 fwrite( STDOUT, "PASS bulk grading SQL: failed-source retry identity, latest failure selection, protected states, revision/hash isolation.\n" );
+
+$manual_run = $pdo->prepare( "INSERT INTO oj_ai_evaluation_runs VALUES ('submission_evaluation', ?, 'manual_prepare')" );
+$manual_run->execute( array( $target_ids[3] ) );
+$observed_rows = array_column( $pdo->query( $source_database->last_sql )->fetchAll( PDO::FETCH_ASSOC ), null, 'submission_id' );
+g4_s04_same( 0, (int) $observed_rows[ $submission_ids[3] ]['has_evaluation'], 'Opening or saving an unconfirmed rubric must not exclude a learner from AI bulk grading.' );
+$pdo->exec( "UPDATE oj_ai_submissions SET official_review_public_id = 'approved-review' WHERE id = 3" );
+$observed_rows = array_column( $pdo->query( $source_database->last_sql )->fetchAll( PDO::FETCH_ASSOC ), null, 'submission_id' );
+g4_s04_same( 1, (int) $observed_rows[ $submission_ids[3] ]['has_evaluation'], 'Confirmed teacher scores must remain protected from AI bulk grading.' );

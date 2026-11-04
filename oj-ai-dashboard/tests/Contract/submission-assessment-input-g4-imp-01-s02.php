@@ -767,6 +767,14 @@ g4_s02_same( $response_criterion_id, $subset_payload['rubric']['criteria'][0]['c
 g4_s02_same( '7', $subset_payload['rubric']['total_points'], 'Provider total must include only selected criteria.' );
 g4_s02_same( 1, count( $subset_input->binding_manifest() ), 'Private binding manifest must match the selected criterion subset.' );
 
+$partial_revision = $official_revision;
+unset( $partial_revision['response']['answers'][ $response_ids[0] ], $partial_revision['response']['answers'][ $response_ids[1] ] );
+g4_s02_rebind_official( $canonical, $integrity, $submission_id, $publication['publication_hash'], $partial_revision );
+$partial_input     = $builder->build( $evaluation_ref, $submission_id, $revision_id, $partial_revision, $publication, $configuration, $artifacts );
+$partial_responses = $partial_input->gateway_input()['operation_payload']['responses'];
+g4_s02_same( array( 'value' => null ), $partial_responses[0]['answer'], 'A missing automatically submitted answer must not be invented for grading.' );
+g4_s02_same( array( 'value' => null ), $partial_responses[1]['answer'], 'Required unanswered responses must remain explicit for official grading.' );
+
 $wrong_official = g4_s02_id( 99 );
 g4_s02_failure(
 	static fn () => $builder->build( $evaluation_ref, $submission_id, $wrong_official, $official_revision, $publication, $configuration, $artifacts ),

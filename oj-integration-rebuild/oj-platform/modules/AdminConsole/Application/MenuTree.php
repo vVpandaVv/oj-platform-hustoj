@@ -38,6 +38,14 @@ final class MenuTree
         ));
     }
 
+    public function find(string $key): ?MenuDefinition
+    {
+        foreach ($this->menus->all() as $menu) {
+            if ($menu->key() === $key) { return $menu; }
+        }
+        return null;
+    }
+
     /**
      * 애드온이 등록한 메뉴는 키가 "addon.<id>.그 외"로 시작하므로, 같은 <id>를 가진
      * 항목끼리는 서로 다른 항목 사이에 흩어지지 않고 한 덩어리로 붙어서 나오도록

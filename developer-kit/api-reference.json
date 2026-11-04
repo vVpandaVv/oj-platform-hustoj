@@ -1,10 +1,10 @@
 {
     "schemaVersion": 1,
-    "platformVersion": "2.5.4",
-    "addonApiVersion": "1.8.0",
+    "platformVersion": "2.5.9",
+    "addonApiVersion": "1.9.0",
     "namespace": "CodingPanda\\OjPlatform\\AddonApi\\V1",
     "sourceHashFormat": "SHA-256 of UTF-8 source with LF line endings",
-    "symbolCount": 95,
+    "symbolCount": 102,
     "symbols": [
         {
             "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonAcceptedSubmissionPageV1",
@@ -3328,7 +3328,7 @@
             "interfaces": [],
             "parent": null,
             "source": "src/AddonApi/V1/AddonConsoleMenuDefinitionV1.php",
-            "sourceSha256": "f63718dcf7ad1ef869a07feffc4471a557c0803b6633edeffc605335cce2cc17",
+            "sourceSha256": "7e748cb5e7b2c9e5e7b02eaca7a8fd20e535557de490b112d253696e13b7d424",
             "doc": null,
             "constants": [],
             "methods": [
@@ -3386,6 +3386,14 @@
                             "byReference": false,
                             "variadic": false,
                             "default": ""
+                        },
+                        {
+                            "name": "fallbackForNativeMenu",
+                            "type": "?string",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": null
                         }
                     ],
                     "returnType": null,
@@ -3405,6 +3413,14 @@
                     "static": false,
                     "parameters": [],
                     "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "fallbackForNativeMenu",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonConsoleMenuDefinitionV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "?string",
                     "doc": null
                 },
                 {
@@ -3456,7 +3472,7 @@
             "interfaces": [],
             "parent": null,
             "source": "src/AddonApi/V1/AddonConsolePageDefinitionV1.php",
-            "sourceSha256": "0602fdab3298a9aab7b3807a19c043b5c6e4890699e6696c8abc8147b22ea48b",
+            "sourceSha256": "4679fc840a9cbdad798775b54551944f4047b072c6826602346f5efdb0669021",
             "doc": null,
             "constants": [],
             "methods": [
@@ -3500,6 +3516,14 @@
                             "byReference": false,
                             "variadic": false,
                             "default": []
+                        },
+                        {
+                            "name": "navigationMenuKey",
+                            "type": "?string",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": null
                         }
                     ],
                     "returnType": null,
@@ -3535,6 +3559,14 @@
                     "static": false,
                     "parameters": [],
                     "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "navigationMenuKey",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonConsolePageDefinitionV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "?string",
                     "doc": null
                 },
                 {
@@ -5481,6 +5513,735 @@
             ]
         },
         {
+            "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningItemV1",
+            "kind": "class",
+            "final": true,
+            "interfaces": [],
+            "parent": null,
+            "source": "src/AddonApi/V1/AddonNativeLearningItemV1.php",
+            "sourceSha256": "e1513606c4d333833d8fb68949f91cddb099588411339afd01aaf060a08e45c6",
+            "doc": null,
+            "constants": [],
+            "methods": [
+                {
+                    "name": "__construct",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningItemV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "externalId",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "typeLabel",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "primaryLink",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningLinkV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "secondaryLinks",
+                            "type": "array",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": []
+                        },
+                        {
+                            "name": "statusLabel",
+                            "type": "string",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": ""
+                        }
+                    ],
+                    "returnType": null,
+                    "doc": null
+                },
+                {
+                    "name": "externalId",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningItemV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "primaryLink",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningItemV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningLinkV1",
+                    "doc": null
+                },
+                {
+                    "name": "secondaryLinks",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningItemV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "array",
+                    "doc": null
+                },
+                {
+                    "name": "statusLabel",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningItemV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "title",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningItemV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "typeLabel",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningItemV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                }
+            ]
+        },
+        {
+            "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningLinkV1",
+            "kind": "class",
+            "final": true,
+            "interfaces": [],
+            "parent": null,
+            "source": "src/AddonApi/V1/AddonNativeLearningLinkV1.php",
+            "sourceSha256": "99291d324428e6ca1a9d504132ef437e7581a4f108acf66239bced0098518005",
+            "doc": null,
+            "constants": [],
+            "methods": [
+                {
+                    "name": "__construct",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningLinkV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "routeKey",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "parameters",
+                            "type": "array",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": []
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": []
+                        }
+                    ],
+                    "returnType": null,
+                    "doc": null
+                },
+                {
+                    "name": "label",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningLinkV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "parameters",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningLinkV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "array",
+                    "doc": null
+                },
+                {
+                    "name": "query",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningLinkV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "array",
+                    "doc": null
+                },
+                {
+                    "name": "routeKey",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningLinkV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                }
+            ]
+        },
+        {
+            "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningManifestBuilderV1",
+            "kind": "interface",
+            "final": false,
+            "interfaces": [
+                "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1"
+            ],
+            "parent": null,
+            "source": "src/AddonApi/V1/AddonNativeLearningManifestBuilderV1.php",
+            "sourceSha256": "a6e0c5ee89938c06620a21f3c97b2699a311a8d8a437cf72d6559db8a373c8ff",
+            "doc": "Optional Addon API 1.9 catalog contributions in native problem and course menus.",
+            "constants": [],
+            "methods": [
+                {
+                    "name": "aiTask",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "definition",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonAiTaskDefinitionV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                },
+                {
+                    "name": "assetBundle",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "definition",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonAssetBundleDefinitionV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                },
+                {
+                    "name": "capability",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "definition",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonCapabilityDefinitionV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                },
+                {
+                    "name": "consoleMenu",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "definition",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonConsoleMenuDefinitionV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                },
+                {
+                    "name": "consolePage",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "definition",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonConsolePageDefinitionV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                },
+                {
+                    "name": "manifest",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "namespace",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "pluginFile",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "requiresPlatform",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "requiresAddonApi",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "diagnosticLabel",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "supportReference",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                },
+                {
+                    "name": "nativeLearningProvider",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "definition",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderDefinitionV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                },
+                {
+                    "name": "onReady",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "callback",
+                            "type": "callable",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": "Supplies the callback the platform invokes once this addon's manifest\nhas been validated and accepted, handing it an AddonRuntimeContextV1\nscoped to THIS addon only. Called at most once per registration.\n\nInvoked as a plain PHP function call, never via a WordPress action —\nno other addon can intercept, spoof, or receive this callback, since\nthe platform only ever holds the exact callable this addon supplied.\nIf the manifest is rejected, this callback is never invoked. If\nomitted, the addon gets no runtime context (no Context/AI Task\ngateway access) — this is the safe default.\n\n@param callable(AddonRuntimeContextV1): void $callback"
+                },
+                {
+                    "name": "publicMenu",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "definition",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonPublicMenuDefinitionV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                },
+                {
+                    "name": "publicPage",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonManifestBuilderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "definition",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonPublicPageDefinitionV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "void",
+                    "doc": null
+                }
+            ]
+        },
+        {
+            "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningPageV1",
+            "kind": "class",
+            "final": true,
+            "interfaces": [],
+            "parent": null,
+            "source": "src/AddonApi/V1/AddonNativeLearningPageV1.php",
+            "sourceSha256": "caf63f69103eff70ec2c034007468ca9b90659226f052be50f0635980c86da1a",
+            "doc": null,
+            "constants": [],
+            "methods": [
+                {
+                    "name": "__construct",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningPageV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "items",
+                            "type": "array",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": []
+                        },
+                        {
+                            "name": "nextBeforeId",
+                            "type": "?int",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": null
+                        },
+                        {
+                            "name": "actions",
+                            "type": "array",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": []
+                        },
+                        {
+                            "name": "available",
+                            "type": "bool",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": true
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": ""
+                        }
+                    ],
+                    "returnType": null,
+                    "doc": null
+                },
+                {
+                    "name": "actions",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningPageV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "array",
+                    "doc": null
+                },
+                {
+                    "name": "isAvailable",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningPageV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "bool",
+                    "doc": null
+                },
+                {
+                    "name": "items",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningPageV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "array",
+                    "doc": null
+                },
+                {
+                    "name": "message",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningPageV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "nextBeforeId",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningPageV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "?int",
+                    "doc": null
+                }
+            ]
+        },
+        {
+            "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderDefinitionV1",
+            "kind": "class",
+            "final": true,
+            "interfaces": [],
+            "parent": null,
+            "source": "src/AddonApi/V1/AddonNativeLearningProviderDefinitionV1.php",
+            "sourceSha256": "0c735a30115f260f77d87c5517bca166cd02532147663c497f15deed3bbc92e6",
+            "doc": null,
+            "constants": [],
+            "methods": [
+                {
+                    "name": "__construct",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderDefinitionV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "provider",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "order",
+                            "type": "int",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": 50
+                        }
+                    ],
+                    "returnType": null,
+                    "doc": null
+                },
+                {
+                    "name": "key",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderDefinitionV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "label",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderDefinitionV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "order",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderDefinitionV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "int",
+                    "doc": null
+                },
+                {
+                    "name": "provider",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderDefinitionV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderV1",
+                    "doc": null
+                }
+            ]
+        },
+        {
+            "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderV1",
+            "kind": "interface",
+            "final": false,
+            "interfaces": [],
+            "parent": null,
+            "source": "src/AddonApi/V1/AddonNativeLearningProviderV1.php",
+            "sourceSha256": "c67df2ae76b6501a2547222d39b44891ca6432f00f573407b78a9d2b64416fa9",
+            "doc": null,
+            "constants": [],
+            "methods": [
+                {
+                    "name": "query",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningProviderV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "query",
+                            "type": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningQueryV1",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        }
+                    ],
+                    "returnType": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningPageV1",
+                    "doc": null
+                }
+            ]
+        },
+        {
+            "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningQueryV1",
+            "kind": "class",
+            "final": true,
+            "interfaces": [],
+            "parent": null,
+            "source": "src/AddonApi/V1/AddonNativeLearningQueryV1.php",
+            "sourceSha256": "ff2bd60856627701f85feb98e7916ef6514572a81cabf73032839ad69502b676",
+            "doc": null,
+            "constants": [],
+            "methods": [
+                {
+                    "name": "__construct",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningQueryV1",
+                    "static": false,
+                    "parameters": [
+                        {
+                            "name": "actorUserId",
+                            "type": "int",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "surface",
+                            "type": "string",
+                            "required": true,
+                            "byReference": false,
+                            "variadic": false
+                        },
+                        {
+                            "name": "contextId",
+                            "type": "int",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": 0
+                        },
+                        {
+                            "name": "beforeId",
+                            "type": "int",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": 0
+                        },
+                        {
+                            "name": "limit",
+                            "type": "int",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": 20
+                        }
+                    ],
+                    "returnType": null,
+                    "doc": null
+                },
+                {
+                    "name": "actorUserId",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningQueryV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "int",
+                    "doc": null
+                },
+                {
+                    "name": "beforeId",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningQueryV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "int",
+                    "doc": null
+                },
+                {
+                    "name": "contextId",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningQueryV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "int",
+                    "doc": null
+                },
+                {
+                    "name": "limit",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningQueryV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "int",
+                    "doc": null
+                },
+                {
+                    "name": "surface",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonNativeLearningQueryV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "string",
+                    "doc": null
+                }
+            ]
+        },
+        {
             "name": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonPageHandlerV1",
             "kind": "interface",
             "final": false,
@@ -5516,7 +6277,7 @@
             "interfaces": [],
             "parent": null,
             "source": "src/AddonApi/V1/AddonPageRequestV1.php",
-            "sourceSha256": "2ae019d9eb48d8ecb37195e89e71e3ea52fd531f20d7f06e8a744766c6f983b7",
+            "sourceSha256": "e922207a096e831c51829fa93c27927d14af59fb092df96ea44d6af1e1706129",
             "doc": null,
             "constants": [],
             "methods": [
@@ -5566,6 +6327,14 @@
                             "required": true,
                             "byReference": false,
                             "variadic": false
+                        },
+                        {
+                            "name": "navigationUrls",
+                            "type": "array",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": []
                         }
                     ],
                     "returnType": null,
@@ -5594,6 +6363,14 @@
                     "parameters": [],
                     "returnType": "string",
                     "doc": null
+                },
+                {
+                    "name": "navigationUrls",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonPageRequestV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "array",
+                    "doc": "@return array<string,string>"
                 },
                 {
                     "name": "parameters",
@@ -6704,7 +7481,7 @@
             "interfaces": [],
             "parent": null,
             "source": "src/AddonApi/V1/AddonPublicPageDefinitionV1.php",
-            "sourceSha256": "403e9d9e07ac44a7630575d29158d733b7009531c34e3281b4017149c8652c44",
+            "sourceSha256": "a704bbe53903d358bbe21649e8e6f8ddaa4f695fa918e20b3fd6f6b0a566d8b4",
             "doc": null,
             "constants": [],
             "methods": [
@@ -6748,6 +7525,14 @@
                             "byReference": false,
                             "variadic": false,
                             "default": []
+                        },
+                        {
+                            "name": "navigationMenuKey",
+                            "type": "?string",
+                            "required": false,
+                            "byReference": false,
+                            "variadic": false,
+                            "default": null
                         }
                     ],
                     "returnType": null,
@@ -6783,6 +7568,14 @@
                     "static": false,
                     "parameters": [],
                     "returnType": "string",
+                    "doc": null
+                },
+                {
+                    "name": "navigationMenuKey",
+                    "declaredBy": "CodingPanda\\OjPlatform\\AddonApi\\V1\\AddonPublicPageDefinitionV1",
+                    "static": false,
+                    "parameters": [],
+                    "returnType": "?string",
                     "doc": null
                 },
                 {

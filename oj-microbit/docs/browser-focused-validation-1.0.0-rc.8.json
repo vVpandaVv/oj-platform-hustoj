@@ -1,0 +1,188 @@
+{
+  "date": "2026-11-04",
+  "candidateVersion": "1.0.0-rc.8",
+  "ok": true,
+  "checks": [
+    "Existing independent menus and bounded one-row problem list remain intact",
+    "Focused problem view has one title, readable task, device summary and public parallel/serial examples without hidden tests or eager editor",
+    "Original exact conditions remain behind an explicit technical disclosure",
+    "Problem content fits narrow devices at 320 390 and 440 pixels",
+    "Focused authoring starts with one visible step and no eager MakeCode load",
+    "Staged pin selection and Escape cancellation leave the original exercise and dirty state unchanged",
+    "One four-page dialog adds three pins and a serial LED sequence atomically while retaining the same editor",
+    "Stage Edit loads all selected pins and their existing serial actions and applies multiple changed values together",
+    "Batch pin/value/time pages and focused steps fit 320 390 440 1280 pixels with contained dialog scrolling and keyboard cycling",
+    "New input stage and interval edits move all later pin references together without cloning unrelated output states",
+    "The final focused publish action prepares the existing explicit review and cancellation preserves the original code frame",
+    "Modal editing adds no REST requests; save sends the original schema and retains the same live editor",
+    "Field errors open the correct focused author step and its exact detailed input",
+    "Real unsaved code still prompts once; saving and leaving remains clean",
+    "Focused lesson problem preserves assignment context and scoped solve/history actions",
+    "Focused problem content remains readable with the actual platform dark theme",
+    "Core programming and class bodies remain separate"
+  ],
+  "pageErrors": 0,
+  "metrics": [
+    {
+      "label": "problem-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1609,
+      "localNav": 0
+    },
+    {
+      "label": "problem-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1561,
+      "localNav": 0
+    },
+    {
+      "label": "problem-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1561,
+      "localNav": 0
+    },
+    {
+      "label": "author-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1505,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1505,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1505,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1505,
+      "localNav": 34
+    },
+    {
+      "label": "author-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1467,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1467,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1467,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1467,
+      "localNav": 34
+    },
+    {
+      "label": "author-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1467,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1467,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1467,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1467,
+      "localNav": 34
+    },
+    {
+      "label": "author-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1244,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1244,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1244,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1244,
+      "localNav": 34
+    },
+    {
+      "label": "focused-dark-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1583,
+      "localNav": 0
+    }
+  ],
+  "posts": [
+    {
+      "id": 0,
+      "revision": 0
+    },
+    {
+      "id": 72,
+      "revision": 1
+    }
+  ],
+  "microbitJsSha256": "6638c46bea72826564e5a45f158cb0e1c77da14e2fb4fb96d73565890015e7c7",
+  "microbitCssSha256": "3b03e9abebee11d044feec3621a64618433e0aabd3cd46941399abf8f9f3346d",
+  "shellCssSha256": "c67bfc7c54a8face97b5ab041a0b6139e096769ed1f8f506a867001de5b89cdc",
+  "actualPlatformMenuResolver": true,
+  "actualPhpRenderer": true,
+  "editorProtocolFixture": true,
+  "actualWordPress": false,
+  "actualMakeCode": false,
+  "actualDatabase": false,
+  "actualDocker": false,
+  "actualHardware": false
+}

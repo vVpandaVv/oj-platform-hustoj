@@ -28,6 +28,10 @@ final class Migration_Plan {
 	public const PREVIOUS_2_SCHEMA_FINGERPRINT = 'e49cb1fbcd726f4aae44fe4cb0ad952eabda49971420a7a2a398eee037fd6ee6';
 	public const PREVIOUS_3_SCHEMA_VERSION     = '1.0.3';
 	public const PREVIOUS_3_SCHEMA_FINGERPRINT = 'b2e72dc8508407e2530b6629a68d0c092d5f6c17aa01a9a884f22138609a7688';
+	public const PREVIOUS_4_SCHEMA_VERSION     = '1.0.4';
+	public const PREVIOUS_4_SCHEMA_FINGERPRINT = 'acacb197494135acaa976d4b8207171f93f9fd9f98fe545b73fbc6f51018bc6a';
+	public const PREVIOUS_5_SCHEMA_VERSION     = '1.0.5';
+	public const PREVIOUS_5_SCHEMA_FINGERPRINT = '4ba1b80844f8f648619c9f79a0053b0a383cc76588db9b6ddf7c42dd5e93fc7e';
 	public const PROJECT_TABLES                = array( 'oj_ai_assessment_projects', 'oj_ai_assessment_project_revisions', 'oj_ai_assessment_project_worksheets' );
 
 	/**
@@ -134,10 +138,36 @@ final class Migration_Plan {
 			),
 			new Migration_Definition(
 				'202609070001_assessment_projects',
-				Schema_Catalog::SCHEMA_VERSION,
-				$this->catalog->fingerprint(),
+				self::PREVIOUS_4_SCHEMA_VERSION,
+				self::PREVIOUS_4_SCHEMA_FINGERPRINT,
 				self::PROJECT_TABLES,
 				array_map( fn ( string $name ): string => $this->catalog->table( $name )->create_sql(), self::PROJECT_TABLES )
+			),
+			new Migration_Definition(
+				'202611030001_assignment_target_grades',
+				self::PREVIOUS_5_SCHEMA_VERSION,
+				self::PREVIOUS_5_SCHEMA_FINGERPRINT,
+				array( 'oj_ai_assignment_targets' ),
+				array(
+					'ALTER TABLE `oj_ai_assignment_targets`
+  ADD COLUMN `non_submission_grade_schema` VARCHAR(100) NULL,
+  ADD COLUMN `non_submission_grade_version` SMALLINT UNSIGNED NULL,
+  ADD COLUMN `non_submission_grade_json` LONGTEXT NULL,
+  ADD COLUMN `non_submission_grade_hash` CHAR(64) NULL',
+				)
+			),
+			new Migration_Definition(
+				'202611040001_assignment_exception_policy',
+				Schema_Catalog::SCHEMA_VERSION,
+				$this->catalog->fingerprint(),
+				array( 'oj_ai_assignments' ),
+				array(
+					'ALTER TABLE `oj_ai_assignments`
+  ADD COLUMN `exception_policy_schema` VARCHAR(100) NULL,
+  ADD COLUMN `exception_policy_version` SMALLINT UNSIGNED NULL,
+  ADD COLUMN `exception_policy_json` LONGTEXT NULL,
+  ADD COLUMN `exception_policy_hash` CHAR(64) NULL',
+				)
 			),
 		);
 
@@ -163,6 +193,16 @@ final class Migration_Plan {
 			}
 			$columns = $table->columns();
 			$indexes = $table->indexes();
+			if ( 'oj_ai_assignments' === $table->name() ) {
+				foreach ( array_keys( Schema_Profile::json_columns( 'exception_policy', true ) ) as $column ) {
+					unset( $columns[ $column ] );
+				}
+			}
+			if ( 'oj_ai_assignment_targets' === $table->name() ) {
+				foreach ( array_keys( Schema_Profile::json_columns( 'non_submission_grade', true ) ) as $column ) {
+					unset( $columns[ $column ] );
+				}
+			}
 			if ( 'oj_ai_export_jobs' === $table->name() ) {
 				$columns['context_type']     = 'VARCHAR(16) NOT NULL';
 				$columns['context_id']       = 'VARCHAR(191) NOT NULL';
@@ -364,7 +404,9 @@ final class Migration_Plan {
 		return $this->is_supported_baseline_installation( $installation )
 			|| $this->is_supported_previous_installation( $installation )
 			|| $this->is_supported_previous_2_installation( $installation )
-			|| $this->matches_installation( $installation, self::PREVIOUS_3_SCHEMA_VERSION, self::PREVIOUS_3_SCHEMA_FINGERPRINT );
+			|| $this->matches_installation( $installation, self::PREVIOUS_3_SCHEMA_VERSION, self::PREVIOUS_3_SCHEMA_FINGERPRINT )
+			|| $this->matches_installation( $installation, self::PREVIOUS_4_SCHEMA_VERSION, self::PREVIOUS_4_SCHEMA_FINGERPRINT )
+			|| $this->matches_installation( $installation, self::PREVIOUS_5_SCHEMA_VERSION, self::PREVIOUS_5_SCHEMA_FINGERPRINT );
 	}
 
 	/**
@@ -375,6 +417,12 @@ final class Migration_Plan {
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
 	public function upgrade_source_tables( ?array $installation ): array {
+		if ( $this->matches_installation( $installation, self::PREVIOUS_5_SCHEMA_VERSION, self::PREVIOUS_5_SCHEMA_FINGERPRINT ) ) {
+			return $this->previous_5_tables();
+		}
+		if ( $this->matches_installation( $installation, self::PREVIOUS_4_SCHEMA_VERSION, self::PREVIOUS_4_SCHEMA_FINGERPRINT ) ) {
+			return $this->previous_4_tables();
+		}
 		if ( $this->matches_installation( $installation, self::PREVIOUS_3_SCHEMA_VERSION, self::PREVIOUS_3_SCHEMA_FINGERPRINT ) ) {
 			return $this->previous_3_tables();
 		}
@@ -398,10 +446,52 @@ final class Migration_Plan {
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
 	public function previous_3_tables(): array {
-		$tables = array_diff_key( $this->catalog->tables(), array_flip( self::PROJECT_TABLES ) );
+		$tables = array_diff_key( $this->previous_4_tables(), array_flip( self::PROJECT_TABLES ) );
 		$json   = json_encode( array_map( static fn ( Table_Definition $table ): array => $table->normalized_definition(), array_values( $tables ) ), JSON_UNESCAPED_SLASHES ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- Domain JSON uses explicit flags and error handling; fallback re-encoding would change canonical bytes.
 		if ( false === $json || ! hash_equals( self::PREVIOUS_3_SCHEMA_FINGERPRINT, hash( 'sha256', $json ) ) ) {
 			throw new LogicException( 'The immutable 1.0.3 schema changed.' );
+		}
+		return $tables;
+	}
+
+	/**
+	 * Recover the immutable pre-grade schema for supported upgrades.
+	 *
+	 * @return array<string,Table_Definition>
+	 * @throws LogicException If the previous schema fingerprint drifted.
+	 */
+	public function previous_4_tables(): array {
+		$tables  = $this->previous_5_tables();
+		$table   = $tables['oj_ai_assignment_targets'];
+		$columns = $table->columns();
+		foreach ( array_keys( Schema_Profile::json_columns( 'non_submission_grade', true ) ) as $column ) {
+			unset( $columns[ $column ] );
+		}
+		$tables[ $table->name() ] = new Table_Definition( $table->name(), $table->owner(), $columns, $table->indexes(), $table->foreign_keys() );
+		$json                     = json_encode( array_map( static fn ( Table_Definition $item ): array => $item->normalized_definition(), array_values( $tables ) ), JSON_UNESCAPED_SLASHES ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- Immutable schema fingerprint bytes.
+		if ( false === $json || ! hash_equals( self::PREVIOUS_4_SCHEMA_FINGERPRINT, hash( 'sha256', $json ) ) ) {
+			throw new LogicException( 'The immutable 1.0.4 schema changed.' );
+		}
+		return $tables;
+	}
+
+	/**
+	 * Recover the immutable schema before assignment-specific exception policies.
+	 *
+	 * @return array<string,Table_Definition>
+	 * @throws LogicException If the previous schema fingerprint drifted.
+	 */
+	public function previous_5_tables(): array {
+		$tables  = $this->catalog->tables();
+		$table   = $tables['oj_ai_assignments'];
+		$columns = $table->columns();
+		foreach ( array_keys( Schema_Profile::json_columns( 'exception_policy', true ) ) as $column ) {
+			unset( $columns[ $column ] );
+		}
+		$tables[ $table->name() ] = new Table_Definition( $table->name(), $table->owner(), $columns, $table->indexes(), $table->foreign_keys() );
+		$json                     = json_encode( array_map( static fn ( Table_Definition $item ): array => $item->normalized_definition(), array_values( $tables ) ), JSON_UNESCAPED_SLASHES ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- Immutable schema fingerprint bytes.
+		if ( false === $json || ! hash_equals( self::PREVIOUS_5_SCHEMA_FINGERPRINT, hash( 'sha256', $json ) ) ) {
+			throw new LogicException( 'The immutable 1.0.5 schema changed.' );
 		}
 		return $tables;
 	}

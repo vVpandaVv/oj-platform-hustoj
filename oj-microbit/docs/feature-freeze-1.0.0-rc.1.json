@@ -1,0 +1,192 @@
+{
+  "candidateVersion": "1.0.0-rc.1",
+  "baselineVersion": "0.5.1",
+  "baselineArchiveSha256": "ea88b7efbcae1e9629936b9e88a327af15d77555e4a50cd638ca05ea8f6accd8",
+  "date": "2026-10-28",
+  "databaseSchema": 3,
+  "gradingContract": "oj-gpio/3",
+  "files": [
+    {
+      "path": "resources/css/microbit.css",
+      "sha256": "35be23f8610f62a4a7b72e4856ff5d6ab34bf73513984e48e51aaa2b6d16fa2c"
+    },
+    {
+      "path": "resources/js/microbit.js",
+      "sha256": "cea50ce2b083401d2334ce5ee01e36bc4d17c77fa69896fecc7af885d4c952c8"
+    },
+    {
+      "path": "resources/vendor/microbit-usb.js",
+      "sha256": "74fff5a21241f15506eabf11e00dbc8ad34c1701844538a40358bebaf385d023"
+    },
+    {
+      "path": "resources/vendor/README.md",
+      "sha256": "a04c87d14a53e29515d0119b9c56f307ceed44e9edf928add3d84f3ddedd6901"
+    },
+    {
+      "path": "resources/vendor/THIRD_PARTY_NOTICES.txt",
+      "sha256": "86633ad2b92c56e07c4887c1b75bcfb3cb1640c1b03ecc5f88839eb2055a50b3"
+    },
+    {
+      "path": "runner/src/assertions.mjs",
+      "sha256": "acd02cb837d01bc19f0461e1b891ccebc71b51b23242ad7696e0ba7e2330ff7c"
+    },
+    {
+      "path": "runner/src/compiler.mjs",
+      "sha256": "d90bab49631b3dddd71da2e3335a66da3570caf63b1dc67c591f51b92e822ed5"
+    },
+    {
+      "path": "runner/src/grade.mjs",
+      "sha256": "cb69e8e335ade65fc66ae897af67e0a18d9404b9092e623d95e7d00e4a2e352e"
+    },
+    {
+      "path": "runner/src/job.mjs",
+      "sha256": "cac56919c6350f087d3860309bde2832ab3dd0a62810d94a3b952f33734ece20"
+    },
+    {
+      "path": "runner/src/peripherals.mjs",
+      "sha256": "e1c402fd935695ef59a5799a6777d1211719c556a2c9093bb8462ce2591adf4d"
+    },
+    {
+      "path": "runner/src/server.mjs",
+      "sha256": "a4a4f7d8e5d4fa6023b4fcec98493457315685fecad53c842dae02d50de9171f"
+    },
+    {
+      "path": "runner/src/simulator.mjs",
+      "sha256": "31f03c3b080aff5e62dcb2a22a2035d7d5e07bd8f28c3e23fdc350c53ecbe8d1"
+    },
+    {
+      "path": "runner/src/validation.mjs",
+      "sha256": "23dd91a36df119715d73041ab26bb5ee52f53a2d2c0b7d083b4c5fd1e5779a92"
+    },
+    {
+      "path": "runner/src/version.mjs",
+      "sha256": "d28765176ce07cae667a94283ee71e08295a61061c0e4ba70b0735397fbb9723"
+    },
+    {
+      "path": "src/Addon/PageHandler.php",
+      "sha256": "68432941ac476b3b21197d682265b197575e369e490556d9bcabfe830a87dcad"
+    },
+    {
+      "path": "src/Addon/Registration.php",
+      "sha256": "aeae79c90fd5207a42e94f2f4685935c713fc6c030b464008f1c793477a6f0eb"
+    },
+    {
+      "path": "src/Addon/RestController.php",
+      "sha256": "6d56e2ff49aadbf2176864129f9fe6b8770f8f82340ba7e21a4a74eacbb8e775"
+    },
+    {
+      "path": "src/Application/Access.php",
+      "sha256": "bf9814133952663f27e60ce8290dc83785178731ebd9f0754169ec3b4f26f746"
+    },
+    {
+      "path": "src/Application/PracticeService.php",
+      "sha256": "34f4d88ca0fca5e92bbe00d72f4794594672645649fa545dadea76fef39d565e"
+    },
+    {
+      "path": "src/Application/Repository.php",
+      "sha256": "031e97182674ad1876ca74bbec28ca3af220f7b9febe59884087d4afbc837327"
+    },
+    {
+      "path": "src/Application/Runner.php",
+      "sha256": "6bac4ec60af6a5403ee13f58ec2d7dd4d88be96ac9906adb3855fb46a4bc9ab5"
+    },
+    {
+      "path": "src/Core/Autoloader.php",
+      "sha256": "e46db0573f3a647ff797257208b736dafcbe721de70da07c737e1554689ffbde"
+    },
+    {
+      "path": "src/Core/Plugin.php",
+      "sha256": "e59d75c86927e625d817951b272633a849b3730e3ec19ba4362f2871057d66bb"
+    },
+    {
+      "path": "src/Domain/ExerciseSchema.php",
+      "sha256": "8bec241027382717696ec707cb30104db00338dd411ef7a0f641244bbca50f04"
+    },
+    {
+      "path": "src/Domain/I2cSchema.php",
+      "sha256": "bb213afe392208397eb2799ae46477e5c936362c6b62db70a6cbd5b321a54b9b"
+    },
+    {
+      "path": "src/Domain/OutputSequenceSchema.php",
+      "sha256": "4136940086b71d2809ac8aef6b41176952b5521820694a7af02f3d9a67cb8fa9"
+    },
+    {
+      "path": "src/Domain/ProjectSchema.php",
+      "sha256": "ee2e810cbbd9ebf991918e54018f390abd881e9fbf670628bffd0a9a91ca568f"
+    },
+    {
+      "path": "src/Domain/PublicationReview.php",
+      "sha256": "a60fcc3ca6a74793677a9cde4010f97a22830d97e02e17cdd0baa777f64fd01c"
+    },
+    {
+      "path": "src/Domain/ResultVisibility.php",
+      "sha256": "d9b3ab10e757b9a3bff33b8984a48fc14820e9997177e05d36fc8914aa8844a9"
+    },
+    {
+      "path": "src/Domain/RunnerResultSchema.php",
+      "sha256": "37e573c1171fe6104ac958f79ca833ac7b5e0860e992761c63f8b14d90255803"
+    },
+    {
+      "path": "src/Domain/SchemaValue.php",
+      "sha256": "1533627943e47033b1332bd1b9d0993ab4b890d77847cd58aca210aef5954df0"
+    },
+    {
+      "path": "src/Domain/SignalSchema.php",
+      "sha256": "5e046b26afdcb0ffb0942a6e3ec734329f1719b1d32890469a2b24449cd4fcee"
+    },
+    {
+      "path": "src/Storage/Installer.php",
+      "sha256": "c8019a03fc51ded5ed53a1b67f4c36ca373f7bfc8b476538f5acc90ab0aa6479"
+    },
+    {
+      "path": "src/Storage/WpdbRepository.php",
+      "sha256": "fe896865d6794e32e3cc72756c63ff8edcc55b001f62deb0fba50d21278efd05"
+    },
+    {
+      "path": "src/Support/ClassAudienceAccess.php",
+      "sha256": "a8b6b9451899e599418fd7dc51bc2faabd097f792bec51c8df37afde0680cb89"
+    },
+    {
+      "path": "src/Support/HttpRunner.php",
+      "sha256": "c1bef3e24958c0e632e12935272c9e2aee7f168fe3c0288e56b87d9e705f4c86"
+    },
+    {
+      "path": "src/Support/LearnerCapabilities.php",
+      "sha256": "496f57e4f987cda5a913544df149e3cad1e9c2d424272e00a2af6f90062500c5"
+    },
+    {
+      "path": "src/Support/OperationError.php",
+      "sha256": "ea03658c7e0fe509b39e8cdcb850b4c7d46c261ec7d1cd262482bc144b696fb8"
+    },
+    {
+      "path": "src/Support/PlatformAccess.php",
+      "sha256": "64fb088057f93d188dbe8a9ec95293e122e28ad5d7e14a4c77064860744b9785"
+    },
+    {
+      "path": "src/Support/Privacy.php",
+      "sha256": "b28908085298111bd03f4fdc8d20d45a0c995691005b3a7328016bd5d5dc56fa"
+    },
+    {
+      "path": "src/Support/RequestContext.php",
+      "sha256": "c85cae7bb473351db3789c32a0a3aca86501c780388115365d1a8e0715bc0bc2"
+    },
+    {
+      "path": "src/Support/Settings.php",
+      "sha256": "0135beb4dd5bc500eef5171266ab13d93739d73b88a05f8d543fd769bb69fe4c"
+    }
+  ],
+  "versionOnlyFiles": [
+    {
+      "path": "oj-microbit.php",
+      "normalizedSha256": "42fa20038711e1a994895fd193334a99e66c3c944bd9fdf57adac994e164e28f"
+    },
+    {
+      "path": "plugin-package.php",
+      "normalizedSha256": "66a7e1ef63dc0d46bf92841e3895d182e8b9cb0b36c595ccb9b7b038d61b6a0b"
+    },
+    {
+      "path": "runner/src/launcher.mjs",
+      "normalizedSha256": "4bb3083f9e4b34294765acbe087879c23a2061db7a95bb8fb28f8804190346f0"
+    }
+  ]
+}

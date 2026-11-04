@@ -71,7 +71,7 @@ final class Device_Matching_Module implements Game_Module {
      * @return array<int, array<string, string>>
      */
     private static function devices(): array {
-        return array(
+        $devices = array(
             self::device('desktop-computer', __('데스크톱 컴퓨터', 'edu-games'), __('책상 위에서 사용하는 본체와 입출력 장치를 갖춘 컴퓨터입니다.', 'edu-games'), 'computing', __('컴퓨팅 장치', 'edu-games'), 'RGB_desktop_computer_setup_with_keyboard_and_monitor.jpg', 'CC0', 'SankalpSasnur'),
             self::device('laptop', __('노트북', 'edu-games'), __('화면, 키보드, 배터리가 하나로 결합된 휴대용 컴퓨터입니다.', 'edu-games'), 'computing', __('컴퓨팅 장치', 'edu-games'), 'Notebook_computer.jpg', 'CC BY-SA 4.0', 'KK IN HK'),
             self::device('tablet', __('태블릿', 'edu-games'), __('터치 화면으로 조작하는 얇은 휴대용 컴퓨팅 장치입니다.', 'edu-games'), 'computing', __('컴퓨팅 장치', 'edu-games'), 'Galaxy_Tab.jpg', 'CC BY-SA 4.0', 'KA KIT'),
@@ -111,6 +111,12 @@ final class Device_Matching_Module implements Game_Module {
             self::device('water-pump', __('수중 펌프', 'edu-games'), __('물속에서 모터를 돌려 물을 이동시킵니다. 수조의 물을 순환시키는 것처럼 액체를 움직이는 데 쓰입니다.', 'edu-games'), 'actuator', __('액추에이터', 'edu-games'), 'Tauchpumpe EDEN 104s 2007-10-14 aa EDIT CUT 1944x1944.jpg', 'CC BY 3.0', 'User:Zapyon'),
             self::device('linear-actuator', __('직선 액추에이터', 'edu-games'), __('전기 에너지를 이용해 축을 직선으로 밀거나 당깁니다. 회전 대신 앞뒤 움직임이 필요한 곳에 쓰입니다.', 'edu-games'), 'actuator', __('액추에이터', 'edu-games'), 'LCA25.jpg', 'CC BY-SA 3.0', 'smacmca'),
         );
+        $extra=json_decode((string)file_get_contents(EDU_GAMES_PATH.'assets/device-matching/team-sources.json'),true,512,JSON_THROW_ON_ERROR);
+        foreach($extra as $row){
+            $device=self::device($row['id'],$row['name'],$row['description'],$row['category'],$row['categoryLabel'],$row['sourceFile'],$row['license'],$row['author']);
+            $device['image']=plugins_url('assets/device-matching/images/'.$row['asset'],EDU_GAMES_FILE);$devices[]=$device;
+        }
+        return $devices;
     }
 
     /**

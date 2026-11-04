@@ -14,7 +14,7 @@ define('ARRAY_A', 'ARRAY_A');
 define('MINUTE_IN_SECONDS', 60);
 define('HOUR_IN_SECONDS', 3600);
 define('DAY_IN_SECONDS', 86400);
-define('FOCUS_TRACKER_VERSION', '1.0.1');
+define('FOCUS_TRACKER_VERSION', '1.1.2');
 define('FOCUS_TRACKER_FILE', dirname(__DIR__) . '/focus-tracker.php');
 define('FOCUS_TRACKER_PATH', dirname(__DIR__) . '/');
 define('FOCUS_TRACKER_URL', '/__focus/');
@@ -175,6 +175,8 @@ final class Focus_Test_Wpdb {
 
 function dbDelta(string $sql): void {
     global $wpdb;
+    preg_match('/CREATE TABLE (\w+)/', $sql, $table_match);
+    preg_match_all('/^\s*KEY (\w+) \(([^)]+)\),?\s*$/m', $sql, $secondary, PREG_SET_ORDER);
     $sql = preg_replace('/id bigint\(20\) unsigned NOT NULL AUTO_INCREMENT,/', 'id INTEGER PRIMARY KEY AUTOINCREMENT,', $sql);
     $sql = preg_replace('/^\s*PRIMARY KEY\s+\(id\),?\s*$/m', '', $sql);
     $sql = preg_replace('/^\s*UNIQUE KEY \w+ \(([^)]+)\),?\s*$/m', 'UNIQUE ($1),', $sql);
@@ -185,6 +187,12 @@ function dbDelta(string $sql): void {
     $sql = str_replace('CREATE TABLE ', 'CREATE TABLE IF NOT EXISTS ', $sql);
     if (false === $wpdb->query($sql)) {
         throw new RuntimeException($wpdb->last_error . "\n" . $sql);
+    }
+    foreach ($secondary as $index) {
+        $name = $table_match[1] . '_' . $index[1];
+        // WordPress dbDelta reports DDL errors through wpdb; the installer's
+        // schema inspection, rather than an adapter exception, rejects them.
+        $wpdb->query('CREATE INDEX IF NOT EXISTS ' . $name . ' ON ' . $table_match[1] . ' (' . $index[2] . ')');
     }
 }
 
@@ -225,6 +233,7 @@ function checked($checked, $current = true, bool $display = true): string { $res
 function wp_nonce_field(string $action, string $name): void { echo '<input type="hidden" name="' . esc_attr($name) . '" value="focus-test-nonce">'; }
 function wp_json_encode($data, int $flags = 0): string { return json_encode($data, $flags | JSON_THROW_ON_ERROR); }
 function wp_unslash($value) { return $value; }
+function wp_salt($scheme = 'auth'): string { return 'focus-tracker-explicit-fixture-salt-' . (string) $scheme . '-not-a-production-secret'; }
 function wp_parse_url($url, int $component = -1) { return parse_url($url, $component); }
 function sanitize_text_field($value): string { return trim(strip_tags((string) $value)); }
 function sanitize_key($value): string { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $value)); }

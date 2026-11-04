@@ -95,11 +95,11 @@ release_boundary_assert(
 	'Release packaging must not enumerate and copy the repository root.'
 );
 
-$dirty_guard = strpos( $source, 'if ($dirtyState.Count -gt 0)' );
-$dist_write  = strpos( $source, 'New-Item -ItemType Directory -Path $dist' );
-$registration_check = strpos( $source, "& \$php (Join-Path \$root 'tests\\Contract\\addon-api-consumer.php')" );
+$dirty_guard               = strpos( $source, 'if ($dirtyState.Count -gt 0)' );
+$dist_write                = strpos( $source, 'New-Item -ItemType Directory -Path $dist' );
+$registration_check        = strpos( $source, "& \$php (Join-Path \$root 'tests\\Contract\\addon-api-consumer.php')" );
 $staged_registration_check = strpos( $source, "& \$php (Join-Path \$root 'tests\\Contract\\addon-api-consumer.php') \$packageRoot" );
-$archive_write = strpos( $source, '$archive = [System.IO.Compression.ZipFile]::Open(' );
+$archive_write             = strpos( $source, '$archive = [System.IO.Compression.ZipFile]::Open(' );
 release_boundary_assert( false !== $registration_check && $registration_check < $dist_write, 'Source registration must be checked before staging.' );
 release_boundary_assert( false !== $staged_registration_check && $staged_registration_check < $archive_write, 'The staged package must pass registration before creating a ZIP.' );
 release_boundary_assert( str_contains( $source, "throw 'Add-on registration contract failed; no package was created.'" ), 'Source registration failure must block packaging.' );

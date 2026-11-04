@@ -81,7 +81,15 @@ final class Plugin {
         add_action('init', array(Missing_Values_Assets::class, 'register'));
         add_action('init', array(Outlier_Detection_Assets::class, 'register'));
         add_action('rest_api_init', array(Api::class, 'register_routes'));
+        add_action('init', array(__CLASS__, 'schedule_binary_team'));
+        add_action('edu_games_binary_team_maintenance', array(\EduGames\Multiplayer\Wpdb_Repository::class, 'prune'));
         Oj_Platform_Registration::register();
+    }
+
+    public static function schedule_binary_team(): void {
+        if (!wp_next_scheduled('edu_games_binary_team_maintenance')) {
+            wp_schedule_event(time()+3600, 'hourly', 'edu_games_binary_team_maintenance');
+        }
     }
 
     public static function activate(): void {

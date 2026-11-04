@@ -236,8 +236,12 @@ $wpdb->update(Installer::checks_table(), array('expires_at_ms' => Clock::now_ms(
 $summary = Check_Service::summary(4);
 expect_check(1, $summary['counts']['unanswered'], 'Passive expiry is reported even before another poll');
 expect_check(0, $summary['counts']['incorrect'], 'No response is not recorded as a wrong answer');
+$expiry_queries = count($wpdb->queries);
 next_check($draft_request);
 expect_check('unanswered', stored_check($unanswered_check['id'])['status'], 'Next poll finalises expired pending question');
+$expiry_updates = array_values(array_filter(array_slice($wpdb->queries, $expiry_queries), static fn (string $sql): bool => str_starts_with($sql, 'UPDATE ' . Installer::checks_table() . ' SET status = CASE')));
+expect_check(1, count($expiry_updates), 'Only the observed expired question requires an expiry write');
+assert_check(str_contains($expiry_updates[0], 'WHERE id = ' . $unanswered_check['id'] . ' AND user_id = 4 AND status = '), 'Expiry writes use the exact known primary row and recheck ownership and pending status');
 
 check_user(5);
 $gateway->samples = true;
@@ -421,6 +425,15 @@ expect_check(false, $older_config['checks']['enabled'], 'Older runtime disables 
 assert_check(isset($older_config['restUrl'], $older_config['heartbeatMs']), 'Older runtime preserves ordinary tracking configuration');
 expect_check('unavailable', next_check()['status'], 'Older runtime cannot accidentally issue ungrounded questions');
 Runtime_Bridge::connect($runtime);
+
+// A new student has no expiry row to mutate. A no-match UPDATE would still
+// acquire RR next-key/gap locks and contend with another student's INSERT.
+assert_check(is_array(Check_Repository::begin_for_user(90)), 'Empty-expiry regression owns the normal per-user privacy and quota locks');
+$empty_expiry_start = count($wpdb->queries);
+expect_check(null, Check_Repository::pending(90, Clock::now_ms()), 'A new learner has no pending question');
+$empty_expiry_updates = array_filter(array_slice($wpdb->queries, $empty_expiry_start), static fn (string $sql): bool => str_starts_with($sql, 'UPDATE ' . Installer::checks_table()));
+expect_check(0, count($empty_expiry_updates), 'No expired candidate means no check-table UPDATE or empty-gap write lock');
+assert_check(Check_Repository::finish(true), 'Empty-expiry read commits its ordinary per-user transaction');
 
 // The platform distinguishes GNU C (13) and GNU C++ (14). Keep canonical
 // language in the verifier proof and source hash even for editor aliases.

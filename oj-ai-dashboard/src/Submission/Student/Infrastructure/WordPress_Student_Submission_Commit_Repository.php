@@ -282,7 +282,7 @@ final class WordPress_Student_Submission_Commit_Repository implements Student_Su
 			$policy                             = $this->auto_resubmission_policy( $current );
 			$validation_record                  = $record;
 			$validation_record['actor_user_id'] = $record['learner_user_id'];
-			$revision                           = $this->lock_and_validate_current_revision( $current, $validation_record );
+			$revision                           = $this->lock_and_validate_current_revision( $current, $validation_record, false );
 			$latest_receipt                     = $this->latest_receipt( $this->positive_integer( $current['submission_pk'] ?? null ) );
 			$receipt_no                         = null === $latest_receipt ? 1 : $latest_receipt + 1;
 			$attempt_no                         = $this->auto_attempt_no( $current, $policy, $record, $latest_receipt );
@@ -576,10 +576,11 @@ final class WordPress_Student_Submission_Commit_Repository implements Student_Su
 	 *
 	 * @param array<string,mixed> $current Current.
 	 * @param array<string,mixed> $record Record.
+	 * @param bool                $require_complete Enforce manual submission completeness.
 	 * @return array{revision_pk:int,public_id:string,content_hash:string,attachment_set_hash:string}
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
-	private function lock_and_validate_current_revision( array $current, array $record ): array {
+	private function lock_and_validate_current_revision( array $current, array $record, bool $require_complete = true ): array {
 		$sql = 'SELECT id AS revision_pk, public_id, content_hash, revision_no, base_revision_no, state, response_schema_version, response_schema, response_version, response_json, response_hash, attachment_set_hash FROM ' . self::TABLE_REVISIONS
 			. ' WHERE submission_id = %d AND public_id = %s LIMIT 1 FOR UPDATE';
 		$row = $this->get_row(
@@ -618,8 +619,11 @@ final class WordPress_Student_Submission_Commit_Repository implements Student_Su
 		) {
 			$this->stored_invalid( Assignment_Failure::SUBMIT_REVISION_PUBLICATION_MISMATCH );
 		}
-		$profile   = $this->response_profile( $current );
-		$validated = $this->responses->validate_complete( $profile, $response['answers'] );
+		$profile = $this->response_profile( $current );
+		// Deadline submission preserves valid saved answers, including unfinished required fields.
+		$validated = $require_complete
+			? $this->responses->validate_complete( $profile, $response['answers'] )
+			: $this->responses->validate( $profile, $response['answers'] );
 		// A strict !== comparison here false-positives whenever the two arrays
 		// were built with the same content in a different key order: $response
 		// came back from decode_json() in the canonical (alphabetically

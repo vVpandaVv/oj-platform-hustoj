@@ -19,6 +19,9 @@ assert.equal(bulkCandidateCount([
   { ...candidate, roster: { assigned: true, status: 'reopened' } },
 ]), 4);
 const failedCandidate = { ...candidate, kind: 'evaluation', state: 'failed' };
+const prepared = { ...candidate, kind: 'evaluation', state: 'review_required', latest_run: { operation: 'manual_prepare' } };
+assert.equal(bulkCandidateCount([prepared]), 1, 'Unconfirmed teacher worksheets remain AI-eligible.');
+assert.equal(bulkCandidateCount([{ ...prepared, review: { official_id: 'confirmed' } }]), 0, 'Official teacher grades stay protected.');
 assert.equal(bulkCandidateCount([failedCandidate]), 1, 'Failed evaluations must enable bulk grading even without new submissions.');
 assert.equal(bulkCandidateCount([
   ...['requested', 'queued', 'running', 'review_required', 'reviewed', 'cancelled'].map(state => ({ ...failedCandidate, state })),

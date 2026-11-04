@@ -1,0 +1,243 @@
+{
+  "request": {
+    "project": {
+      "name": "출력 동작 순서",
+      "files": {
+        "main.ts": "basic.pause(200)\npins.digitalWritePin(DigitalPin.P1, 1)\npins.servoWritePin(AnalogPin.P2, 0)\nbasic.pause(400)\npins.servoWritePin(AnalogPin.P2, 90)\nbasic.pause(600)\npins.digitalWritePin(DigitalPin.P1, 0)\npins.servoWritePin(AnalogPin.P2, 0)\nbasic.pause(200)\n",
+        "pxt.json": "{\"name\":\"출력 동작 순서\",\"description\":\"\",\"dependencies\":{\"core\":\"*\"},\"files\":[\"main.ts\"],\"preferredEditor\":\"tsprj\"}"
+      }
+    },
+    "exercise": {
+      "title": "실제 출력 시각을 기준으로 LED와 서보 검사",
+      "description": "",
+      "status": "published",
+      "connections": [
+        {
+          "pin": 1,
+          "direction": "output",
+          "signal": "digital",
+          "device": "led",
+          "label": "LED"
+        },
+        {
+          "pin": 2,
+          "direction": "output",
+          "signal": "servo",
+          "device": "servo",
+          "label": "서보"
+        }
+      ],
+      "i2cDevices": [],
+      "scenarios": [
+        {
+          "id": "sequence",
+          "name": "지연 켜짐과 서보 복귀",
+          "visible": true,
+          "durationMs": 2000,
+          "inputs": [],
+          "assertions": [],
+          "i2cInputs": [],
+          "i2cAssertions": [],
+          "outputSequences": [
+            {
+              "pin": 1,
+              "signal": "digital",
+              "afterMs": 0,
+              "steps": [
+                {
+                  "expected": 1,
+                  "withinMs": 500,
+                  "holdMs": 1000,
+                  "tolerance": 0
+                },
+                {
+                  "expected": 0,
+                  "withinMs": 100,
+                  "holdMs": 200,
+                  "tolerance": 0
+                }
+              ]
+            },
+            {
+              "pin": 2,
+              "signal": "servo",
+              "afterMs": 0,
+              "steps": [
+                {
+                  "expected": 0,
+                  "withinMs": 500,
+                  "holdMs": 400,
+                  "tolerance": 0
+                },
+                {
+                  "expected": 90,
+                  "withinMs": 100,
+                  "holdMs": 600,
+                  "tolerance": 0
+                },
+                {
+                  "expected": 0,
+                  "withinMs": 100,
+                  "holdMs": 200,
+                  "tolerance": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "starterProject": {
+        "name": "출력 동작 순서",
+        "files": {
+          "main.ts": "basic.pause(200)\npins.digitalWritePin(DigitalPin.P1, 1)\npins.servoWritePin(AnalogPin.P2, 0)\nbasic.pause(400)\npins.servoWritePin(AnalogPin.P2, 90)\nbasic.pause(600)\npins.digitalWritePin(DigitalPin.P1, 0)\npins.servoWritePin(AnalogPin.P2, 0)\nbasic.pause(200)\n",
+          "pxt.json": "{\"name\":\"출력 동작 순서\",\"description\":\"\",\"dependencies\":{\"core\":\"*\"},\"files\":[\"main.ts\"],\"preferredEditor\":\"tsprj\"}"
+        }
+      }
+    }
+  },
+  "result": {
+    "runtimeVersion": "pxt-microbit/9.1.1;pxt-core/13.0.1;oj-gpio/3",
+    "projectHash": "4e4d77ae3d941b5b2b99e41c7263d6fc2ad0192b1fc8ae23ef5c43fbe4a63225",
+    "trace": [
+      {
+        "atMs": 200,
+        "pin": 1,
+        "signal": "digital",
+        "value": 1,
+        "kind": "write"
+      },
+      {
+        "atMs": 200,
+        "pin": 2,
+        "signal": "servo",
+        "value": 0,
+        "kind": "write"
+      },
+      {
+        "atMs": 600,
+        "pin": 2,
+        "signal": "servo",
+        "value": 90,
+        "kind": "write"
+      },
+      {
+        "atMs": 1200,
+        "pin": 1,
+        "signal": "digital",
+        "value": 0,
+        "kind": "write"
+      },
+      {
+        "atMs": 1200,
+        "pin": 2,
+        "signal": "servo",
+        "value": 0,
+        "kind": "write"
+      }
+    ],
+    "i2cTrace": [],
+    "traceScenarioId": "sequence",
+    "status": "graded",
+    "passed": true,
+    "score": 100,
+    "scenarios": [
+      {
+        "id": "sequence",
+        "name": "지연 켜짐과 서보 복귀",
+        "passed": true,
+        "error": null,
+        "assertions": [],
+        "i2cAssertions": [],
+        "outputSequences": [
+          {
+            "pin": 1,
+            "signal": "digital",
+            "afterMs": 0,
+            "passed": true,
+            "steps": [
+              {
+                "expected": 1,
+                "withinMs": 500,
+                "holdMs": 1000,
+                "tolerance": 0,
+                "passed": true,
+                "matchedAtMs": 200,
+                "completedAtMs": 1200,
+                "observed": {
+                  "signal": "digital",
+                  "value": 1,
+                  "atMs": 200
+                }
+              },
+              {
+                "expected": 0,
+                "withinMs": 100,
+                "holdMs": 200,
+                "tolerance": 0,
+                "passed": true,
+                "matchedAtMs": 1200,
+                "completedAtMs": 1400,
+                "observed": {
+                  "signal": "digital",
+                  "value": 0,
+                  "atMs": 1200
+                }
+              }
+            ]
+          },
+          {
+            "pin": 2,
+            "signal": "servo",
+            "afterMs": 0,
+            "passed": true,
+            "steps": [
+              {
+                "expected": 0,
+                "withinMs": 500,
+                "holdMs": 400,
+                "tolerance": 0,
+                "passed": true,
+                "matchedAtMs": 200,
+                "completedAtMs": 600,
+                "observed": {
+                  "signal": "servo",
+                  "value": 0,
+                  "atMs": 200
+                }
+              },
+              {
+                "expected": 90,
+                "withinMs": 100,
+                "holdMs": 600,
+                "tolerance": 0,
+                "passed": true,
+                "matchedAtMs": 600,
+                "completedAtMs": 1200,
+                "observed": {
+                  "signal": "servo",
+                  "value": 90,
+                  "atMs": 600
+                }
+              },
+              {
+                "expected": 0,
+                "withinMs": 100,
+                "holdMs": 200,
+                "tolerance": 0,
+                "passed": true,
+                "matchedAtMs": 1200,
+                "completedAtMs": 1400,
+                "observed": {
+                  "signal": "servo",
+                  "value": 0,
+                  "atMs": 1200
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "diagnostics": []
+  }
+}

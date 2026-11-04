@@ -144,7 +144,8 @@ final class AcceptedAddonCatalog
             $manifest->aiTasks(),
             $manifest->activityProviders(),
             $manifest->siteAssets(),
-            $manifest->privacyData()
+            $manifest->privacyData(),
+            $manifest->nativeLearningProviders()
         );
     }
 

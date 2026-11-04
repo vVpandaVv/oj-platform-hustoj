@@ -723,6 +723,28 @@ foreach ( array( 1, 2, 10 ) as $attempt_limit ) {
 	g3_same( $after, $exhausted['database']->tables, 'A second grant must not change pending work.' );
 }
 
+$partial = c27_fixture();
+$partial['database']->tables['oj_ai_submissions'][0]['state'] = 'auto_submitted';
+$partial_revision                                       = &$partial['database']->tables['oj_ai_submission_revisions'][0];
+$partial_response                                       = json_decode( $partial_revision['response_json'], true, 512, JSON_THROW_ON_ERROR );
+$partial_response['answers'][ $partial['response_id'] ] = '';
+$partial_revision['response_json']                      = $partial['canonical']->encode( $partial_response );
+$partial_revision['response_hash']                      = hash( 'sha256', $partial_revision['response_json'] );
+$partial_revision['content_hash']                       = ( new Submission_Revision_Integrity( $partial['canonical'] ) )->content_hash(
+	$partial['submission_id'],
+	1,
+	null,
+	'saved',
+	'1.0.0',
+	$partial_revision['response_hash'],
+	$partial_revision['attachment_set_hash']
+);
+unset( $partial_revision );
+$partial_before = $partial['database']->tables['oj_ai_submission_revisions'][0];
+$partial_result = c27_service( $partial )->execute( c27_command( $partial, Control_Teacher_Submission_Command::REOPEN, 'partial-key', 'auto_submitted', 1, 'teacher-reopen-partial' ) );
+g3_same( 'reopened', $partial_result->submission()['state'], 'Teachers must be able to reopen incomplete automatic submissions.' );
+g3_same( $partial_before, $partial['database']->tables['oj_ai_submission_revisions'][0], 'Reopening a partial automatic answer must preserve its official snapshot.' );
+
 $expired = c27_fixture( 2, '2026-08-22 10:00:00' );
 g3_failure(
 	static fn () => c27_service( $expired )->execute( c27_command( $expired, Control_Teacher_Submission_Command::REOPEN, 'expired-key', 'submitted', 1, 'teacher-reopen-expired' ) ),

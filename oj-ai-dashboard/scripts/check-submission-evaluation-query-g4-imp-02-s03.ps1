@@ -100,7 +100,7 @@ Assert-Markers 'src\Core\Composition_Root.php' @(
 ) 'composition root'
 
 Assert-Markers 'src\Database\Foundation\Schema_Catalog.php' @(
-    "SCHEMA_VERSION = '1.0.4'"
+    "SCHEMA_VERSION = '1.0.6'"
     "'prompt_contract_version'         => 'VARCHAR(64) NOT NULL'"
 ) 'schema 1.0.2 catalog'
 

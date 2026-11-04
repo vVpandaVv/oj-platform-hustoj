@@ -8,6 +8,7 @@ use RuntimeException;
 
 /** Daily totals contain no code, question text, names, or individual answers. */
 final class Statistics_Repository {
+    private const ARCHIVED_CHECK_CANDIDATE_LIMIT = 257;
     public static function scope_key(array $scope): string {
         return hash('sha256', (string) json_encode(array($scope['type'], $scope['id'])));
     }
@@ -25,6 +26,7 @@ final class Statistics_Repository {
             $row['problem_id'] = null === $row['problem_id'] ? null : (int) $row['problem_id'];
             $row['raw_events_expired'] = ! empty($row['raw_events_expired']);
             $row['has_delivery_gaps'] = ! empty($row['has_delivery_gaps']);
+            $row['page_context_version'] = (int) ($row['page_context_version'] ?? 0);
             $row['_activityIds'] = null === $row['activity_id'] ? array() : array((int) $row['activity_id']);
         }
         unset($row);
@@ -96,6 +98,28 @@ final class Statistics_Repository {
             ' WHERE user_id = %d AND scope_key = %s AND local_day = %s AND time_zone = %s', $user_id, self::scope_key($scope), $day, $zone), ARRAY_A);
         self::assert_read();
         if (! is_array($row)) { return null; }
+        return self::decode_snapshot($row);
+    }
+
+    /** Metadata only: the service keeps raw event reads at their original daily scope. */
+    public static function range_inputs(int $user_id, array $scope, int $start, int $end, string $first_day, string $last_day, string $zone): array {
+        global $wpdb;
+        $sessions = self::sessions($user_id, $start, $end);
+        $activities = $scope['type'] === 'self' ? self::capture_activities($sessions) : self::activities($scope, $start, $end);
+        $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . Installer::statistics_table()
+            . ' WHERE user_id = %d AND scope_key = %s AND local_day >= %s AND local_day <= %s AND time_zone = %s ORDER BY local_day ASC',
+            $user_id, self::scope_key($scope), $first_day, $last_day, $zone), ARRAY_A);
+        self::assert_read();
+        $cached = array();
+        foreach ($rows as $row) { $cached[$row['local_day']] = self::decode_snapshot($row); }
+        $checks = self::checks($user_id, $start, $end);
+        $archived_checks = self::archived_check_candidates($user_id, $start, $end, self::ARCHIVED_CHECK_CANDIDATE_LIMIT);
+        return array('sessions' => $sessions, 'activities' => $activities, 'cached' => $cached, 'checks' => $checks,
+            // A large timezone history falls back to the original per-day check.
+            'archivedCheckCandidates' => count($archived_checks) >= self::ARCHIVED_CHECK_CANDIDATE_LIMIT ? null : $archived_checks);
+    }
+
+    private static function decode_snapshot(array $row): array {
         $row['metrics'] = json_decode((string) $row['metrics_json'], true);
         if (! is_array($row['metrics'])) { throw new RuntimeException('Invalid daily statistics snapshot.'); }
         $row['archived'] = ! empty($row['archived']);
@@ -150,11 +174,23 @@ final class Statistics_Repository {
 
     /** A different site timezone cannot redistribute already removed checks. */
     public static function has_archived_check_overlap(int $user_id, int $start, int $end): bool {
+        return self::archived_check_overlap(self::archived_check_candidates($user_id, $start, $end, 16), $start, $end);
+    }
+
+    private static function archived_check_candidates(int $user_id, int $start, int $end, int $limit): array {
         global $wpdb;
         $rows = $wpdb->get_results($wpdb->prepare('SELECT local_day, time_zone FROM ' . Installer::statistics_table()
-            . ' WHERE user_id = %d AND scope_type = %s AND local_day >= %s AND local_day <= %s AND metrics_json LIKE %s LIMIT 16',
-            $user_id, 'self', gmdate('Y-m-d', intdiv($start, 1000) - 2 * DAY_IN_SECONDS), gmdate('Y-m-d', intdiv($end, 1000) + 2 * DAY_IN_SECONDS), '%"_checksArchived":true%'), ARRAY_A);
+            . ' WHERE user_id = %d AND scope_type = %s AND local_day >= %s AND local_day <= %s AND metrics_json LIKE %s LIMIT %d',
+            $user_id, 'self', gmdate('Y-m-d', intdiv($start, 1000) - 2 * DAY_IN_SECONDS), gmdate('Y-m-d', intdiv($end, 1000) + 2 * DAY_IN_SECONDS), '%"_checksArchived":true%', $limit), ARRAY_A);
         self::assert_read();
+        return $rows;
+    }
+
+    /** Apply the same sixteen-row conservative test to a complete metadata batch. */
+    public static function archived_check_overlap(array $rows, int $start, int $end): bool {
+        $first = gmdate('Y-m-d', intdiv($start, 1000) - 2 * DAY_IN_SECONDS);
+        $last = gmdate('Y-m-d', intdiv($end, 1000) + 2 * DAY_IN_SECONDS);
+        $rows = array_values(array_filter($rows, static fn (array $row): bool => $row['local_day'] >= $first && $row['local_day'] <= $last));
         if (count($rows) >= 16) { return true; }
         foreach ($rows as $row) {
             try { $day = new \DateTimeImmutable($row['local_day'] . ' 00:00:00', new \DateTimeZone($row['time_zone'])); }

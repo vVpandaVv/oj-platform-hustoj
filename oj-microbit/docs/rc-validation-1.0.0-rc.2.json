@@ -1,0 +1,65 @@
+{
+  "candidateVersion": "1.0.0-rc.2",
+  "date": "2026-11-03",
+  "status": "local_verification_passed_live_acceptance_pending",
+  "featureFreeze": "feature-freeze-1.0.0-rc.2.json",
+  "databaseSchema": 4,
+  "gradingContract": "oj-gpio/3",
+  "checks": {
+    "php": 1003,
+    "frontend": 61,
+    "installerShell": 26,
+    "runner": 91,
+    "freeze": 4,
+    "acceptanceRest": 13,
+    "acceptancePython": 26,
+    "total": 1224
+  },
+  "browser": {
+    "report": "browser-problem-workflow-validation-1.0.0-rc.2.json",
+    "flows": 8,
+    "pageErrors": 0,
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualHardware": false
+  },
+  "environment": {
+    "php": "8.5.5 Windows, PDO SQLite",
+    "node": "24.22.1 Windows",
+    "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+    "python": "3.14 Windows",
+    "shell": "Git Bash; isolated command and filesystem fixtures"
+  },
+  "verified": [
+    "Separate groups/groupIds and legacy classes/classIds, including same numeric IDs",
+    "Live public context adapter boundaries and membership recheck with fixtures",
+    "20,000 mixed records, actual SQLite SQL and plans, bounded two-query paging",
+    "Atomic audience replacement, namespace transitions, archive and owner erasure rollback",
+    "Schema 1/2/3 to4 guards and old record preservation through installer fixtures",
+    "Independent explanation, solve, draft save, preview, submission and submission history",
+    "Deep links, reload, Back cancellation and failed project fetch preserve work",
+    "Production PXT GPIO/PWM/servo/I2C and ordered output grading regression",
+    "Read-only schema4/MySQL probe and bounded REST acceptance tool fixture tests"
+  ],
+  "actualTrialServer": false,
+  "actualWordPress": false,
+  "actualMySQL": false,
+  "actualDocker": false,
+  "actualHustojParallelLoad": false,
+  "actualBackupRestore": false,
+  "actualHardware": false,
+  "pending": [
+    "Ubuntu/PHP8.3 WordPress installation and recovery",
+    "Actual platform group membership and revocation during grading",
+    "MySQL/MariaDB EXPLAIN and concurrent save/erasure locks",
+    "Representative class load alongside actual HUSTOJ judging",
+    "Database/web backup restore and operational cleanup",
+    "Physical HEX/WebUSB if included in official support"
+  ],
+  "limitations": [
+    "SQLite and fake WordPress cannot certify MySQL optimizer or live WordPress authentication",
+    "Browser uses a local iframe protocol fixture; actual MakeCode was not contacted for rc.2",
+    "Simulator and scoring implementation remain byte-frozen; actual PXT compiler runs locally",
+    "Existing platform Context API may read its full membership ledger before returning a bounded page; trial measurements remain required"
+  ]
+}

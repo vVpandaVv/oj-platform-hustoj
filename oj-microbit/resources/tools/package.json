@@ -1,0 +1,17 @@
+{
+  "name": "oj-microbit-browser-assets",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test frontend.test.cjs"
+  },
+  "dependencies": {
+    "@microbit/microbit-connection": "1.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "linkedom": "0.18.12"
+  }
+}

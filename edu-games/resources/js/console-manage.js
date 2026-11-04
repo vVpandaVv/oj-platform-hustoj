@@ -38,6 +38,24 @@ class EduGamesConsole {
         this.bindEvents();
         this.loadGames();
         this.loadTeams();
+        this.initRealtime();
+    }
+
+    async initRealtime() {
+        const section=this.root.querySelector('[data-eg-realtime]');if(!section)return;
+        const form=section.querySelector('form'),message=section.querySelector('[data-eg-realtime-message]');
+        const paint=data=>{form.elements.enabled.checked=data.enabled;form.elements.public_url.value=data.public_url;section.querySelector('[data-eg-realtime-code]').value=data.installCode;};
+        try{paint(await this.api('/binary-team/realtime/settings'));}catch(e){message.textContent=e.message;}
+        form.addEventListener('submit',async event=>{
+            event.preventDefault();const button=form.querySelector('[type=submit]');button.disabled=true;
+            try{paint(await this.api('/binary-team/realtime/settings',{method:'POST',body:JSON.stringify({enabled:form.elements.enabled.checked,public_url:form.elements.public_url.value})}));message.textContent='저장했습니다. 서버 등록 후 기존 게임 탭을 새로 고침하세요.';}
+            catch(e){message.textContent=e.message;}finally{button.disabled=false;}
+        });
+        section.querySelector('[data-eg-realtime-status]').addEventListener('click',async event=>{
+            const button=event.currentTarget;button.disabled=true;message.textContent='연결 확인 중';
+            try{const s=await this.api('/binary-team/realtime/status');message.textContent=`WebSocket 연결 정상 · 공용 서버 ${s.version} · 에듀게임 ${s.appVersion} · ${s.connections}개 연결 · ${s.rooms}개 방`;}
+            catch(e){message.textContent=e.message;}finally{button.disabled=false;}
+        });
     }
 
     readConfig() {

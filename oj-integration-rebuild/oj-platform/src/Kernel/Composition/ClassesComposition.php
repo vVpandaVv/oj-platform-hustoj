@@ -55,7 +55,8 @@ final class ClassesComposition
         ChoiceProvider $groupChoices,
         Clock $storageClock,
         Clock $siteClock,
-        \CodingPanda\OjPlatform\Modules\Settings\Contract\FeatureFlags $features
+        \CodingPanda\OjPlatform\Modules\Settings\Contract\FeatureFlags $features,
+        ?\CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog $nativeLearning = null
     ): ClassesBundle {
         $repository = new WordPressClassRepository($database, $storageClock);
         $accountErasure = new ClassAccountErasureParticipant($database);
@@ -89,7 +90,9 @@ final class ClassesComposition
             $accountShell->actionUrls(),
             $accountShell->actionSecurity(),
             $html,
-            $classesPagination
+            $classesPagination,
+            $nativeLearning,
+            $submissions->performanceModePolicy()
         );
         $routes = $accountShell->routeHandlers();
         $routes->register('classes.index', $catalog);
@@ -99,7 +102,8 @@ final class ClassesComposition
             $accountShell->currentAccounts(),
             $service,
             $submissions->performanceModePolicy(),
-            $html
+            $html,
+            $nativeLearning
         );
         $routes->register('classes.submissions', $report);
         $routes->register('classes.progress', $report);
@@ -112,7 +116,8 @@ final class ClassesComposition
             $accountShell->actionSecurity(),
             $html,
             $groupChoices,
-            $classesPagination
+            $classesPagination,
+            $nativeLearning
         );
         foreach ([
             'console.classes.index',
@@ -142,7 +147,8 @@ final class ClassesComposition
             $accountShell->actionUrls(),
             $accountShell->actionSecurity(),
             $submissions->rejudgeControls(),
-            $html
+            $html,
+            $nativeLearning
         );
         foreach ([
             'console.classes.submissions',

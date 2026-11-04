@@ -71,6 +71,7 @@ final class Activities_Controller {
         global $wpdb;
         if (false === $wpdb->query('START TRANSACTION')) { return self::delete_failed(); }
         try {
+            if (! Activity_Repository::lock_mutations()) { throw new \RuntimeException('activity_mutation_lock'); }
             // Do not acquire learner privacy/quota locks after this activity
             // lock. Ingestion/checks already take those before activity locks.
             $activity = Activity_Repository::find($id, true);
@@ -270,6 +271,7 @@ final class Activities_Controller {
         if (false === $wpdb->query('START TRANSACTION')) {
             return new WP_Error('focus_tracker_update_failed', __('활동을 저장하지 못했습니다.', 'focus-tracker'), array('status' => 503));
         }
+        if (! Activity_Repository::lock_mutations()) { $wpdb->query('ROLLBACK'); return new WP_Error('focus_tracker_update_failed', __('활동을 저장하지 못했습니다.', 'focus-tracker'), array('status' => 503)); }
         $locked = Activity_Repository::find($id, true);
         if ('' !== (string) $wpdb->last_error) { $wpdb->query('ROLLBACK'); return new WP_Error('focus_tracker_update_failed', __('활동을 저장하지 못했습니다.', 'focus-tracker'), array('status' => 503)); }
         if ($locked === null || $locked['status'] === Activity_Repository::STATUS_DELETED || $locked['owner_user_id'] !== get_current_user_id()) {

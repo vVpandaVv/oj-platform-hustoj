@@ -22,7 +22,8 @@ final class ClassReportPageHandler implements RouteHandler
         private readonly CurrentAccountProvider $accounts,
         private readonly ClassService $classes,
         private readonly PerformanceModePolicy $performanceMode,
-        private readonly ClassHtml $html
+        private readonly ClassHtml $html,
+        private readonly ?\CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog $nativeLearning = null
     ) {
     }
 
@@ -59,6 +60,8 @@ final class ClassReportPageHandler implements RouteHandler
             ->restrictsOwnSubmissionDetails($userId);
         $sort = $request->queryString('sort', 'progress-desc');
         $notice = $restricted ? $this->performanceModeNotice() : '';
+        $canManage = $this->classes->canManage($userId, $class);
+        $showNative = !$restricted && ($canManage || !$this->performanceMode->restrictsOwnSubmissionDetails($userId));
         $content = '<header class="ojp-page-header"><div>'
             . '<p class="ojp-eyebrow">수업</p><h1>'
             . $this->html->escape($report->class()->name()) . ' ' . $title
@@ -69,6 +72,7 @@ final class ClassReportPageHandler implements RouteHandler
                 false
             )
             . $notice
+            . ($showNative ? ($this->nativeLearning?->classAssignments($request, $classId, $canManage) ?? '') : '')
             . ($submissions
                 ? $this->html->submissionTable($report, ! $restricted)
                 : $this->html->reportTable(

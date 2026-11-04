@@ -97,7 +97,9 @@ use CodingPanda\OjPlatform\Modules\Auth\Contract\GuardianConsentNotifier;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\LegacyJudgeUserReader;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\LegacyTransitionChallengeStore;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\LearnerAccountProvisioner;
+use CodingPanda\OjPlatform\Modules\Auth\Contract\LearnerAddonCapabilities;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\PasswordResetTargetPolicy;
+use CodingPanda\OjPlatform\Modules\Auth\Contract\PasswordResetTargetDiagnostics;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\RegistrationPolicyProvider;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\UserPreferenceBatchProvider;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\UserPreferenceRepository;
@@ -119,6 +121,7 @@ use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressGuardi
 use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressGuardianConsentNotifier;
 use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressLegacyTransitionChallengeStore;
 use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressPasswordResetTargetPolicy;
+use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressPrivilegedAccountDetector;
 use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressUserManagementTargetPolicy;
 use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressCurrentSessionTerminator;
 use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressUserApiGateway;
@@ -257,7 +260,8 @@ final class AccountShellComposition
         AddonPublicMenuContributions $addonPublicMenus,
         DefinitionRegistry $capabilities,
         AddonDocumentExtensions $addonDocuments,
-        AddonPrivacyInventory $addonPrivacy
+        AddonPrivacyInventory $addonPrivacy,
+        LearnerAddonCapabilities $learnerAddonCapabilities
     ): AccountShellBundle {
         $addonCapabilityAssignments = new WordPressAddonCapabilityAssignmentGateway();
         $authModule = new \CodingPanda\OjPlatform\Modules\Auth\Module(
@@ -317,7 +321,8 @@ final class AccountShellComposition
         );
         $directory = new UserDirectoryService($profiles, $userGateway, $userGateway);
         $submissionPreferences = new UserSubmissionPreferenceService($preferences);
-        $userManagementTargets = new WordPressUserManagementTargetPolicy();
+        $privilegedAccounts = new WordPressPrivilegedAccountDetector($learnerAddonCapabilities);
+        $userManagementTargets = new WordPressUserManagementTargetPolicy($privilegedAccounts);
         $accountService = new UserAccountService(
             $userGateway,
             $userGateway,
@@ -349,7 +354,7 @@ final class AccountShellComposition
             $roles,
             $roleAssignmentPolicy
         );
-        $passwordTargetPolicy = new WordPressPasswordResetTargetPolicy();
+        $passwordTargetPolicy = new WordPressPasswordResetTargetPolicy($privilegedAccounts);
         $passwords = new PasswordResetService(
             $userGateway,
             $profiles,
@@ -526,7 +531,8 @@ final class AccountShellComposition
             $addonCapabilityAssignments,
             new WordPressAceCoreAssetLocator($environment),
             $addonPrivacy,
-            $userManagementTargets
+            $userManagementTargets,
+            $passwordTargetPolicy
         );
         $this->registerActions(
             $actionHandlers,
@@ -662,6 +668,7 @@ final class AccountShellComposition
                 LearnerAccountProvisioner::class => $creation,
                 UserRoleService::class => $roleService,
                 PasswordResetTargetPolicy::class => $passwordTargetPolicy,
+                PasswordResetTargetDiagnostics::class => $passwordTargetPolicy,
                 PasswordResetService::class => $passwords,
                 AuthorizedPasswordResetter::class => $passwords,
                 ManagedUserNameUpdater::class => new WordPressManagedUserNameUpdater($userGateway, $accountInputs),
@@ -739,7 +746,8 @@ final class AccountShellComposition
         AddonCapabilityAssignmentGateway $addonCapabilityAssignments,
         AceCoreAssetLocator $aceAssets,
         AddonPrivacyInventory $addonPrivacy,
-        UserManagementTargetPolicy $userManagementTargets
+        UserManagementTargetPolicy $userManagementTargets,
+        PasswordResetTargetDiagnostics $passwordDiagnostics
     ): void {
         $this->route(
             $routes,
@@ -852,7 +860,8 @@ final class AccountShellComposition
             $accounts,
             $permissions,
             $roles,
-            $dateFormatter
+            $dateFormatter,
+            $passwordDiagnostics
         ));
         $this->route($routes, 'console.users.edit', new UserEditPageHandler(
             $consolePages,

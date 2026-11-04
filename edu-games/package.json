@@ -1,11 +1,14 @@
 {
   "name": "edu-games",
-  "version": "1.6.7",
+  "version": "1.10.2",
   "private": true,
   "description": "Build tooling for Edu Games blocks and frontend assets.",
   "scripts": {
     "test:addon": "php tests/addon-assets.php",
     "test:php": "php tests/regression.php",
+    "test:binary-team": "php tests/binary-team.php && php tests/binary-realtime-settings.php && node tests/browser-binary-team.cjs",
+    "test:device-team": "php tests/device-team.php",
+    "test:team-operations": "php tests/team-operations.php && php tests/team-bots.php",
     "test:hands": "php tests/hands.php && php -d extension=pdo_sqlite tests/play-api.php && node tests/browser-play.cjs",
     "test:missing-methods": "php tests/missing-methods.php && node tests/missing-preview.cjs",
     "test:handwriting": "php tests/handwriting-combinations.php",
@@ -20,6 +23,7 @@
     "test:devices": "node tests/device-matching.cjs",
     "test:rankings": "php tests/leaderboard-all.php && node tests/browser-leaderboard-all.cjs && node tests/browser-rank-pagination.cjs",
     "test:moderation": "php -d extension=pdo_sqlite tests/ranking-moderation.php",
+    "test:ranking-page": "php -d extension=pdo_sqlite tests/ranking-overview.php && node tests/browser-ranking-page.cjs",
     "test:strategy": "php tests/strategy.php && php tests/strategy-schema.php && node tests/browser-strategy.cjs",
     "lint:js": "wp-scripts lint-js",
     "lint:css": "wp-scripts lint-style"

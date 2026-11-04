@@ -178,7 +178,9 @@ final class Retention_Cleanup {
         Statistics_Repository::assert_read();
         if (empty($rows)) { return 0; }
         $ids = array_map('intval', array_column($rows, 'id'));
-        $updated = $wpdb->query($wpdb->prepare("UPDATE {$table} SET ended_at = last_heartbeat_at, ended_at_ms = last_heartbeat_at_ms, end_reason = 'timeout' WHERE id IN (" . implode(',', array_fill(0, count($ids), '%d')) . ') AND ended_at IS NULL', $ids));
+        // A heartbeat may commit after the work-list SELECT. Recheck its age
+        // under the UPDATE lock before classifying the session as abandoned.
+        $updated = $wpdb->query($wpdb->prepare("UPDATE {$table} SET ended_at = last_heartbeat_at, ended_at_ms = last_heartbeat_at_ms, end_reason = 'timeout' WHERE id IN (" . implode(',', array_fill(0, count($ids), '%d')) . ') AND ended_at IS NULL AND last_heartbeat_at < %s', array_merge($ids, array($cutoff))));
         if ($updated === false) { throw new \RuntimeException('Participation cleanup failed.'); }
         return $updated;
     }

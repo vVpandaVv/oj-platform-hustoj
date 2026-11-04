@@ -162,7 +162,7 @@ foreach ( array(
 ) as $constant => $expected ) {
 	g6_imp04_same( $expected, \OJAI\Dashboard\Tests\Support\Source_Contract_Tokens::string_constant( $integration_source, $constant ), 'Addon API compatibility marker is missing: ' . $constant );
 }
-g6_imp04_same( '1.0.4', \OJAI\Dashboard\Tests\Support\Source_Contract_Tokens::string_constant( $catalog_source, 'SCHEMA_VERSION' ), 'The target schema is not 1.0.4.' );
+g6_imp04_same( '1.0.6', \OJAI\Dashboard\Tests\Support\Source_Contract_Tokens::string_constant( $catalog_source, 'SCHEMA_VERSION' ), 'The target schema is not 1.0.6.' );
 foreach ( array(
 	'BASELINE_SCHEMA_VERSION' => '1.0.0',
 	'PREVIOUS_SCHEMA_VERSION' => '1.0.1',
@@ -172,7 +172,7 @@ foreach ( array(
 
 $upgrade_contract = g6_imp04_source( $root, 'tests/Contract/sequential-upgrade-g5-imp-06-s02.php' );
 foreach ( array(
-	"'1.0.4'",
+	"'1.0.6'",
 	'g5_s02_assert_blocked_without_writes',
 	'upgrade:future-20260825',
 	'schema_preflight_blocked',
@@ -292,7 +292,7 @@ $manifest      = g6_imp04_canonicalize(
 		'evidence'                 => $evidence_entries,
 		'operator_sequence'        => array( 'clean_install', 'supported_upgrade', 'rollback_fail_closed', 'reactivate', 'verify_evidence' ),
 		'platform_addon_api_range' => '>=1.1.0 <2.0.0',
-		'schema_version'           => '1.0.4',
+		'schema_version'           => '1.0.6',
 	)
 );
 $schema_marker = "SCHEMA_VERSION = '" . $manifest['schema_version'] . "'";

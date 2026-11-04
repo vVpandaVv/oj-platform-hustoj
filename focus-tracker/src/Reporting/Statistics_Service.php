@@ -18,6 +18,7 @@ use RuntimeException;
 /** Longitudinal browser participation, independent of activity grades. */
 final class Statistics_Service {
     private const VERSION = '1';
+    private const METADATA_CHUNK_DAYS = 7;
     private const CHECK_STATUSES = array('pending', 'correct', 'incorrect', 'unknown', 'skipped', 'unanswered', 'invalidated');
 
     public static function report(int $user_id, string $period, ?string $date = null, array $scope = array('type' => 'self', 'id' => ''), ?int $now_ms = null): array {
@@ -47,6 +48,8 @@ final class Statistics_Service {
             'period' => $period, 'startDate' => $start->format('Y-m-d'), 'endDate' => $end->modify('-1 day')->format('Y-m-d'),
             'today' => $now->format('Y-m-d'), 'timeZone' => $zone->getName(), 'userId' => $user_id, 'scope' => $scope,
             'provisional' => $now_ms < self::ms($end), 'totals' => $totals, 'days' => $days,
+            'pageCategories' => $totals['pageCategories'], 'pageCategoryCoverageUnknown' => $totals['pageCategoryCoverageUnknown'],
+            'pageAttribution' => 'active_then_latest_focus_then_session',
             'previous' => array('startDate' => $previous_start->format('Y-m-d'), 'endDate' => $start->modify('-1 day')->format('Y-m-d'), 'totals' => $previous),
             'delta' => $delta, 'affectsFocusScore' => false,
             'historyKnownFrom' => self::at(self::coverage_since($now_ms), $zone)->format('Y-m-d'),
@@ -55,36 +58,83 @@ final class Statistics_Service {
 
     private static function series(int $user_id, array $scope, DateTimeImmutable $start, DateTimeImmutable $end, int $through, int $now): array {
         $result = array();
+        $days = array();
         for ($day = $start; $day < $end; $day = $day->modify('+1 day')) {
-            $next = $day->modify('+1 day');
-            $limit = min(self::ms($next), $through);
-            $metrics = $limit <= self::ms($day) ? self::empty('no_data', true) : self::day($user_id, $scope, $day, $limit, $now, false);
-            unset($metrics['_hasSources'], $metrics['_checksArchived']);
-            $result[] = array_merge(array('date' => $day->format('Y-m-d'), 'provisional' => $limit > self::ms($day) && $limit < self::ms($next), 'isFuture' => $limit <= self::ms($day)), $metrics);
+            $days[] = array('day' => $day, 'limit' => min(self::ms($day->modify('+1 day')), $through));
+        }
+        foreach (array_chunk($days, self::METADATA_CHUNK_DAYS) as $chunk) {
+            $prepared = self::prepare_range($user_id, $scope, $chunk, $now);
+            foreach ($chunk as $input) {
+                $day = $input['day']; $limit = $input['limit'];
+                $metrics = $limit <= self::ms($day) ? self::empty('no_data', true)
+                    : self::calculate_day($user_id, $scope, $day, $limit, $now, false, false,
+                        $prepared === null ? null : self::day_inputs($prepared, $scope, $day, $limit));
+                unset($metrics['_hasSources'], $metrics['_checksArchived']);
+                $result[] = array_merge(array('date' => $day->format('Y-m-d'), 'provisional' => $limit > self::ms($day) && $limit < self::ms($day->modify('+1 day')), 'isFuture' => $limit <= self::ms($day)), $metrics);
+            }
         }
         return $result;
     }
 
+    /** Request-local metadata, never reused across a privacy transaction or report. */
+    private static function prepare_range(int $user_id, array $scope, array $days, int $now): ?array {
+        $retention = Settings::aggregate_cutoff($now);
+        $readable = array_values(array_filter($days, static fn (array $input): bool => $input['limit'] > self::ms($input['day'])
+            && ($retention === null || self::ms($input['day']->modify('+1 day')) > self::ms($retention))));
+        if ($readable === array()) { return null; }
+        $cutoff = Privacy_Guard::cutoff($user_id);
+        $readable = array_values(array_filter($readable, static fn (array $input): bool => $input['limit'] > $cutoff));
+        if ($readable === array()) { return array('privacyCutoff' => $cutoff); }
+        $first = $readable[0]['day']; $last = $readable[count($readable) - 1];
+        return Repository::range_inputs($user_id, $scope, self::ms($first), $last['limit'], $first->format('Y-m-d'), $last['day']->format('Y-m-d'), $first->getTimezone()->getName())
+            + array('privacyCutoff' => $cutoff);
+    }
+
+    private static function day_inputs(array $range, array $scope, DateTimeImmutable $day, int $end): array {
+        if (! isset($range['sessions'])) { return $range; }
+        $start = self::ms($day);
+        $sessions = array_values(array_filter($range['sessions'], static fn (array $row): bool => $row['started_at_ms'] < $end
+            && ($row['ended_at_ms'] ?? $row['last_heartbeat_at_ms'] + Score_Calculator::HEARTBEAT_GRACE_MS) > $start));
+        if ($scope['type'] === 'self') {
+            $ids = array();
+            foreach ($sessions as $session) {
+                if (str_starts_with((string) $session['session_uid'], 'g6-')) { foreach ($session['_activityIds'] as $id) { $ids[(int) $id] = true; } }
+            }
+            $activities = array_values(array_filter($range['activities'], static fn (array $row): bool => isset($ids[(int) $row['id']])));
+        } else {
+            // The repository's historical query deliberately includes exact boundaries.
+            $activities = array_values(array_filter($range['activities'], static fn (array $row): bool => Clock::mysql_to_ms($row['starts_at']) <= $end && Clock::mysql_to_ms($row['ends_at']) >= $start));
+        }
+        return array('privacyCutoff' => $range['privacyCutoff'], 'sessions' => $sessions, 'activities' => $activities,
+            'cached' => $range['cached'][$day->format('Y-m-d')] ?? null,
+            'checks' => array_values(array_filter($range['checks'], static fn (array $row): bool => (int) $row['issued_at_ms'] >= $start && (int) $row['issued_at_ms'] < $end)),
+            'archivedCheckOverlap' => $range['archivedCheckCandidates'] === null ? null : Repository::archived_check_overlap($range['archivedCheckCandidates'], $start, $end));
+    }
+
     /** Full-day snapshots are frozen only by the retention guard below. */
     public static function day(int $user_id, array $scope, DateTimeImmutable $day, int $through, int $now, bool $archive, bool $checks_archived = false): array {
+        return self::calculate_day($user_id, $scope, $day, $through, $now, $archive, $checks_archived, null);
+    }
+
+    private static function calculate_day(int $user_id, array $scope, DateTimeImmutable $day, int $through, int $now, bool $archive, bool $checks_archived, ?array $prepared): array {
         $retention_boundary = Settings::aggregate_cutoff($now);
         if (! $archive && $retention_boundary !== null && self::ms($day->modify('+1 day')) <= self::ms($retention_boundary)) {
             return self::empty('unavailable', false);
         }
         $start = self::ms($day);
         $end = min(self::ms($day->modify('+1 day')), $through);
-        $privacy_cutoff = Privacy_Guard::cutoff($user_id);
+        $privacy_cutoff = $prepared === null ? Privacy_Guard::cutoff($user_id) : $prepared['privacyCutoff'];
         if ($privacy_cutoff > 0 && $end <= $privacy_cutoff) { return self::empty('unavailable', false); }
         $privacy_gap = $privacy_cutoff > 0 && $start <= $privacy_cutoff;
         $full_day = $end === self::ms($day->modify('+1 day'));
         $zone = $day->getTimezone()->getName();
-        $activities = Repository::activities($scope, $start, $end);
-        $sessions = Repository::sessions($user_id, $start, $end, $archive);
-        if ($scope['type'] === 'self') { $activities = Repository::capture_activities($sessions); }
+        $activities = $prepared === null ? Repository::activities($scope, $start, $end) : $prepared['activities'];
+        $sessions = $prepared === null ? Repository::sessions($user_id, $start, $end, $archive) : $prepared['sessions'];
+        if ($prepared === null && $scope['type'] === 'self') { $activities = Repository::capture_activities($sessions); }
         $sessions = array_values(array_filter($sessions, static fn (array $p): bool => self::eligible_session($p, $activities, $scope, $start, $end)));
         $signature = self::signature($sessions, $activities, $scope);
         if ($archive) { Repository::finalize_expired_checks($user_id, $start, $end, $now); }
-        $cached = Repository::get($user_id, $scope, $day->format('Y-m-d'), $zone);
+        $cached = $prepared === null ? Repository::get($user_id, $scope, $day->format('Y-m-d'), $zone) : $prepared['cached'];
         $frozen_check_counts = null;
         $unknown_check_counts = false;
         $expired = ! empty(array_filter($sessions, static fn (array $p): bool => $p['raw_events_expired']));
@@ -96,7 +146,7 @@ final class Statistics_Service {
             $cached = null;
         }
         if ($cached !== null && $cached['archived']) {
-            $metrics = $cached['metrics'];
+            $metrics = self::with_page_categories($cached['metrics']);
             if ($privacy_gap) {
                 $metrics['status'] = 'incomplete';
                 $metrics['hasObservationGaps'] = true;
@@ -114,6 +164,8 @@ final class Statistics_Service {
                     $metrics['coverageUnknown'] = true;
                     $metrics['focusRatio'] = null;
                     $metrics['editCount'] = $metrics['runCount'] = $metrics['submitCount'] = null;
+                    $metrics['pageCategories'] = Score_Calculator::empty_page_categories(true);
+                    $metrics['pageCategoryCoverageUnknown'] = true;
                     if (! empty($metrics['_checksArchived']) && $scope['type'] !== 'self') { $metrics['checks'] = array_fill_keys(self::CHECK_STATUSES, null); }
                     return $metrics;
                 }
@@ -130,10 +182,10 @@ final class Statistics_Service {
             }
         }
         if ($expired) { return self::empty('unavailable', false); }
-        if ($frozen_check_counts === null && Repository::has_archived_check_overlap($user_id, $start, $end)) { $unknown_check_counts = true; }
+        if ($frozen_check_counts === null && (($prepared['archivedCheckOverlap'] ?? null) ?? Repository::has_archived_check_overlap($user_id, $start, $end))) { $unknown_check_counts = true; }
         $events = Event_Repository::list_for_participations(array_column($sessions, 'id'));
         Repository::assert_read();
-        $checks = array_values(array_filter(Repository::checks($user_id, $start, $end, $archive), static fn (array $check): bool => self::eligible_check($check, $activities, $scope)));
+        $checks = array_values(array_filter($prepared === null ? Repository::checks($user_id, $start, $end, $archive) : $prepared['checks'], static fn (array $check): bool => self::eligible_check($check, $activities, $scope)));
         if (empty($sessions) && empty($checks)) {
             $old = $start < self::coverage_since($now);
             return self::empty($old || $privacy_gap ? 'unavailable' : 'no_data', false);
@@ -144,6 +196,9 @@ final class Statistics_Service {
         $has_delivery_gaps = false;
         $missing = false;
         $counts = array('activity' => 0, 'run' => 0, 'submit' => 0);
+        $page_categories = Score_Calculator::empty_page_categories();
+        $page_active_ms = $page_observed_ms = array_fill(0, count($page_categories), 0);
+        $page_sessions = array();
         foreach ($sessions as &$session) {
             $session['events'] = $events[$session['id']] ?? array();
             $missing = $missing || empty($session['events']);
@@ -171,13 +226,13 @@ final class Statistics_Service {
             $inputs = array_values(array_filter($sessions, static fn (array $p): bool => ! empty($p['events']) && self::session_allowed_at($p, $from, $activities, $scope)));
             if (empty($inputs)) { continue; }
             $timeline = Score_Calculator::timeline_for_participations($inputs, $from, $to, $now);
-            $all_visible = array_map(static function (array $input): array {
-                $input['initial_away'] = false;
-                $gated = str_starts_with((string) ($input['session_uid'] ?? ''), 'g6-');
-                $input['events'] = array_map(static fn (array $event): array => $gated && (int) ($event['seq'] ?? -1) === 0 ? $event : array_merge($event, array('type' => 'heartbeat', 'meta' => array('visible' => true, 'focused' => true))), $input['events']);
-                return $input;
-            }, $inputs);
-            $witnessed = Score_Calculator::timeline_for_participations($all_visible, $from, $to, $now);
+            $witnessed = Score_Calculator::timeline_for_participations(Score_Calculator::observed_inputs($inputs), $from, $to, $now);
+            $pages = Score_Calculator::page_timeline_for_participations($inputs, $from, $to, $now);
+            foreach ($pages['pageCategories'] as $index => $category) {
+                $page_active_ms[$index] += (int) round(($category['activeSeconds'] ?? 0) * 1000);
+                $page_observed_ms[$index] += (int) round(($category['observedSeconds'] ?? 0) * 1000);
+                foreach (array_keys($pages['_categorySessionKeys'][$index] ?? array()) as $identity) { $page_sessions[$index][$identity] = true; }
+            }
             $active = array_merge($active, $timeline['intervals']);
             $observed = array_merge($observed, $witnessed['intervals']);
             $has_observation_gaps = $has_observation_gaps || $timeline['has_observation_gaps'] || $witnessed['has_observation_gaps'];
@@ -195,6 +250,17 @@ final class Statistics_Service {
         if ($frozen_check_counts !== null) { $check_counts = $frozen_check_counts; }
         if ($unknown_check_counts) { $check_counts = array_fill_keys(self::CHECK_STATUSES, null); }
         $incomplete = $missing || $has_delivery_gaps || $has_observation_gaps || $unknown_check_counts;
+        $page_unknown = false;
+        foreach ($page_categories as $index => &$category) {
+            if (empty($page_sessions[$index])) { continue; }
+            $category['activeSeconds'] = $page_active_ms[$index] / 1000;
+            $category['observedSeconds'] = $page_observed_ms[$index] / 1000;
+            $category['sessionCount'] = $category['pageCount'] = $category['pageViews'] = count($page_sessions[$index]);
+            $category['coverageUnknown'] = $category['category'] === 'unclassified' || $missing;
+            $category['status'] = $missing || $has_delivery_gaps || $has_observation_gaps ? 'incomplete' : 'complete';
+            $page_unknown = $page_unknown || $category['coverageUnknown'];
+        }
+        unset($category);
         $metrics = array(
             'activeSeconds' => round($active_ms / 1000, 3), 'observedSeconds' => round($observed_ms / 1000, 3),
             'focusRatio' => ! $incomplete && $observed_ms > 0 ? round(min(1, $active_ms / $observed_ms), 4) : null,
@@ -202,8 +268,10 @@ final class Statistics_Service {
             'status' => $incomplete ? 'incomplete' : 'complete', 'hasObservationGaps' => $has_observation_gaps,
             'hasDeliveryGaps' => $has_delivery_gaps, 'coverageUnknown' => $missing || $unknown_check_counts, '_hasSources' => true,
             '_checksArchived' => $checks_archived || ! empty($cached['metrics']['_checksArchived']),
+            'pageCategories' => $page_categories, 'pageCategoryCoverageUnknown' => $page_unknown,
         );
-        if ($full_day && ! Repository::save($user_id, $scope, $day->format('Y-m-d'), $zone, $metrics, $signature, $archive)) { throw new RuntimeException('Daily statistics could not be saved.'); }
+        $unchanged = $cached !== null && $cached['archived'] === $archive && hash_equals($cached['source_signature'], $signature) && $cached['metrics'] === $metrics;
+        if ($full_day && ! $unchanged && ! Repository::save($user_id, $scope, $day->format('Y-m-d'), $zone, $metrics, $signature, $archive)) { throw new RuntimeException('Daily statistics could not be saved.'); }
         return $metrics;
     }
 
@@ -213,22 +281,31 @@ final class Statistics_Service {
             if (! in_array((int) $activity['id'], $p['_activityIds'], true)) { continue; }
             $from = max($start, (int) $p['started_at_ms'], Clock::mysql_to_ms($activity['starts_at']));
             $to = min($end, (int) ($p['ended_at_ms'] ?? $p['last_heartbeat_at_ms'] + Score_Calculator::HEARTBEAT_GRACE_MS), Clock::mysql_to_ms($activity['ends_at']));
-            if ($to > $from && (null === $activity['problem_ids'] || in_array($p['problem_id'], $activity['problem_ids'], true))) { return true; }
+            if ($to > $from && self::problem_allowed($p, $activity)) { return true; }
         }
         return false;
     }
 
-    private static function allowed_at(?int $problem, int $at, array $activities, array $scope): bool {
+    private static function allowed_at(?int $problem, int $at, array $activities, array $scope, bool $nonproblem = false): bool {
         if ($scope['type'] === 'self') { return true; }
         foreach ($activities as $activity) {
-            if (Clock::mysql_to_ms($activity['starts_at']) <= $at && Clock::mysql_to_ms($activity['ends_at']) > $at && (null === $activity['problem_ids'] || in_array($problem, $activity['problem_ids'], true))) { return true; }
+            if (Clock::mysql_to_ms($activity['starts_at']) <= $at && Clock::mysql_to_ms($activity['ends_at']) > $at && ($nonproblem || null === $activity['problem_ids'] || in_array($problem, $activity['problem_ids'], true))) { return true; }
         }
         return false;
     }
 
     private static function session_allowed_at(array $session, int $at, array $activities, array $scope): bool {
         if ($scope['type'] === 'self' && str_starts_with((string) $session['session_uid'], 'g6-')) { $scope = array('type' => 'capture', 'id' => ''); }
-        return self::allowed_at($session['problem_id'], $at, self::session_activities($session, $activities), $scope);
+        return self::allowed_at($session['problem_id'], $at, self::session_activities($session, $activities), $scope, self::nonproblem($session));
+    }
+
+    private static function nonproblem(array $session): bool {
+        $page = Score_Calculator::page_metadata($session);
+        return (int) ($session['problem_id'] ?? 0) < 1 && $page['category'] !== 'unclassified' && ! Score_Calculator::page_supports_activity($page);
+    }
+
+    private static function problem_allowed(array $session, array $activity): bool {
+        return self::nonproblem($session) || null === $activity['problem_ids'] || in_array($session['problem_id'], $activity['problem_ids'], true);
     }
 
     private static function session_activities(array $session, array $activities): array {
@@ -245,7 +322,11 @@ final class Statistics_Service {
     }
 
     private static function signature(array $sessions, array $activities, array $scope): string {
-        $parts = array_map(static fn (array $p): array => array($p['id'], $p['problem_id'], $p['started_at_ms'], $p['ended_at_ms'], $p['last_heartbeat_at_ms'], $p['event_revision'], $p['has_delivery_gaps'], $scope['type'] === 'self' && ! str_starts_with((string) $p['session_uid'], 'g6-') ? array() : array_values(array_intersect($p['_activityIds'], array_column($activities, 'id')))), $sessions);
+        $parts = array_map(static function (array $p) use ($scope, $activities): array {
+            $part = array($p['id'], $p['problem_id'], $p['started_at_ms'], $p['ended_at_ms'], $p['last_heartbeat_at_ms'], $p['event_revision'], $p['has_delivery_gaps'], $scope['type'] === 'self' && ! str_starts_with((string) $p['session_uid'], 'g6-') ? array() : array_values(array_intersect($p['_activityIds'], array_column($activities, 'id'))));
+            if ((int) ($p['page_context_version'] ?? 0) > 0) { $part[] = array(Score_Calculator::PAGE_POLICY_VERSION, $p['page_category'], $p['page_subtype'], $p['page_key'], (int) $p['page_context_version']); }
+            return $part;
+        }, $sessions);
         $windows = array_map(static fn (array $a): array => array($a['id'], $a['starts_at'], $a['ends_at'], $a['problem_ids']), $activities);
         return hash('sha256', (string) json_encode(array(self::VERSION, Score_Calculator::VERSION, $parts, $windows)));
     }
@@ -267,7 +348,17 @@ final class Statistics_Service {
         return array('activeSeconds' => $unknown ? null : 0, 'observedSeconds' => $unknown ? null : 0, 'focusRatio' => null,
             'editCount' => $unknown ? null : 0, 'runCount' => $unknown ? null : 0, 'submitCount' => $unknown ? null : 0,
             'checks' => array_fill_keys(self::CHECK_STATUSES, $unknown ? null : 0), 'status' => $status,
-            'hasObservationGaps' => false, 'hasDeliveryGaps' => false, 'coverageUnknown' => $status === 'unavailable', '_hasSources' => false);
+            'hasObservationGaps' => false, 'hasDeliveryGaps' => false, 'coverageUnknown' => $status === 'unavailable', '_hasSources' => false,
+            'pageCategories' => Score_Calculator::empty_page_categories($status === 'unavailable'), 'pageCategoryCoverageUnknown' => $status === 'unavailable');
+    }
+
+    /** Old frozen totals remain valid; removed raw data cannot invent categories. */
+    private static function with_page_categories(array $metrics): array {
+        if (! isset($metrics['pageCategories'])) {
+            $metrics['pageCategories'] = Score_Calculator::empty_page_categories(($metrics['status'] ?? '') !== 'no_data');
+            $metrics['pageCategoryCoverageUnknown'] = ($metrics['status'] ?? '') !== 'no_data';
+        }
+        return $metrics;
     }
 
     private static function sum(array $days): array {
@@ -281,6 +372,21 @@ final class Statistics_Service {
         foreach ($days as $day) {
             if (! empty($day['isFuture'])) { continue; }
             if ($day['status'] === 'no_data') { continue; }
+            $day = self::with_page_categories($day);
+            $total['pageCategoryCoverageUnknown'] = $total['pageCategoryCoverageUnknown'] || $day['pageCategoryCoverageUnknown'];
+            foreach ($day['pageCategories'] as $index => $category) {
+                if ($category['status'] === 'no_data') { continue; }
+                $target = &$total['pageCategories'][$index];
+                $was_empty = $target['status'] === 'no_data';
+                foreach (array('activeSeconds', 'observedSeconds', 'sessionCount', 'pageCount', 'pageViews') as $key) {
+                    $target[$key] = $category[$key] === null || (! $was_empty && $target[$key] === null) ? null : ($was_empty ? 0 : $target[$key]) + $category[$key];
+                    if (in_array($key, array('activeSeconds', 'observedSeconds'), true) && $target[$key] !== null) { $target[$key] = round($target[$key], 3); }
+                }
+                $target['coverageUnknown'] = $target['coverageUnknown'] || $category['coverageUnknown'];
+                $target['status'] = in_array($target['status'], array('incomplete', 'unavailable'), true) || in_array($category['status'], array('incomplete', 'unavailable'), true)
+                    ? 'incomplete' : ($category['status'] === 'archived' || $target['status'] === 'archived' ? 'archived' : 'complete');
+                unset($target);
+            }
             $has_data = $has_data || in_array($day['status'], array('complete', 'archived', 'incomplete'), true);
             $archived = $archived || $day['status'] === 'archived';
             $unavailable = $unavailable || $day['status'] === 'unavailable';
@@ -315,7 +421,7 @@ final class Statistics_Service {
         foreach ($windows as $activity) {
             $from = max((int) $participation['started_at_ms'], Clock::mysql_to_ms($activity['starts_at']));
             $to = Clock::mysql_to_ms($activity['ends_at']);
-            if ($to <= $from || ($activity['problem_ids'] !== null && ! in_array((int) $participation['problem_id'], $activity['problem_ids'], true))) { continue; }
+            if ($to <= $from || ! self::problem_allowed($participation, $activity)) { continue; }
             $latest = max($latest ?? $to, $to);
         }
         return $latest === null ? $end : min($end, $latest);

@@ -32,8 +32,10 @@ final class Score_Repository {
             'has_observation_gaps' => empty($metrics['has_observation_gaps']) ? 0 : 1,
             'has_delivery_gaps' => empty($metrics['has_delivery_gaps']) ? 0 : 1,
             'raw_events_expired' => empty($metrics['raw_events_expired']) ? 0 : 1,
+            'activity_eligible' => ! array_key_exists('activity_eligible', $metrics) || $metrics['activity_eligible'] ? 1 : 0,
+            'score_eligible' => ! array_key_exists('score_eligible', $metrics) || $metrics['score_eligible'] ? 1 : 0,
         );
-        $formats = array('%d','%d','%d','%d','%f','%d','%f','%f','%f','%f','%f','%f','%s','%s','%d','%d','%d','%d','%d');
+        $formats = array('%d','%d','%d','%d','%f','%d','%f','%f','%f','%f','%f','%f','%s','%s','%d','%d','%d','%d','%d','%d','%d');
         $columns = implode(', ', array_keys($data));
         $updates = array();
         foreach (array_keys($data) as $column) {
@@ -44,6 +46,43 @@ final class Score_Repository {
         $sql = 'INSERT INTO ' . Installer::scores_table() . " ({$columns}) VALUES (" . implode(', ', $formats)
             . ') ON DUPLICATE KEY UPDATE ' . implode(', ', $updates);
         return false !== $wpdb->query($wpdb->prepare($sql, array_values($data)));
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public static function list_for_activity_and_users(int $activity_id, array $user_ids): array {
+        $user_ids = array_values(array_unique(array_map('intval', $user_ids)));
+        if (empty($user_ids)) { return array(); }
+        global $wpdb;
+        $rows = $wpdb->get_results($wpdb->prepare(
+            'SELECT * FROM ' . Installer::scores_table() . ' WHERE activity_id = %d AND user_id IN ('
+            . implode(',', array_fill(0, count($user_ids), '%d')) . ')', array_merge(array($activity_id), $user_ids)
+        ), ARRAY_A);
+        if (! is_array($rows) || '' !== (string) $wpdb->last_error) { throw new \RuntimeException('Score snapshot storage unavailable.'); }
+        $result = array();
+        foreach ($rows as $row) { $result[(int) $row['user_id']] = $row; }
+        return $result;
+    }
+
+    /** The ingest transaction invalidates its learner's changed activities once. */
+    public static function invalidate_for_user_activities(int $user_id, array $activity_ids): bool {
+        $activity_ids = array_values(array_unique(array_filter(array_map('intval', $activity_ids), static fn (int $id): bool => $id > 0)));
+        if (empty($activity_ids)) { return true; }
+        if ($user_id < 1) { return false; }
+        global $wpdb;
+        foreach (array_chunk($activity_ids, 100) as $ids) {
+            // Never issue a range DELETE for an absent live cache. Under RR it
+            // could lock the same empty index gap as another learner's INSERT.
+            $rows = $wpdb->get_results($wpdb->prepare(
+                'SELECT id FROM ' . Installer::scores_table() . ' WHERE user_id = %d AND activity_id IN ('
+                . implode(',', array_fill(0, count($ids), '%d')) . ') AND raw_events_expired = 0', array_merge(array($user_id), $ids)
+            ), ARRAY_A);
+            if (! is_array($rows) || '' !== (string) $wpdb->last_error) { return false; }
+            $keys = array_map('intval', array_column($rows, 'id')); sort($keys, SORT_NUMERIC);
+            foreach ($keys as $key) {
+                if (false === $wpdb->query($wpdb->prepare('DELETE FROM ' . Installer::scores_table() . ' WHERE id = %d AND user_id = %d AND raw_events_expired = 0', $key, $user_id))) { return false; }
+            }
+        }
+        return true;
     }
 
     /** Only a successfully saved final snapshot permits deletion of its source. */

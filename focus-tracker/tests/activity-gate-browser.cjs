@@ -119,12 +119,29 @@ async function futureEndAndResume() {
     await app.page.locator('[data-ftk-answer]').first().focus();
     await gate(app, false);
     await until(async () => (await state()).events.some(event => event.event_type === 'session_end'), 'The known deadline must flush its final eligible session boundary.');
+    const firstBoundary = await app.page.evaluate(() => {
+        const value = window.FocusTrackerActivityGate.state(); return { nowMs: value.nowMs, active: value.active, reason: value.reason,
+            validUntilMs: value.validUntilMs, label: document.querySelector('[data-ftk-gate-label]').textContent };
+    });
+    const lastConfirmed = app.stateResponses.slice().reverse().find(item => item.status === 200)?.body;
+    console.log('Observed first safe boundary ' + JSON.stringify({ clientNowMs: firstBoundary.nowMs, reason: firstBoundary.reason,
+        active: firstBoundary.active, validUntilMs: firstBoundary.validUntilMs, knownEndMs: end,
+        lastServerNowMs: lastConfirmed?.serverNowMs, lastServerActive: lastConfirmed?.active }));
+    const earlyUnavailableLabelCorrect = !(firstBoundary.nowMs < end && firstBoundary.reason === 'unavailable')
+        || firstBoundary.label === '연결 오류로 중단';
+    check(await app.page.locator('[data-ftk-check], [data-ftk-check-launcher]').count() === 0, 'The first safe stop removes the question and launcher immediately.');
+    check(await app.page.locator('.ace_text-input').evaluate(item => item === document.activeElement), 'A focused question returns to the editor at the first safe stop.');
+    // The first safe session end can precede the scheduled end when an RTT
+    // leaves no usable lease. Require fresh post-deadline server confirmation
+    // before asserting the distinct, definitively ended status label.
+    await until(() => app.stateResponses.some(item => item.status === 200 && item.body.active === false
+        && Number(item.body.serverNowMs) >= end), 'The server must confirm inactivity after the actual scheduled end.');
+    await until(async () => await app.page.locator('[data-ftk-gate-label]').textContent() === '활동 종료', 'A confirmed scheduled end must update its status label.');
     const finished = await state();
     check(finished.events.every(event => eventTime(event) >= start && (event.event_type === 'session_end' ? eventTime(event) <= end : eventTime(event) < end)),
         'Every stored learning event lies inside the scheduled interval and the final control boundary is clamped to its end.');
-    check(await app.page.locator('[data-ftk-check], [data-ftk-check-launcher]').count() === 0, 'The scheduled deadline removes the question and launcher immediately.');
-    check(await app.page.locator('[data-ftk-gate-label]').textContent() === '활동 종료', 'A scheduled deadline is shown as ended, not a connection failure.');
-    check(await app.page.locator('.ace_text-input').evaluate(item => item === document.activeElement), 'A focused question returns to the editor when its activity ends.');
+    check(earlyUnavailableLabelCorrect && await app.page.locator('[data-ftk-gate-label]').textContent() === '활동 종료',
+        'An unusable early response is distinguished from a freshly confirmed scheduled end.');
     const beforeOff = edits(finished).length;
     const responseCount = requestCount(app, /\/checks\/\d+\/response/);
     await edit(app.page, '# OFF_TIME_SOURCE\nvalue = 1\nif value <= 10:\n    print(value)');

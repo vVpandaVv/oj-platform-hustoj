@@ -479,6 +479,16 @@
       const criteria = Array.isArray(value.criteria) ? value.criteria : [];
       criteria.forEach((criterion, index) => fragment.append(criterionRow(criterion, index)));
       fragment.append(button('평가 항목 추가', 'add-criterion'));
+      const exceptions = document.createElement('section');
+      exceptions.className = 'oj-ai-config__exception-scores';
+      exceptions.append(textNode('h3', '', '별도 점수'));
+      for (const [key, label] of [['not_submitted', '미제출 점수'], ['long_absence', '장기결석 점수']]) {
+        const control = input('number', value.exception_scores?.[key] ?? '', label);
+        control.min = '0'; control.step = '0.0001'; control.placeholder = '미설정';
+        control.dataset.exceptionScore = key;
+        exceptions.append(field(label, control));
+      }
+      fragment.append(exceptions);
     }
     elements.rubricEditor.replaceChildren(fragment);
     renderRevisionList('rubric', elements.rubricRevisions);
@@ -603,7 +613,15 @@
       };
     });
     if (criteria.length === 0) throw new Error('평가 항목을 하나 이상 추가해 주세요.');
-    return { subject_type: state.subject, total_points: decimalString(totalUnits), value: { criteria } };
+    const value = { criteria };
+    const exceptionScores = {};
+    elements.rubricEditor.querySelectorAll('[data-exception-score]').forEach(control => {
+      const units = control.value === '' ? null : decimalUnits(control.value, true);
+      if (units !== null && units > totalUnits) throw new Error('별도 점수는 총점을 초과할 수 없습니다.');
+      exceptionScores[control.dataset.exceptionScore] = units === null ? null : decimalString(units);
+    });
+    if (editableRevision('rubric')?.value?.exception_scores || Object.values(exceptionScores).some(score => score !== null)) value.exception_scores = exceptionScores;
+    return { subject_type: state.subject, total_points: decimalString(totalUnits), value };
   }
 
   function policyPayload() {

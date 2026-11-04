@@ -8,6 +8,8 @@ use CodingPanda\OjResearch\Domain\PilotProtocol as P;
 use CodingPanda\OjResearch\Domain\PilotReport;
 use CodingPanda\OjResearch\Domain\PilotDesign;
 use CodingPanda\OjResearch\Domain\PilotAnalysisReport;
+use CodingPanda\OjResearch\Domain\ClassroomProtocol;
+use CodingPanda\OjResearch\Domain\ClassroomReport;
 use CodingPanda\OjResearch\Domain\ResearchProtocol;
 use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\ActionSecurity;
 use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\ActionUrlProvider;
@@ -21,20 +23,13 @@ final class PilotPages
     public function isPilot(int $actor,int $id):bool {return P::is($this->research->managed($actor,$id));}
     public function hasLearner(int $actor):bool {return $this->pilot->learner($actor)!==null;}
 
-    public function index(int $actor):string
-    {
-        $html='<header class="ojp-page-header"><div><p class="ojp-eyebrow">OJ Console · 수업 연구</p><h1>수업을 운영하고, 연구를 기록하세요</h1><p>문제 자료부터 두 집단의 수업 진행까지 한곳에서 관리합니다.</p></div><a class="ojp-button ojp-button--primary" href="/oj-console/research/new">새 시범 연구</a></header>';
-        $html.='<div class="ojp-research-callout"><strong>관리는 수업 중심으로, 보고서는 논문 작성용으로</strong><p>각 연구의 관리 화면에서 수업을 진행하고, 별도 연구 보고서에서 저장된 조건과 실제 결과를 문안·표로 내려받으세요.</p></div><div class="ojp-research-grid">';
-        $studies=$this->research->listFor($actor);
-        foreach($studies as$s){$pilot=P::is($s);$p=$s['data']['protocol'];
-            $html.='<article class="ojp-research-card"><span class="ojp-badge">'.$this->e(($pilot?P::PHASES:ResearchProtocol::PHASES)[$s['status']]??$s['status']).'</span><h2>'.$this->e($s['title']).'</h2><p>'.($pilot?'수준별 AI·문제 추천 시범 연구':'기존 독립 평가 연구').'</p><p>진행 '.$s['data']['lesson'].'차시 · 연결 그룹 '.count($p['groups']).'개</p><div class="ojp-research-actions"><a class="ojp-button ojp-button--primary" href="/oj-console/research/'.$s['id'].'">연구 관리</a>'.($pilot?'<a class="ojp-button" href="/oj-console/research/'.$s['id'].'/report">연구 보고서</a>':'').'</div></article>';
-        }
-        if($studies===[]){$html.='<article class="ojp-research-card"><h2>첫 연구를 준비해 보세요</h2><p>대상 그룹과 비교 조건을 저장한 뒤 문제 자료와 학생 명단을 차례로 준비할 수 있습니다.</p></article>';}
-        return $html.'</div><details class="ojp-section"><summary>기존 독립 평가 연구 도구</summary><p><a href="/oj-console/research?legacy=1">이전 연구 방식으로 만들기</a> · <a href="/oj-console/research/rating">독립 채점함</a></p></details>';
-    }
+    public function index(int $actor):string {return $this->classroom()->index($actor);}
 
-    public function edit(int $actor,?array $s=null):string
+    private function classroom():ClassroomPages {return new ClassroomPages($this->research,$this->pilot,$this->urls,$this->security);}
+
+    public function edit(int $actor,?array $s=null,bool $advanced=false,int $groupId=0):string
     {
+        if(($s===null&&!$advanced)||($s!==null&&ClassroomProtocol::is($s))){return $this->classroom()->edit($actor,$s,$groupId);}
         $p=$s['data']['protocol']??null;
         if($p===null){$groups=$this->research->managedGroups($actor);if($groups===[]){return '<div class="ojp-empty-state"><h1>관리하는 그룹이 필요합니다</h1><p>대상 그룹을 만든 뒤 연구를 준비해 주세요.</p><a href="/oj-console/groups">그룹 관리</a></div>';}
             $p=P::validate(['title'=>'수준별 AI 피드백의 알고리즘 학습 효과','design'=>'adaptation','groups'=>[array_key_first($groups)]]);$p['groups']=[];}
@@ -81,6 +76,7 @@ final class PilotPages
     public function show(int $actor,int $id,string $tab='overview'):string
     {
         $s=$this->research->managed($actor,$id);$p=$s['data']['protocol'];$people=$this->research->participants($actor,$id);$roster=$this->research->roster($actor,$id);
+        if(ClassroomProtocol::is($s)&&!in_array($tab,['materials','students','settings'],true)){return $this->classroom()->show($actor,$s);}
         if(!in_array($tab,['overview','materials','students','settings'],true)){$tab='overview';}
         $html=$this->header($s).'<nav class="ojp-research-nav" aria-label="연구 관리">';
         foreach(['overview'=>'수업 운영','materials'=>'문제 자료','students'=>'학생·집단','settings'=>'연구 조건']as$key=>$label){$html.='<a href="/oj-console/research/'.$id.'?tab='.$key.'"'.($key===$tab?' aria-current="page"':'').'>'.$label.'</a>';}
@@ -149,9 +145,11 @@ final class PilotPages
         return $html;
     }
 
-    public function report(int $actor,int $id):string
+    public function report(int $actor,int $id,string $document='',bool $fragment=false):string
     {
-        $s=$this->research->managed($actor,$id);$report=$this->reportData($actor,$id);
+        $s=$this->research->managed($actor,$id);
+        if(ClassroomProtocol::is($s)){return $this->classroom()->report($actor,$s,$document,$fragment);}
+        $report=$this->reportData($actor,$id);
         $html='<div class="ojp-research-report"><header class="ojp-page-header"><div><p class="ojp-eyebrow">논문 작성용 · 연구 보고서</p><h1>'.$this->e($s['title']).'</h1><p>저장한 연구 조건과 실제 수집 자료를 연결한 초안입니다. 미작성 항목은 대괄호로 표시합니다.</p></div><a class="ojp-button" href="/oj-console/research/'.$id.'">수업 관리로 돌아가기</a></header>';
         $html.='<div class="ojp-research-actions">';foreach(['markdown'=>'논문 문안·표 내려받기','html'=>'인쇄용 보고서 내려받기','csv'=>'분석용 데이터 CSV','json'=>'분석 근거 JSON']as$format=>$label){$html.=$this->form('pilot.export',$s).'<input type="hidden" name="format" value="'.$format.'">'.$this->button($label).'</form>';}$html.='</div>';
         $html.='<div class="ojp-research-callout"><strong>보고서 기준: 연구 버전 '.$s['revision'].'</strong><p>실제 수집 자료로 계산합니다. 평균·변화량과 사전 보정 효과를 구분하며, 자료가 부족하면 추정을 보류합니다. 연구 중에는 중간 결과입니다.</p></div>'.$this->analysisCards($report);
@@ -161,7 +159,8 @@ final class PilotPages
     }
     public function reportData(int $actor,int $id):array
     {
-        return PilotReport::build($this->research->managed($actor,$id),$this->research->participants($actor,$id),$this->pilot->records($actor,$id));
+        $s=$this->research->managed($actor,$id);$report=ClassroomProtocol::is($s)?ClassroomReport::class:PilotReport::class;
+        return $report::build($s,$this->research->participants($actor,$id),$this->pilot->reportRecords($actor,$id));
     }
 
     private function analysisCards(array $report):string
@@ -180,6 +179,7 @@ final class PilotPages
     public function learner(int $actor):string
     {
         $ctx=$this->pilot->learner($actor);if($ctx===null){return '<p>현재 참여 중인 시범 연구가 없습니다.</p>';}
+        if(ClassroomProtocol::is($ctx['study'])){return $this->classroom()->learner($actor,$ctx);}
         $s=$ctx['study'];$p=$ctx['participant'];$protocol=$s['data']['protocol'];$ids=$this->pilot->problemIds($s);$catalog=$this->pilot->catalog($actor,$ids);
         $html='<header class="ojp-page-header"><div><p class="ojp-eyebrow">내 연구 활동</p><h1>'.$this->e($s['title']).'</h1><p>'.$this->e(P::PHASES[$s['status']]).' · '.$s['data']['lesson'].'차시</p></div></header>';
         if(in_array($s['status'],P::ACTIVE,true)){

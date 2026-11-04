@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OJAI\Dashboard\Assessment\Project\Domain;
 
 use OJAI\Dashboard\Assessment\Configuration\Domain\Assessment_Configuration_Profile;
+use OJAI\Dashboard\Assessment\Configuration\Domain\Rubric_Exception_Scores;
 use OJAI\Dashboard\Worksheet\Authoring\Domain\Canonical_Json;
 use OJAI\Dashboard\Worksheet\Authoring\Domain\Public_Id;
 use OJAI\Dashboard\Worksheet\Authoring\Domain\Public_Id_Generator;
@@ -54,7 +55,7 @@ final class Project_Configuration {
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
 	public function normalize( array $value, bool $confirmed ): array {
-		self::keys( $value, array( 'learning_goals', 'achievement_standards', 'criteria', 'total_points' ) );
+		self::keys( $value, array_merge( array( 'learning_goals', 'achievement_standards', 'criteria', 'total_points' ), array_key_exists( 'exception_scores', $value ) ? array( 'exception_scores' ) : array() ) );
 		$result = $this->empty();
 		foreach ( array( 'learning_goals', 'achievement_standards', 'criteria' ) as $key ) {
 			if ( ! is_array( $value[ $key ] ) || ! array_is_list( $value[ $key ] ) || count( $value[ $key ] ) > 100 ) {
@@ -99,6 +100,9 @@ final class Project_Configuration {
 			$result['total_points'] = $prepared['total_points'];
 		} elseif ( '0' !== $value['total_points'] ) {
 			throw new Project_Input_Failure( '평가 항목이 없으면 총점은 0이어야 합니다.' );
+		}
+		if ( array_key_exists( 'exception_scores', $value ) ) {
+			$result['exception_scores'] = Rubric_Exception_Scores::normalize( $value['exception_scores'], $result['total_points'] );
 		}
 		return $result;
 	}
@@ -167,13 +171,15 @@ final class Project_Configuration {
 	 * @return array
 	 */
 	public static function rubric( array $project ): array {
-		$value = array( 'criteria' => $project['configuration']['criteria'] );
+		$value  = array( 'criteria' => $project['configuration']['criteria'] );
+		$extra  = array_intersect_key( $project['configuration'], array( 'exception_scores' => true ) );
+		$value += $extra;
 		return array(
 			'revision_id'  => $project['revision_id'],
 			'content_hash' => hash( 'sha256', ( new Canonical_Json() )->encode( $value ) ),
 			'criteria'     => $value['criteria'],
 			'total_points' => $project['configuration']['total_points'],
-		);
+		) + $extra;
 	}
 
 	/**

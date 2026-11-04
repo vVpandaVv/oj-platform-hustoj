@@ -434,8 +434,9 @@ final class WordPress_Teacher_Submission_Control_Repository implements Teacher_S
 		) {
 			$this->stored_invalid();
 		}
-		$validated = $this->responses->validate_complete( $this->response_profile( $current ), $response['answers'] );
-		if ( $validated['answers'] !== $response['answers'] ) {
+		// An already official deadline submission can contain unanswered required fields.
+		$validated = $this->responses->validate( $this->response_profile( $current ), $response['answers'] );
+		if ( $this->canonical->encode( $validated['answers'] ) !== $this->canonical->encode( $response['answers'] ) ) {
 			$this->stored_invalid();
 		}
 		$attachment_hash = $this->stored_hash( $row['attachment_set_hash'] ?? null );

@@ -242,7 +242,13 @@ final class WordPress_Submission_Evaluation_Source implements Submission_Evaluat
 					'content_hash' => $rubric['content_hash'],
 					'state'        => 'active',
 					'subject_type' => 'student_submission',
-					'value'        => array( 'criteria' => $rubric['criteria'] ),
+					'value'        => array_intersect_key(
+						$rubric,
+						array(
+							'criteria'         => true,
+							'exception_scores' => true,
+						)
+					),
 					'total_points' => $rubric['total_points'],
 				),
 			);
@@ -335,7 +341,8 @@ final class WordPress_Submission_Evaluation_Source implements Submission_Evaluat
 			$this->invalid( '$.artifacts.response' );
 		}
 		try {
-			$expected = $this->responses->validate_complete( $profile, $response['answers'] )['attachments'];
+			// Official deadline submissions may be incomplete; attachment safety remains mandatory.
+			$expected = $this->responses->validate( $profile, $response['answers'] )['attachments'];
 		} catch ( Throwable ) {
 			$this->invalid( '$.artifacts.validate_complete' );
 		}

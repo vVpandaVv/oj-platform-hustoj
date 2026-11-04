@@ -1,0 +1,95 @@
+{
+  "candidateVersion": "1.0.0-rc.4",
+  "date": "2026-11-03",
+  "status": "local_verification_passed_live_acceptance_pending",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "featureFreeze": "feature-freeze-1.0.0-rc.4.json",
+  "checks": {
+    "php": 1217,
+    "frontend": 89,
+    "installerShell": 26,
+    "runner": 91,
+    "freeze": 4,
+    "acceptanceRest": 15,
+    "acceptancePython": 26,
+    "total": 1468
+  },
+  "browser": {
+    "report": "browser-ui-ux-validation-1.0.0-rc.4.json",
+    "flows": 15,
+    "pageErrors": 0,
+    "actualPlatformCss": true,
+    "actualPhpHostRenderer": true,
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualDatabase": false,
+    "actualRunner": false,
+    "actualHardware": false
+  },
+  "environment": {
+    "php": "8.5.5 Windows, PDO SQLite",
+    "node": "24.22.1 Windows",
+    "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+    "python": "3.14 Windows",
+    "shell": "Git Bash; nonprivileged command/filesystem fixtures"
+  },
+  "verified": [
+    "Native problem catalog type filters and external-only path avoid native programming count/list reads",
+    "Actual public and teacher problem handlers and class overview/progress/report handlers include bounded typed metadata",
+    "Root and subdirectory routes use the actual contributor, handler, browser URL provider and transport without double prefixes",
+    "Current navigation is independent from actual routing and preserves native authorization and console visibility",
+    "Default Microbit provider factory uses real Plugin runtime and SQLite, not only injected test services",
+    "Compact empty/error states, unambiguous current navigation, keyboard focus, dark theme and bounded 320/390/440/1280px widths",
+    "Cancelled navigation retains drafts and approved navigation consumes one beforeunload bypass without clearing dirty projects",
+    "Current lesson participation/management is revalidated with exact-class bounded metadata queries",
+    "Public learners have problem-view links only; new class sections obey existing host performance-mode restrictions",
+    "Existing schema 5, public/general/lesson scope isolation, GPIO/PWM/servo/I2C/sequence grading and installer coexistence regressions remain intact"
+  ],
+  "actualTrialServer": false,
+  "actualWordPress": false,
+  "actualMySQL": false,
+  "actualDocker": false,
+  "actualHustojParallelLoad": false,
+  "actualBackupRestore": false,
+  "actualHardware": false,
+  "pending": [
+    "Actual WordPress/PHP8.3 schema upgrade and private configuration",
+    "Actual class/group ledger permissions and concurrent revocation",
+    "MySQL/MariaDB plans, unique migration, transactions, concurrent locks and workload",
+    "Representative lessons and student sessions with actual HUSTOJ judging",
+    "Matched plugin/database backup restore and privacy/retention completion",
+    "Physical HEX/WebUSB if official device support is included",
+    "Actual native menu, fallback roles, subdirectory and theme behavior on the installed WordPress site",
+    "Performance-mode policy including pre-existing direct addon URLs, not only new host sections"
+  ],
+  "limitations": [
+    "SQLite and fake dbDelta/POSIX/WordPress do not certify actual MySQL or WordPress authentication",
+    "Browser uses controlled loopback REST and iframe messages, not the actual MakeCode service",
+    "Platform roster gateway may load its complete bounded ledger before returning one page; actual load remains unmeasured",
+    "A disabled lesson cannot provide a current roster through the public API; authorized teachers use retained submission history",
+    "External membership authorization cannot share the local recording transaction; extreme concurrent ledger revocation remains an actual-server test",
+    "Code-only downgrade to rc.2 or older does not understand lesson scopes; restore a matching database snapshot too",
+    "New native class sections inherit existing host performance-mode restrictions; old direct addon pages retain their existing policy and require explicit live evaluation checks"
+  ],
+  "requiresPlatform": ">=2.5.9 <3.0.0",
+  "requiresAddonApi": "^1.9",
+  "platform": {
+    "version": "2.5.9",
+    "addonApi": "1.9.0",
+    "commit": "d54b70479049f1a8ca7e5ca774778bb4d3dc809f",
+    "phpSyntaxFiles": 1659,
+    "testScripts": 111,
+    "releaseGatePassed": true,
+    "packageSha256": "a7ab51aac9728826f26ce67c3abe45f9e1d931550f41a7d061f858708a7f82ee",
+    "packageManifest": "../../_releases/oj-platform/2.5.9/oj-platform-2.5.9.manifest.json"
+  },
+  "initialPlatformEnvironmentRetry": {
+    "cause": "Local PHP CLI cURL extension disabled",
+    "initialScriptsPassed": 110,
+    "initialScriptsFailed": 1,
+    "isolatedOperationsRetryPassed": true,
+    "phpIniModified": false,
+    "officialReleaseGateEnablesExtensionsPerProcess": true
+  }
+}

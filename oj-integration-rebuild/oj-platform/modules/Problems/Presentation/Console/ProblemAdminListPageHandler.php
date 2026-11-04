@@ -31,7 +31,8 @@ final class ProblemAdminListPageHandler implements RouteHandler
         private readonly ActionUrlProvider $actionUrls,
         private readonly ActionSecurity $security,
         private readonly ProblemHtml $html,
-        private readonly PaginationView $pagination
+        private readonly PaginationView $pagination,
+        private readonly ?\CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog $nativeLearning = null
     ) {
     }
 
@@ -39,6 +40,8 @@ final class ProblemAdminListPageHandler implements RouteHandler
     {
         unset($route);
         $userId = $this->accounts->current()->identity()?->userId() ?? 0;
+        $showProgramming = $this->nativeLearning?->showsProgramming($request, true) ?? true;
+        $hasNative = $this->nativeLearning?->hasProviders(true) ?? false;
         $keyword = trim($request->queryString('q'));
         $visibility = match ($request->queryString('visibility')) {
             'published' => ProblemVisibility::Published,
@@ -52,24 +55,24 @@ final class ProblemAdminListPageHandler implements RouteHandler
         };
         $page = max(1, (int) $request->queryString('page', '1'));
         $limit = 50;
-        $problems = $this->catalog->managedPage(
+        $problems = $showProgramming ? $this->catalog->managedPage(
             $userId,
             $keyword,
             $visibility,
             $limit,
             ($page - 1) * $limit,
             $specialJudge
-        );
-        $metadata = $this->catalog->metadataMany(array_map(
+        ) : [];
+        $metadata = $showProgramming ? $this->catalog->metadataMany(array_map(
             static fn (JudgeProblem $problem): ProblemId => $problem->id(),
             $problems
-        ));
-        $total = $this->catalog->managedCount(
+        )) : [];
+        $total = $showProgramming ? $this->catalog->managedCount(
             $userId,
             $keyword,
             $visibility,
             $specialJudge
-        );
+        ) : 0;
         $canGenerateMetadata = false;
         foreach ($problems as $problem) {
             if ($this->access->canGenerateMetadataAi($userId, $problem->id())) {
@@ -89,11 +92,14 @@ final class ProblemAdminListPageHandler implements RouteHandler
                     $total
                 )
                 : '')
-            . ($this->access->canCreate($userId)
+            . ($showProgramming && $this->access->canCreate($userId)
                 ? '<a class="ojp-button ojp-button--primary" href="/oj-console/problems/new">문제 추가</a>'
                 : '')
             . '</div></header>'
-            . $this->filters($keyword, $visibility, $specialJudge)
+            . ($this->nativeLearning?->problemFilters($request, true) ?? '')
+            . ($this->nativeLearning?->problems($request, true) ?? '')
+            . ($showProgramming ? (($hasNative ? '<h2>프로그래밍 문제</h2><p class="ojp-muted">프로그래밍 문제 ' . number_format($total) . '개</p>' : '')
+            . $this->filters($keyword, $visibility, $specialJudge, $request->queryString('type'))
             . '<div data-ojp-bulk-select>'
             . $this->bulkForm($canGenerateMetadata)
             . $this->table($problems, $metadata, $userId)
@@ -106,8 +112,9 @@ final class ProblemAdminListPageHandler implements RouteHandler
                     'q' => $keyword,
                     'visibility' => $visibility?->value ?? '',
                     'judging' => $this->judgingValue($specialJudge),
+                    'type' => $request->queryString('type'),
                 ], static fn (string $value): bool => $value !== '')
-            );
+            )) : '');
 
         return $this->pages->respond(
             '문제 관리',
@@ -120,11 +127,13 @@ final class ProblemAdminListPageHandler implements RouteHandler
     private function filters(
         string $keyword,
         ?ProblemVisibility $visibility,
-        ?bool $specialJudge
+        ?bool $specialJudge,
+        string $type = ''
     ): string {
         $judging = $this->judgingValue($specialJudge);
 
         return '<form class="ojp-filter-bar" method="get" action="/oj-console/problems">'
+            . ($type === '' ? '' : '<input type="hidden" name="type" value="' . $this->html->escape($type) . '">')
             . '<div class="ojp-filter-bar__primary">'
             . '<label class="ojp-field"><span class="ojp-label">검색</span>'
             . '<input class="ojp-input" type="search" name="q" value="'

@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Schema_Catalog {
 	public const ADDON_ID       = 'oj-ai-dashboard';
-	public const SCHEMA_VERSION = '1.0.4';
+	public const SCHEMA_VERSION = '1.0.6';
 	public const TABLE_COUNT    = 48;
 
 	public const OWNER_DATABASE                 = 'Database';
@@ -724,6 +724,7 @@ final class Schema_Catalog {
 						'auto_submit_completed_at_utc'    => 'DATETIME NULL',
 					),
 					Schema_Profile::json_columns( 'resubmission_policy' ),
+					Schema_Profile::json_columns( 'exception_policy', true ),
 					array( 'target_snapshot_hash' => 'CHAR(64) NOT NULL' )
 				),
 				array(
@@ -749,7 +750,8 @@ final class Schema_Catalog {
 					array(
 						'snapshot_hash' => 'CHAR(64) NOT NULL',
 						'state'         => 'VARCHAR(32) NOT NULL',
-					)
+					),
+					Schema_Profile::json_columns( 'non_submission_grade', true )
 				),
 				array(
 					self::uq( 'uq_assignment_target_public', 'public_id' ),

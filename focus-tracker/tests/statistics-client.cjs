@@ -217,3 +217,42 @@ test('duplicate script execution and DOM readiness bind each widget once', async
     assert.equal(app.requests.length, 1);
     app.again(); await app.settle(); assert.equal(app.requests.length, 1);
 });
+
+test('category charts and accessible tables distinguish ML practice, real zero and missing historical classification', async () => {
+    const pageCategories = [
+        { category: 'problem', subtype: null, activeSeconds: 120, observedSeconds: 180, status: 'complete' },
+        { category: 'practice', subtype: 'ml', activeSeconds: 60, observedSeconds: 90, status: 'complete' },
+        { category: 'practice', subtype: null, activeSeconds: null, observedSeconds: null, status: 'no_data' },
+        { category: 'material', subtype: null, activeSeconds: 0, observedSeconds: 150, status: 'complete' },
+        { category: 'game', subtype: null, activeSeconds: null, observedSeconds: null, status: 'no_data' },
+        { category: 'unclassified', subtype: null, activeSeconds: null, observedSeconds: null, status: 'unavailable', coverageUnknown: true },
+    ];
+    const app = runtime({ responder: () => response(data({ pageCategories })) }); await app.settle();
+    const section = app.root.querySelector('[data-stat="categories"]');
+    assert.match(section.textContent, /범주를 옮겼다는 이유로 감점하거나 미집중으로 판단하지 않습니다/);
+    assert.match(section.textContent, /관측된 열람 시간에는 화면 활성 시간이 포함/);
+    assert.match(section.querySelector('[data-stat-category="practice:ml"]').textContent, /ML 실습1\.0분1\.5분/);
+    assert.match(section.querySelector('[data-stat-category="practice"]').textContent, /실습·학습도구\(ML 제외\)/);
+    assert.match(section.textContent, /일반 실습에 중복 합산하지 않습니다/);
+    assert.match(section.querySelector('[data-stat-category="material"]').textContent, /0\.0분2\.5분/);
+    assert.match(section.querySelector('[data-stat-category="game"]').textContent, /——/);
+    assert.match(section.querySelector('[data-stat-category="unclassified"]').textContent, /이전 기록·미분류——/);
+    assert.match(section.textContent, /분류 이전 자료/);
+    assert.equal(section.querySelectorAll('.ftk-stat-category-observed').length, 3);
+    assert.equal(section.querySelectorAll('.ftk-stat-category-active').length, 3);
+    assert.equal(section.querySelector('svg').getAttribute('role'), 'img');
+    assert.match(section.querySelector('svg').getAttribute('aria-label'), /합쳐 더하지 않습니다/);
+    app.change('period', 'month'); await app.settle();
+    assert.match(app.requests.at(-1).url, /period=month/);
+    assert.equal(app.root.querySelectorAll('[data-stat-category]').length, 6, 'month refresh replaces rather than duplicates rows');
+});
+
+test('legacy reports explain missing category evidence and unknown labels never become markup', async () => {
+    const legacy = runtime(); await legacy.settle();
+    assert.match(legacy.root.querySelector('[data-stat="categories"]').textContent, /분류 기능이 적용되기 전 기록은 추정해 채우지 않습니다/);
+    const app = runtime({ responder: () => response(data({ totals: totals({ pageCategories: [
+        { category: '<img src=x onerror=alert(1)>', subtype: '<script>', activeSeconds: null, observedSeconds: null, status: 'unavailable' },
+    ] }) })) }); await app.settle();
+    assert.match(app.root.querySelector('[data-stat="categories"]').textContent, /분류 확인 필요/);
+    assert.equal(app.root.querySelectorAll('img,script').length, 0);
+});

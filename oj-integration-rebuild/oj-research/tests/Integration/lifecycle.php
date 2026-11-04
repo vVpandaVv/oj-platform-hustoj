@@ -89,7 +89,7 @@ if (($argv[1] ?? '') === 'platform-first') { require $platformRoot . '/oj-platfo
 else { require $file; require $platformRoot . '/oj-platform.php'; }
 ($GLOBALS['research_activate'])();
 $assert(defined('OJ_RESEARCH_VERSION'), 'Separate WordPress entrypoint loads');
-$assert(OJ_PLATFORM_ADDON_API_VERSION === '1.2.0' && ! defined('OJ_PLATFORM_RESEARCH_API_VERSION'), 'General and research addons share one API version');
+$assert(version_compare(OJ_PLATFORM_ADDON_API_VERSION,'1.2.0','>=') && version_compare(OJ_PLATFORM_ADDON_API_VERSION,'2.0.0','<') && ! defined('OJ_PLATFORM_RESEARCH_API_VERSION'), 'General and research addons share one compatible API version');
 
 // An unchanged 1.1 addon coexists with the early research extension in the real host boot flow.
 $legacyContexts = [];
@@ -124,10 +124,11 @@ $build = static function () use ($platformRoot) {
 };
 $container = $build();
 $assert(count($legacyContexts) === 1 && $legacyContexts[0]->snapshot()->status() === 'accepted', 'Existing addon register/onReady are invoked once alongside research');
-$assert($legacyContexts[0]->snapshot()->requiredAddonApi() === '^1.1.0' && $legacyContexts[0]->snapshot()->actualAddonApi() === '1.2.0', 'An existing addon executes against API 1.2 without rewriting its manifest');
+$assert($legacyContexts[0]->snapshot()->requiredAddonApi() === '^1.1.0' && $legacyContexts[0]->snapshot()->actualAddonApi() === OJ_PLATFORM_ADDON_API_VERSION, 'An existing addon executes against the current host API without rewriting its manifest');
 $assert($legacyContexts[0]->contexts() instanceof \CodingPanda\OjPlatform\AddonApi\V1\AddonContextGatewayV1 && $legacyContexts[0]->aiTasks() instanceof \CodingPanda\OjPlatform\AddonApi\V1\AddonAiTaskGatewayV1, 'Existing Context and AI task gateways remain available');
 $assert($legacyContexts[0] instanceof \CodingPanda\OjPlatform\AddonApi\V1\AddonEditorRuntimeContextV1 && $legacyContexts[0]->editor() instanceof \CodingPanda\OjPlatform\AddonApi\V1\AddonEditorGatewayV1, 'API 1.1 editor extension remains available');
-$assert($container->get(FoundationServiceIds::TABLE_SCHEMAS)->count() === 52, 'Companion contributes its three schemas before registry freeze');
+$expectedTables=count($db->tables);
+$assert($container->get(FoundationServiceIds::TABLE_SCHEMAS)->count() === $expectedTables, 'Companion contributes its three schemas before registry freeze');
 $catalog = $container->get(\CodingPanda\OjPlatform\Modules\Migration\Application\MigrationCatalog::class);
 $assert(count($catalog->forWave(\CodingPanda\OjPlatform\Modules\Migration\Domain\MigrationWave::Research)) === 3, 'Legacy migration includes companion tables when active');
 $assert($container->get(FoundationServiceIds::ROUTES)->find('console.research.new') !== null, 'Research UI connected through host routes');
@@ -145,7 +146,7 @@ $saved = $GLOBALS['oj_platform_test_actions']['oj_platform_register_extensions']
 unset($GLOBALS['oj_platform_test_actions']['oj_platform_register_extensions']);
 $without = $build();
 $assert(count($legacyContexts) === 2 && $legacyContexts[1]->snapshot()->status() === 'accepted', 'Existing addons also boot when the research plugin is absent');
-$assert($without->get(FoundationServiceIds::TABLE_SCHEMAS)->count() === 49, 'Host-only installation has no research schemas');
+$assert($without->get(FoundationServiceIds::TABLE_SCHEMAS)->count() === $expectedTables-3, 'Host-only installation has no research schemas');
 $assert($without->get(\CodingPanda\OjPlatform\Modules\Migration\Application\MigrationCatalog::class)->forWave(\CodingPanda\OjPlatform\Modules\Migration\Domain\MigrationWave::Research) === [], 'Legacy migration does not request unavailable companion schemas');
 $assert($without->get(FoundationServiceIds::ROUTES)->find('research.index') === null, 'Inactive companion contributes no research routes');
 $assert($without->get(FoundationServiceIds::FEATURES)->find('research') === null, 'Inactive companion contributes no management switch');

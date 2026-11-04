@@ -26,6 +26,7 @@ const nodes = {
   '[data-role="submission-control-summary"]': summary,
 };
 const scope = vm.createContext({
+  window: {},
   Date: class extends Date { static now() { return now; } },
   canManageSubmissions: true, canAssessSubmissions: true,
   find: selector => nodes[selector], create: node,

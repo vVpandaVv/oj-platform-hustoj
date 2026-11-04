@@ -1,0 +1,20 @@
+{
+  "version": "1.0.0-rc.1",
+  "date": "2026-10-28",
+  "baselineVersion": "0.5.1",
+  "featureFreeze": { "byteIdenticalProductFiles": 42, "versionOnlyEntrypoints": 3, "databaseSchema": 3, "gradingContract": "oj-gpio/3" },
+  "testRuntime": { "node": "24.22.1 Windows x64", "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5", "php": "8.5.5 Windows CLI", "python": "3.14 Windows; scripts target Ubuntu Python 3 stdlib" },
+  "checks": { "php": 887, "frontend": 50, "installerShell": 26, "runner": 91, "featureFreeze": 3, "acceptanceRest": 12, "acceptancePython": 26, "total": 1095 },
+  "localScope": ["actual PHP CLI and SQLite with WordPress/POSIX fixtures", "Bash offline installer and host command mocks", "loopback HTTP acceptance fixtures", "actual PXT compiler and simulator regression", "source freeze compared against immutable 0.5.1 release"],
+  "knownLocalExecutionEvent": "One Windows fixture move was temporarily denied; the unchanged targeted test passed on rerun and the final package gate was rerun.",
+  "liveTrialServerExecuted": false,
+  "liveInstallationRecovery": false,
+  "liveWordPressPermissions": false,
+  "liveMySqlPlansAndLocks": false,
+  "liveHustojParallelJudging": false,
+  "liveDockerIsolation": false,
+  "physicalUsbUpload": false,
+  "acceptanceApproval": "PENDING",
+  "checklistPreapproved": false,
+  "finalReleaseApproved": false
+}

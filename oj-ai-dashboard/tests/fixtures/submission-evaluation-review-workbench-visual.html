@@ -20,6 +20,8 @@
   <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" style="position:absolute">
     <symbol id="refresh-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-15.5-6.2L3 8M3 3v5h5M3 12a9 9 0 0 0 15.5 6.2L21 16M16 16h5v5"/></symbol>
     <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+    <symbol id="arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
     <symbol id="settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4L10.4 6.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1Z"/></symbol>
   </svg>
   <main class="fixture-shell">
@@ -98,6 +100,7 @@
         candidateSubmission: '01K5A00000000000000000000J',
         candidateRevision: '01K5A00000000000000000000K',
         candidateEvaluation: '01K5A00000000000000000000M',
+        manualEvaluation: '01K5A00000000000000000000R',
         candidateAttachment: '01K5A00000000000000000000N',
       };
       const hash = (letter) => letter.repeat(64);
@@ -235,18 +238,75 @@
         releases: [],
         review_precondition: null,
       };
+      const manualDetail = structuredClone(detail);
+      manualDetail.evaluation.id = ids.manualEvaluation;
+      Object.assign(manualDetail.evaluation, { assignment: candidateEvaluation.assignment, learner: candidate.learner, submission: candidateEvaluation.submission, state: 'review_required', latest_run: { ...evaluation.latest_run, operation: 'manual_prepare' } });
+      Object.assign(manualDetail.source.submission_revision, { id: ids.candidateRevision, content_hash: hash('7') });
+      manualDetail.source.responses = [
+        { ...detail.source.responses[0], answer: { text: candidateSubmission.official_revision.response.answers.answerOne } },
+        { ...detail.source.responses[1], kind: 'short_text', answer: { text: '출처표시-예시.png' } },
+      ];
+      Object.assign(manualDetail.selected_result, { provider_status: 'not_requested', candidate_score: null, abstained: true, safety_flagged: false, overall_confidence: '0.0000', summary: '교사 직접 채점' });
+      manualDetail.selected_result.items.forEach(item => Object.assign(item, { candidate_points: null, decision: 'abstain', rationale: null, abstain_reason: 'not_requested', confidence: '0.0000', flags: [], evidence: [], levels: [
+        { label: '관찰한 사실과 판단 근거를 구체적으로 연결하여 설명함.', points: item.maximum_points },
+        { label: '관찰한 사실을 부분적으로 설명하였으나 판단 근거가 부족함.', points: '1.0000' },
+        { label: '평가 기준에 해당하는 응답이 없음.', points: '0.0000' },
+      ] }));
+      const rubricPreview = { items: structuredClone(manualDetail.selected_result.items), maximum_score: '10.0000', bindings: manualDetail.source.bindings };
+      window.__manualFixture = manualDetail;
+      window.__aiFixture = candidateEvaluationDetail;
       const envelope = (data, meta = {}) => ({ data, meta: { correlation_id: 'submission-review-visual', ...meta }, links: {}, actions: [] });
-      const jsonResponse = (payload, status = 200) => Promise.resolve({ ok: status >= 200 && status < 300, status, json: async () => payload });
+      const jsonResponse = (payload, status = 200) => Promise.resolve({ ok: status >= 200 && status < 300, status, json: async () => structuredClone(payload) });
       window.__reviewRequests = [];
       window.__manualRequests = [];
+      window.__writeRequests = [];
       if (new URLSearchParams(location.search).has('manual_only')) document.querySelector('#oj-ai-submission-review-app').dataset.canAssess = '0';
       window.__evaluationRequests = [];
       window.__evaluationStarted = false;
       window.__reviewDetailReads = 0;
       window.__reviewConflictOnce = false;
       window.__reviewPermissionDenied = false;
+      window.__targetGrades = {};
+      window.__targetGradeRequests = [];
+      window.__exceptionPolicy = null;
+      window.__policyRequests = [];
+      window.__historyReads = [];
+      const targetBinding = { binding_key: hash('e'), response_id: 'essay', label: '학생 답안의 근거', maximum_points: '20', levels: [
+        { level_key: 'level-high', label: '근거를 충분히 제시함', points: '20' },
+        { level_key: 'level-low', label: '근거를 부분적으로 제시함', points: '8' },
+      ] };
+      const draftRevisions = [3, 2, 1].map(n => ({ id: `draft-${n}`, revision_no: n, created_at_utc: `2026-11-03 01:0${n}:00`, state: 'draft', is_current: n === 3, is_official: false,
+        response: { answers: { essay: ['처음 작성한 답안', '근거를 추가한 답안', '최종 저장된 작성 중 답안'][n - 1] } } }));
       window.fetch = async (url, options = {}) => {
         const value = String(url);
+        if (options.method === 'POST') window.__writeRequests.push(value);
+        if (/\/submissions\/[^/]+(?:\/revisions)?\?/.test(value)) {
+          window.__historyReads.push(value);
+          if (window.__historyDelay) await new Promise(resolve => setTimeout(resolve, window.__historyDelay));
+          if (window.__historyFail) return jsonResponse({ message: '작성 이력을 불러오지 못했습니다.' }, 503);
+          const draft = value.includes('/submissions/draft');
+          if (value.includes('/revisions?')) return jsonResponse(envelope({ revisions: draft ? (value.includes('cursor=older') ? draftRevisions.slice(2) : draftRevisions.slice(0, 2)) : [] }, { next_cursor: draft && !value.includes('cursor=older') ? 'older' : '' }));
+          return jsonResponse(envelope({ submission: draft ? { id: 'draft', current_revision: draftRevisions[0], official_revision: null, attachments: [] } : candidateSubmission }));
+        }
+        if (value.includes('/assignment-exception-scores?')) {
+          const body = JSON.parse(options.body);
+          window.__policyRequests.push({ body, headers: options.headers });
+          if (window.__policyFail) return jsonResponse({ message: '별도 점수 저장에 실패했습니다.' }, 503);
+          if (body.expected_hash !== (window.__exceptionPolicy?.hash ?? null)) return jsonResponse({ message: '설정이 변경되었습니다.' }, 409);
+          const revision = (window.__exceptionPolicy?.revision || 0) + 1;
+          window.__exceptionPolicy = { ...body, assignment_id: ids.assignment, revision, hash: String(revision).repeat(64), actor_user_id: 42, updated_at_utc: '2026-11-04 04:00:00' };
+          return jsonResponse(envelope({ policy: window.__exceptionPolicy, replayed: false }));
+        }
+        if (value.includes('/assignment-target-grades?')) {
+          const body = JSON.parse(options.body);
+          window.__targetGradeRequests.push(body);
+          if (window.__targetGradeConflict) return jsonResponse({ message: '제출 상태가 변경되었습니다.' }, 409);
+          const old = window.__targetGrades[body.target_id];
+          const grade = { ...body, assignment_id: ids.assignment, status: body.action === 'withdraw' ? 'withdrawn' : 'confirmed',
+            maximum_score: '20', revision: (old?.revision || 0) + 1, hash: String((old?.revision || 0) + 1).repeat(64), updated_at_utc: '2026-11-03 01:00:00' };
+          window.__targetGrades[body.target_id] = grade;
+          return jsonResponse(envelope({ grade, replayed: false }));
+        }
         if (value.includes('/submission-evaluation-roster?')) {
           if (new URLSearchParams(location.search).has('roster_error')) return jsonResponse({ message: '학생 명단을 불러오지 못했습니다.' }, 503);
           const rows = [evaluation, second, candidate].map((item, index) => ({
@@ -258,12 +318,22 @@
             { id: 'target-missing', learner: { user_id: 76, display_name: '한지우' }, assigned: true, current_member: true, status: 'not_started', submission: null },
             { id: 'learner-new', learner: { user_id: 77, display_name: '홍예준' }, assigned: false, current_member: true, status: 'not_assigned', submission: null }
           );
+          if (new URLSearchParams(location.search).has('missing_grade')) rows.forEach(row => {
+            if (row.assigned && !row.submission?.official_revision_id) {
+              row.grading = { allowed: true, maximum_score: '20', publication_hash: 'a'.repeat(64), bindings: [targetBinding], exception_scores: { not_submitted: '0', long_absence: '5' } };
+              if (new URLSearchParams(location.search).has('no_exception_scores')) row.grading.exception_scores = { not_submitted: null, long_absence: null };
+              if (window.__exceptionPolicy) Object.assign(row.grading, { exception_policy: window.__exceptionPolicy, exception_scores: window.__exceptionPolicy.scores });
+              row.non_submission_grade = window.__targetGrades[row.id] || null;
+            }
+          });
           return jsonResponse(envelope({ items: rows }));
         }
         if (value.includes('/assignments?')) return jsonResponse(envelope({items:[evaluation.assignment]}));
         if (value.endsWith('/contexts?limit=100')) return jsonResponse(envelope({ items: [{ type: 'class', id: 'class-5-2', revision: 'membership-17', label: '5학년 2반', selectable: true }] }));
         if (value.includes('/submission-evaluations?')) {
-          const items = window.__evaluationStarted ? [evaluation, second, candidateEvaluation] : [evaluation, second];
+          const items = [evaluation, second];
+          if (window.__manualRequests.length) items.push(manualDetail.evaluation);
+          if (window.__evaluationStarted) items.push(candidateEvaluation);
           return jsonResponse(envelope({ items }, { next_cursor: '', has_more: false, limit: 40 }));
         }
         if (value.includes('/submission-evaluation-candidates?')) {
@@ -271,14 +341,21 @@
           return jsonResponse(envelope({ items }, { next_cursor: '', has_more: false, limit: 40 }));
         }
         if (value.includes(`/submission-evaluation-candidates/${ids.candidateSubmission}?`) && (!options.method || options.method === 'GET')) {
-          return jsonResponse(envelope({ submission: candidateSubmission }));
+          return jsonResponse(envelope({ submission: candidateSubmission, rubric_preview: rubricPreview }));
         }
         if (value.includes(`/submission-evaluations/${ids.candidateEvaluation}?`) && (!options.method || options.method === 'GET')) {
           window.__reviewDetailReads += 1;
+          window.__reviewFixture = candidateEvaluationDetail;
           return jsonResponse(envelope(candidateEvaluationDetail));
+        }
+        if (value.includes(`/submission-evaluations/${ids.manualEvaluation}?`) && (!options.method || options.method === 'GET')) {
+          window.__reviewDetailReads += 1;
+          window.__reviewFixture = manualDetail;
+          return jsonResponse(envelope(manualDetail));
         }
         if (value.includes(`/submission-evaluations/${ids.evaluation}?`) && (!options.method || options.method === 'GET')) {
           window.__reviewDetailReads += 1;
+          window.__reviewFixture = detail;
           return jsonResponse(envelope(detail));
         }
         if (value.includes(`/submission-evaluations/${ids.evaluationTwo}?`) && (!options.method || options.method === 'GET')) {
@@ -287,6 +364,7 @@
         }
         if (value.includes(`/submissions/${ids.candidateSubmission}/commands/evaluate?`) && options.method === 'POST') {
           window.__evaluationRequests.push({ url: value, headers: options.headers, body: JSON.parse(options.body) });
+          const replay = window.__evaluationStarted;
           window.__evaluationStarted = true;
           return jsonResponse(envelope({
             evaluation: {
@@ -296,22 +374,25 @@
               submission_revision_id: ids.candidateRevision,
             },
             run: { id: ids.run, run_no: 1, state: 'queued' },
-          }), 202);
+          }, { idempotent_replay: replay }), 202);
         }
         if (value.includes(`/submissions/${ids.candidateSubmission}/commands/start-manual-assessment?`) && options.method === 'POST') {
           window.__manualRequests.push({ url: value, headers: options.headers, body: JSON.parse(options.body) });
-          Object.assign(evaluation, { learner: candidate.learner, submission: candidateEvaluation.submission, state: 'review_required', latest_run: { ...evaluation.latest_run, operation: 'manual_prepare' } });
-          Object.assign(detail.source.submission_revision, { id: ids.candidateRevision, content_hash: hash('7') });
-          Object.assign(detail.selected_result, { provider_status: 'not_requested', candidate_score: null, abstained: true, safety_flagged: false, overall_confidence: '0.0000', summary: '교사 직접 채점' });
-          detail.selected_result.items.forEach(item => Object.assign(item, { candidate_points: null, decision: 'abstain', rationale: null, abstain_reason: 'not_requested', confidence: '0.0000', flags: [], evidence: [], levels: [
-            { label: '관찰한 사실과 판단 근거를 구체적으로 연결하여 설명함.', points: item.maximum_points },
-            { label: '관찰한 사실을 부분적으로 설명하였으나 판단 근거가 부족함.', points: '1.0000' },
-            { label: '평가 기준에 해당하는 응답이 없음.', points: '0.0000' },
-          ] }));
-          return jsonResponse(envelope({ evaluation: { id: ids.evaluation, state: 'review_required' }, run: { id: ids.run, state: 'succeeded' } }), 201);
+          if (window.__prepareUnavailable) return jsonResponse({ message: '채점표를 저장하지 못했습니다.' }, 503);
+          return jsonResponse(envelope({ evaluation: { id: ids.manualEvaluation, state: 'review_required' }, run: { id: ids.run, state: 'succeeded' } }), 201);
+        }
+        if (value.includes('/commands/retry?') && options.method === 'POST') {
+          (window.__retryRequests ||= []).push({ url: value, headers: options.headers, body: JSON.parse(options.body) });
+          const current = value.includes(ids.candidateEvaluation) ? candidateEvaluationDetail : detail;
+          current.evaluation.state = 'queued';
+          current.evaluation.latest_run = { ...current.evaluation.latest_run, run_no: current.evaluation.latest_run.run_no + 1, state: 'queued' };
+          return jsonResponse(envelope({ evaluation: { id: current.evaluation.id, state: 'queued' } }), 202);
         }
         if (value.includes('/commands/review?') && options.method === 'POST') {
+          const detail = value.includes(ids.manualEvaluation) ? manualDetail : value.includes(ids.candidateEvaluation) ? candidateEvaluationDetail : window.__originalFixture;
+          const evaluation = detail.evaluation;
           window.__reviewRequests.push({ url: value, headers: options.headers, body: JSON.parse(options.body) });
+          if (window.__reviewSaveUnavailable) return jsonResponse({ message: '저장에 실패했습니다.', data: { status: 503 } }, 503);
           if (window.__reviewConflictOnce) {
             window.__reviewConflictOnce = false;
             return jsonResponse({ code: 'review_source_stale', message: '평가 결과가 변경되었습니다.', data: { status: 409 } }, 409);
@@ -322,6 +403,7 @@
           if (window.__reviewPersistTransitions) {
             const body = JSON.parse(options.body);
             const withdrawn = body.payload.decision === 'withdrawn';
+            const draft = body.payload.decision === 'draft';
             const reviewNo = detail.reviews.length + 1;
             const reviewId = '01K5A0000000000000000000' + String(reviewNo).padStart(2, '0');
             const items = body.payload.decision === 'accepted'
@@ -330,19 +412,21 @@
             detail.reviews.forEach(item => { item.is_official = false; });
             detail.reviews.push({ id: reviewId, result_id: ids.result, review_no: reviewNo,
               decision: body.payload.decision, official_score: withdrawn ? null : String(items.reduce((sum, item) => sum + Number(item.official_points), 0)),
-              score_decisions: withdrawn ? null : { value: { items } }, is_official: !withdrawn,
+              score_decisions: withdrawn ? null : { value: { items } }, is_official: !withdrawn && !draft,
               reason: body.payload.reason, created_at_utc: '2026-10-23 10:00:00' });
             detail.review_precondition.expected_review_no = reviewNo;
-            detail.review_precondition.expected_official_review_id = withdrawn ? null : reviewId;
-            detail.review_precondition.expected_official_review_hash = withdrawn ? null : hash('8');
-            evaluation.review = { official_id: withdrawn ? null : reviewId, official_scope: withdrawn ? 'none' : 'this_evaluation' };
-            evaluation.state = withdrawn ? 'review_required' : 'reviewed';
+            detail.review_precondition.expected_official_review_id = withdrawn || draft ? null : reviewId;
+            detail.review_precondition.expected_official_review_hash = withdrawn || draft ? null : hash('8');
+            const review = detail.reviews.at(-1);
+            evaluation.review = { official_id: withdrawn || draft ? null : reviewId, official_scope: withdrawn || draft ? 'none' : 'this_evaluation', latest_id: reviewId, latest_no: reviewNo, latest_decision: body.payload.decision, latest_result_id: detail.selected_result.id, latest_score: review.official_score, official_score: withdrawn || draft ? null : review.official_score };
+            evaluation.state = withdrawn || draft ? 'review_required' : 'reviewed';
           } else evaluation.state = 'reviewed';
           return jsonResponse(envelope({ evaluation: { id: ids.evaluation }, result: { id: ids.result, hash: hash('9') }, review: { id: '01K5A00000000000000000000H', hash: hash('8'), review_no: 1, decision: 'adjusted', official_score: '6.5000', item_decisions: [] }, official_review: { id: '01K5A00000000000000000000H', hash: hash('8'), advanced: true } }), 201);
         }
         return jsonResponse({ code: 'oj_ai_not_found', message: '대상을 찾을 수 없습니다.', data: { status: 404 } }, 404);
       };
       window.__reviewFixture = detail;
+      window.__originalFixture = detail;
     })();
   </script>
   <script src="../../resources/js/worksheet-workflow.js"></script>

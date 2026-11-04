@@ -72,7 +72,8 @@ final class Submission_Evaluation_Review_Result {
 		}
 		$this->pointer( $official_review_id, $official_review_hash );
 		if (
-			$review_no < 1 || ! in_array( $decision, array( 'accepted', 'adjusted', 'rejected', 'withdrawn' ), true )
+			$review_no < 1 || ! in_array( $decision, array( 'accepted', 'adjusted', 'draft', 'rejected', 'withdrawn' ), true )
+			|| ( 'draft' === $decision && $official_pointer_advanced )
 			|| in_array( $decision, array( 'rejected', 'withdrawn' ), true ) !== ( null === $official_score )
 			|| in_array( $decision, array( 'rejected', 'withdrawn' ), true ) !== ( null === $score_decisions )
 			|| ( 'withdrawn' === $decision && ( null !== $official_review_id || ! $official_pointer_advanced ) )

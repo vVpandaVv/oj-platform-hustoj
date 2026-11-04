@@ -1,0 +1,13 @@
+{
+  "officialEditor": true,
+  "nativeBlocksSaveRestore": true,
+  "sourceSaveRestore": true,
+  "realPxtGrade": true,
+  "sensorActuatorPlayback": true,
+  "actualHexBytes": 1296908,
+  "hexRecordChecksums": true,
+  "teacherFormSave": true,
+  "uiErrors": [],
+  "hardwareUsbFlash": "not tested",
+  "wordpressDatabase": "memory REST fixture"
+}

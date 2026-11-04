@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningManifestBuilderV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningProviderV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningProviderDefinitionV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningQueryV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningLinkV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningItemV1;
+use CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningPageV1;
 use CodingPanda\OjPlatform\AddonApi\V1\AddonAiTaskDefinitionV1;
 use CodingPanda\OjPlatform\AddonApi\V1\AddonAiTaskInstructionV1;
 use CodingPanda\OjPlatform\AddonApi\V1\AddonAiTaskGatewayV1;
@@ -336,6 +343,9 @@ $interfaces = [
     ],
 ];
 
+$interfaces[AddonNativeLearningManifestBuilderV1::class] = array_merge($interfaces[AddonManifestBuilderV1::class], ['nativeLearningProvider' => ['void', [['definition', AddonNativeLearningProviderDefinitionV1::class]]]]);
+$interfaces[AddonNativeLearningProviderV1::class] = ['query' => [AddonNativeLearningPageV1::class, [['query', AddonNativeLearningQueryV1::class]]]];
+
 foreach ($interfaces as $interfaceName => $methods) {
     $reflection = new ReflectionClass($interfaceName);
     addonApiAssert($reflection->isInterface(), $interfaceName . '는 interface여야 합니다.');
@@ -397,16 +407,16 @@ $classes = [
         ['key' => 'string', 'label' => 'string', 'audience' => 'string'],
     ],
     AddonConsolePageDefinitionV1::class => [
-        [['key', 'string'], ['path', 'string'], ['handler', AddonPageHandlerV1::class], ['capability', 'string'], ['assetBundles', 'array', []]],
-        ['key' => 'string', 'path' => 'string', 'handler' => AddonPageHandlerV1::class, 'capability' => 'string', 'assetBundles' => 'array'],
+        [['key', 'string'], ['path', 'string'], ['handler', AddonPageHandlerV1::class], ['capability', 'string'], ['assetBundles', 'array', []], ['navigationMenuKey', '?string', null]],
+        ['key' => 'string', 'path' => 'string', 'handler' => AddonPageHandlerV1::class, 'capability' => 'string', 'assetBundles' => 'array', 'navigationMenuKey' => '?string'],
     ],
     AddonPublicPageDefinitionV1::class => [
-        [['key', 'string'], ['path', 'string'], ['handler', AddonPageHandlerV1::class], ['capability', 'string'], ['assetBundles', 'array', []]],
-        ['key' => 'string', 'path' => 'string', 'handler' => AddonPageHandlerV1::class, 'capability' => 'string', 'assetBundles' => 'array'],
+        [['key', 'string'], ['path', 'string'], ['handler', AddonPageHandlerV1::class], ['capability', 'string'], ['assetBundles', 'array', []], ['navigationMenuKey', '?string', null]],
+        ['key' => 'string', 'path' => 'string', 'handler' => AddonPageHandlerV1::class, 'capability' => 'string', 'assetBundles' => 'array', 'navigationMenuKey' => '?string'],
     ],
     AddonConsoleMenuDefinitionV1::class => [
-        [['key', 'string'], ['label', 'string'], ['anchor', 'string'], ['route', 'string'], ['capability', 'string'], ['order', 'int'], ['icon', 'string', '']],
-        ['key' => 'string', 'label' => 'string', 'anchor' => 'string', 'route' => 'string', 'capability' => 'string', 'order' => 'int', 'icon' => 'string'],
+        [['key', 'string'], ['label', 'string'], ['anchor', 'string'], ['route', 'string'], ['capability', 'string'], ['order', 'int'], ['icon', 'string', ''], ['fallbackForNativeMenu', '?string', null]],
+        ['key' => 'string', 'label' => 'string', 'anchor' => 'string', 'route' => 'string', 'capability' => 'string', 'order' => 'int', 'icon' => 'string', 'fallbackForNativeMenu' => '?string'],
     ],
     AddonConsoleLocalNavItemV1::class => [
         [['key', 'string'], ['label', 'string'], ['menu', 'string'], ['route', 'string'], ['order', 'int']],
@@ -429,8 +439,8 @@ $classes = [
         ['contractVersion' => 'string', 'content' => 'string', 'contentHash' => 'string'],
     ],
     AddonPageRequestV1::class => [
-        [['routeKey', 'string'], ['actorUserId', 'int'], ['parameters', 'array'], ['query', 'array'], ['locale', 'string'], ['correlationId', 'string']],
-        ['routeKey' => 'string', 'actorUserId' => 'int', 'parameters' => 'array', 'query' => 'array', 'locale' => 'string', 'correlationId' => 'string'],
+        [['routeKey', 'string'], ['actorUserId', 'int'], ['parameters', 'array'], ['query', 'array'], ['locale', 'string'], ['correlationId', 'string'], ['navigationUrls', 'array', []]],
+        ['routeKey' => 'string', 'actorUserId' => 'int', 'parameters' => 'array', 'query' => 'array', 'locale' => 'string', 'correlationId' => 'string', 'navigationUrls' => 'array'],
     ],
     AddonRuntimeSnapshotV1::class => [
         [['addonId', 'string'], ['addonVersion', 'string'], ['requiredPlatform', 'string'], ['actualPlatform', 'string'], ['requiredAddonApi', 'string'], ['actualAddonApi', 'string'], ['status', 'string'], ['code', 'string'], ['catalogRevision', 'string'], ['contributionCounts', 'array'], ['correlationId', 'string']],
@@ -594,6 +604,13 @@ $classes = [
     ],
 ];
 
+
+$classes[AddonNativeLearningProviderDefinitionV1::class] = [[['key','string'],['label','string'],['provider',AddonNativeLearningProviderV1::class],['order','int',50]], ['key'=>'string','label'=>'string','provider'=>AddonNativeLearningProviderV1::class,'order'=>'int']];
+$classes[AddonNativeLearningQueryV1::class] = [[['actorUserId','int'],['surface','string'],['contextId','int',0],['beforeId','int',0],['limit','int',20]], ['actorUserId'=>'int','surface'=>'string','contextId'=>'int','beforeId'=>'int','limit'=>'int']];
+$classes[AddonNativeLearningLinkV1::class] = [[['routeKey','string'],['label','string'],['parameters','array',[]],['query','array',[]]], ['routeKey'=>'string','label'=>'string','parameters'=>'array','query'=>'array']];
+$classes[AddonNativeLearningItemV1::class] = [[['externalId','string'],['title','string'],['typeLabel','string'],['primaryLink',AddonNativeLearningLinkV1::class],['secondaryLinks','array',[]],['statusLabel','string','']], ['externalId'=>'string','title'=>'string','typeLabel'=>'string','primaryLink'=>AddonNativeLearningLinkV1::class,'secondaryLinks'=>'array','statusLabel'=>'string']];
+$classes[AddonNativeLearningPageV1::class] = [[['items','array',[]],['nextBeforeId','?int',null],['actions','array',[]],['available','bool',true],['message','string','']], ['items'=>'array','nextBeforeId'=>'?int','actions'=>'array','isAvailable'=>'bool','message'=>'string']];
+
 foreach ($classes as $className => [$constructor, $getters]) {
     $reflection = new ReflectionClass($className);
     addonApiAssert($reflection->isFinal(), $className . '는 final이어야 합니다.');
@@ -675,8 +692,8 @@ addonApiSame($expectedFiles, $actualFiles, 'Addon API v1 공개 파일 allowlist
 
 $pluginSource = (string) file_get_contents($pluginRoot . '/oj-platform.php');
 addonApiAssert(
-    str_contains($pluginSource, "define('OJ_PLATFORM_ADDON_API_VERSION', '1.8.0');"),
-    'Addon API 1.8.0 공개 상수가 없습니다.'
+    str_contains($pluginSource, "define('OJ_PLATFORM_ADDON_API_VERSION', '1.9.0');"),
+    'Addon API 1.9.0 공개 상수가 없습니다.'
 );
 
 $baseline = json_decode(
@@ -975,7 +992,7 @@ addonApiThrows(
 fwrite(
     STDOUT,
     sprintf(
-        "C28-I06 Addon API 1.8.0 계약 검사 통과: interface %d개, DTO %d개, 권한 utility 1개, 기본 공개 symbol %d개 (연구 하위 계약 별도 검사)\n",
+        "C28-I06 Addon API 1.9.0 계약 검사 통과: interface %d개, DTO %d개, 권한 utility 1개, 기본 공개 symbol %d개 (연구 하위 계약 별도 검사)\n",
         count($interfaces),
         count($classes) + 1,
         count($expectedFiles)

@@ -35,8 +35,13 @@ final class MenuDefinition implements RegistryDefinition
         private readonly ?string $policy,
         array $anyFeatureKeys = [],
         private readonly ?string $section = null,
-        private readonly string $icon = ''
+        private readonly string $icon = '',
+        private readonly ?string $fallbackForNativeMenu = null
     ) {
+        if ($this->fallbackForNativeMenu !== null && ($this->fallbackForNativeMenu === $this->menuKey || ! in_array($this->fallbackForNativeMenu, ['problems.index', 'classes.index'], true))) {
+            throw new InvalidArgumentException('Unsupported native fallback menu.');
+        }
+
         if (preg_match('/^[a-z][a-z0-9_.-]*$/', $this->menuKey) !== 1) {
             throw new InvalidArgumentException('관리 메뉴 키 형식이 올바르지 않습니다.');
         }
@@ -124,8 +129,14 @@ final class MenuDefinition implements RegistryDefinition
             isset($definition['policy']) ? (string) $definition['policy'] : null,
             array_values((array) ($definition['any_feature_keys'] ?? [])),
             isset($definition['section']) ? (string) $definition['section'] : null,
-            (string) ($definition['icon'] ?? '')
+            (string) ($definition['icon'] ?? ''),
+            isset($definition['fallback_for_native_menu']) ? (string) $definition['fallback_for_native_menu'] : null
         );
+    }
+
+    public function fallbackForNativeMenu(): ?string
+    {
+        return $this->fallbackForNativeMenu;
     }
 
     public function key(): string

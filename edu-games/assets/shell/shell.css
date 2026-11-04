@@ -172,6 +172,7 @@
 .edu-game.eg-focused .eg-game-header {margin:0 0 8px;padding:0;border:0;gap:8px;justify-content:flex-end}
 .edu-game.eg-focused .eg-game-header :is(h2,.oj-code-brand,.oj-binary-brand) {display:none}
 .edu-game.eg-focused .ep-heading {display:none}
+.edu-game.eg-focused :is([data-binary-team-link],[data-device-team-link]) {display:none}
 .edu-game.eg-focused :is(.oj-code-stats,.oj-device-stats,.oj-typing-stats,.oj-image-stats,.oj-rain-stats,.oj-binary-sidebar,.eh-scoreboard) {grid-template-columns:repeat(auto-fit,minmax(80px,1fr));padding:8px 0;gap:0;margin:0 0 8px}
 .edu-game.eg-focused :is(.oj-code-stat,.oj-device-stat,.oj-typing-stat,.oj-image-stat,.oj-rain-stat,.oj-binary-sidecard,.eh-scoreboard>div) {padding:0 10px;gap:1px;min-height:0}
 .edu-game.eg-focused :is(.oj-code-stat,.oj-device-stat,.oj-typing-stat,.oj-image-stat,.oj-rain-stat,.oj-binary-sidecard,.eh-scoreboard>div)>strong {font-size:20px}

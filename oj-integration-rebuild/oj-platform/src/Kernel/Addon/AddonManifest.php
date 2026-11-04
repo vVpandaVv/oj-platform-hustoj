@@ -50,7 +50,8 @@ final class AddonManifest
         private readonly array $consoleLocalNav = [],
         private readonly array $activityProviders = [],
         private readonly array $siteAssets = [],
-        private readonly array $privacyData = []
+        private readonly array $privacyData = [],
+        private readonly array $nativeLearningProviders = []
     ) {
     }
 
@@ -83,6 +84,8 @@ final class AddonManifest
     public function siteAssets(): array { return $this->siteAssets; }
     /** @return list<AddonPrivacyDataDefinitionV1> */
     public function privacyData(): array { return $this->privacyData; }
+    /** @return list<\CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningProviderDefinitionV1> */
+    public function nativeLearningProviders(): array { return $this->nativeLearningProviders; }
 
     /** @return array<string, int> */
     public function contributionCounts(): array
@@ -110,6 +113,8 @@ final class AddonManifest
         if ($this->privacyData !== []) {
             $counts['privacy_data'] = count($this->privacyData);
         }
+
+        if ($this->nativeLearningProviders !== []) { $counts['native_learning_provider'] = count($this->nativeLearningProviders); }
 
         return $counts;
     }

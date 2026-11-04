@@ -22,27 +22,34 @@ final class ProblemListPageHandler implements RouteHandler
         private readonly PageResponder $pages,
         private readonly ProblemCatalogService $catalog,
         private readonly ProblemHtml $html,
-        private readonly PaginationView $pagination
+        private readonly PaginationView $pagination,
+        private readonly ?\CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog $nativeLearning = null
     ) {
     }
 
     public function handle(RouteMatch $route, HttpRequest $request): HttpResponse
     {
         unset($route);
+        $showProgramming = $this->nativeLearning?->showsProgramming($request) ?? true;
+        $hasNative = $this->nativeLearning?->hasProviders() ?? false;
         $keyword = trim($request->queryString('q'));
         $page = max(1, (int) $request->queryString('page', '1'));
         $limit = 50;
         $offset = ($page - 1) * $limit;
-        $problems = $this->catalog->publicPage($keyword, $limit, $offset);
-        $total = $this->catalog->publicCount($keyword);
-        $metadata = $this->catalog->metadataMany(array_map(
+        $problems = $showProgramming ? $this->catalog->publicPage($keyword, $limit, $offset) : [];
+        $total = $showProgramming ? $this->catalog->publicCount($keyword) : 0;
+        $metadata = $showProgramming ? $this->catalog->metadataMany(array_map(
             static fn (JudgeProblem $problem): ProblemId => $problem->id(),
             $problems
-        ));
+        )) : [];
 
         $content = '<header class="ojp-page-header"><div><p class="ojp-eyebrow">문제</p>'
             . '<h1>문제 목록</h1><p>주제와 난이도를 확인하고 풀 문제를 선택합니다.</p></div></header>'
+            . ($this->nativeLearning?->problemFilters($request) ?? '')
+            . ($this->nativeLearning?->problems($request) ?? '')
+            . ($showProgramming ? (($hasNative ? '<h2>프로그래밍 문제</h2><p class="ojp-muted">프로그래밍 문제 ' . number_format($total) . '개</p>' : '')
             . '<form class="ojp-filter-bar" method="get" action="/problems">'
+            . ($request->queryString('type') === 'programming' ? '<input type="hidden" name="type" value="programming">' : '')
             . '<div class="ojp-filter-bar__primary"><label class="ojp-field">'
             . '<span class="ojp-label">검색</span>'
             . '<input class="ojp-input" type="search" name="q" value="'
@@ -54,8 +61,8 @@ final class ProblemListPageHandler implements RouteHandler
                 $page,
                 max(1, (int) ceil($total / $limit)),
                 '/problems',
-                $keyword === '' ? [] : ['q' => $keyword]
-            );
+                array_filter(['q' => $keyword, 'type' => $request->queryString('type')], static fn(string $value): bool => $value !== '')
+            )) : '');
 
         return $this->pages->authenticated('문제 목록', $content, $request);
     }

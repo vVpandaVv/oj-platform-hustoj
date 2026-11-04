@@ -299,7 +299,7 @@ final class WordPress_Worksheet_Evaluation_Configuration implements \OJAI\Dashbo
 			'oj_ai.student_submission_rubric',
 			self::STUDENT_SUBJECT
 		);
-		$this->exact_keys( $criteria, array( 'criteria' ) );
+		$this->exact_keys( $criteria, array_key_exists( 'exception_scores', $criteria ) ? array( 'criteria', 'exception_scores' ) : array( 'criteria' ) );
 		if ( ! is_string( $rubric_row['total_points'] ?? null ) || ! is_array( $criteria['criteria'] ?? null ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Propagates an exception object; presentation boundaries map stable errors and escape displayed text.
 			throw Worksheet_Evaluation_Failure::because( Worksheet_Evaluation_Failure::CONFIGURATION_UNAVAILABLE );

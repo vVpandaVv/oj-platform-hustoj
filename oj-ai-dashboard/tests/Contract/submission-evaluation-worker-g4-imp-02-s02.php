@@ -521,6 +521,7 @@ final class G4_S02_Source_Port implements Submission_Evaluation_Source_Port_Inte
 	 *
 	 * @param string $submission_id Submission public identifier.
 	 * @param string $official_revision_id Official revision id.
+	 * @param bool   $manual Whether the request prepares a teacher review.
 	 * @return Submission_Evaluation_Source|null
 	 */
 	public function find_official( string $submission_id, string $official_revision_id, bool $manual = false ): ?Submission_Evaluation_Source {

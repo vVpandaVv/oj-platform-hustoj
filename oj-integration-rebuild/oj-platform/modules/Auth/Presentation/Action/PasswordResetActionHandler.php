@@ -11,6 +11,7 @@ use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpResponse;
 use CodingPanda\OjPlatform\Modules\AdminConsole\Contract\ConsoleResponder;
 use CodingPanda\OjPlatform\Modules\Auth\Application\PasswordResetService;
 use CodingPanda\OjPlatform\Modules\Auth\Presentation\ActionGuard;
+use CodingPanda\OjPlatform\Ui\Component\AccountProtectionDiagnosticView;
 use InvalidArgumentException;
 use Throwable;
 
@@ -53,7 +54,9 @@ final class PasswordResetActionHandler implements ActionHandler
                     . ($result->succeeded() ? '완료' : '제외') . '</td><td>'
                     . ($result->temporaryPassword() !== null
                         ? $this->passwordField($result->userId(), $result->temporaryPassword())
-                        : $this->escape($this->resultLabel($result->resultCode())))
+                        : ($result->diagnostic() !== null
+                            ? (new AccountProtectionDiagnosticView())->render($result->diagnostic(), true)
+                            : $this->escape($this->resultLabel($result->resultCode()))))
                     . '</td></tr>';
             }
             $failedCount = count($results) - $succeededCount;
@@ -64,7 +67,7 @@ final class PasswordResetActionHandler implements ActionHandler
                 . $this->summaryNotice($succeededCount, $failedCount)
                 . '<div class="ojp-notice ojp-notice--warning"><strong>화면을 닫기 전 전달하세요.</strong>'
                 . '<p>분실한 임시 비밀번호는 복구할 수 없으며 다시 초기화해야 합니다.</p></div>'
-                . '<div class="ojp-table-wrap"><table class="ojp-table">'
+                . '<div class="ojp-table-wrap"><table class="ojp-table ojp-table--password-resets">'
                 . '<thead><tr><th>사용자 번호</th><th>결과</th><th>임시 비밀번호 또는 사유</th></tr></thead>'
                 . '<tbody>' . $rows . '</tbody></table></div>'
                 . '<div class="ojp-action-bar"><a class="ojp-button ojp-button--primary"'
@@ -138,6 +141,13 @@ final class PasswordResetActionHandler implements ActionHandler
     {
         return match ($code) {
             'self_reset_forbidden' => '본인 계정 제외',
+            'account_not_found' => '계정을 찾을 수 없습니다.',
+            'profile_missing' => '플랫폼 사용자 정보가 없습니다. 사용자 상세에서 등록 상태를 확인하세요.',
+            'account_pending' => '가입 승인 대기 계정입니다. 승인 후 초기화하세요.',
+            'account_suspended' => '이용 중지 계정입니다. 이용 상태를 확인하세요.',
+            'target_protected' => '관리자 또는 운영 권한이 있는 보호 계정입니다.',
+            'actor_not_allowed' => '비밀번호 초기화에 필요한 사용자 정보 수정 권한이 없습니다.',
+            'reset_failed' => '비밀번호 저장에 실패했습니다.',
             'target_not_allowed' => '보호 대상 또는 이용 불가 계정',
             default => '초기화 실패',
         };

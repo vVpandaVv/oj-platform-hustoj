@@ -147,6 +147,7 @@ function g4_s02_release_hash(
  *
  * @param Canonical_Json $canonical Canonical JSON encoder used for stable digests.
  * @param bool           $visible_release Visible release.
+ * @param bool           $manual Whether the fixture represents a teacher-prepared review.
  * @return array{snapshot:array<string,mixed>,items:array<int,array<string,mixed>>,evaluation_id:string,result_id:string,result_hash:string}
  */
 function g4_s02_storage_fixture( Canonical_Json $canonical, bool $visible_release, bool $manual = false ): array {
@@ -177,10 +178,30 @@ function g4_s02_storage_fixture( Canonical_Json $canonical, bool $visible_releas
 		'position'         => 0,
 	);
 	if ( $manual ) {
-		$normalized_item = array_replace( $normalized_item, array(
-			'decision' => 'abstain', 'candidate_points' => null, 'confidence' => '0.0000', 'rationale' => null, 'abstain_reason' => 'not_requested',
-			'levels' => array( array( 'label' => 'Complete', 'level_key' => g4_s02_storage_id(), 'points' => '5.0000', 'position' => 0 ), array( 'label' => 'Absent', 'level_key' => g4_s02_storage_id(), 'points' => '0.0000', 'position' => 1 ) ),
-		) );
+		$normalized_item = array_replace(
+			$normalized_item,
+			array(
+				'decision'         => 'abstain',
+				'candidate_points' => null,
+				'confidence'       => '0.0000',
+				'rationale'        => null,
+				'abstain_reason'   => 'not_requested',
+				'levels'           => array(
+					array(
+						'label'     => 'Complete',
+						'level_key' => g4_s02_storage_id(),
+						'points'    => '5.0000',
+						'position'  => 0,
+					),
+					array(
+						'label'     => 'Absent',
+						'level_key' => g4_s02_storage_id(),
+						'points'    => '0.0000',
+						'position'  => 1,
+					),
+				),
+			)
+		);
 	}
 	$normalized      = array(
 		'schema_id'          => Submission_Evaluation_Output_Normalizer::RESULT_SCHEMA,
@@ -677,6 +698,7 @@ final class G4_S02_Storage_Database {
  * @param string         $decision Decision.
  * @param string         $command_id Command identifier used for idempotency.
  * @param string|null    $reason Reason.
+ * @param array|null     $items Optional score item overrides.
  * @return Review_Submission_Evaluation_Command
  */
 function g4_s02_storage_command(
@@ -882,11 +904,19 @@ g4_s02_storage_assert( 1 !== preg_match( '/\b(?:UPDATE|DELETE)\s+oj_ai_submissio
 g4_s02_storage_assert( str_contains( $repository_source, 'expected_submission_lock_version' ) && str_contains( $repository_source, 'current_release_public_id' ), 'S02 must bind both root CAS expectations.' );
 g4_s02_storage_assert( str_contains( $repository_source, 'official_review_changed' ) && Ojai_Php_Source_Contract::contains( $repository_source, "'state' => 'stale'" ), 'S02 stale release evidence drifted.' );
 
-$manual_fixture = g4_s02_storage_fixture( $canonical, false, true );
-$manual_database = new G4_S02_Storage_Database( $manual_fixture['snapshot'], $manual_fixture['items'] );
-$manual_application = g4_s02_storage_application( $canonical, $manual_database );
-$manual_items = array( array( 'binding_key' => str_repeat( 'a', 64 ), 'source' => 'teacher_assigned', 'official_points' => '5.0000', 'reason_code' => 'manual_assessment', 'reason_note' => null ) );
-$off_level_items = $manual_items;
+$manual_fixture                        = g4_s02_storage_fixture( $canonical, false, true );
+$manual_database                       = new G4_S02_Storage_Database( $manual_fixture['snapshot'], $manual_fixture['items'] );
+$manual_application                    = g4_s02_storage_application( $canonical, $manual_database );
+$manual_items                          = array(
+	array(
+		'binding_key'     => str_repeat( 'a', 64 ),
+		'source'          => 'teacher_assigned',
+		'official_points' => '5.0000',
+		'reason_code'     => 'manual_assessment',
+		'reason_note'     => null,
+	),
+);
+$off_level_items                       = $manual_items;
 $off_level_items[0]['official_points'] = '3.0000';
 try {
 	$manual_application->execute( g4_s02_storage_command( $canonical, $manual_fixture, 'adjusted', 'manual-off-level', null, $off_level_items ) );
@@ -898,13 +928,34 @@ try {
 $manual_review = $manual_application->execute( g4_s02_storage_command( $canonical, $manual_fixture, 'adjusted', 'manual-confirm', null, $manual_items ) );
 g4_s02_storage_same( '5.0000', $manual_review->official_score(), 'Teacher can confirm a rubric score without any AI candidate.' );
 g4_s02_storage_same( $manual_review->review_id(), $manual_database->snapshot['official_review_id'], 'Manual scoring follows the same official pointer contract.' );
-$manual_fixture['snapshot'] = $manual_database->snapshot;
+$manual_fixture['snapshot']                 = $manual_database->snapshot;
 $manual_fixture['snapshot']['review_count'] = 1;
 $manual_application->execute( g4_s02_storage_command( $canonical, $manual_fixture, 'withdrawn', 'manual-withdraw', 'Recheck student evidence.' ) );
 g4_s02_storage_same( null, $manual_database->snapshot['official_review_id'], 'Manual score approval can be withdrawn.' );
 
-$foreign_fixture = g4_s02_storage_fixture( $canonical, true );
-$foreign_database = new G4_S02_Storage_Database( $foreign_fixture['snapshot'], $foreign_fixture['items'] );
+$draft_fixture     = g4_s02_storage_fixture( $canonical, false, true );
+$draft_database    = new G4_S02_Storage_Database( $draft_fixture['snapshot'], $draft_fixture['items'] );
+$draft_application = g4_s02_storage_application( $canonical, $draft_database );
+$saved_grade       = $draft_application->execute( g4_s02_storage_command( $canonical, $draft_fixture, 'draft', 'bulk-teacher-save', null, $manual_items ) );
+g4_s02_storage_same( null, $draft_database->snapshot['official_review_id'], 'Saving teacher scores must not approve them.' );
+g4_s02_storage_failure(
+	fn () => $draft_application->execute( g4_s02_storage_command( $canonical, $draft_fixture, 'adjusted', 'bulk-teacher-stale', null, $manual_items ) ),
+	Submission_Evaluation_Failure::REVIEW_SOURCE_STALE,
+	'Bulk approval must reject a changed review number even if the score and result are unchanged.'
+);
+$draft_fixture['snapshot']                 = $draft_database->snapshot;
+$draft_fixture['snapshot']['review_count'] = 1;
+$draft_command                             = g4_s02_storage_command( $canonical, $draft_fixture, 'adjusted', 'bulk-teacher-approve', null, $manual_items );
+$draft_approved                            = $draft_application->execute( $draft_command );
+g4_s02_storage_same( '5.0000', $draft_approved->official_score(), 'Bulk teacher approval confirms the saved rubric points without AI.' );
+g4_s02_storage_same( $draft_approved->review_id(), $draft_database->snapshot['official_review_id'], 'Teacher approval advances the official pointer.' );
+g4_s02_storage_same( array( 'draft', 'adjusted' ), array_column( $draft_database->inserts['oj_ai_submission_evaluation_reviews'], 'decision' ), 'Approval preserves the saved review history.' );
+g4_s02_storage_same( $saved_grade->review_id(), $draft_database->inserts['oj_ai_submission_evaluation_reviews'][0]['public_id'], 'Saved teacher draft remains in history.' );
+g4_s02_storage_same( 1, $draft_database->inserts['oj_ai_submission_evaluation_reviews'][1]['previous_review_id'], 'Approval chains to the internal ID of the reviewed teacher draft.' );
+g4_s02_storage_same( 2, count( $draft_database->inserts['oj_ai_submission_evaluation_reviews'] ), 'A stale approval attempt must not append an extra review.' );
+
+$foreign_fixture                         = g4_s02_storage_fixture( $canonical, true );
+$foreign_database                        = new G4_S02_Storage_Database( $foreign_fixture['snapshot'], $foreign_fixture['items'] );
 $foreign_database->official_review_owned = false;
 g4_s02_storage_failure( fn () => g4_s02_storage_application( $canonical, $foreign_database )->execute( g4_s02_storage_command( $canonical, $foreign_fixture, 'accepted', 'foreign-approve' ) ), Submission_Evaluation_Failure::REVIEW_SOURCE_STALE, 'Another evaluation cannot replace a manually confirmed score.' );
 g4_s02_storage_same( array(), $foreign_database->inserts, 'Foreign approval must not write anything.' );

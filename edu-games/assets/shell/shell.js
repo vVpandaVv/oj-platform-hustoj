@@ -35,7 +35,7 @@
             header.before(back);
         }
         const labels = {'device-matching':'장치 카드 매칭','image-data':'이미지 데이터','keyword-rain':'키워드 레인'};
-        if (labels[config.gameId]) header.querySelector('h2').textContent = labels[config.gameId];
+        if (labels[config.gameId]&&!config.channel) header.querySelector('h2').textContent = labels[config.gameId];
         // Move existing nodes, never clone: the game retains its fields and event handlers.
         function fold(node, title, kind) {
             if (!node) return;

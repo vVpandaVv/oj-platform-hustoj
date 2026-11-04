@@ -26,7 +26,8 @@ final class ClassReportPageHandler implements RouteHandler
         private readonly ActionUrlProvider $actionUrls,
         private readonly ActionSecurity $security,
         private readonly SubmissionRejudgeControlRenderer $rejudgeControls,
-        private readonly ClassHtml $html
+        private readonly ClassHtml $html,
+        private readonly ?\CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog $nativeLearning = null
     ) {
     }
 
@@ -68,6 +69,7 @@ final class ClassReportPageHandler implements RouteHandler
                 $submissions ? 'submissions' : 'progress',
                 true
             )
+            . ($this->nativeLearning?->classAssignments($request, $classId, true) ?? '')
             . ($submissions
                 ? $this->rejudgeControls->render(
                     '/oj-console/classes/' . $classId . '/submissions'

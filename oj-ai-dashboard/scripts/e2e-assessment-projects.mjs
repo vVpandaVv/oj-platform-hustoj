@@ -111,10 +111,13 @@ try{
     await page.locator('[data-kind=level][data-prop=label]').nth(i).fill(i===0?longDescription:`Observable performance ${i+1}`);
     await page.locator('[data-kind=level][data-prop=points]').nth(i).fill(String(20-i*2));
   }
+  await page.locator('[data-kind="exception"][data-prop="not_submitted"]').fill('0');
+  await page.locator('[data-kind="exception"][data-prop="long_absence"]').fill('5');
   await page.screenshot({path:path.join(artifacts,'criteria-desktop.png'),fullPage:true});await fit();
   await page.setViewportSize({width:390,height:844});await fit();await page.screenshot({path:path.join(artifacts,'criteria-mobile.png'),fullPage:true});
   await action('confirm').click();await page.waitForURL(u=>u.searchParams.get('stage')==='author');
   const savedLevels=projects.get(projectId).configuration.criteria[0].levels;
+  assert.deepEqual(projects.get(projectId).configuration.exception_scores,{not_submitted:'0',long_absence:'5'});
   assert.equal(savedLevels.length,7);assert.equal(savedLevels[0].label,longDescription);
   assert.deepEqual(savedLevels.map(l=>Number(l.points)),[20,18,16,14,12,10,8]);
   for(const title of ['Source analysis','Written conclusion']){

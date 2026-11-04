@@ -1,0 +1,46 @@
+/* Card faces and the 2D flip come from the personal device-matching game. */
+.device-team {--dt-gap:8px;--dt-padding:8px;--dt-budget:330px}
+.device-team .bt-metrics {margin:0 0 24px;padding:16px 0}
+.device-team.eg-focused .bt-metrics {margin:0 0 8px;padding:8px 0}
+.device-team .dt-workbench {display:block;min-width:0}
+.device-team .dt-deck.oj-device-deck {--dt-columns:8;--dt-rows:6;display:grid;grid-template-columns:repeat(var(--dt-columns),minmax(0,1fr));grid-template-rows:repeat(var(--dt-rows),var(--dt-height,128px));gap:var(--dt-gap);padding:var(--dt-padding);min-width:0;min-height:0;background:var(--eg-fill)}
+.device-team .dt-deck button.dt-card {min-width:0;min-height:0;width:100%;height:100%;padding:0;display:block;border:0;border-radius:8px;background:transparent;color:var(--eg-ink);position:relative;aspect-ratio:auto;box-shadow:none}
+.device-team .dt-card.is-mine .oj-device-card-face {border-color:var(--eg-accent)}
+.device-team .dt-card[data-state=miss] .oj-device-card-face {border-color:var(--eg-danger)}
+.device-team .dt-card:disabled {opacity:1}
+.device-team .dt-card.is-matched {opacity:0;pointer-events:none}
+.device-team .dt-card-content {padding-bottom:16px}
+.device-team .dt-card-content .oj-device-text-card {grid-row:1/-1}
+.device-team .dt-card-description {display:none}
+.device-team[data-dt-readable=true] .dt-card-description {display:block}
+.device-team[data-dt-dense=true] .dt-card-content .oj-device-chip {display:none}
+.device-team[data-dt-dense=true] .dt-back {padding:6px}
+.device-team[data-dt-dense=true] .dt-back>span:last-child {display:none}
+.device-team[data-dt-dense=true] .dt-back .oj-device-card-mark {width:24px;height:24px;font-size:16px}
+.device-team[data-dt-dense=true] .dt-card-content .oj-device-text-card {padding:4px;gap:0}
+.device-team[data-dt-dense=true] .dt-card-content .oj-device-text-card strong {font-size:12px;line-height:1.2}
+.device-team .dt-card-owner {position:absolute;bottom:2px;left:4px;right:4px;font-size:10px;line-height:12px;text-align:center;color:var(--eg-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+.device-team .dt-inspector {display:flex;gap:12px;border-top:1px solid var(--eg-line);padding:6px 0 0;margin-top:6px;height:86px;min-width:0;overflow:auto}
+.device-team .dt-inspector-picture {height:78px;width:110px;min-width:110px;background:var(--eg-on-accent);margin:0}
+.device-team .dt-inspector-picture img {width:100%;height:100%;object-fit:contain;display:block}
+.device-team .dt-inspector>div:last-child {min-width:0}
+.device-team .dt-inspector :is(h4,p) {margin:0 0 3px;overflow-wrap:anywhere;font-size:12px}
+.device-team .dt-inspector a {font-size:11px;overflow-wrap:anywhere}
+.device-team .dt-waiting {display:flex;align-items:center;gap:16px;min-height:72px;font-size:13px;color:var(--eg-muted)}
+.device-team .dt-actions {display:flex;align-items:center;gap:8px;min-height:32px;font-size:12px;margin-top:6px}
+.device-team .dt-actions>span {flex:1;min-width:0}
+.device-team .dt-actions .bt-board-status {display:block;font:inherit;color:var(--eg-muted);margin:0;min-height:0}
+.device-team .dt-actions .bt-board-status.bt-error {color:var(--eg-danger)}
+.device-team .dt-actions>button {font-size:12px;min-height:30px;padding:3px 6px}
+.device-team .dt-actions>a {color:var(--eg-accent);font-size:12px}
+.device-team.eg-focused .dt-deck {--dt-height:clamp(36px,calc((var(--dt-space,calc(var(--eg-view-height) - var(--dt-budget))) - 2*var(--dt-padding) - (var(--dt-rows) - 1)*var(--dt-gap))/var(--dt-rows)),150px)}
+@media(max-width:700px){
+ .device-team {--dt-gap:5px;--dt-padding:5px;--dt-budget:350px}
+ .device-team .bt-team-scores span {display:none}
+ .device-team .dt-actions {margin-top:2px}
+ .device-team .dt-inspector {gap:10px;height:84px;max-height:84px;min-height:84px}
+ .device-team .dt-inspector-picture {width:90px;min-width:90px;position:sticky;top:0}
+ .device-team .dt-inspector a {font-size:10px}
+ .device-team .dt-card-owner {font-size:9px;line-height:10px}
+ .device-team.eg-focused .dt-deck {--dt-height:clamp(40px,calc((var(--dt-space,calc(var(--eg-view-height) - var(--dt-budget))) - 2*var(--dt-padding) - (var(--dt-rows) - 1)*var(--dt-gap))/var(--dt-rows)),128px)}
+}

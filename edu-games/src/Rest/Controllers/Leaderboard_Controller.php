@@ -98,6 +98,10 @@ final class Leaderboard_Controller {
 
         if ($request->get_param('page') !== null) {
             $result = Leaderboard_Service::page($game,$request->get_param('page'),$request->get_param('perPage'),Team_Repository::member_user_ids($team_id));
+            if(!is_wp_error($result)&&$request->get_param('overview')){
+                $overview=Leaderboard_Service::overview($game,Team_Repository::member_user_ids($team_id));
+                if(is_wp_error($overview))return $overview;$result['overview']=$overview;
+            }
             return is_wp_error($result) ? $result : rest_ensure_response($result + array('game'=>$game,'teamId'=>$team_id));
         }
         return rest_ensure_response(
@@ -158,7 +162,10 @@ final class Leaderboard_Controller {
 
         if ($request->get_param('page') !== null) {
             $result = Leaderboard_Service::page($game,$request->get_param('page'),$request->get_param('perPage'));
-            return is_wp_error($result) ? $result : rest_ensure_response($result + array('game'=>$game,'myRank'=>Leaderboard_Service::rank_for_user($game,get_current_user_id())));
+            if(!is_wp_error($result)&&$request->get_param('overview')){
+                $overview=Leaderboard_Service::overview($game);if(is_wp_error($overview))return $overview;$result['overview']=$overview;
+            }
+            return is_wp_error($result) ? $result : rest_ensure_response($result + array('game'=>$game,'myRank'=>isset($result['overview'])?($result['overview']['personal']['rank']??null):Leaderboard_Service::rank_for_user($game,get_current_user_id())));
         }
 
         return rest_ensure_response(

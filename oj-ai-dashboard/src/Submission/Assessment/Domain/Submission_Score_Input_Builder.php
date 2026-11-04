@@ -100,7 +100,8 @@ final class Submission_Score_Input_Builder {
 		}
 
 		try {
-			$validated = $this->responses->validate_complete( $published['response_schema'], $response['answers'] );
+			// Completeness gates manual submission, not scoring of an official deadline snapshot.
+			$validated = $this->responses->validate( $published['response_schema'], $response['answers'] );
 		} catch ( \Throwable ) {
 			throw Submission_Score_Input_Failure::invalid( '$.official_revision.response.answers' );
 		}
@@ -516,7 +517,7 @@ final class Submission_Score_Input_Builder {
 		$this->public_id( $policy['value']['rubric_revision_id'] ?? null, '$.configuration.policy.value.rubric_revision_id' );
 		$this->public_id( $policy['value']['review_rule_revision_id'] ?? null, '$.configuration.policy.value.review_rule_revision_id' );
 
-		$this->exact_keys( $rubric['value'], array( 'criteria' ), '$.configuration.rubric.value' );
+		$this->exact_keys( $rubric['value'], array_key_exists( 'exception_scores', $rubric['value'] ) ? array( 'criteria', 'exception_scores' ) : array( 'criteria' ), '$.configuration.rubric.value' );
 		$criteria = $rubric['value']['criteria'] ?? null;
 		if ( ! is_array( $criteria ) || ! array_is_list( $criteria ) || array() === $criteria ) {
 			throw Submission_Score_Input_Failure::grading_invalid( '$.configuration.rubric.value.criteria' );
@@ -568,8 +569,11 @@ final class Submission_Score_Input_Builder {
 		if ( $total_units !== $this->decimal_units( $total_points, false, '$.configuration.rubric.total_points' ) ) {
 			throw Submission_Score_Input_Failure::grading_invalid( '$.configuration.rubric.total_points' );
 		}
-		$rubric['total_points'] = $this->decimal_string( $total_units );
-		$rubric['value']        = array( 'criteria' => $normalized_criteria );
+		$rubric['total_points']      = $this->decimal_string( $total_units );
+		$rubric['value']['criteria'] = $normalized_criteria;
+		if ( array_key_exists( 'exception_scores', $rubric['value'] ) ) {
+			$rubric['value']['exception_scores'] = \OJAI\Dashboard\Assessment\Configuration\Domain\Rubric_Exception_Scores::normalize( $rubric['value']['exception_scores'], $rubric['total_points'] );
+		}
 
 		$this->exact_keys( $review['value'], array( 'abstain_handling', 'safety_handling' ), '$.configuration.review_rule.value' );
 		if (
@@ -708,7 +712,10 @@ final class Submission_Score_Input_Builder {
 			}
 		}
 		$this->exact_keys( $p03['policy'], array( 'content_hash', 'revision_id' ), '$.publication.grading_schema.payload.policy' );
-		$this->exact_keys( $p03['rubric'], array( 'content_hash', 'revision_id', 'total_points' ), '$.publication.grading_schema.payload.rubric' );
+		$this->exact_keys( $p03['rubric'], array_merge( array( 'content_hash', 'revision_id', 'total_points' ), array_key_exists( 'exception_scores', $p03['rubric'] ) ? array( 'exception_scores' ) : array() ), '$.publication.grading_schema.payload.rubric' );
+		if ( $this->canonical->encode( $p03['rubric']['exception_scores'] ?? null ) !== $this->canonical->encode( $rubric['value']['exception_scores'] ?? null ) ) {
+			throw Submission_Score_Input_Failure::grading_invalid( '$.publication.grading_schema.payload.rubric.exception_scores' );
+		}
 		$this->exact_keys( $p03['review_rule'], array( 'content_hash', 'explicit_release_required', 'review_required', 'revision_id' ), '$.publication.grading_schema.payload.review_rule' );
 		if (
 			$policy['revision_id'] !== ( $p03['policy']['revision_id'] ?? null )

@@ -37,6 +37,7 @@ function rest_url($path): string { return 'https://fixture.test/wp-json/' . $pat
 function wp_timezone(): DateTimeZone { return new DateTimeZone('Asia/Seoul'); }
 function esc_url_raw($url): string { return $url; }
 function wp_create_nonce($action): string { return 'fixture-nonce'; }
+function wp_salt($scheme = 'auth'): string { return 'platform-integration-explicit-test-salt-' . $scheme; }
 function __($text, $domain = ''): string { return $text; }
 function esc_attr($text): string { return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8'); }
 function esc_attr_e($text, $domain = ''): void { echo esc_attr($text); }
@@ -73,7 +74,7 @@ foreach (require platform_fixture_root() . '/config/routes.php' as $route) {
 }
 $transport = new WordPressRouteTransport(new RouteMatcher($registry));
 class_exists(Tracked_Page_Enqueuer::class);
-$path_method = new ReflectionMethod(Tracked_Page_Enqueuer::class, 'current_route_path');
+$path_method = new ReflectionMethod(\FocusTracker\Tracking\Page_Context::class, 'current_path');
 $cases = array(
     array('/', '/problems/123', array(), null, '/problems/123', 123),
     array('/', '/problems/123/', array(), null, '/problems/123', 123),
@@ -95,6 +96,8 @@ foreach ($cases as [$home, $uri, $query, $route_var, $expected_path, $problem_id
     $config = Tracked_Page_Enqueuer::config(1);
     if (null !== $problem_id) {
         platform_check(($config['problemId'] ?? null) === $problem_id, 'Problem context must survive every supported route transport: ' . $uri);
+    } elseif (\FocusTracker\Tracking\Page_Context::classify($actual_path, $_GET) !== null) {
+        platform_check(isset($config['page']['token']) && $config['problemId'] === null, 'Non-problem learning routes receive a signed page context: ' . $uri);
     } else {
         platform_check(array() === $config, 'Untracked/invalid platform route must not collect: ' . $uri);
     }
@@ -160,6 +163,11 @@ foreach (array('dashboard', 'self') as $kind) {
 $gateway = platform_fixture_connect_runtime(125, range(1, 205));
 platform_check(count(Context_Resolver::list_teaching_contexts(1)) === 125 && $gateway->teachingCalls === 2, 'Teachers can select contexts beyond the first page.');
 platform_check(count(Context_Resolver::list_learning_contexts(1)) === 125 && $gateway->learningCalls === 2, 'Learner activity matching receives every context.');
+$successful = false;
+platform_check(count(Context_Resolver::list_learning_contexts(1, $successful, array('class'))) === 125 && $successful
+    && array_slice($gateway->learningTypes, -2) === array(array('class'), array('class')), 'The selected membership kind is kept across every pagination cursor.');
+platform_check(Context_Resolver::list_learning_contexts(1, $successful, array('group')) === array() && $successful
+    && end($gateway->learningTypes) === array('group'), 'An empty selected group result is complete without querying unrelated classes.');
 platform_check(count(Context_Resolver::list_all_learner_ids(1, 'class', 'class:1', 'revision-1')) === 205, 'Roster pagination preserves all learners.');
 $gateway->repeatCursor = true;
 platform_check(array() === Context_Resolver::list_learning_contexts(1), 'Repeated cursors fail closed instead of looping forever.');

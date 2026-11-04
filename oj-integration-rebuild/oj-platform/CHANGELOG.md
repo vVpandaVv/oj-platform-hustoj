@@ -3,6 +3,64 @@
 All notable changes to the OJ Platform WordPress plugin are recorded here.
 Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [2.5.9] - 2026-11-03
+
+- Add optional Addon API 1.9 typed providers to native problem lists and class
+  pages. Keep addon IDs, grading, source and database ownership separate from
+  programming judge data.
+- Add accessible problem type navigation and bounded provider cursors; selecting
+  an addon type skips native programming COUNT/OFFSET/metadata queries.
+- Associate addon detail pages with native problem/class navigation, retaining
+  permission-aware fallback menus for addon-only console teachers.
+- Preserve class authorization and existing performance-mode visibility on new
+  sections. Validate own registered routes, escape metadata, isolate failures
+  and cap synchronous providers at four.
+
+## [2.5.8] - 2026-11-02
+
+- Add read-only account protection diagnostics to authorized user detail views
+  and rejected user/group password resets, showing blocked capability keys,
+  lookup/filter/catalog failures, safe exception categories and source locations.
+- Preserve account protection, actor permissions, group scope and nonce checks.
+  Do not expose passwords, raw exception messages, absolute paths or call stacks.
+- Keep existing result codes and public Addon API methods unchanged; add an
+  optional diagnostic snapshot to the internal authorized-reset result contract.
+- Verify read-only behavior, sensitive-data redaction, module boundaries and
+  responsive diagnostic details on desktop and mobile layouts.
+
+## [2.5.7] - 2026-11-02
+
+- Classify learner capabilities from accepted addon manifests consistently in
+  user management and password resets, including combined grants from multiple
+  addons, without requiring a separate exception filter from every addon.
+- Preserve administrator, superadmin, educator/operator, unknown capability,
+  registration validation, actor permission, group scope and nonce protections.
+  Keep existing explicit learner filters compatible and actual grants unchanged.
+- Add user-list and group reset regressions for the twelve combined learner
+  grants observed in production, mixed privileged grants and result privacy.
+
+## [2.5.6] - 2026-11-02
+
+- Let OJ user managers reset ordinary learner passwords without requiring
+  WordPress-wide user editing permission. Keep privileged targets protected.
+- Distinguish missing accounts or profiles, pending or suspended accounts,
+  protected targets, insufficient actor permissions and password write failures
+  in user/group reset results and audit records without storing passwords.
+- Add action-level authorization, session revocation, password-change and
+  hidden-result regressions plus Code Arena learner grant integration checks.
+
+## [2.5.5] - 2026-10-28
+
+- Serialize request limit counters, transient expiry and reset indexes with a
+  short database-scoped named lock to avoid concurrent WordPress option writes.
+  Keep login, submission and messaging limits unchanged; fail closed on storage
+  or lock errors and always release the lock.
+- Repair missing database transient expiry without resetting existing counts,
+  including counters already at their limit. Preserve fixed-window reset times.
+  Verify both the stored count and expiry after writes.
+- Add concurrency, missing-expiry, full-budget and storage-failure regressions;
+  validate the change in a separate Oracle MySQL 8.0.46 WordPress instance.
+
 ## [2.5.4] - 2026-10-27
 
 - Show published, enabled quizzes in problem headers and a linked quiz section.

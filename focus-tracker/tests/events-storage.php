@@ -31,6 +31,10 @@ function create_activity(int $start, int $end, ?array $problems = array(123)): a
     check($result instanceof WP_REST_Response && ! empty($result->data['id']), 'Activity created through actual controller');
     return Activities::find((int) $result->data['id']);
 }
+function event_insert_queries(): array {
+    global $wpdb;
+    return array_values(array_filter($wpdb->queries, static fn (string $sql): bool => str_starts_with($sql, 'INSERT INTO ' . Installer::events_table())));
+}
 
 // Cookie identity/capability checks and both valid WP nonce ages.
 $request = new WP_REST_Request(array(), array('_wpnonce' => 'focus-test-nonce'));
@@ -69,8 +73,11 @@ check($ids === array($a['id'], $b['id']), 'Preopened session associated with ALL
 $count = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table());
 $revision = Participations::find($participation['id'])['event_revision'];
 $saved_heartbeat = Participations::find($participation['id'])['last_heartbeat_at_ms'];
+$wpdb->queries = array();
 $result = post_events('preopened', $start, $batch, true);
 check($result instanceof WP_REST_Response && $result->data['stored'] === 0, 'Retry acknowledged as duplicate');
+check(event_insert_queries() === array(), 'A complete replay never issues an events INSERT, including duplicate synthetic controls');
+check($result->data['participation_ids'] === array($participation['id']), 'A complete replay still acknowledges its original logical session');
 check((int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table()) === $count, 'No duplicate rows');
 check(Participations::find($participation['id'])['event_revision'] === $revision, 'Duplicate retry does not increment revision');
 $tampered_retry = array(array('seq' => 2, 'type' => 'heartbeat', 'occurred_at' => $now + 10000, 'meta' => array('queue_dropped' => true)));
@@ -122,6 +129,99 @@ $selection = ActivityApi::update(new WP_REST_Request(array('problem_ids' => arra
 check($selection instanceof WP_REST_Response && Scoring::score_for_learner(Activities::find($a['id']), 1)['data_status'] === 'no_data', 'Problem change excludes old linked observations');
 ActivityApi::update(new WP_REST_Request(array('problem_ids' => array(123)), array('id' => $a['id'])));
 check(Scoring::score_for_learner(Activities::find($a['id']), 1)['data_status'] === 'incomplete', 'Restored problem set reconciles recorded sessions');
+
+// Repartitioning cannot create an empty new logical run just to replay events
+// whose physical sequence numbers were already stored in an older run.
+$sessionCount = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::participations_table());
+$recordedReplay = array_map(static fn (array $row): array => array('seq' => (int) $row['sequence_number'], 'type' => $row['event_type'], 'occurred_at' => (int) $row['occurred_at_ms']),
+    $wpdb->get_results('SELECT sequence_number,event_type,occurred_at_ms FROM ' . Installer::events_table() . ' WHERE participation_id=' . $participation['id'] . ' AND sequence_number>0 AND sequence_number<2147483648 ORDER BY sequence_number', ARRAY_A));
+Activities::update($a['id'], array('starts_at' => Clock::ms_to_mysql($now - 115000)));
+try { $movedReplay = post_events('preopened', $start, $recordedReplay, true); }
+finally { Activities::update($a['id'], array('starts_at' => $a['starts_at'])); }
+check($movedReplay instanceof WP_REST_Response && $movedReplay->data['stored'] === 0 && $movedReplay->data['participation_ids'] === array($participation['id']), 'A moved run acknowledges sequences already belonging to the original run');
+check((int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::participations_table()) === $sessionCount, 'Already stored real events cannot create a new empty segment after a schedule edit');
+
+// A replay may carry new final/deadline metadata even though no real event is
+// new. Preserve that metadata without re-inserting duplicate event/control rows.
+$finalEvents = array(array('seq' => 1, 'type' => 'heartbeat', 'occurred_at' => $now - 3000));
+$finalInitial = post_events('final-flag-replay', $now - 5000, $finalEvents);
+$finalId = (int) $finalInitial->data['participation_id'];
+$finalRevision = Participations::find($finalId)['event_revision'];
+$wpdb->queries = array();
+$finalReplay = post_events('final-flag-replay', $now - 5000, $finalEvents, true);
+check($finalReplay instanceof WP_REST_Response && $finalReplay->data['stored'] === 0 && event_insert_queries() === array(), 'A final-flag-only replay writes no duplicate events');
+check(Participations::find($finalId)['ended_at_ms'] === $now - 3000 && Participations::find($finalId)['end_reason'] === 'pagehide', 'A new final flag still closes an existing source at its observation');
+check(Participations::find($finalId)['event_revision'] === $finalRevision, 'Final metadata alone does not change the event revision');
+
+$deadlineInitial = post_events('deadline-replay', $now - 5000, $finalEvents);
+$deadlineId = (int) $deadlineInitial->data['participation_id'];
+Activities::update($current_activity['id'], array('ends_at' => Clock::ms_to_mysql($now - 1000)));
+try {
+    $deadlineReplay = post_events('deadline-replay', $now - 5000, $finalEvents);
+    check($deadlineReplay instanceof WP_REST_Response && $deadlineReplay->data['stored'] === 1, 'A shortened ended window stores only its previously absent synthetic end control');
+    check(Participations::find($deadlineId)['ended_at_ms'] === $now - 1000, 'A duplicate real packet still applies the current shortened deadline');
+    $deadlineRevision = Participations::find($deadlineId)['event_revision'];
+    $wpdb->queries = array();
+    $deadlineAgain = post_events('deadline-replay', $now - 5000, $finalEvents);
+    check($deadlineAgain instanceof WP_REST_Response && $deadlineAgain->data['stored'] === 0 && event_insert_queries() === array() && Participations::find($deadlineId)['event_revision'] === $deadlineRevision, 'A second deadline replay does not reinsert either reserved control or increment revision');
+} finally { Activities::update($current_activity['id'], array('ends_at' => $current_activity['ends_at'])); }
+
+$mixedInitial = post_events('mixed-sequence-replay', $now - 5000, array(array('seq' => 1, 'type' => 'heartbeat', 'occurred_at' => $now - 4000)));
+$mixedId = (int) $mixedInitial->data['participation_id'];
+$mixedRevision = Participations::find($mixedId)['event_revision'];
+$mixed = post_events('mixed-sequence-replay', $now - 5000, array(
+    array('seq' => 1, 'type' => 'heartbeat', 'occurred_at' => $now - 4000),
+    array('seq' => 2, 'type' => 'activity', 'occurred_at' => $now - 2000, 'meta' => array('len_delta' => 3)),
+    array('seq' => 2, 'type' => 'activity', 'occurred_at' => $now - 1000, 'meta' => array('len_delta' => 999, 'queue_dropped' => true)),
+));
+check($mixed instanceof WP_REST_Response && $mixed->data['stored'] === 1 && Participations::find($mixedId)['event_revision'] === $mixedRevision + 1, 'A partial replay and within-packet duplicates store only the one new physical sequence');
+$mixedSaved = $wpdb->get_row('SELECT occurred_at_ms,meta FROM ' . Installer::events_table() . ' WHERE participation_id=' . $mixedId . ' AND sequence_number=2', ARRAY_A);
+check((int) $mixedSaved['occurred_at_ms'] === $now - 2000 && (json_decode($mixedSaved['meta'], true)['len_delta'] ?? null) === 3, 'The first occurrence of a packet sequence owns its stored timestamp and metadata');
+check(! Participations::find($mixedId)['has_delivery_gaps'] && Participations::find($mixedId)['last_heartbeat_at_ms'] === $now - 2000, 'A duplicate conflicting payload cannot forge a gap or heartbeat');
+
+// Retention may lock an existing cold source independently of the learner
+// guard. Change its metadata after the prefix snapshot, before the next read.
+$cold = post_events('retention-current-metadata', $now - 5000, array(array('seq' => 1, 'type' => 'heartbeat', 'occurred_at' => $now - 1000)));
+check($cold instanceof WP_REST_Response && $cold->data['stored'] > 0, 'An ordinary source exists before the retention metadata race');
+$coldId = (int) $cold->data['participation_id'];
+$coldBefore = Participations::find($coldId);
+$coldCount = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table() . ' WHERE participation_id = ' . $coldId);
+$retentionInterleaved = false;
+$originalDb = $wpdb;
+$wpdb = new class($originalDb, static function () use ($originalDb, $coldId, &$retentionInterleaved): void {
+    $retentionInterleaved = true;
+    $originalDb->update(Installer::participations_table(), array('raw_events_expired' => 1), array('id' => $coldId));
+}) {
+    private bool $used = false;
+    public function __construct(private object $db, private Closure $afterPrefix) {}
+    public function __get(string $name): mixed { return $this->db->$name; }
+    public function __set(string $name, mixed $value): void { $this->db->$name = $value; }
+    public function __isset(string $name): bool { return isset($this->db->$name); }
+    public function __call(string $name, array $arguments): mixed { return $this->db->$name(...$arguments); }
+    public function get_results(string $sql, mixed $mode = ARRAY_A): array {
+        $rows = $this->db->get_results($sql, $mode);
+        if (! $this->used && str_contains($sql, 'WHERE session_uid >=') && str_contains($sql, Installer::participations_table())) {
+            $this->used = true; ($this->afterPrefix)();
+        }
+        return $rows;
+    }
+};
+try { $coldRetry = post_events('retention-current-metadata', $now - 5000, array(array('seq' => 2, 'type' => 'activity', 'occurred_at' => $now))); }
+finally { $wpdb = $originalDb; }
+check($retentionInterleaved, 'Retention metadata changes after the original source snapshot');
+check($coldRetry instanceof WP_REST_Response && $coldRetry->data['stored'] === 0 && $coldRetry->data['policyDropped'] === 1, 'The fresh expired target is acknowledged without recreating raw evidence');
+check((int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table() . ' WHERE participation_id = ' . $coldId) === $coldCount, 'The expired target keeps its original source rows unchanged');
+check(Participations::find($coldId)['event_revision'] === $coldBefore['event_revision'] && Participations::find($coldId)['last_heartbeat_at_ms'] === $coldBefore['last_heartbeat_at_ms'], 'An excluded expired packet cannot alter archived revision or observation bounds');
+
+// One long-lived physical source can span separated lessons. Expiry of an old
+// logical run cannot discard legitimate observations in the next logical run.
+$oldSegment = post_events('expired-earlier-run', $start, array(array('seq' => 1, 'type' => 'heartbeat', 'occurred_at' => $now - 110000)));
+check($oldSegment instanceof WP_REST_Response && $oldSegment->data['stored'] > 0, 'A physical source has an earlier authorized logical run');
+$oldSegmentId = (int) $oldSegment->data['participation_id'];
+$wpdb->update(Installer::participations_table(), array('raw_events_expired' => 1), array('id' => $oldSegmentId));
+$newSegment = post_events('expired-earlier-run', $start, array(array('seq' => 2, 'type' => 'heartbeat', 'occurred_at' => $now)));
+check($newSegment instanceof WP_REST_Response && $newSegment->data['stored'] > 0 && (int) $newSegment->data['participation_id'] !== $oldSegmentId, 'A fresh later lesson is stored despite an expired earlier segment of the same physical source');
+check(! Participations::find((int) $newSegment->data['participation_id'])['raw_events_expired'], 'The later logical run retains independent live provenance');
 
 // Purging old evidence must first freeze every grade using those observations.
 $old_start = $now - 70 * DAY_IN_SECONDS * 1000;

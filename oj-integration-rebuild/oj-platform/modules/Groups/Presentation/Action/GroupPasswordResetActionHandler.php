@@ -10,6 +10,8 @@ use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpRequest;
 use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpResponse;
 use CodingPanda\OjPlatform\Modules\AdminConsole\Contract\ConsoleResponder;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\ActionAccessGuard;
+use CodingPanda\OjPlatform\Modules\Auth\Contract\AccountProtectionDiagnostic;
+use CodingPanda\OjPlatform\Ui\Component\AccountProtectionDiagnosticView;
 use CodingPanda\OjPlatform\Modules\Groups\Application\GroupService;
 use InvalidArgumentException;
 use Throwable;
@@ -49,7 +51,9 @@ final class GroupPasswordResetActionHandler implements ActionHandler
                     . '</td><td>'
                     . ($result['success'] ? '완료' : '제외') . '</td><td>'
                     . ($result['temporary_password'] === null
-                        ? $this->reason($result['reason'])
+                        ? (($result['diagnostic'] ?? null) instanceof AccountProtectionDiagnostic
+                            ? (new AccountProtectionDiagnosticView())->render($result['diagnostic'], true)
+                            : $this->reason($result['reason']))
                         : (new \CodingPanda\OjPlatform\Ui\Component\PasswordFieldView())->result(
                             'ojp-group-temporary-password-' . $groupId . '-' . $index,
                             $result['user_login'] . '의 임시 비밀번호',
@@ -66,7 +70,7 @@ final class GroupPasswordResetActionHandler implements ActionHandler
                 . '임시 비밀번호는 이 화면에서 한 번만 표시됩니다.</strong>'
                 . '<p>이메일 주소와 관계없이 직접 초기화되며 다음 로그인에서 '
                 . '비밀번호 변경을 요구합니다.</p></div>'
-                . '<div class="ojp-table-wrap"><table class="ojp-table">'
+                . '<div class="ojp-table-wrap"><table class="ojp-table ojp-table--password-resets">'
                 . '<thead><tr><th>로그인 아이디</th><th>결과</th>'
                 . '<th>임시 비밀번호 또는 사유</th></tr></thead><tbody>'
                 . $rows . '</tbody></table></div>'
@@ -136,6 +140,14 @@ final class GroupPasswordResetActionHandler implements ActionHandler
     private function reason(string $reason): string
     {
         return match ($reason) {
+            'self_reset_forbidden' => '본인 계정 제외',
+            'account_not_found' => '계정을 찾을 수 없습니다.',
+            'profile_missing' => '플랫폼 사용자 정보가 없습니다. 사용자 상세에서 등록 상태를 확인하세요.',
+            'account_pending' => '가입 승인 대기 계정입니다. 승인 후 초기화하세요.',
+            'account_suspended' => '이용 중지 계정입니다. 이용 상태를 확인하세요.',
+            'target_protected' => '관리자 또는 운영 권한이 있는 보호 계정입니다.',
+            'actor_not_allowed' => '비밀번호 초기화에 필요한 사용자 정보 수정 권한이 없습니다.',
+            'reset_failed' => '비밀번호 저장에 실패했습니다.',
             'target_not_allowed' => '보호 대상 또는 이용 불가 계정',
             default => '초기화 실패',
         };

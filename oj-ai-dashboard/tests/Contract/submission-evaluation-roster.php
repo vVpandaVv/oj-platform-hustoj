@@ -266,10 +266,10 @@ $policy                        = new class() implements \OJAI\Dashboard\Security
 	 */
 	public function authorize( \OJAI\Dashboard\Security\Policy\Access_Policy_Request $request ): \OJAI\Dashboard\Security\Policy\Access_Policy_Decision {
 		$this->calls[] = $request;
-		if ( $this->deny ) {
+		if ( $this->deny || ! $request->request_integrity_verified() ) {
 			return \OJAI\Dashboard\Security\Policy\Access_Policy_Decision::denied( 403, 'addon_capability_denied', $request->correlation_id() ); }
 		$context = $request->context();
-		return \OJAI\Dashboard\Security\Policy\Access_Policy_Decision::allowed( $request->correlation_id(), \OJAI\Dashboard\Security\Policy\Context_Authorization_Result::allowed( $context->type(), $context->id(), 'active', $this->drift ? 'other-revision' : 'context-r1', 'context_staff' ) );
+		return \OJAI\Dashboard\Security\Policy\Access_Policy_Decision::allowed( $request->correlation_id(), \OJAI\Dashboard\Security\Policy\Context_Authorization_Result::allowed( $context->type(), $context->id(), 'active', $this->drift ? 'other-revision' : 'context-r1', 'context_staff' ), \OJAI\Dashboard\Security\Policy\Object_Authorization_Result::allowed( 'context-r1', 'closed', 'context_staff' ) );
 	}
 };
 $correlations                  = new \OJAI\Dashboard\Rest\Correlation_Id_Factory();
@@ -374,3 +374,172 @@ $controller->permissions_roster( $request );
 $error = $controller->roster( $request );
 roster_assert( $error instanceof WP_Error && 503 === $error->data['status'] && ! str_contains( $error->message, 'Private' ), 'Platform failure must be private and must not return partial counts.' );
 echo "PASS roster REST: exact object and teacher capability, grant consumption, actor injection, denial, context drift, private errors\n";
+
+$grade_store      = new class() implements \OJAI\Dashboard\Submission\Assessment\Port\Non_Submission_Grade_Repository_Port_Interface {
+	/**
+	 * Captured grade commands.
+	 *
+	 * @var array
+	 */
+	public array $commands = array();
+	/**
+	 * Capture assignment policy writes through the same authorized port.
+	 *
+	 * @param array $record Validated policy command.
+	 * @return array
+	 */
+	public function save_policy( array $record ): array {
+		$this->commands[] = $record;
+		return array(
+			'policy'   => $record['input'],
+			'replayed' => false,
+		);
+	}
+	/**
+	 * Return no fixture grades.
+	 *
+	 * @param array $scope Assignment scope.
+	 * @return array
+	 */
+	public function read( array $scope ): array {
+		return array(); }
+	/**
+	 * Capture an authorized command.
+	 *
+	 * @param array $record Server command.
+	 * @return array
+	 */
+	public function save( array $record ): array {
+		$this->commands[] = $record;
+		return array(
+			'grade'    => array( 'score' => $record['input']['score'] ),
+			'replayed' => false,
+		);
+	}
+};
+$grade_service    = new \OJAI\Dashboard\Submission\Assessment\Application\Manage_Non_Submission_Grade( $grade_store, new \OJAI\Dashboard\Worksheet\Authoring\Domain\Canonical_Json() );
+$grade_controller = new \OJAI\Dashboard\Submission\Assessment\Presentation\Submission_Evaluation_Query_Rest_Controller( $permissions, $unused_evaluations, new Read_Teacher_Submissions( $source ), $envelopes, $correlations, $reader, null, $grade_service );
+$grade_request    = new class( $request->query ) {
+	/**
+	 * Submitted command.
+	 *
+	 * @var array
+	 */
+	public array $body;
+	/**
+	 * Nonce header.
+	 *
+	 * @var string
+	 */
+	public string $nonce = 'fixture-nonce';
+	/**
+	 * Replay key header.
+	 *
+	 * @var string
+	 */
+	public string $key = 'grade-idempotency-contract-0001';
+	/**
+	 * Initialize an authenticated grade request.
+	 *
+	 * @param array $query Authorized assignment scope.
+	 */
+	public function __construct( public array $query ) {
+		$this->body = array(
+			'target_id'        => '01K5A000000000000000000005',
+			'action'           => 'confirm',
+			'category'         => 'not_submitted',
+			'score'            => '0',
+			'memo'             => '',
+			'expected_hash'    => null,
+			'publication_hash' => str_repeat( 'a', 64 ),
+		);
+	}
+	/**
+	 * Read context query.
+	 *
+	 * @return array
+	 */
+	public function get_query_params(): array {
+		return $this->query; }
+	/**
+	 * Read JSON body.
+	 *
+	 * @return array
+	 */
+	public function get_json_params(): array {
+		return $this->body; }
+	/**
+	 * Read mutation method.
+	 *
+	 * @return string
+	 */
+	public function get_method(): string {
+		return 'POST'; }
+	/**
+	 * Read authentication and replay headers.
+	 *
+	 * @param string $name Header name.
+	 * @return string
+	 */
+	public function get_header( string $name ): string {
+		return match ( strtolower( $name ) ) {
+			'x-wp-nonce' => $this->nonce, 'idempotency-key' => $this->key, default => '' }; }
+};
+roster_assert( true === $grade_controller->permissions_grade( $grade_request ), 'Teacher grade permission failed.' );
+$call = $policy->calls[ array_key_last( $policy->calls ) ];
+roster_assert( array( \OJAI\Dashboard\Security\Addon_Capabilities::REVIEW_ASSESSMENTS ) === $call->required_capabilities() && 'evaluate_submissions' === $call->object()->action() && $assignment_id === $call->object()->id(), 'Grade must require exact assignment and teacher review rights.' );
+$result = $grade_controller->save_grade( $grade_request );
+roster_assert( $result instanceof WP_REST_Response && '0' === $result->data['data']['grade']['score'] && false === $result->data['meta']['student_visible'], 'Zero grade response failed.' );
+roster_assert( 42 === $grade_store->commands[0]['actor_user_id'], 'Grade actor must come from server.' );
+roster_assert( $grade_controller->save_grade( $grade_request ) instanceof WP_Error, 'Consumed grant must not write again.' );
+foreach ( array(
+	'actor_user_id' => 999,
+	'maximum_score' => '1000',
+) as $field => $value ) {
+	$grade_request->body[ $field ] = $value;
+	$grade_controller->permissions_grade( $grade_request );
+	roster_assert( 422 === $grade_controller->save_grade( $grade_request )->data['status'], 'Injected grade fields must fail.' );
+	unset( $grade_request->body[ $field ] );
+}
+$policy->deny = true;
+roster_assert( 403 === $grade_controller->permissions_grade( $grade_request )->data['status'], 'Student or unauthorized teacher must be denied.' );
+$policy->deny  = false;
+$policy->drift = true;
+$grade_controller->permissions_grade( $grade_request );
+roster_assert( $grade_controller->save_grade( $grade_request ) instanceof WP_Error, 'Drifted grade context must fail.' );
+$policy->drift        = false;
+$grade_request->nonce = 'invalid';
+roster_assert( $grade_controller->permissions_grade( $grade_request ) instanceof WP_Error, 'Invalid nonce must fail.' );
+$grade_request->nonce = 'fixture-nonce';
+$grade_request->key   = '';
+roster_assert( $grade_controller->permissions_grade( $grade_request ) instanceof WP_Error, 'Missing idempotency key must fail.' );
+roster_assert( 1 === count( $grade_store->commands ), 'Denied or malformed grades wrote storage.' );
+echo "PASS non-submission grade REST: review capability, assignment action, nonce/idempotency, server actor, no implicit publication, denial and context drift.\n";
+
+$grade_request->key  = 'policy-idempotency-contract-0001';
+$grade_request->body = array(
+	'scores'           => array(
+		'not_submitted' => '0',
+		'long_absence'  => '8',
+	),
+	'reason'           => '종료 후 기준 보완',
+	'expected_hash'    => null,
+	'publication_hash' => str_repeat( 'a', 64 ),
+);
+roster_assert( true === $grade_controller->permissions_grade( $grade_request ), 'Exception settings require authorized teacher review permission.' );
+$result = $grade_controller->save_policy( $grade_request );
+roster_assert( $result instanceof WP_REST_Response && '8' === $result->data['data']['policy']['scores']['long_absence'] && false === $result->data['meta']['student_visible'], 'Private exception policy response failed.' );
+roster_assert( 42 === $grade_store->commands[1]['actor_user_id'], 'Policy actor must come from server.' );
+roster_assert( $grade_controller->save_policy( $grade_request ) instanceof WP_Error, 'Policy write reused a consumed grant.' );
+$grade_request->body['actor_user_id'] = 999;
+$grade_controller->permissions_grade( $grade_request );
+roster_assert( 422 === $grade_controller->save_policy( $grade_request )->data['status'], 'Policy body accepted injected actor.' );
+unset( $grade_request->body['actor_user_id'] );
+$policy->deny = true;
+roster_assert( 403 === $grade_controller->permissions_grade( $grade_request )->data['status'], 'Policy write accepted an unauthorized user.' );
+$policy->deny  = false;
+$policy->drift = true;
+$grade_controller->permissions_grade( $grade_request );
+roster_assert( $grade_controller->save_policy( $grade_request ) instanceof WP_Error, 'Policy write accepted context drift.' );
+roster_assert( 2 === count( $grade_store->commands ), 'Denied policy requests reached storage.' );
+echo "PASS exception policy REST: exact assignment, teacher capability, server actor, nonce/idempotency grant, private output and denied writes.\n";

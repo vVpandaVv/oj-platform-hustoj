@@ -425,8 +425,9 @@
         }
 
         function statusLabel(row) {
-            return ({ provisional: '진행 중', complete: '계산 완료', incomplete: '기록 일부 누락',
-                archived: '최종 집계 보관', no_data: '관측 자료 없음', unavailable: '원시 기록 없음' })[row.dataStatus] || '확인 필요';
+            return (({ provisional: '진행 중', complete: '계산 완료', incomplete: '기록 일부 누락',
+                archived: '최종 집계 보관', no_data: '관측 자료 없음', unavailable: '원시 기록 없음' })[row.dataStatus] || '확인 필요')
+                + (row.activityEligible === false && ['no_data', 'unavailable'].indexOf(row.dataStatus) === -1 ? ' · 입력·제출 미평가' : '');
         }
 
         function showScores(activity) {
@@ -448,7 +449,8 @@
 
                 data.rows.forEach(function (row) {
                     var available = row.dataStatus !== 'no_data' && row.dataStatus !== 'unavailable';
-                    var scoreAvailable = available && row.dataStatus !== 'incomplete' && !row.hasDeliveryGaps && !row.hasObservationGaps;
+                    var scoreAvailable = available && row.dataStatus !== 'incomplete' && !row.hasDeliveryGaps && !row.hasObservationGaps
+                        && row.scoreEligible !== false && typeof row.scoreTotal === 'number';
                     var tr = document.createElement('tr');
                     if (row.needsReview) {
                         tr.className = 'ftk-needs-review';
@@ -458,8 +460,8 @@
                         + '<td>' + (available ? pct(row.focusRatio) : '—') + '</td>'
                         + '<td>' + (available ? Number(row.blurCount) : '—') + '</td>'
                         + '<td>' + (available ? Number(row.avgRecoverySeconds).toFixed(1) + '초' : '—') + '</td>'
-                        + '<td>' + (available ? pct(row.activityWindowRatio) : '—') + '</td>'
-                        + '<td><strong>' + (scoreAvailable ? Number(row.scoreTotal).toFixed(1) : '—') + '</strong></td>'
+                        + '<td>' + (available && row.activityEligible === false ? '미평가' : (available && typeof row.activityWindowRatio === 'number' ? pct(row.activityWindowRatio) : '—')) + '</td>'
+                        + '<td><strong>' + (available && row.scoreEligible === false ? '미평가' : (scoreAvailable ? Number(row.scoreTotal).toFixed(1) : '—')) + '</strong></td>'
                         + '<td data-f="status"></td>'
                         + '<td class="ftk-row-actions"><button type="button" class="ojp-button ojp-button--small ojp-button--plain" data-action="view-timeline">상세 보기</button>'
                         + '<button type="button" class="ojp-button ojp-button--small ojp-button--plain" data-action="view-statistics">누적 통계</button></td>';
@@ -524,7 +526,10 @@
 
         function renderTimelineSvg(data) {
             var width = 800;
-            var height = 90;
+            var categories = Array.isArray(data.categorySpans) ? data.categorySpans.filter(function (span) {
+                return Number.isFinite(Number(span.startedAt)) && Number.isFinite(Number(span.endedAt)) && Number(span.endedAt) > Number(span.startedAt);
+            }) : [];
+            var height = categories.length ? 130 : 90;
             var barY = 30;
             var barHeight = 30;
             var windowStart = data.windowStartsAtMs;
@@ -532,6 +537,11 @@
 
             function x(ms) {
                 return ((ms - windowStart) / windowSpan) * width;
+            }
+            function offset(value) {
+                if (!Number.isFinite(Number(value))) { return '—'; }
+                var seconds = Math.max(0, Math.floor((Number(value) - windowStart) / 1000));
+                return Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
             }
 
             var svgParts = [];
@@ -556,6 +566,18 @@
                 svgParts.push('<circle class="' + markerClass + '" cx="' + mx + '" cy="' + (barY + barHeight + 12) + '" r="4" />');
             });
 
+            var categoryLabels = { problem: '문제 풀이', submission: '제출·결과', material: '학습자료', practice: '실습·학습도구',
+                game: '교육게임', discussion: '질문·토론', other: '기타 내부 학습', unclassified: '이전 기록·미분류' };
+            function categoryKey(span) { return Object.prototype.hasOwnProperty.call(categoryLabels, span.category) ? span.category : 'unclassified'; }
+            function categoryLabel(span) { return span.category === 'practice' && span.subtype === 'ml' ? 'ML 실습' : categoryLabels[categoryKey(span)]; }
+            if (categories.length) {
+                svgParts.push('<text x="0" y="95" class="ftk-tl-category-label">페이지 범주</text>');
+                categories.forEach(function (span) {
+                    var sx = Math.max(0, x(Number(span.startedAt))); var ex = Math.min(width, x(Number(span.endedAt)));
+                    if (ex > sx) svgParts.push('<rect class="ftk-category-' + categoryKey(span) + '" x="' + sx + '" y="100" width="' + (ex - sx) + '" height="18"><title>' + categoryLabel(span) + '</title></rect>');
+                });
+            }
+
             svgParts.push('</svg>');
 
             var wrapper = document.createElement('div');
@@ -568,6 +590,59 @@
                 + '<span><span class="ftk-legend-swatch ftk-legend-swatch--dot ftk-legend-swatch--submit"></span>제출</span>'
                 + '<span><span class="ftk-legend-swatch ftk-legend-swatch--dot ftk-legend-swatch--run"></span>실행</span>';
             wrapper.appendChild(legend);
+            var note = document.createElement('p'); note.className = 'ojp-muted';
+            note.textContent = '페이지 범주는 관측된 이용 흐름입니다. 범주 이동만으로 감점하거나 미집중으로 판단하지 않습니다.';
+            wrapper.appendChild(note);
+            if (categories.length) {
+                var disclosure = document.createElement('details'); disclosure.className = 'ftk-category-transitions';
+                var heading = document.createElement('summary'); heading.textContent = '페이지 범주 전환과 관측 구간 보기'; disclosure.appendChild(heading);
+                var list = document.createElement('ol'); list.setAttribute('data-category-transitions', '');
+                categories.forEach(function (span) {
+                    var item = document.createElement('li');
+                    item.setAttribute('data-timeline-category', categoryKey(span) + (span.subtype === 'ml' ? ':ml' : ''));
+                    item.textContent = '활동 시작 후 ' + offset(span.startedAt) + '~' + offset(span.endedAt) + ' · ' + categoryLabel(span)
+                        + (span.active === true ? ' · 화면 활성' : ' · 비활성/관측 안 됨');
+                    list.appendChild(item);
+                });
+                disclosure.appendChild(list); wrapper.appendChild(disclosure);
+            } else {
+                var missing = document.createElement('p'); missing.className = 'ojp-muted';
+                missing.textContent = '이 구간의 페이지 분류 자료가 없습니다. 분류 이전 기록은 다른 범주로 추정하지 않습니다.'; wrapper.appendChild(missing);
+            }
+            var visits = document.createElement('details'); visits.className = 'ftk-page-visits';
+            var visitsHeading = document.createElement('summary'); visitsHeading.textContent = '페이지 방문 기록(탭별)'; visits.appendChild(visitsHeading);
+            var visitsNote = document.createElement('p'); visitsNote.className = 'ojp-muted';
+            visitsNote.textContent = '개별 페이지·탭에서 관측된 이력입니다. 서로 겹치는 구간이 있어 아래 시간을 직접 합산하면 중복될 수 있습니다. 전체 시간은 범주별 누적 기록을 확인해 주세요. 시작·종료는 활동 시작 후 경과 시간입니다.';
+            visits.appendChild(visitsNote);
+            var pages = Array.isArray(data.pages) ? data.pages.slice(0, 500) : [];
+            if (data.pageRecordsTruncated === true || (Array.isArray(data.pages) && data.pages.length > 500)) {
+                var truncated = document.createElement('p'); truncated.className = 'ojp-muted'; truncated.setAttribute('data-page-records-truncated', '');
+                truncated.textContent = '페이지 방문 기록은 최대 500개만 표시합니다. 일부 이력이 생략되었으므로 표시된 행 수를 전체 방문 횟수로 해석하지 마세요.'; visits.appendChild(truncated);
+            }
+            if (pages.length) {
+                var tableWrap = document.createElement('div'); tableWrap.className = 'ojp-table-wrap';
+                var table = document.createElement('table'); table.className = 'ojp-table'; table.setAttribute('data-page-visits', '');
+                var caption = document.createElement('caption'); caption.textContent = '개별 페이지·탭별 방문 이력'; table.appendChild(caption);
+                var thead = document.createElement('thead'); var header = document.createElement('tr');
+                ['페이지 범주', '내부 자료 식별자', '시작', '종료', '화면 활성 시간', '관측된 체류·열람 시간'].forEach(function (text) {
+                    var th = document.createElement('th'); th.scope = 'col'; th.textContent = text; header.appendChild(th);
+                });
+                thead.appendChild(header); table.appendChild(thead); var tbody = document.createElement('tbody');
+                function pageMinutes(value) { return typeof value === 'number' && Number.isFinite(value) ? (value / 60).toFixed(1) + '분' : '—'; }
+                pages.forEach(function (page) {
+                    var row = document.createElement('tr'); row.setAttribute('data-timeline-page', '');
+                    [categoryLabel(page), typeof page.pageKey === 'string' && page.pageKey ? page.pageKey : '확인 불가',
+                        offset(page.startedAtMs), offset(page.endedAtMs), pageMinutes(page.activeSeconds), pageMinutes(page.observedSeconds)].forEach(function (text, index) {
+                        var cell = document.createElement(index === 0 ? 'th' : 'td'); if (index === 0) cell.scope = 'row';
+                        cell.textContent = text; row.appendChild(cell);
+                    }); tbody.appendChild(row);
+                });
+                table.appendChild(tbody); tableWrap.appendChild(table); visits.appendChild(tableWrap);
+            } else {
+                var emptyVisits = document.createElement('p'); emptyVisits.className = 'ojp-muted';
+                emptyVisits.textContent = '개별 페이지 방문 자료가 없습니다. 이전 기록이나 보관 기간이 끝난 자료를 다른 페이지로 추정하지 않습니다.'; visits.appendChild(emptyVisits);
+            }
+            wrapper.appendChild(visits);
 
             return wrapper;
         }

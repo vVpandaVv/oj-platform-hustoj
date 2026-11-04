@@ -7,6 +7,7 @@ use CodingPanda\OjResearch\Contract\ResearchLearningGateway;
 use CodingPanda\OjResearch\Contract\PilotResources;
 use CodingPanda\OjResearch\Domain\PilotProtocol as P;
 use CodingPanda\OjResearch\Domain\ResearchProtocol;
+use CodingPanda\OjResearch\Domain\ClassroomProtocol;
 use CodingPanda\OjPlatform\Modules\Settings\Contract\FeatureFlags;
 use CodingPanda\OjPlatform\Modules\Submissions\Contract\AiFeedbackSubmission;
 use CodingPanda\OjPlatform\Modules\Submissions\Contract\SubmissionResearchRecorder;
@@ -68,8 +69,9 @@ final class PilotService implements SubmissionResearchRecorder, RecommendationPo
         if(!P::is($s)) {throw new DomainException('시범 연구가 아닙니다.');}
         $ids=P::ids($ids);
         if (count($ids)<2 || count($ids)>500) { throw new DomainException('동의를 확인한 학생 2~500명을 선택해 주세요.'); }
-        foreach (['practice','pretest','posttest'] as $phase) { if ($p[$phase]===[]) { throw new DomainException('학습·사전·사후 문제를 모두 지정해 주세요.'); } }
+        foreach (ClassroomProtocol::is($s) ? ['practice'] : ['practice','pretest','posttest'] as $phase) { if ($p[$phase]===[]) { throw new DomainException('학습·사전·사후 문제를 모두 지정해 주세요.'); } }
         if ($p['notes']['consent']==='') { throw new DomainException('동의 문서와 자료 보관 절차를 작성해 주세요.'); }
+        if (ClassroomProtocol::is($s)) { \CodingPanda\OjResearch\Domain\ClassroomSettings::requireReady($p); }
         $hashes=$this->learning->problemHashes($actor,array_merge($p['practice'],$p['pretest'],$p['posttest']));
         $usesAi = $p['arms']['A']['ai']!=='off' || $p['arms']['B']['ai']!=='off';
         foreach ($p['support'] as $supports) { $usesAi=$usesAi || count(array_filter($supports,static fn($x)=>$x!=='off'))>0; }
@@ -117,6 +119,10 @@ final class PilotService implements SubmissionResearchRecorder, RecommendationPo
             $allowed=['baseline'=>['pretest'],'pretest'=>['allocation_ready'],'allocated'=>['practice'],'practice'=>['between_lessons'],
                 'between_lessons'=>[$s['data']['lesson']<$s['data']['protocol']['lessons_count']?'practice':'posttest'],
                 'posttest'=>['completed'],'completed'=>['archived'],'cancelled'=>['archived']];
+            if (ClassroomProtocol::is($s)) {
+                $step = ClassroomProtocol::next($s);
+                $allowed = [$old=>$step === null ? [] : [$step[0]], 'completed'=>['archived'], 'cancelled'=>['archived']];
+            }
             if($next==='paused' && in_array($old,P::ACTIVE,true)) {$s['data']['resume_phase']=$old;}
             elseif($old==='paused' && $next===($s['data']['resume_phase']??'')) {}
             elseif($next==='cancelled' && !in_array($old,['archived','cancelled'],true)) {}
@@ -126,6 +132,21 @@ final class PilotService implements SubmissionResearchRecorder, RecommendationPo
                 // End any running timers at the teacher's explicit phase boundary.
                 foreach($this->store->participants($id) as $person) { $this->pauseRunning($s,$person); }
             }
+            if (ClassroomProtocol::is($s) && $next === 'practice' && in_array($old, ['baseline','pretest'], true)) {
+                $people = array_values(array_filter($this->store->participants($id), static fn($x)=>$x['consent']==='granted'));
+                $seed = bin2hex(random_bytes(32)); $protocol = $s['data']['protocol'];
+                if ($protocol['allocation'] === 'manual') { throw new DomainException('간편 수업에서는 수준별·무작위·그룹 배정을 선택해 주세요.'); }
+                $map = P::allocate($people, $protocol['allocation'], $protocol['arms'], $seed);
+                foreach ($map as $pid=>$arm) { $this->store->updateParticipant($pid, ['arm'=>$arm]); }
+                $s['data']['allocation'] = ['method'=>$protocol['allocation'],'seed'=>$seed,'input_hash'=>ResearchProtocol::hash($people),'at'=>$this->now()];
+                $s['data']['assignment_count'] = count($people);
+                $this->event($id,0,'allocation','allocation.completed',$s['data']['allocation']);
+            }
+            if (ClassroomProtocol::is($s) && $next==='archived') {
+                $latest=$this->latestResults($s,$this->store->records($id));
+                if(in_array(null,$latest,true)){throw new DomainException('채점 대기 또는 조회되지 않은 제출이 있습니다. 판정을 확인한 뒤 보관해 주세요.');}
+                $this->collectInto($s,$this->store->records($id));
+            } elseif (ClassroomProtocol::is($s) && in_array($old,P::ACTIVE,true)) { $this->collectInto($s, $this->store->records($id)); }
             if($next==='practice' && $old!=='paused') {++$s['data']['lesson'];}
             if(in_array($next,P::ACTIVE,true) && $old!=='paused') {$s['data']['activity_started_at']=$this->now();}
             if(in_array($next,['archived','cancelled'],true)) {foreach($this->store->participants($id)as$person){$this->store->updateParticipant($person['id'],['active_user_id'=>null]);}}
@@ -148,6 +169,12 @@ final class PilotService implements SubmissionResearchRecorder, RecommendationPo
     public function problemIds(array $s):array {return in_array($s['status'],P::ACTIVE,true)?$s['data']['protocol'][$s['status']]:[];}
     public function catalog(int $actor,array $ids):array {return $this->resources->problems($actor,$ids);}
     public function records(int $actor,int $id):array {$this->management->managed($actor,$id);return $this->store->records($id);}
+
+    public function learnerRecords(int $actor):array
+    {
+        $ctx=$this->learner($actor);if($ctx===null){return [];}
+        return array_values(array_filter($this->store->records($ctx['study']['id']),static fn($r)=>$r['participant_id']===$ctx['participant']['id']));
+    }
 
     public function sessions(array $s,array $person):array
     {
@@ -230,7 +257,7 @@ final class PilotService implements SubmissionResearchRecorder, RecommendationPo
     {
         $this->store->transaction(function()use($actor,$id,$revision,$answers):void {
             [$s,$p]=$this->studentLocked($actor,$id,$revision);
-            if(!in_array($s['status'],['posttest','completed'],true)){throw new DomainException('사후 단계에서 설문에 응답해 주세요.');}
+            if(ClassroomProtocol::is($s)||!in_array($s['status'],['posttest','completed'],true)){throw new DomainException('현재 수업의 설문 화면에서 응답해 주세요.');}
             $protocol=$s['data']['protocol'];$values=[];
             foreach($protocol['survey_items']as$i=>$item){$values[]=P::integer($answers[$i]??'',1,$protocol['survey_max']);}
             $this->event($id,$p['id'],'survey:'.$p['id'],'pilot.survey',['answers'=>$values]);
@@ -240,6 +267,53 @@ final class PilotService implements SubmissionResearchRecorder, RecommendationPo
     public function surveySaved(array $s,array $p):bool
     {
         foreach($this->store->records($s['id'])as$r){if($r['participant_id']===$p['id']&&$r['kind']==='pilot.survey'){return true;}}return false;
+    }
+
+    public function classroomSurvey(int $actor,int $id,int $revision,string $stage,array $answers,string $comment=''):void
+    {
+        $this->store->transaction(function()use($actor,$id,$revision,$stage,$answers,$comment):void {
+            [$s,$person]=$this->studentLocked($actor,$id,$revision);
+            if (!ClassroomProtocol::is($s) || !in_array($stage,['before','after'],true)) { throw new DomainException('수업 설문 정보를 확인해 주세요.'); }
+            $allowed = $stage === 'before' ? ['baseline'] : ['completed'];
+            if (!in_array($s['status'],$allowed,true)) { throw new DomainException('현재 열려 있는 설문에 응답해 주세요.'); }
+            $p=$s['data']['protocol']; $items=$stage==='before'?$p['before_items']:$p['survey_items']; $values=[];
+            foreach ($items as $i=>$item) { $values[]=($answers[$i]??'')==='na'?null:P::integer($answers[$i]??'',1,$p['survey_max']); }
+            $this->event($id,$person['id'],'classroom.survey:'.$stage.':'.$person['id'],'classroom.survey',[
+                'stage'=>$stage,'answers'=>$values,'comment'=>P::text($comment,2000),'items_hash'=>ResearchProtocol::hash($items),
+            ]);
+        });
+    }
+
+    public function classroomObservation(int $actor,int $id,int $revision,array $input):void
+    {
+        $this->store->transaction(function()use($actor,$id,$revision,$input):void {
+            $s=$this->locked($actor,$id,$revision);
+            if (!ClassroomProtocol::is($s) || in_array($s['status'],['draft','archived','cancelled'],true)) { throw new DomainException('진행 중이거나 종료한 수업에서 관찰을 기록해 주세요.'); }
+            $pid=P::integer($input['participant_id']??0,1,PHP_INT_MAX);
+            $person=array_column($this->store->participants($id),null,'id')[$pid]??null;
+            if ($person===null || $person['consent']!=='granted') { throw new DomainException('이 수업에 참여 중인 학생을 선택해 주세요.'); }
+            $requestId=P::text($input['request_id']??'',32);
+            if(!preg_match('/^[a-f0-9]{32}$/D',$requestId)){throw new DomainException('관찰 입력 화면을 새로고침해 주세요.');}
+            $data=['lesson'=>$s['data']['lesson'], 'level_match'=>P::choice($input['level_match']??'unobserved',['unobserved','matches','higher','lower']),
+                'teacher_help'=>P::choice($input['teacher_help']??'unobserved',['unobserved','none','some','much']),
+                'feedback_use'=>P::choice($input['feedback_use']??'unobserved',['unobserved','understood','difficult','unused']),
+                'issue'=>P::choice($input['issue']??'unobserved',['unobserved','none','ai_delay','ai_error','submission','other']),
+                'note'=>P::text($input['note']??'',4000)];
+            // An observation does not change AI policy or invalidate already queued feedback.
+            $this->event($id,$pid,'observation:'.$requestId,'classroom.observation',$data);
+        });
+    }
+
+    /** Read the latest verdicts without mutating the study or requiring a separate teacher collection action. */
+    public function reportRecords(int $actor,int $id):array
+    {
+        $s=$this->management->managed($actor,$id); $records=$this->store->records($id);
+        if (!ClassroomProtocol::is($s) || $s['status']==='archived' || !isset($s['data']['baseline_at'])) { return $records; }
+        $current=$this->latestResults($s,$records);
+        $replace=array_keys($current);
+        $records=array_values(array_filter($records,static fn($r)=>$r['kind']!=='pilot.judged'||!in_array($r['data']['submission_id'],$replace,true)));
+        foreach ($current as $row) { if ($row!==null) { $records[]=['kind'=>'pilot.judged','participant_id'=>$row['participant_id'],'data'=>$row['data'],'created_at'=>$row['data']['submitted_at']]; } }
+        return $records;
     }
 
     public function aiMode(array $s,array $person):string
@@ -314,18 +388,34 @@ final class PilotService implements SubmissionResearchRecorder, RecommendationPo
         $this->store->transaction(function()use($actor,$id,$revision):void {
             $s=$this->locked($actor,$id,$revision);$records=$this->store->records($id);
             if($s['status']==='archived'){throw new DomainException('보관한 연구는 수집 결과를 변경하지 않습니다.');}
-            foreach($this->store->participants($id)as$p){
-                if($p['consent']!=='granted'){continue;}$bindings=[];
-                foreach($records as$r){if($r['participant_id']===$p['id']&&$r['kind']==='pilot.submission'){$bindings[$r['data']['submission_id']]=$r['data'];}}
-                if($bindings===[]){continue;}
-                $all=$this->learning->submissions($p['user_id'],array_values(array_unique(array_column($bindings,'problem_id'))),$s['data']['baseline_at'],$this->now());
-                foreach($all as$submission){if(isset($bindings[$submission['submission_id']])&&!$submission['processing']){
-                    $data=$bindings[$submission['submission_id']]+['result_code'=>$submission['result_code'],'pass_rate'=>$submission['pass_rate']??null,'submitted_at'=>$submission['submitted_at']];
-                    $this->event($id,$p['id'],'judged:'.$submission['submission_id'].':'.ResearchProtocol::hash($data),'pilot.judged',$data);
-                }}
-            }
+            $this->collectInto($s,$records);
             $this->event($id,0,'refresh:'.$revision,'pilot.collected',['actor'=>$actor]);$this->store->updateStudy($s,$revision);
         });
+    }
+
+    private function latestResults(array $s,array $records):array
+    {
+        $current=[];
+        foreach($this->store->participants($s['id'])as$p){
+            if($p['consent']!=='granted'){continue;}$bindings=[];
+            foreach($records as$r){if($r['participant_id']===$p['id']&&$r['kind']==='pilot.submission'){$bindings[$r['data']['submission_id']]=$r['data'];}}
+            if($bindings===[]){continue;}
+            foreach($bindings as$sid=>$binding){$current[$sid]=null;}
+            $all=$this->learning->submissions($p['user_id'],array_values(array_unique(array_column($bindings,'problem_id'))),$s['data']['baseline_at'],$this->now());
+            foreach($all as$submission){if(isset($bindings[$submission['submission_id']])&&!$submission['processing']){
+                $data=$bindings[$submission['submission_id']]+['result_code'=>$submission['result_code'],'pass_rate'=>$submission['pass_rate']??null,'submitted_at'=>$submission['submitted_at']];
+                $current[$submission['submission_id']]=['participant_id'=>$p['id'],'data'=>$data];
+            }}
+        }
+        return $current;
+    }
+
+    private function collectInto(array $s,array $records):void
+    {
+        foreach($this->latestResults($s,$records)as$sid=>$row){if($row!==null){
+            $key='judged:'.(ClassroomProtocol::is($s)?$s['revision'].':':'').$sid.':'.ResearchProtocol::hash($row['data']);
+            $this->event($s['id'],$row['participant_id'],$key,'pilot.judged',$row['data']);
+        }}
     }
 
     private function studentLocked(int $actor,int $id,int $revision):array

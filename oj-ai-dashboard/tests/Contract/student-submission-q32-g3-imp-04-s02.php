@@ -646,6 +646,43 @@ $q32_database->tables['oj_ai_submission_receipts'][1]['content_hash'] = hash( 's
 g3_failure( static fn () => $q32_reader->read( 7, $q32_submission_id ), Assignment_Failure::STORED_DATA_INVALID, 'Q32 must reject a tampered teacher control receipt.' );
 $q32_database->tables['oj_ai_submission_receipts'][1] = $q32_original_control_receipt;
 
+$deadline_commits = new class() implements \OJAI\Dashboard\Submission\Student\Port\Auto_Submission_Commit_Repository_Port_Interface {
+	/**
+	 * Authorized recovery attempts.
+	 *
+	 * @var array<int,array<string,mixed>>
+	 */
+	public array $records = array();
+	/**
+	 * Record an authorized attempt without mutating the query fixture.
+	 *
+	 * @param array<string,mixed> $record Automatic commit inputs.
+	 * @return string
+	 */
+	public function auto_submit( array $record ): string {
+		$this->records[] = $record;
+		return 'stale';
+	}
+};
+$deadline         = new \OJAI\Dashboard\Submission\Student\Application\Finalize_Expired_Own_Submission(
+	$deadline_commits,
+	new \OJAI\Dashboard\Worksheet\Authoring\Domain\Public_Id_Generator()
+);
+$deadline_reader  = new Read_Own_Submission( $q32_repository, $q32_contexts, static fn (): string => '2026-08-23 12:30:00', $deadline );
+$deadline_reader->read( 7, $q32_submission_id );
+g3_same( 1, count( $deadline_commits->records ), 'Authorized expired self-read must attempt bounded recovery.' );
+g3_same( 7, $deadline_commits->records[0]['learner_user_id'], 'Recovery actor must come from authenticated self-read.' );
+g3_failure( static fn () => $deadline_reader->read( 99, $q32_submission_id ), Assignment_Failure::NOT_FOUND, 'Other students must not trigger recovery.' );
+$q32_database->tables['oj_ai_assignment_targets'][0]['state'] = 'revoked';
+g3_failure( static fn () => $deadline_reader->read( 7, $q32_submission_id ), Assignment_Failure::NOT_FOUND, 'Revoked students must not trigger recovery.' );
+$q32_database->tables['oj_ai_assignment_targets'][0]['state'] = 'active';
+$q32_contexts->contexts                                       = array();
+g3_failure( static fn () => $deadline_reader->read( 7, $q32_submission_id ), Assignment_Failure::NOT_FOUND, 'Removed platform membership must not trigger recovery.' );
+$q32_contexts->contexts = array( 'class:class-21' => $q32_context );
+g3_same( 1, count( $deadline_commits->records ), 'Denied reads must never invoke the committing recovery path.' );
+( new Read_Own_Submission( $q32_repository, $q32_contexts, static fn (): string => '2026-08-22 10:40:00', $deadline ) )->read( 7, $q32_submission_id );
+g3_same( 1, count( $deadline_commits->records ), 'Open assignments must not invoke deadline recovery.' );
+
 $q32_controller_reflection = new ReflectionClass( Student_Assignment_Rest_Controller::class );
 $q32_controller            = $q32_controller_reflection->newInstanceWithoutConstructor();
 $q32_path_method           = $q32_controller_reflection->getMethod( 'submission_path_id' );

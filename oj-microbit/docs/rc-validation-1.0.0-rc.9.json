@@ -1,0 +1,114 @@
+{
+  "candidateVersion": "1.0.0-rc.9",
+  "date": "2026-11-04",
+  "status": "local_verification_passed_live_acceptance_pending",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "featureFreeze": "feature-freeze-1.0.0-rc.9.json",
+  "requiresPlatform": ">=2.5.9 <3.0.0",
+  "requiresAddonApi": "^1.9",
+  "checks": {
+    "php": 1233,
+    "frontend": 134,
+    "installerShell": 26,
+    "runner": 102,
+    "freeze": 4,
+    "acceptanceRest": 15,
+    "acceptancePython": 26,
+    "total": 1540
+  },
+  "navigation": {
+    "nativeCatalogProvidersRegistered": 0,
+    "consolePages": 3,
+    "publicPages": 2,
+    "consoleMenus": 2,
+    "publicMenus": 2,
+    "teacherProblemLocalNavItems": 2,
+    "coreMenuAliases": 0,
+    "problemRoot": "problems",
+    "lessonRoot": "classes",
+    "duplicateInnerNavigation": false,
+    "publicMenuKeysReplacedForNewParents": true
+  },
+  "platform": {
+    "version": "2.5.9",
+    "addonApi": "1.9.0",
+    "productCodeChanged": false,
+    "existingPackageSha256": "a7ab51aac9728826f26ce67c3abe45f9e1d931550f41a7d061f858708a7f82ee"
+  },
+  "browser": {
+    "report": "browser-focused-validation-1.0.0-rc.9.json",
+    "flows": 22,
+    "pageErrors": 0,
+    "actualPlatformCss": true,
+    "actualPhpHostRenderer": true,
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualDatabase": false,
+    "actualRunner": false,
+    "actualHardware": false,
+    "editorProtocolFixture": true
+  },
+  "environment": {
+    "php": "8.5.5 Windows, PDO SQLite",
+    "node": "24.22.1 Windows",
+    "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+    "python": "3.14 Windows",
+    "shell": "Git Bash; nonprivileged command/filesystem fixtures"
+  },
+  "verified": [
+    "The unchanged selected focus sample and actual plugin code are compared with identical data and surface widths; first creation fields, title and card positions, compact output lanes, button radius, all four steps and student reading layout are verified",
+    "Focused authoring shows one of four steps and keeps the same MakeCode frame through navigation, modal application, save and publication-review cancellation",
+    "Focused problem pages show one title, readable task, device summary, public action examples and scoped solve/history controls",
+    "One modal selects several input and output pins, edits their values and serial actions, and validates all changes atomically before commit",
+    "Stage Edit reloads all existing pins and serial values; initial input seeding preserves existing values in every other example",
+    "Invalid values, duplicate/reserved pins, full-range tolerance, excessive time/counts and concurrent original changes cannot partially commit",
+    "Fixed-time assertions retain their original kind unless the teacher explicitly appends another action; I2C bytes/order and complex timelines remain preserved",
+    "Actual PXT consumes batch data for serial LED plus parallel PWM, independent failure, later input reference times, servo angle/pulse and fixed-assertion compatibility",
+    "Modal editing adds no REST request; DB query/schema and grading runtime/USB assets match the previous freeze",
+    "Actual platform PHP/menu/CSS and controlled REST/editor messages are used at 320, 390, 440 and 1280 pixels; Apply remains inside modal bounds and keyboard focus cycles correctly",
+    "Final publish action prepares the existing explicit review, and genuine unsaved code still triggers one cancellable exit prompt"
+  ],
+  "actualTrialServer": false,
+  "actualWordPress": false,
+  "actualMySQL": false,
+  "actualDocker": false,
+  "actualHustojParallelLoad": false,
+  "actualBackupRestore": false,
+  "actualHardware": false,
+  "pending": [
+    "Actual creation page installation version, cached CSS/JS and theme rules; Computer Use could not safely establish the browser URL",
+    "Actual WordPress theme, persisted menu visibility/order, roles and subdirectory routing",
+    "Actual group/class ledger permissions and concurrent revocation",
+    "MySQL/MariaDB plans, transactions, concurrent locks and workload",
+    "Representative lessons and student sessions with actual HUSTOJ judging",
+    "Matched plugin/database backup restore and privacy/retention completion",
+    "Physical HEX/WebUSB if official device support is included",
+    "Evaluation policy for independent addon result pages"
+  ],
+  "limitations": [
+    "SQLite and WordPress/POSIX/command fixtures do not certify actual MySQL or WordPress authentication",
+    "Browser uses real platform styles and PHP renderer with controlled loopback REST and iframe messages, not the actual MakeCode service",
+    "Existing group and class permission ledgers are reused by independent menus rather than copied into new module tables",
+    "Core programming performance-mode policies are not automatically applied to independent addon pages",
+    "Code-only downgrade to rc.2 or older does not understand lesson scopes; restore a matching database snapshot too"
+  ],
+  "designFidelity": {
+    "report": "design-fidelity-validation-1.0.0-rc.9.json",
+    "originalSampleSha256": "90e6f22f3958323c72f11febc5040192fcc3d185e2ab26f9f16f5580b241e97b",
+    "viewports": [
+      1280,
+      390,
+      320
+    ],
+    "firstCreationForm": true,
+    "allAuthorSteps": true,
+    "geometryCompared": true,
+    "maxPositionDifferencePx": 3,
+    "actualLiveSite": false
+  },
+  "validationNotes": [
+    "The first full run returned one real PXT HTTP compilation timeout while other local browser checks were running. The isolated HTTP suite passed 11/11, then a separate complete verification run passed 1540/1540 including 102/102 runner tests without changing execution limits.",
+    "Computer Use ended because the Windows browser URL could not be confirmed reliably for policy enforcement. No live site deployment, cache or theme verification is claimed."
+  ]
+}

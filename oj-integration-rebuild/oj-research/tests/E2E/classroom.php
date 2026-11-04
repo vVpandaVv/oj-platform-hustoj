@@ -1,0 +1,98 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/Unit/research-pilot.php';
+use CodingPanda\OjResearch\Domain\{ClassroomProtocol as C,ClassroomReport as R};
+use CodingPanda\OjResearch\Presentation\{PilotPages,PilotActions};
+use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\{ActionUrlProvider,ActionSecurity,HttpRequest};
+
+$start=$checks;
+$urls=new class implements ActionUrlProvider {public function actionUrl():string{return '/wp-admin/admin-post.php';}public function ajaxUrl():string{return '/wp-admin/admin-ajax.php';}};
+$security=new class implements ActionSecurity {public function hiddenFields(string $key):string{return '<input type="hidden" name="action" value="'.$key.'"><input type="hidden" name="_wpnonce" value="synthetic-test">';}public function verify(string $key,HttpRequest $r):bool{return false;}};
+$ui=new PilotPages($service,$pilot,$urls,$security);$actions=new PilotActions($service,$pilot);
+$output=getenv('OJ_CLASSROOM_UI_OUTPUT');
+$snapshot=static function(string $name,string $html)use($output):void {
+    if(!is_string($output)||$output===''){return;}if(!is_dir($output)){mkdir($output,0777,true);}
+    $shell='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>합성 자료 · 그룹 수업 화면</title><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/research.css"><script defer src="/research.js"></script></head><body class="ojp-app"><main class="ojp-shell"><p class="ojp-notice">합성 자료로 생성한 실제 PHP 화면 · 운영 데이터 아님</p>'.$html.'</main></body></html>';
+    file_put_contents($output.'/'.$name.'.html',$shell);
+    copy(dirname(__DIR__,3).'/oj-platform/resources/ui/css/oj-ui-system.css',$output.'/ui.css');copy(dirname(__DIR__,2).'/assets/research.css',$output.'/research.css');copy(dirname(__DIR__,2).'/assets/research.js',$output.'/research.js');
+};
+$snapshot('setup',$ui->edit(1,null,false,2));
+$response=$actions->handle(1,new HttpRequest('POST','/',[],['operation'=>'pilot.classroom.save','title'=>'합성 자료 · 반복문 피드백 수업','groups'=>[1,2],'practice'=>'1000,1001','lessons_count'=>'2','note_consent'=>'합성 동의·보관 시험','design'=>'adaptation']));
+researchAssert($response->status()===302,'Actual classroom action creates study');
+$cid=max(array_keys($store->studyRows));$cv=fn()=>$store->study($cid)['revision'];$cs=fn()=>$store->study($cid);
+$report=fn()=>R::build($cs(),$store->participants($cid),$pilot->reportRecords(1,$cid));
+researchAssert(C::is($cs())&&$cs()['data']['protocol']['pretest']===[],'Default flow permits optional assessments');
+researchAssert(count($cs()['data']['protocol']['before_items'])===3&&count($cs()['data']['protocol']['survey_items'])===7,'Before and after survey defaults stored');
+researchDenied(fn()=>$actions->handle(1,new HttpRequest('POST','/',[],['operation'=>'pilot.enroll','study_id'=>$cid,'revision'=>$cv(),'participants'=>[10,14]])),'Consent confirmation required by action');
+$snapshot('draft',$ui->show(1,$cid));
+$pilot->enroll(1,$cid,$cv(),[10,11,14,15]);$baseline=array_column($store->participants($cid),'baseline','id');
+$snapshot('survey-before',$ui->learner(10));
+researchDenied(fn()=>$pilot->classroomSurvey(99,$cid,$cv(),'before',[1,2,3]),'Nonparticipant survey denied');
+researchDenied(fn()=>$pilot->classroomSurvey(10,$id,$cv(),'before',[1,2,3]),'Cross-study survey denied');
+researchDenied(fn()=>$pilot->classroomSurvey(10,$cid,$cv(),'after',[1,2,3,4,5]),'End survey cannot be submitted early');
+researchDenied(fn()=>$pilot->classroomSurvey(10,$cid,0,'before',[1,2,3]),'Stale survey denied');
+researchDenied(fn()=>$pilot->classroomSurvey(10,$cid,$cv(),'before',[6,2,3]),'Out-of-range response denied');
+researchDenied(fn()=>$pilot->classroomSurvey(10,$cid,$cv(),'before',['',2,3]),'Blank answer is not silently zero');
+$request=new HttpRequest('POST','/',[],['operation'=>'pilot.classroom.survey','study_id'=>$cid,'revision'=>$cv(),'survey_stage'=>'before','answer_0'=>'4','answer_1'=>'na','answer_2'=>'3','comment'=>'<script>synthetic()</script>']);
+$actions->handle(10,$request);$count=count($store->records($cid));$actions->handle(10,$request);
+researchAssert(count($store->records($cid))===$count,'Identical survey retry is idempotent');
+researchDenied(fn()=>$pilot->classroomSurvey(10,$cid,$cv(),'before',[1,2,3]),'Changed duplicate survey is rejected');
+$pilot->classroomSurvey(14,$cid,$cv(),'before',[2,3,2]);
+researchAssert($report()['survey']['before'][1]['all']['na']===1&&$report()['survey']['before'][1]['all']['missing']===2,'NA and entire nonresponse stay distinct');
+researchAssert(count($pilot->learnerRecords(10))<count($store->records($cid)),'Learner only receives own records');
+$snapshot('baseline',$ui->show(1,$cid));
+$pilot->transition(1,$cid,$cv(),'practice');$assignment=array_column($store->participants($cid),'arm','id');
+researchAssert(count(array_unique($assignment))===2&&$cs()['data']['lesson']===1,'One start action assigns both arms and begins first lesson');
+researchDenied(fn()=>$pilot->classroomSurvey(11,$cid,$cv(),'before',[2,2,2]),'Start survey closes when class begins');
+researchDenied(fn()=>$pilot->allocate(1,$cid,$cv()),'No allocation reroll');
+$n=8000;$submitClass=function(int $user,int $problem,int $code,bool $processing=false)use($pilot,$cid,$cv,$clock,$learning,&$n):int {
+    $pilot->timer($user,$cid,$cv(),$problem,'start');$clock->time=$clock->time->modify('+20 seconds');$sid=++$n;$pilot->bindSubmission($user,$problem,$sid);
+    $learning->judged[$user][$sid]=['submission_id'=>$sid,'problem_id'=>$problem,'result_code'=>$code,'pass_rate'=>$code===4?1:0.5,'processing'=>$processing,'submitted_at'=>$clock->time->format('Y-m-d H:i:s')];return $sid;
+};
+$first=$submitClass(10,1000,6);$last=$submitClass(10,1000,4);$pending=$submitClass(14,1001,4,true);
+$beforeRead=serialize([$store->studyRows,$store->events]);$r=$report();
+researchAssert($beforeRead===serialize([$store->studyRows,$store->events]),'Report refresh is read-only');
+researchAssert($r['total']['paired_units']===1&&$r['total']['first_errors']===1&&$r['total']['last_errors']===0,'Paired same-unit error changes use observed judgments');
+researchAssert((float)$r['total']['practice_error_reduction']===100.0&&$r['total']['pending']===1,'Actual improvement and pending count separated');
+researchAssert((float)$r['total']['solve_seconds']===40.0,'First accepted elapsed time is measured, not judge runtime');
+$pilot->collect(1,$cid,$cv());$learning->judged[10][$last]['processing']=true;
+researchAssert($report()['total']['solved_units']===0&&$report()['total']['paired_units']===0,'Rejudging removes stale success and paired result');
+$learning->judged[10][$last]['processing']=false;
+$person=$store->activeForUser(10);$context=$service->context($aiSubmission(10,$last));
+$service->record($context,'generated',['submission_id'=>$last,'input_hash'=>'classroom','content'=>['feedback'=>'합성 피드백']]);
+$service->record($context,'delivered',['submission_id'=>$last,'input_hash'=>'classroom']);
+researchAssert($report()['total']['feedback_generated']===1&&$report()['total']['feedback_delivered']===1,'Generated and delivered evidence counted separately');
+researchDenied(fn()=>$pilot->classroomObservation(10,$cid,$cv(),['participant_id'=>$person['id']]),'Student cannot write teacher observations');
+researchDenied(fn()=>$pilot->classroomObservation(1,$cid,$cv(),['participant_id'=>999]),'Observation cannot target another cohort');
+$observationRequest=new HttpRequest('POST','/',[],['operation'=>'pilot.classroom.observation','study_id'=>$cid,'revision'=>$cv(),'request_id'=>str_repeat('a',32),'participant_id'=>$person['id'],'level_match'=>'matches','teacher_help'=>'some','feedback_use'=>'understood','issue'=>'none','note'=>'반복 범위 질문 후 다시 제출함.']);
+$beforeObservation=$cv();$actions->handle(1,$observationRequest);$actions->handle(1,$observationRequest);
+researchAssert($beforeObservation===$cv()&&count($report()['observations'])===1,'Observation retry is idempotent and does not invalidate queued feedback');
+researchAssert(count($report()['observations'])===1&&array_column($store->participants($cid),'baseline','id')===$baseline,'Observations recorded without changing level snapshots');
+$snapshot('index',$ui->index(1));$snapshot('manage',$ui->show(1,$cid));$snapshot('learner',$ui->learner(10));
+$pilot->transition(1,$cid,$cv(),'paused','합성 중단');$pilot->transition(1,$cid,$cv(),'practice','합성 재개');
+researchAssert($cs()['data']['lesson']===1,'Resume does not increment lesson');
+$pilot->transition(1,$cid,$cv(),'practice');
+researchAssert($cs()['data']['lesson']===2&&array_column($store->participants($cid),'arm','id')===$assignment,'Next lesson keeps original assignment');
+$submitClass(10,1000,4);researchAssert($report()['total']['attempted_units']===3,'Same problem in a new lesson is a separate unit');
+$pilot->transition(1,$cid,$cv(),'completed');$snapshot('survey-after',$ui->learner(11));
+researchDenied(fn()=>$pilot->survey(11,$cid,$cv(),[1,2,3,4,5]),'Legacy survey endpoint cannot bypass classroom survey');
+$pilot->classroomSurvey(11,$cid,$cv(),'after',[4,4,4,5,'na','na','na']);
+$r=$report();researchAssert($r['survey']['after'][4]['all']['n']===0&&$r['survey']['after'][4]['all']['na']===1,'All-NA item has missing mean, not zero');
+researchAssert($r['survey']['after'][3]['all']['mean']===5&&$r['total']['after_responded']===1,'Satisfaction is item-specific');
+researchDenied(fn()=>$pilot->transition(1,$cid,$cv(),'archived'),'Pending results cannot be frozen as old verdicts');
+$learning->judged[14][$pending]['processing']=false;
+$snapshot('results',$ui->show(1,$cid));$snapshot('report',$ui->report(1,$cid));
+foreach(['html','markdown','csv','json']as$format){$response=$actions->handle(1,new HttpRequest('POST','/',[],['operation'=>'pilot.export','study_id'=>$cid,'format'=>$format]));researchAssert($response->status()===200&&strlen($response->body())>100,'New report export works: '.$format);researchAssert(!str_contains($response->body(),'학생10')&&!str_contains($response->body(),'"user_id"'),'Pseudonymous results export: '.$format);if($format==='html'){researchAssert(!str_contains($response->body(),'<script>')&&str_contains($response->body(),'&lt;script&gt;'),'Report escapes survey free text');}}
+$paper=$ui->report(1,$cid);researchAssert(str_contains($paper,'전문가 자문 요청서')&&str_contains($ui->report(1,$cid,'report'),'독립 성취의 상승 폭은 산출하지 않는다'),'Expert form and interpretation limits available in separate documents');
+researchAssert(!str_contains($ui->show(1,$cid),'자문 항목과 검토 요청')&&str_contains($ui->show(1,$cid),'그룹별 진행'),'Operational group cards remain separate from manuscript tables');
+researchDenied(fn()=>$ui->report(10,$cid),'Students cannot view report');
+$pilot->transition(1,$cid,$cv(),'archived');researchAssert($report()['total']['pending']===0&&$report()['total']['solved_units']===3,'Archive collects final judgments automatically');
+researchAssert($pilot->learner(11)===null,'Archive closes survey and releases participant');
+// Optional assessments retain explicit completion and absent-data rules.
+$optional=$pilot->save(1,0,0,['workflow'=>C::WORKFLOW,'title'=>'선택 평가 검증','groups'=>[1],'practice'=>[1000],'pretest'=>[2000],'posttest'=>[3000],'lessons_count'=>1,'notes'=>['consent'=>'합성']]);
+$ov=fn()=>$store->study($optional)['revision'];$pilot->enroll(1,$optional,$ov(),[10,11]);
+foreach(['pretest','practice','posttest','completed']as$phase){$pilot->transition(1,$optional,$ov(),$phase);}
+$or=R::build($store->study($optional),$store->participants($optional),$pilot->reportRecords(1,$optional));researchAssert($or['assessment']['configured']&&$or['rows'][0]['pretest_score']===null&&$or['rows'][0]['gain']===null,'Optional tests remain missing without completion');
+$service->withdraw(1,$optional,$ov(),$store->participants($optional)[0]['id'],'합성 철회');
+$or=R::build($store->study($optional),$store->participants($optional),$pilot->reportRecords(1,$optional));researchAssert(count($or['rows'])===1&&$or['withdrawn']===1,'Withdrawal excluded from new report');
+echo 'Group classroom passed: '.($checks-$start)." assertions; real actions, stages, survey, reports, permissions and automatic judgments\n";

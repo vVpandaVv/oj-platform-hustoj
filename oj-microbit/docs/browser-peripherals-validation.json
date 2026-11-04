@@ -1,0 +1,35 @@
+{
+  "cases": [
+    {
+      "preset": "servo",
+      "officialEditor": true,
+      "nativeBlocks": true,
+      "realGrade": 100,
+      "preview": true,
+      "teacherSave": true,
+      "actualHexBytes": 1296908,
+      "hexChecksums": true,
+      "usbDataPreparation": {
+        "V1": 534276,
+        "V2": 758498
+      }
+    },
+    {
+      "preset": "i2c",
+      "officialEditor": true,
+      "nativeBlocks": true,
+      "realGrade": 100,
+      "preview": true,
+      "teacherSave": true,
+      "actualHexBytes": 1299980,
+      "hexChecksums": true,
+      "usbDataPreparation": {
+        "V1": 535948,
+        "V2": 760170
+      }
+    }
+  ],
+  "uiErrors": [],
+  "hardware": "not tested",
+  "database": "memory REST fixture"
+}

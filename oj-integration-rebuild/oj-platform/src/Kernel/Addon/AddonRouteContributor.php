@@ -34,7 +34,8 @@ final class AddonRouteContributor
         private readonly RouteUrlProvider $routeUrls,
         private readonly ConsoleResponder $consoleResponder,
         private readonly PageResponder $publicResponder,
-        private readonly ?AddonAssetRenderer $assets = null
+        private readonly ?AddonAssetRenderer $assets = null,
+        private readonly ?\CodingPanda\OjPlatform\Modules\AdminConsole\Contract\ConsoleMenuVisibility $menuVisibility = null
     ) {
     }
 
@@ -68,6 +69,9 @@ final class AddonRouteContributor
         }
 
         $assetBundles = $manifest->assetBundles();
+        $navigationRoutes = [];
+        foreach ($manifest->consolePages() as $target) { $navigationRoutes[$target->key()] = ['capability' => AddonCapabilityKeys::capabilityKey($target->capability()), 'console' => true]; }
+        foreach ($manifest->publicPages() as $target) { $navigationRoutes[$target->key()] = ['capability' => AddonCapabilityKeys::capabilityKey($target->capability()), 'console' => false]; }
 
         foreach ($manifest->consolePages() as $page) {
             $capabilityKey = AddonCapabilityKeys::capabilityKey($page->capability());
@@ -97,7 +101,10 @@ final class AddonRouteContributor
                 $manifest->pluginFile(),
                 $assetBundles,
                 $page->assetBundles(),
-                $segmentsByRoute[$page->key()] ?? []
+                $segmentsByRoute[$page->key()] ?? [],
+                $navigationRoutes,
+                $page->navigationMenuKey(),
+                $this->menuVisibility
             ));
             $this->consoleCapabilities[$page->key()] = $capabilityKey;
         }
@@ -129,7 +136,10 @@ final class AddonRouteContributor
                 $this->assets,
                 $manifest->pluginFile(),
                 $assetBundles,
-                $page->assetBundles()
+                $page->assetBundles(),
+                [],
+                $navigationRoutes,
+                $page->navigationMenuKey()
             ));
         }
     }

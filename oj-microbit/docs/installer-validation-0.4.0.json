@@ -1,0 +1,18 @@
+{
+  "version": "0.4.0",
+  "date": "2026-10-28",
+  "target": "Ubuntu 24.04 amd64; systemd; native same-host single-site WordPress; PHP 8.3 CLI and POSIX",
+  "nodeTestRuntime": "24.22.1 Windows x64",
+  "nodeTestSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+  "phpChecks": 644,
+  "frontendTests": 42,
+  "installerShellTests": 16,
+  "runnerTests": 86,
+  "totalChecks": 788,
+  "bashMockInstallation": true,
+  "actualPxtCanary": true,
+  "liveUbuntuInstallation": false,
+  "liveDockerSystemd": false,
+  "liveWordPressBootstrap": false,
+  "posixOwnershipTestedOnLinux": false
+}

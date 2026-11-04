@@ -7,6 +7,8 @@ use FocusTracker\Support\Capabilities;
 use FocusTracker\Support\Diagnostics;
 use FocusTracker\Support\Request_Limiter;
 use FocusTracker\Tracking\Activity_Window_Gate;
+use FocusTracker\Tracking\Page_Context;
+use FocusTracker\Support\Clock;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -37,14 +39,23 @@ final class Tracking_Controller {
         if ($limit !== null) { Diagnostics::record('gate', $limit->get_error_code() === 'focus_tracker_rate_limited' ? 'limited' : 'store'); return $limit; }
         $body = $request->get_json_params();
         $body = is_array($body) ? $body : array();
-        $problem = filter_var($body['problem_id'] ?? null, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1)));
+        $now = Clock::now_ms();
+        $page = Page_Context::from_payload($body, get_current_user_id(), $now);
+        if ($page instanceof WP_Error) { Diagnostics::record('gate', 'invalid'); return $page; }
         $type = $body['context_type'] ?? 'general';
         $id = $body['context_id'] ?? null;
-        if ($problem === false || ! is_string($type) || ($id !== null && ! is_string($id) && ! is_int($id))) {
+        if (! is_string($type) || ($id !== null && ! is_string($id) && ! is_int($id))) {
             Diagnostics::record('gate', 'invalid');
             return new WP_Error('focus_tracker_invalid_payload', '문제와 학습 문맥을 확인해 주세요.', array('status' => 400));
         }
-        $state = Activity_Window_Gate::state(get_current_user_id(), $problem, $type, $id);
+        $context = Page_Context::context($page, $type, $id);
+        if ($context instanceof WP_Error) { Diagnostics::record('gate', 'invalid'); return $context; }
+        $state = Activity_Window_Gate::state(get_current_user_id(), $page['problemId'], $context['type'], $context['id'], $now, false, $page['version'] > 0);
+        if (! $state instanceof WP_Error && $page['version'] > 0) {
+            $renewed = Page_Context::renew($page, get_current_user_id(), $now);
+            $state['pageContextToken'] = $renewed['token'];
+            $state['pageContextExpiresAtMs'] = $renewed['expiresAtMs'];
+        }
         Diagnostics::record('gate', $state instanceof WP_Error ? 'access' : (! empty($state['active']) ? 'success' : 'inactive'));
         return $state instanceof WP_Error ? $state : rest_ensure_response($state);
     }

@@ -33,6 +33,7 @@
         canShare() {
             return typeof SharedArrayBuffer !== 'undefined' && (this.options.sharedInput === true || host.crossOriginIsolated === true);
         }
+        isBusy() { return this.active !== null || this.queue.length > 0; }
         writeFile(fileName, bytes) {
             // Never allow a dataset to overwrite interpreter/site files.
             const name = String(fileName).split(/[\\/]/).pop();

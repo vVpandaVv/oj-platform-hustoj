@@ -24,6 +24,8 @@ final class Api {
         Controllers\Ranking_Records_Controller::register_routes();
         Player_Stats_Controller::register_routes();
         Teams_Controller::register_routes();
+        Controllers\Binary_Team_Controller::register_routes();
+        Controllers\Binary_Team_Controller::register_routes('device-matching');
         Games_Admin_Controller::register_routes();
         AI_Model_Lab_Controller::register_routes();
         AI_Model_Lab_Report_Controller::register_routes();

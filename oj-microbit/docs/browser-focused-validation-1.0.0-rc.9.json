@@ -1,0 +1,291 @@
+{
+  "date": "2026-11-04",
+  "candidateVersion": "1.0.0-rc.9",
+  "ok": true,
+  "checks": [
+    "Existing independent menus and bounded one-row problem list remain intact",
+    "Focused problem view has one title, readable task, device summary and public parallel/serial examples without hidden tests or eager editor",
+    "Original exact conditions remain behind an explicit technical disclosure",
+    "Problem content fits narrow devices at 320 390 and 440 pixels",
+    "Focused authoring starts with one visible step and no eager MakeCode load",
+    "Staged pin selection and Escape cancellation leave the original exercise and dirty state unchanged",
+    "One four-page dialog adds three pins and a serial LED sequence atomically while retaining the same editor",
+    "Stage Edit loads all selected pins and their existing serial actions and applies multiple changed values together",
+    "Batch pin/value/time pages and focused steps fit 320 390 440 1280 pixels with contained dialog scrolling and keyboard cycling",
+    "New input stage and interval edits move all later pin references together without cloning unrelated output states",
+    "The final focused publish action prepares the existing explicit review and cancellation preserves the original code frame",
+    "Modal editing adds no REST requests; save sends the original schema and retains the same live editor",
+    "Field errors open the correct focused author step and its exact detailed input",
+    "Real unsaved code still prompts once; saving and leaving remains clean",
+    "Focused lesson problem preserves assignment context and scoped solve/history actions",
+    "Focused problem content remains readable with the actual platform dark theme",
+    "Selected sample and actual author page match button radius/type, header spacing, title size, sidebar, layout gap, lane columns and compact state width at 1280 390 320",
+    "All four author steps render with one visible panel and one title at desktop and mobile widths; code initializes only in step three",
+    "Focused component resists broad late-loaded theme button and heading rules",
+    "Selected sample and actual problem view match centered reading width, body padding, unboxed reading section, compact output lanes and CTA geometry at 1280 390 320",
+    "Paired sample and actual component screenshots use identical input values, output values, timings and surface width",
+    "Core programming and class bodies remain separate"
+  ],
+  "pageErrors": 0,
+  "metrics": [
+    {
+      "label": "problem-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1386,
+      "localNav": 0
+    },
+    {
+      "label": "problem-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1358,
+      "localNav": 0
+    },
+    {
+      "label": "problem-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1358,
+      "localNav": 0
+    },
+    {
+      "label": "author-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "author-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "author-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "author-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1091,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1091,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1091,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1091,
+      "localNav": 34
+    },
+    {
+      "label": "focused-dark-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1367,
+      "localNav": 0
+    },
+    {
+      "label": "sample-author-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1089,
+      "localNav": 34
+    },
+    {
+      "label": "sample-author-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "sample-author-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "author-step-1-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1089,
+      "localNav": 34
+    },
+    {
+      "label": "author-step-2-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1089,
+      "localNav": 34
+    },
+    {
+      "label": "author-step-3-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1452,
+      "localNav": 34
+    },
+    {
+      "label": "author-step-4-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1089,
+      "localNav": 34
+    },
+    {
+      "label": "author-step-1-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "author-step-2-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "author-step-3-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1525,
+      "localNav": 34
+    },
+    {
+      "label": "author-step-4-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1329,
+      "localNav": 34
+    },
+    {
+      "label": "sample-problem-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 913,
+      "localNav": 0
+    },
+    {
+      "label": "sample-problem-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1120,
+      "localNav": 0
+    },
+    {
+      "label": "sample-problem-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1120,
+      "localNav": 0
+    }
+  ],
+  "posts": [
+    {
+      "id": 0,
+      "revision": 0
+    },
+    {
+      "id": 72,
+      "revision": 1
+    }
+  ],
+  "microbitJsSha256": "e813374e374a3ff5b77f8bc47e73daae4cdbb649767948cebc9fd12b34e439e0",
+  "microbitCssSha256": "93b25065a69f471f78f3500f73451c4fce67a90ab26f43917fe78f6be8976fec",
+  "shellCssSha256": "c67bfc7c54a8face97b5ab041a0b6139e096769ed1f8f506a867001de5b89cdc",
+  "actualPlatformMenuResolver": true,
+  "actualPhpRenderer": true,
+  "editorProtocolFixture": true,
+  "actualWordPress": false,
+  "actualMakeCode": false,
+  "actualDatabase": false,
+  "actualDocker": false,
+  "actualHardware": false
+}

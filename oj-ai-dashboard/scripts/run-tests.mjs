@@ -1,6 +1,17 @@
 import { spawnSync } from 'node:child_process';
 
 const checks = [
+  { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/submission-rubric-preview.php'] },
+  { command: process.env.OJAI_PHP || 'php', args: ['-d', 'extension=pdo_sqlite', 'tests/Contract/assignment-exception-scores.php'] },
+  { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/submission-score-drafts.php'] },
+  { command: process.execPath, args: ['scripts/e2e-editable-grading.mjs'] },
+  { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/submission-manual-score-readback.php'] },
+  { command: process.execPath, args: ['tests/Contract/submission-review-attention.mjs'] },
+  { command: process.execPath, args: ['scripts/e2e-submission-review-attention.mjs'] },
+  { command: process.env.OJAI_PHP || 'php', args: ['-d', 'extension=pdo_sqlite', 'tests/Contract/non-submission-grade.php'] },
+  { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/rubric-exception-scores.php'] },
+  { command: process.execPath, args: ['tests/Contract/non-submission-grade.mjs'] },
+  { command: process.execPath, args: ['scripts/e2e-non-submission-grade.mjs'] },
   { command: process.env.OJAI_PHP || 'php', args: ['-d', 'extension=intl', 'tests/Contract/worksheet-table-widths.php'] },
   { command: process.execPath, args: ['scripts/e2e-worksheet-table-widths.mjs'] },
   { command: process.env.OJAI_PHP || 'php', args: ['-d', 'extension=intl', 'tests/Contract/submission-screen-view.php', '--fixture'] },
@@ -16,6 +27,7 @@ const checks = [
   { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/server-setup-recovery.php'] },
   { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/server-config-helper.php'] },
   { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/external-ml-assessment.php'] },
+  { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/external-ml-ollama-compat.php'] },
   { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/external-common-assessment.php'] },
   { command: process.env.OJAI_PHP || 'php', args: ['-d', 'extension=pdo_sqlite', 'tests/Contract/external-ml-assessment-storage.php'] },
   { command: process.execPath, args: ['tests/Contract/student-note-failure-ui.mjs'] },

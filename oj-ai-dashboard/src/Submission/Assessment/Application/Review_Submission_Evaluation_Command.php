@@ -94,7 +94,7 @@ final class Review_Submission_Evaluation_Command {
 		$this->safe_token( $command_id, 'command_id', 8, 128 );
 		$this->safe_token( $correlation_id, 'correlation_id', 1, 100 );
 		if (
-			! in_array( $decision, array( 'accepted', 'adjusted', 'rejected', 'withdrawn' ), true )
+			! in_array( $decision, array( 'accepted', 'adjusted', 'draft', 'rejected', 'withdrawn' ), true )
 			|| 1 !== preg_match( '/^[a-f0-9]{64}$/D', $idempotency_fingerprint )
 			|| 1 !== preg_match( '/^(?:0|[1-9][0-9]*)$/D', $authorized_revision )
 			|| ! in_array( $authorized_state, array( 'review_required', 'reviewed' ), true )
@@ -107,7 +107,7 @@ final class Review_Submission_Evaluation_Command {
 		$this->item_decisions = $this->normalize_decisions( $item_decisions );
 		if (
 			( 'accepted' === $decision && ( array() !== $this->item_decisions || null !== $this->reason ) )
-			|| ( 'adjusted' === $decision && array() === $this->item_decisions )
+			|| ( in_array( $decision, array( 'adjusted', 'draft' ), true ) && array() === $this->item_decisions )
 			|| ( in_array( $decision, array( 'rejected', 'withdrawn' ), true ) && ( array() !== $this->item_decisions || null === $this->reason ) )
 		) {
 			throw new InvalidArgumentException( 'ReviewSubmissionEvaluation decision payload is invalid.' );

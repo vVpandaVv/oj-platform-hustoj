@@ -2,7 +2,7 @@
 
 이 폴더는 아래 플러그인의 **설치 패키지 생성**과 **설치 안내서 생성**을 한 곳에서 처리하는 기준점입니다. 어떤 편집기, 어떤 PC, 어떤 AI 에이전트로 작업하든 패키징과 설치 문서는 이 킷으로만 만듭니다.
 
-대상: `oj-platform`, `edu-games`, `learning-materials`, `oj-ai-dashboard`, `oj-code-lab`, `readcontents-library`, `teaching-tools`, `focus-tracker`, `oj-primm`
+대상: `oj-platform`, `edu-games`, `learning-materials`, `oj-ai-dashboard`, `oj-code-lab`, `readcontents-library`, `teaching-tools`, `focus-tracker`, `oj-primm`, `oj-microbit`, `oj-research`
 
 ## 사용법
 

@@ -44,6 +44,43 @@ function retention_question(int $user, int $at): array {
 function retention_raw_count(int $id): int { global $wpdb; return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table() . ' WHERE participation_id = ' . $id); }
 function retention_continue(): void { wp_clear_scheduled_hook('focus_tracker_cleanup_continue'); Cleanup::run(); }
 
+// Interleave a real heartbeat after candidate selection, before the cleanup
+// UPDATE. The SELECT is only a work list; it cannot authorize stale writes.
+$raceNow = Clock::now_ms();
+$raceOld = $raceNow - 300000;
+$resumed = Participation_Repository::find_or_create(array('activity_id' => null, 'user_id' => 898, 'problem_id' => 123, 'session_uid' => 'cleanup-resumed-heartbeat', 'started_at_ms' => $raceOld));
+$stillStale = Participation_Repository::find_or_create(array('activity_id' => null, 'user_id' => 899, 'problem_id' => 123, 'session_uid' => 'cleanup-still-stale', 'started_at_ms' => $raceOld));
+$originalDb = $wpdb;
+$interleaved = false;
+$wpdb = new class($originalDb, static function (array $candidates) use ($resumed, $raceNow, &$interleaved): void {
+    retention_assert(in_array($resumed['id'], array_column($candidates, 'id'), true), 'A stale heartbeat is initially selected by the actual cleanup query');
+    $interleaved = true;
+    if (! Participation_Repository::touch_heartbeat($resumed['id'], $raceNow)) { throw new RuntimeException('Concurrent heartbeat fixture failed.'); }
+}) {
+    private bool $used = false;
+    public function __construct(private object $db, private Closure $afterCandidates) {}
+    public function __get(string $name): mixed { return $this->db->$name; }
+    public function __set(string $name, mixed $value): void { $this->db->$name = $value; }
+    public function __call(string $name, array $arguments): mixed { return $this->db->$name(...$arguments); }
+    public function get_results(string $sql, mixed $mode = ARRAY_A): array {
+        $rows = $this->db->get_results($sql, $mode);
+        if (! $this->used && str_contains($sql, 'SELECT id FROM ' . Installer::participations_table()) && str_contains($sql, 'ended_at IS NULL AND last_heartbeat_at <')) {
+            $this->used = true;
+            ($this->afterCandidates)($rows);
+        }
+        return $rows;
+    }
+};
+try { $closedDuringRace = (new ReflectionMethod(Cleanup::class, 'close_abandoned'))->invoke(null); }
+finally { $wpdb = $originalDb; }
+retention_assert($interleaved, 'A heartbeat commits between candidate selection and timeout update');
+$resumedAfter = Participation_Repository::find($resumed['id']);
+retention_expect(null, $resumedAfter['ended_at_ms'], 'A fresh heartbeat prevents an already selected session from being timed out');
+retention_expect(null, $resumedAfter['end_reason'], 'A resumed session retains no false timeout reason');
+retention_expect($raceNow, $resumedAfter['last_heartbeat_at_ms'], 'The concurrent heartbeat remains intact');
+retention_expect(1, $closedDuringRace, 'Only the still-stale peer is counted as closed');
+retention_expect($raceOld, Participation_Repository::find($stillStale['id'])['ended_at_ms'], 'A genuinely abandoned peer still closes at its last observation');
+
 update_option('focus_tracker_settings', array('retention_days' => 90));
 retention_expect(90, Settings::get('check_retention_days'), 'Legacy single retention setting remains the check-retention fallback');
 retention_expect(0, Settings::get('aggregate_retention_days'), 'Existing sites retain aggregates indefinitely by default');

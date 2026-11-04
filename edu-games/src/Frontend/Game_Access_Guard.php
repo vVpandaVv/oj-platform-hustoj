@@ -20,6 +20,10 @@ final class Game_Access_Guard {
     public static function pre_render_block($pre_render, array $parsed_block) {
         $block_name = (string) ($parsed_block['blockName'] ?? '');
         $prefix = 'edu-games/';
+        if ($block_name === 'edu-games/binary-team') {
+            return self::can_access('binary-conversion') ? $pre_render : self::closed_notice();
+        }
+        if ($block_name === 'edu-games/device-team') return self::can_access('device-matching') ? $pre_render : self::closed_notice();
 
         if (! str_starts_with($block_name, $prefix)) {
             return $pre_render;
@@ -73,7 +77,7 @@ final class Game_Access_Guard {
      * @return array<string, string>
      */
     private static function shortcode_game_map(): array {
-        $map = array();
+        $map = array('binary_team'=>'binary-conversion', 'oj_binary_team'=>'binary-conversion','device_team'=>'device-matching','oj_device_team'=>'device-matching');
 
         foreach (edu_games_registry()->all(false) as $game_id => $definition) {
             $tag = (string) ($definition['shortcode'] ?? '');

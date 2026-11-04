@@ -17,6 +17,7 @@ use CodingPanda\OjPlatform\Modules\AdminConsole\Contract\ConsoleResponder;
 use CodingPanda\OjPlatform\Modules\Auth\Application\LoginThrottleService;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\AccessStatus;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\ActionResponse;
+use CodingPanda\OjPlatform\Modules\Auth\Contract\AttemptLimiterStorageLock;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\CurrentAccount;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\CurrentAccountProvider;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\UserIdentity;
@@ -39,6 +40,9 @@ Autoloader::register($pluginRoot);
 require_once $pluginRoot . '/tests/Support/wordpress-stubs.php';
 
 $transients = [];
+// This existing model represents an external transient cache. SQL timeout
+// rows and the actual MySQL lock are tested in attempt-limiter-concurrency.
+function wp_using_ext_object_cache(): bool { return true; }
 function get_transient(string $key): mixed { return $GLOBALS['transients'][$key] ?? false; }
 function set_transient(string $key, mixed $value, int $expiration): bool
 {
@@ -75,7 +79,10 @@ $settings = new class implements SettingsManager {
         return $this->snapshots[$key] = new SettingsSnapshot($expectedRevision + 1, $value);
     }
 };
-$storage = new WordPressAttemptLimiter();
+$storageLock = new class implements AttemptLimiterStorageLock {
+    public function synchronized(callable $operation): mixed { return $operation(); }
+};
+$storage = new WordPressAttemptLimiter(storageLock: $storageLock);
 $GLOBALS['transient_write_mode'] = 'unchanged';
 loginSecurityAssert($storage->consume('submission', 'concurrent-test', 10, 60), '동시 요청에서 동일 값이 저장되면 허용해야 합니다.');
 $GLOBALS['transient_write_mode'] = 'fail';
@@ -118,7 +125,7 @@ loginSecurityAssert(! $limiter->consume('lost_password', '203.0.113.1', 1, 600),
 $limiter->reset(2);
 loginSecurityAssert($limiter->snapshot()->value()['enabled'] === false, '초기화가 사용 여부를 바꾸면 안 됩니다.');
 $limiter->save(true, 3);
-$nextRequestLimiter = new LoginThrottleService(new WordPressAttemptLimiter(), $settings);
+$nextRequestLimiter = new LoginThrottleService(new WordPressAttemptLimiter(storageLock: $storageLock), $settings);
 loginSecurityAssert($nextRequestLimiter->consume('login', '203.0.113.1|student-a', 1, 600), '다시 켜도 오래된 차단 기록이 살아나면 안 됩니다.');
 loginSecurityAssert(! $nextRequestLimiter->consume('login', '203.0.113.1|student-a', 1, 600), '새 요청에서도 저장된 설정을 적용해야 합니다.');
 $before = $limiter->snapshot();

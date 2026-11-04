@@ -21,7 +21,7 @@ use CodingPanda\OjPlatform\AddonApi\V1\AddonSiteAssetDefinitionV1;
 use LogicException;
 
 /** @internal */
-final class AddonManifestBuilder implements AddonManifestBuilderV1, AddonConsoleLocalNavBuilderV1, AddonIntegrationManifestBuilderV1
+final class AddonManifestBuilder implements AddonManifestBuilderV1, AddonConsoleLocalNavBuilderV1, AddonIntegrationManifestBuilderV1, \CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningManifestBuilderV1
 {
     /** @var array<string, string>|null */
     private ?array $metadata = null;
@@ -47,6 +47,8 @@ final class AddonManifestBuilder implements AddonManifestBuilderV1, AddonConsole
     private array $siteAssets = [];
     /** @var list<AddonPrivacyDataDefinitionV1> */
     private array $privacyData = [];
+    /** @var list<\CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningProviderDefinitionV1> */
+    private array $nativeLearningProviders = [];
     /** @var callable(\CodingPanda\OjPlatform\AddonApi\V1\AddonRuntimeContextV1): void|null */
     private $onReady = null;
     private bool $closed = false;
@@ -156,6 +158,13 @@ final class AddonManifestBuilder implements AddonManifestBuilderV1, AddonConsole
         $this->privacyData[] = $definition;
     }
 
+    public function nativeLearningProvider(\CodingPanda\OjPlatform\AddonApi\V1\AddonNativeLearningProviderDefinitionV1 $definition): void
+    {
+        $this->assertOpen();
+        if (count($this->nativeLearningProviders) >= 4) { throw new LogicException('An addon may declare at most four native catalogs.'); }
+        $this->nativeLearningProviders[] = $definition;
+    }
+
     public function close(): AddonManifest
     {
         $this->assertOpen();
@@ -182,7 +191,8 @@ final class AddonManifestBuilder implements AddonManifestBuilderV1, AddonConsole
             $this->consoleLocalNav,
             $this->activityProviders,
             $this->siteAssets,
-            $this->privacyData
+            $this->privacyData,
+            $this->nativeLearningProviders
         );
     }
 

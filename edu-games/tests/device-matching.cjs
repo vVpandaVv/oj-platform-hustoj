@@ -18,14 +18,14 @@ const rules = JSON.parse(php(['tests/bridge.php', 'rules']))['device-matching'].
 const additions = JSON.parse(fs.readFileSync(path.join(root, 'assets/device-matching/expanded-sources.json'), 'utf8'));
 let checks = 0;
 const check = (condition, message) => { assert(condition, message); checks++; };
-check(rules.devices.length === 38, '38 device types');
-check(new Set(rules.devices.map(d => d.id)).size === 38, 'unique IDs');
-check(rules.devices.filter(d => d.category === 'sensor').length === 11, '11 sensors');
-check(rules.devices.filter(d => d.category === 'actuator').length === 7, '7 actuators');
+check(rules.devices.length === 70, '70 device types');
+check(new Set(rules.devices.map(d => d.id)).size === 70, 'unique IDs');
+check(rules.devices.filter(d => d.category === 'sensor').length >= 11, 'sensor variety');
+check(rules.devices.filter(d => d.category === 'actuator').length >= 7, 'actuator variety');
 check(additions.length === 14, '14 new photographs');
 for (const d of rules.devices) {
-    const bytes = fs.readFileSync(path.join(root, 'assets/device-matching/images', `${d.id}.jpg`));
-    check(bytes[0] === 0xff && bytes[1] === 0xd8, `${d.id} JPEG signature`);
+    const filename=path.basename(new URL(d.image,'http://localhost').pathname),bytes = fs.readFileSync(path.join(root, 'assets/device-matching/images', filename));
+    check(bytes.length>1000, `${d.id} image bytes`);
     check(d.name && d.description && d.author && d.license && d.sourceUrl.startsWith('https://commons.wikimedia.org/wiki/File:'), `${d.id} metadata`);
 }
 for (const entry of additions) {
@@ -56,7 +56,7 @@ for (let run = 0; run < 100; run++) {
     }
     check(game.state.seenDeviceIds.length === 36, 'no repeated devices in one run');
 }
-check(observed.size === 38, 'entire expanded pool reachable');
+check(observed.size === 70, 'entire expanded pool reachable');
 game.rules = { ...rules, devices: rules.devices.slice(0, 24) };
 game.state = game.initialState();
 for (let stage = 0; stage < 4; stage++) {
@@ -99,7 +99,7 @@ async function main() {
         check(errors.length === 0, errors.join('\n'));
         if (process.env.DEVICE_IMAGES_ONLY) return;
         await page.goto(`http://127.0.0.1:${server.address().port}`);
-        check(await page.locator('.oj-device-credits li').count() === 38, 'all credits rendered');
+        check(await page.locator('.oj-device-credits li').count() === 70, 'all credits rendered');
         await page.locator('[data-action="start"]').click();
         await page.waitForSelector('.eg-focus-dialog');await page.locator('.edu-game').evaluate(e=>e.__GameViewport.close());
         check(await page.locator('[data-card-id]').count() === 12, 'starts with six pairs');

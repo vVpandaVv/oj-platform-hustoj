@@ -33,12 +33,13 @@ final class ResearchPageHandler implements RouteHandler
             $key = $route->route()->key();
             $id = (int) ($route->parameters()['study_id'] ?? 0);
             $content = match ($key) {
-                'console.research.new' => $this->pilot?->edit($actor) ?? $this->index($actor),
-                'console.research.report' => $this->pilot !== null && $this->pilot->isPilot($actor,$id) ? $this->pilot->report($actor,$id) : $this->study($actor,$id),
+                'console.research.new' => $this->pilot?->edit($actor,null,$request->queryString('advanced')==='1',(int)$request->queryString('group_id','0')) ?? $this->index($actor),
+                'console.research.report' => $this->pilot !== null && $this->pilot->isPilot($actor,$id) ? $this->pilot->report($actor,$id,$request->queryString('document'),$request->queryString('fragment')==='1') : $this->study($actor,$id),
                 'console.research.rating' => $this->ratings($actor),
                 'console.research.show' => $this->pilot !== null && $this->pilot->isPilot($actor,$id) ? $this->pilot->show($actor,$id,$request->queryString('tab','overview')) : $this->study($actor,$id),
                 default => $this->pilot !== null && $request->queryString('legacy') !== '1' ? $this->pilot->index($actor) : $this->index($actor),
             };
+            if ($key==='console.research.report' && $request->queryString('fragment')==='1' && $request->queryString('document')!=='') { return HttpResponse::html($content); }
             if ($request->queryString('notice') === 'saved') { $content = '<div class="ojp-notice ojp-notice--success">저장했습니다.</div>' . $content; }
             return $this->console->respond('수업 연구', $this->assets . $content, 'learning_support.research', $request);
         } catch (DomainException $error) {

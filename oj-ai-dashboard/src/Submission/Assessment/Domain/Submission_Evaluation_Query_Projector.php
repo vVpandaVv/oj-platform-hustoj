@@ -44,7 +44,7 @@ final class Submission_Evaluation_Query_Projector {
 		'cancelled',
 	);
 	private const RUN_OPERATIONS    = array( 'score', 'feedback_draft', 'special_note_draft', 'manual_prepare' );
-	private const REVIEW_DECISIONS  = array( 'accepted', 'adjusted', 'rejected', 'withdrawn' );
+	private const REVIEW_DECISIONS  = array( 'accepted', 'adjusted', 'draft', 'rejected', 'withdrawn' );
 	private const FEEDBACK_STATES   = array( 'ai_draft', 'teacher_draft', 'rejected', 'approved', 'stale' );
 	private const RELEASE_STATES    = array( 'released', 'corrected', 'withdrawn', 'stale' );
 	private const MAXIMUM_HISTORY   = 500;
@@ -374,14 +374,26 @@ final class Submission_Evaluation_Query_Projector {
 		if ( null === $official && null !== $official_local_no ) {
 			throw new InvalidArgumentException( 'Submission evaluation official review summary drifted.' );
 		}
+		$latest_score   = $this->nullable_decimal( $row['latest_review_score'] ?? null );
+		$latest_result  = $this->nullable_public_id( $row['latest_review_result_id'] ?? null );
+		$official_score = $this->nullable_decimal( $row['official_local_score'] ?? null );
+		$maximum        = $this->nullable_decimal( $row['latest_maximum_score'] ?? null );
+		if ( ( null !== $latest_score && ( null === $latest_result || ! in_array( $latest_decision, array( 'draft', 'accepted', 'adjusted' ), true ) ) )
+			|| ( null !== $official_score && null === $official_local_no )
+			|| ( null !== $maximum && ( ( null !== $latest_score && (float) $latest_score > (float) $maximum ) || ( null !== $official_score && (float) $official_score > (float) $maximum ) ) ) ) {
+			throw new InvalidArgumentException( 'Submission evaluation displayed score is inconsistent.' );
+		}
 
 		return array(
-			'count'           => $count,
-			'latest_id'       => $latest_id,
-			'latest_no'       => $latest_no,
-			'latest_decision' => $latest_decision,
-			'official_id'     => null === $official ? null : $official['id'],
-			'official_scope'  => null === $official ? 'none' : ( null === $official_local_no ? 'other_evaluation' : 'this_evaluation' ),
+			'count'            => $count,
+			'latest_id'        => $latest_id,
+			'latest_no'        => $latest_no,
+			'latest_decision'  => $latest_decision,
+			'latest_score'     => $latest_score,
+			'latest_result_id' => $latest_result,
+			'official_score'   => $official_score,
+			'official_id'      => null === $official ? null : $official['id'],
+			'official_scope'   => null === $official ? 'none' : ( null === $official_local_no ? 'other_evaluation' : 'this_evaluation' ),
 		);
 	}
 
@@ -747,7 +759,7 @@ final class Submission_Evaluation_Query_Projector {
 			throw new InvalidArgumentException( 'Submission evaluation normalized result columns drifted.' );
 		}
 
-		$items        = $this->result_items( $normalized['items'] ?? null, $item_rows );
+		$items        = $this->result_items( $normalized['items'] ?? null, $item_rows, 'not_requested' === ( $normalized['provider_status'] ?? null ) );
 		$content_hash = hash(
 			'sha256',
 			$this->canonical->encode(
@@ -784,10 +796,11 @@ final class Submission_Evaluation_Query_Projector {
 	 *
 	 * @param mixed                          $normalized Normalized.
 	 * @param array<int,array<string,mixed>> $rows Rows.
+	 * @param bool                           $manual Whether the result is a local teacher score sheet.
 	 * @return array<int,array<string,mixed>>
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
-	private function result_items( $normalized, array $rows ): array {
+	private function result_items( $normalized, array $rows, bool $manual = false ): array {
 		if ( ! is_array( $normalized ) || ! array_is_list( $normalized ) || count( $normalized ) !== count( $rows ) ) {
 			throw new InvalidArgumentException( 'Submission evaluation result item count drifted.' );
 		}
@@ -845,7 +858,9 @@ final class Submission_Evaluation_Query_Projector {
 			) {
 				throw new InvalidArgumentException( 'Submission evaluation stored evidence drifted.' );
 			}
-			$item_hash = hash(
+			// Earlier manual sheets hashed the original decimal text, before DB padding.
+			$hash_maximum = $manual && 'not_requested' === $abstain_reason ? $item['maximum_points'] : $maximum;
+			$item_hash    = hash(
 				'sha256',
 				$this->canonical->encode(
 					array(
@@ -854,7 +869,7 @@ final class Submission_Evaluation_Query_Projector {
 						'criterion_key'    => $criterion_id,
 						'evidence_hash'    => $evidence_hash,
 						'flags'            => $stored_flags,
-						'maximum_points'   => $maximum,
+						'maximum_points'   => $hash_maximum,
 						'position'         => $position,
 						'question_key'     => $response_id,
 					)
@@ -1031,7 +1046,10 @@ final class Submission_Evaluation_Query_Projector {
 			if ( in_array( $decision, array( 'rejected', 'withdrawn' ), true ) !== ( null === $overrides ) ) {
 				throw new InvalidArgumentException( 'Submission evaluation review score decisions drifted.' );
 			}
-			$is_official     = null !== $official && hash_equals( $official['id'], $id ) && hash_equals( $official['hash'], $content_hash );
+			$is_official = null !== $official && hash_equals( $official['id'], $id ) && hash_equals( $official['hash'], $content_hash );
+			if ( $is_official && ! in_array( $decision, array( 'accepted', 'adjusted' ), true ) ) {
+				throw new InvalidArgumentException( 'Submission evaluation official review decision drifted.' );
+			}
 			$official_count += $is_official ? 1 : 0;
 			$result[]        = array(
 				'id'              => $id,

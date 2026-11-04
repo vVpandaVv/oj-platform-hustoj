@@ -63,7 +63,7 @@ function stat_check(int $user, int $problem, int $at, string $type, ?string $id,
 platform_fixture_connect_runtime(1, array(1, 2));
 $GLOBALS['focus_test_user_id'] = 1;
 $today = (new DateTimeImmutable('now', wp_timezone()))->setTime(0, 0);
-$day = $today->modify('-2 days');
+$day = $today->modify('last wednesday');
 $date = $day->format('Y-m-d');
 $now = Clock::now_ms();
 $start = $day->setTime(10, 0)->getTimestamp() * 1000;

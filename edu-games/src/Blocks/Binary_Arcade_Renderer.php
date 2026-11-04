@@ -23,6 +23,7 @@ final class Binary_Arcade_Renderer extends Abstract_Game_Renderer {
                         <h2><?php esc_html_e('이진수 변환 아케이드', 'edu-games'); ?></h2>
                     </div>
                     <div class="oj-binary-actions">
+                        <a class="oj-binary-button" data-binary-team-link href="<?php echo esc_url(home_url('/oj-addons/edu-games/binary-team')); ?>"><?php esc_html_e('실시간 팀전', 'edu-games'); ?></a>
                         <button type="button" class="oj-binary-button oj-binary-button-secondary" data-action="practice"><?php esc_html_e('연습 문제 생성', 'edu-games'); ?></button>
                         <button type="button" class="oj-binary-button oj-binary-button-primary" data-action="start"><?php esc_html_e('게임 시작', 'edu-games'); ?></button>
                     </div>

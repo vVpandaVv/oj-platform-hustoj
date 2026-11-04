@@ -13,7 +13,7 @@ ob_end_clean();
 
 $policy = new G4_S04_Feedback_UI_Policy();
 $html   = (string) g4_s04_feedback_ui_page( $policy, 'bulk-review-report' )->body();
-foreach ( array( 'accept', 'feedback', 'note' ) as $action ) {
+foreach ( array( 'accept', 'teacher', 'feedback', 'note' ) as $action ) {
 	g4_s04_feedback_ui_assert( str_contains( $html, 'data-workflow-bulk="' . $action . '" hidden disabled' ), 'Bulk action is missing or enabled before scope load.' );
 }
 g4_s04_feedback_ui_assert( str_contains( $html, 'data-review-role="workflow-dialog"' ), 'Confirmation must be discoverable.' );
@@ -21,6 +21,7 @@ g4_s04_feedback_ui_assert( str_contains( $html, 'data-review-role="workflow-dial
 $policy->denied_actions = array( 'submission.evaluation.review' );
 $denied                 = (string) g4_s04_feedback_ui_page( $policy, 'bulk-review-denied' )->body();
 g4_s04_feedback_ui_assert( ! str_contains( $denied, 'data-workflow-bulk="accept"' ), 'Denied score approval must not render.' );
+g4_s04_feedback_ui_assert( ! str_contains( $denied, 'data-workflow-bulk="teacher"' ), 'Denied teacher score approval must not render.' );
 g4_s04_feedback_ui_assert( ! str_contains( $denied, 'data-workflow-bulk="feedback"' ), 'Denied feedback request must not render.' );
 $policy->denied_actions = array( 'submission.student_note.manage' );
 $denied                 = (string) g4_s04_feedback_ui_page( $policy, 'bulk-note-denied' )->body();

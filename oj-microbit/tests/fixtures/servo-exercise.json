@@ -1,0 +1,122 @@
+{
+  "title": "센서로 서보 각도와 펄스 제어하기",
+  "description": "P0 값이 512 미만이면 P1 서보를 45°, P2 펄스를 1000µs로 설정합니다. 512 이상이면 135°와 1800µs로 바꿉니다. 화면은 명령한 각도·펄스 값을 보여 줍니다.",
+  "status": "draft",
+  "i2cDevices": [],
+  "connections": [
+    {
+      "pin": 0,
+      "direction": "input",
+      "signal": "analog",
+      "device": "potentiometer",
+      "label": "입력 센서"
+    },
+    {
+      "pin": 1,
+      "direction": "output",
+      "signal": "servo",
+      "device": "servo",
+      "label": "각도 서보"
+    },
+    {
+      "pin": 2,
+      "direction": "output",
+      "signal": "servo_pulse",
+      "device": "servo",
+      "label": "펄스 서보"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "servo-threshold",
+      "name": "서보 각도·펄스 변경",
+      "visible": true,
+      "durationMs": 1500,
+      "inputs": [
+        {
+          "atMs": 0,
+          "pin": 0,
+          "signal": "analog",
+          "value": 0
+        },
+        {
+          "atMs": 500,
+          "pin": 0,
+          "signal": "analog",
+          "value": 800
+        },
+        {
+          "atMs": 1000,
+          "pin": 0,
+          "signal": "analog",
+          "value": 200
+        }
+      ],
+      "assertions": [
+        {
+          "pin": 1,
+          "signal": "servo",
+          "expected": 45,
+          "afterMs": 0,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        },
+        {
+          "pin": 2,
+          "signal": "servo_pulse",
+          "expected": 1000,
+          "afterMs": 0,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        },
+        {
+          "pin": 1,
+          "signal": "servo",
+          "expected": 135,
+          "afterMs": 500,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        },
+        {
+          "pin": 2,
+          "signal": "servo_pulse",
+          "expected": 1800,
+          "afterMs": 500,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        },
+        {
+          "pin": 1,
+          "signal": "servo",
+          "expected": 45,
+          "afterMs": 1000,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        },
+        {
+          "pin": 2,
+          "signal": "servo_pulse",
+          "expected": 1000,
+          "afterMs": 1000,
+          "withinMs": 100,
+          "holdMs": 200,
+          "tolerance": 0
+        }
+      ],
+      "i2cInputs": [],
+      "i2cAssertions": []
+    }
+  ],
+  "starterProject": {
+    "name": "서보 제어",
+    "files": {
+      "main.ts": "basic.forever(function () {\n    if (pins.analogReadPin(AnalogPin.P0) >= 512) {\n        pins.servoWritePin(AnalogPin.P1, 135)\n        pins.servoSetPulse(AnalogPin.P2, 1800)\n    } else {\n        pins.servoWritePin(AnalogPin.P1, 45)\n        pins.servoSetPulse(AnalogPin.P2, 1000)\n    }\n    basic.pause(20)\n})\n",
+      "pxt.json": "{\n  \"name\": \"서보 제어\",\n  \"dependencies\": {\n    \"core\": \"*\"\n  },\n  \"files\": [\n    \"main.ts\"\n  ],\n  \"preferredEditor\": \"tsprj\"\n}"
+    }
+  }
+}

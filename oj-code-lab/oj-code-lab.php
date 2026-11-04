@@ -2,7 +2,7 @@
 /**
  * Plugin Name: OJ Code Lab
  * Description: A Colab-style code practice notebook, isolated per student, with teacher review and a unified Kaggle/공공데이터포털/GitHub/upload dataset import interface, as an oj-platform addon.
- * Version: 1.4.0
+ * Version: 1.4.1
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Author: CodingPanda
@@ -30,7 +30,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-define('OJ_CODE_LAB_VERSION', '1.4.0');
+define('OJ_CODE_LAB_VERSION', '1.4.1');
 define('OJ_CODE_LAB_FILE', __FILE__);
 define('OJ_CODE_LAB_PATH', plugin_dir_path(__FILE__));
 define('OJ_CODE_LAB_URL', plugin_dir_url(__FILE__));

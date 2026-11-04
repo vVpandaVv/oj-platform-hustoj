@@ -1,15 +1,15 @@
 # OJ Platform 애드온 개발
 
-**OJ Platform 2.5.4 · Addon API 1.8.0 · WordPress 6.6+ · PHP 8.3+**
+**OJ Platform 2.5.9 · Addon API 1.9.0 · WordPress 6.6+ · PHP 8.3+**
 
 이 폴더는 외부 플러그인을 만드는 데 필요한 공개 API 형식과 실행 예제를 모은 개발 자료입니다.
 
 | 자료 | 내용 |
 | --- | --- |
 | [실행 예제](examples/oj-addon-starter/) | 콘솔 메뉴·개인 메모 화면·REST 조회/저장·권한·CSS/JS |
-| [PHP API](php-api.md) | 등록 순서, 매니페스트, 인자·반환값, 학급·그룹·문제·AI 연동 |
+| [PHP API](php-api.md) | 등록 순서, 매니페스트, 인자·반환값, 기본 문제·수업 목록과 AI 연동 |
 | [프런트엔드 API](frontend-api.md) | 화면·자산 등록, UI 함수, CSS 토큰, REST 인증과 응답 |
-| [전체 API 형식](api-reference.json) | 공개 타입 95개의 생성자·메서드·필수 인자·기본값·반환형·배열 형식 |
+| [전체 API 형식](api-reference.json) | 공개 타입 102개의 생성자·메서드·필수 인자·기본값·반환형·배열 형식 |
 
 ## 예제로 시작하기
 
@@ -48,6 +48,8 @@
 권한 키는 `AddonCapabilityKeyV1::wordpress()`로 변환한 뒤 `current_user_can()`에 전달합니다. REST에는 로그인 쿠키와 `wp_rest` nonce를 사용하고, 서버에서 요청자의 권한과 대상 자료 접근 권한을 확인합니다. 예제는 현재 로그인한 본인의 메모만 저장합니다.
 
 학급·그룹 조회는 `runtime->contexts()`, 문제·제출·명단 조회는 `runtime->integrations()`, AI 요청은 `runtime->aiTasks()`에서 시작합니다. 각 요청·결과 형식과 선택형 런타임 인터페이스는 [PHP API](php-api.md)에 있습니다.
+
+API 1.9의 `nativeLearningProvider()`는 애드온 자료를 기본 문제 목록·수업 과제에 연결합니다. 페이지의 상위 메뉴와 권한별 URL 연결도 함께 제공합니다. 이 기능을 추가할 때는 플랫폼 최소 버전을 2.5.9, API 최소 버전을 1.9로 선언합니다. 기존 시작 예제는 플랫폼 2.5.1·API 1.8부터 사용할 수 있습니다.
 
 ## API 형식 읽기
 

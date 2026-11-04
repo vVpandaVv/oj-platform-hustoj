@@ -1,0 +1,171 @@
+[
+  {
+    "label": "initial",
+    "rawFiles": [
+      "main.ts",
+      "pxt.json",
+      "main.blocks",
+      "_history"
+    ],
+    "sourceFiles": [
+      "main.ts",
+      "main.blocks"
+    ],
+    "configKeys": [
+      "name",
+      "description",
+      "dependencies",
+      "files",
+      "preferredEditor"
+    ],
+    "frontendFiles": [
+      "main.ts",
+      "pxt.json",
+      "main.blocks"
+    ],
+    "validation": {
+      "ok": true,
+      "files": [
+        "main.blocks",
+        "main.ts",
+        "pxt.json"
+      ]
+    }
+  },
+  {
+    "label": "simulator-input",
+    "rawFiles": [
+      "main.ts",
+      "pxt.json",
+      "main.blocks",
+      "_history"
+    ],
+    "sourceFiles": [
+      "main.ts",
+      "main.blocks"
+    ],
+    "configKeys": [
+      "name",
+      "description",
+      "dependencies",
+      "files",
+      "preferredEditor"
+    ],
+    "frontendFiles": [
+      "main.ts",
+      "pxt.json",
+      "main.blocks"
+    ],
+    "validation": {
+      "ok": true,
+      "files": [
+        "main.blocks",
+        "main.ts",
+        "pxt.json"
+      ]
+    }
+  },
+  {
+    "label": "blocks",
+    "rawFiles": [
+      "main.ts",
+      "pxt.json",
+      "main.blocks",
+      ".simstate.json",
+      "_history"
+    ],
+    "sourceFiles": [
+      "main.ts",
+      "main.blocks"
+    ],
+    "configKeys": [
+      "name",
+      "description",
+      "dependencies",
+      "files",
+      "preferredEditor"
+    ],
+    "frontendFiles": [
+      "main.ts",
+      "pxt.json",
+      "main.blocks"
+    ],
+    "validation": {
+      "ok": true,
+      "files": [
+        "main.blocks",
+        "main.ts",
+        "pxt.json"
+      ]
+    }
+  },
+  {
+    "label": "reopened-saved",
+    "rawFiles": [
+      "main.blocks",
+      "main.ts",
+      "pxt.json",
+      "_history"
+    ],
+    "sourceFiles": [
+      "main.ts",
+      "main.blocks"
+    ],
+    "configKeys": [
+      "name",
+      "description",
+      "dependencies",
+      "files",
+      "preferredEditor"
+    ],
+    "frontendFiles": [
+      "main.blocks",
+      "main.ts",
+      "pxt.json"
+    ],
+    "validation": {
+      "ok": true,
+      "files": [
+        "main.blocks",
+        "main.ts",
+        "pxt.json"
+      ]
+    }
+  },
+  {
+    "label": "new-empty-blocks",
+    "rawFiles": [
+      "README.md",
+      "main.blocks",
+      "main.ts",
+      "pxt.json",
+      "_history"
+    ],
+    "sourceFiles": [
+      "main.blocks",
+      "main.ts",
+      "README.md"
+    ],
+    "configKeys": [
+      "name",
+      "description",
+      "dependencies",
+      "files"
+    ],
+    "frontendFiles": [
+      "README.md",
+      "main.blocks",
+      "main.ts",
+      "pxt.json"
+    ],
+    "validation": {
+      "ok": true,
+      "files": [
+        "README.md",
+        "main.blocks",
+        "main.ts",
+        "pxt.json"
+      ]
+    }
+  }
+]

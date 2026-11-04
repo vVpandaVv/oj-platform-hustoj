@@ -745,10 +745,10 @@ textarea.oj-ai-student-response-input {
 }
 
 
-/* Frozen A-DS-01 learner IA: three queues and direct question navigation. */
+/* Learner queues include closed drafts so saved answers remain reachable. */
 .oj-ai-student-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .oj-ai-student-tabs__button {
@@ -773,6 +773,14 @@ textarea.oj-ai-student-response-input {
 .oj-ai-student-tabs__button[aria-selected="true"] .oj-ai-student-tabs__count {
   background: var(--ojp-color-line, #d9efeb);
   color: var(--ojp-color-primary, #0f766e);
+}
+
+@media (max-width: 420px) {
+  .oj-ai-student-tabs__button {
+    flex-direction: column;
+    gap: 2px;
+    font-size: 14px;
+  }
 }
 
 .oj-ai-student-detail__workspace {

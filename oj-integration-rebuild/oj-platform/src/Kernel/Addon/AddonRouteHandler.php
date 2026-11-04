@@ -45,7 +45,10 @@ final class AddonRouteHandler implements RouteHandler
         private readonly string $pluginFile = '',
         private readonly array $assetBundles = [],
         private readonly array $pageAssetBundleKeys = [],
-        private readonly array $localNav = []
+        private readonly array $localNav = [],
+        private readonly array $navigationRoutes = [],
+        private readonly ?string $navigationMenuKey = null,
+        private readonly ?\CodingPanda\OjPlatform\Modules\AdminConsole\Contract\ConsoleMenuVisibility $menuVisibility = null
     ) {
     }
 
@@ -70,7 +73,8 @@ final class AddonRouteHandler implements RouteHandler
             $route->parameters(),
             $this->normalizeQuery($request),
             'ko_KR',
-            $this->correlations->next($this->routeKey)
+            $this->correlations->next($this->routeKey),
+            $this->navigationUrls()
         ));
 
         return $this->respond($response, $request);
@@ -124,14 +128,31 @@ final class AddonRouteHandler implements RouteHandler
             return $this->consoleResponder->respond(
                 $title,
                 $body,
-                $this->consoleMenuKey ?? $this->routeKey,
+                ($this->navigationMenuKey !== null && $this->menuVisibility?->canAccessMenu($this->accounts->current()->identity()?->userId() ?? 0, $this->navigationMenuKey) === true)
+                    ? $this->navigationMenuKey : ($this->consoleMenuKey ?? $this->routeKey),
                 $request,
                 $status
             );
         }
 
+        if ($this->navigationMenuKey !== null) { $request = $request->withNavigationPath($this->navigationMenuKey === 'classes.index' ? '/classes' : '/problems'); }
         return $this->publicResponder->authenticated($title, $body, $request, $status);
     }
+
+    /** Registry-derived own-page and native menu paths; no client-supplied URLs. */
+    private function navigationUrls(): array
+    {
+        $actor = $this->accounts->current()->identity()?->userId() ?? 0; $result = [];
+        $native = $this->consoleResponder !== null ? ['problems.index' => 'console.problems.index', 'classes.index' => 'console.classes.index'] : ['problems.index' => 'problems.index', 'classes.index' => 'classes.index'];
+        foreach ($native as $key => $route) { if ($this->consoleResponder !== null && $this->menuVisibility?->canAccessMenu($actor, $key) !== true) { continue; } try { $url = $this->routeUrls->path($route); if ($this->navigationUrlSafe($url)) { $result[$key] = $url; } } catch (\Throwable) {} }
+        foreach ($this->navigationRoutes as $route => $data) {
+            if (!$this->permissions->can($actor, $data['capability']) || ($data['console'] && !$this->permissions->can($actor, 'oj_access_console'))) { continue; }
+            try { $url = $this->routeUrls->path($route); if ($this->navigationUrlSafe($url)) { $result[$route] = $url; } } catch (\Throwable) {}
+        }
+        return $result;
+    }
+    private function navigationUrlSafe(string $url): bool
+    { return strlen($url) <= 2048 && str_starts_with($url, '/') && !str_starts_with($url, '//') && !str_contains($url, '\\') && preg_match('/[\x00-\x20\x7f]/', $url) !== 1; }
 
     private function localNavMarkup(HttpRequest $request): string
     {

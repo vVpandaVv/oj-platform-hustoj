@@ -1,0 +1,94 @@
+{
+  "candidateVersion": "1.0.0-rc.7",
+  "date": "2026-11-04",
+  "status": "local_verification_passed_live_acceptance_pending",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "featureFreeze": "feature-freeze-1.0.0-rc.7.json",
+  "requiresPlatform": ">=2.5.9 <3.0.0",
+  "requiresAddonApi": "^1.9",
+  "checks": {
+    "php": 1233,
+    "frontend": 115,
+    "installerShell": 26,
+    "runner": 97,
+    "freeze": 4,
+    "acceptanceRest": 15,
+    "acceptancePython": 26,
+    "total": 1516
+  },
+  "navigation": {
+    "nativeCatalogProvidersRegistered": 0,
+    "consolePages": 3,
+    "publicPages": 2,
+    "consoleMenus": 2,
+    "publicMenus": 2,
+    "teacherProblemLocalNavItems": 2,
+    "coreMenuAliases": 0,
+    "problemRoot": "problems",
+    "lessonRoot": "classes",
+    "duplicateInnerNavigation": false,
+    "publicMenuKeysReplacedForNewParents": true
+  },
+  "platform": {
+    "version": "2.5.9",
+    "addonApi": "1.9.0",
+    "productCodeChanged": false,
+    "existingPackageSha256": "a7ab51aac9728826f26ce67c3abe45f9e1d931550f41a7d061f858708a7f82ee"
+  },
+  "browser": {
+    "report": "browser-stage-wizard-validation-1.0.0-rc.7.json",
+    "flows": 15,
+    "pageErrors": 0,
+    "actualPlatformCss": true,
+    "actualPhpHostRenderer": true,
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualDatabase": false,
+    "actualRunner": false,
+    "actualHardware": false,
+    "editorProtocolFixture": true
+  },
+  "environment": {
+    "php": "8.5.5 Windows, PDO SQLite",
+    "node": "24.22.1 Windows",
+    "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+    "python": "3.14 Windows",
+    "shell": "Git Bash; nonprivileged command/filesystem fixtures"
+  },
+  "verified": [
+    "New problem starts empty; stage, pin, value and time are authored one page at a time in a modal",
+    "Apply is atomic; Back, Cancel and Escape preserve original data and restore focus; Tab and Shift+Tab cycle inside the modal",
+    "Adding an input pin seeds only missing initial values in other examples and preserves existing values",
+    "Input reference intervals are distinct from output response limits and minimum hold times",
+    "Parallel pin lanes share a reference time and serial actions chain from actual preceding completion without claiming thread detection",
+    "Actual PXT compilation/simulation consumes the exact wizard data for parallel GPIO/PWM, delay-before versus delay-after, and serial later-off deadlines",
+    "Existing raw timing, I2C transaction editing, servo models and hidden-test disclosure remain unchanged",
+    "No server request is added while using the modal; DB query and schema hashes match the preceding frozen product",
+    "The same MakeCode protocol iframe survives modal application, authoring toggles and normal saves",
+    "Actual platform PHP renderer, menu resolution and CSS are used with controlled loopback REST/editor fixtures at 320, 390, 440 and 1280 pixels"
+  ],
+  "actualTrialServer": false,
+  "actualWordPress": false,
+  "actualMySQL": false,
+  "actualDocker": false,
+  "actualHustojParallelLoad": false,
+  "actualBackupRestore": false,
+  "actualHardware": false,
+  "pending": [
+    "Actual WordPress theme, persisted menu visibility/order, roles and subdirectory routing",
+    "Actual group/class ledger permissions and concurrent revocation",
+    "MySQL/MariaDB plans, transactions, concurrent locks and workload",
+    "Representative lessons and student sessions with actual HUSTOJ judging",
+    "Matched plugin/database backup restore and privacy/retention completion",
+    "Physical HEX/WebUSB if official device support is included",
+    "Evaluation policy for independent addon result pages"
+  ],
+  "limitations": [
+    "SQLite and WordPress/POSIX/command fixtures do not certify actual MySQL or WordPress authentication",
+    "Browser uses real platform styles and PHP renderer with controlled loopback REST and iframe messages, not the actual MakeCode service",
+    "Existing group and class permission ledgers are reused by independent menus rather than copied into new module tables",
+    "Core programming performance-mode policies are not automatically applied to independent addon pages",
+    "Code-only downgrade to rc.2 or older does not understand lesson scopes; restore a matching database snapshot too"
+  ]
+}

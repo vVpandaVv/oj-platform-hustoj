@@ -25,6 +25,9 @@ final class PilotActions
     {
         return match ($request->bodyString('operation')) {
             'pilot.save' => $this->save($actor, $request),
+            'pilot.classroom.save' => $this->classroomSave($actor, $request),
+            'pilot.classroom.survey' => $this->classroomSurvey($actor, $request),
+            'pilot.classroom.observation' => $this->classroomObservation($actor, $request),
             'pilot.material' => $this->material($actor, $request),
             'pilot.enroll' => $this->enroll($actor, $request),
             'pilot.allocate' => $this->allocate($actor, $request),
@@ -36,6 +39,31 @@ final class PilotActions
             'pilot.export' => $this->export($actor, $request),
             default => throw new DomainException('지원하지 않는 연구 작업입니다.'),
         };
+    }
+
+    private function classroomSave(int $actor,HttpRequest $request):HttpResponse
+    {
+        return $this->saved($this->pilot->save($actor,$request->bodyInt('study_id'),$request->bodyInt('revision'),ClassroomInput::read($request)));
+    }
+
+    private function classroomSurvey(int $actor,HttpRequest $request):HttpResponse
+    {
+        $context=$this->pilot->learner($actor);
+        if($context===null){throw new DomainException('참여 중인 수업이 없습니다.');}
+        $stage=$request->bodyString('survey_stage'); $protocol=$context['study']['data']['protocol'];
+        $items=$stage==='before'?($protocol['before_items']??[]):$protocol['survey_items']; $answers=[];
+        foreach($items as$i=>$item){$answers[]=$request->bodyString('answer_'.$i);}
+        $this->pilot->classroomSurvey($actor,$request->bodyInt('study_id'),$request->bodyInt('revision'),$stage,$answers,$request->bodyString('comment'));
+        return HttpResponse::redirect('/research?notice=saved');
+    }
+
+    private function classroomObservation(int $actor,HttpRequest $request):HttpResponse
+    {
+        $input=['participant_id'=>$request->bodyInt('participant_id')];
+        foreach(['level_match','teacher_help','feedback_use','issue','note','request_id']as$key){$input[$key]=$request->bodyString($key,in_array($key,['note','request_id'],true)?'':'unobserved');}
+        $id=$request->bodyInt('study_id');
+        $this->pilot->classroomObservation($actor,$id,$request->bodyInt('revision'),$input);
+        return $this->saved($id);
     }
 
     private function save(int $actor, HttpRequest $request): HttpResponse
@@ -133,10 +161,11 @@ final class PilotActions
         if (! PilotProtocol::is($study)) {
             throw new DomainException('시범 연구 보고서가 아닙니다.');
         }
-        $data = PilotReport::build(
-            $study, $this->research->participants($actor, $id), $this->pilot->records($actor, $id)
+        $builder = \CodingPanda\OjResearch\Domain\ClassroomProtocol::is($study) ? \CodingPanda\OjResearch\Domain\ClassroomReport::class : PilotReport::class;
+        $data = $builder::build(
+            $study, $this->research->participants($actor, $id), $this->pilot->reportRecords($actor, $id)
         );
-        return $this->exports->response($study, $data, $request->bodyString('format'));
+        return $this->exports->response($study, $data, $request->bodyString('format'),$request->bodyString('document','all'));
     }
 
     private function saved(int $id, string $tab = ''): HttpResponse

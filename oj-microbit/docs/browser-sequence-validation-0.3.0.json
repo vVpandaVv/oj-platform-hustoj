@@ -1,0 +1,25 @@
+{
+  "primarySequenceCards": true,
+  "actualMakeCodeSourceSave": true,
+  "phpProjectAndExerciseSchema": true,
+  "phpRunnerResultSchema": true,
+  "automaticDurationMs": 2200,
+  "failureHoldMs": 1500,
+  "failureFollowingActionSkipped": true,
+  "gpioScore": 100,
+  "servoScore": 100,
+  "matchedAndCompletedMs": [
+    [
+      200,
+      1200
+    ],
+    [
+      1200,
+      1300
+    ]
+  ],
+  "runtimeVersion": "pxt-microbit/9.1.1;pxt-core/13.0.1;oj-gpio/3",
+  "projectHash": "281ca7d0ef6912f853d6c01443386689fa284f7bb0b002beb24b300d71e203e9",
+  "uiErrors": [],
+  "database": "memory REST fixture"
+}

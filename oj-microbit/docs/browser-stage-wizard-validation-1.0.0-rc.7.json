@@ -1,0 +1,151 @@
+{
+  "date": "2026-11-04",
+  "candidateVersion": "1.0.0-rc.7",
+  "ok": true,
+  "checks": [
+    "Separate one-row problem list and actual platform problem/class menu parents remain correct",
+    "Students see parallel pin lanes and serial arrows without editing controls or hidden scenarios",
+    "Exact original conditions stay available under optional technical disclosure",
+    "New authoring begins empty with one first-stage action and no eager MakeCode load",
+    "Four-page dialog validates values locally and Escape cancels without adding a pin or stage and restores focus",
+    "Input stage is committed only after stage pin value and interval pages are complete",
+    "Two output pins appear as independent parallel lanes with the same reference time",
+    "Adding the next value automatically shows serial arrows while preserving the live editor frame",
+    "Later input stages are added separately and changing their gap moves later reference times without changing values",
+    "Native dialog traps keyboard focus and all flow pages fit 320 390 440 and 1280 pixels without document overflow",
+    "Responsive parallel branch borders and serial arrows remain readable with platform light and dark tokens",
+    "Saving sends the existing pin/timing schema and preserves the same editor without adding DB requests during modal interaction",
+    "Actual unsaved code still causes a cancellable exit warning while a saved project leaves cleanly",
+    "Lesson routes retain assignment context and the independent menu",
+    "Core programming and class bodies remain separate from microbit records"
+  ],
+  "pageErrors": 0,
+  "metrics": [
+    {
+      "label": "student-flow-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1902,
+      "localNav": 0
+    },
+    {
+      "label": "wizard-time-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1875,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 2590,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-time-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 2590,
+      "localNav": 34
+    },
+    {
+      "label": "flow-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 2590,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2382,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-time-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2382,
+      "localNav": 34
+    },
+    {
+      "label": "flow-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2382,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 2382,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-time-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 2382,
+      "localNav": 34
+    },
+    {
+      "label": "flow-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 2382,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1949,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-time-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1949,
+      "localNav": 34
+    },
+    {
+      "label": "flow-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1949,
+      "localNav": 34
+    },
+    {
+      "label": "dialog-dark-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2382,
+      "localNav": 34
+    }
+  ],
+  "posts": [
+    {
+      "id": 0,
+      "revision": 0
+    },
+    {
+      "id": 72,
+      "revision": 1
+    }
+  ],
+  "microbitJsSha256": "29a06013659f29fcace8c7249c79118f2437367acae1a4849a7d4c43bf70356c",
+  "microbitCssSha256": "949428c07b2e67b476fb2be33e74a646a273edcf1fa45432b38aec7d40309bc3",
+  "shellCssSha256": "c67bfc7c54a8face97b5ab041a0b6139e096769ed1f8f506a867001de5b89cdc",
+  "actualPlatformMenuResolver": true,
+  "actualPhpRenderer": true,
+  "editorProtocolFixture": true,
+  "actualWordPress": false,
+  "actualMakeCode": false,
+  "actualDatabase": false,
+  "actualDocker": false,
+  "actualHardware": false
+}

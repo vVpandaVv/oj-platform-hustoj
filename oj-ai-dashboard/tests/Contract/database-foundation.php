@@ -249,10 +249,10 @@ foreach ( $tables as $table ) {
 $fingerprint = $catalog->fingerprint();
 database_foundation_assert( 1 === ( preg_match( '/^[a-f0-9]{64}$/', $fingerprint ) ), 'Schema fingerprint must be SHA-256.' );
 database_foundation_assert(
-	'acacb197494135acaa976d4b8207171f93f9fd9f98fe545b73fbc6f51018bc6a' === ( $fingerprint ),
-	'The 1.0.4 target fingerprint changed without a new immutable migration.'
+	'18df186a195145daa1da98c06652eaa4fd3c5fbce336060e6641120bcbcb4539' === ( $fingerprint ),
+	'The 1.0.6 target fingerprint changed without a new immutable migration.'
 );
-database_foundation_assert( '1.0.4' === ( Schema_Catalog::SCHEMA_VERSION ), 'The target schema version changed.' );
+database_foundation_assert( '1.0.6' === ( Schema_Catalog::SCHEMA_VERSION ), 'The target schema version changed.' );
 database_foundation_assert( 64 === ( strlen( $catalog->owner_marker() ) ), 'Owner marker must be a 64-character digest.' );
 
 $preflight = new Schema_Preflight( $catalog );
@@ -293,7 +293,7 @@ database_foundation_assert( $drift->is_blocked(), 'Schema fingerprint drift must
 $plan       = new Migration_Plan( $catalog );
 $migrations = $plan->migrations();
 database_foundation_assert( 'oj_ai_dashboard_schema' === ( Migration_Plan::LOCK_NAME ), 'The named lock changed.' );
-database_foundation_assert( 6 === ( count( $migrations ) ), 'The plan must preserve five migrations and append assessment projects.' );
+database_foundation_assert( 8 === ( count( $migrations ) ), 'The plan must preserve seven migrations and append exception settings.' );
 database_foundation_assert( '1.0.0' === ( Migration_Plan::BASELINE_SCHEMA_VERSION ), 'The immutable baseline version changed.' );
 database_foundation_assert( '1.0.1' === ( Migration_Plan::PREVIOUS_SCHEMA_VERSION ), 'The immutable previous version changed.' );
 database_foundation_assert( '31cee35952177177a1b36bd483f43ea1d6c1880c7d2a1e1ad891f896a41e32b1' === ( Migration_Plan::PREVIOUS_SCHEMA_FINGERPRINT ), 'The immutable 1.0.1 fingerprint changed.' );
@@ -322,7 +322,11 @@ database_foundation_assert( $migrations[3]->schema_fingerprint() === Migration_P
 database_foundation_assert( $migrations[4]->alters_tables(), 'The evaluation run error message delta must be ALTER-only.' );
 database_foundation_assert( $migrations[4]->table_names() === array( 'oj_ai_evaluation_runs' ), 'The evaluation run error message delta may only add the error message column.' );
 database_foundation_assert( $migrations[4]->schema_fingerprint() === Migration_Plan::PREVIOUS_3_SCHEMA_FINGERPRINT, 'The immutable 1.0.3 migration must retain its fingerprint.' );
-database_foundation_assert( $migrations[5]->schema_fingerprint() === $fingerprint && $migrations[5]->creates_tables() && 3 === ( count( $migrations[5]->table_names() ) ), 'Assessment migration must create only its three tables.' );
+database_foundation_assert( $migrations[5]->schema_fingerprint() === Migration_Plan::PREVIOUS_4_SCHEMA_FINGERPRINT && $migrations[5]->creates_tables() && 3 === ( count( $migrations[5]->table_names() ) ), 'Assessment migration must create only its three tables.' );
+database_foundation_assert( '5f58ac62b4e1dda62a6d6a3d23612c5288ab5c4b220381cf401b21a4c8a76f8a' === $migrations[5]->checksum(), 'Immutable 1.0.4 migration changed.' );
+database_foundation_assert( $migrations[6]->schema_fingerprint() === Migration_Plan::PREVIOUS_5_SCHEMA_FINGERPRINT && $migrations[6]->alters_tables() && array( 'oj_ai_assignment_targets' ) === $migrations[6]->table_names(), 'Grades must only extend assignment targets.' );
+database_foundation_assert( '5fb576e7e023552478ce9cd3f1f6af07f00292de93f86ad0a9c4d17e7bdfa997' === $migrations[6]->checksum(), 'Immutable 1.0.5 migration changed.' );
+database_foundation_assert( $migrations[7]->schema_fingerprint() === $fingerprint && $migrations[7]->alters_tables() && array( 'oj_ai_assignments' ) === $migrations[7]->table_names(), 'Exception settings must only extend assignments.' );
 database_foundation_assert(
 	$migrations[0]->table_names() === array( 'oj_ai_installations', 'oj_ai_schema_migrations' ),
 	'Bootstrap table order changed.'
@@ -417,6 +421,6 @@ foreach ( array( '$wpdb->prefix', '$wpdb->base_prefix', 'wp_oj_ai_', 'DROP TABLE
 }
 
 // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- The CLI summary prints only the schema manifest SHA-256 fingerprint.
-echo 'G1 database foundation contract passed: 48 tables, 10 owners, 6 immutable migrations, target fingerprint '
+echo 'G1 database foundation contract passed: 48 tables, 10 owners, 8 immutable migrations, target fingerprint '
 	. $fingerprint . ".\n";
 // phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped

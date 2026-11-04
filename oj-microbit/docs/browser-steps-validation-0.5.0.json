@@ -1,0 +1,15 @@
+{
+  "primaryCards": true,
+  "independentExamples": 2,
+  "sequentialSteps": true,
+  "stageDuplicateDelete": true,
+  "secondsPrecisionMs": 625,
+  "bidirectionalViews": true,
+  "phpProjectAndExerciseSchema": true,
+  "phpRunnerResultSchema": true,
+  "actualMakeCodeSourceSave": true,
+  "realPxtGrade": 100,
+  "i2cCards": 3,
+  "uiErrors": [],
+  "database": "memory REST fixture"
+}

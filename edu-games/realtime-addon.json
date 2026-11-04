@@ -1,0 +1,8 @@
+{
+  "protocol": 1,
+  "app": "edu-games",
+  "version": "1.10.2",
+  "secretKey": "EDU_GAMES_SECRET",
+  "adapter": "realtime-server/src/adapter.js",
+  "include": ["realtime-server/src"]
+}

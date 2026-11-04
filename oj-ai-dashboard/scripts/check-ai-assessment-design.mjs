@@ -8911,7 +8911,7 @@ for (const marker of [
 for (const marker of [
   'g6_imp04_same( 13, count( $unique_evidence )',
   'Package add-on version is invalid.',
-  "\"'1.0.4'\"",
+  "\"'1.0.6'\"",
   'g5_s02_assert_blocked_without_writes',
   'g6_imp04_same( 16, count( $workers )',
   'g6_imp04_same( 14, $recurring_workers',
@@ -8928,7 +8928,7 @@ checkPhpFragments('G6 IMP-04 PHP contract', upgradeRollbackContractG6Imp04, [
   "'ADDON_API_RANGE' => '>=1.1.0 <2.0.0'",
   "'BASELINE_SCHEMA_VERSION' => '1.0.0'",
   "'PREVIOUS_SCHEMA_VERSION' => '1.0.1'",
-  "g6_imp04_same( '1.0.4', \\OJAI\\Dashboard\\Tests\\Support\\Source_Contract_Tokens::string_constant( $catalog_source, 'SCHEMA_VERSION' )",
+  "g6_imp04_same( '1.0.6', \\OJAI\\Dashboard\\Tests\\Support\\Source_Contract_Tokens::string_constant( $catalog_source, 'SCHEMA_VERSION' )",
 ]);
 
 for (const marker of ['id="amendment-14"', 'Amendment 14', 'Q39·Q40', 'Page 9·GET 40·POST 79', 'Platform API change']) {

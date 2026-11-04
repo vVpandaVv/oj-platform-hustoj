@@ -45,7 +45,8 @@
       root.dataset.assignmentId = assignmentId;
     }
     const context = { type: 'class', id: 'class-21', label: '2학년 1반', revision: 'member-r2', subject: '수학', teacher: '김선생' };
-    const schedule = { opens_at_utc: null, due_at_utc: '2026-08-22 11:00:00', closes_at_utc: '2026-08-22 12:00:00' };
+    const fixtureUtc = (milliseconds) => new Date(milliseconds).toISOString().slice(0, 19).replace('T', ' ');
+    const schedule = { opens_at_utc: null, due_at_utc: fixtureUtc(Date.now() + 3600000), closes_at_utc: fixtureUtc(Date.now() + 7200000) };
     const assignments = [
       { id: assignmentId, title: '분수 비교 활동지', state: 'open', availability: 'open', lock_version: 0, schedule_version: 1, schedule_hash: scheduleHash, worksheet_publication_id: publicationId, publication_hash: publicationHash, context, schedule, submission: { id: '11040G2081040G2081040G2081', state: 'draft', lock_version: 1, current_revision_id: '12040G2081040G2081040G2081', official_revision_id: null, started_at_utc: '2026-08-22 09:00:00', submitted_at_utc: null, closed_at_utc: null }, actions: ['assignment.export_pdf', 'assignment.continue'] },
       { id: '02040G2081040G2081040G2082', title: '도형 관찰 기록', state: 'scheduled', availability: 'upcoming', lock_version: 0, schedule_version: 1, schedule_hash: scheduleHash, worksheet_publication_id: publicationId, publication_hash: publicationHash, context, schedule: { opens_at_utc: '2026-08-23 09:00:00', due_at_utc: '2026-08-23 11:00:00', closes_at_utc: '2026-08-23 12:00:00' }, submission: null, actions: [] },
@@ -54,6 +55,7 @@
     assignments.push(
       { ...assignments[2], id: '04040G2081040G2081040G2084', title: '공개된 마감 활동', result: { release_id: '00000000000000000000000091' } },
       { ...assignments[2], id: '05040G2081040G2081040G2085', title: '공개된 진행 활동', state: 'open', availability: 'open', result: { release_id: '00000000000000000000000092' } },
+      { ...assignments[0], id: '06040G2081040G2081040G2086', title: '종료된 미제출 활동', state: 'closed', availability: 'closed', schedule: assignments[2].schedule, actions: ['assignment.export_pdf'] },
     );
     let detail = {
       id: assignmentId,
@@ -219,6 +221,13 @@
       detail = { ...detail, submission: { id: submissionId, state: 'draft', lock_version: revisionSequence, current_revision_id: id, official_revision_id: null, started_at_utc: submissionDetail.started_at_utc }, actions: ['assignment.export_pdf', 'assignment.continue'] };
       return { revision, submission: { id: submissionId, assignment_id: assignmentId, state: 'draft', lock_version: revisionSequence, current_revision_id: id, official_revision_id: null, save_token: submissionDetail.save_token, actions: ['submission.autosave'] } };
     };
+    window.__studentSetDeadline = (delay, enabled = true) => {
+      const closes = fixtureUtc(Date.now() + delay);
+      submissionDetail.schedule.closes_at_utc = closes;
+      detail.schedule = { ...detail.schedule, closes_at_utc: closes };
+      window.__studentDeadlineEnabled = enabled;
+      root.dispatchEvent(new CustomEvent('oj-ai:student-assignment-detail', { detail: { assignment: detail } }));
+    };
     window.__studentAttachmentRequests = [];
     window.__studentAttachmentMode = 'success';
     const attachmentReceipts = new Map();
@@ -288,6 +297,16 @@
       if (value.endsWith(`/me/assignments/${assignmentId}`) && method === 'GET') return { ok: true, status: 200, async json() { return envelope({ assignment: detail }); } };
       if (value.endsWith(`/me/submissions/${submissionId}`) && method === 'GET') {
         window.__studentSubmissionReads += 1;
+        if (Date.parse(submissionDetail.schedule.closes_at_utc.replace(' ', 'T') + 'Z') <= Date.now()) {
+          submissionDetail.availability = 'closed';
+          submissionDetail.actions = [];
+          if (window.__studentDeadlineEnabled && submissionDetail.current_revision && submissionDetail.state === 'draft') {
+            submissionDetail.state = 'auto_submitted';
+            submissionDetail.official_revision = submissionDetail.current_revision;
+            submissionDetail.official_attempt_no = 1;
+            submissionDetail.submitted_at_utc = submissionDetail.schedule.closes_at_utc;
+          }
+        }
         submissionDetail.attachments.forEach((row) => {
           if (row.state !== 'scanning') return;
           scans.set(row.id, (scans.get(row.id) || 0) + 1);

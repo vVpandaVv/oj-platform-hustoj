@@ -36,6 +36,11 @@ if($game==='warehouse'){
     echo json_encode(array('state'=>$state,'view'=>$board::view($state)),JSON_UNESCAPED_UNICODE);exit;
 }
 if($action==='html'){
+    if($game==='ranking-page'){
+        if(!defined('EDU_GAMES_VERSION'))define('EDU_GAMES_VERSION',(require EDU_GAMES_PATH.'plugin-package.php')['version']);
+        $GLOBALS['caps']=!empty($input['admin'])?array('edu_games_play','edu_games_manage','manage_options'):array('edu_games_play');
+        echo EduGames\Blocks\Ranking_Page_Renderer::render();exit;
+    }
     if(!empty($input['learning'])){echo EduGames\Blocks\Learning_Renderer::render_game($game,$game);exit;}
     if(!empty($input['play'])){echo EduGames\Blocks\Play_Renderer::render($game);exit;}
     if(in_array($game,array('game-leaderboard','group-leaderboard'),true)){define('ABSPATH',EDU_GAMES_PATH);require EDU_GAMES_PATH.'blocks/'.$game.'/render.php';exit;}

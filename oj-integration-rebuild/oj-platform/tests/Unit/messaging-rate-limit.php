@@ -6,6 +6,7 @@ use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpRequest;
 use CodingPanda\OjPlatform\Modules\AccessRouter\Contract\HttpResponse;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\ActionAccessGuard;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\ActionResponse;
+use CodingPanda\OjPlatform\Modules\Auth\Contract\AttemptLimiterStorageLock;
 use CodingPanda\OjPlatform\Modules\Auth\Contract\UserIdentity;
 use CodingPanda\OjPlatform\Modules\Auth\Infrastructure\WordPress\WordPressAttemptLimiter;
 use CodingPanda\OjPlatform\Modules\Messaging\Presentation\Action\MessagingActionHandler;
@@ -14,6 +15,7 @@ use CodingPanda\OjPlatform\Ui\Message\UiMessage;
 require __DIR__ . '/messaging.php';
 $startChecks = $messagingAssertions;
 $GLOBALS['rateValues'] = []; $GLOBALS['rateTtls'] = []; $GLOBALS['rateOptions'] = [];
+function wp_using_ext_object_cache(): bool { return true; }
 function get_transient(string $key): mixed { return $GLOBALS['rateValues'][$key] ?? false; }
 function set_transient(string $key, mixed $value, int $ttl): bool {
     if ($GLOBALS['rateFailWrite'] ?? false) { return false; }
@@ -28,7 +30,10 @@ $clock = new class implements \CodingPanda\OjPlatform\Shared\Clock\Clock {
     public int $timestamp = 100;
     public function now(): DateTimeImmutable { return new DateTimeImmutable('@' . $this->timestamp); }
 };
-$limiter = new WordPressAttemptLimiter($clock);
+$storageLock = new class implements AttemptLimiterStorageLock {
+    public function synchronized(callable $operation): mixed { return $operation(); }
+};
+$limiter = new WordPressAttemptLimiter($clock, $storageLock);
 messagingAssert($limiter->consumeFixedWindow('messaging_send', '1', 2, 600), '첫 발송을 허용해야 합니다.');
 $key = array_key_first($GLOBALS['rateValues']);
 messagingSame(700, $GLOBALS['rateValues'][$key]['reset_at'], '첫 시도부터 정확히 600초 후 초기화해야 합니다.');

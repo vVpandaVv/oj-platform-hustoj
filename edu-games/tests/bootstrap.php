@@ -50,7 +50,7 @@ namespace {
     function wp_json_encode($value) { return json_encode($value); }
     function is_wp_error($value) { return $value instanceof WP_Error; }
     function rest_ensure_response($value) { return $value; }
-    function get_current_user_id() { return 7; }
+    function get_current_user_id() { return (int)($GLOBALS['test_user_id']??7); }
     function get_userdata($id) { return (object) array('display_name' => 'Test student'); }
     function is_user_logged_in() { return true; }
     function current_user_can($cap) { return in_array($cap, $GLOBALS['caps'] ?? array('edu_games_play'), true); }

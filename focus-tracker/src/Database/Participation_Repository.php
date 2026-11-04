@@ -69,8 +69,12 @@ final class Participation_Repository {
                 'last_heartbeat_at' => Clock::ms_to_mysql($started_at_ms),
                 'last_heartbeat_at_ms' => $started_at_ms,
                 'created_at' => $now_mysql,
+                'page_category' => $data['page_category'] ?? 'unclassified',
+                'page_subtype' => $data['page_subtype'] ?? null,
+                'page_key' => $data['page_key'] ?? null,
+                'page_context_version' => $data['page_context_version'] ?? 0,
             ),
-            array('%d', '%d', '%d', '%s', '%s', '%d', '%s', '%d', '%s')
+            array('%d', '%d', '%d', '%s', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%d')
         );
 
         if (false !== $inserted) {
@@ -164,6 +168,26 @@ final class Participation_Repository {
         ));
     }
 
+    /** @return array<int, list<array<string, mixed>>> Request-local roster input. */
+    public static function list_for_activity_and_users(int $activity_id, array $user_ids): array {
+        $user_ids = array_values(array_unique(array_map('intval', $user_ids)));
+        if (empty($user_ids)) { return array(); }
+        global $wpdb;
+        $holders = implode(',', array_fill(0, count($user_ids), '%d'));
+        $rows = $wpdb->get_results($wpdb->prepare(
+            'SELECT p.* FROM ' . Installer::participations_table() . " p
+             WHERE p.user_id IN ({$holders}) AND (p.activity_id = %d OR EXISTS (
+                 SELECT 1 FROM " . Installer::activity_links_table() . ' l
+                 WHERE l.participation_id = p.id AND l.activity_id = %d
+             )) ORDER BY p.started_at_ms ASC, p.id ASC',
+            array_merge($user_ids, array($activity_id, $activity_id))
+        ), ARRAY_A);
+        if (! is_array($rows) || '' !== (string) $wpdb->last_error) { throw new \RuntimeException('Score participation storage unavailable.'); }
+        $result = array_fill_keys($user_ids, array());
+        foreach ($rows as $row) { $result[(int) $row['user_id']][] = self::decode($row); }
+        return $result;
+    }
+
     /** @return list<int> Includes associations created before the link table existed. */
     public static function activity_ids(int $participation_id): array {
         global $wpdb;
@@ -192,24 +216,56 @@ final class Participation_Repository {
         ));
     }
 
+    /** Caller holds the learner guard and this existing row's primary-key lock. */
+    public static function record_ingestion_state(array $current, int $end_ms, string $reason, int $heartbeat_ms, int $inserted, bool $has_gaps): ?bool {
+        global $wpdb;
+        $set = array(); $values = array();
+        if ($current['ended_at_ms'] === null || (int) $current['ended_at_ms'] !== $end_ms || ($current['end_reason'] ?? null) !== $reason) {
+            $set[] = 'ended_at = %s'; $values[] = Clock::ms_to_mysql($end_ms);
+            $set[] = 'ended_at_ms = %d'; $values[] = $end_ms;
+            $set[] = 'end_reason = %s'; $values[] = $reason;
+        }
+        if ($heartbeat_ms > (int) $current['last_heartbeat_at_ms']) {
+            $set[] = 'last_heartbeat_at = %s'; $values[] = Clock::ms_to_mysql($heartbeat_ms);
+            $set[] = 'last_heartbeat_at_ms = %d'; $values[] = $heartbeat_ms;
+        }
+        if ($inserted > 0) { $set[] = 'event_revision = event_revision + %d'; $values[] = $inserted; }
+        if ($has_gaps && empty($current['has_delivery_gaps'])) { $set[] = 'has_delivery_gaps = 1'; }
+        if ($set === array()) { return false; }
+        $values[] = (int) $current['id'];
+        return $wpdb->query($wpdb->prepare('UPDATE ' . Installer::participations_table() . ' SET ' . implode(', ', $set) . ' WHERE id = %d', $values)) === false ? null : true;
+    }
+
     /** Reconcile saved observations when an authorized teacher edits a window/problem set. */
     public static function link_matching_sessions(array $activity, array $learner_ids): bool {
         global $wpdb;
         $saved = true;
         foreach (array_chunk($learner_ids, 100) as $chunk) {
             $placeholders = implode(',', array_fill(0, count($chunk), '%d'));
-            $params = array_merge($chunk, array(Clock::mysql_to_ms((string) $activity['ends_at']), Clock::mysql_to_ms((string) $activity['starts_at'])));
+            $type = (string) $activity['context_type'];
+            $context_id = (string) $activity['context_id'];
+            $bare_id = str_starts_with($context_id, $type . ':') ? substr($context_id, strlen($type) + 1) : $context_id;
+            $params = array_merge($chunk, array(Clock::mysql_to_ms((string) $activity['ends_at']), Clock::mysql_to_ms((string) $activity['starts_at']), $type, $bare_id, $type . ':' . $bare_id));
             $rows = $wpdb->get_results($wpdb->prepare(
-                'SELECT id, problem_id FROM ' . Installer::participations_table() . "
-                 WHERE user_id IN ({$placeholders}) AND started_at_ms <= %d
-                   AND COALESCE(ended_at_ms, last_heartbeat_at_ms) >= %d",
+                'SELECT p.id, p.problem_id, p.page_context_version FROM ' . Installer::participations_table() . " p
+                 WHERE p.user_id IN ({$placeholders}) AND p.started_at_ms <= %d
+                   AND COALESCE(p.ended_at_ms, p.last_heartbeat_at_ms) >= %d
+                   AND ((p.session_uid NOT LIKE 'g6-%%' AND p.page_context_version = 0) OR EXISTS (
+                     SELECT 1 FROM " . Installer::activities_table() . " captured
+                     WHERE captured.context_type = %s AND captured.context_id IN (%s, %s)
+                       AND (captured.id = p.activity_id OR EXISTS (
+                         SELECT 1 FROM " . Installer::activity_links_table() . " original_link
+                         WHERE original_link.participation_id = p.id AND original_link.activity_id = captured.id
+                       ))
+                   ))",
                 $params
             ), ARRAY_A);
             if ('' !== (string) $wpdb->last_error || ! is_array($rows)) {
                 return false;
             }
             foreach ($rows as $row) {
-                if (null !== $activity['problem_ids'] && ! in_array((int) $row['problem_id'], $activity['problem_ids'], true)) {
+                $signed_nonproblem = $row['problem_id'] === null && (int) ($row['page_context_version'] ?? 0) > 0;
+                if (! $signed_nonproblem && null !== $activity['problem_ids'] && ! in_array((int) $row['problem_id'], $activity['problem_ids'], true)) {
                     continue;
                 }
                 $saved = self::link_activity((int) $row['id'], (int) $activity['id']) && $saved;
@@ -230,6 +286,10 @@ final class Participation_Repository {
         $row['raw_events_expired'] = ! empty($row['raw_events_expired']);
         $row['has_delivery_gaps'] = ! empty($row['has_delivery_gaps']);
         $row['event_revision'] = (int) ($row['event_revision'] ?? 0);
+        $row['page_category'] = (string) ($row['page_category'] ?? 'unclassified');
+        $row['page_subtype'] = isset($row['page_subtype']) ? (string) $row['page_subtype'] : null;
+        $row['page_key'] = isset($row['page_key']) ? (string) $row['page_key'] : null;
+        $row['page_context_version'] = (int) ($row['page_context_version'] ?? 0);
 
         return $row;
     }

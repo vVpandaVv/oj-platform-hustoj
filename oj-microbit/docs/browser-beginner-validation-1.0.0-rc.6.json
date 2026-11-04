@@ -1,0 +1,109 @@
+{
+  "date": "2026-11-04",
+  "candidateVersion": "1.0.0-rc.6",
+  "ok": true,
+  "checks": [
+    "Problem list uses one bounded row per problem and no repeated inner navigation",
+    "Actual platform public menus place microbit below first-level Problems and Classes",
+    "Student examples group simultaneous outputs into three plain-language cards and omit hidden scenarios",
+    "Exact original timing and signal details remain available only after explicit disclosure",
+    "Rows remain inside the document at 320 390 440 and 1280 pixels",
+    "Teacher authoring has one platform tab bar and four compact steps without eager editor loads",
+    "Teacher input steps are collapsed cards whose expansion preserves exact existing scenario data",
+    "Initial workspace normalization stays clean and saving a new problem preserves its live editor frame",
+    "Only real unsaved code triggers one cancellable exit warning; saved code leaves without warning or duplicate creation",
+    "Lesson deep links preserve assignment context with no repeated inner menu",
+    "Student cards retain readable dark-theme tokens and bounded mobile layout",
+    "Core programming problem and class bodies remain separate from microbit records"
+  ],
+  "pageErrors": 0,
+  "metrics": [
+    {
+      "label": "list-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "localNav": 0
+    },
+    {
+      "label": "story-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1175,
+      "localNav": 0
+    },
+    {
+      "label": "list-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 900,
+      "localNav": 0
+    },
+    {
+      "label": "list-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 900,
+      "localNav": 0
+    },
+    {
+      "label": "list-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 900,
+      "localNav": 0
+    },
+    {
+      "label": "create-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1087,
+      "localNav": 34
+    },
+    {
+      "label": "input-cards-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1483,
+      "localNav": 34
+    },
+    {
+      "label": "lesson-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1197,
+      "localNav": 0
+    },
+    {
+      "label": "story-dark",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1175,
+      "localNav": 0
+    }
+  ],
+  "posts": [
+    {
+      "id": 0,
+      "revision": 0
+    },
+    {
+      "id": 72,
+      "revision": 1
+    }
+  ],
+  "microbitJsSha256": "900c063bc093bfc4b44e2c603ad225ddae0664f59ff271141c349665409c9c61",
+  "microbitCssSha256": "dccefbf53d0b83d5cd534689d92362d05934150438140d1de5ba237dfda710b7",
+  "shellCssSha256": "c67bfc7c54a8face97b5ab041a0b6139e096769ed1f8f506a867001de5b89cdc",
+  "actualPlatformMenuResolver": true,
+  "actualPhpRenderer": true,
+  "editorProtocolFixture": true,
+  "actualWordPress": false,
+  "actualMakeCode": false,
+  "actualDatabase": false,
+  "actualDocker": false,
+  "actualHardware": false,
+  "frontendChecks": 100,
+  "rerun": "node oj-microbit/tests/browser-beginner.cjs",
+  "limitations": "Real platform menu resolver and PHP components with controlled localhost REST and MakeCode protocol iframe; no live WordPress authentication, Microsoft editor, MySQL, Docker, HUSTOJ load or physical USB acceptance."
+}

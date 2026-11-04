@@ -44,9 +44,9 @@ class Element {
   descendants() { return this.children.flatMap(x=>[x,...x.descendants()]); }
 }
 const flush = () => new Promise(resolve=>setImmediate(resolve));
-function app() {
+function app(options={}) {
   const root=new Element(); const requests=[]; const timers=[]; const events={}; const workers=[];
-  class Worker { constructor(){this.sent=[];workers.push(this);} postMessage(data){this.sent.push(data);if(data.type==='init')queueMicrotask(()=>this.emit({type:'ready'}));} terminate(){this.terminated=true;} emit(data){this.onmessage({data});} }
+  class Worker { constructor(){this.sent=[];workers.push(this);} postMessage(data){this.sent.push(data);if(data.type==='init' && options.autoReady!==false)queueMicrotask(()=>this.emit({type:'ready'}));} terminate(){this.terminated=true;} emit(data){this.onmessage({data});} }
   const document={querySelector:()=>root,createElement:tag=>Object.assign(new Element(tag),{ownerDocument:document}),createTextNode:text=>Object.assign(new Element('text'),{textContent:text,ownerDocument:document}),addEventListener:(_,cb)=>{document.ready=cb;}};
   root.ownerDocument=document;
   const window={crossOriginIsolated:true,addEventListener:(type,fn)=>events[type]=fn,setInterval:fn=>timers.push(fn),setTimeout:()=>0};
@@ -201,14 +201,18 @@ test('dataset import generates read_csv using the acknowledged isolated file pat
  worker.emit({type:'result',id:worker.sent[2].id});await flush();a.action('stop');
 });
 
-test('a silent completed run clears only its own running indicator',async()=>{
- const a=await loaded();edit(a,'sequence = [1]');
- a.field('cells').querySelector('.ocl-btn-run').fire('click');
- a.field('cells').querySelector('.ocl-btn-run').fire('click');await flush();
- const worker=a.workers[0];worker.emit({type:'result',id:worker.sent[1].id});await flush();
- assert.ok(a.field('cells').querySelector('.ocl-output-running'),'the next run keeps its indicator');
- worker.emit({type:'result',id:worker.sent[2].id});await flush();
- assert.equal(a.field('cells').querySelector('.ocl-output-running'),null);a.action('stop');
+test('a superseded run cannot remove the newest running indicator or append stale output',async()=>{
+ const a=await loaded();edit(a,'old = input()');
+ const row=cellRows(a)[0];row.querySelector('.ocl-btn-run').fire('click');await flush();
+ const previous=a.workers[0],oldId=previous.sent[1].id;
+ edit(a,'print("latest")');row.querySelector('.ocl-btn-run').fire('click');await flush();
+ const current=a.workers.at(-1),currentId=current.sent[1].id;
+ assert.notEqual(current,previous);assert.equal(previous.terminated,true);
+ previous.emit({type:'stream',id:oldId,text:'STALE'});previous.emit({type:'result',id:oldId,error:'old failure'});await flush();
+ assert.ok(row.querySelector('.ocl-output-running'),'the latest run keeps its own indicator');
+ assert.equal(row.querySelector('.ocl-output-error'),null);assert.equal(row.querySelector('.ocl-output-text'),null);
+ current.emit({type:'stream',id:currentId,text:'latest\n'});current.emit({type:'result',id:currentId});await flush();
+ assert.equal(row.querySelector('.ocl-output-running'),null);assert.equal(row.querySelector('.ocl-output-text').textContent,'latest\n');a.action('stop');
 });
 
 
@@ -488,20 +492,16 @@ test('stop closes a finished or failed debug review without rerunning, clearing 
  }
 });
 
-test('closing a finished review preserves another cell input and its queued successor',async()=>{
- const a=app();a.respond(0,{revision:1,cells:[
-  {id:'a',code:'value = 7',outputs:[]},
-  {id:'b',code:'answer = input()',outputs:[]},
-  {id:'c',code:'print(answer)',outputs:[]}
- ]});await flush();
+test('closing a finished review preserves another cell input and its Run All successor',async()=>{
+ const a=await loaded();edit(a,'value = 7');
  const {row,worker,stopButton}=await finishedDebugReview(a);
- const [,inputRow,queuedRow]=cellRows(a);
- inputRow.querySelector('.ocl-btn-run').fire('click');await flush();
+ insertControls(a)[0].fire('click');const inputRow=cellRows(a)[0];setCode(inputRow,'answer = input()');
+ insertControls(a)[1].fire('click');const queuedRow=cellRows(a)[1];setCode(queuedRow,'print(answer)');
+ a.action('run-all');await flush();
  const inputJob=worker.sent[2];worker.emit({type:'input-request',id:inputJob.id});
  const form=inputRow.querySelector('.ocl-input-request'),input=form.querySelector('input');
  input.value='작성 중인 입력';
- queuedRow.querySelector('.ocl-btn-run').fire('click');await flush();
- assert.equal(worker.sent.length,3,'the successor waits for the active input cell');
+ assert.equal(worker.sent.length,3,'Run All successor waits for the active input cell');
  stopButton.fire('click');await flush();
  assert.equal(row.querySelector('.ocl-debug-panel'),null);assert.notEqual(worker.terminated,true);
  assert.equal(inputRow.querySelector('.ocl-input-request'),form);
@@ -518,6 +518,7 @@ test('closing a finished review preserves another cell input and its queued succ
  worker.emit({type:'result',id:worker.sent[3].id});await flush();
  assert.equal(queuedRow.querySelector('.ocl-output-text').textContent,'queued output\n');
  assert.ok(inputRow.querySelectorAll('.ocl-output-text').some(node=>node.textContent==='input accepted\n'));
+ assert.equal(worker.sent[4].code,'value = 7');worker.emit({type:'result',id:worker.sent[4].id});await flush();
  a.action('stop');
 });
 
@@ -539,4 +540,171 @@ test('a closed review stop callback cannot stop or unlock a new debug session',a
  assert.equal(worker.terminated,true,'a resumed, still-live debug run retains force-stop behavior');
  assert.equal(row.querySelector('.ocl-debug-panel'),null);
  assert.equal(row.querySelector('.ocl-code').readOnly,false);
+});
+
+
+async function notebookWith(codes,options={}) {
+ const a=app(options);a.respond(0,{revision:1,cells:codes.map((code,index)=>({id:'cell'+index,type:'code',code,outputs:[]}))});await flush();return a;
+}
+function saveBody(a) { a.action('save');return JSON.parse(a.requests.at(-1).options.body); }
+function clearOutput(row) { const button=row.querySelector('.ocl-btn-clear-output');assert.ok(button);button.fire('click'); }
+async function beginImport(a) {
+ a.field('datasets-panel').hidden=true;a.action('toggle-datasets');
+ const listIndex=a.requests.length-1;a.respond(listIndex,[{id:7,label:'자료',source:'upload'}]);await flush();
+ a.field('recommended-list').children[0].children[1].fire('click');return a.requests.length-1;
+}
+
+test('rapid reruns during initialization execute only the last code snapshot',async()=>{
+ const a=await notebookWith(['print("first")'],{autoReady:false}),row=cellRows(a)[0];
+ row.querySelector('.ocl-btn-run').fire('click');
+ setCode(row,'print("second")');row.querySelector('.ocl-btn-run').fire('click');
+ setCode(row,'print("last")');row.querySelector('.ocl-btn-run').fire('click');
+ assert.equal(a.workers.length,3);
+ for(const old of a.workers.slice(0,-1)){assert.equal(old.terminated,true);old.emit({type:'ready'});}
+ const latest=a.workers.at(-1);latest.emit({type:'ready'});await flush();
+ assert.equal(latest.sent[1].code,'print("last")');
+ assert.ok(a.workers.slice(0,-1).every(worker=>worker.sent.length===1),'superseded initialization never sends Python');
+ latest.emit({type:'result',id:latest.sent[1].id});await flush();
+ assert.equal(latest.sent.length,2,'no duplicate runs are queued');a.action('stop');
+});
+
+test('rerunning the same input cell discards the old form and accepts exactly one latest input',async()=>{
+ const {a,worker:previous,id}=await waitingForInput();const row=cellRows(a)[0];
+ const oldForm=row.querySelector('.ocl-input-request');oldForm.querySelector('input').value='old answer';
+ setCode(row,'latest = input("new")');row.querySelector('.ocl-btn-run').fire('click');await flush();
+ assert.equal(previous.terminated,true);assert.equal(row.querySelector('.ocl-input-request'),null);
+ const latest=a.workers.at(-1),job=latest.sent[1];latest.emit({type:'input-request',id:job.id});
+ const currentForm=row.querySelector('.ocl-input-request');assert.notEqual(currentForm,oldForm);
+ oldForm.fire('submit',{preventDefault(){}});await flush();
+ assert.equal(row.querySelector('.ocl-input-request'),currentForm);
+ const sync=new Int32Array(latest.sent[0].syncBuffer);assert.equal(Atomics.load(sync,0),0);
+ currentForm.querySelector('input').value='new answer';currentForm.fire('submit',{preventDefault(){}});
+ assert.equal(Atomics.load(sync,0),1);
+ previous.emit({type:'result',id,error:'old EOF'});latest.emit({type:'result',id:job.id});await flush();
+ assert.equal(row.querySelector('.ocl-output-error'),null);assert.equal(latest.sent.length,2);
+ assert.deepEqual(saveBody(a).cells[0].outputs,[{type:'input',text:'> new answer'}]);a.action('stop');
+});
+
+test('running another cell immediately replaces pending input and old submit cannot answer the new cell',async()=>{
+ const a=await notebookWith(['old = input()','new = input()']);const [first,second]=cellRows(a);
+ first.querySelector('.ocl-btn-run').fire('click');await flush();const old=a.workers[0];
+ old.emit({type:'input-request',id:old.sent[1].id});const stale=first.querySelector('.ocl-input-request');
+ second.querySelector('.ocl-btn-run').fire('click');await flush();const latest=a.workers.at(-1);
+ assert.equal(old.terminated,true);assert.equal(first.querySelector('.ocl-input-request'),null);
+ assert.equal(latest.sent[1].code,'new = input()');latest.emit({type:'input-request',id:latest.sent[1].id});
+ const form=second.querySelector('.ocl-input-request');form.querySelector('input').value='keep this';
+ stale.querySelector('input').value='not this';stale.fire('submit',{preventDefault(){}});
+ assert.equal(second.querySelector('.ocl-input-request'),form);assert.equal(form.querySelector('input').value,'keep this');
+ assert.equal(Atomics.load(new Int32Array(latest.sent[0].syncBuffer),0),0);
+ assert.match(first.querySelector('.ocl-execution-notice').textContent,/중단|취소/);
+ assert.match(second.querySelector('.ocl-execution-notice').textContent,/실행|초기화|입력/);
+ form.fire('submit',{preventDefault(){}});latest.emit({type:'result',id:latest.sent[1].id});await flush();
+ assert.deepEqual(saveBody(a).cells[0].outputs,[]);a.action('stop');
+});
+
+test('completed manual runs share the existing Worker and later run uses the current code',async()=>{
+ const a=await notebookWith(['value = 7','print(value)']);const [first,second]=cellRows(a);
+ first.querySelector('.ocl-btn-run').fire('click');await flush();const worker=a.workers[0];
+ worker.emit({type:'result',id:worker.sent[1].id});await flush();
+ second.querySelector('.ocl-btn-run').fire('click');await flush();
+ assert.equal(a.workers.length,1);assert.notEqual(worker.terminated,true);assert.equal(worker.sent[2].code,'print(value)');
+ worker.emit({type:'result',id:worker.sent[2].id});await flush();a.action('stop');
+});
+
+test('a manual cell request invalidates a Run All chain before its first microtask',async()=>{
+ const a=await notebookWith(['first()','second()','latest()']);
+ a.action('run-all');cellRows(a)[2].querySelector('.ocl-btn-run').fire('click');await flush();
+ assert.equal(a.workers.length,1);const worker=a.workers[0];assert.equal(worker.sent[1].code,'latest()');
+ worker.emit({type:'result',id:worker.sent[1].id});await flush();assert.equal(worker.sent.length,2);a.action('stop');
+});
+
+test('latest Run All replaces a running batch and a manual run cancels its remaining cells',async()=>{
+ const a=await notebookWith(['first()','second()','third()']);a.action('run-all');await flush();
+ const old=a.workers[0];setCode(cellRows(a)[0],'new_first()');a.action('run-all');await flush();
+ const current=a.workers.at(-1);assert.equal(old.terminated,true);assert.equal(current.sent[1].code,'new_first()');
+ current.emit({type:'result',id:current.sent[1].id});await flush();assert.equal(current.sent[2].code,'second()');
+ cellRows(a)[0].querySelector('.ocl-btn-run').fire('click');await flush();const newest=a.workers.at(-1);
+ assert.equal(current.terminated,true);assert.equal(newest.sent[1].code,'new_first()');
+ current.emit({type:'result',id:current.sent[2].id});old.emit({type:'result',id:old.sent[1].id});
+ newest.emit({type:'result',id:newest.sent[1].id});await flush();
+ assert.equal(newest.sent.length,2,'no cancelled batch successor starts');a.action('stop');
+});
+
+test('clearing one saved output keeps code, other cells and the running Worker',async()=>{
+ const a=app();a.respond(0,{revision:1,cells:[
+  {id:'a',code:'value = 7',outputs:[{type:'stream',text:'old'},{type:'error',text:'error'},{type:'image',image:'AA=='}]},
+  {id:'b',code:'print(value)',outputs:[{type:'stream',text:'untouched'}]}
+ ]});await flush();const [first,second]=cellRows(a);
+ clearOutput(first);assert.equal(first.querySelector('.ocl-output').children.length,0);
+ assert.equal(first.querySelector('.ocl-code').value,'value = 7');assert.equal(second.querySelector('.ocl-output-text').textContent,'untouched');
+ assert.equal(a.workers.length,0);assert.equal(isDirty(a),true);
+ const payload=saveBody(a);assert.deepEqual(payload.cells[0].outputs,[]);assert.deepEqual(payload.cells[1].outputs,[{type:'stream',text:'untouched'}]);
+ a.respond(a.requests.length-1,{revision:2,updatedAt:'saved'});await flush();
+ first.querySelector('.ocl-btn-run').fire('click');await flush();const worker=a.workers[0];
+ worker.emit({type:'stream',id:worker.sent[1].id,text:'before clear'});clearOutput(first);
+ assert.notEqual(worker.terminated,true);worker.emit({type:'stream',id:worker.sent[1].id,text:'after clear'});
+ worker.emit({type:'result',id:worker.sent[1].id});await flush();
+ assert.equal(first.querySelector('.ocl-output-text').textContent,'after clear');
+ assert.deepEqual(saveBody(a).cells[0].outputs,[{type:'stream',text:'after clear'}]);a.action('stop');
+});
+
+test('clearing inline input output preserves its node, typed value and later stored echo',async()=>{
+ const a=await loaded();const row=cellRows(a)[0];setCode(row,'answer = input("name: ")');
+ row.querySelector('.ocl-btn-run').fire('click');await flush();const worker=a.workers[0],id=worker.sent[1].id;
+ worker.emit({type:'stream',id,text:'earlier output\nname: '});worker.emit({type:'input-request',id});
+ const form=row.querySelector('.ocl-input-request'),input=form.querySelector('input');
+ input.value='한글 입력';assert.equal(form.className,'ocl-input-request ocl-input-request-inline');
+ clearOutput(row);assert.equal(row.querySelector('.ocl-input-request'),form);assert.equal(form.querySelector('input'),input);
+ assert.equal(input.value,'한글 입력');assert.equal(a.document.activeElement,input);assert.notEqual(worker.terminated,true);
+ assert.equal(row.querySelector('.ocl-output-text'),null);
+ form.fire('submit',{preventDefault(){}});
+ worker.emit({type:'stream',id,text:'received\n'});worker.emit({type:'result',id});await flush();
+ assert.equal(row.querySelector('.ocl-input-request'),null);
+ assert.deepEqual(saveBody(a).cells[0].outputs,[{type:'input',text:'> 한글 입력'},{type:'stream',text:'received\n'}]);
+ a.action('stop');
+});
+
+test('clearing another cell does not remove the active input or pause state',async()=>{
+ const a=await notebookWith(['input()','unused']);const [first,second]=cellRows(a);
+ first.querySelector('.ocl-btn-run').fire('click');await flush();const worker=a.workers[0];
+ worker.emit({type:'input-request',id:worker.sent[1].id});const form=first.querySelector('.ocl-input-request');
+ form.querySelector('input').value='still waiting';clearOutput(second);
+ assert.equal(first.querySelector('.ocl-input-request'),form);assert.equal(form.querySelector('input').value,'still waiting');
+ assert.notEqual(worker.terminated,true);a.action('stop');
+});
+
+test('a late dataset HTTP response or error cannot create a preview after a newer manual run',async()=>{
+ for(const fail of [false,true]){
+  const a=await loaded();const request=await beginImport(a);const row=cellRows(a)[0];
+ row.querySelector('.ocl-btn-run').fire('click');await flush();const worker=a.workers[0],notice=a.field('status').textContent;
+ if(fail)a.respond(request,{message:'STALE_IMPORT_ERROR'},false,502);
+ else a.respond(request,{fileName:'late.csv',format:'csv',content:'x\n1\n'});
+ await flush();assert.equal(cellRows(a).length,1);assert.equal(worker.sent.length,2);
+ assert.equal(a.field('status').textContent,notice);assert.notEqual(worker.terminated,true);
+ worker.emit({type:'result',id:worker.sent[1].id});await flush();a.action('stop');
+ }
+});
+
+test('a superseded dataset write acknowledgement cannot steal execution or add a cell',async()=>{
+ const a=await loaded();await importRecommended(a,{fileName:'late.csv',format:'csv',content:'x\n1\n'});
+ const old=a.workers[0],write=old.sent[1];assert.equal(write.type,'writeFile');
+ cellRows(a)[0].querySelector('.ocl-btn-run').fire('click');await flush();const current=a.workers.at(-1);
+ old.emit({type:'ack',id:write.id,filePath:'/home/pyodide/ocl-datasets/late.csv'});await flush();
+ assert.equal(old.terminated,true);assert.equal(cellRows(a).length,1);assert.equal(current.sent[1].code,'print(1)');
+ assert.equal(current.sent.length,2);assert.notEqual(current.terminated,true);
+ current.emit({type:'result',id:current.sent[1].id});await flush();a.action('stop');
+});
+
+test('automatic dataset preview keeps the acknowledged file when another batch cell is queued',async()=>{
+ const a=await notebookWith(['first()','second()']);a.action('run-all');await flush();const worker=a.workers[0];
+ const request=await beginImport(a);a.respond(request,{fileName:'ok.csv',format:'csv',content:'x\n1\n'});await flush();
+ worker.emit({type:'result',id:worker.sent[1].id});await flush();
+ const write=worker.sent.find(job=>job.type==='writeFile');assert.ok(write);
+ worker.emit({type:'ack',id:write.id,filePath:'/home/pyodide/ocl-datasets/ok.csv'});await flush();
+ assert.notEqual(worker.terminated,true);assert.equal(a.workers.length,1);
+ const second=worker.sent.find(job=>job.code==='second()');assert.ok(second);
+ worker.emit({type:'result',id:second.id});await flush();
+ const preview=worker.sent.find(job=>job.code?.includes('pd.read_csv'));assert.ok(preview);
+ assert.ok(preview.code.includes('/home/pyodide/ocl-datasets/ok.csv'));
+ worker.emit({type:'result',id:preview.id});await flush();assert.equal(a.workers.length,1);a.action('stop');
 });

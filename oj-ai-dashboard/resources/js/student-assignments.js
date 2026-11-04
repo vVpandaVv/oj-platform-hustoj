@@ -135,6 +135,7 @@
     const complete = finalSubmission(item);
     if (activeFilter === 'todo') return !complete && item.availability !== 'closed';
     if (activeFilter === 'submitted') return complete && !resultReleaseId(item);
+    if (activeFilter === 'closed') return !complete && item.availability === 'closed' && !resultReleaseId(item);
     return Boolean(resultReleaseId(item));
   };
 
@@ -154,6 +155,7 @@
       ['todo', '할 일'],
       ['submitted', '제출함'],
       ['results', '결과'],
+      ['closed', '종료'],
     ].forEach(([key, label]) => {
       const button = create('button', 'oj-ai-student-tabs__button');
       const text = create('span', '', label);
@@ -189,7 +191,9 @@
     const details = create('dl', 'oj-ai-student-card__details');
     const detailRows = [
       ['마감', formatDate(item.schedule?.due_at_utc)],
-      ['상태', saveLabel(item.submission)],
+      ['상태', item.availability === 'closed' && !finalSubmission(item)
+        ? item.submission?.current_revision_id ? '저장 답안 있음 · 미제출' : '저장 답안 없음'
+        : saveLabel(item.submission)],
     ];
     if (item.context?.subject) detailRows.unshift(['교과', item.context.subject]);
     if (item.context?.teacher) detailRows.push(['교사', item.context.teacher]);
@@ -203,7 +207,9 @@
       ? '결과 확인'
       : actions.includes('assignment.continue')
         ? '작성 계속'
-        : actions.includes('assignment.start') ? '활동지 열기' : item.submission ? '제출 보기' : '활동지 열기';
+        : actions.includes('assignment.start') ? '활동지 열기'
+          : item.availability === 'closed' && !finalSubmission(item) && item.submission ? '저장 답안 보기'
+            : item.submission ? '제출 보기' : '활동지 열기';
     const action = create('a', 'oj-ai-student-primary', actionLabel);
     action.href = activeFilter === 'results' && releaseId
       ? '/oj-addons/oj-ai-dashboard/results/' + encodeURIComponent(releaseId)
@@ -375,7 +381,8 @@
       && !notice.classList.contains('oj-ai-student-detail__notice--upcoming')) {
       notice.textContent = saveLabel(submission);
     }
-    if (finalSubmission({ submission })) root.querySelector('.oj-ai-student-primary--start')?.remove();
+    const closed = submission.availability === 'closed';
+    if (finalSubmission({ submission }) || closed) root.querySelector('.oj-ai-student-primary--start')?.remove();
     const labels = {
       draft: '작성 중입니다',
       conflict: '저장 내용을 확인해 주세요',
@@ -388,7 +395,7 @@
     const section = create('section', `oj-ai-student-submission-status oj-ai-student-submission-status--${state || 'draft'}`);
     section.dataset.role = 'submission-status';
     section.setAttribute('aria-label', '제출 상태');
-    section.append(create('h3', '', labels[state] || '제출 상태'));
+    section.append(create('h3', '', closed && !finalSubmission({ submission }) ? '작성 시간이 종료되었습니다' : labels[state] || '제출 상태'));
 
     const control = submission.control_receipt && typeof submission.control_receipt === 'object'
       ? submission.control_receipt
@@ -669,7 +676,7 @@
         cursors.add(cursor);
       } while (cursor);
       assignments = loaded;
-      const preferred = ['todo', 'submitted', 'results'].find((filter) => {
+      const preferred = ['todo', 'submitted', 'results', 'closed'].find((filter) => {
         activeFilter = filter;
         return assignments.some(matchesFilter);
       });
@@ -920,7 +927,7 @@
   root.addEventListener('keydown', (event) => {
     const tab = event.target instanceof Element ? event.target.closest('[role="tab"][data-filter]') : null;
     if (!tab || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-    const filters = ['todo', 'submitted', 'results'];
+    const filters = ['todo', 'submitted', 'results', 'closed'];
     const current = Math.max(0, filters.indexOf(tab.dataset.filter));
     let next = current;
     if (event.key === 'ArrowLeft') next = (current - 1 + filters.length) % filters.length;

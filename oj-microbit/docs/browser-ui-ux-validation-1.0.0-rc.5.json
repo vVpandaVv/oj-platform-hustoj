@@ -1,0 +1,601 @@
+{
+  "date": "2026-11-04",
+  "ok": true,
+  "checks": [
+    "Actual shell CSS shows the selected public tab and a readable compact empty state",
+    "Public detail retains the public navigation context",
+    "Assigned detail retains the lesson navigation context",
+    "Teacher report keeps zero and unsubmitted rows legible with actual shell CSS",
+    "390px list, empty state, header and report have no document-level overflow",
+    "Action and menu foreground/background contrast is at least 4.5:1",
+    "Keyboard focus follows both local navigation choices",
+    "Independent student problem and lesson menus retain their own routes, current selection and assignment context",
+    "Independent teacher creation opens its own page, saves onto the edit route, and returns with the current menu updated",
+    "Legacy assignment links redirect to the lesson page with scope intact",
+    "320px, 390px, 440px and desktop widths retain bounded content without horizontal overflow",
+    "Dark theme uses actual platform tokens with unambiguous legacy and independent current menus",
+    "Independent menu cancel preserves a draft and approved navigation triggers no duplicate beforeunload dialog",
+    "Read failures show a readable error instead of a blank problem card",
+    "Actual core problem and class handlers contain no microbit catalog; independent public, console and creation menus select their own context"
+  ],
+  "pageErrors": 0,
+  "metrics": [
+    {
+      "label": "empty-desktop",
+      "items": [
+        {
+          "text": "공개 문제",
+          "current": "page",
+          "background": "rgb(231, 243, 242)",
+          "color": "rgb(6, 106, 102)",
+          "border": "3px"
+        },
+        {
+          "text": "내 수업",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(110, 110, 115)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "empty",
+      "text": "공개된 마이크로비트 문제가 없습니다.문제가 공개되면 이 목록에서 설명과 예시를 확인하고 풀 수 있습니다.",
+      "box": {
+        "x": 30,
+        "y": 412.625,
+        "width": 1220,
+        "height": 101,
+        "top": 412.625,
+        "right": 1250,
+        "bottom": 513.625,
+        "left": 30
+      },
+      "children": [
+        {
+          "text": "공개된 마이크로비트 문제가 없습니다.",
+          "rect": {
+            "x": 51,
+            "y": 433.625,
+            "width": 1178,
+            "height": 27,
+            "top": 433.625,
+            "right": 1229,
+            "bottom": 460.625,
+            "left": 51
+          },
+          "color": "rgb(29, 29, 31)"
+        },
+        {
+          "text": "문제가 공개되면 이 목록에서 설명과 예시를 확인하고 풀 수 있습니다.",
+          "rect": {
+            "x": 51,
+            "y": 468.625,
+            "width": 1178,
+            "height": 24,
+            "top": 468.625,
+            "right": 1229,
+            "bottom": 492.625,
+            "left": 51
+          },
+          "color": "rgb(110, 110, 115)"
+        }
+      ]
+    },
+    {
+      "label": "public-detail",
+      "items": [
+        {
+          "text": "공개 문제",
+          "current": "page",
+          "background": "rgb(231, 243, 242)",
+          "color": "rgb(6, 106, 102)",
+          "border": "3px"
+        },
+        {
+          "text": "내 수업",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(110, 110, 115)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "lesson-detail",
+      "items": [
+        {
+          "text": "공개 문제",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(110, 110, 115)",
+          "border": "3px"
+        },
+        {
+          "text": "내 수업",
+          "current": "page",
+          "background": "rgb(231, 243, 242)",
+          "color": "rgb(6, 106, 102)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "independent-student-problems",
+      "items": [
+        {
+          "text": "마이크로비트 문제",
+          "current": "page",
+          "background": "rgb(231, 243, 242)",
+          "color": "rgb(6, 106, 102)",
+          "border": "3px"
+        },
+        {
+          "text": "마이크로비트 수업",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(110, 110, 115)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "dark-public",
+      "items": [
+        {
+          "text": "공개 문제",
+          "current": "page",
+          "background": "rgba(60, 196, 187, 0.16)",
+          "color": "rgb(90, 208, 200)",
+          "border": "3px"
+        },
+        {
+          "text": "내 수업",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(161, 161, 166)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "independent-dark-problems",
+      "items": [
+        {
+          "text": "마이크로비트 문제",
+          "current": "page",
+          "background": "rgba(60, 196, 187, 0.16)",
+          "color": "rgb(90, 208, 200)",
+          "border": "3px"
+        },
+        {
+          "text": "마이크로비트 수업",
+          "current": null,
+          "background": "rgba(0, 0, 0, 0)",
+          "color": "rgb(161, 161, 166)",
+          "border": "3px"
+        }
+      ]
+    },
+    {
+      "label": "actual-host-menu-selection",
+      "items": {
+        "microbit-problems": "/oj-addons/oj-microbit/learn",
+        "microbit-lessons": "/oj-addons/oj-microbit/lessons",
+        "microbit-teacher": "/oj-console/addons/oj-microbit",
+        "microbit-create": "/oj-console/addons/oj-microbit",
+        "microbit-teacher-lessons": "/oj-console/addons/oj-microbit/lessons"
+      }
+    }
+  ],
+  "layoutMetrics": [
+    {
+      "label": "layout",
+      "viewport": 1280,
+      "documentWidth": 1280,
+      "contentWidth": 1220,
+      "root": {
+        "x": 30,
+        "y": 30,
+        "width": 1220,
+        "height": 936.765625,
+        "top": 30,
+        "right": 1250,
+        "bottom": 966.765625,
+        "left": 30
+      }
+    },
+    {
+      "label": "layout",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 925.90625,
+        "top": 22,
+        "right": 378,
+        "bottom": 947.90625,
+        "left": 12
+      }
+    },
+    {
+      "label": "layout",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 579.21875,
+        "top": 22,
+        "right": 378,
+        "bottom": 601.21875,
+        "left": 12
+      },
+      "empty": {
+        "x": 12,
+        "y": 390.640625,
+        "width": 366,
+        "height": 113.78125,
+        "top": 390.640625,
+        "right": 378,
+        "bottom": 504.421875,
+        "left": 12
+      }
+    },
+    {
+      "label": "layout",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 606.03125,
+        "top": 22,
+        "right": 378,
+        "bottom": 628.03125,
+        "left": 12
+      }
+    },
+    {
+      "label": "independent-student-problems",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 606.03125,
+        "top": 22,
+        "right": 378,
+        "bottom": 628.03125,
+        "left": 12
+      }
+    },
+    {
+      "label": "independent-empty-mobile",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 579.21875,
+        "top": 22,
+        "right": 378,
+        "bottom": 601.21875,
+        "left": 12
+      },
+      "empty": {
+        "x": 12,
+        "y": 390.640625,
+        "width": 366,
+        "height": 113.78125,
+        "top": 390.640625,
+        "right": 378,
+        "bottom": 504.421875,
+        "left": 12
+      }
+    },
+    {
+      "label": "independent-lesson-detail",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 1646.9375,
+        "top": 22,
+        "right": 378,
+        "bottom": 1668.9375,
+        "left": 12
+      }
+    },
+    {
+      "label": "independent-create",
+      "viewport": 390,
+      "documentWidth": 390,
+      "contentWidth": 366,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 366,
+        "height": 7007.875,
+        "top": 22,
+        "right": 378,
+        "bottom": 7029.875,
+        "left": 12
+      }
+    },
+    {
+      "label": "empty-320",
+      "viewport": 320,
+      "documentWidth": 320,
+      "contentWidth": 296,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 296,
+        "height": 650.4375,
+        "top": 22,
+        "right": 308,
+        "bottom": 672.4375,
+        "left": 12
+      },
+      "empty": {
+        "x": 12,
+        "y": 434.859375,
+        "width": 296,
+        "height": 140.78125,
+        "top": 434.859375,
+        "right": 308,
+        "bottom": 575.640625,
+        "left": 12
+      }
+    },
+    {
+      "label": "problems-320",
+      "viewport": 320,
+      "documentWidth": 320,
+      "contentWidth": 296,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 296,
+        "height": 683.421875,
+        "top": 22,
+        "right": 308,
+        "bottom": 705.421875,
+        "left": 12
+      }
+    },
+    {
+      "label": "empty-440",
+      "viewport": 440,
+      "documentWidth": 440,
+      "contentWidth": 416,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 416,
+        "height": 556.828125,
+        "top": 22,
+        "right": 428,
+        "bottom": 578.828125,
+        "left": 12
+      },
+      "empty": {
+        "x": 12,
+        "y": 390.640625,
+        "width": 416,
+        "height": 91.390625,
+        "top": 390.640625,
+        "right": 428,
+        "bottom": 482.03125,
+        "left": 12
+      }
+    },
+    {
+      "label": "problems-440",
+      "viewport": 440,
+      "documentWidth": 440,
+      "contentWidth": 416,
+      "root": {
+        "x": 12,
+        "y": 22,
+        "width": 416,
+        "height": 606.03125,
+        "top": 22,
+        "right": 428,
+        "bottom": 628.03125,
+        "left": 12
+      }
+    },
+    {
+      "label": "empty-1280",
+      "viewport": 1280,
+      "documentWidth": 1280,
+      "contentWidth": 1220,
+      "root": {
+        "x": 30,
+        "y": 30,
+        "width": 1220,
+        "height": 580.421875,
+        "top": 30,
+        "right": 1250,
+        "bottom": 610.421875,
+        "left": 30
+      },
+      "empty": {
+        "x": 30,
+        "y": 412.625,
+        "width": 1220,
+        "height": 101,
+        "top": 412.625,
+        "right": 1250,
+        "bottom": 513.625,
+        "left": 30
+      }
+    },
+    {
+      "label": "problems-1280",
+      "viewport": 1280,
+      "documentWidth": 1280,
+      "contentWidth": 1220,
+      "root": {
+        "x": 30,
+        "y": 30,
+        "width": 1220,
+        "height": 639.640625,
+        "top": 30,
+        "right": 1250,
+        "bottom": 669.640625,
+        "left": 30
+      }
+    },
+    {
+      "label": "dark-problems",
+      "viewport": 1280,
+      "documentWidth": 1280,
+      "contentWidth": 1220,
+      "root": {
+        "x": 30,
+        "y": 30,
+        "width": 1220,
+        "height": 639.640625,
+        "top": 30,
+        "right": 1250,
+        "bottom": 669.640625,
+        "left": 30
+      }
+    },
+    {
+      "label": "host-core-problems",
+      "viewport": 390,
+      "documentWidth": 390
+    },
+    {
+      "label": "host-core-class",
+      "viewport": 390,
+      "documentWidth": 390
+    }
+  ],
+  "actualFonts": true,
+  "microbitJsSha256": "9ea39ebc7133df72bad17e37b45077509a3a163b5bd64c022dde7c7e5e9c16ea",
+  "microbitCssSha256": "0100e6535872e65bb99045213809c0bfab8ad1bb563a690a3ed2371a5fee79ca",
+  "hostFixtureGeneratorSha256": "071b7fe314ad1ae68d45ce8014e2a023360fb78490f2317f2356edf41ffa2682",
+  "hostFixtureHashes": {
+    "core-problems": "3abcee7cbdb7a73057d5a6411cff8777e62f824c9d0c7fc8fe0a819690afb5eb",
+    "core-class": "4fca18e8f0c570f6a93ba412dd81571e18fd9fff41d332bb117f0dae111a0ed8",
+    "microbit-problems": "4e6456462e6eaff9041218ecf7d0c61ae6dbd6669e08855151e1d16692ac50dd",
+    "microbit-lessons": "61aa0affb04d220a3504db364cf6210c3baee7d59e3190bff3dd8384af0461e4",
+    "microbit-teacher": "bc463b4a2c70059beee84517b65d83305cc76f0825733205d08b03eca446213e",
+    "microbit-create": "1546c5d2f7e132a1beafdffe3e1ae2aedfff6447ff9ed65779f938a814673e81",
+    "microbit-teacher-lessons": "f23e879ff65ecc21c8ec9c11b5cc25348f7140626206f8cf594e1a8554a3797f"
+  },
+  "hostEvidence": {
+    "nativeProviders": 0,
+    "coreProblems": "actual ProblemListPageHandler with actual accepted microbit manifest; no provider",
+    "coreClass": "actual ClassCatalogPageHandler with actual accepted microbit manifest; no provider",
+    "selection": {
+      "microbit-problems": [
+        {
+          "label": "마이크로비트 문제",
+          "href": "/oj-addons/oj-microbit/learn"
+        }
+      ],
+      "microbit-lessons": [
+        {
+          "label": "마이크로비트 수업",
+          "href": "/oj-addons/oj-microbit/lessons"
+        }
+      ],
+      "microbit-teacher": [
+        {
+          "label": "마이크로비트 문제",
+          "href": "/oj-console/addons/oj-microbit"
+        },
+        {
+          "label": "문제 목록",
+          "href": "/oj-console/addons/oj-microbit"
+        },
+        {
+          "label": "마이크로비트 문제",
+          "href": "/oj-console/addons/oj-microbit"
+        }
+      ],
+      "microbit-create": [
+        {
+          "label": "마이크로비트 문제",
+          "href": "/oj-console/addons/oj-microbit"
+        },
+        {
+          "label": "문제 생성",
+          "href": "/oj-console/addons/oj-microbit/new"
+        },
+        {
+          "label": "마이크로비트 문제",
+          "href": "/oj-console/addons/oj-microbit"
+        }
+      ],
+      "microbit-teacher-lessons": [
+        {
+          "label": "마이크로비트 수업",
+          "href": "/oj-console/addons/oj-microbit/lessons"
+        },
+        {
+          "label": "마이크로비트 수업",
+          "href": "/oj-console/addons/oj-microbit/lessons"
+        }
+      ]
+    },
+    "teacherCreateSelection": {
+      "route": "/oj-console/addons/oj-microbit/new",
+      "registeredAlias": null,
+      "sidebarOwnProblemSelected": true,
+      "localCreateSelected": true,
+      "localListUnselected": true,
+      "localCurrentCount": 1
+    }
+  },
+  "actualShellJs": true,
+  "shellJsSha256": "ff08247de465609de39392505810a16d4537277d023b49c0e35f95613f70edf9",
+  "actualShellCss": "oj-integration-rebuild/oj-platform/resources/ui/css/oj-ui-system.css",
+  "shellCssSha256": "c67bfc7c54a8face97b5ab041a0b6139e096769ed1f8f506a867001de5b89cdc",
+  "actualWordPress": false,
+  "actualMakeCode": false,
+  "actualDatabase": false,
+  "actualGrading": false,
+  "limitations": "Actual platform CSS, Pretendard fonts and oj-ui.js with controlled loopback REST and fixture page markup. The final host flow uses the actual microbit Registration, AddonRouteContributor, PageHandler, ProblemListPageHandler, ClassCatalogPageHandler, PublicShell menu renderer and ConsoleShell with in-memory gateways and permissive fixture authorization. This is not a full WordPress installation or actual role/DB acceptance. No actual MakeCode service, WordPress/MySQL database, grading server, USB device, or HUSTOJ workload was exercised. MathJax loading is stubbed because mathematical rendering is outside the checked flow.",
+  "candidateVersion": "1.0.0-rc.5",
+  "frontendChecks": 95,
+  "actualCoreHandlers": true,
+  "actualAddonRegistration": true,
+  "fixtureAuthorization": "Permissive in-memory identity and authorization stubs; actual WordPress roles and server-side acceptance are outside this browser run.",
+  "screenshots": [
+    "ui-problems-mobile-1.0.0-rc.5.png",
+    "ui-lessons-mobile-1.0.0-rc.5.png",
+    "ui-create-mobile-1.0.0-rc.5.png",
+    "ui-empty-mobile-1.0.0-rc.5.png",
+    "ui-problems-dark-1.0.0-rc.5.png",
+    "ui-core-problems-1.0.0-rc.5.png"
+  ],
+  "rerun": {
+    "command": "node oj-microbit/tests/browser-ui-ux.cjs",
+    "hostFixtureCommand": "D:/php/php.exe oj-microbit/tests/fixtures/browser-host.php --render D:/프로젝트/plugins/_notes/tmp/microbit-ux-rc5",
+    "dependencies": "Configured PHP CLI (PHP_BINARY or D:/php/php.exe), checked-out sibling OJ Platform source, external Playwright cache and Chromium, and loopback browser permission. The browser script generates its actual host fixtures automatically in its own temporary directory."
+  },
+  "evidenceCapture": "Selected independent menus are captured without keyboard focus decoration. Core host screenshots show actual component/handler output with test responders, rather than a production WordPress theme.",
+  "contrastSampling": "Measured foreground/background ratios after actual CSS transitions finished; enabled action and menu text meet 4.5:1 in the checked light/dark contexts."
+}

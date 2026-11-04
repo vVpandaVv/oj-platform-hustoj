@@ -13,6 +13,8 @@ $tables = array(
     $wpdb->prefix . 'edu_games_team_members',
     $wpdb->prefix . 'edu_games_teams',
     $wpdb->prefix . 'edu_games_ai_model_lab_attempts',
+    $wpdb->prefix . 'edu_games_binary_rooms',
+    $wpdb->prefix . 'edu_games_binary_results',
 );
 
 foreach ($tables as $table) {
@@ -25,6 +27,9 @@ if ($ranking_page_id > 0) {
 }
 
 delete_option('edu_games_db_version');
+delete_option('edu_games_binary_team_secret');
+delete_option('edu_games_realtime');
+wp_clear_scheduled_hook('edu_games_binary_team_maintenance');
 delete_option('edu_games_closed_games');
 delete_option('edu_games_ranking_page_id');
 delete_option('edu_games_ranking_page_cleanup_done');

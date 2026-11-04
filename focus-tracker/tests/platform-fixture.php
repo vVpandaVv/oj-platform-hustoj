@@ -74,23 +74,25 @@ if (! function_exists('wp_styles')) {
 final class Platform_Fixture_Context_Gateway implements Api\AddonLearningContextGatewayV1, Api\AddonAssignmentRosterGatewayV1 {
     public int $teachingCalls = 0;
     public int $learningCalls = 0;
+    public array $learningTypes = array();
     public bool $repeatCursor = false;
     public bool $failLaterPage = false;
 
     public function __construct(private int $count = 1, private array $learners = array(1)) {}
 
-    private function page(string $cursor, int $limit): Api\AddonContextPageV1 {
+    private function page(string $cursor, int $limit, array $types = array('class', 'group')): Api\AddonContextPageV1 {
         if ($this->failLaterPage && '' !== $cursor) {
             return new Api\AddonContextPageV1(false, array(), '', new Api\AddonApiProblemV1('addon_context_unavailable', 'Fixture unavailable', 'fixture-context', true));
         }
         $offset = '' === $cursor ? 0 : (int) $cursor;
         if (isset($GLOBALS['focus_test_statistics_contexts'])) {
-            $rows = $GLOBALS['focus_test_statistics_contexts'];
+            $rows = array_values(array_filter($GLOBALS['focus_test_statistics_contexts'], static fn (array $row): bool => in_array($row['type'], $types, true)));
             $slice = array_slice($rows, $offset, $limit);
             $items = array_map(static fn (array $row): Api\AddonContextSummaryV1 => new Api\AddonContextSummaryV1($row['type'], $row['id'], $row['label'], 'active', 'revision-1'), $slice);
             $next = $offset + count($slice) < count($rows) ? (string) ($offset + count($slice)) : '';
             return new Api\AddonContextPageV1(true, $items, $next, null);
         }
+        if (! in_array('class', $types, true)) { return new Api\AddonContextPageV1(true, array(), '', null); }
         $items = array();
         for ($index = $offset + 1; $index <= min($this->count, $offset + $limit); $index++) {
             $items[] = new Api\AddonContextSummaryV1('class', 'class:' . $index, '수업 ' . $index, 'active', 'revision-1');
@@ -109,7 +111,8 @@ final class Platform_Fixture_Context_Gateway implements Api\AddonLearningContext
 
     public function listLearningContexts(Api\AddonLearningContextQueryV1 $query): Api\AddonContextPageV1 {
         $this->learningCalls++;
-        return $this->page($query->cursor(), $query->limit());
+        $this->learningTypes[] = $query->types();
+        return $this->page($query->cursor(), $query->limit(), $query->types());
     }
 
     private function context(string $type, string $id): Api\AddonContextSnapshotV1 {

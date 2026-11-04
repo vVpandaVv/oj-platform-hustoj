@@ -23,6 +23,7 @@ final class Device_Matching_Renderer extends Abstract_Game_Renderer {
                         <h2><?php esc_html_e('사진과 설명을 짝지어 보세요', 'edu-games'); ?></h2>
                     </div>
                     <div class="oj-device-actions">
+                        <a class="oj-device-button oj-device-button-ghost" data-device-team-link href="<?php echo esc_url(home_url('/oj-addons/edu-games/device-team')); ?>"><?php esc_html_e('실시간 팀전','edu-games'); ?></a>
                         <button type="button" class="oj-device-button oj-device-button-primary" data-action="start"><?php esc_html_e('도전 시작', 'edu-games'); ?></button>
                         <button type="button" class="oj-device-button oj-device-button-ghost" data-action="next-stage" hidden><?php esc_html_e('다음 단계', 'edu-games'); ?></button>
                     </div>

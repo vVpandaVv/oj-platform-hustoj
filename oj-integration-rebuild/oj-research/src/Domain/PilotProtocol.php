@@ -83,6 +83,18 @@ final class PilotProtocol
         if ($p['support']['pretest']['A'] !== $p['support']['pretest']['B']) { throw new DomainException('배정 전 사전 평가의 AI 조건은 두 집단이 같아야 합니다.'); }
         $p['common_instructions'] = self::text($input['common_instructions'] ?? '현재 제출의 오류 원인과 관련 개념을 설명하고 스스로 확인할 질문을 제시한다. 학생 수준 정보는 사용하지 않는다. 완성된 정답 코드를 제공하지 않는다.');
         foreach (self::NOTES as $key=>$label) { $p['notes'][$key] = self::text($input['notes'][$key] ?? ''); }
+        if (($input['workflow'] ?? '') === ClassroomProtocol::WORKFLOW) {
+            $p['workflow'] = ClassroomProtocol::WORKFLOW;
+            $p['before_items'] = ClassroomProtocol::questions($input['before_items'] ?? '', ClassroomProtocol::BEFORE);
+            $p['survey_items'] = ClassroomProtocol::questions($input['survey_items'] ?? '', ClassroomProtocol::AFTER);
+            if(isset($input['setup'])){
+                if(!is_array($input['setup'])){throw new DomainException('수업 조건 형식을 확인해 주세요.');}
+                $p=ClassroomSettings::apply($p,$input['setup']);
+            }
+            if ($p['practice'] === []) { throw new DomainException('수업에서 풀 문제를 한 개 이상 선택해 주세요.'); }
+            if ($p['allocation'] === 'manual') { throw new DomainException('간편 수업은 자동 배정을 사용합니다. 수동 배정은 상세 연구에서 선택해 주세요.'); }
+            if ($p['allocation'] === 'class' && count($p['groups']) < 2) { throw new DomainException('그룹 단위 배정에는 두 개 이상의 그룹이 필요합니다.'); }
+        }
         if ($p['design']!=='custom' && ($issues=PilotDesign::issues($p))!==[]) {throw new DomainException(implode(' ', $issues).' 다른 조건이 필요하면 직접 설계를 선택하세요.');}
         if ($p['allocation']==='class' && $p['covariance']==='hc3') {throw new DomainException('학급 단위 배정에는 학급 보정 또는 자동 분석을 선택하세요.');}
         return $p;

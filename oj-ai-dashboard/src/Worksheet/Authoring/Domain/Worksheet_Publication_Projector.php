@@ -134,6 +134,9 @@ final class Worksheet_Publication_Projector {
 			),
 		);
 
+		if ( array_key_exists( 'exception_scores', $rubric ) ) {
+			$payload['rubric']['exception_scores'] = \OJAI\Dashboard\Assessment\Configuration\Domain\Rubric_Exception_Scores::normalize( $rubric['exception_scores'], $binding_result['total_points'] );
+		}
 		return $this->envelope(
 			self::GRADING_SCHEMA,
 			self::GRADING_VERSION,
@@ -191,7 +194,7 @@ final class Worksheet_Publication_Projector {
 	 */
 	private function rubric( $value ): array {
 		$value = $this->object( $value, 'rubric' );
-		$this->assert_keys( $value, array( 'content_hash', 'criteria', 'revision_id', 'total_points' ) );
+		$this->assert_keys( $value, array_merge( array( 'content_hash', 'criteria', 'revision_id', 'total_points' ), array_key_exists( 'exception_scores', $value ) ? array( 'exception_scores' ) : array() ) );
 		$this->public_id( $value['revision_id'] ?? null, 'rubric revision' );
 		$this->hash( $value['content_hash'] ?? null, 'rubric hash' );
 		$criteria = $value['criteria'] ?? null;

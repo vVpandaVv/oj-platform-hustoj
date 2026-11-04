@@ -328,7 +328,7 @@ final class G4_S02_Rest_Repository implements Submission_Evaluation_Review_Repos
 	 */
 	public function append_review( array $record ): Submission_Evaluation_Review_Result {
 		$this->records[] = $record;
-		$advanced        = 'rejected' !== $record['decision'];
+		$advanced        = ! in_array( $record['decision'], array( 'rejected', 'draft' ), true );
 		$result          = new Submission_Evaluation_Review_Result(
 			$record['evaluation_public_id'],
 			$record['submission_public_id'],
@@ -700,4 +700,30 @@ g4_s02_rest_assert( str_contains( $root_source, 'new WordPress_Submission_Evalua
 g4_s02_rest_assert( ! str_contains( $controller_source, '$wpdb->prefix' ) && ! str_contains( $controller_source, 'wp_oj_ai_' ), 'C34 REST must not introduce prefixed tables.' );
 g4_s02_rest_assert( ! str_contains( $controller_source, 'CodingPanda\\OjPlatform\\Kernel\\' ), 'C34 REST must use only public platform boundaries.' );
 
+$repository->snapshot  = $snapshot;
+$policy->state         = 'review_required';
+$draft_body            = g4_s02_rest_body( $snapshot, 'command-g4-rest-draft' );
+$draft_body['payload'] = array(
+	'decision'       => 'draft',
+	'item_decisions' => array(
+		array(
+			'binding_key'     => str_repeat( 'c', 64 ),
+			'source'          => 'teacher_assigned',
+			'official_points' => '0.0000',
+			'reason_code'     => 'manual_assessment',
+			'reason_note'     => null,
+		),
+	),
+	'reason'         => null,
+);
+$draft_request         = new G4_S02_Rest_Request( $draft_body, $evaluation_id, g4_s02_rest_context(), 'idempotency-g4-rest-draft' );
+g4_s02_rest_same( true, $controller->permissions_review( $draft_request ), 'Draft save uses the existing nonce/context/object gate.' );
+$draft_response = $controller->review( $draft_request );
+g4_s02_rest_assert( $draft_response instanceof WP_REST_Response, 'Draft save must return a receipt.' );
+g4_s02_rest_same( 'draft', $draft_response->get_data()['data']['review']['decision'], 'REST preserves non-official decision.' );
+g4_s02_rest_same( false, $draft_response->get_data()['data']['official_review']['advanced'], 'Draft cannot advance the official pointer.' );
+$draft_count = count( $repository->records );
+g4_s02_rest_same( true, $controller->permissions_review( $draft_request ), 'Draft replay is reauthorized.' );
+g4_s02_rest_same( 200, $controller->review( $draft_request )->get_status(), 'Draft replay reuses its receipt.' );
+g4_s02_rest_same( $draft_count, count( $repository->records ), 'Duplicate save must not duplicate history.' );
 fwrite( STDOUT, "G4-IMP-03-S02 C34 REST and authorization contract passed.\n" );

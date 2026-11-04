@@ -82,10 +82,10 @@ final class Review_Submission_Evaluation {
 		$score_decisions_json = null;
 		$score_decisions_hash = null;
 		$official_score       = null;
-		if ( in_array( $command->decision(), array( 'accepted', 'adjusted' ), true ) ) {
+		if ( in_array( $command->decision(), array( 'accepted', 'adjusted', 'draft' ), true ) ) {
 			$score_decisions      = 'accepted' === $command->decision()
 				? $this->accept_items( $items )
-				: $this->adjust_items( $items, $command->item_decisions() );
+				: $this->adjust_items( $items, $command->item_decisions(), 'draft' === $command->decision() );
 			$official_score       = $this->total( $score_decisions );
 			$score_payload        = array(
 				'schema_id'      => self::SCORE_DECISIONS_SCHEMA,
@@ -111,7 +111,7 @@ final class Review_Submission_Evaluation {
 			$snapshot['latest_review_id']
 		);
 
-		$stale_release_id = 'rejected' !== $command->decision()
+		$stale_release_id = ! in_array( $command->decision(), array( 'rejected', 'draft' ), true )
 			&& in_array( $snapshot['current_release_state'], array( 'released', 'corrected' ), true )
 			? $this->ids->create()->value() : null;
 
@@ -322,11 +322,12 @@ final class Review_Submission_Evaluation {
 	 *
 	 * @param array<int,array<string,mixed>> $items Items.
 	 * @param array<int,array<string,mixed>> $changes Changes.
+	 * @param bool                           $draft Allow incomplete, non-official grading.
 	 * @return array<int,array<string,mixed>>
 	 * @throws \Throwable Propagates validation or dependency failures.
 	 */
-	private function adjust_items( array $items, array $changes ): array {
-		if ( count( $items ) !== count( $changes ) ) {
+	private function adjust_items( array $items, array $changes, bool $draft = false ): array {
+		if ( ! $draft && count( $items ) !== count( $changes ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Propagates an exception object; presentation boundaries map stable errors and escape displayed text.
 			throw Submission_Evaluation_Failure::because( Submission_Evaluation_Failure::REVIEW_ITEMS_INCOMPLETE );
 		}
@@ -338,6 +339,9 @@ final class Review_Submission_Evaluation {
 		$teacher_count = 0;
 		foreach ( $items as $item ) {
 			$change = $by_key[ $item['binding_key'] ] ?? null;
+			if ( $draft && null === $change ) {
+				continue;
+			}
 			if ( ! is_array( $change ) ) {
 				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Propagates an exception object; presentation boundaries map stable errors and escape displayed text.
 				throw Submission_Evaluation_Failure::because( Submission_Evaluation_Failure::REVIEW_ITEMS_INCOMPLETE );
@@ -385,7 +389,7 @@ final class Review_Submission_Evaluation {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Propagates an exception object; presentation boundaries map stable errors and escape displayed text.
 			throw Submission_Evaluation_Failure::because( Submission_Evaluation_Failure::REVIEW_ITEMS_INCOMPLETE );
 		}
-		if ( 0 === $teacher_count ) {
+		if ( ! $draft && 0 === $teacher_count ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Propagates an exception object; presentation boundaries map stable errors and escape displayed text.
 			throw Submission_Evaluation_Failure::because( Submission_Evaluation_Failure::REVIEW_SCORE_INVALID );
 		}

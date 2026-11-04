@@ -1,0 +1,28 @@
+{
+  "exerciseCount": 125,
+  "exercisePages": 7,
+  "historyCount": 125,
+  "historyPages": 7,
+  "maximumDomRowsPerPage": 20,
+  "summaryPayloadMaxBytes": 2670,
+  "exercisePayloadMaxBytes": 3150,
+  "lazyHistoryDetail": true,
+  "duplicateGradeRequests": 1,
+  "actualMakeCodeAndPxtScore": 100,
+  "actualPreviewServo": 90,
+  "denseEvents": 10000,
+  "replay": {
+    "initialTimerCount": 1,
+    "setupMs": 3
+  },
+  "dense": {
+    "pinRows": 60,
+    "i2cRows": 100,
+    "finalPinValue": 112,
+    "finalRegisterValue": "135"
+  },
+  "readinessRequests": 1,
+  "automaticPolling": false,
+  "uiErrors": [],
+  "database": "memory REST fixture; SQL plans verified separately"
+}

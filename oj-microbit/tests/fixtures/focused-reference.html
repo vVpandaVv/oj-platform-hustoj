@@ -1,0 +1,548 @@
+<style>
+#microbit-page-designs {
+  --mb-bg: light-dark(#f5f7f9, #11161b);
+  --mb-paper: light-dark(#ffffff, #1b2229);
+  --mb-ink: light-dark(#1e2b37, #eaf0f4);
+  --mb-muted: light-dark(#647382, #a6b4c1);
+  --mb-line: light-dark(#dde5eb, #38444f);
+  --mb-soft: light-dark(#edf3f5, #252f38);
+  --mb-brand: light-dark(#007f79, #77d8cc);
+  --mb-on-brand: light-dark(#ffffff, #10342e);
+  --mb-tint: light-dark(#eaf6f3, #203b35);
+  --mb-warm: light-dark(#fff5dc, #43371c);
+  --mb-warm-ink: light-dark(#805b0c, #f1d186);
+  --mb-board: light-dark(#263742, #0e151b);
+  --mb-gold: light-dark(#eac873, #d9b862);
+  --mb-led: light-dark(#ed7054, #fc987b);
+  --mb-shadow: light-dark(#152f4114, #00000040);
+  color: var(--mb-ink);
+  font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+}
+#microbit-page-designs .mb-variant { min-height: 950px; }
+#microbit-page-designs .mb-preview-tools {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  padding: 0 100px 14px 0; font-size: 13px;
+}
+#microbit-page-designs .mb-preview-tools > strong { font-size: 16px; margin-right: 8px; }
+#microbit-page-designs button, #microbit-page-designs input,
+#microbit-page-designs select, #microbit-page-designs textarea { font: inherit; }
+#microbit-page-designs button { color: inherit; }
+#microbit-page-designs .mb-preview-tools button {
+  border: 1px solid var(--mb-line); border-radius: 7px; padding: 7px 12px;
+  color: var(--mb-ink); background: var(--mb-paper);
+}
+#microbit-page-designs .mb-preview-tools button[aria-pressed="true"] {
+  background: var(--mb-brand); color: var(--mb-on-brand); border-color: var(--mb-brand);
+}
+#microbit-page-designs .mb-app {
+  background: var(--mb-bg); border: 1px solid var(--mb-line); border-radius: 12px;
+  overflow-wrap: anywhere; min-height: 890px; font-size: 14px; line-height: 1.65;
+  display: flex; flex-direction: column;
+}
+#microbit-page-designs .mb-app *, #microbit-page-designs .mb-editor-dialog * { box-sizing: border-box; }
+#microbit-page-designs [hidden][hidden] { display: none; }
+#microbit-page-designs .mb-topbar {
+  display: flex; align-items: center; gap: 22px; padding: 12px 22px;
+  background: var(--mb-paper); border-bottom: 1px solid var(--mb-line);
+  border-radius: 12px 12px 0 0;
+}
+#microbit-page-designs .mb-logo {
+  background: var(--mb-brand); color: var(--mb-on-brand); border-radius: 8px;
+  font-size: 13px; font-weight: 700; padding: 5px 7px; letter-spacing: -1px;
+}
+#microbit-page-designs .mb-topbar nav { display: flex; gap: 18px; }
+#microbit-page-designs .mb-topbar nav span { color: var(--mb-muted); }
+#microbit-page-designs .mb-topbar nav [aria-current] { color: var(--mb-brand); font-weight: 700; }
+#microbit-page-designs .mb-role { margin-left: auto; color: var(--mb-muted); font-size: 12px; }
+#microbit-page-designs .mb-screen { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+#microbit-page-designs .mb-page-head { padding: 22px 26px 18px; }
+#microbit-page-designs .mb-breadcrumb { font-size: 12px; color: var(--mb-muted); margin-bottom: 10px; }
+#microbit-page-designs .mb-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+#microbit-page-designs h1, #microbit-page-designs h2, #microbit-page-designs h3,
+#microbit-page-designs p { margin: 0; }
+#microbit-page-designs .mb-app h1 { font-size: 25px; line-height: 1.4; letter-spacing: -.8px; font-weight: 700; }
+#microbit-page-designs .mb-app h2 { font-size: 19px; line-height: 1.5; font-weight: 700; letter-spacing: -.4px; }
+#microbit-page-designs .mb-app h3 { font-size: 15px; font-weight: 700; }
+#microbit-page-designs .mb-subtitle { margin-top: 7px; color: var(--mb-muted); }
+#microbit-page-designs .mb-small { font-size: 12px; color: var(--mb-muted); }
+#microbit-page-designs .mb-btn {
+  display: inline-flex; gap: 6px; align-items: center; justify-content: center;
+  border: 1px solid var(--mb-line); border-radius: 8px; background: var(--mb-paper);
+  padding: 9px 14px; min-height: 40px; text-decoration: none; white-space: normal;
+  color: var(--mb-ink); font-weight: 600; line-height: 1.4;
+}
+#microbit-page-designs .mb-btn-primary { background: var(--mb-brand); color: var(--mb-on-brand); border-color: var(--mb-brand); }
+#microbit-page-designs .mb-btn-quiet { background: transparent; border-color: transparent; color: var(--mb-muted); padding: 6px 8px; }
+#microbit-page-designs .mb-btn:disabled { opacity: .45; }
+#microbit-page-designs .mb-btn svg, #microbit-page-designs .mb-btn i { width: 16px; height: 16px; }
+#microbit-page-designs .mb-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+#microbit-page-designs .mb-status { font-size: 12px; color: var(--mb-muted); min-height: 20px; }
+#microbit-page-designs .mb-chip {
+  display: inline-flex; align-items: center; gap: 5px; border-radius: 5px;
+  background: var(--mb-soft); padding: 3px 8px; font-size: 12px; color: var(--mb-ink);
+}
+#microbit-page-designs .mb-chip-accent { background: var(--mb-tint); color: var(--mb-brand); }
+#microbit-page-designs .mb-label { display: grid; gap: 7px; color: var(--mb-ink); font-weight: 600; min-width: 0; }
+#microbit-page-designs .mb-field {
+  width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--mb-line);
+  border-radius: 8px; background: var(--mb-paper); color: var(--mb-ink);
+  font-size: 15px; font-weight: 400; line-height: 1.6;
+}
+#microbit-page-designs textarea.mb-field { resize: vertical; min-height: 88px; }
+#microbit-page-designs .mb-stack { display: grid; gap: var(--mb-gap, 18px); }
+#microbit-page-designs .mb-divider { border: 0; border-top: 1px solid var(--mb-line); margin: 20px 0; }
+#microbit-page-designs .mb-footer {
+  margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 16px 26px; border-top: 1px solid var(--mb-line); background: var(--mb-paper);
+  border-radius: 0 0 12px 12px; flex-wrap: wrap;
+}
+#microbit-page-designs .mb-device-line { display: flex; gap: 8px 14px; flex-wrap: wrap; align-items: center; }
+#microbit-page-designs .mb-device-line span { display: inline-flex; gap: 7px; align-items: center; }
+#microbit-page-designs .mb-pin { color: var(--mb-brand); font-size: 12px; font-weight: 700; }
+#microbit-page-designs .mb-condition {
+  border: 1px solid var(--mb-line); border-radius: 10px; padding: 18px;
+  background: var(--mb-paper); min-width: 0;
+}
+#microbit-page-designs .mb-condition-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 16px; }
+#microbit-page-designs .mb-input-strip {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding-bottom: 14px;
+  border-bottom: 1px solid var(--mb-line); margin-bottom: 14px;
+}
+#microbit-page-designs .mb-input-value { font-size: 20px; font-weight: 700; margin-left: auto; }
+#microbit-page-designs .mb-branches { display: grid; gap: 14px; padding-left: 14px; border-left: 2px solid var(--mb-line); }
+#microbit-page-designs .mb-lane { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 10px; align-items: center; }
+#microbit-page-designs .mb-lane-name { font-size: 13px; }
+#microbit-page-designs .mb-lane-name small { display: block; font-size: 11px; color: var(--mb-muted); }
+#microbit-page-designs .mb-steps { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; min-width: 0; }
+#microbit-page-designs .mb-state {
+  background: var(--mb-soft); border-radius: 7px; padding: 9px 12px; font-size: 13px;
+  display: grid; gap: 1px; min-width: 100px;
+}
+#microbit-page-designs .mb-state strong { font-weight: 600; }
+#microbit-page-designs .mb-state small { font-size: 11px; color: var(--mb-muted); }
+#microbit-page-designs .mb-state-on { background: var(--mb-tint); color: var(--mb-brand); }
+#microbit-page-designs .mb-flow-arrow { color: var(--mb-muted); font-weight: 600; }
+#microbit-page-designs .mb-parallel-note { font-size: 12px; color: var(--mb-muted); margin-bottom: 12px; }
+#microbit-page-designs .mb-details { font-size: 12px; color: var(--mb-muted); }
+#microbit-page-designs .mb-details > summary { padding: 10px 0; }
+#microbit-page-designs .mb-details > p { padding: 0 0 8px; line-height: 1.7; }
+#microbit-page-designs .mb-read-text { font-size: var(--mb-body-size, 15px); line-height: 1.85; }
+#microbit-page-designs .mb-number-list { padding-left: 20px; margin: 10px 0 0; }
+#microbit-page-designs .mb-number-list li + li { margin-top: 8px; }
+#microbit-page-designs .mb-read-section { display: grid; gap: 12px; }
+#microbit-page-designs .mb-inline-link {
+  border: 0; border-bottom: 1px solid currentColor; background: transparent; padding: 0;
+  color: var(--mb-brand); font-size: 13px;
+}
+#microbit-page-designs .mb-focus-layout { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 28px; padding: 8px 26px 26px; }
+#microbit-page-designs .mb-step-nav { display: grid; gap: 6px; align-content: start; padding-top: 3px; }
+#microbit-page-designs .mb-step-nav button {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 10px;
+  border: 0; border-radius: 8px; background: transparent; text-align: left; color: var(--mb-muted); font-size: 13px;
+}
+#microbit-page-designs .mb-step-nav button[aria-current="step"] { color: var(--mb-brand); background: var(--mb-tint); font-weight: 700; }
+#microbit-page-designs .mb-step-index { width: 23px; height: 23px; border-radius: 50%; background: var(--mb-soft); display: grid; place-items: center; flex: 0 0 auto; font-size: 12px; }
+#microbit-page-designs .mb-step-nav [aria-current] .mb-step-index { background: var(--mb-brand); color: var(--mb-on-brand); }
+#microbit-page-designs .mb-focus-content { display: grid; gap: 20px; align-content: start; min-width: 0; }
+#microbit-page-designs .mb-work-title { display: grid; gap: 5px; }
+#microbit-page-designs .mb-kicker { font-size: 11px; font-weight: 700; letter-spacing: .7px; color: var(--mb-brand); }
+#microbit-page-designs .mb-add { border: 1px dashed var(--mb-line); width: 100%; background: transparent; color: var(--mb-brand); }
+#microbit-page-designs .mb-focus-view { padding: 4px 36px 28px; display: grid; gap: 24px; max-width: 850px; width: 100%; margin: 0 auto; }
+#microbit-page-designs .mb-brief { padding: 18px 20px; background: var(--mb-tint); border-left: 3px solid var(--mb-brand); border-radius: 0 8px 8px 0; }
+#microbit-page-designs .mb-focus-view .mb-condition { border: 0; padding: 0; background: transparent; }
+#microbit-page-designs .mb-code-placeholder {
+  display: grid; gap: 10px; background: var(--mb-soft); padding: 24px; border-radius: 10px;
+  color: var(--mb-muted); min-height: 200px; align-content: center;
+}
+#microbit-page-designs .mb-code-placeholder code { font-family: Consolas, monospace; font-size: 13px; color: var(--mb-ink); }
+#microbit-page-designs .mb-split-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 22px; padding: 0 26px 26px; }
+#microbit-page-designs .mb-form-panel { background: var(--mb-paper); padding: 22px; border: 1px solid var(--mb-line); border-radius: 10px; display: grid; gap: 20px; align-content: start; }
+#microbit-page-designs .mb-preview-panel { display: grid; gap: 16px; align-content: start; min-width: 0; }
+#microbit-page-designs .mb-collapsible-preview { min-width: 0; }
+#microbit-page-designs .mb-collapsible-preview > summary { display: none; color: var(--mb-brand); font-size: 14px; font-weight: 600; }
+#microbit-page-designs .mb-mini-preview { padding: 20px; border-radius: 10px; background: var(--mb-paper); border: 1px solid var(--mb-line); display: grid; gap: 16px; }
+#microbit-page-designs .mb-mini-preview h2 { font-size: 20px; }
+#microbit-page-designs .mb-mini-preview .mb-branches { padding-left: 10px; gap: 10px; }
+#microbit-page-designs .mb-mini-preview .mb-lane { grid-template-columns: 1fr; gap: 4px; }
+#microbit-page-designs .mb-mini-preview .mb-state { min-width: 75px; padding: 7px 9px; }
+#microbit-page-designs .mb-mini-preview .mb-state small { font-size: 11px; }
+#microbit-page-designs .mb-fieldset-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+#microbit-page-designs .mb-summary-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 12px 0; border-bottom: 1px solid var(--mb-line); }
+#microbit-page-designs .mb-summary-row:last-child { border-bottom: 0; }
+#microbit-page-designs .mb-summary-row .mb-inline-link { margin-left: auto; }
+#microbit-page-designs .mb-mini-state { display: grid; gap: 12px; }
+#microbit-page-designs .mb-input-range { width: 100%; accent-color: var(--mb-brand); margin: 0; }
+#microbit-page-designs .mb-hardware { display: grid; grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr); align-items: center; gap: 8px; padding: 16px 0; }
+#microbit-page-designs .mb-board { color: light-dark(#ffffff, #e4eeee); background: var(--mb-board); border-radius: 10px; padding: 15px 10px 0; text-align: center; max-width: 140px; width: 100%; }
+#microbit-page-designs .mb-board strong { font-size: 12px; font-weight: 600; letter-spacing: .4px; }
+#microbit-page-designs .mb-board-pixels { display: grid; grid-template-columns: repeat(5, 6px); gap: 4px; justify-content: center; padding: 13px 0; }
+#microbit-page-designs .mb-board-pixels span { width: 6px; height: 6px; background: light-dark(#60747c, #44565f); border-radius: 1px; }
+#microbit-page-designs .mb-board-edge { display: flex; gap: 8px; justify-content: center; margin-top: 4px; }
+#microbit-page-designs .mb-board-edge span { background: var(--mb-gold); color: light-dark(#333524, #313421); padding: 5px 5px 2px; font-size: 10px; border-radius: 5px 5px 0 0; }
+#microbit-page-designs .mb-hardware-output { display: grid; gap: 16px; }
+#microbit-page-designs .mb-led-row { display: flex; align-items: center; gap: 8px; font-size: 12px; flex-wrap: wrap; }
+#microbit-page-designs .mb-led-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--mb-led); box-shadow: 0 0 0 4px var(--mb-warm); flex: 0 0 auto; }
+#microbit-page-designs .mb-led-dot.is-off { background: var(--mb-line); box-shadow: none; }
+#microbit-page-designs .mb-pwm { height: 6px; background: var(--mb-soft); border-radius: 3px; margin-top: 7px; }
+#microbit-page-designs .mb-pwm span { display: block; width: 78%; height: 100%; border-radius: 3px; background: var(--mb-brand); }
+#microbit-page-designs .mb-lab { background: var(--mb-paper); padding: 22px; border: 1px solid var(--mb-line); border-radius: 10px; }
+#microbit-page-designs .mb-lab h3 { margin-bottom: 14px; }
+#microbit-page-designs .mb-split-reading { display: grid; gap: 24px; align-content: start; padding: 5px 0; }
+#microbit-page-designs .mb-split-view .mb-condition { background: transparent; border: 0; padding: 0; }
+#microbit-page-designs .mb-lab-caption { font-size: 12px; color: var(--mb-muted); margin-bottom: 14px; }
+#microbit-page-designs .mb-document { background: var(--mb-paper); }
+#microbit-page-designs .mb-document .mb-page-head { padding-bottom: 10px; }
+#microbit-page-designs .mb-doc-body { width: 100%; max-width: 780px; margin: 0 auto; padding: 12px 32px 28px; display: grid; gap: 24px; align-content: start; }
+#microbit-page-designs .mb-doc-title { border: 0; border-bottom: 1px solid var(--mb-line); border-radius: 0; padding: 0 0 12px; font-size: 25px; font-weight: 700; letter-spacing: -.5px; }
+#microbit-page-designs .mb-doc-label { font-size: 13px; font-weight: 700; }
+#microbit-page-designs .mb-doc-title-label { display: grid; gap: 8px; }
+#microbit-page-designs .mb-doc-body textarea { background: var(--mb-paper); padding: 10px 0; border: 0; border-bottom: 1px solid var(--mb-line); border-radius: 0; }
+#microbit-page-designs .mb-doc-body .mb-condition { border: 0; border-left: 2px solid var(--mb-line); border-radius: 0; padding: 0 0 0 18px; }
+#microbit-page-designs .mb-doc-body .mb-condition-header { margin-bottom: 12px; }
+#microbit-page-designs .mb-doc-body .mb-state { padding: 8px 12px; }
+#microbit-page-designs .mb-doc-titlebar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--mb-line); padding: 13px 24px; }
+#microbit-page-designs .mb-doc-titlebar > div { display: flex; align-items: center; gap: 12px; }
+#microbit-page-designs .mb-doc-view-head { display: grid; gap: 13px; padding-bottom: 22px; border-bottom: 1px solid var(--mb-line); }
+#microbit-page-designs .mb-doc-view-head h1 { font-size: 29px; }
+#microbit-page-designs .mb-callout { font-size: 13px; color: var(--mb-muted); padding-left: 12px; border-left: 2px solid var(--mb-line); }
+#microbit-page-designs .mb-editor-dialog {
+  --mb-gap: 18px; width: min(460px, calc(100% - 24px)); max-height: calc(100% - 24px);
+  color: var(--mb-ink); background: var(--mb-paper); border: 1px solid var(--mb-line);
+  border-radius: 14px; padding: 24px; font: 14px/1.65 "Pretendard", "Malgun Gothic", system-ui, sans-serif;
+  box-shadow: 0 20px 60px var(--mb-shadow);
+}
+#microbit-page-designs .mb-editor-dialog::backdrop { background: light-dark(#18334366, #00000099); }
+#microbit-page-designs .mb-editor-dialog h2 { margin: 18px 0; font-size: 20px; font-weight: 700; }
+#microbit-page-designs .mb-dialog-top, #microbit-page-designs .mb-dialog-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+#microbit-page-designs .mb-dialog-bottom { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--mb-line); }
+#microbit-page-designs .mb-dialog-step { min-height: 120px; }
+#microbit-page-designs .mb-dialog-step p { margin-top: 8px; color: var(--mb-muted); }
+#microbit-page-designs .mb-dialog-error { color: var(--mb-warm-ink); background: var(--mb-warm); padding: 8px 12px; margin-top: 12px; border-radius: 6px; }
+@media (max-width: 760px) {
+  #microbit-page-designs .mb-focus-layout { grid-template-columns: 128px minmax(0, 1fr); gap: 18px; }
+  #microbit-page-designs .mb-split-layout { grid-template-columns: minmax(0, 1fr); }
+  #microbit-page-designs .mb-preview-panel { grid-template-columns: minmax(0, 1fr); }
+  #microbit-page-designs .mb-mini-preview { gap: 12px; }
+  #microbit-page-designs .mb-variant { min-height: 1210px; }
+  #microbit-page-designs .mb-app { min-height: 1120px; }
+  #microbit-page-designs .mb-collapsible-preview > summary { display: list-item; padding: 12px 0; }
+  #microbit-page-designs .mb-collapsible-preview[open] > summary { margin-bottom: 12px; }
+}
+@media (max-width: 520px) {
+  #microbit-page-designs .mb-preview-tools { padding-right: 92px; gap: 6px; }
+  #microbit-page-designs .mb-preview-tools > strong { width: 100%; }
+  #microbit-page-designs .mb-topbar { gap: 16px; padding: 11px 16px; }
+  #microbit-page-designs .mb-role { font-size: 11px; }
+  #microbit-page-designs .mb-page-head { padding: 18px 18px 16px; }
+  #microbit-page-designs .mb-app h1 { font-size: 23px; }
+  #microbit-page-designs .mb-focus-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 0 18px 22px; }
+  #microbit-page-designs .mb-step-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+  #microbit-page-designs .mb-step-nav button { padding: 8px 3px; font-size: 12px; justify-content: center; flex-wrap: wrap; gap: 4px; }
+  #microbit-page-designs .mb-step-index { width: 20px; height: 20px; font-size: 11px; }
+  #microbit-page-designs .mb-step-long { display: none; }
+  #microbit-page-designs .mb-condition { padding: 16px; }
+  #microbit-page-designs .mb-lane { grid-template-columns: minmax(0, 1fr); gap: 7px; }
+  #microbit-page-designs .mb-lane-name small { display: inline; margin-left: 6px; }
+  #microbit-page-designs .mb-state { min-width: 80px; padding: 8px 10px; }
+  #microbit-page-designs .mb-focus-view { padding: 0 20px 22px; gap: 22px; }
+  #microbit-page-designs .mb-brief { padding: 16px; }
+  #microbit-page-designs .mb-split-layout { padding: 0 18px 22px; gap: 20px; }
+  #microbit-page-designs .mb-form-panel, #microbit-page-designs .mb-mini-preview, #microbit-page-designs .mb-lab { padding: 18px; }
+  #microbit-page-designs .mb-footer { padding: 16px 18px; }
+  #microbit-page-designs .mb-footer > .mb-status { width: 100%; }
+  #microbit-page-designs .mb-doc-body { padding: 14px 22px 26px; }
+  #microbit-page-designs .mb-doc-titlebar { padding: 12px 18px; }
+  #microbit-page-designs .mb-doc-title { font-size: 23px; }
+  #microbit-page-designs .mb-field { font-size: 16px; }
+  #microbit-page-designs .mb-editor-dialog { padding: 20px; }
+}
+@media (pointer: coarse) {
+  #microbit-page-designs .mb-btn, #microbit-page-designs .mb-preview-tools button,
+  #microbit-page-designs .mb-inline-link, #microbit-page-designs .mb-step-nav button { min-height: 44px; }
+}
+</style>
+
+<div id="microbit-page-designs">
+  <div class="viz-carousel" aria-label="마이크로비트 페이지 디자인 3개 시안" data-previous-label="이전 시안" data-next-label="다음 시안">
+    <section class="mb-variant" data-variant="집중형" aria-label="집중형 디자인">
+      <div class="mb-preview-tools">
+        <strong>집중형</strong>
+        <button type="button" class="cursor-interaction" data-mode="create" aria-pressed="true">문제 생성</button>
+        <button type="button" class="cursor-interaction" data-mode="view" aria-pressed="false">문제 보기</button>
+      </div>
+      <div class="mb-app" data-design="focus" aria-label="집중형 화면 조정">
+        <header class="mb-topbar"><span class="mb-logo">OJ</span><nav aria-label="상위 메뉴"><span aria-current="page">문제</span><span>수업</span></nav><span class="mb-role">마이크로비트</span></header>
+        <section class="mb-screen" data-page="create" aria-label="집중형 문제 생성">
+          <div class="mb-page-head">
+            <div class="mb-breadcrumb">마이크로비트 문제 / 문제 생성</div>
+            <div class="mb-heading-row"><h1>문제 만들기</h1><span class="mb-chip">초안</span></div>
+            <p class="mb-subtitle">센서로 LED와 모터 제어하기</p>
+          </div>
+          <div class="mb-focus-layout">
+            <nav class="mb-step-nav" aria-label="작성 단계">
+              <button type="button" class="cursor-interaction" data-author-step="1"><span class="mb-step-index">✓</span><span>안내<span class="mb-step-long"> 작성</span></span></button>
+              <button type="button" class="cursor-interaction" data-author-step="2" aria-current="step"><span class="mb-step-index">2</span><span>동작<span class="mb-step-long"> 조건</span></span></button>
+              <button type="button" class="cursor-interaction" data-author-step="3"><span class="mb-step-index">3</span><span>코드<span class="mb-step-long"> 준비</span></span></button>
+              <button type="button" class="cursor-interaction" data-author-step="4"><span class="mb-step-index">4</span><span>공개<span class="mb-step-long"> 점검</span></span></button>
+            </nav>
+            <div class="mb-focus-content">
+              <div data-author-panel="1" hidden class="mb-stack">
+                <div class="mb-work-title"><span class="mb-kicker">문제 안내</span><h2>어떤 문제인가요?</h2></div>
+                <label class="mb-label">문제 제목<input class="mb-field" value="센서로 LED와 모터 제어하기"></label>
+                <label class="mb-label">학생에게 보여줄 설명<textarea class="mb-field" rows="4">센서 값이 512 이상이면 LED를 0.5초 켠 뒤 끄세요. 모터는 센서 값에 맞는 세기로 움직이세요.</textarea></label>
+              </div>
+              <div data-author-panel="2" class="mb-stack">
+                <div class="mb-work-title"><span class="mb-kicker">동작 조건</span><h2>어떻게 동작해야 하나요?</h2><p class="mb-small">한 상황에 입력과 기대 동작을 함께 정해요.</p></div>
+                <section class="mb-condition">
+                  <div class="mb-condition-header"><h3>상황 1 · 시작할 때</h3><button type="button" class="mb-inline-link cursor-interaction" data-edit>수정</button></div>
+                  <div class="mb-input-strip"><span class="mb-chip">입력</span><span>센서 <span class="mb-pin">P0</span></span><strong class="mb-input-value" data-sensor-value>800</strong></div>
+                  <p class="mb-parallel-note">아래 두 핀이 함께 시작해요</p>
+                  <div class="mb-branches">
+                    <div class="mb-lane"><div class="mb-lane-name">LED<small>P1</small></div><div class="mb-steps"><span class="mb-state mb-state-on"><strong>켜짐</strong><small><span data-hold>0.5</span>초 유지</small></span><span class="mb-flow-arrow">→</span><span class="mb-state"><strong>꺼짐</strong><small>0.2초 유지</small></span></div></div>
+                    <div class="mb-lane"><div class="mb-lane-name">모터<small>P2</small></div><div class="mb-steps"><span class="mb-state"><strong>세기 800</strong><small>LED와 동시에</small></span></div></div>
+                  </div>
+                  <details class="mb-details"><summary class="cursor-interaction">시간·허용 오차 자세히</summary><p>출력 반응 한도 0.1초 · 허용 오차 0<br>LED는 켜진 뒤 0.5초를 유지하고 다음 꺼짐을 확인합니다.</p></details>
+                </section>
+                <button type="button" class="mb-btn mb-add cursor-interaction" data-edit>+ 다음 입력 단계 만들기</button>
+                <div class="mb-device-line mb-small"><span>연결한 핀</span><span>P0 센서</span><span>P1 LED</span><span>P2 모터</span></div>
+              </div>
+              <div data-author-panel="3" hidden class="mb-stack">
+                <div class="mb-work-title"><span class="mb-kicker">시작 코드</span><h2>학생은 어디서 시작하나요?</h2></div>
+                <div class="mb-code-placeholder"><strong>MakeCode 편집기 영역</strong><code>basic.forever(function () {<br>&nbsp; // 센서를 읽고 장치를 움직여 보세요.<br>})</code><span class="mb-small">편집기 배치 미리보기</span></div>
+                <label class="mb-label">학생용 시작 코드<select class="mb-field"><option>빈 틀로 시작하기</option><option>교사가 준비한 코드로 시작하기</option></select></label>
+              </div>
+              <div data-author-panel="4" hidden class="mb-stack">
+                <div class="mb-work-title"><span class="mb-kicker">공개 점검</span><h2>학생에게 보여주기 전에</h2></div>
+                <div class="mb-condition mb-stack"><p>✓ 문제 안내를 작성했어요.</p><p>✓ 입력과 기대 동작을 정했어요.</p><p>✓ 학생용 시작 코드를 선택했어요.</p><button type="button" class="mb-btn mb-btn-primary cursor-interaction" data-jump-view>학생 화면 미리보기</button></div>
+              </div>
+            </div>
+          </div>
+          <footer class="mb-footer"><span class="mb-status" role="status" data-status>현재 작성 · 동작 조건</span><div class="mb-actions"><button type="button" class="mb-btn cursor-interaction" data-sample-action="초안 저장 상태를 확인했어요.">초안 저장</button><button type="button" class="mb-btn mb-btn-primary cursor-interaction" data-next-author>다음: 시작 코드 →</button></div></footer>
+        </section>
+        <section class="mb-screen" data-page="view" aria-label="집중형 문제 보기" hidden>
+          <div class="mb-page-head"><div class="mb-breadcrumb">마이크로비트 문제 / MB-012</div><span class="mb-chip mb-chip-accent">처음 배우기</span><h1 style="margin-top:10px">센서로 LED와 모터 제어하기</h1></div>
+          <div class="mb-focus-view">
+            <section class="mb-brief mb-read-section"><h2>이번에 만들 동작</h2><p class="mb-read-text">센서 값이 512 이상이면 LED를 0.5초 켠 뒤 끄고, 모터는 센서 값에 맞는 세기로 움직여요.</p></section>
+            <section class="mb-read-section"><h3>연결할 장치</h3><div class="mb-device-line"><span><b class="mb-pin">P0</b> 센서</span><span><b class="mb-pin">P1</b> LED</span><span><b class="mb-pin">P2</b> 모터</span></div></section>
+            <section class="mb-condition"><div class="mb-condition-header"><h2>이렇게 동작하면 돼요</h2><span class="mb-small">공개 예시 1</span></div><div class="mb-input-strip"><span>센서 값이</span><strong class="mb-input-value" style="margin-left:0">800</strong><span>일 때</span></div><p class="mb-parallel-note">LED와 모터는 함께 시작해요</p><div class="mb-branches"><div class="mb-lane"><div class="mb-lane-name">LED<small>P1</small></div><div class="mb-steps"><span class="mb-state mb-state-on"><strong>켜짐</strong><small><span data-hold>0.5</span>초 유지</small></span><span class="mb-flow-arrow">→</span><span class="mb-state"><strong>꺼짐</strong><small>0.2초 유지</small></span></div></div><div class="mb-lane"><div class="mb-lane-name">모터<small>P2</small></div><div class="mb-steps"><span class="mb-state"><strong>세기 800</strong><small>함께 실행</small></span></div></div></div></section>
+            <details class="mb-details"><summary class="cursor-interaction">핀 번호와 세부 채점 조건 보기</summary><p>입력 P0 · 아날로그 800 / 출력 P1 · 디지털 1 → 0 / 출력 P2 · PWM 800<br>출력 반응 한도 0.1초 · 허용 오차 0</p></details>
+          </div>
+          <footer class="mb-footer"><span class="mb-status" role="status" data-status>실제 보드 없이 풀 수 있어요.</span><button type="button" class="mb-btn mb-btn-primary cursor-interaction" data-sample-action="실제 서비스에서는 MakeCode 풀이 화면으로 이동합니다.">MakeCode로 문제 풀기 →</button></footer>
+        </section>
+      </div>
+    </section>
+
+    <section class="mb-variant" data-variant="분할형" aria-label="분할형 디자인" hidden>
+      <div class="mb-preview-tools"><strong>분할형</strong><button type="button" class="cursor-interaction" data-mode="create" aria-pressed="true">문제 생성</button><button type="button" class="cursor-interaction" data-mode="view" aria-pressed="false">문제 보기</button></div>
+      <div class="mb-app" data-design="split" aria-label="분할형 화면 조정">
+        <header class="mb-topbar"><span class="mb-logo">OJ</span><nav aria-label="상위 메뉴"><span aria-current="page">문제</span><span>수업</span></nav><span class="mb-role">마이크로비트</span></header>
+        <section class="mb-screen" data-page="create" aria-label="분할형 문제 생성">
+          <div class="mb-page-head"><div class="mb-breadcrumb">마이크로비트 문제 / 문제 생성</div><div class="mb-heading-row"><h1>문제 만들기</h1><div class="mb-actions"><button type="button" class="mb-btn cursor-interaction" data-sample-action="초안 저장 상태를 확인했어요.">초안 저장</button><button type="button" class="mb-btn mb-btn-primary cursor-interaction" data-jump-view>미리보기 →</button></div></div></div>
+          <div class="mb-split-layout">
+            <div class="mb-form-panel">
+              <label class="mb-label">문제 제목<input class="mb-field" data-title-input value="센서로 LED와 모터 제어하기"></label>
+              <label class="mb-label">학생에게 보여줄 설명<textarea class="mb-field" rows="3" data-description-input>센서 값이 512 이상이면 LED를 0.5초 켠 뒤 끄고, 모터는 센서 값에 맞는 세기로 움직이세요.</textarea></label>
+              <div class="mb-stack" style="gap:10px"><div class="mb-fieldset-row"><h3>장치 연결</h3><button type="button" class="mb-inline-link cursor-interaction" data-edit>변경</button></div><div class="mb-device-line"><span class="mb-chip">P0 센서</span><span class="mb-chip">P1 LED</span><span class="mb-chip">P2 모터</span></div></div>
+              <section><div class="mb-fieldset-row"><h3>입력과 기대 동작</h3><button type="button" class="mb-inline-link cursor-interaction" data-edit>+ 추가</button></div><div class="mb-summary-row"><span class="mb-chip">입력</span><span>P0 센서</span><strong data-sensor-value>800</strong><button type="button" class="mb-inline-link cursor-interaction" data-edit>수정</button></div><div class="mb-summary-row"><span class="mb-chip mb-chip-accent">출력</span><span>P1 켜짐 <span data-hold>0.5</span>초 → 꺼짐</span></div><div class="mb-summary-row"><span class="mb-chip mb-chip-accent">출력</span><span>P2 모터 세기 800 · 함께 시작</span></div></section>
+              <details class="mb-details"><summary class="cursor-interaction">시작 코드·공개 전 점검</summary><p>학생용 빈 틀로 시작 · 사이트 전체 공개<br>최종 공개 전 동작 조건과 배포할 코드를 확인해요.</p></details>
+            </div>
+            <details class="mb-collapsible-preview" data-responsive-preview open><summary class="cursor-interaction">학생 미리보기 열기</summary><aside class="mb-preview-panel">
+              <div class="mb-fieldset-row"><h3>학생에게 이렇게 보여요</h3><span class="mb-small">미리보기</span></div>
+              <section class="mb-mini-preview"><span class="mb-kicker">마이크로비트 문제</span><h2 data-title-preview>센서로 LED와 모터 제어하기</h2><p class="mb-read-text" data-description-preview>센서 값이 512 이상이면 LED를 0.5초 켠 뒤 끄고, 모터는 센서 값에 맞는 세기로 움직이세요.</p><hr class="mb-divider" style="margin:0"><h3>센서 800일 때</h3><div class="mb-branches"><div class="mb-lane"><div class="mb-lane-name">LED · P1</div><div class="mb-steps"><span class="mb-state mb-state-on"><strong>켜짐</strong><small><span data-hold>0.5</span>초</small></span><span class="mb-flow-arrow">→</span><span class="mb-state"><strong>꺼짐</strong><small>0.2초</small></span></div></div><div class="mb-lane"><div class="mb-lane-name">모터 · P2</div><span class="mb-state"><strong>세기 800</strong><small>LED와 함께 시작</small></span></div></div><button type="button" class="mb-btn mb-btn-primary cursor-interaction" data-jump-view>문제 보기로 확인 →</button></section>
+            </aside></details>
+          </div>
+          <footer class="mb-footer"><span class="mb-status" role="status" data-status>왼쪽에서 작성한 내용을 오른쪽에서 확인해요.</span><span class="mb-small">초안</span></footer>
+        </section>
+        <section class="mb-screen mb-split-view" data-page="view" aria-label="분할형 문제 보기" hidden>
+          <div class="mb-page-head"><div class="mb-breadcrumb">마이크로비트 문제 / MB-012</div><h1 data-title-preview>센서로 LED와 모터 제어하기</h1><p class="mb-subtitle">센서 입력 · LED · PWM 모터</p></div>
+          <div class="mb-split-layout">
+            <div class="mb-split-reading">
+              <section class="mb-read-section"><h2>해야 할 일</h2><p class="mb-read-text" data-description-preview>센서 값이 512 이상이면 LED를 0.5초 켠 뒤 끄고, 모터는 센서 값에 맞는 세기로 움직이세요.</p><p class="mb-callout">센서 값이 512보다 작으면 LED를 끄고 모터 세기는 센서 값에 맞춰요.</p></section>
+              <section class="mb-read-section"><h3>장치 연결</h3><div class="mb-device-line"><span><b class="mb-pin">P0</b> 센서</span><span><b class="mb-pin">P1</b> LED</span><span><b class="mb-pin">P2</b> 모터</span></div></section>
+              <section class="mb-condition"><div class="mb-condition-header"><h3>공개 동작 예시</h3><span class="mb-small">센서 800</span></div><div class="mb-branches"><div class="mb-lane"><div class="mb-lane-name">LED · P1</div><div class="mb-steps"><span class="mb-state mb-state-on"><strong>켜짐</strong><small><span data-hold>0.5</span>초</small></span><span class="mb-flow-arrow">→</span><span class="mb-state"><strong>꺼짐</strong><small>0.2초</small></span></div></div><div class="mb-lane"><div class="mb-lane-name">모터 · P2</div><span class="mb-state"><strong>세기 800</strong><small>함께 시작</small></span></div></div></section>
+              <details class="mb-details"><summary class="cursor-interaction">세부 채점 조건 보기</summary><p>각 출력 반응 한도 0.1초 · 값 허용 오차 0<br>실제 켜진 뒤 유지시간을 채워야 다음 꺼짐을 검사합니다.</p></details>
+            </div>
+            <details class="mb-collapsible-preview" data-responsive-preview open><summary class="cursor-interaction">입력을 바꿔서 이해하기</summary><aside class="mb-preview-panel">
+              <section class="mb-lab"><h3>입력을 바꿔서 이해하기</h3><p class="mb-lab-caption">기대 동작의 설명용 미리보기</p><label class="mb-label">센서 <span><b class="mb-pin">P0</b> · <strong data-lab-value>800</strong></span><input class="mb-input-range" type="range" aria-label="미리보기 센서 값" min="0" max="1023" value="800" data-lab-input></label><div class="mb-hardware" role="img" aria-label="마이크로비트 P1 LED와 P2 모터의 기대 상태"><div class="mb-board"><strong>micro:bit</strong><div class="mb-board-pixels" aria-hidden="true"></div><div class="mb-board-edge"><span>0</span><span>1</span><span>2</span></div></div><span class="mb-flow-arrow">→</span><div class="mb-hardware-output"><div class="mb-led-row"><span class="mb-led-dot" data-lab-led></span><span>LED <strong data-lab-led-label>켜짐 → 꺼짐</strong></span></div><div class="mb-small">모터 <strong data-lab-motor>800</strong><div class="mb-pwm"><span data-lab-pwm></span></div></div></div></div><p class="mb-small" aria-live="polite" data-lab-summary>LED를 0.5초 켠 뒤 끄고, 모터는 800으로 움직여요.</p><button type="button" class="mb-btn mb-btn-primary cursor-interaction" style="width:100%;margin-top:18px" data-sample-action="실제 서비스에서는 MakeCode 풀이 화면으로 이동합니다.">MakeCode로 문제 풀기 →</button></section>
+              <p class="mb-small">실제 보드 없이 시작할 수 있어요.</p>
+            </aside></details>
+          </div>
+          <footer class="mb-footer"><span class="mb-status" role="status" data-status>설명을 읽고 오른쪽에서 기대 동작을 확인해요.</span><button type="button" class="mb-btn mb-btn-quiet cursor-interaction" data-sample-action="실제 서비스에서는 이 문제의 제출 내역을 엽니다.">내 제출 내역</button></footer>
+        </section>
+      </div>
+    </section>
+
+    <section class="mb-variant" data-variant="문서형" aria-label="문서형 디자인" hidden>
+      <div class="mb-preview-tools"><strong>문서형</strong><button type="button" class="cursor-interaction" data-mode="create" aria-pressed="true">문제 생성</button><button type="button" class="cursor-interaction" data-mode="view" aria-pressed="false">문제 보기</button></div>
+      <div class="mb-app mb-document" data-design="document" aria-label="문서형 화면 조정">
+        <header class="mb-topbar"><span class="mb-logo">OJ</span><nav aria-label="상위 메뉴"><span aria-current="page">문제</span><span>수업</span></nav><span class="mb-role">마이크로비트</span></header>
+        <section class="mb-screen" data-page="create" aria-label="문서형 문제 생성">
+          <div class="mb-doc-titlebar"><div><strong>문제 생성</strong><span class="mb-chip">초안</span></div><div class="mb-actions"><button type="button" class="mb-btn cursor-interaction" data-jump-view>학생 화면 보기</button><button type="button" class="mb-btn mb-btn-primary cursor-interaction" data-sample-action="초안 저장 상태를 확인했어요.">초안 저장</button></div></div>
+          <div class="mb-doc-body">
+            <label class="mb-doc-title-label"><span class="mb-small">문제 제목</span><input class="mb-field mb-doc-title" value="센서로 LED와 모터 제어하기" data-title-input></label>
+            <label class="mb-label"><span class="mb-doc-label">문제 설명</span><textarea class="mb-field" rows="3" data-description-input>센서 값이 512 이상이면 LED를 0.5초 켠 뒤 끄고, 모터는 센서 값에 맞는 세기로 움직이세요.</textarea></label>
+            <section class="mb-read-section"><div class="mb-fieldset-row"><h3>장치 연결</h3><button type="button" class="mb-inline-link cursor-interaction" data-edit>변경</button></div><div class="mb-device-line"><span><b class="mb-pin">P0</b> 센서</span><span><b class="mb-pin">P1</b> LED</span><span><b class="mb-pin">P2</b> 모터</span></div></section>
+            <section class="mb-read-section"><div class="mb-fieldset-row"><h3>입력과 기대 동작</h3><button type="button" class="mb-inline-link cursor-interaction" data-edit>+ 단계 추가</button></div><section class="mb-condition"><div class="mb-condition-header"><span>상황 1 · 센서 <strong data-sensor-value>800</strong></span><button type="button" class="mb-inline-link cursor-interaction" data-edit>수정</button></div><div class="mb-branches"><div class="mb-lane"><div class="mb-lane-name">LED · P1</div><div class="mb-steps"><span class="mb-state mb-state-on"><strong>켜짐</strong><small><span data-hold>0.5</span>초 유지</small></span><span class="mb-flow-arrow">→</span><span class="mb-state"><strong>꺼짐</strong><small>0.2초 유지</small></span></div></div><div class="mb-lane"><div class="mb-lane-name">모터 · P2</div><span class="mb-state"><strong>세기 800</strong><small>LED와 함께 시작</small></span></div></div></section><details class="mb-details"><summary class="cursor-interaction">시간·허용 오차 설정</summary><p>출력 반응 한도 0.1초 · 값 허용 오차 0</p></details></section>
+            <details class="mb-details"><summary class="cursor-interaction">시작 코드와 공개 범위</summary><p>학생용 시작 코드: 빈 틀<br>문제 공개: 최종 점검 후 전체 공개</p><button type="button" class="mb-btn cursor-interaction" data-jump-view>공개 전 학생 화면 확인</button></details>
+          </div>
+          <footer class="mb-footer"><span class="mb-status" role="status" data-status>문서처럼 작성하고, 동작 조건만 따로 편집해요.</span><button type="button" class="mb-btn mb-btn-quiet cursor-interaction" data-jump-view>공개 전 미리보기 →</button></footer>
+        </section>
+        <section class="mb-screen" data-page="view" aria-label="문서형 문제 보기" hidden>
+          <div class="mb-doc-body" style="padding-top:28px">
+            <header class="mb-doc-view-head"><div class="mb-breadcrumb" style="margin:0">마이크로비트 문제 / MB-012</div><h1 data-title-preview>센서로 LED와 모터 제어하기</h1><div class="mb-heading-row"><span class="mb-small">센서 입력 · 디지털 출력 · PWM</span><button type="button" class="mb-btn mb-btn-primary cursor-interaction" data-sample-action="실제 서비스에서는 MakeCode 풀이 화면으로 이동합니다.">문제 풀기 →</button></div></header>
+            <section class="mb-read-section"><h2>해야 할 일</h2><p class="mb-read-text" data-description-preview>센서 값이 512 이상이면 LED를 0.5초 켠 뒤 끄고, 모터는 센서 값에 맞는 세기로 움직이세요.</p></section>
+            <section class="mb-read-section"><h2>장치 연결</h2><div class="mb-device-line"><span><b class="mb-pin">P0</b> 센서</span><span><b class="mb-pin">P1</b> LED</span><span><b class="mb-pin">P2</b> 모터</span></div></section>
+            <section class="mb-read-section"><h2>입력과 기대 동작</h2><section class="mb-condition"><div class="mb-condition-header"><strong>센서가 800일 때</strong><span class="mb-small">공개 예시 1</span></div><p class="mb-parallel-note">LED와 모터는 함께 시작해요.</p><div class="mb-branches"><div class="mb-lane"><div class="mb-lane-name">LED · P1</div><div class="mb-steps"><span class="mb-state mb-state-on"><strong>켜짐</strong><small><span data-hold>0.5</span>초</small></span><span class="mb-flow-arrow">→</span><span class="mb-state"><strong>꺼짐</strong><small>0.2초</small></span></div></div><div class="mb-lane"><div class="mb-lane-name">모터 · P2</div><span class="mb-state"><strong>세기 800</strong><small>함께 실행</small></span></div></div></section><details class="mb-details"><summary class="cursor-interaction">세부 채점 조건 보기</summary><p>입력 P0 · 아날로그 800 / 출력 P1 · 디지털 1 → 0 / 출력 P2 · PWM 800<br>출력 반응 한도 0.1초 · 허용 오차 0</p></details></section>
+          </div>
+          <footer class="mb-footer"><span class="mb-status" role="status" data-status>실제 보드 없이 풀 수 있어요.</span><button type="button" class="mb-btn mb-btn-quiet cursor-interaction" data-sample-action="실제 서비스에서는 이 문제의 제출 내역을 엽니다.">내 제출 내역 →</button></footer>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <dialog class="mb-editor-dialog" aria-labelledby="mb-design-dialog-title">
+    <div class="mb-dialog-top"><span class="mb-small" data-dialog-progress>1 / 4</span><button type="button" class="mb-btn mb-btn-quiet cursor-interaction" data-dialog-cancel>작성 취소</button></div>
+    <h2 id="mb-design-dialog-title">단계 만들기</h2>
+    <section class="mb-dialog-step" data-dialog-page="0"><strong>이 상황에서 확인할 동작을 정해요.</strong><p>핀을 고른 뒤 값과 유지시간을 차례로 입력해요.</p><p class="mb-small">시작 시점 · 프로그램을 시작할 때</p></section>
+    <section class="mb-dialog-step" data-dialog-page="1" hidden><label class="mb-label">사용할 핀<select class="mb-field" data-dialog-pin><option value="0">P0 · 센서 입력</option><option value="1">P1 · LED 출력</option><option value="2">P2 · 모터 출력</option></select></label></section>
+    <section class="mb-dialog-step" data-dialog-page="2" hidden><label class="mb-label"><span data-dialog-value-label>센서 입력값</span><input class="mb-field" type="number" min="0" max="1023" value="800" required data-dialog-value></label><p class="mb-small" data-dialog-value-help>0~1023 사이의 값을 입력해요.</p></section>
+    <section class="mb-dialog-step" data-dialog-page="3" hidden><label class="mb-label"><span data-dialog-duration-label>다음 입력 단계까지 간격 (초)</span><input class="mb-field" type="number" min="0.001" max="30" step="0.001" value="0.5" data-dialog-duration></label><p class="mb-small" data-dialog-duration-help>이 간격 뒤에 다음 입력 단계를 시작해요.</p><details class="mb-details"><summary class="cursor-interaction">반응 시간·허용 오차</summary><p>기대 출력이 나타나기까지 0.1초<br>값 허용 오차 0</p></details></section>
+    <p class="mb-dialog-error" data-dialog-error role="alert" hidden></p>
+    <div class="mb-dialog-bottom"><button type="button" class="mb-btn cursor-interaction" data-dialog-previous disabled>이전</button><button type="button" class="mb-btn mb-btn-primary cursor-interaction" data-dialog-next>다음 →</button></div>
+  </dialog>
+</div>
+
+<script>
+(() => {
+  const root = document.getElementById('microbit-page-designs');
+  const variants = Array.from(root.querySelectorAll('[data-variant]'));
+  const saved = window.openai?.widgetState;
+  const remembered = saved?.privateContent?.views || saved?.views || {};
+  const views = {};
+  function remember() {
+    if (!window.openai?.setWidgetState) return;
+    window.openai.setWidgetState({modelContent:{mockupViews:{...views}},privateContent:{views:{...views}}}).catch(()=>{});
+  }
+  function setMode(variant, mode, persist = true) {
+    variant.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
+    variant.querySelectorAll('[data-page]').forEach(page => { page.hidden = page.dataset.page !== mode; });
+    views[variant.dataset.variant] = mode;
+    if (persist) remember();
+  }
+  variants.forEach(variant => {
+    setMode(variant, remembered[variant.dataset.variant] === 'view' ? 'view' : 'create', false);
+    variant.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(variant, button.dataset.mode)));
+    variant.querySelectorAll('[data-jump-view]').forEach(button => button.addEventListener('click', () => setMode(variant, 'view')));
+    variant.querySelectorAll('[data-sample-action]').forEach(button => button.addEventListener('click', () => {
+      const page = button.closest('[data-page]');
+      page.querySelector('[data-status]').textContent = button.dataset.sampleAction;
+    }));
+    const titleInput = variant.querySelector('[data-title-input]');
+    const descriptionInput = variant.querySelector('[data-description-input]');
+    if (titleInput) titleInput.addEventListener('input', () => {
+      variant.querySelectorAll('[data-title-preview]').forEach(node => { node.textContent = titleInput.value || '문제 제목'; });
+    });
+    if (descriptionInput) descriptionInput.addEventListener('input', () => {
+      variant.querySelectorAll('[data-description-preview]').forEach(node => { node.textContent = descriptionInput.value || '문제 설명'; });
+    });
+    const app = variant.querySelector('.mb-app');
+    if (globalThis.Tweak) {
+      const design = {spacing:18, textSize:15};
+      const renderDesign = () => { app.style.setProperty('--mb-gap', design.spacing+'px'); app.style.setProperty('--mb-body-size',design.textSize+'px'); };
+      renderDesign();
+      const tweak = new Tweak({container:app,onChange:renderDesign});
+      tweak.addSlider(design,'spacing',{label:'내용 간격',min:12,max:28,unit:'px',reference:'--mb-gap'});
+      tweak.addSlider(design,'textSize',{label:'설명 글자 크기',min:14,max:18,unit:'px',reference:'--mb-body-size'});
+    }
+  });
+  const compactPreview = window.matchMedia('(max-width: 760px)');
+  const resizePreviews = () => root.querySelectorAll('[data-responsive-preview]').forEach(preview => { preview.open = !compactPreview.matches; });
+  resizePreviews();
+  compactPreview.addEventListener('change', resizePreviews);
+  window.addEventListener('openai:set_globals', event => {
+    const state = event.detail?.globals?.widgetState;
+    const next = state?.privateContent?.views || state?.views;
+    if (next) variants.forEach(variant => setMode(variant, next[variant.dataset.variant] === 'view' ? 'view' : 'create', false));
+  });
+  const focus = root.querySelector('[data-design="focus"]');
+  let authorStep = 2;
+  const authorNames = ['안내 작성','동작 조건','코드 준비','공개 점검'];
+  function setAuthorStep(step) {
+    authorStep = step;
+    focus.querySelectorAll('[data-author-step]').forEach(button => {
+      if (Number(button.dataset.authorStep) === step) button.setAttribute('aria-current','step');
+      else button.removeAttribute('aria-current');
+    });
+    focus.querySelectorAll('[data-author-panel]').forEach(panel => { panel.hidden = Number(panel.dataset.authorPanel) !== step; });
+    focus.querySelector('[data-page="create"] [data-status]').textContent = '현재 작성 · '+authorNames[step-1];
+    focus.querySelector('[data-next-author]').textContent = step === 4 ? '학생 화면 확인 →' : '다음: '+authorNames[step]+' →';
+  }
+  focus.querySelectorAll('[data-author-step]').forEach(button => button.addEventListener('click',()=>setAuthorStep(Number(button.dataset.authorStep))));
+  focus.querySelector('[data-next-author]').addEventListener('click',()=>authorStep<4?setAuthorStep(authorStep+1):setMode(focus.closest('[data-variant]'),'view'));
+  root.querySelectorAll('.mb-board-pixels').forEach(board => {
+    for (let index=0;index<25;index++) board.append(document.createElement('span'));
+  });
+  const split = root.querySelector('[data-design="split"]');
+  const labInput = split.querySelector('[data-lab-input]');
+  labInput.addEventListener('input', () => {
+    const value = Number(labInput.value), on = value >= 512;
+    split.querySelector('[data-lab-value]').textContent = value;
+    split.querySelector('[data-lab-motor]').textContent = value;
+    split.querySelector('[data-lab-led]').classList.toggle('is-off', !on);
+    split.querySelector('[data-lab-led-label]').textContent = on?'켜짐 → 꺼짐':'꺼짐';
+    split.querySelector('[data-lab-pwm]').style.width = (value/1023*100)+'%';
+    split.querySelector('[data-lab-summary]').textContent = on?'LED를 0.5초 켠 뒤 끄고, 모터는 '+value+'으로 움직여요.':'LED는 꺼두고, 모터는 '+value+'으로 움직여요.';
+    split.querySelector('.mb-hardware').setAttribute('aria-label', '센서 '+value+'일 때 LED '+(on?'켜졌다 꺼짐':'꺼짐')+', 모터 세기 '+value+'의 기대 동작');
+  });
+  const dialog = root.querySelector('dialog');
+  let dialogPage = 0, activeVariant = null, opener = null;
+  const titles = ['단계 만들기','사용할 핀','입력값 또는 출력값','유지시간'];
+  const pin = dialog.querySelector('[data-dialog-pin]'), value = dialog.querySelector('[data-dialog-value]'), duration = dialog.querySelector('[data-dialog-duration]');
+  const error = dialog.querySelector('[data-dialog-error]');
+  function renderDialog() {
+    dialog.querySelector('[data-dialog-progress]').textContent = (dialogPage+1)+' / 4';
+    dialog.querySelector('h2').textContent = titles[dialogPage];
+    dialog.querySelectorAll('[data-dialog-page]').forEach(page=>{page.hidden=Number(page.dataset.dialogPage)!==dialogPage;});
+    dialog.querySelector('[data-dialog-previous]').disabled = dialogPage===0;
+    dialog.querySelector('[data-dialog-next]').textContent = dialogPage===3?'시안에 적용':'다음 →';
+    error.hidden = true;
+  }
+  function closeDialog() { dialog.close(); if(opener?.isConnected) opener.focus(); }
+  function adjustPin() {
+    const input = pin.value==='0', digital = pin.value==='1';
+    dialog.querySelector('[data-dialog-value-label]').textContent = input?'센서 입력값':digital?'LED 출력값':'모터 출력값';
+    value.max = digital?'1':'1023'; value.value=digital?'1':'800';
+    dialog.querySelector('[data-dialog-value-help]').textContent = digital?'1은 켜짐, 0은 꺼짐이에요.':'0~1023 사이의 값을 입력해요.';
+    dialog.querySelector('[data-dialog-duration-label]').textContent=input?'다음 입력 단계까지 간격 (초)':'이 출력 상태를 유지할 시간 (초)';
+    dialog.querySelector('[data-dialog-duration-help]').textContent=input?'이 간격 뒤에 다음 입력 단계를 시작해요.':'출력이 나타난 뒤 이 시간만큼 유지해야 해요.';
+  }
+  root.querySelectorAll('[data-edit]').forEach(button=>button.addEventListener('click',()=>{
+    activeVariant=button.closest('[data-variant]');opener=button;dialogPage=0;pin.value='0';duration.value='0.5';adjustPin();renderDialog();dialog.showModal();
+  }));
+  pin.addEventListener('change',adjustPin);
+  dialog.querySelector('[data-dialog-cancel]').addEventListener('click',closeDialog);
+  dialog.addEventListener('cancel',event=>{event.preventDefault();closeDialog();});
+  dialog.querySelector('[data-dialog-previous]').addEventListener('click',()=>{if(dialogPage){dialogPage--;renderDialog();}});
+  dialog.querySelector('[data-dialog-next]').addEventListener('click',()=>{
+    if(dialogPage===2&&!value.checkValidity()){error.textContent='표시된 범위 안의 값을 입력해 주세요.';error.hidden=false;return;}
+    if(dialogPage<3){dialogPage++;renderDialog();return;}
+    if(!duration.checkValidity()||!duration.value){error.textContent='시간은 0.001~30초로 입력해 주세요.';error.hidden=false;return;}
+    if(pin.value==='0')activeVariant.querySelectorAll('[data-sensor-value]').forEach(node=>{node.textContent=value.value;});
+    if(pin.value==='1') {
+      activeVariant.querySelectorAll('[data-hold]').forEach(node=>{node.textContent=duration.value;});
+      activeVariant.querySelectorAll('.mb-lane').forEach(lane=>{
+        if(!lane.querySelector('.mb-lane-name')?.textContent.includes('LED'))return;
+        const state=lane.querySelector('.mb-state');state.querySelector('strong').textContent=value.value==='1'?'켜짐':'꺼짐';
+        state.classList.toggle('mb-state-on',value.value==='1');
+      });
+    }
+    if(pin.value==='2')activeVariant.querySelectorAll('.mb-lane').forEach(lane=>{
+      if(lane.querySelector('.mb-lane-name')?.textContent.includes('모터'))lane.querySelector('.mb-state strong').textContent='세기 '+value.value;
+    });
+    const status=activeVariant.querySelector('[data-page="create"] [data-status]');
+    status.textContent='샘플 조건을 적용했어요. 실제 문제는 변경되지 않습니다.';
+    closeDialog();
+  });
+  if(globalThis.lucide) lucide.createIcons({attrs:{width:16,height:16}});
+})();
+</script>

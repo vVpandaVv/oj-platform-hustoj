@@ -85,7 +85,7 @@ final class Warehouse_Controller {
         global $wpdb;
         $p=self::input($request);
         if(isset($p['page'])) {
-            $result=\EduGames\Rankings\Run_Leaderboard::page(Board::GAME,Board::VERSION,'board',$level,$p['page'],$p['perPage']??20);
+            $result=\EduGames\Rankings\Run_Leaderboard::page(Board::GAME,Board::VERSION,'board',$level,$p['page'],$p['perPage']??20,!empty($p['overview']));
             return is_wp_error($result)?$result:rest_ensure_response($progress+$result+array('level'=>$level));
         }
         $leaders=$wpdb->get_results($wpdb->prepare('SELECT user_id, MAX(score) AS score FROM '.Installer::table()." WHERE game_slug=%s AND content_version=%s AND mode='board' AND level=%s AND completed_at IS NOT NULL GROUP BY user_id ORDER BY score DESC, user_id ASC",Board::GAME,Board::VERSION,$level),ARRAY_A);

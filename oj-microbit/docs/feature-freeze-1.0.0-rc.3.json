@@ -1,0 +1,253 @@
+{
+  "candidateVersion": "1.0.0-rc.3",
+  "baselineVersion": "1.0.0-rc.2",
+  "baselineArchiveSha256": "862800e6d2b669ddc7715b7710a172df7c080ae52fcc3c54fcf31dd33442241c",
+  "date": "2026-11-03",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "previousRelease": {
+    "version": "1.0.0-rc.2",
+    "archiveSha256": "862800e6d2b669ddc7715b7710a172df7c080ae52fcc3c54fcf31dd33442241c",
+    "freezeManifestSha256": "bf70f028b7fa845c0eca941fb91c3cde7bd4cf7042d6010a9cef7862d5c746bd"
+  },
+  "requestedChange": "공개 문제는 모두가 일반 풀이하고, 같은 문제의 수업별 프로젝트·제출·최근 결과는 배정 식별자로 분리",
+  "files": [
+    {
+      "path": "resources/css/microbit.css",
+      "sha256": "0f874c362b84f76a22724ea01acecf7c7754af0fbe71ad53d5f228e711b76cc0",
+      "previousSha256": "3b1a5a36ac03bd6dc7daaa040e7a7b2162ef53cdde0d5e5e424fcfa4d9843d7f",
+      "reviewScope": "problem_workflow"
+    },
+    {
+      "path": "resources/js/microbit.js",
+      "sha256": "80df999f94a172ff487907e9063e5a7e7184e5f08a2c0b5869a005d7bc70e801",
+      "previousSha256": "ac9cdd379f325981fdce13b82a665d8699ae637a6e7e0823fb04d9c968c08611",
+      "reviewScope": "problem_workflow"
+    },
+    {
+      "path": "resources/vendor/microbit-usb.js",
+      "sha256": "74fff5a21241f15506eabf11e00dbc8ad34c1701844538a40358bebaf385d023"
+    },
+    {
+      "path": "resources/vendor/README.md",
+      "sha256": "a04c87d14a53e29515d0119b9c56f307ceed44e9edf928add3d84f3ddedd6901"
+    },
+    {
+      "path": "resources/vendor/THIRD_PARTY_NOTICES.txt",
+      "sha256": "86633ad2b92c56e07c4887c1b75bcfb3cb1640c1b03ecc5f88839eb2055a50b3"
+    },
+    {
+      "path": "runner/src/assertions.mjs",
+      "sha256": "acd02cb837d01bc19f0461e1b891ccebc71b51b23242ad7696e0ba7e2330ff7c"
+    },
+    {
+      "path": "runner/src/compiler.mjs",
+      "sha256": "d90bab49631b3dddd71da2e3335a66da3570caf63b1dc67c591f51b92e822ed5"
+    },
+    {
+      "path": "runner/src/grade.mjs",
+      "sha256": "cb69e8e335ade65fc66ae897af67e0a18d9404b9092e623d95e7d00e4a2e352e"
+    },
+    {
+      "path": "runner/src/job.mjs",
+      "sha256": "cac56919c6350f087d3860309bde2832ab3dd0a62810d94a3b952f33734ece20"
+    },
+    {
+      "path": "runner/src/peripherals.mjs",
+      "sha256": "e1c402fd935695ef59a5799a6777d1211719c556a2c9093bb8462ce2591adf4d"
+    },
+    {
+      "path": "runner/src/server.mjs",
+      "sha256": "a4a4f7d8e5d4fa6023b4fcec98493457315685fecad53c842dae02d50de9171f"
+    },
+    {
+      "path": "runner/src/simulator.mjs",
+      "sha256": "31f03c3b080aff5e62dcb2a22a2035d7d5e07bd8f28c3e23fdc350c53ecbe8d1"
+    },
+    {
+      "path": "runner/src/validation.mjs",
+      "sha256": "23dd91a36df119715d73041ab26bb5ee52f53a2d2c0b7d083b4c5fd1e5779a92"
+    },
+    {
+      "path": "runner/src/version.mjs",
+      "sha256": "d28765176ce07cae667a94283ee71e08295a61061c0e4ba70b0735397fbb9723"
+    },
+    {
+      "path": "src/Addon/PageHandler.php",
+      "sha256": "05aa59057cb2ba9a2ef6f597bf35297b880ce47d6db3c3c5ae7ae22634b85371",
+      "previousSha256": "dec65de95f105d5e5c497c48ed8f7c0229900b13bbe206168b7f53fd2f955e43",
+      "reviewScope": "problem_workflow"
+    },
+    {
+      "path": "src/Addon/Registration.php",
+      "sha256": "4b0ed5f91d715fc9c2c258bbdbb77fe1029eca326abba293696f8c0fd30745ba"
+    },
+    {
+      "path": "src/Addon/RestController.php",
+      "sha256": "5d6c08f19a5838ec1fa00f014759d11b525aeaf883e800b23c6379d15191cac8",
+      "previousSha256": "69e7120fa97f238c61526fff973cf92274917b3f5dd28b78b1afdccb03b5026f",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Application/Access.php",
+      "sha256": "897da38701deaf56be4fbe2cbe52a7b371f400f44e3766703300f31fbd13d695"
+    },
+    {
+      "path": "src/Application/PracticeService.php",
+      "sha256": "6c47a8a36ef0622708bff092ffd2f6c26e2fb451b60adb51c1512416900f2bd7",
+      "previousSha256": "b5a9230e520c8bf1d21c17f577f4ba229e220f071892622bb43da84c4d20599a",
+      "reviewScope": "public_problems"
+    },
+    {
+      "path": "src/Application/Repository.php",
+      "sha256": "12ec594301acddc38080f5662cf2f45e8b5a85f6a66c210757fe3a6b4a7ecd7a"
+    },
+    {
+      "path": "src/Application/Runner.php",
+      "sha256": "6bac4ec60af6a5403ee13f58ec2d7dd4d88be96ac9906adb3855fb46a4bc9ab5"
+    },
+    {
+      "path": "src/Core/Autoloader.php",
+      "sha256": "e46db0573f3a647ff797257208b736dafcbe721de70da07c737e1554689ffbde"
+    },
+    {
+      "path": "src/Core/Plugin.php",
+      "sha256": "04399dac952770acd05bae7bd462100dd4fa0c3a2d761e90c4073aa6b1ad3728",
+      "previousSha256": "e59d75c86927e625d817951b272633a849b3730e3ec19ba4362f2871057d66bb",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Domain/ExerciseSchema.php",
+      "sha256": "60cf24d27c12146f23893a2707221d43514f137aeda414790ef41f8264b41b60"
+    },
+    {
+      "path": "src/Domain/I2cSchema.php",
+      "sha256": "bb213afe392208397eb2799ae46477e5c936362c6b62db70a6cbd5b321a54b9b"
+    },
+    {
+      "path": "src/Domain/OutputSequenceSchema.php",
+      "sha256": "4136940086b71d2809ac8aef6b41176952b5521820694a7af02f3d9a67cb8fa9"
+    },
+    {
+      "path": "src/Domain/ProjectSchema.php",
+      "sha256": "ee2e810cbbd9ebf991918e54018f390abd881e9fbf670628bffd0a9a91ca568f"
+    },
+    {
+      "path": "src/Domain/PublicationReview.php",
+      "sha256": "a60fcc3ca6a74793677a9cde4010f97a22830d97e02e17cdd0baa777f64fd01c"
+    },
+    {
+      "path": "src/Domain/ResultVisibility.php",
+      "sha256": "d9b3ab10e757b9a3bff33b8984a48fc14820e9997177e05d36fc8914aa8844a9"
+    },
+    {
+      "path": "src/Domain/RunnerResultSchema.php",
+      "sha256": "37e573c1171fe6104ac958f79ca833ac7b5e0860e992761c63f8b14d90255803"
+    },
+    {
+      "path": "src/Domain/SchemaValue.php",
+      "sha256": "1533627943e47033b1332bd1b9d0993ab4b890d77847cd58aca210aef5954df0"
+    },
+    {
+      "path": "src/Domain/SignalSchema.php",
+      "sha256": "5e046b26afdcb0ffb0942a6e3ec734329f1719b1d32890469a2b24449cd4fcee"
+    },
+    {
+      "path": "src/Storage/Installer.php",
+      "sha256": "f7c4a3d60af627917ebe166af846a52383acf4a520cd223277e7d38d172a3c82",
+      "previousSha256": "cb77323a0792b5783f1d5af81582be50c4405ef3c21b67444c0294f1cc913fad",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Storage/WpdbRepository.php",
+      "sha256": "4494cc79e21229caa8952321240f52ba74113c5c314e74e1c847bffd364b7762",
+      "previousSha256": "5e9be092137fb67ab3e0aa48e808994d84764d23c9c9676da4064d16fa45c999",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Support/ClassAudienceAccess.php",
+      "sha256": "d3e94a99aa2168743632de5acb091f2b598c0186c04823e469c3d9aa7f828d3c"
+    },
+    {
+      "path": "src/Support/HttpRunner.php",
+      "sha256": "c1bef3e24958c0e632e12935272c9e2aee7f168fe3c0288e56b87d9e705f4c86"
+    },
+    {
+      "path": "src/Support/LearnerCapabilities.php",
+      "sha256": "496f57e4f987cda5a913544df149e3cad1e9c2d424272e00a2af6f90062500c5"
+    },
+    {
+      "path": "src/Support/OperationError.php",
+      "sha256": "ea03658c7e0fe509b39e8cdcb850b4c7d46c261ec7d1cd262482bc144b696fb8"
+    },
+    {
+      "path": "src/Support/PlatformAccess.php",
+      "sha256": "d9193baa198aa962fee52187ce379f16d3ada6803e3d552c4848041377bdee42",
+      "previousSha256": "bd3267fbc8574dcc3c518ae6fcf1be9e367f029c794c2d8f381b9d5fce6f33c4",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Support/Privacy.php",
+      "sha256": "308d1bad9db36d65500049aec078e60c3aa3e294168174eabb06724553cfcbf3",
+      "previousSha256": "01de8aff692248d8171e6e41bd7872b5946f6ce03ca93885e7e1bc726d174b36",
+      "reviewScope": "lesson_privacy"
+    },
+    {
+      "path": "src/Support/RequestContext.php",
+      "sha256": "c85cae7bb473351db3789c32a0a3aca86501c780388115365d1a8e0715bc0bc2"
+    },
+    {
+      "path": "src/Support/Settings.php",
+      "sha256": "0135beb4dd5bc500eef5171266ab13d93739d73b88a05f8d543fd769bb69fe4c"
+    },
+    {
+      "path": "src/Support/GroupAudienceAccess.php",
+      "sha256": "beb4e0cf47bd99cfe4e621e7309158f048619b18b9850f615f6e0dbdd99790bf"
+    },
+    {
+      "path": "uninstall.php",
+      "sha256": "4d7c5a74e5f34af4b0908cb1496feb965390e4a5a86cbddd751c4f009ed1c27f",
+      "previousSha256": "cd62060ff16d939b0e3bf5ec318087d3988d4a7064ae63d11a1b67a60f9df304",
+      "reviewScope": "lesson_privacy"
+    },
+    {
+      "path": "src/Application/LessonAccess.php",
+      "sha256": "2c7efae6ece8acde87d1612d65fab3bc8b3e009019be377f466da9f9aae95fce",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Application/LessonRepository.php",
+      "sha256": "ae3ab918abde5f0903294d594d42a5f1d544f3ae0eeecf91f3f7598accb21c93",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Application/LessonService.php",
+      "sha256": "3f1c7b161e930365595628b1a92e6e627ed338797761b5a9911890d7dfb13418",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Storage/WpdbLessonRepository.php",
+      "sha256": "db06dd00859e9a352d1ab7e27a420f30d14e5ed1ae900e60bd1f93ee8caf437c",
+      "reviewScope": "lesson_assignments"
+    },
+    {
+      "path": "src/Support/ClassLessonAccess.php",
+      "sha256": "41b07ffb29f87614f7534046015799b394bb6a0279f2b91096ce4b84a0d487da",
+      "reviewScope": "lesson_assignments"
+    }
+  ],
+  "versionOnlyFiles": [
+    {
+      "path": "oj-microbit.php",
+      "normalizedSha256": "42fa20038711e1a994895fd193334a99e66c3c944bd9fdf57adac994e164e28f"
+    },
+    {
+      "path": "plugin-package.php",
+      "normalizedSha256": "66a7e1ef63dc0d46bf92841e3895d182e8b9cb0b36c595ccb9b7b038d61b6a0b"
+    },
+    {
+      "path": "runner/src/launcher.mjs",
+      "normalizedSha256": "4bb3083f9e4b34294765acbe087879c23a2061db7a95bb8fb28f8804190346f0"
+    }
+  ]
+}

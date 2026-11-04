@@ -56,6 +56,42 @@ final class Privacy_Guard {
         } catch (\Throwable $error) { return PHP_INT_MAX; }
     }
 
+    /**
+     * One fresh read per bounded learner chunk. Call after all privacy locks
+     * when sharing a transactional source snapshot; never retain it between
+     * requests or across a new lock/transaction boundary.
+     *
+     * @return array<int, int> Inclusive erasure watermarks keyed by learner ID.
+     */
+    public static function cutoffs(array $user_ids): array {
+        global $wpdb;
+        $ids = array_values(array_unique(array_filter(array_map('intval', $user_ids), static fn (int $id): bool => $id > 0)));
+        $out = array_fill_keys($ids, 0);
+        foreach (array_chunk($ids, 100) as $chunk) {
+            $keys = array();
+            foreach ($chunk as $id) { $keys[self::key($id)] = $id; }
+            try {
+                $wpdb->last_error = '';
+                $rows = $wpdb->get_results($wpdb->prepare(
+                    'SELECT option_name, option_value FROM ' . $wpdb->options . ' WHERE option_name IN ('
+                    . implode(',', array_fill(0, count($keys), '%s')) . ')', array_keys($keys)
+                ), ARRAY_A);
+                if (! is_array($rows) || '' !== (string) $wpdb->last_error) { throw new \RuntimeException('privacy_watermarks_read'); }
+                foreach ($rows as $row) {
+                    if (! isset($keys[$row['option_name']])) { continue; }
+                    $value = (string) $row['option_value'];
+                    $out[$keys[$row['option_name']]] = in_array($value, array('open', 'erasing', 'deleted'), true) ? 0
+                        : (preg_match('/^(?:open|erasing):([0-9]{1,16})$/D', $value, $match) ? (int) $match[1] : PHP_INT_MAX);
+                }
+            } catch (\Throwable $error) {
+                // A failed batch cannot turn missing watermarks into permission
+                // to recreate erased evidence, including otherwise empty rows.
+                foreach ($chunk as $id) { $out[$id] = PHP_INT_MAX; }
+            }
+        }
+        return $out;
+    }
+
     /** Only after lock_for_erasure(), within the caller's transaction. */
     public static function set_state(int $user_id, string $state): bool {
         if (! in_array($state, array('open', 'erasing', 'deleted'), true)) { return false; }

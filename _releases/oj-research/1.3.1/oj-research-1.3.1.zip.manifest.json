@@ -1,0 +1,235 @@
+{
+    "plugin":  "oj-research",
+    "version":  "1.3.1",
+    "builder":  "_release-kit generic",
+    "archive":  "oj-research-1.3.1.zip",
+    "sha256":  "b744dbe8a784daf905d8a5c956f8437b57ad78ae6367afd03644ed07cb3d0a80",
+    "fileCount":  45,
+    "files":  [
+                  {
+                      "path":  "oj-research/assets/research.css",
+                      "bytes":  5646,
+                      "sha256":  "1ae691a9e8ea28cc6812f8524f9f4be59af9652af61c845663e2b5c2f4dfa37e"
+                  },
+                  {
+                      "path":  "oj-research/assets/research.js",
+                      "bytes":  9766,
+                      "sha256":  "4f8df4790c0af1b2545d0ff69b32ff3360066f6edcc6df77f35356a4bef08e81"
+                  },
+                  {
+                      "path":  "oj-research/config/platform.php",
+                      "bytes":  4769,
+                      "sha256":  "2eb7746a6a4d6a58b32b733b4dce510f45a8a4d6eef9186f7480b780cc061ead"
+                  },
+                  {
+                      "path":  "oj-research/config/schema.php",
+                      "bytes":  2760,
+                      "sha256":  "332d87eed30879568061498d5b19f97dffecb1a21f22b392bd28864370394f52"
+                  },
+                  {
+                      "path":  "oj-research/oj-research.php",
+                      "bytes":  678,
+                      "sha256":  "a3a986c826c5cfeb7131770b5e4532f5b76f1ad8caa6e0628ca5d2a0820eca1e"
+                  },
+                  {
+                      "path":  "oj-research/plugin-package.php",
+                      "bytes":  361,
+                      "sha256":  "d1449a557f889089ba416c0305468e3ce499614d02dd3c7b28e8448d544285ba"
+                  },
+                  {
+                      "path":  "oj-research/README.md",
+                      "bytes":  9202,
+                      "sha256":  "ee00c70c3afee7b31410710cf1e0ef1304297aea581e6af54db3a47d88560bec"
+                  },
+                  {
+                      "path":  "oj-research/src/Application/PilotService.php",
+                      "bytes":  33106,
+                      "sha256":  "8e1595b1b2efca8d1b36b9fc8b3b0e9b0217db29fe1ac6c22acec9ff60838684"
+                  },
+                  {
+                      "path":  "oj-research/src/Application/ResearchAccountErasureParticipant.php",
+                      "bytes":  4763,
+                      "sha256":  "b8cd69d062cd8fcc16068904034f9186f2933dd62fe299891edeebc940a51a75"
+                  },
+                  {
+                      "path":  "oj-research/src/Application/ResearchFeatureDisableGuard.php",
+                      "bytes":  742,
+                      "sha256":  "48202421bc120c33557d216b18387ac3e61b8060118561930b590dd90b016187"
+                  },
+                  {
+                      "path":  "oj-research/src/Application/ResearchService.php",
+                      "bytes":  35420,
+                      "sha256":  "0c01d5b7c25b0ba8b25d43f5385d3ab50198a10c2685b300e0b54cbb7b6d1580"
+                  },
+                  {
+                      "path":  "oj-research/src/Contract/PilotResources.php",
+                      "bytes":  201,
+                      "sha256":  "08315b47aae388c00d900ccced4b5b213b5b345c7623c419011051662e8a869c"
+                  },
+                  {
+                      "path":  "oj-research/src/Contract/ResearchLearningGateway.php",
+                      "bytes":  595,
+                      "sha256":  "38f1fb7e22c21944c984392800dba4b2cc1e37284688cfaccc6054de97cae442"
+                  },
+                  {
+                      "path":  "oj-research/src/Contract/ResearchRepository.php",
+                      "bytes":  802,
+                      "sha256":  "d623c764cc8ab7810faf1773d8a5f598a5aa66d931470c614f93d78fd68683c1"
+                  },
+                  {
+                      "path":  "oj-research/src/Core/Autoloader.php",
+                      "bytes":  657,
+                      "sha256":  "40850b7e27ea8e1e06b828b62c72b13539d1ada438182ba90849d8909f0063d7"
+                  },
+                  {
+                      "path":  "oj-research/src/Core/Plugin.php",
+                      "bytes":  2942,
+                      "sha256":  "262cf8e32f46616ccee0cffda1ba9a1668f4407deae01db0fc73bd2089a3f763"
+                  },
+                  {
+                      "path":  "oj-research/src/Core/ResearchExtension.php",
+                      "bytes":  3588,
+                      "sha256":  "287e2bbf05cba1235f42ab90aca46a208ab1dad27942670e8dedaf1dbc2ed3e5"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/ClassroomDocuments.php",
+                      "bytes":  7320,
+                      "sha256":  "6b0b151aa072fdd9c24e2a40de38aa17349394f26ff77a77eec72c23a2d259e1"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/ClassroomProtocol.php",
+                      "bytes":  3948,
+                      "sha256":  "56b7d02091ec653d51327575b4b74dc9f1de9999bf8c041f378f2331f620abb5"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/ClassroomReport.php",
+                      "bytes":  21068,
+                      "sha256":  "204c9222dac617f1e31aa9291f8dcdc487889dd4564e848cc8fcde37121fbdba"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/ClassroomSettings.php",
+                      "bytes":  11261,
+                      "sha256":  "fb0136fbc7675716338575ee905b6dd018e88d1ee7d8276f83afc1512011522b"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/PilotAnalysis.php",
+                      "bytes":  8308,
+                      "sha256":  "f84f1dafac511c66942725881d868dd92304554a4de97fbd0a28fa11104b52a3"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/PilotAnalysisReport.php",
+                      "bytes":  6667,
+                      "sha256":  "e490b7cbb825851d6a5b5208aace8f106e3aaade8a6922f30a206342b2cd039a"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/PilotDesign.php",
+                      "bytes":  4016,
+                      "sha256":  "e7ed8911a8ac3a2a39510736d9dfd2ea299a44751d295d60fa9bbc660337676e"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/PilotProtocol.php",
+                      "bytes":  10508,
+                      "sha256":  "f176514d1f83501dac3302e1897dca07ce521fef9428db304055c29b28b44c40"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/PilotRegression.php",
+                      "bytes":  6419,
+                      "sha256":  "35219b194e48c7a84f8491128ecc9c93fa4ddeb01cd13a609ddff382498df7ef"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/PilotReport.php",
+                      "bytes":  14200,
+                      "sha256":  "05b891004e2f67754b5c634d6b649b51ee580049efc557ceb987ceeab8f71522"
+                  },
+                  {
+                      "path":  "oj-research/src/Domain/ResearchProtocol.php",
+                      "bytes":  6361,
+                      "sha256":  "3ed80c7268959148b008b2218251e58150462bee4f0cee7f4763426d2557d4c4"
+                  },
+                  {
+                      "path":  "oj-research/src/Infrastructure/PlatformLearningGateway.php",
+                      "bytes":  1038,
+                      "sha256":  "896454e8bcc958b49b60b81f079e0e258ed723ced90d80978b22cdc3bc82fe79"
+                  },
+                  {
+                      "path":  "oj-research/src/Infrastructure/WordPressResearchRepository.php",
+                      "bytes":  5476,
+                      "sha256":  "882f8bb305afa70de04caabd5ee0149f19d4147eb610dce98d7e7556ff33bb80"
+                  },
+                  {
+                      "path":  "oj-research/src/Module.php",
+                      "bytes":  1017,
+                      "sha256":  "785550d2918118cffb3e101e383bb6864edf3902817ef78d725e4f072a92a6a5"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ClassroomDocumentPages.php",
+                      "bytes":  4372,
+                      "sha256":  "8870004c9332eb4e76757e03168a89c7efd97b438f37f971993fa2d741444afb"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ClassroomInput.php",
+                      "bytes":  3345,
+                      "sha256":  "bcd38378226d7abf9360c54df5bb8c9a502afc7c15147f6a37ae90c70dd5f73f"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ClassroomPages.php",
+                      "bytes":  26460,
+                      "sha256":  "dc40e1347b7c01e8ba4971d3693aae55552f8b359e8697b63f5ced1617e4a5e8"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ClassroomSettingsFields.php",
+                      "bytes":  6789,
+                      "sha256":  "42748cefcb14fc8cfe32d1323772ce5eb3a97c3e469b0d9c3b09722f0e3ac388"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/PilotActions.php",
+                      "bytes":  8104,
+                      "sha256":  "abac08147d40387895cd02b8290480d38beaf04988a0a86b0fcfa6a4aef630cf"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/PilotConfigurationInput.php",
+                      "bytes":  1486,
+                      "sha256":  "8529bbdfabde3b044235924411c5e3e936b87cc2e16e835e22b13bac0e979ef5"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/PilotPages.php",
+                      "bytes":  30274,
+                      "sha256":  "6404922096fbda24e6a64f54886587941307dcccd69240ddffc0b01bf7fb5cb8"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/PilotProblemSection.php",
+                      "bytes":  1271,
+                      "sha256":  "f198fd8f6cda1814bc0b820d5b589e38abb6f33727a807db69c93696b820560b"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/PilotReportExporter.php",
+                      "bytes":  4989,
+                      "sha256":  "d6a52d83619ed2b8ada36ee59a10949c2efdcf6dbee23aa2b372b3441da6c719"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ResearchActionHandler.php",
+                      "bytes":  3606,
+                      "sha256":  "970669efe1433f8e48f4807a22f8117f29ceb3963c29c2edcd1d071bcdaef422"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ResearchExportAction.php",
+                      "bytes":  1215,
+                      "sha256":  "58b4f592ee477b89458c8d5a1dc71dcdf06feaf78af32fd0c316831d55604c5b"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ResearchPageHandler.php",
+                      "bytes":  21236,
+                      "sha256":  "921d0abdb5885a5f43f2701640bccd82c837ca10e26ff6c9efecdda28434d00a"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ResearchParticipantActions.php",
+                      "bytes":  2104,
+                      "sha256":  "4918f812bf2b1f7583e56cab9e500a257a4e6d83a3607738a7e78dc9509e45e4"
+                  },
+                  {
+                      "path":  "oj-research/src/Presentation/ResearchStudyActions.php",
+                      "bytes":  3065,
+                      "sha256":  "44abcc4cd81387ecd922ca4c7274dc527c5cdac6d3368e7c2e9ff47527c6c103"
+                  }
+              ]
+}

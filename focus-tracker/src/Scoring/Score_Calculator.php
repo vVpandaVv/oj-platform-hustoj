@@ -7,6 +7,7 @@ namespace FocusTracker\Scoring;
 final class Score_Calculator {
     public const HEARTBEAT_GRACE_MS = 45000;
     public const VERSION = '4';
+    public const PAGE_POLICY_VERSION = '1';
     private const DEFAULT_FOCUS_BANDS = array(
         array(95.0, 1.0), array(90.0, 0.83), array(80.0, 0.67),
         array(70.0, 0.5), array(60.0, 0.33), array(0.0, 0.17),
@@ -16,6 +17,147 @@ final class Score_Calculator {
         array(120.0, 0.4), array(PHP_FLOAT_MAX, 0.2),
     );
     private const ACTIVITY_EVENT_TYPES = array('activity', 'run', 'submit');
+
+    /** Stable, mutually exclusive bins; legacy pages are never guessed. */
+    public static function empty_page_categories(bool $unknown = false): array {
+        $rows = array();
+        foreach (array('problem', 'submission', 'material', 'practice', 'practice:ml', 'game', 'discussion', 'other', 'unclassified') as $key) {
+            $parts = explode(':', $key, 2);
+            $rows[] = array('category' => $parts[0], 'subtype' => $parts[1] ?? null,
+                'activeSeconds' => null, 'observedSeconds' => null, 'sessionCount' => $unknown ? null : 0,
+                'pageCount' => $unknown ? null : 0, 'pageViews' => $unknown ? null : 0,
+                'status' => $unknown ? 'unavailable' : 'no_data', 'coverageUnknown' => $unknown);
+        }
+        return $rows;
+    }
+
+    /** Canonical stored metadata only; an old problem ID cannot identify its page. */
+    public static function page_metadata(array $participation): array {
+        $category = (int) ($participation['page_context_version'] ?? 0) > 0 ? ($participation['page_category'] ?? '') : '';
+        if (! in_array($category, array('problem', 'submission', 'material', 'practice', 'game', 'discussion', 'other'), true)) { $category = 'unclassified'; }
+        $subtype = $category === 'practice' && ($participation['page_subtype'] ?? null) === 'ml' ? 'ml' : null;
+        if ($category === 'submission' && in_array($participation['page_subtype'] ?? null, array('form', 'result'), true)) { $subtype = $participation['page_subtype']; }
+        return array('category' => $category, 'subtype' => $subtype,
+            'pageKey' => $category === 'unclassified' || ! is_string($participation['page_key'] ?? null) ? null : $participation['page_key']);
+    }
+
+    public static function page_supports_activity(array $page): bool {
+        return in_array($page['category'], array('problem', 'unclassified'), true)
+            || ($page['category'] === 'submission' && ($page['subtype'] ?? null) === 'form');
+    }
+
+    /** Turn known page lifetime observations into intervals without inventing focus. */
+    public static function observed_inputs(array $participations): array {
+        return array_map(static function (array $input): array {
+            $input['initial_away'] = false;
+            $gated = str_starts_with((string) ($input['session_uid'] ?? ''), 'g6-');
+            $input['events'] = array_map(static fn (array $event): array => $gated && (int) ($event['seq'] ?? -1) === 0
+                ? $event : array_merge($event, array('type' => 'heartbeat', 'meta' => array('visible' => true, 'focused' => true))), $input['events'] ?? array());
+            return $input;
+        }, $participations);
+    }
+
+    /**
+     * One owner per observed millisecond: active tab, latest meaningful focus or
+     * input evidence, latest page start, then stable session identity. Heartbeats
+     * do not steal attribution from another tab's deliberate focus. Categories
+     * therefore partition the same union as the overall timeline, not a sum of tabs.
+     * pageViews counts observed page sessions per day, never period-unique URLs.
+     * Raw pages retain each tab's own duration for history; those rows overlap
+     * and must not be summed as a replacement for the category union.
+     */
+    public static function page_timeline_for_participations(array $participations, int $start, int $end, ?int $now = null): array {
+        $now ??= $end;
+        $bins = self::empty_page_categories();
+        $bin_index = array();
+        foreach ($bins as $index => $bin) { $bin_index[$bin['category'] . ':' . ($bin['subtype'] ?? '')] = $index; }
+        $states = array();
+        $cuts = array($start, $end);
+        $pages = array();
+        $seen = array();
+        foreach ($participations as $index => $input) {
+            if (empty($input['events'])) { continue; }
+            $active = self::timeline_for_participations(array($input), $start, $end, $now);
+            $observed = self::timeline_for_participations(self::observed_inputs(array($input)), $start, $end, $now);
+            if (empty($observed['intervals'])) { continue; }
+            $meta = self::page_metadata($input);
+            $bin = $bin_index[$meta['category'] . ':' . ($meta['category'] === 'practice' ? ($meta['subtype'] ?? '') : '')];
+            $identity = (string) ($input['session_uid'] ?? ('id:' . ($input['id'] ?? $index)));
+            $physical = preg_match('/^(g6-[a-f0-9]{32}-)/D', $identity, $match) ? $match[1] : $identity;
+            $seen[$bin][$physical] = true;
+            $evidence = array((int) $input['started_at_ms']);
+            foreach ($input['events'] as $event) {
+                if (in_array($event['type'], array('focus', 'visible', 'activity', 'run', 'submit'), true)) {
+                    $at = (int) $event['occurred_at'];
+                    $evidence[] = $at;
+                    if ($at > $start && $at < $end) { $cuts[] = $at; }
+                }
+            }
+            sort($evidence, SORT_NUMERIC);
+            foreach (array_merge($active['intervals'], $observed['intervals']) as $interval) {
+                $cuts[] = $interval['startedAt']; $cuts[] = $interval['endedAt'];
+            }
+            $states[] = array('active' => $active['intervals'], 'observed' => $observed['intervals'],
+                'ai' => 0, 'oi' => 0, 'ei' => 0, 'evidence' => $evidence, 'meta' => $meta, 'bin' => $bin,
+                'started' => (int) $input['started_at_ms'], 'identity' => $identity);
+            if (count($pages) < 500) {
+                $pages[] = array_merge($meta, array('startedAtMs' => $observed['intervals'][0]['startedAt'],
+                    'endedAtMs' => $observed['intervals'][count($observed['intervals']) - 1]['endedAt'],
+                    'activeSeconds' => self::interval_duration($active['intervals']) / 1000,
+                    'observedSeconds' => self::interval_duration($observed['intervals']) / 1000,
+                    'unclassified' => $meta['category'] === 'unclassified'));
+            }
+        }
+        $cuts = array_values(array_unique($cuts)); sort($cuts, SORT_NUMERIC);
+        $spans = array(); $active_intervals = array(); $observed_intervals = array();
+        $active_ms = array_fill(0, count($bins), 0); $observed_ms = $active_ms;
+        for ($index = 0; $index + 1 < count($cuts); ++$index) {
+            $from = $cuts[$index]; $to = $cuts[$index + 1];
+            if ($to <= $from || $from < $start || $to > $end) { continue; }
+            $winner = null; $best = null; $winner_active = false;
+            foreach ($states as &$state) {
+                while (isset($state['observed'][$state['oi']]) && $state['observed'][$state['oi']]['endedAt'] <= $from) { ++$state['oi']; }
+                $interval = $state['observed'][$state['oi']] ?? null;
+                if ($interval === null || $interval['startedAt'] > $from) { continue; }
+                while (isset($state['active'][$state['ai']]) && $state['active'][$state['ai']]['endedAt'] <= $from) { ++$state['ai']; }
+                while (isset($state['evidence'][$state['ei'] + 1]) && $state['evidence'][$state['ei'] + 1] <= $from) { ++$state['ei']; }
+                $known_active = $state['active'][$state['ai']] ?? null;
+                $is_active = $known_active !== null && $known_active['startedAt'] <= $from;
+                $rank = array($is_active ? 1 : 0, $state['evidence'][$state['ei']], $state['started'], $state['identity']);
+                if ($best === null || $rank > $best) { $best = $rank; $winner = $state; $winner_active = $is_active; }
+            }
+            unset($state);
+            if ($winner === null) { continue; }
+            $bin = $winner['bin']; $observed_ms[$bin] += $to - $from;
+            $observed_intervals[] = array('startedAt' => $from, 'endedAt' => $to);
+            if ($winner_active) { $active_ms[$bin] += $to - $from; $active_intervals[] = array('startedAt' => $from, 'endedAt' => $to); }
+            $span = array_merge(array('startedAt' => $from, 'endedAt' => $to, 'active' => $winner_active), $winner['meta']);
+            $last = count($spans) - 1;
+            if ($last >= 0 && $spans[$last]['endedAt'] === $from && $spans[$last]['category'] === $span['category']
+                && $spans[$last]['subtype'] === $span['subtype'] && $spans[$last]['pageKey'] === $span['pageKey'] && $spans[$last]['active'] === $span['active']) {
+                $spans[$last]['endedAt'] = $to;
+            } else { $spans[] = $span; }
+        }
+        foreach ($bins as $index => &$bin) {
+            if (! isset($seen[$index])) { continue; }
+            // Integer milliseconds are partitioned first; decimal seconds never
+            // create a per-category rounding drift from the overall union.
+            $bin['activeSeconds'] = $active_ms[$index] / 1000;
+            $bin['observedSeconds'] = $observed_ms[$index] / 1000;
+            $bin['sessionCount'] = count($seen[$index]);
+            $bin['pageCount'] = $bin['pageViews'] = count($seen[$index]);
+            $bin['status'] = 'complete';
+            $bin['coverageUnknown'] = $bin['category'] === 'unclassified';
+        }
+        unset($bin);
+        return array('categorySpans' => $spans, 'pageCategories' => $bins, 'pages' => $pages,
+            'pagesTruncated' => count($states) > 500, 'activeIntervals' => $active_intervals, 'observedIntervals' => $observed_intervals,
+            'pageCategoryCoverageUnknown' => ! empty($seen[$bin_index['unclassified:']]), '_categorySessionKeys' => $seen);
+    }
+
+    private static function interval_duration(array $intervals): int {
+        return array_sum(array_map(static fn (array $interval): int => $interval['endedAt'] - $interval['startedAt'], $intervals));
+    }
 
     /** Score a single known interval without a WordPress dependency. */
     public static function calculate(array $events, int $session_start_ms, int $session_end_ms, array $weights = array(), int $activity_window_seconds = 30, bool $initial_away = false): array {
@@ -50,7 +192,20 @@ final class Score_Calculator {
         $blur_count = count($recovered);
         $avg_recovery = $blur_count > 0 ? array_sum(array_column($recovered, 'duration_ms')) / $blur_count / 1000 : 0.0;
         $focus_ratio = $duration_ms > 0 ? 100.0 * $active_ms / $duration_ms : 0.0;
-        $activity_ratio = self::activity_window_ratio($timeline['markers'], $away_intervals, $window_start_ms, $window_end_ms, $activity_window_seconds);
+        $page_inputs = ! empty(array_filter($participations, static fn (array $p): bool => (int) ($p['page_context_version'] ?? 0) > 0));
+        $neutral = array();
+        $activity_eligible = true;
+        if ($page_inputs) {
+            $pages = self::page_timeline_for_participations($participations, $window_start_ms, $window_end_ms, $observed_at_ms);
+            $activity_eligible = false;
+            foreach ($pages['categorySpans'] as $span) {
+                if (! self::page_supports_activity($span)) { $neutral[] = $span; }
+                else { $activity_eligible = true; }
+            }
+            // A navigation gap is unknown evidence, not confirmed time away.
+            $timeline['has_observation_gaps'] = $timeline['has_observation_gaps'] || self::interval_duration($pages['observedIntervals']) < $duration_ms;
+        }
+        $activity_ratio = $activity_eligible ? self::activity_window_ratio($timeline['markers'], $away_intervals, $window_start_ms, $window_end_ms, $activity_window_seconds, $neutral) : null;
         $has_data = $duration_ms > 0 && ! empty($participations);
         $weight_focus = self::weight($weights['focus'] ?? 8.0);
         $weight_selfreg = self::weight($weights['selfreg'] ?? 6.0);
@@ -58,8 +213,10 @@ final class Score_Calculator {
         $focus = $has_data ? round($weight_focus * self::band_fraction_min(self::DEFAULT_FOCUS_BANDS, $focus_ratio), 1) : 0.0;
         $selfreg_fraction = $abandoned ? 0.2 : ($blur_count === 0 ? 1.0 : self::band_fraction_max(self::DEFAULT_RECOVERY_BANDS, $avg_recovery));
         $selfreg = $has_data ? round($weight_selfreg * $selfreg_fraction, 1) : 0.0;
-        $activity = $has_data ? round($weight_activity * $activity_ratio / 100.0, 1) : 0.0;
+        $activity = ! $activity_eligible ? null : ($has_data ? round($weight_activity * $activity_ratio / 100.0, 1) : 0.0);
         $maximum = round($weight_focus + $weight_selfreg + $weight_activity, 10);
+        $eligible_maximum = $weight_focus + $weight_selfreg + ($activity_eligible ? $weight_activity : 0.0);
+        $total = $eligible_maximum > 0 ? ($focus + $selfreg + ($activity ?? 0.0)) * $maximum / $eligible_maximum : ($page_inputs ? null : 0.0);
         return array(
             'total_active_seconds' => (int) round($active_ms / 1000),
             'total_hidden_seconds' => (int) round(max(0, $duration_ms - $active_ms) / 1000),
@@ -67,12 +224,14 @@ final class Score_Calculator {
             'blur_count' => $blur_count,
             'avg_recovery_seconds' => round($avg_recovery, 2),
             'abandoned_without_return' => $has_data && $abandoned,
-            'activity_window_ratio' => round($activity_ratio, 2),
+            'activity_window_ratio' => $activity_ratio === null ? null : round($activity_ratio, 2),
+            'activity_eligible' => $activity_eligible,
+            'score_eligible' => ! $page_inputs || $eligible_maximum > 0,
             'score_focus' => $focus,
             'score_selfreg' => $selfreg,
             'score_activity' => $activity,
-            'score_total' => min($maximum, round(($focus + $selfreg + $activity) * 2) / 2),
-            'needs_review' => $timeline['has_observation_gaps'] || ($has_data && $focus_ratio >= 95.0 && $activity_ratio <= 5.0),
+            'score_total' => $total === null ? null : min($maximum, round($total * 2) / 2),
+            'needs_review' => $timeline['has_observation_gaps'] || ($has_data && $activity_eligible && $focus_ratio >= 95.0 && $activity_ratio <= 5.0),
             'has_observation_gaps' => $timeline['has_observation_gaps'],
         );
     }
@@ -190,7 +349,7 @@ final class Score_Calculator {
     }
 
     /** Existing rubric: work in more-than-half-visible buckets is eligible. */
-    private static function activity_window_ratio(array $markers, array $away_intervals, int $start, int $end, int $window_seconds): float {
+    private static function activity_window_ratio(array $markers, array $away_intervals, int $start, int $end, int $window_seconds, array $neutral = array()): float {
         $window_ms = max(1, $window_seconds) * 1000;
         $duration_ms = max(0, $end - $start);
         if ($duration_ms === 0) { return 0.0; }
@@ -203,10 +362,18 @@ final class Score_Calculator {
             $hidden = 0;
             foreach ($away_intervals as $interval) {
                 $hidden += max(0, min($to, $interval['start_ms'] + $interval['duration_ms']) - max($from, $interval['start_ms']));
+                foreach ($neutral as $reading) {
+                    $hidden -= max(0, min($to, $interval['start_ms'] + $interval['duration_ms'], $reading['endedAt']) - max($from, $interval['start_ms'], $reading['startedAt']));
+                }
             }
-            $eligible[$i] = $hidden * 2 < $to - $from;
+            $reading_ms = 0;
+            foreach ($neutral as $reading) { $reading_ms += max(0, min($to, $reading['endedAt']) - max($from, $reading['startedAt'])); }
+            $eligible_ms = max(0, $to - $from - $reading_ms);
+            $eligible[$i] = $eligible_ms > 0 && $hidden * 2 < $eligible_ms;
         }
         foreach ($markers as $marker) {
+            $reading = ! empty(array_filter($neutral, static fn (array $interval): bool => $interval['startedAt'] <= $marker['occurredAt'] && $marker['occurredAt'] < $interval['endedAt']));
+            if ($reading) { continue; }
             $index = (int) floor(($marker['occurredAt'] - $start) / $window_ms);
             if ($index >= 0 && $index < $window_count && $eligible[$index]) { $active[$index] = true; }
         }

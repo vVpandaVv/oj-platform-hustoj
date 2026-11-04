@@ -158,7 +158,8 @@ final class Installer {
             updated_at datetime NOT NULL,
             PRIMARY KEY  (id),
             KEY owner_status (owner_user_id, status),
-            KEY context_window (context_type, context_id, starts_at, ends_at)
+            KEY context_window (context_type, context_id, starts_at, ends_at),
+            KEY context_end_window (context_type, context_id, ends_at, starts_at)
         ) ENGINE=InnoDB {$charset_collate};";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -176,6 +177,10 @@ final class Installer {
             activity_id bigint(20) unsigned NULL,
             user_id bigint(20) unsigned NOT NULL,
             problem_id bigint(20) unsigned NULL,
+            page_category varchar(20) NOT NULL DEFAULT 'unclassified',
+            page_subtype varchar(32) NULL,
+            page_key varchar(160) NULL,
+            page_context_version tinyint(1) unsigned NOT NULL DEFAULT 0,
             session_uid varchar(64) NOT NULL,
             started_at datetime(3) NOT NULL,
             started_at_ms bigint(20) unsigned NOT NULL,
@@ -247,6 +252,8 @@ final class Installer {
             score_selfreg decimal(4,1) NOT NULL,
             score_activity decimal(4,1) NOT NULL,
             score_total decimal(4,1) NOT NULL,
+            activity_eligible tinyint(1) NOT NULL DEFAULT 1,
+            score_eligible tinyint(1) NOT NULL DEFAULT 1,
             computed_at datetime NOT NULL,
             cache_signature varchar(64) NOT NULL DEFAULT '',
             finalized tinyint(1) NOT NULL DEFAULT 0,
@@ -255,7 +262,8 @@ final class Installer {
             has_observation_gaps tinyint(1) NOT NULL DEFAULT 0,
             has_delivery_gaps tinyint(1) NOT NULL DEFAULT 0,
             PRIMARY KEY  (id),
-            UNIQUE KEY activity_user (activity_id, user_id)
+            UNIQUE KEY activity_user (activity_id, user_id),
+            KEY user_activity (user_id, activity_id)
         ) ENGINE=InnoDB {$charset_collate};";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -294,10 +302,10 @@ final class Installer {
 
         $required = array(
             self::activities_table() => array('id', 'starts_at', 'ends_at'),
-            self::participations_table() => array('id', 'ended_at_ms', 'raw_events_expired', 'has_delivery_gaps', 'event_revision'),
+            self::participations_table() => array('id', 'ended_at_ms', 'raw_events_expired', 'has_delivery_gaps', 'event_revision', 'page_category', 'page_subtype', 'page_key', 'page_context_version'),
             self::activity_links_table() => array('participation_id', 'activity_id'),
             self::events_table() => array('id', 'sequence_number', 'meta'),
-            self::scores_table() => array('id', 'cache_signature', 'finalized', 'raw_events_expired', 'abandoned_without_return', 'has_observation_gaps', 'has_delivery_gaps'),
+            self::scores_table() => array('id', 'cache_signature', 'finalized', 'raw_events_expired', 'abandoned_without_return', 'has_observation_gaps', 'has_delivery_gaps', 'activity_eligible', 'score_eligible'),
             self::checks_table() => array('id', 'user_id', 'problem_id', 'candidate_json', 'status', 'expires_at_ms', 'response_uid', 'activity_ids_json', 'window_start_ms', 'window_end_ms'),
             self::check_states_table() => array('user_id', 'issued_day', 'issued_today', 'next_allowed_at_ms'),
             self::statistics_table() => array('id', 'user_id', 'scope_key', 'local_day', 'time_zone', 'metrics_json', 'source_signature', 'archived'),
@@ -313,6 +321,7 @@ final class Installer {
             self::statistics_table() => array('user_id', 'scope_key', 'local_day', 'time_zone'),
             $wpdb->options => array('option_name'),
         );
+        $lookups = array(self::activities_table() => array('context_type', 'context_id', 'ends_at', 'starts_at'));
         foreach ($required as $table => $columns) {
             $label = $table === $wpdb->options ? 'wordpress_options' : str_replace($wpdb->prefix . 'focus_tracker_', '', $table);
             try {
@@ -321,14 +330,26 @@ final class Installer {
                 if (! is_array($actual) || array_diff($columns, array_column($actual, 'Field'))) { $issues[] = $label . ':missing_columns'; }
                 $status = $wpdb->get_row($wpdb->prepare('SHOW TABLE STATUS WHERE Name = %s', $table), ARRAY_A);
                 if (! is_array($status) || strcasecmp((string) ($status['Engine'] ?? ''), 'InnoDB') !== 0) { $issues[] = $label . ':transaction_engine'; }
-                if (isset($indexes[$table])) {
+                if (isset($indexes[$table]) || isset($lookups[$table])) {
                     $keys = array();
+                    $lookup_keys = array();
+                    $user_lookup = false;
                     foreach ($wpdb->get_results("SHOW INDEX FROM {$table}", ARRAY_A) as $index) {
                         if ((int) $index['Non_unique'] === 0) { $keys[$index['Key_name']][(int) $index['Seq_in_index']] = $index['Column_name']; }
+                        $lookup_keys[$index['Key_name']][(int) $index['Seq_in_index']] = $index['Column_name'];
+                        if ((int) $index['Seq_in_index'] === 1 && $index['Column_name'] === 'user_id') { $user_lookup = true; }
                     }
                     $found = false;
-                    foreach ($keys as $key) { ksort($key); if (array_values($key) === $indexes[$table]) { $found = true; break; } }
-                    if (! $found) { $issues[] = $label . ':unique_index'; }
+                    if (isset($indexes[$table])) {
+                        foreach ($keys as $key) { ksort($key); if (array_values($key) === $indexes[$table]) { $found = true; break; } }
+                    }
+                    if (isset($indexes[$table]) && ! $found) { $issues[] = $label . ':unique_index'; }
+                    if ($table === self::scores_table() && ! $user_lookup) { $issues[] = $label . ':user_lookup_index'; }
+                    if (isset($lookups[$table])) {
+                        $found_lookup = false;
+                        foreach ($lookup_keys as $key) { ksort($key); if (array_slice(array_values($key), 0, count($lookups[$table])) === $lookups[$table]) { $found_lookup = true; break; } }
+                        if (! $found_lookup) { $issues[] = $label . ':end_window_index'; }
+                    }
                 }
             } catch (\Throwable $error) {
                 $issues[] = $label . ':inspection_failed';

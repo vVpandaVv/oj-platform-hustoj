@@ -33,6 +33,14 @@ try {
   const manifest = path.join(fixture, 'approved.json');
   await writeFile(manifest, released.stdout);
   assert.equal(run('--verify', manifest).status, 0);
+  const pinned = spawnSync(process.execPath, [script, '--verify', manifest], {
+    encoding: 'utf8', timeout: 30000, env: { ...process.env, OJ_PLATFORM_SOURCE: platform },
+  });
+  assert.equal(pinned.status, 0, pinned.stderr);
+  const explicit = spawnSync(process.execPath, [script, '--platform-root', platform, '--verify', manifest], {
+    encoding: 'utf8', timeout: 30000, env: { ...process.env, OJ_PLATFORM_SOURCE: path.join(fixture, 'missing') },
+  });
+  assert.equal(explicit.status, 0, explicit.stderr);
   await version('1.2.4-rc.7');
   const candidate = run();
   assert.equal(candidate.status, 0, candidate.stderr);

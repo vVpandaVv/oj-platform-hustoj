@@ -1,0 +1,11 @@
+{
+  "apiVersion": 3,
+  "name": "edu-games/binary-team",
+  "title": "이진수 아케이드 팀전",
+  "category": "widgets",
+  "icon": "groups",
+  "description": "방을 만들고 하나의 이진수 보드를 함께 조작하는 실시간 팀전입니다.",
+  "textdomain": "edu-games",
+  "render": "file:./render.php",
+  "supports": { "html": false }
+}

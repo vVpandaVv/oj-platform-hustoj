@@ -230,7 +230,7 @@ final class G4_S01_Repository implements Submission_Evaluation_Review_Repository
 	 */
 	public function append_review( array $record ): Submission_Evaluation_Review_Result {
 		$this->records[] = $record;
-		$advanced        = 'rejected' !== $record['decision'];
+		$advanced        = ! in_array( $record['decision'], array( 'rejected', 'draft' ), true );
 		$result          = new Submission_Evaluation_Review_Result(
 			$record['evaluation_public_id'],
 			$record['submission_public_id'],

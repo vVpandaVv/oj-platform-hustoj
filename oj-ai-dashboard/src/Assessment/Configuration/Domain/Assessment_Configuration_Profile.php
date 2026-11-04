@@ -193,6 +193,9 @@ final class Assessment_Configuration_Profile {
 			self::RUBRIC      => $this->rubric( $subject_type, $value, $strict ),
 			self::REVIEW_RULE => $this->review_rule( $subject_type, $value ),
 		};
+		if ( self::RUBRIC === $resource_type && self::STUDENT_SUBMISSION === $subject_type && array_key_exists( 'exception_scores', $value ) ) {
+			$normalized['exception_scores'] = Rubric_Exception_Scores::normalize( $value['exception_scores'], (string) ( $payload['total_points'] ?? '' ) );
+		}
 		$json = $this->canonical->encode( $normalized );
 		$hash = hash( 'sha256', $json );
 
@@ -706,7 +709,7 @@ final class Assessment_Configuration_Profile {
 			return array( 'dimensions' => $result );
 		}
 
-		$this->exact_keys( $value, array( 'criteria' ) );
+		$this->exact_keys( $value, array_key_exists( 'exception_scores', $value ) ? array( 'criteria', 'exception_scores' ) : array( 'criteria' ) );
 		$criteria = $value['criteria'] ?? null;
 		if ( ! is_array( $criteria ) || ! array_is_list( $criteria ) || count( $criteria ) < 1 || count( $criteria ) > 100 ) {
 			throw new InvalidArgumentException( 'Student-submission criteria are invalid.' );

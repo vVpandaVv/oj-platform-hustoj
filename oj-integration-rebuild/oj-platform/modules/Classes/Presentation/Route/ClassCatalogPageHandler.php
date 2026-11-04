@@ -30,7 +30,9 @@ final class ClassCatalogPageHandler implements RouteHandler
         private readonly ActionUrlProvider $actionUrls,
         private readonly ActionSecurity $security,
         private readonly ClassHtml $html,
-        private readonly PaginationView $pagination
+        private readonly PaginationView $pagination,
+        private readonly ?\CodingPanda\OjPlatform\Modules\PublicUi\Contract\NativeLearningCatalog $nativeLearning = null,
+        private readonly ?\CodingPanda\OjPlatform\Modules\Submissions\Contract\PerformanceModePolicy $performanceMode = null
     ) {
     }
 
@@ -153,12 +155,15 @@ final class ClassCatalogPageHandler implements RouteHandler
             $canManage,
             $class->requiresApproval()
         );
+        $showNative = $canViewProblems && ($canManage || !($this->performanceMode?->restrictsOwnSubmissionDetails($userId) ?? false));
         $content = '<header class="ojp-page-header"><div>'
             . '<p class="ojp-eyebrow">수업</p><h1>'
             . $this->html->escape($class->name()) . '</h1><p>'
             . $this->html->escape($class->description()) . '</p></div></header>'
             . $this->html->tabs($classId, 'show', false)
             . $joinForm
+            . ($showNative ? ($this->nativeLearning?->classAssignments($request, $classId, $canManage) ?? '') : '')
+            . (($showNative && ($this->nativeLearning?->hasProviders($canManage) ?? false)) ? '<h2>프로그래밍 문제</h2>' : '')
             . '<div class="ojp-table-wrap"><table class="ojp-table">'
             . '<thead><tr><th>순서</th><th>문제</th><th>공개 상태</th>'
             . '<th>해결 여부</th><th>작업</th></tr></thead>'

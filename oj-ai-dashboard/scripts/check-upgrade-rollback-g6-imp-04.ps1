@@ -90,7 +90,7 @@ Invoke-Checked $php @('-l', $contract)
 Invoke-Checked $php @($contract)
 
 Assert-Markers 'src\Database\Foundation\Schema_Catalog.php' @(
-    "SCHEMA_VERSION = '1.0.4'", 'TABLE_COUNT    = 48'
+    "SCHEMA_VERSION = '1.0.6'", 'TABLE_COUNT    = 48'
 ) 'target schema'
 Assert-Markers 'src\Database\Foundation\Migration_Plan.php' @(
     "BASELINE_SCHEMA_VERSION = '1.0.0'", "PREVIOUS_SCHEMA_VERSION = '1.0.1'"

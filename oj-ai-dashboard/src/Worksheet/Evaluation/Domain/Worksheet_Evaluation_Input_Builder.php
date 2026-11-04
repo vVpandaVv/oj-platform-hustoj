@@ -807,7 +807,10 @@ final class Worksheet_Evaluation_Input_Builder {
 		if ( ! is_array( $value ) || array_is_list( $value ) ) {
 			throw Worksheet_Evaluation_Input_Failure::invalid( '$.configuration.grading_rubric' );
 		}
-		$this->assert_exact_keys( $value, array( 'assessment_enabled', 'revision_id', 'content_hash', 'total_points', 'criteria' ), '$.configuration.grading_rubric' );
+		$this->assert_exact_keys( $value, array_merge( array( 'assessment_enabled', 'revision_id', 'content_hash', 'total_points', 'criteria' ), array_key_exists( 'exception_scores', $value ) ? array( 'exception_scores' ) : array() ), '$.configuration.grading_rubric' );
+		if ( array_key_exists( 'exception_scores', $value ) ) {
+			\OJAI\Dashboard\Assessment\Configuration\Domain\Rubric_Exception_Scores::normalize( $value['exception_scores'], (string) ( $value['total_points'] ?? '' ) );
+		}
 		$criteria = $value['criteria'] ?? null;
 		if ( ! is_bool( $value['assessment_enabled'] ?? null ) || ! is_array( $criteria ) || ! array_is_list( $criteria ) || array() === $criteria ) {
 			throw Worksheet_Evaluation_Input_Failure::invalid( '$.configuration.grading_rubric.criteria' );

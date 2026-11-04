@@ -181,7 +181,9 @@ ml_ai_assert( 'assessment_consent_required' === $api->enqueue( $key, $id, 7, arr
 $common_route = null;
 ml_ai_assert( 'assessment_routing_required' === $api->enqueue( $key, $id, 7, $consent )['code'], 'Missing common route is not replaced with ML routing.' );
 $common_route = array( 'fingerprint' => $consent['routingFingerprint'] );
-$first        = $api->enqueue( $key, $id, 7, $consent );
+ml_ai_assert( array( 'structured' ) === $api->status( $key, $id, 7 )['output_modes'], 'Common assessment does not advertise the ML compatibility mode.' );
+ml_ai_assert( 'assessment_invalid_output_mode' === $api->enqueue( $key, $id, 7, $consent + array( 'outputMode' => 'json_compat' ) )['code'] && 0 === count( $common_store->runs ), 'The ML compatibility mode cannot change common assessment inputs.' );
+$first = $api->enqueue( $key, $id, 7, $consent );
 $api->enqueue( $key, $id, 7, $consent );
 ml_ai_assert( 'queued' === $first['result']['state'] && 1 === count( $common_store->runs ), 'Same snapshot queues once.' );
 ml_ai_assert( ! str_contains( Assessment_Profile::encode( $common_store->runs ), '개인정보' ), 'Metadata ledger excludes answers.' );

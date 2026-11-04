@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Edu Games
  * Description: Modular educational mini-games with scoring, statistics, and leaderboards.
- * Version: 1.6.7
+ * Version: 1.10.2
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Author: CodingPanda
@@ -16,7 +16,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-define('EDU_GAMES_VERSION', '1.6.7');
+define('EDU_GAMES_VERSION', '1.10.2');
 define('EDU_GAMES_FILE', __FILE__);
 define('EDU_GAMES_PATH', plugin_dir_path(__FILE__));
 define('EDU_GAMES_URL', plugin_dir_url(__FILE__));
@@ -50,3 +50,6 @@ if (! function_exists('edu_games_activate')) {
 }
 
 register_activation_hook(EDU_GAMES_FILE, 'edu_games_activate');
+register_deactivation_hook(EDU_GAMES_FILE, static function (): void {
+    wp_clear_scheduled_hook('edu_games_binary_team_maintenance');
+});

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "snapshotDate": "2026-10-26",
+  "snapshotDate": "2026-11-05",
   "mode": "source-only",
   "defaultOutput": ".codex-work/github/oj-platform-hustoj",
   "includeRoots": [
@@ -18,7 +18,9 @@
     "docs",
     "_notes/readcontents-server-import-2026-09-12/editor-source/assets/src",
     "_notes/readcontents-server-import-2026-09-12/editor-source/tests",
-    "source"
+    "source",
+    "developer-kit",
+    "oj-microbit"
   ],
   "includeFiles": [
     ".editorconfig",
@@ -49,7 +51,8 @@
     "oj-primm",
     "readcontents-library",
     "teaching-tools",
-    "_shared/oj-realtime-hub"
+    "_shared/oj-realtime-hub",
+    "oj-microbit"
   ],
   "excludeDirectoryNames": [
     ".git",
@@ -218,6 +221,8 @@
     "readcontents-library",
     "teaching-tools",
     "focus-tracker",
-    "oj-primm"
+    "oj-primm",
+    "oj-microbit",
+    "oj-research"
   ]
 }

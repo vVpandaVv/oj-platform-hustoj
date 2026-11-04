@@ -18,7 +18,8 @@ final class AddonPageRequestV1
         private readonly array $parameters,
         private readonly array $query,
         private readonly string $locale,
-        private readonly string $correlationId
+        private readonly string $correlationId,
+        private readonly array $navigationUrls = []
     ) {
         ValueValidator::contributionKey($this->routeKey, 'routeKey');
         ValueValidator::positiveUserId($this->actorUserId, 'actorUserId');
@@ -26,7 +27,12 @@ final class AddonPageRequestV1
         ValueValidator::queryMap($this->query, 'query');
         ValueValidator::safeToken($this->locale, 'locale', 32);
         ValueValidator::correlationId($this->correlationId);
+        if (count($this->navigationUrls) > 66) { throw new \InvalidArgumentException('Navigation URL map is too large.'); }
+        foreach ($this->navigationUrls as $key => $url) { ValueValidator::simpleKey($key, 'navigationUrls'); if (!is_string($url) || strlen($url) > 2048 || !str_starts_with($url, '/') || str_starts_with($url, '//') || preg_match('/[\\x00-\\x20\\x7f]/', $url)) { throw new \InvalidArgumentException('Invalid navigation URL.'); } }
     }
+
+    /** @return array<string,string> */
+    public function navigationUrls(): array { return $this->navigationUrls; }
 
     public function routeKey(): string { return $this->routeKey; }
     public function actorUserId(): int { return $this->actorUserId; }

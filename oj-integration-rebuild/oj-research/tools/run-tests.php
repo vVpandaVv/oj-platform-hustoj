@@ -16,14 +16,14 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
 printf("Research PHP syntax/UTF-8: %d files, %d failures\n", $linted, count($failed));
 if ($failed !== []) { exit(1); }
 $tests = [
-    ['Unit/research.php'], ['Unit/research-pilot.php'], ['Unit/research-analysis.php'],
+    ['Unit/research.php'], ['Unit/research-pilot.php'], ['Unit/research-analysis.php'], ['Unit/classroom-survey.php'],
     ['Unit/release-state.php'],
-    ['Integration/research-feedback.php'], ['Integration/dependency.php'],
+    ['Integration/research-feedback.php'], ['Integration/classroom-feedback.php'], ['Integration/dependency.php'],
     ['Integration/dependency.php', '1.1.0'], ['Integration/dependency.php', '1.2.0'],
     ['Integration/dependency.php', '1.3.0'], ['Integration/dependency.php', '2.0.0'],
     ['Integration/dependency.php', 'missing-contract'],
     ['Integration/lifecycle.php'], ['Integration/lifecycle.php', 'platform-first'],
-    ['E2E/research-ui.php'], ['E2E/research-actions.php'], ['E2E/research-pilot-ui.php'],
+    ['E2E/research-ui.php'], ['E2E/research-actions.php'], ['E2E/research-pilot-ui.php'], ['E2E/classroom.php'], ['E2E/classroom-documents.php'], ['E2E/classroom-settings.php'],
 ];
 foreach ($tests as $test) {
     $file = array_shift($test);

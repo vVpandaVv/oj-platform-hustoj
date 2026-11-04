@@ -26,6 +26,7 @@ use OJAI\Dashboard\Database\Foundation\Schema_Migration_Checkpoint;
 use OJAI\Dashboard\Database\Foundation\Schema_Postcondition_Verifier;
 use OJAI\Dashboard\Database\Foundation\Schema_Preflight;
 use OJAI\Dashboard\Database\Foundation\Schema_Repair_Authorization;
+use OJAI\Dashboard\Database\Foundation\Schema_Runtime_Readiness_Verifier;
 
 $addon_root = dirname( __DIR__, 2 );
 
@@ -192,12 +193,18 @@ final class Database_Infrastructure_Test_Store implements
 		}
 		if ( 1 === preg_match( '/^ALTER TABLE `(oj_ai_[a-z0-9_]+)`/', $statement, $matches ) ) {
 			$table_name = $matches[1];
-			if ( ! in_array( $table_name, array( 'oj_ai_export_jobs', 'oj_ai_submission_evaluations', 'oj_ai_evaluation_runs' ), true )
+			if ( ! in_array( $table_name, array( 'oj_ai_export_jobs', 'oj_ai_submission_evaluations', 'oj_ai_evaluation_runs', 'oj_ai_assignment_targets', 'oj_ai_assignments' ), true )
 				|| ! isset( $this->tables[ $table_name ] ) ) {
 				throw new RuntimeException( 'test_executor_invalid_alter_target' );
 			}
-			$definitions                 = $this->catalog->tables();
-			$this->tables[ $table_name ] = Schema_Metadata_Contract::expected( $definitions[ $table_name ] );
+			$definitions = $this->catalog->tables();
+			$expected    = Schema_Metadata_Contract::expected( $definitions[ $table_name ] );
+			if ( 'oj_ai_assignments' === $table_name ) {
+				// ADD COLUMN without AFTER appends columns; do not copy catalog order.
+				$expected['columns'] = $this->tables[ $table_name ]['columns']
+					+ array_diff_key( $expected['columns'], $this->tables[ $table_name ]['columns'] );
+			}
+			$this->tables[ $table_name ] = $expected;
 			$this->statements[]          = $statement;
 			$this->drift_metadata_if_requested( $table_name );
 			return;
@@ -468,6 +475,12 @@ final class Database_Infrastructure_Test_Lock implements Schema_Lock_Port_Interf
 	 * @var int
 	 */
 	public int $releases = 0;
+	/**
+	 * Mutation to exercise the lock-boundary recheck.
+	 *
+	 * @var Closure|null
+	 */
+	public ?Closure $on_acquire = null;
 
 	/**
 	 * Acquire.
@@ -480,6 +493,9 @@ final class Database_Infrastructure_Test_Lock implements Schema_Lock_Port_Interf
 		database_infrastructure_assert( $name === Migration_Plan::LOCK_NAME, 'The runner used the wrong named lock.' );
 		database_infrastructure_assert( $timeout_seconds > 0, 'The schema lock timeout must be bounded and positive.' );
 		++$this->acquisitions;
+		if ( $this->available && null !== $this->on_acquire ) {
+			( $this->on_acquire )();
+		}
 
 		return $this->available;
 	}
@@ -649,8 +665,8 @@ $fresh_store                   = new Database_Infrastructure_Test_Store( $catalo
 $installed                     = $fresh_runner->install( 7, 'install-20260814-001' );
 database_infrastructure_assert( $installed->status() === Schema_Installation_Result::INSTALLED, 'Fresh install did not complete.' );
 database_infrastructure_assert( 48 === ( count( $fresh_store->tables ) ), 'Fresh install must create all 48 tables.' );
-database_infrastructure_assert( 51 === ( count( $fresh_store->statements ) ), 'Fresh install must execute 48 CREATE statements and three ALTER statements.' );
-database_infrastructure_assert( 51 === ( count( array_unique( $fresh_store->statements ) ) ), 'Fresh install repeated a DDL statement.' );
+database_infrastructure_assert( 53 === ( count( $fresh_store->statements ) ), 'Fresh install must execute 48 CREATE statements and five ALTER statements.' );
+database_infrastructure_assert( 53 === ( count( array_unique( $fresh_store->statements ) ) ), 'Fresh install repeated a DDL statement.' );
 database_infrastructure_assert(
 	$fresh_store->installation['state'] === Installation_State::REGISTRATION_PENDING,
 	'Installation must stop at registration_pending.'
@@ -694,7 +710,7 @@ foreach ( array_slice( $baseline_plan->migrations(), 0, 2 ) as $migration ) {
 $upgraded            = $baseline_runner->install( 7, 'upgrade-20260822-001' );
 database_infrastructure_assert( $upgraded->status() === Schema_Installation_Result::UPGRADED, 'The owned 1.0.0 baseline must upgrade normally.' );
 database_infrastructure_assert( $upgraded->succeeded(), 'The upgraded result must be successful.' );
-database_infrastructure_assert( 6 === ( count( $baseline_store->statements ) ), 'Baseline upgrade must execute three ALTER and three CREATE statements.' );
+database_infrastructure_assert( 8 === ( count( $baseline_store->statements ) ), 'Baseline upgrade must execute five ALTER and three CREATE statements.' );
 database_infrastructure_assert( str_starts_with( $baseline_store->statements[0], 'ALTER TABLE `oj_ai_export_jobs`' ), 'The 1.0.1 baseline delta targeted the wrong table.' );
 database_infrastructure_assert( str_starts_with( $baseline_store->statements[1], 'ALTER TABLE `oj_ai_submission_evaluations`' ), 'The 1.0.2 baseline delta targeted the wrong table.' );
 database_infrastructure_assert( str_starts_with( $baseline_store->statements[2], 'ALTER TABLE `oj_ai_evaluation_runs`' ), 'The 1.0.3 baseline delta targeted the wrong table.' );
@@ -730,7 +746,7 @@ foreach ( array_slice( $baseline_plan->migrations(), 0, 3 ) as $migration ) {
 [ $previous_runner ] = database_infrastructure_runner( $catalog, $previous_store );
 $previous_upgraded   = $previous_runner->install( 7, 'upgrade-20260823-001' );
 database_infrastructure_assert( $previous_upgraded->status() === Schema_Installation_Result::UPGRADED, 'The owned 1.0.1 schema must upgrade normally.' );
-database_infrastructure_assert( 5 === ( count( $previous_store->statements ) ), 'The 1.0.1 upgrade must execute two ALTER and three CREATE statements.' );
+database_infrastructure_assert( 7 === ( count( $previous_store->statements ) ), 'The 1.0.1 upgrade must execute four ALTER and three CREATE statements.' );
 database_infrastructure_assert( str_starts_with( $previous_store->statements[0], 'ALTER TABLE `oj_ai_submission_evaluations`' ), 'The 1.0.1 upgrade targeted the wrong table.' );
 database_infrastructure_assert( str_starts_with( $previous_store->statements[1], 'ALTER TABLE `oj_ai_evaluation_runs`' ), 'The 1.0.1 upgrade targeted the wrong table for the error message delta.' );
 database_infrastructure_assert( $previous_store->installation['schema_version'] === Schema_Catalog::SCHEMA_VERSION, 'The 1.0.1 upgrade did not store the target version.' );
@@ -760,7 +776,7 @@ foreach ( array_slice( $baseline_plan->migrations(), 0, 4 ) as $migration ) {
 [ $previous_2_runner ] = database_infrastructure_runner( $catalog, $previous_2_store );
 $previous_2_upgraded   = $previous_2_runner->install( 7, 'upgrade-20260829-001' );
 database_infrastructure_assert( $previous_2_upgraded->status() === Schema_Installation_Result::UPGRADED, 'The owned 1.0.2 schema must upgrade normally.' );
-database_infrastructure_assert( 4 === ( count( $previous_2_store->statements ) ), 'The 1.0.2 upgrade must execute one ALTER and three CREATE statements.' );
+database_infrastructure_assert( 6 === ( count( $previous_2_store->statements ) ), 'The 1.0.2 upgrade must execute three ALTER and three CREATE statements.' );
 database_infrastructure_assert( str_starts_with( $previous_2_store->statements[0], 'ALTER TABLE `oj_ai_evaluation_runs`' ), 'The 1.0.2 upgrade targeted the wrong table.' );
 database_infrastructure_assert( $previous_2_store->installation['schema_version'] === Schema_Catalog::SCHEMA_VERSION, 'The 1.0.2 upgrade did not store the target version.' );
 database_infrastructure_assert( $previous_2_store->migrations[ $latest_migration_2->id() ]['state'] === Migration_Ledger_State::APPLIED, 'The newest migration did not finish applied from 1.0.2.' );
@@ -784,9 +800,139 @@ $old_ledger            = $previous_3_store->migrations;
 [ $previous_3_runner ] = database_infrastructure_runner( $catalog, $previous_3_store );
 $previous_3_upgraded   = $previous_3_runner->install( 7, 'upgrade-assessment-projects' );
 database_infrastructure_assert( $previous_3_upgraded->status() === Schema_Installation_Result::UPGRADED, 'The owned 1.0.3 schema must upgrade normally.' );
-database_infrastructure_assert( 3 === ( count( $previous_3_store->statements ) ), 'The 1.0.3 upgrade must create only three new tables.' );
+database_infrastructure_assert( 5 === ( count( $previous_3_store->statements ) ), 'The 1.0.3 upgrade must create three tables and extend targets and assignments.' );
+
+$previous_4_store = new Database_Infrastructure_Test_Store( $catalog );
+foreach ( $baseline_plan->previous_4_tables() as $table_name => $definition ) {
+	$previous_4_store->tables[ $table_name ] = Schema_Metadata_Contract::expected( $definition );
+}
+$previous_4_store->installation = array_replace(
+	$previous_3_store->installation,
+	array(
+		'schema_version'     => Migration_Plan::PREVIOUS_4_SCHEMA_VERSION,
+		'schema_fingerprint' => Migration_Plan::PREVIOUS_4_SCHEMA_FINGERPRINT,
+	)
+);
+foreach ( array_slice( $baseline_plan->migrations(), 0, 6 ) as $migration ) {
+	$previous_4_store->migrations[ $migration->id() ] = database_infrastructure_applied_record( $migration, 'fixture:previous-4-applied' );
+}
+$previous_4_history    = $previous_4_store->migrations;
+[ $previous_4_runner ] = database_infrastructure_runner( $catalog, $previous_4_store );
+$previous_4_upgraded   = $previous_4_runner->install( 7, 'upgrade-20261103-001' );
+database_infrastructure_assert( $previous_4_upgraded->status() === Schema_Installation_Result::UPGRADED, 'Owned 1.0.4 must upgrade.' );
+database_infrastructure_assert( 2 === count( $previous_4_store->statements ) && str_starts_with( $previous_4_store->statements[0], 'ALTER TABLE `oj_ai_assignment_targets`' ), 'The 1.0.4 upgrade must only extend targets and assignments.' );
+database_infrastructure_assert( $previous_4_history === array_slice( $previous_4_store->migrations, 0, 6, true ), 'The 1.0.4 history changed.' );
+
+$previous_5_store = new Database_Infrastructure_Test_Store( $catalog );
+foreach ( $baseline_plan->previous_5_tables() as $table_name => $definition ) {
+	$previous_5_store->tables[ $table_name ] = Schema_Metadata_Contract::expected( $definition );
+}
+$previous_5_store->installation = array_replace(
+	$previous_4_store->installation,
+	array(
+		'schema_version'     => Migration_Plan::PREVIOUS_5_SCHEMA_VERSION,
+		'schema_fingerprint' => Migration_Plan::PREVIOUS_5_SCHEMA_FINGERPRINT,
+	)
+);
+foreach ( array_slice( $baseline_plan->migrations(), 0, 7 ) as $migration ) {
+	$previous_5_store->migrations[ $migration->id() ] = database_infrastructure_applied_record( $migration, 'fixture:previous-5-applied' );
+}
+$previous_5_history    = $previous_5_store->migrations;
+[ $previous_5_runner ] = database_infrastructure_runner( $catalog, $previous_5_store );
+$previous_5_upgraded   = $previous_5_runner->install( 7, 'upgrade-20261104-001' );
+database_infrastructure_assert( $previous_5_upgraded->status() === Schema_Installation_Result::UPGRADED, 'Owned 1.0.5 must upgrade.' );
+database_infrastructure_assert( 1 === count( $previous_5_store->statements ) && str_starts_with( $previous_5_store->statements[0], 'ALTER TABLE `oj_ai_assignments`' ), 'The 1.0.5 upgrade must only extend assignment settings.' );
+database_infrastructure_assert( $previous_5_history === array_slice( $previous_5_store->migrations, 0, 7, true ), 'The 1.0.5 migration history changed.' );
+
+// Reproduce the persisted failure from 1.2.24: DDL completed, order check failed.
+$policy_failure                        = clone $previous_5_store;
+$policy_migration                      = $baseline_plan->migrations()[7];
+$policy_failure->installation['state'] = Installation_State::MAINTENANCE_REQUIRED;
+$policy_failure->finish_migration(
+	$policy_migration->id(),
+	Migration_Ledger_State::REPAIR_REQUIRED,
+	array(
+		'phase'            => 'failed',
+		'cursor'           => 0,
+		'completed_tables' => array(),
+		'next_table'       => 'oj_ai_assignments',
+		'postcondition'    => 'failed',
+		'correlation_id'   => 'upgrade:column-order-124',
+		'repair'           => false,
+	),
+	'schema_postcondition_failed',
+	'2026-11-04 04:00:00'
+);
+$policy_failure->statements      = array();
+$recovered_policy                = clone $policy_failure;
+[ $policy_runner, $policy_lock ] = database_infrastructure_runner( $catalog, $recovered_policy );
+$policy_result                   = $policy_runner->install( 7, 'upgrade:column-order-125' );
+database_infrastructure_assert( Schema_Installation_Result::UPGRADED === $policy_result->status(), 'Completed policy amendment must recover automatically.' );
+database_infrastructure_assert( array() === $recovered_policy->statements && $policy_failure->tables === $recovered_policy->tables, 'Recovery must not execute DDL or modify physical data.' );
+database_infrastructure_assert( $previous_5_history === array_slice( $recovered_policy->migrations, 0, 7, true ), 'Recovery modified existing migration history.' );
+database_infrastructure_assert( 2 === $recovered_policy->migrations[ $policy_migration->id() ]['attempt_count'], 'Recovery must retain an additional attempt in the ledger.' );
+database_infrastructure_assert( 1 === $policy_lock->acquisitions && 1 === $policy_lock->releases, 'Recovery must hold and release the schema lock.' );
+$policy_readiness = new Schema_Runtime_Readiness_Verifier(
+	$catalog,
+	$baseline_plan,
+	new Schema_Preflight( $catalog ),
+	$recovered_policy,
+	$recovered_policy,
+	new Schema_Postcondition_Verifier( $catalog, $recovered_policy )
+);
+database_infrastructure_assert( $policy_readiness->verify()->is_ready(), 'Recovered schema must permit addon/menu registration.' );
+database_infrastructure_assert( Schema_Installation_Result::ALREADY_READY === $policy_runner->install( 7, 'upgrade:column-order-repeat' )->status(), 'Recovery must be idempotent.' );
+
+foreach ( array( 'missing_column', 'wrong_type', 'foreign_owner', 'foreign_installation', 'checksum', 'checkpoint', 'different_failure', 'older_failure', 'missing_migration', 'extra_table' ) as $corruption ) {
+	$blocked_policy = clone $policy_failure;
+	switch ( $corruption ) {
+		case 'missing_column':
+			unset( $blocked_policy->tables['oj_ai_assignments']['columns']['exception_policy_hash'] );
+			break;
+		case 'wrong_type':
+			$blocked_policy->tables['oj_ai_assignments']['columns']['exception_policy_hash']['type'] = 'VARCHAR(64)';
+			break;
+		case 'foreign_owner':
+			$blocked_policy->installation['owner_marker'] = 'foreign';
+			break;
+		case 'foreign_installation':
+			$blocked_policy->foreign_installation_rows = 1;
+			break;
+		case 'checksum':
+			$blocked_policy->migrations[ $policy_migration->id() ]['checksum'] = str_repeat( '0', 64 );
+			break;
+		case 'checkpoint':
+			$blocked_policy->migrations[ $policy_migration->id() ]['checkpoint_hash'] = str_repeat( '0', 64 );
+			break;
+		case 'different_failure':
+			$blocked_policy->migrations[ $policy_migration->id() ]['error_code'] = 'schema_statement_failed';
+			break;
+		case 'older_failure':
+			$blocked_policy->migrations[ $baseline_plan->migrations()[6]->id() ]['state'] = Migration_Ledger_State::REPAIR_REQUIRED;
+			break;
+		case 'missing_migration':
+			unset( $blocked_policy->migrations[ $baseline_plan->migrations()[6]->id() ] );
+			break;
+		case 'extra_table':
+			$blocked_policy->tables['oj_ai_foreign'] = $blocked_policy->tables['oj_ai_assignments'];
+			break;
+	}
+	$before             = clone $blocked_policy;
+	[ $blocked_runner ] = database_infrastructure_runner( $catalog, $blocked_policy );
+	$blocked_result     = $blocked_runner->install( 7, 'upgrade:policy-block-' . $corruption );
+	database_infrastructure_assert( Schema_Installation_Result::BLOCKED === $blocked_result->status(), 'Unsafe policy recovery was accepted: ' . $corruption );
+	database_infrastructure_assert( $before->tables === $blocked_policy->tables && $before->migrations === $blocked_policy->migrations && $before->installation === $blocked_policy->installation && array() === $blocked_policy->statements, 'Blocked recovery wrote data: ' . $corruption );
+}
+$racing_policy                   = clone $policy_failure;
+[ $racing_runner, $racing_lock ] = database_infrastructure_runner( $catalog, $racing_policy );
+$racing_lock->on_acquire         = static function () use ( $racing_policy ): void {
+	unset( $racing_policy->tables['oj_ai_assignments']['columns']['exception_policy_hash'] );
+};
+database_infrastructure_assert( Schema_Installation_Result::BLOCKED === $racing_runner->install( 7, 'upgrade:policy-lock-drift' )->status(), 'Recovery must recheck physical state inside the lock.' );
+database_infrastructure_assert( array() === $racing_policy->statements && 1 === $racing_lock->releases, 'Lock-boundary drift must not write DDL or retain the lock.' );
+
 foreach ( $previous_3_store->statements as $sql ) {
-	database_infrastructure_assert( str_starts_with( $sql, 'CREATE TABLE `oj_ai_assessment_project' ), 'The upgrade must not rewrite existing tables.' );
+	database_infrastructure_assert( str_starts_with( $sql, 'CREATE TABLE `oj_ai_assessment_project' ) || str_starts_with( $sql, 'ALTER TABLE `oj_ai_assignment_targets`' ) || str_starts_with( $sql, 'ALTER TABLE `oj_ai_assignments`' ), 'The upgrade must not modify unrelated tables.' );
 }
 database_infrastructure_assert( array_intersect_key( $previous_3_store->migrations, $old_ledger ) === $old_ledger, 'Existing migration receipts changed.' );
 
@@ -826,9 +972,9 @@ $failed_store->fail_at_attempt = null;
 $repaired                      = $failed_runner->repair( database_infrastructure_authorization( $catalog, 'repair-20260814-001' ) );
 database_infrastructure_assert( $repaired->status() === Schema_Installation_Result::REPAIRED, 'Approved repair did not complete.' );
 database_infrastructure_assert( 48 === ( count( $failed_store->tables ) ), 'Repair must finish all missing tables.' );
-database_infrastructure_assert( 51 === ( count( $failed_store->statements ) ), 'Repair must finish missing CREATE statements and all forward ALTER statements once.' );
+database_infrastructure_assert( 53 === ( count( $failed_store->statements ) ), 'Repair must finish missing CREATE statements and all forward ALTER statements once.' );
 database_infrastructure_assert(
-	51 === ( count( array_unique( $failed_store->statements ) ) ),
+	53 === ( count( array_unique( $failed_store->statements ) ) ),
 	'Repair must execute each successful forward statement at most once.'
 );
 database_infrastructure_assert(
@@ -912,4 +1058,4 @@ database_infrastructure_assert( ! str_contains( $source, 'base_prefix' ), 'Infra
 database_infrastructure_assert( ! str_contains( $source, 'dbDelta(' ), 'Infrastructure adapters may not use dbDelta as completion evidence.' );
 database_infrastructure_assert( ! str_contains( $source, 'wp_oj_ai_' ), 'Infrastructure adapters may not contain prefixed target candidates.' );
 
-echo 'G1 database infrastructure contract passed: fresh 1.0.4 install, supported upgrades through 1.0.3, lock, ledger, partial failure, explicit repair.' . PHP_EOL;
+echo 'G1 database infrastructure contract passed: fresh 1.0.6 install, supported upgrades through 1.0.5, lock, ledger, partial failure, explicit repair.' . PHP_EOL;

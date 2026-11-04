@@ -42,6 +42,7 @@ use EduGames\Games\Modules\Keyword_Rain\Keyword_Rain_Module;
 use EduGames\Games\Modules\Missing_Values\Missing_Values_Module;
 use EduGames\Games\Modules\Outlier_Detection\Outlier_Detection_Module;
 use EduGames\Support\Capabilities;
+use EduGames\Support\Legacy_Play_Capability;
 
 /**
  * Registers this plugin as an oj-platform Addon API v1 addon: one Console
@@ -74,7 +75,24 @@ final class Oj_Platform_Registration {
 
         self::register_console($addon);
         self::register_public_hub($addon);
+        $addon->assetBundle(new AddonAssetBundleDefinitionV1(
+            'addon.edu_games.binary_team_assets', 'edu-games-binary-team',
+            array('blocks/binary-arcade/style.css','blocks/device-matching/style.css','assets/binary-team/style.css','assets/device-team/style.css','assets/binary-team/operations.css'), array('assets/binary-team/socket.js','assets/device-team/board.js','assets/binary-team/operations.js','assets/binary-team/view.js'), array(), EDU_GAMES_VERSION
+        ));
+        $addon->publicPage(new AddonPublicPageDefinitionV1(
+            'addon.edu_games.binary_team', '/oj-addons/edu-games/binary-team',
+            new Binary_Team_Page_Handler(), Capabilities::PLAY,
+            array('addon.edu_games.shell_assets', 'addon.edu_games.binary_team_assets')
+        ));
         self::register_play_assets($addon);
+        $addon->publicPage(new AddonPublicPageDefinitionV1(
+            'addon.edu_games.device_team','/oj-addons/edu-games/device-team',new Device_Team_Page_Handler(),Capabilities::PLAY,
+            array('addon.edu_games.shell_assets','addon.edu_games.binary_team_assets')
+        ));
+        $addon->publicPage(new AddonPublicPageDefinitionV1(
+            'addon.edu_games.team_board','/oj-addons/edu-games/team-board',new Team_Operations_Page_Handler(true),Capabilities::MANAGE,
+            array('addon.edu_games.shell_assets','addon.edu_games.binary_team_assets')
+        ));
         $addon->assetBundle(new AddonAssetBundleDefinitionV1(
             'addon.edu_games.shell_assets', 'edu-games-shell',
             array('assets/shell/shell.css'), array('assets/shell/shell.js'),
@@ -89,10 +107,15 @@ final class Oj_Platform_Registration {
         // onReady simply never fires in that case.
         $addon->onReady(static function (AddonRuntimeContextV1 $runtime): void {
             Runtime_Bridge::connect($runtime);
+            Legacy_Play_Capability::register($runtime);
         });
     }
 
     private static function register_console(AddonManifestBuilderV1 $addon): void {
+        $addon->consolePage(new AddonConsolePageDefinitionV1(
+            'addon.edu_games.team_games','/oj-console/addons/edu-games/team-games',new Team_Operations_Page_Handler(),Capabilities::MANAGE,
+            array('addon.edu_games.shell_assets','addon.edu_games.binary_team_assets')
+        ));
         $addon->assetBundle(new AddonAssetBundleDefinitionV1(
             'addon.edu_games.report_assets', 'edu-games-report',
             array('resources/css/console-game-report.css','assets/rankings/pager.css'),
@@ -154,6 +177,9 @@ final class Oj_Platform_Registration {
                 'addon.edu_games.nav_manage', __('게임 공개·팀', 'edu-games'), 'addon.edu_games.manage_menu', 'addon.edu_games.manage', 10
             ));
             $addon->consoleLocalNav(new AddonConsoleLocalNavItemV1(
+                'addon.edu_games.nav_team_games', __('실시간 팀전', 'edu-games'), 'addon.edu_games.manage_menu', 'addon.edu_games.team_games', 15
+            ));
+            $addon->consoleLocalNav(new AddonConsoleLocalNavItemV1(
                 'addon.edu_games.nav_report', __('게임 기록', 'edu-games'), 'addon.edu_games.manage_menu', 'addon.edu_games.report', 20
             ));
             $addon->consoleLocalNav(new AddonConsoleLocalNavItemV1(
@@ -203,8 +229,8 @@ final class Oj_Platform_Registration {
     }
 
     private static function register_public_ranking(AddonManifestBuilderV1 $addon): void {
-        $styles = array('assets/rankings/pager.css', 'blocks/group-leaderboard/style.css', 'assets/learning/style.css', 'assets/warehouse/style.css', 'assets/strategy/style.css');
-        $scripts = array('assets/rankings/pager.js', 'assets/learning/progress.js', 'blocks/group-leaderboard/view.js', 'assets/vendor/chartjs/chart.umd.min.js', 'assets/learning/view.js', 'assets/warehouse/view.js', 'assets/strategy/board-views.js', 'assets/strategy/view.js');
+        $styles = array('assets/rankings/pager.css', 'assets/rankings/page.css');
+        $scripts = array('assets/rankings/pager.js', 'assets/rankings/page.js');
         $addon->assetBundle(new AddonAssetBundleDefinitionV1(
             'addon.edu_games.ranking_assets',
             'edu-games-ranking',
@@ -219,7 +245,7 @@ final class Oj_Platform_Registration {
             '/oj-addons/edu-games/ranking',
             new Public_Ranking_Page_Handler(),
             Capabilities::PLAY,
-            array('addon.edu_games.ranking_assets', 'addon.edu_games.play_assets', 'addon.edu_games.shell_assets')
+            array('addon.edu_games.ranking_assets')
         ));
 
         $addon->publicMenu(new AddonPublicMenuDefinitionV1(

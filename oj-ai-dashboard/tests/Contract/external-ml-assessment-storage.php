@@ -295,6 +295,7 @@ try {
 
 	// Queue and worker locks protect the same immutable input from duplicate billing.
 	ml_store_assert( null === $store->latest( $source, $source_id ), 'Initially empty source.' );
+	ml_store_assert( ! $store->has_pending(), 'No follow-up wake is needed for an empty queue.' );
 	$enqueue_lock = 'oj_ai_ml_' . substr( strtoupper( hash( 'sha256', $source . ':' . $source_id ) ), 0, 26 );
 	$other_db->get_var( $other_db->prepare( 'SELECT GET_LOCK(%s, 0)', $enqueue_lock ) );
 	ml_store_fails( static fn() => $store->enqueue( $metadata() ), 'ml_ai_busy' );
@@ -305,13 +306,15 @@ try {
 	ml_store_fails( static fn() => $store->claim(), 'ml_ai_maintenance_required' );
 	$db->change( 'oj_ai_installations', 'state', 'runtime_ready', 1 );
 	$queued = $store->enqueue( $metadata() );
-	$again  = $store->enqueue( $metadata() );
+	ml_store_assert( $store->has_pending(), 'A queued job requests a bounded follow-up wake.' );
+	$again = $store->enqueue( $metadata() );
 	ml_store_assert( $queued['run_id'] === $again['run_id'] && 1 === $count_rows( 'oj_ai_outbox_events' ), 'Queued request is idempotent.' );
 	ml_store_assert( null === $store->latest( 'other-source', $source_id ), 'Source namespaces stay isolated.' );
 	$ledger = $db->get_row( 'SELECT * FROM oj_ai_outbox_events' );
 	ml_store_assert( null !== $ledger['published_at_utc'] && 'oj_ai.external_ml_metadata' === $ledger['payload_schema'], 'Ledger is not generic-dispatchable.' );
 	ml_store_assert( ! str_contains( $ledger['payload_json'], 'PRIVATE_' ), 'Queue contains references, not evidence or output.' );
 	$claimed = $store->claim();
+	ml_store_assert( ! $store->has_pending(), 'Running work alone does not schedule another queued-job wake.' );
 	ml_store_assert( 'running' === $claimed['state'] && '' !== $claimed['_lease'], 'Claim creates a lease.' );
 	ml_store_assert( null === $other->claim(), 'A second worker cannot claim while the global lock is owned.' );
 	ml_store_assert( $store->enqueue( $metadata() )['run_id'] === $claimed['run_id'], 'Running request is idempotent.' );

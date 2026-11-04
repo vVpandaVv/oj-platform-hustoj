@@ -29,10 +29,18 @@ final class Check_Repository {
 
     public static function pending(int $user_id, int $now_ms): ?array {
         global $wpdb;
-        if (false === $wpdb->query($wpdb->prepare(
-            'UPDATE ' . Installer::checks_table() . ' SET status = CASE WHEN window_end_ms IS NOT NULL AND expires_at_ms >= window_end_ms THEN %s ELSE %s END WHERE user_id = %d AND status = %s AND expires_at_ms <= %d',
-            'invalidated', 'unanswered', $user_id, 'pending', $now_ms
-        ))) { return null; }
+        // begin_for_user() already serializes this learner's issuance. A
+        // no-match range UPDATE still locks an InnoDB index gap under RR and
+        // deadlocks with an unrelated learner's first question INSERT. Observe
+        // expired candidates without a write lock, then update only exact rows.
+        $expired = $wpdb->get_results($wpdb->prepare('SELECT id FROM ' . Installer::checks_table() . ' WHERE user_id = %d AND status = %s AND expires_at_ms <= %d ORDER BY id ASC', $user_id, 'pending', $now_ms), ARRAY_A);
+        if (! is_array($expired) || '' !== (string) $wpdb->last_error) { return null; }
+        foreach ($expired as $candidate) {
+            if (false === $wpdb->query($wpdb->prepare(
+                'UPDATE ' . Installer::checks_table() . ' SET status = CASE WHEN window_end_ms IS NOT NULL AND expires_at_ms >= window_end_ms THEN %s ELSE %s END WHERE id = %d AND user_id = %d AND status = %s AND expires_at_ms <= %d',
+                'invalidated', 'unanswered', (int) $candidate['id'], $user_id, 'pending', $now_ms
+            ))) { return null; }
+        }
         $row = $wpdb->get_row($wpdb->prepare(
             'SELECT * FROM ' . Installer::checks_table() . ' WHERE user_id = %d AND status = %s ORDER BY id DESC LIMIT 1',
             $user_id, 'pending'

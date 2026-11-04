@@ -1,0 +1,20 @@
+{
+  "explicitPublicationReview": true,
+  "blankAuthorSourcePreserved": true,
+  "teacherReferenceExport": true,
+  "independentActualMakeCodePreview": true,
+  "hiddenPreviewAndResultRemoved": true,
+  "classSelectionAcrossPages": [
+    7,
+    21
+  ],
+  "fieldPathFocus": true,
+  "changedSnapshotBlocked": true,
+  "casConflictPreservedDraft": true,
+  "actualMakeCodeSaveAndPxtScore": 100,
+  "phpPublicationSchemaAndResultVisibility": true,
+  "busyRetryNoAutoRun": true,
+  "previousResultPreservedOn503": true,
+  "frontendErrors": [],
+  "environment": "memory REST fixture with actual PHP contracts and remote MakeCode; not production WordPress/MySQL authorization"
+}

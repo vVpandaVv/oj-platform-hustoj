@@ -1,0 +1,353 @@
+.ojmicrobit { min-width: 0; max-width: 100%; color: var(--ojp-color-ink); }
+.ojmicrobit .ojp-page-header > div { min-width: 0; max-width: 100%; }
+.ojmicrobit .ojp-page-header p { overflow-wrap: anywhere; }
+.ojmicrobit [hidden] { display: none; }
+.ojmicrobit .ojmicrobit-status { margin: 0 0 20px; padding: 14px 18px; border-radius: var(--ojp-radius-md); background: var(--ojp-color-subtle); color: var(--ojp-color-muted); }
+.ojmicrobit .is-error { color: var(--ojp-color-danger); }
+.ojmicrobit .ojmicrobit-status.is-error { background: var(--ojp-color-danger-bg); }
+.ojmicrobit .ojmicrobit-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 16px 0; }
+.ojmicrobit .ojmicrobit-toolbar .ojp-field { margin: 0; }
+.ojmicrobit .ojmicrobit-toolbar input[type=number] { max-width: 160px; }
+.ojmicrobit .ojmicrobit-card { min-width: 0; padding: 22px; margin-bottom: 20px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-lg); background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-card > h2:first-child { margin-top: 0; }
+.ojmicrobit .ojmicrobit-muted { color: var(--ojp-color-muted); font-size: var(--ojp-text-subhead); line-height: 1.6; }
+.ojmicrobit .ojmicrobit-description { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+.ojmicrobit .ojmicrobit-workflow { padding: 14px 18px; margin: 0 0 20px; border-radius: var(--ojp-radius-md); color: var(--ojp-color-ink-2); background: var(--ojp-color-subtle); line-height: 1.8; }
+.ojmicrobit .ojmicrobit-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 16px 0; }
+.ojmicrobit .ojmicrobit-scenario { min-width: 0; margin: 20px 0; padding: 18px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-md); }
+.ojmicrobit .ojmicrobit-scenario legend { padding: 0 8px; color: var(--ojp-color-ink-2); font-weight: 700; }
+.ojmicrobit .ojp-table input { min-width: 100px; }
+.ojmicrobit .ojp-table input[type=checkbox] { min-width: 24px; width: 24px; height: 24px; accent-color: var(--ojp-color-primary); }
+.ojmicrobit .ojp-table select { min-width: 130px; }
+.ojmicrobit .ojp-table td { vertical-align: middle; }
+.ojmicrobit .ojp-table-wrap { max-width: 100%; overflow-x: auto; }
+.ojmicrobit [data-mb-public-tests] .ojp-table { white-space: nowrap; }
+.ojmicrobit .ojmicrobit-editor { display: block; width: 100%; height: 720px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-md); background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-import { margin-top: 16px; padding: 12px; border-radius: var(--ojp-radius-sm); background: var(--ojp-color-subtle); }
+.ojmicrobit .ojmicrobit-import summary, .ojmicrobit details.ojmicrobit-card > summary { cursor: pointer; font-weight: 600; }
+.ojmicrobit .ojmicrobit-import .ojp-field { margin: 16px 0; }
+.ojmicrobit .ojmicrobit-workspace { display: grid; grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); gap: 20px; align-items: start; }
+.ojmicrobit .ojmicrobit-pinboard { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.ojmicrobit .ojmicrobit-device { min-width: 0; padding: 16px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-md); background: var(--ojp-color-subtle); }
+.ojmicrobit .ojmicrobit-device-title { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 14px; }
+.ojmicrobit .ojmicrobit-device-title strong { flex: 1 1 100%; }
+.ojmicrobit .ojmicrobit-device-value { display: block; padding-top: 8px; color: var(--ojp-color-ink); font-family: var(--ojp-font-mono); font-weight: 700; }
+.ojmicrobit .ojmicrobit-device input[type=range], .ojmicrobit .ojmicrobit-device meter { width: 100%; accent-color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-device input[type=checkbox], .ojmicrobit .ojmicrobit-fields input[type=checkbox] { width: 24px; height: 24px; accent-color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-indicator { --mb-level: 0; position: relative; display: grid; place-items: center; width: 56px; height: 56px; margin: 8px auto 14px; border: 2px solid var(--ojp-color-line-strong); border-radius: var(--ojp-radius-pill); background: var(--ojp-color-fill-strong); }
+.ojmicrobit .ojmicrobit-indicator.is-led.is-active { background: var(--ojp-color-warning); opacity: max(.2, var(--mb-level)); box-shadow: 0 0 16px var(--ojp-color-warning-bg); }
+.ojmicrobit .ojmicrobit-indicator.is-motor > span { width: 40px; height: 10px; border-radius: var(--ojp-radius-pill); background: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-indicator.is-motor > span::after { content: ''; position: absolute; width: 10px; height: 40px; left: 21px; top: 6px; border-radius: var(--ojp-radius-pill); background: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-indicator.is-motor.is-active > span { animation: ojmicrobit-rotate calc(2s - var(--mb-level) * 1.8s) linear infinite; }
+.ojmicrobit .ojmicrobit-indicator.is-servo { border-radius: var(--ojp-radius-sm); background: var(--ojp-color-elevated); }
+.ojmicrobit .ojmicrobit-indicator.is-servo > span { position: absolute; width: 6px; height: 24px; bottom: 24px; left: 23px; background: var(--ojp-color-muted); transform-origin: 50% 100%; transform: rotate(var(--mb-angle, 0deg)); border-radius: var(--ojp-radius-pill); }
+.ojmicrobit .ojmicrobit-indicator.is-servo.is-active > span { background: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-indicator.is-servo::after { content: ''; position: absolute; width: 10px; height: 10px; border-radius: var(--ojp-radius-pill); background: var(--ojp-color-ink-2); }
+.ojmicrobit .ojmicrobit-indicator.is-servo.is-pulse > span { height: 20px; width: 24px; bottom: 16px; left: 14px; border: 3px solid var(--ojp-color-muted); border-bottom: 0; border-radius: 0; background: transparent; transform: none; }
+.ojmicrobit .ojmicrobit-indicator.is-servo.is-pulse::after { display: none; }
+.ojmicrobit .ojmicrobit-i2c-device { grid-column: 1 / -1; }
+.ojmicrobit .ojmicrobit-i2c-device .ojp-table input { min-width: 70px; }
+.ojmicrobit .ojmicrobit-register-value { font-family: var(--ojp-font-mono); font-weight: 700; }
+.ojmicrobit .ojmicrobit-order { display: flex; align-items: center; gap: 4px; }
+.ojmicrobit .ojmicrobit-order .ojp-button { padding: 4px 6px; min-width: 34px; }
+.ojmicrobit .ojmicrobit-i2c-scenario { padding-top: 12px; margin-top: 20px; border-top: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-example { padding: 20px; margin: 20px 0; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-lg); background: var(--ojp-color-subtle); }
+.ojmicrobit .ojmicrobit-example-heading, .ojmicrobit .ojmicrobit-step-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.ojmicrobit .ojmicrobit-example-heading h3, .ojmicrobit .ojmicrobit-step-heading h4 { margin: 0; }
+.ojmicrobit .ojmicrobit-step-card { margin: 16px 0; padding: 18px; border-radius: var(--ojp-radius-md); border: 1px solid var(--ojp-color-line); background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-step-summary { padding: 12px 14px; border-radius: var(--ojp-radius-sm); line-height: 1.7; background: var(--ojp-color-accent-bg); color: var(--ojp-color-ink); overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-step-flow { display: grid; grid-template-columns: minmax(0, 1fr) 30px minmax(0, 1fr); gap: 12px; align-items: start; }
+.ojmicrobit .ojmicrobit-step-side { min-width: 0; }
+.ojmicrobit .ojmicrobit-step-side h5 { margin: 0 0 14px; font-size: var(--ojp-text-body); }
+.ojmicrobit .ojmicrobit-step-arrow { align-self: center; text-align: center; color: var(--ojp-color-primary); font-size: 28px; }
+.ojmicrobit .ojmicrobit-condition { display: grid; grid-template-columns: minmax(0, 1fr) minmax(90px, .7fr); gap: 10px; padding: 12px; margin-bottom: 10px; border-radius: var(--ojp-radius-sm); background: var(--ojp-color-subtle); }
+.ojmicrobit .ojmicrobit-condition > strong, .ojmicrobit .ojmicrobit-condition > button { grid-column: 1 / -1; justify-self: start; }
+.ojmicrobit .ojmicrobit-condition-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.ojmicrobit .ojmicrobit-output-sequence { padding: 14px; margin: 12px 0; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-md); background: var(--ojp-color-subtle); }
+.ojmicrobit .ojmicrobit-sequence-heading { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.ojmicrobit .ojmicrobit-sequence-heading > .ojp-field { flex: 1 1 180px; }
+.ojmicrobit .ojmicrobit-sequence-action { padding: 12px; border-radius: var(--ojp-radius-sm); background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-sequence-main { display: grid; grid-template-columns: 24px minmax(90px, 1fr) minmax(90px, 1fr); align-items: start; gap: 10px; }
+.ojmicrobit .ojmicrobit-sequence-number { align-self: start; padding-top: 28px; color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-sequence-time { margin-top: 12px; }
+.ojmicrobit .ojmicrobit-sequence-time > summary, .ojmicrobit .ojmicrobit-result-sequence > summary { cursor: pointer; font-weight: 600; }
+.ojmicrobit .ojmicrobit-sequence-time .ojmicrobit-fields { margin-top: 12px; }
+.ojmicrobit .ojmicrobit-sequence-arrow { padding: 8px; text-align: center; color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-result-sequence { padding: 12px; margin: 12px 0; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-sm); }
+.ojmicrobit .ojmicrobit-field-error { margin: 6px 0; color: var(--ojp-color-danger); font-weight: 600; overflow-wrap: anywhere; }
+.ojmicrobit [aria-invalid="true"] { outline: 2px solid var(--ojp-color-danger); outline-offset: 2px; }
+.ojmicrobit [data-mb-publication-review] { border: 2px solid var(--ojp-color-primary); }
+.ojmicrobit [data-mb-publication-review] > .ojp-field { margin: 16px 0; }
+.ojmicrobit [data-mb-publication-review] > .ojmicrobit-review-ack { display: flex; align-items: center; gap: 8px; }
+.ojmicrobit .ojmicrobit-review-ack input { order: -1; width: auto; flex: 0 0 auto; }
+.ojmicrobit .ojmicrobit-review-times, .ojmicrobit .ojmicrobit-review-preview { margin: 16px 0; padding: 14px; background: var(--ojp-color-subtle); border-radius: var(--ojp-radius-sm); }
+.ojmicrobit .ojmicrobit-review-times > summary, .ojmicrobit .ojmicrobit-review-preview > summary { cursor: pointer; font-weight: 600; }
+.ojmicrobit .ojmicrobit-review-source { padding: 12px; max-height: 260px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--ojp-color-surface); border: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-class-choices { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.ojmicrobit .ojmicrobit-class-choices > .ojp-field { display: flex; align-items: center; flex-direction: row-reverse; justify-content: start; }
+.ojmicrobit .ojmicrobit-class-choices input { width: auto; }
+.ojmicrobit .ojmicrobit-class-choices > nav, .ojmicrobit .ojmicrobit-class-choices > p { grid-column: 1 / -1; }
+.ojmicrobit .ojmicrobit-step-time, .ojmicrobit .ojmicrobit-advanced { margin: 14px 0 0; padding: 12px 14px; border-top: 1px solid var(--ojp-color-line); color: var(--ojp-color-ink-2); }
+.ojmicrobit .ojmicrobit-step-time > summary, .ojmicrobit .ojmicrobit-advanced > summary { cursor: pointer; font-weight: 600; }
+.ojmicrobit .ojmicrobit-advanced[open] { background: var(--ojp-color-surface); border-radius: var(--ojp-radius-sm); }
+.ojmicrobit .ojmicrobit-advanced > .ojp-field { margin: 16px 0; }
+.ojmicrobit .ojmicrobit-list { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); }
+.ojmicrobit .ojmicrobit-list .ojmicrobit-card { margin: 0; }
+@keyframes ojmicrobit-rotate { to { transform: rotate(360deg); } }
+@media (max-width: 1200px) { .ojmicrobit .ojmicrobit-workspace { grid-template-columns: minmax(0, 1fr); } .ojmicrobit .ojmicrobit-pinboard { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); } }
+@media (max-width: 600px) { .ojmicrobit .ojmicrobit-card { padding: 14px; } .ojmicrobit .ojmicrobit-fields { grid-template-columns: minmax(0, 1fr); } .ojmicrobit .ojmicrobit-editor { height: 620px; } .ojmicrobit .ojmicrobit-toolbar .ojp-button { flex: 1 1 auto; } }
+@media (max-width: 800px) { .ojmicrobit .ojmicrobit-step-flow { grid-template-columns: minmax(0, 1fr); } .ojmicrobit .ojmicrobit-step-arrow { transform: rotate(90deg); margin: 0; } .ojmicrobit .ojmicrobit-example { padding: 12px; } }
+@media (prefers-reduced-motion: reduce) { .ojmicrobit .ojmicrobit-indicator.is-motor.is-active > span { animation: none; } }
+
+.ojmicrobit .ojmicrobit-navigation { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 20px 0 24px; border-bottom: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-nav-item { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; position: relative; flex: 0 1 auto; min-height: 44px; padding: 10px 16px; border: 0; border-bottom: 3px solid transparent; border-radius: var(--ojp-radius-sm) var(--ojp-radius-sm) 0 0; background: transparent; color: var(--ojp-color-muted); font: inherit; font-weight: 600; cursor: pointer; }
+.ojmicrobit .ojmicrobit-nav-item:hover { background: var(--ojp-color-subtle); color: var(--ojp-color-ink); }
+.ojmicrobit .ojmicrobit-nav-item[aria-current="page"] { border-bottom-color: var(--ojp-color-primary); background: var(--ojp-color-accent-bg); color: var(--ojp-color-primary-hover); font-weight: 700; }
+.ojmicrobit .ojmicrobit-nav-item:focus-visible, .ojmicrobit .ojmicrobit-menu-link:focus-visible { outline: 3px solid var(--ojp-color-focus); outline-offset: 2px; }
+.ojmicrobit .ojmicrobit-navigation--native { gap: 12px; padding: 0 0 12px; }
+.ojmicrobit .ojmicrobit-navigation-current { display: inline-flex; align-items: center; min-height: 44px; color: var(--ojp-color-ink); font-weight: 700; }
+.ojmicrobit .ojmicrobit-navigation-current::before { content: '/'; margin-right: 12px; color: var(--ojp-color-tertiary); font-weight: 400; }
+.ojmicrobit .ojmicrobit-menu-link { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 2px; color: var(--ojp-color-primary); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-menu-link:hover { color: var(--ojp-color-primary-hover); }
+.ojmicrobit .ojmicrobit-menu-alternate { margin-left: auto; }
+.ojmicrobit .ojmicrobit-empty { display: grid; align-content: start; gap: 8px; min-width: 0; padding: 20px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-md); background: var(--ojp-color-subtle); text-align: left; }
+.ojmicrobit .ojmicrobit-empty > h3 { margin: 0; color: var(--ojp-color-ink); font-size: var(--ojp-text-title3); line-height: 1.5; overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-empty > p { margin: 0; color: var(--ojp-color-muted); line-height: 1.6; overflow-wrap: anywhere; }
+.ojmicrobit .ojp-empty-state { min-height: 0; padding: 16px; text-align: left; place-items: start; }
+.ojmicrobit .ojmicrobit-list > .ojmicrobit-empty { grid-column: 1 / -1; }
+.ojmicrobit .ojmicrobit-button { max-width: 100%; min-height: 44px; padding-block: 8px; white-space: normal; overflow-wrap: anywhere; text-align: center; }
+.ojmicrobit .ojmicrobit-button[data-mb-variant="primary"] { border-color: var(--ojp-color-primary); background: var(--ojp-color-primary); color: var(--ojp-color-on-accent); }
+.ojmicrobit .ojmicrobit-button[data-mb-variant="primary"]:hover { border-color: var(--ojp-color-primary-hover); background: var(--ojp-color-primary-hover); color: var(--ojp-color-on-accent); }
+@media (max-width: 600px) { .ojmicrobit .ojmicrobit-navigation { gap: 4px; } .ojmicrobit .ojmicrobit-nav-item { flex: 1 1 auto; padding-inline: 10px; } .ojmicrobit .ojmicrobit-menu-alternate { margin-left: 0; } .ojmicrobit .ojmicrobit-empty { padding: 16px; } }
+
+.ojmicrobit .ojmicrobit-page-header { margin-bottom: 12px; }
+.ojmicrobit .ojmicrobit-page-header p { margin-bottom: 0; }
+.ojmicrobit .ojmicrobit-problem-table table { width: 100%; table-layout: fixed; }
+.ojmicrobit .ojmicrobit-problem-table th:first-child, .ojmicrobit .ojmicrobit-problem-table td:first-child { width: 56px; }
+.ojmicrobit .ojmicrobit-problem-table th:nth-child(3), .ojmicrobit .ojmicrobit-problem-table td:nth-child(3) { width: 66px; }
+.ojmicrobit .ojmicrobit-problem-table th:nth-child(4), .ojmicrobit .ojmicrobit-problem-table td:nth-child(4) { width: 112px; }
+.ojmicrobit .ojmicrobit-problem-table td { padding-block: 12px; }
+.ojmicrobit .ojmicrobit-problem-table td:nth-child(2) > a { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 600; }
+.ojmicrobit .ojmicrobit-row-link { color: var(--ojp-color-primary); text-decoration: none; }
+.ojmicrobit .ojmicrobit-row-link:hover { text-decoration: underline; }
+.ojmicrobit .ojmicrobit-row-link:focus-visible { outline: 3px solid var(--ojp-color-focus); outline-offset: 2px; }
+.ojmicrobit .ojmicrobit-row-actions { display: flex; gap: 12px; white-space: nowrap; font-size: var(--ojp-text-caption); }
+.ojmicrobit .ojmicrobit-compose-section { margin: 12px 0; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-md); background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-compose-section > summary { padding: 16px 18px; cursor: pointer; font-weight: 700; }
+.ojmicrobit .ojmicrobit-compose-section > .ojmicrobit-card { border: 0; margin: 0; padding-top: 4px; }
+.ojmicrobit .ojmicrobit-compose-section > .ojmicrobit-card > h2 { font-size: var(--ojp-text-title3); }
+.ojmicrobit .ojmicrobit-optional { padding: 0 18px 12px; }
+.ojmicrobit .ojmicrobit-optional > summary, .ojmicrobit .ojmicrobit-example-options > summary { cursor: pointer; color: var(--ojp-color-muted); font-size: var(--ojp-text-caption); }
+.ojmicrobit .ojmicrobit-example-options { margin-block: 10px; }
+.ojmicrobit .ojmicrobit-step-card { padding: 0; margin-block: 10px; }
+.ojmicrobit .ojmicrobit-step-card > summary { padding: 12px 14px; cursor: pointer; }
+.ojmicrobit .ojmicrobit-step-card > summary .ojmicrobit-step-summary { margin: 8px 0 0; padding: 8px 10px; font-size: var(--ojp-text-caption); }
+.ojmicrobit .ojmicrobit-step-card > .ojmicrobit-step-flow, .ojmicrobit .ojmicrobit-step-card > .ojmicrobit-step-time, .ojmicrobit .ojmicrobit-step-card > .ojmicrobit-toolbar { margin: 12px 14px; }
+.ojmicrobit .ojmicrobit-story { display: grid; gap: 10px; list-style: none; padding: 0; margin: 12px 0; }
+.ojmicrobit .ojmicrobit-story-step { min-width: 0; padding: 14px 16px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-md); background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-story-heading { color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-story-step p { margin: 8px 0 0; overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-story-output { font-weight: 600; }
+.ojmicrobit .ojmicrobit-story-example { margin-bottom: 16px; }
+.ojmicrobit .ojmicrobit-example-readout > summary { cursor: pointer; font-weight: 700; }
+@media (max-width: 600px) { .ojmicrobit .ojmicrobit-example { padding: 10px; margin-block: 12px; } .ojmicrobit .ojmicrobit-problem-table td, .ojmicrobit .ojmicrobit-problem-table th { padding-inline: 8px; } .ojmicrobit .ojmicrobit-problem-table th:first-child, .ojmicrobit .ojmicrobit-problem-table td:first-child { width: 44px; } .ojmicrobit .ojmicrobit-row-actions { gap: 8px; } }
+
+.ojmicrobit [data-microbit-status]:empty { display: none; }
+.ojmicrobit[data-mb-view="detail"] > .ojmicrobit-page-header, .ojmicrobit[data-mb-view="preview"] > .ojmicrobit-page-header { display: none; }
+.ojmicrobit .ojmicrobit-compose-section > .ojmicrobit-card > h2:first-child { display: none; }
+.ojmicrobit .ojmicrobit-list-tools { justify-content: flex-end; }
+.ojmicrobit .ojmicrobit-list-tools .ojmicrobit-button { flex: 0 0 auto; min-height: 36px; padding: 6px 12px; font-size: var(--ojp-text-caption); }
+
+/* Guided pin steps share platform tokens and remain within the addon surface. */
+.ojmicrobit .ojmicrobit-wizard { box-sizing: border-box; width: min(620px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 22px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-lg); background: var(--ojp-color-surface); color: var(--ojp-color-ink); overflow: auto; overscroll-behavior: contain; box-shadow: var(--ojp-shadow-3); }
+.ojmicrobit .ojmicrobit-wizard::backdrop { background: var(--ojp-color-overlay, rgba(0, 0, 0, .5)); }
+.ojmicrobit .ojmicrobit-wizard h2 { margin: 14px 0; font-size: var(--ojp-text-title3); line-height: 1.5; }
+.ojmicrobit .ojmicrobit-wizard-header, .ojmicrobit .ojmicrobit-wizard-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ojmicrobit .ojmicrobit-wizard-header .ojmicrobit-button { font-size: var(--ojp-text-caption); }
+.ojmicrobit .ojmicrobit-wizard-body { display: grid; gap: 16px; min-width: 0; margin: 18px 0; }
+.ojmicrobit .ojmicrobit-wizard-body p { margin: 0; line-height: 1.65; overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-wizard-body .ojp-field { min-width: 0; }
+.ojmicrobit .ojmicrobit-wizard-body input, .ojmicrobit .ojmicrobit-wizard-body select { box-sizing: border-box; width: 100%; min-width: 0; }
+.ojmicrobit .ojmicrobit-wizard-relation, .ojmicrobit .ojmicrobit-wizard-pin { padding: 12px 14px; border-radius: var(--ojp-radius-sm); background: var(--ojp-color-accent-bg); color: var(--ojp-color-primary-hover); font-weight: 600; }
+.ojmicrobit .ojmicrobit-wizard-values { display: flex; gap: 12px; }
+.ojmicrobit .ojmicrobit-wizard-values > button { flex: 1 1 0; }
+.ojmicrobit .ojmicrobit-wizard-timing > summary { cursor: pointer; font-weight: 600; }
+.ojmicrobit .ojmicrobit-wizard-timing > .ojp-field { margin-top: 16px; }
+.ojmicrobit .ojmicrobit-wizard-timing > p { margin-top: 12px; }
+.ojmicrobit .ojmicrobit-wizard-footer { padding-top: 16px; border-top: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-stage-flow { display: grid; gap: 16px; padding: 0; margin: 14px 0; list-style: none; }
+.ojmicrobit .ojmicrobit-stage-flow h4 { margin: 0 0 12px; }
+.ojmicrobit .ojmicrobit-flow-input { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.ojmicrobit .ojmicrobit-flow-input > span { min-width: 0; overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-flow-lanes { display: grid; gap: 12px; margin: 12px 0; }
+.ojmicrobit .ojmicrobit-flow-lanes.is-parallel { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); padding-left: 12px; border-left: 3px double var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-flow-lane { min-width: 0; padding: 12px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-sm); background: var(--ojp-color-subtle); overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-flow-mode { display: block; margin: 8px 0; font-size: var(--ojp-text-caption); color: var(--ojp-color-primary-hover); font-weight: 600; }
+.ojmicrobit .ojmicrobit-flow-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.ojmicrobit .ojmicrobit-flow-action { display: grid; flex: 1 1 110px; gap: 6px; min-width: 0; padding: 10px; border-radius: var(--ojp-radius-sm); background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-flow-action > strong { color: var(--ojp-color-primary-hover); }
+.ojmicrobit .ojmicrobit-flow-action > small { display: block; line-height: 1.5; }
+.ojmicrobit .ojmicrobit-flow-action > button { justify-self: start; }
+.ojmicrobit .ojmicrobit-flow-arrow { flex: 0 0 auto; color: var(--ojp-color-primary); font-weight: 700; }
+.ojmicrobit .ojmicrobit-flow-gap { margin: 12px 0 0; font-size: var(--ojp-text-caption); color: var(--ojp-color-muted); }
+.ojmicrobit [hidden][hidden] { display: none; }
+.ojmicrobit .ojmicrobit-batch-wizard { width: min(680px, calc(100vw - 24px)); }
+.ojmicrobit .ojmicrobit-batch-choices { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ojmicrobit .ojmicrobit-batch-choices .ojp-field { display: flex; align-items: center; flex-direction: row-reverse; justify-content: flex-end; gap: 10px; padding: 12px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-sm); margin: 0; }
+.ojmicrobit .ojmicrobit-batch-choices input[type="checkbox"] { width: 20px; height: 20px; flex: 0 0 20px; }
+.ojmicrobit .ojmicrobit-batch-choices .ojp-label { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-batch-connect { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 16px; background: var(--ojp-color-subtle); border-radius: var(--ojp-radius-md); }
+.ojmicrobit .ojmicrobit-batch-connect > button { align-self: end; }
+.ojmicrobit .ojmicrobit-batch-channel { padding: 16px; border: 1px solid var(--ojp-color-line); border-radius: var(--ojp-radius-md); min-width: 0; display: grid; gap: 12px; }
+.ojmicrobit .ojmicrobit-batch-channel h3 { margin: 0; font-size: var(--ojp-text-body); }
+.ojmicrobit .ojmicrobit-batch-channel .ojmicrobit-toolbar { margin: 0; }
+.ojmicrobit .ojmicrobit-batch-value { min-width: 0; }
+.ojmicrobit .ojmicrobit-batch-wizard .ojmicrobit-wizard-timing .ojp-field { margin-top: 12px; }
+.ojmicrobit .ojmicrobit-batch-wizard[open] { display: flex; flex-direction: column; overflow: hidden; }
+.ojmicrobit .ojmicrobit-batch-wizard > .ojmicrobit-wizard-header, .ojmicrobit .ojmicrobit-batch-wizard > h2, .ojmicrobit .ojmicrobit-batch-wizard > .ojmicrobit-wizard-footer, .ojmicrobit .ojmicrobit-batch-wizard > .ojmicrobit-field-error { flex: 0 0 auto; }
+.ojmicrobit .ojmicrobit-batch-wizard > .ojmicrobit-wizard-body { min-height: 0; overflow-y: auto; padding: 4px 3px; margin: 12px 0; overscroll-behavior: contain; }
+.ojmicrobit .ojmicrobit-batch-wizard > .ojmicrobit-field-error:empty { display: none; }
+/* Focused page geometry follows the selected design, within native site navigation. */
+.ojmicrobit.has-focus-surface > .ojmicrobit-page-header { display: none; }
+.ojmicrobit .ojmicrobit-focus-surface, .ojmicrobit .ojmicrobit-focus-surface * { box-sizing: border-box; }
+.ojmicrobit .ojmicrobit-focus-surface { display: flex; flex-direction: column; min-height: 832px; min-width: 0; width: 100%; margin: 0; border: 1px solid var(--ojp-color-line); border-radius: 12px; background: var(--ojp-color-subtle); color: var(--ojp-color-ink); font: 14px/1.65 var(--ojp-font-sans); overflow-wrap: anywhere; }
+.ojmicrobit .ojmicrobit-focus-surface h1, .ojmicrobit .ojmicrobit-focus-surface h2, .ojmicrobit .ojmicrobit-focus-surface h3, .ojmicrobit .ojmicrobit-focus-surface p { margin: 0; }
+.ojmicrobit .ojmicrobit-focus-surface h1 { font-size: 25px; line-height: 1.4; font-weight: 700; letter-spacing: -.8px; }
+.ojmicrobit .ojmicrobit-focus-surface h2 { font-size: 19px; line-height: 1.5; font-weight: 700; letter-spacing: -.4px; }
+.ojmicrobit .ojmicrobit-focus-surface h3 { font-size: 15px; line-height: 1.65; font-weight: 700; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-muted { font-size: 12px; line-height: 1.65; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; width: auto; max-width: 100%; padding: 9px 14px; border: 1px solid var(--ojp-color-line); border-radius: 8px; background: var(--ojp-color-surface); color: var(--ojp-color-ink); box-shadow: none; text-decoration: none; text-align: center; font: 600 14px/1.4 var(--ojp-font-sans); white-space: normal; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-button[data-mb-variant="primary"] { background: var(--ojp-color-primary); color: var(--ojp-color-on-accent); border-color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-focus-surface .ojp-field { display: grid; gap: 7px; min-width: 0; margin: 0; }
+.ojmicrobit .ojmicrobit-focus-surface .ojp-label { color: var(--ojp-color-ink); font-size: 14px; font-weight: 600; line-height: 1.65; }
+.ojmicrobit .ojmicrobit-focus-surface .ojp-input, .ojmicrobit .ojmicrobit-focus-surface .ojp-select, .ojmicrobit .ojmicrobit-focus-surface .ojp-textarea { width: 100%; height: auto; min-width: 0; padding: 10px 12px; border: 1px solid var(--ojp-color-line); border-radius: 8px; color: var(--ojp-color-ink); background: var(--ojp-color-surface); font: 400 15px/1.6 var(--ojp-font-sans); }
+.ojmicrobit .ojmicrobit-focus-surface input[type="checkbox"] { width: 20px; height: 20px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojp-textarea { min-height: 88px; }
+.ojmicrobit .ojmicrobit-focus-header { padding: 22px 26px 18px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-breadcrumb { margin-bottom: 10px; font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-focus-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-subtitle { margin-top: 7px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-focus-chip { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 5px; background: var(--ojp-color-fill-2); color: var(--ojp-color-ink); font-size: 12px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-author-layout { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 28px; align-items: start; padding: 8px 26px 26px; margin: 0; }
+.ojmicrobit .ojmicrobit-author-nav { display: grid; gap: 6px; align-content: start; padding-top: 3px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-author-nav > button { min-height: 0; width: 100%; justify-content: start; gap: 10px; padding: 12px 10px; border: 0; border-radius: 8px; background: transparent; text-align: left; color: var(--ojp-color-muted); font-size: 13px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-author-nav > button[aria-current="step"] { background: var(--ojp-color-accent-bg); color: var(--ojp-color-primary-hover); font-weight: 700; }
+.ojmicrobit .ojmicrobit-author-index { display: grid; place-items: center; width: 23px; height: 23px; flex: 0 0 23px; border-radius: 50%; background: var(--ojp-color-fill-2); font-size: 12px; }
+.ojmicrobit .ojmicrobit-author-nav > button[aria-current="step"] .ojmicrobit-author-index { background: var(--ojp-color-primary); color: var(--ojp-color-on-accent); }
+.ojmicrobit .ojmicrobit-author-panels { min-width: 0; }
+.ojmicrobit .ojmicrobit-author-panels > .ojmicrobit-compose-section { padding: 0; margin: 0; border: 0; border-radius: 0; background: transparent; }
+.ojmicrobit .ojmicrobit-author-panels > .ojmicrobit-compose-section > summary { display: none; }
+.ojmicrobit .ojmicrobit-focus-kicker { display: block; margin-bottom: 5px; color: var(--ojp-color-primary-hover); font-size: 11px; font-weight: 700; letter-spacing: .7px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-author-heading { margin: 0 0 5px; font-size: 19px; line-height: 1.5; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-card { padding: 0; margin: 0; border: 0; border-radius: 0; background: transparent; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-card > h2:first-child, .ojmicrobit .ojmicrobit-author-panels [data-mb-scenarios] > p:first-of-type { display: none; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-fields { grid-template-columns: minmax(0, 1fr); gap: 18px; margin: 18px 0; }
+.ojmicrobit .ojmicrobit-author-panels [data-mb-author-panel="1"] > .ojmicrobit-author-heading { margin-bottom: 0; }
+.ojmicrobit .ojmicrobit-author-panels [data-mb-author-panel="2"] > p { margin-bottom: 20px; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-example { margin: 0 0 16px; padding: 0; border: 0; background: transparent; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-stage-flow { display: grid; gap: 14px; margin: 0 0 18px; padding: 0; list-style: none; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-story-step { min-width: 0; padding: 18px; border: 1px solid var(--ojp-color-line); border-radius: 10px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-stage-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 0 0 16px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-stage-heading h3 { margin: 0; color: var(--ojp-color-ink); font-size: 15px; font-weight: 700; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-stage-heading button { min-height: 0; padding: 0; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; background: transparent; color: var(--ojp-color-primary-hover); font-size: 13px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-focus-inputs { padding-bottom: 14px; border-bottom: 1px solid var(--ojp-color-line); margin-bottom: 14px; }
+.ojmicrobit .ojmicrobit-focus-input-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.ojmicrobit .ojmicrobit-focus-input-row + .ojmicrobit-focus-input-row { margin-top: 10px; }
+.ojmicrobit .ojmicrobit-focus-input-name { display: inline-flex; align-items: baseline; gap: 7px; }
+.ojmicrobit .ojmicrobit-focus-input-name small { color: var(--ojp-color-primary-hover); font-size: 12px; }
+.ojmicrobit .ojmicrobit-focus-input-value { margin-left: auto; font-size: 20px; font-weight: 700; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-mode[data-mb-parallel-caption] { margin: 0 0 12px; color: var(--ojp-color-muted); font-size: 12px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-lanes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin: 0; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-lanes.is-parallel { grid-template-columns: minmax(0, 1fr); padding-left: 14px; border-left: 2px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-lane { display: grid; grid-template-columns: 80px minmax(0, 1fr); align-items: center; gap: 10px; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
+.ojmicrobit .ojmicrobit-flow-lane-name { font-size: 13px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-flow-lane-name small { display: block; color: var(--ojp-color-muted); font-size: 11px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-lane > .ojmicrobit-flow-mode { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-actions { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; min-width: 0; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-action { display: grid; flex: 0 0 auto; gap: 1px; min-width: 100px; padding: 9px 12px; border-radius: 7px; background: var(--ojp-color-fill-2); color: var(--ojp-color-ink); font-size: 13px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-action.is-on { background: var(--ojp-color-accent-bg); color: var(--ojp-color-primary-hover); }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-action strong { color: inherit; font-size: 13px; font-weight: 600; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-action > span { color: var(--ojp-color-muted); font-size: 11px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-action > small { display: none; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-arrow { color: var(--ojp-color-muted); font-size: 14px; font-weight: 600; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-advanced { margin: 0; padding: 0; border: 0; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-advanced > summary { padding: 10px 0; font-size: 12px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-advanced[open] { padding-top: 12px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-add { width: 100%; border-style: dashed; background: transparent; color: var(--ojp-color-primary-hover); font-weight: 600; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-add[data-mb-variant="primary"] { background: var(--ojp-color-primary); color: var(--ojp-color-on-accent); border-style: solid; }
+.ojmicrobit .ojmicrobit-focus-device-summary { display: flex; gap: 8px 14px; flex-wrap: wrap; align-items: center; margin: 18px 0 8px; font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-device-summary > button { padding: 0; min-height: 0; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; color: var(--ojp-color-primary-hover); background: transparent; font-size: 12px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-focus-management, .ojmicrobit .ojmicrobit-focus-devices, .ojmicrobit .ojmicrobit-focus-maintenance { margin: 8px 0 0; font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-focus-management > summary, .ojmicrobit .ojmicrobit-focus-maintenance > summary { padding: 8px 0; cursor: pointer; font-weight: 400; }
+.ojmicrobit .ojmicrobit-focus-devices > summary { display: none; }
+.ojmicrobit .ojmicrobit-focus-devices[open] { margin-top: 16px; }
+.ojmicrobit .ojmicrobit-focus-publication { display: grid; gap: 18px; margin-top: 20px; padding: 18px; border: 1px solid var(--ojp-color-line); border-radius: 10px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-focus-publication [data-mb-audience] > h2, .ojmicrobit .ojmicrobit-focus-publication [data-mb-audience] > .ojp-notice--info { display: none; }
+.ojmicrobit .ojmicrobit-author-panels [data-mb-publication-review] { padding: 18px; border: 1px solid var(--ojp-color-line); border-radius: 10px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-author-panels [data-mb-publication-review] > h2:first-child { display: block; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-author-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 26px; margin: auto 0 0; border-top: 1px solid var(--ojp-color-line); border-radius: 0 0 12px 12px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-author-footer-copy { display: grid; gap: 3px; min-width: 0; margin-right: auto; flex: 1 1 200px; color: var(--ojp-color-muted); font-size: 12px; }
+.ojmicrobit .ojmicrobit-author-status { font-size: 12px; }
+.ojmicrobit .ojmicrobit-author-status:empty { display: none; }
+.ojmicrobit .ojmicrobit-focused-problem { max-width: none; margin: 0; }
+.ojmicrobit .ojmicrobit-focus-read-body { width: 100%; max-width: 850px; padding: 4px 36px 28px; margin: 0 auto; }
+.ojmicrobit .ojmicrobit-problem-overview { padding: 0; border: 0; border-radius: 0; background: transparent; margin: 0 0 24px; }
+.ojmicrobit .ojmicrobit-problem-brief { padding: 18px 20px; border-left: 3px solid var(--ojp-color-primary); border-radius: 0 8px 8px 0; background: var(--ojp-color-accent-bg); }
+.ojmicrobit .ojmicrobit-problem-brief h2 { margin-bottom: 12px; font-size: 19px; }
+.ojmicrobit .ojmicrobit-problem-brief .ojmicrobit-description { margin: 0; font-size: 15px; line-height: 1.85; }
+.ojmicrobit .ojmicrobit-problem-devices { margin-top: 24px; }
+.ojmicrobit .ojmicrobit-problem-devices h2 { margin-bottom: 12px; font-size: 15px; }
+.ojmicrobit .ojmicrobit-device-summary { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.ojmicrobit .ojmicrobit-device-summary > span { display: inline-flex; align-items: baseline; gap: 7px; }
+.ojmicrobit .ojmicrobit-device-summary strong { color: var(--ojp-color-primary-hover); font-size: 12px; font-weight: 700; }
+.ojmicrobit .ojmicrobit-problem-devices > .ojmicrobit-optional { padding: 0; margin-top: 8px; font-size: 12px; }
+.ojmicrobit .ojmicrobit-focused-examples { padding: 0; margin: 0; border: 0; border-radius: 10px; background: transparent; }
+.ojmicrobit .ojmicrobit-focused-examples > h2 { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+.ojmicrobit .ojmicrobit-focused-examples > h2 small { color: var(--ojp-color-muted); font-size: 12px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-focused-examples .ojmicrobit-story { margin: 0; gap: 24px; }
+.ojmicrobit .ojmicrobit-focused-examples .ojmicrobit-story-example { margin: 0; }
+.ojmicrobit .ojmicrobit-focused-examples .ojmicrobit-story > .ojmicrobit-story-step:only-child > .ojmicrobit-story-heading { display: none; }
+.ojmicrobit .ojmicrobit-focused-examples .ojmicrobit-story-example > h3 { margin: 0 0 12px; font-size: 14px; }
+.ojmicrobit .ojmicrobit-focused-examples .ojmicrobit-story-step { border: 0; border-radius: 0; padding: 0; background: transparent; }
+.ojmicrobit .ojmicrobit-focused-examples .ojmicrobit-story-heading { display: block; margin-bottom: 12px; color: var(--ojp-color-muted); font-size: 12px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-focused-examples .is-readonly-input .ojmicrobit-focus-chip, .ojmicrobit .ojmicrobit-focused-examples .is-readonly-input .ojmicrobit-focus-input-name small { display: none; }
+.ojmicrobit .ojmicrobit-focused-examples .is-readonly-input .ojmicrobit-focus-input-value { margin-left: 0; }
+.ojmicrobit .ojmicrobit-focus-read-body > [data-mb-technical-tests] { margin: 16px 0 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--ojp-color-muted); font-size: 12px; }
+.ojmicrobit .ojmicrobit-focus-read-body > [data-mb-technical-tests] > summary { padding: 8px 0; font-weight: 400; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-problem-actions { padding: 16px 26px; margin: auto 0 0; border-top: 1px solid var(--ojp-color-line); border-radius: 0 0 12px 12px; background: var(--ojp-color-surface); gap: 12px; }
+.ojmicrobit .ojmicrobit-problem-footer-copy { flex: 1 1 220px; display: grid; gap: 3px; color: var(--ojp-color-muted); font-size: 12px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-context { padding: 0; margin: 0; border: 0; border-radius: 0; background: transparent; color: var(--ojp-color-muted); font-size: 12px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-problem-title { margin-top: 10px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-chip.is-accent { color: var(--ojp-color-primary-hover); background: var(--ojp-color-accent-bg); }
+.ojmicrobit .ojmicrobit-problem-heading > .ojmicrobit-focus-context { margin-top: 12px; color: var(--ojp-color-primary-hover); }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-history-link { justify-self: start; min-height: 0; border: 0; border-radius: 0; background: transparent; padding: 0; color: var(--ojp-color-muted); font-size: 12px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-problem-tools { margin: 0 0 12px; }
+.ojmicrobit .ojmicrobit-problem-tools .ojmicrobit-button { min-height: 0; padding: 0; border: 0; background: transparent; border-radius: 0; font-size: 12px; }
+@media (max-width: 760px) {
+  .ojmicrobit .ojmicrobit-author-layout { grid-template-columns: 128px minmax(0, 1fr); gap: 18px; }
+}
+@media (max-width: 520px) {
+  .ojmicrobit .ojmicrobit-focus-surface { min-height: 1064px; }
+  .ojmicrobit .ojmicrobit-focus-header { padding: 18px 18px 16px; }
+  .ojmicrobit .ojmicrobit-focus-surface h1 { font-size: 23px; }
+  .ojmicrobit .ojmicrobit-author-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 0 18px 22px; }
+  .ojmicrobit .ojmicrobit-author-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-author-nav > button { padding: 8px 3px; gap: 4px; font-size: 12px; justify-content: center; flex-wrap: wrap; }
+  .ojmicrobit .ojmicrobit-author-long { display: none; }
+  .ojmicrobit .ojmicrobit-author-index { width: 20px; height: 20px; flex-basis: 20px; font-size: 11px; }
+  .ojmicrobit .ojmicrobit-author-panels .ojmicrobit-story-step { padding: 16px; }
+  .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-lane { grid-template-columns: minmax(0, 1fr); gap: 7px; }
+  .ojmicrobit .ojmicrobit-flow-lane-name small { display: inline; margin-left: 6px; }
+  .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-flow-action { min-width: 80px; padding: 8px 10px; }
+  .ojmicrobit .ojmicrobit-focus-read-body { padding: 0 20px 22px; }
+  .ojmicrobit .ojmicrobit-problem-brief { padding: 16px; }
+  .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-author-footer, .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-problem-actions { padding: 16px 18px; }
+  .ojmicrobit .ojmicrobit-author-footer-copy, .ojmicrobit .ojmicrobit-problem-footer-copy { flex-basis: 100%; }
+  .ojmicrobit .ojmicrobit-focus-surface .ojp-input, .ojmicrobit .ojmicrobit-focus-surface .ojp-select, .ojmicrobit .ojmicrobit-focus-surface .ojp-textarea { font-size: 16px; }
+  .ojmicrobit .ojmicrobit-batch-choices, .ojmicrobit .ojmicrobit-batch-connect { grid-template-columns: minmax(0, 1fr); }
+  .ojmicrobit .ojmicrobit-batch-channel { padding: 14px; }
+  .ojmicrobit .ojmicrobit-batch-wizard .ojmicrobit-wizard-footer > button { flex: 1 1 auto; }
+}
+@media (pointer: coarse) {
+  .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-button, .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-author-nav > button, .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-stage-heading button, .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-device-summary > button { min-height: 44px; }
+}

@@ -1,8 +1,8 @@
 {
   "contract": "oj_ai.release_boundary_fingerprint@1",
   "algorithm": "sha256-path-nul-bytes-nul-v1",
-  "addon_version": "1.2.15",
-  "platform_addon_api_version": "1.7.0",
+  "addon_version": "1.2.26",
+  "platform_addon_api_version": "1.8.0",
   "groups": {
     "addon_api": {
       "file_count": 21,
@@ -29,7 +29,7 @@
         "src/Platform/Worksheet_Workflow.php",
         "src/Security/Addon_Capabilities.php"
       ],
-      "sha256": "710141d9451f17ac5bc177380e208398b7f92bab2d4c5ef9765ffaa854bab27a"
+      "sha256": "b6311093fac1cf7ef18ca8cb95c611b4165f5733ce5551ef93fffcb6db611230"
     },
     "database_schema": {
       "file_count": 36,
@@ -71,7 +71,7 @@
         "src/Database/Status_Values.php",
         "src/Database/Table_Names.php"
       ],
-      "sha256": "56a0389741773645852da5d51cd5fa396dab5f2c25259f7a987b8493db4c808d"
+      "sha256": "f0490e837c49111eb790a99e6fee36e1f962064658ec21e675143147c541950a"
     },
     "rest_routes": {
       "file_count": 79,
@@ -156,7 +156,7 @@
         "src/Worksheet/Evaluation/Presentation/Worksheet_Evaluation_Rest_Controller.php",
         "src/Worksheet/Evaluation/Presentation/Worksheet_Evaluation_Review_Rest_Controller.php"
       ],
-      "sha256": "2bf659431ab5f61575153cdd2c8264f835da96dc0b57b69060e3e32311edc18a"
+      "sha256": "8790e13f17a55f1a7bfd8f65944bba31746a03d53ebd0b78b8e53fd6f229eb0f"
     },
     "platform_addon_api": {
       "file_count": 96,
@@ -258,7 +258,7 @@
         "src/AddonApi/V1/Research/ResearchLearningDataV1.php",
         "src/AddonApi/V1/Research/ResearchRuntimeV1.php"
       ],
-      "sha256": "5456e7b879dc7f0bf3fe6f9451c3e7032b4b5dda5dde65274a06e6e05aa4d5df"
+      "sha256": "d46dfc238d1ab1cd5b9fe6e306a3d49b825ec9f9e790d28b87fe3a419aa6c0f6"
     }
   }
 }

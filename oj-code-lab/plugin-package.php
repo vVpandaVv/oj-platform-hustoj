@@ -8,7 +8,7 @@ declare(strict_types=1);
 return array(
     'id' => 'oj-code-lab',
     'name' => 'OJ Code Lab',
-    'version' => '1.4.0',
+    'version' => '1.4.1',
     'main_file' => 'oj-code-lab.php',
     'requires' => array('oj-platform:^2.0.0-dev.30'),
     'soft_requires' => array(),

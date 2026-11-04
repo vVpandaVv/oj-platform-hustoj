@@ -37,21 +37,33 @@ if ($LASTEXITCODE -ne 0) { throw 'Addon registration check failed; no ZIP was cr
 
 # Package the working tree, including uncommitted runtime assets, never Git history or test data.
 $files = [Collections.Generic.List[IO.FileInfo]]::new()
-foreach ($name in @('edu-games.php', 'plugin-package.php', 'uninstall.php', 'README.md')) {
+foreach ($name in @('edu-games.php', 'binary-relay.php', 'realtime-addon.json', 'plugin-package.php', 'uninstall.php', 'README.md')) {
     $files.Add((Get-Item -LiteralPath (Join-Path $root $name)))
 }
-foreach ($name in @('src', 'blocks', 'assets', 'resources', 'languages')) {
+foreach ($name in @('src', 'blocks', 'assets', 'resources', 'languages', 'realtime-server')) {
     foreach ($entry in Get-ChildItem -LiteralPath (Join-Path $root $name) -Recurse -Force) {
         if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw "Linked paths are not allowed: $($entry.FullName)" }
         if (!$entry.PSIsContainer) { $files.Add($entry) }
+    }
+}
+$sources = [Collections.Generic.List[object]]::new()
+foreach ($file in $files) { $sources.Add(@{File=$file; Relative=$file.FullName.Substring($root.Length + 1).Replace('\', '/')}) }
+# Ship the same host as the other addons, without their plugin dependencies.
+$shared = [IO.Path]::GetFullPath((Join-Path $root '../_shared/oj-realtime-hub'))
+foreach ($name in @('package.json','package-lock.json','install.sh','LICENSE.txt','README.md','src','deploy')) {
+    $path = Join-Path $shared $name
+    foreach ($file in Get-ChildItem -LiteralPath $path -Recurse -File -Force) {
+        if ($file.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Linked common runtime file.' }
+        $sources.Add(@{File=$file; Relative='common-server/'+$file.FullName.Substring($shared.Length+1).Replace('\','/')})
     }
 }
 $entries = [Collections.Generic.List[object]]::new()
 $stream = [IO.File]::Open($archive, [IO.FileMode]::CreateNew)
 $zip = [IO.Compression.ZipArchive]::new($stream, [IO.Compression.ZipArchiveMode]::Create, $false, $utf8)
 try {
-    foreach ($file in ($files | Sort-Object FullName)) {
-        $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
+    foreach ($source in ($sources | Sort-Object Relative)) {
+        $file = $source.File
+        $relative = $source.Relative
         if ($relative -match '(^|/)(\.git|node_modules|__pycache__)(/|$)' -or $relative -match '\.(zip|log|pyc)$') { throw "Unexpected runtime file: $relative" }
         $name = 'edu-games/' + $relative
         [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $file.FullName, $name, [IO.Compression.CompressionLevel]::Optimal) | Out-Null

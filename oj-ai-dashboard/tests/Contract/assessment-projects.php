@@ -285,13 +285,19 @@ $config = $profile->normalize(
 	),
 	true
 );
-$save   = array(
+project_assert( ! array_key_exists( 'exception_scores', $config ), 'Legacy configuration gained a new hashed field.' );
+$config['exception_scores'] = array(
+	'not_submitted' => '0',
+	'long_absence'  => '2',
+);
+$config                     = $profile->normalize( $config, true );
+$save                       = array(
 	'title'         => 'Evaluation A',
 	'configuration' => $config,
 	'state'         => 'confirmed',
 );
-$old    = $a;
-$a      = $repo->save( 41, $a['project_id'], $a['revision_id'], $save, $hash( 'confirm-a' ), $hash( 'confirm' ) );
+$old                        = $a;
+$a                          = $repo->save( 41, $a['project_id'], $a['revision_id'], $save, $hash( 'confirm-a' ), $hash( 'confirm' ) );
 project_assert( $repo->save( 41, $a['project_id'], $old['revision_id'], $save, $hash( 'confirm-a' ), $hash( 'confirm' ) )['revision_id'] === $a['revision_id'], 'Save replay must precede stale revision check' );
 project_failure( fn()=>$repo->save( 41, $a['project_id'], $old['revision_id'], $save, $hash( 'stale' ), $hash( 'stale' ) ), 409 );
 $b = $repo->create(
@@ -306,6 +312,7 @@ $b = $repo->create(
 );
 project_assert( 'draft' === ( $b['state'] ) && $b['worksheets'] === array(), 'Copied criteria require confirmation without linking original worksheets' );
 project_assert( $a['configuration']['criteria'][0]['criterion_id'] !== $b['configuration']['criteria'][0]['criterion_id'], 'Copied criterion IDs must be independent' );
+project_assert( $b['configuration']['exception_scores'] === $config['exception_scores'], 'Project copy lost exception scores.' );
 $b_config                              = $b['configuration'];
 $b_config['learning_goals'][0]['text'] = 'Different goal.';
 $b                                     = $repo->save(
@@ -380,6 +387,7 @@ $quality['grading_rubric'] = array( 'assessment_enabled' => true ) + Project_Con
 $quality_input             = $builder->build( $worksheet_id, $revision_id, $canonical_document, $projected, $asset_snapshots, $quality, $a['configuration']['achievement_standards'] )->input();
 project_assert( str_contains( $json->encode( $quality_input ), 'Compare sources, then justify a conclusion.' ), 'AI review omitted assessment achievement standard text' );
 project_assert( str_contains( $json->encode( $quality_input ), 'Use evidence to explain a claim.' ), 'AI review omitted assessment learning goal' );
+project_assert( ! str_contains( $json->encode( $quality_input ), 'exception_scores' ), 'Teacher exception scores leaked into AI review.' );
 $copy = ( new Worksheet_Document_Id_Rewriter() )->rewrite( $seeded, array(), array_combine( ( new Worksheet_Document_Id_Rewriter() )->asset_ids( $seeded ), ( new Worksheet_Document_Id_Rewriter() )->asset_ids( $seeded ) ), $hash( 'rewrite' ) )['teacher_document'];
 project_assert( ! isset( $copy['settings']['assessment_project'] ) && 'draft' === ( $copy['settings']['preparation']['state'] ), 'Unscoped copy inherited the original assessment' );
 echo "Assessment projects passed: SQL ownership, creation/save replay, CAS, rollback, independent criteria copy, atomic worksheet creation, pinned versions, self-review goals/standards, copy detachment.\n";
@@ -393,6 +401,8 @@ $publication_config = array(
 $publisher          = new \OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Publication_Projector( $json, new \OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Preview_Projector( $json ), new \OJAI\Dashboard\Worksheet\Authoring\Domain\Worksheet_Projection_Safety_Inspector( $json ) );
 $published          = $publisher->project( $canonical_document, $publication_config );
 project_assert( $published->profile( 'grading_schema' )['payload']['rubric']['revision_id'] === $a['revision_id'], 'Published criteria must use project revision' );
+project_assert( $published->profile( 'grading_schema' )['payload']['rubric']['exception_scores'] === $config['exception_scores'], 'Publication lost configured exception scores.' );
+project_assert( ! str_contains( $json->encode( $published->profile( 'student_document' ) ), 'exception_scores' ), 'Exception scores leaked into student document.' );
 project_assert( ! str_contains( $json->encode( $published->profile( 'student_document' ) ), 'assessment_project' ), 'Private assessment membership leaked into student document' );
 echo "Assessment publication passed: pinned rubric, selected bindings, private project context excluded.\n";
 

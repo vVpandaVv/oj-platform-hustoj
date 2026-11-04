@@ -54,7 +54,7 @@ performance_check(get_option('focus_tracker_schema_maintenance_lock') === $lease
 update_option('focus_tracker_schema_maintenance_lock', wp_json_encode(array('token' => 'expired-worker', 'expiresAtMs' => Clock::now_ms() - 1)), false);
 $wpdb->queries = array();
 Installer::maybe_install();
-performance_check(count(performance_queries('/^SHOW /')) === 34 && performance_queries('/^CREATE TABLE/') === array(), 'An expired lease is replaced atomically for one healthy inspection without DDL');
+performance_check(count(performance_queries('/^SHOW /')) === 35 && performance_queries('/^CREATE TABLE/') === array(), 'An expired lease is replaced atomically for one healthy inspection without DDL');
 performance_check(get_option('focus_tracker_schema_maintenance_lock', false) === false, 'Maintenance releases only its own lease');
 $wpdb->queries = array();
 Installer::maybe_install();
@@ -104,8 +104,8 @@ performance_check(! Gate::state(1, 123, 'general', null, $now)['active'], 'Remov
 performance_check(performance_queries('/^SELECT \* FROM wp_focus_tracker_activities/') === array(), 'An empty authorized context list reads no schedules');
 unset($GLOBALS['focus_test_statistics_contexts']);
 
-// The policy read uses a shared lock; owned privacy/session/event locks stay
-// exclusive. SQLite checks the executed SQL and race outcome, not InnoDB lock
+// The policy read uses a shared lock; the learner guard serializes ingestion.
+// SQLite checks the executed SQL and race outcome, not InnoDB lock
 // scheduling, which needs the separate native database acceptance environment.
 $wpdb->query('START TRANSACTION');
 $wpdb->queries = array();
@@ -123,16 +123,33 @@ foreach (array('ends_at', 'status') as $race) {
         $wpdb->before_results = null;
         Activities::update($activity, $race === 'status' ? array('status' => 'deleted') : array('ends_at' => Clock::ms_to_mysql($now - 5000)));
     };
-    $result = Ingest::handle(new WP_REST_Request($payload('schedule-race-' . $race, 1)));
-    performance_check($result instanceof WP_Error && $result->get_error_data()['status'] === 503, 'A teacher ' . $race . ' change between optimistic and locked reads aborts ingestion');
-    performance_check((int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table()) === 0, 'Schedule races leave no unauthorized raw observations');
+    $packet = $payload('schedule-race-' . $race, 1);
+    $packet['events'] = array(array_replace($event(1), array('occurred_at' => $now - 6000)), $event(2));
+    $raw_before = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table());
+    $sessions_before = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::participations_table());
+    $result = Ingest::handle(new WP_REST_Request($packet));
+    if ($race === 'ends_at') {
+        performance_check($result instanceof WP_REST_Response && $result->data['acknowledged'] && $result->data['stored'] > 0, 'A shortened window acknowledges and stores observations still authorized under its locked bounds');
+        performance_check($result->data['policyDropped'] === 1, 'Only the observation after the new end is excluded');
+        $id = (int) $result->data['participation_id'];
+        $real = $wpdb->get_results('SELECT sequence_number,occurred_at_ms FROM ' . Installer::events_table() . ' WHERE participation_id=' . $id . ' AND sequence_number>0 AND sequence_number<2147483648 ORDER BY sequence_number', ARRAY_A);
+        performance_check(count($real) === 1 && (int) $real[0]['sequence_number'] === 1 && (int) $real[0]['occurred_at_ms'] === $now - 6000, 'Committed real source contains exactly the legitimate pre-end observation');
+        performance_check(\FocusTracker\Database\Participation_Repository::find($id)['ended_at_ms'] === $now - 5000, 'The saved session cannot cross the current teacher deadline');
+        $clipped_count = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table());
+        $replay = Ingest::handle(new WP_REST_Request($packet));
+        performance_check($replay instanceof WP_REST_Response && $replay->data['stored'] === 0 && (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table()) === $clipped_count, 'A retry after clipping remains idempotent');
+    } else {
+        performance_check($result instanceof WP_REST_Response && $result->data['acknowledged'] && $result->data['stored'] === 0, 'A deleted window acknowledges excluded data without a transient storage error');
+        performance_check($result->data['policyDropped'] === 2, 'Every observation is excluded when the locked policy has no remaining window');
+        performance_check((int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::events_table()) === $raw_before && (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Installer::participations_table()) === $sessions_before, 'Revoked schedules create no unauthorized evidence or orphan participation');
+    }
 }
 $wpdb->before_results = null;
 Activities::update($activity, array('status' => 'scheduled', 'ends_at' => Clock::ms_to_mysql($now + 60000)));
 $wpdb->queries = array();
 $accepted = Ingest::handle(new WP_REST_Request($payload('valid-shared-schedule', 1)));
 performance_check($accepted instanceof WP_REST_Response && $accepted->data['stored'] > 0, 'Unchanged schedules still accept genuine in-window observations');
-performance_check(count(performance_queries('/LOCK IN SHARE MODE$/')) === 1 && count(performance_queries('/FOR UPDATE$/')) >= 2, 'Ingestion shares schedule locks while retaining exclusive privacy/source/event locks');
+performance_check(count(performance_queries('/LOCK IN SHARE MODE$/')) === 1 && count(performance_queries('/FOR UPDATE$/')) === 1, 'Ingestion shares schedule locks and serializes a learner using one exact guard row instead of source/event range locks');
 
 Diagnostics::reset();
 $wpdb->queries = array();

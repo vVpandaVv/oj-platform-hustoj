@@ -20,7 +20,8 @@ final class HttpRequest
         private readonly array $query = [],
         private readonly array $body = [],
         private readonly array $headers = [],
-        private readonly array $files = []
+        private readonly array $files = [],
+        private readonly ?string $navigationPath = null
     ) {
         if (preg_match('/^[A-Z]+$/', $this->method) !== 1) {
             throw new InvalidArgumentException('HTTP 메서드 형식이 올바르지 않습니다.');
@@ -29,6 +30,14 @@ final class HttpRequest
         if (! str_starts_with($this->path, '/')) {
             throw new InvalidArgumentException('요청 경로는 /로 시작해야 합니다.');
         }
+    }
+
+    /** Menu presentation only; routing and authorization continue to use path(). */
+    public function navigationPath(): string { return $this->navigationPath ?? $this->path; }
+    public function withNavigationPath(string $path): self
+    {
+        if (!in_array($path, ['/problems', '/classes'], true)) { throw new InvalidArgumentException('Invalid navigation section.'); }
+        return new self($this->method, $this->path, $this->query, $this->body, $this->headers, $this->files, $path);
     }
 
     public function method(): string
