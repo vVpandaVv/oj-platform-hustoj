@@ -51,6 +51,7 @@
       ".gitignore",
       "AGENT.md",
       "AGENTS.md",
+      "CHANGELOG.md",
       "OJ-BUILD-HARNESS.md",
       "README.md",
       "_notes/agent-harness.md",
@@ -279,8 +280,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 8596,
-  "totalBytes": 324013417,
+  "fileCount": 8597,
+  "totalBytes": 324017906,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -298,8 +299,8 @@
     },
     {
       "path": "AGENT.md",
-      "size": 3635,
-      "sha256": "eea56deb9a989d90d69899a969386b5c07017287c61453cbfa19339954e74dac",
+      "size": 4467,
+      "sha256": "16dc55aa18882a4086f43ff9d868dc6de76616e261e7b89576f81c3a0cc5c018",
       "origin": "working-tree"
     },
     {
@@ -309,6 +310,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "CHANGELOG.md",
+      "origin": "working-tree",
+      "size": 2590,
+      "sha256": "439969767b71f4543ac4df179845bdbf1e01accb4b62119ad9c4977820017f2c"
+    },
+    {
       "path": "OJ-BUILD-HARNESS.md",
       "size": 13240,
       "sha256": "b2f7d50b1d82b8c53164ce12224b51f4ef9649259ce4e47e68118b3ef20d719b",
@@ -316,8 +323,8 @@
     },
     {
       "path": "README.md",
-      "size": 2465,
-      "sha256": "411bb73412903fb2f59d9e3a40a7bcca8fc1694fae2c401e1ea319bc1ec246f9",
+      "size": 2586,
+      "sha256": "afb4ba5679accae751789aaddc9447bcc342e7e894bfc6ef069f43f401081f90",
       "origin": "working-tree"
     },
     {
@@ -2182,8 +2189,8 @@
     },
     {
       "path": "_release-kit/public-source.json",
-      "size": 6379,
-      "sha256": "db832d7b227f1ef886000dcbeaed2ee110cb211b0c136eb4470919e2c6b494ee",
+      "size": 6399,
+      "sha256": "42f17d2f47e4a969239e66d2dfa21725a9241b283afad27ce176911df7059e2c",
       "origin": "working-tree"
     },
     {
@@ -2308,8 +2315,8 @@
     },
     {
       "path": "_releases/README.md",
-      "size": 2397,
-      "sha256": "e3261a533ca2b543541676de60492c11d14f32b3d2f9e9c2a4b625daa1ec5e53",
+      "size": 2498,
+      "sha256": "92872a66841832c2605b6009c02830237b068dff5da063140b7be5098819aeb8",
       "origin": "generated"
     },
     {
@@ -3052,8 +3059,8 @@
     },
     {
       "path": "docs/github-management.md",
-      "size": 474,
-      "sha256": "996c0cba9781986b670293b5cb249bada6da8bb663474c7a6af0e248168465a7",
+      "size": 1299,
+      "sha256": "4f04c7d995758fde5a36d92f59d1064ba6477517e4e39d3fc44217b5f5b85044",
       "origin": "working-tree"
     },
     {

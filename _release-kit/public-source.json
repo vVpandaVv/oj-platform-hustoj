@@ -30,6 +30,7 @@
     ".gitignore",
     "AGENT.md",
     "AGENTS.md",
+    "CHANGELOG.md",
     "OJ-BUILD-HARNESS.md",
     "README.md",
     "_notes/agent-harness.md",
