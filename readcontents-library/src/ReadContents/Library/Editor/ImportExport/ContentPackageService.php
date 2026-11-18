@@ -108,6 +108,7 @@ final class ContentPackageService
             : [];
         $lesson_conflict_policy = $this->readLessonConflictPolicy($options['lessonConflictPolicy'] ?? null);
         $lesson_conflict_policy_by_source_id = $this->readLessonConflictPolicyMap($options['lessonConflictPolicyBySourceId'] ?? []);
+        $update_titles = $this->readUpdateContainerTitles($options['updateContainerTitles'] ?? false);
         $preview = $this->previewImportPlan($package);
         $id_map = [];
         $created = [
@@ -136,7 +137,8 @@ final class ContentPackageService
         ];
 
         $source_topic = $this->readNode($tree['topic'] ?? null, ContentNodeType::TOPIC);
-        $topic = $this->importContainerNode($source_topic, ContentNodeType::TOPIC, null, $created, $reused);
+        $topic_order = null;
+        $topic = $this->importContainerNode($source_topic, ContentNodeType::TOPIC, null, $created, $reused, $topic_order, $update_titles, $replaced);
         $id_map[(string) $source_topic['id']] = $topic->id;
 
         $chapters = $tree['chapters'] ?? [];
@@ -153,7 +155,7 @@ final class ContentPackageService
             }
 
             $source_chapter = $this->readNode($chapter_group['chapter'] ?? null, ContentNodeType::CHAPTER);
-            $chapter = $this->importContainerNode($source_chapter, ContentNodeType::CHAPTER, $topic->id, $created, $reused, $chapter_order);
+            $chapter = $this->importContainerNode($source_chapter, ContentNodeType::CHAPTER, $topic->id, $created, $reused, $chapter_order, $update_titles, $replaced);
             $id_map[(string) $source_chapter['id']] = $chapter->id;
 
             $sections = $chapter_group['sections'] ?? [];
@@ -170,7 +172,7 @@ final class ContentPackageService
                 }
 
                 $source_section = $this->readNode($section_group['section'] ?? null, ContentNodeType::SECTION);
-                $section = $this->importContainerNode($source_section, ContentNodeType::SECTION, $chapter->id, $created, $reused, $section_order);
+                $section = $this->importContainerNode($source_section, ContentNodeType::SECTION, $chapter->id, $created, $reused, $section_order, $update_titles, $replaced);
                 $id_map[(string) $source_section['id']] = $section->id;
 
                 $lessons = $section_group['lessons'] ?? [];
@@ -344,6 +346,9 @@ final class ContentPackageService
                 $conflict['existing'], $this->repository->getLessonDocument($id)->revision,
             ]));
         }
+        foreach ($preview['containerTitles'] as $title) {
+            $expected['@container/'.$title['sourceId']] = [$title['existingId'], $title['existingTitle']];
+        }
         return ['preview' => $preview, 'expected' => $expected];
     }
 
@@ -404,6 +409,7 @@ final class ContentPackageService
         return [
             'lessonConflictPolicy' => $this->readLessonConflictPolicy($options['lessonConflictPolicy'] ?? 'skip'),
             'lessonConflictPolicyBySourceId' => $this->readLessonConflictPolicyMap($options['lessonConflictPolicyBySourceId'] ?? []),
+            'updateContainerTitles' => $this->readUpdateContainerTitles($options['updateContainerTitles'] ?? false),
         ];
     }
 
@@ -414,6 +420,7 @@ final class ContentPackageService
             $documents += $unit['lessonDocuments'];
         }
         foreach ($expected as $sourceId => $snapshot) {
+            if (str_starts_with((string) $sourceId, '@container/')) continue;
             $policy = $options['lessonConflictPolicyBySourceId'][$sourceId] ?? $options['lessonConflictPolicy'];
             if ($policy === 'skip') unset($documents[$sourceId]);
         }
@@ -434,7 +441,32 @@ final class ContentPackageService
     public function importServerUnit(array $unit, array $options, array $map, array $expected): array
     {
         $current = $this->serverPreview($unit);
+        if ($options['updateContainerTitles'] ?? false) {
+            $matches = [];
+            foreach ($current['preview']['containerTitles'] as $title) {
+                $key = '@container/'.$title['sourceId'];
+                $matches[$key] = true;
+                $prior = $expected[$key] ?? null;
+                // A container can already have been renamed by an earlier unit of this job.
+                if (($prior !== null && $prior[0] !== $title['existingId']) ||
+                    ($title['existingTitle'] !== $title['incomingTitle'] && ($prior[1] ?? null) !== $title['existingTitle'])) {
+                    throw new InvalidArgumentException('미리보기 이후 목차 제목이 변경되었습니다. 새 미리보기가 필요합니다.');
+                }
+            }
+            $sources = [$unit['tree']['topic']];
+            foreach ($unit['tree']['chapters'] ?? [] as $chapter) {
+                $sources[] = $chapter['chapter'];
+                foreach ($chapter['sections'] ?? [] as $section) $sources[] = $section['section'];
+            }
+            foreach ($sources as $source) {
+                $key = '@container/'.$source['id'];
+                if (isset($expected[$key]) && !isset($matches[$key])) {
+                    throw new InvalidArgumentException('갱신할 목차가 이동되거나 삭제되었습니다. 새 미리보기가 필요합니다.');
+                }
+            }
+        }
         foreach ($current['expected'] as $id => $snapshot) {
+            if (str_starts_with((string) $id, '@container/')) continue;
             $policy = $options['lessonConflictPolicyBySourceId'][$id] ?? $options['lessonConflictPolicy'];
             if ($policy === 'replace' && ($expected[$id] ?? null) !== $snapshot) {
                 throw new InvalidArgumentException('미리보기 이후 기존 레슨이 변경되었습니다. 새 미리보기에서 대체 여부를 다시 확인해 주세요.');
@@ -1120,12 +1152,21 @@ final class ContentPackageService
             'lessons' => 0,
         ];
         $conflicts = [];
+        $container_titles = [];
+        $remember_title = static function (array $source, ContentNode $existing) use (&$container_titles): void {
+            $container_titles[] = [
+                'sourceId' => (string) $source['id'], 'type' => $existing->type->value,
+                'existingId' => $existing->id, 'existingTitle' => $existing->title,
+                'incomingTitle' => (string) $source['title'],
+            ];
+        };
 
         $source_topic = $this->readNode($tree['topic'] ?? null, ContentNodeType::TOPIC);
         $topic_match = $this->findMatchingNodeMatch($source_topic, ContentNodeType::TOPIC, null);
         $topic = $topic_match ? $topic_match['node'] : null;
 
         if ($topic instanceof ContentNode) {
+            $remember_title($source_topic, $topic);
             ++$reused['topics'];
         } else {
             ++$created['topics'];
@@ -1148,6 +1189,7 @@ final class ContentPackageService
             }
 
             if ($chapter instanceof ContentNode) {
+                $remember_title($source_chapter, $chapter);
                 ++$reused['chapters'];
             } else {
                 ++$created['chapters'];
@@ -1170,6 +1212,7 @@ final class ContentPackageService
                 }
 
                 if ($section instanceof ContentNode) {
+                    $remember_title($source_section, $section);
                     ++$reused['sections'];
                 } else {
                     ++$created['sections'];
@@ -1222,7 +1265,15 @@ final class ContentPackageService
             'created' => $created,
             'reused' => $reused,
             'conflicts' => $conflicts,
+            'containerTitles' => $container_titles,
         ];
+    }
+
+    private function readUpdateContainerTitles(mixed $value): bool
+    {
+        if (in_array($value, [true, 1, '1', 'true'], true)) return true;
+        if (in_array($value, [false, null, 0, '0', 'false', ''], true)) return false;
+        throw new InvalidArgumentException('목차 제목 갱신 여부가 올바르지 않습니다.');
     }
 
     private function readLessonConflictPolicy(mixed $policy): string
@@ -1273,13 +1324,20 @@ final class ContentPackageService
         ?string $parent_id,
         array &$created,
         array &$reused,
-        ?int &$next_order = null
+        ?int &$next_order = null,
+        bool $update_titles = false,
+        array &$replaced = []
     ): ContentNode {
         $existing = $this->findMatchingContainerNode($node, $type, $parent_id);
         $counter_key = $this->counterKey($type);
 
         if ($existing) {
             ++$reused[$counter_key];
+
+            if ($update_titles && $existing->title !== (string) $node['title']) {
+                ++$replaced[$counter_key];
+                return $this->repository->updateNode($existing->id, ['title' => (string) $node['title']]);
+            }
 
             return $existing;
         }

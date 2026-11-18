@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "snapshotDate": "2026-11-05",
+  "snapshotDate": "2026-11-18",
   "mode": "source-only",
   "defaultOutput": ".codex-work/github/oj-platform-hustoj",
   "includeRoots": [
@@ -20,7 +20,10 @@
     "_notes/readcontents-server-import-2026-09-12/editor-source/tests",
     "source",
     "developer-kit",
-    "oj-microbit"
+    "oj-microbit",
+    "oj-network-lab",
+    "oj-logic-lab",
+    "oj-concept-lab"
   ],
   "includeFiles": [
     ".editorconfig",
@@ -52,7 +55,10 @@
     "readcontents-library",
     "teaching-tools",
     "_shared/oj-realtime-hub",
-    "oj-microbit"
+    "oj-microbit",
+    "oj-network-lab",
+    "oj-logic-lab",
+    "oj-concept-lab"
   ],
   "excludeDirectoryNames": [
     ".git",
@@ -87,7 +93,8 @@
     "test-artifacts",
     "testartifacts",
     "playwright-report",
-    "blob-report"
+    "blob-report",
+    ".local-secrets"
   ],
   "excludePackageDirectoryNames": [
     "build",
@@ -130,13 +137,24 @@
     "oj-code-lab/docs/release-gates.json",
     "oj-code-lab/docs/validation-results.json",
     "oj-integration-rebuild/oj-platform/docs/research-pilot-redesign.html",
-    "oj-integration-rebuild/scripts/build-feedback-report.py"
+    "oj-integration-rebuild/scripts/build-feedback-report.py",
+    "_release-kit/publish-judge0.py",
+    "_release-kit/guides/_judge0-header.md",
+    "_release-kit/guides/_standalone-header.md",
+    "_release-kit/guides/_standalone-footer.md",
+    "_release-kit/guides/oj-platform-judge0.md",
+    "_release-kit/guides/oj-platform-standalone.md"
   ],
   "excludePrefixes": [
     "oj-code-arena",
     "oj-code-lab/docs/history",
     "oj-integration-rebuild/oj-platform/docs/research-feedback-validation-20260911",
-    "oj-ml-playgrounds"
+    "oj-ml-playgrounds",
+    "_release-kit/.local-secrets",
+    "oj-platform-judge0",
+    "oj-platform-standalone",
+    "judge0",
+    "_release-kit/workflows"
   ],
   "excludeOperationalDocumentNamePatterns": [
     "production-*",
@@ -181,7 +199,9 @@
     "**/*-secrets.json",
     "**/unsent-results.jsonl",
     "**/debug.log*",
-    "**/~$*"
+    "**/~$*",
+    "_release-kit/*judge0*",
+    "_release-kit/*standalone*"
   ],
   "exampleFileSuffixes": [
     ".example",
@@ -223,6 +243,9 @@
     "focus-tracker",
     "oj-primm",
     "oj-microbit",
-    "oj-research"
+    "oj-research",
+    "oj-network-lab",
+    "oj-logic-lab",
+    "oj-concept-lab"
   ]
 }

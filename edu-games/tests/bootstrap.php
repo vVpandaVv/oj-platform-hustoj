@@ -42,7 +42,7 @@ namespace {
     }
     function __($text, $domain = '') { return $text; }
     function esc_html__($text, $domain = '') { return $text; }
-    function plugins_url($path = '', $file = '') { return '/plugins/edu-games/' . $path; }
+    function plugins_url($path = '', $file = '') { return '/plugins/'.($file!==''?basename(dirname($file)):'edu-games').'/' . $path; }
     function home_url($path = '') { return $path; }
     function sanitize_key($key) { return preg_replace('/[^a-z0-9_-]/', '', strtolower($key)); }
     function sanitize_text_field($text) { return strip_tags($text); }
@@ -51,7 +51,7 @@ namespace {
     function is_wp_error($value) { return $value instanceof WP_Error; }
     function rest_ensure_response($value) { return $value; }
     function get_current_user_id() { return (int)($GLOBALS['test_user_id']??7); }
-    function get_userdata($id) { return (object) array('display_name' => 'Test student'); }
+    function get_userdata($id) { return (object) array('display_name' => $GLOBALS['test_user_names'][$id]??'Test student'); }
     function is_user_logged_in() { return true; }
     function current_user_can($cap) { return in_array($cap, $GLOBALS['caps'] ?? array('edu_games_play'), true); }
     function current_time($format, $gmt = false) { return gmdate('Y-m-d H:i:s'); }

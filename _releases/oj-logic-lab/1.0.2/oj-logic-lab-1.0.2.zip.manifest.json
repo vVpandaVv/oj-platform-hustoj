@@ -1,0 +1,160 @@
+{
+    "plugin":  "oj-logic-lab",
+    "version":  "1.0.2",
+    "builder":  "_release-kit generic",
+    "archive":  "oj-logic-lab-1.0.2.zip",
+    "sha256":  "db1db45f2201d92d36cf6269e4c2853a6de7f1a2cd732dc04ae49c62f92066a8",
+    "fileCount":  30,
+    "files":  [
+                  {
+                      "path":  "oj-logic-lab/oj-logic-lab.php",
+                      "bytes":  660,
+                      "sha256":  "aeb14c6746ab2cf846bcc83d8083c8f58a17b29b821db4f4bdf69f13cd8947cd"
+                  },
+                  {
+                      "path":  "oj-logic-lab/plugin-package.php",
+                      "bytes":  260,
+                      "sha256":  "90550fc968721058b9a7aaf83ec95bd2679536d0437855e753c02665f39cd3f1"
+                  },
+                  {
+                      "path":  "oj-logic-lab/README.md",
+                      "bytes":  21753,
+                      "sha256":  "565dcab87670392adc2c11226ffbd2109c8db3dc853d603c324aeff2d34743f5"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/css/logic-lab.css",
+                      "bytes":  29779,
+                      "sha256":  "676bc9a909fe38bc79428f7a79fb8fe8833fe76ae636d7a779b31d607281149e"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/analysis.js",
+                      "bytes":  7418,
+                      "sha256":  "21f696b7cf60f39239b32d49c92053ae37fddf3d37967875d9ed0cd12e47df46"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/app.js",
+                      "bytes":  85611,
+                      "sha256":  "f04f460a4d4d6e0e9f087f65e493f8e6fe8dfabe9837d908a43caac33e56161a"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/bootstrap.js",
+                      "bytes":  360,
+                      "sha256":  "62d5ed557f25d2bd9db618510de9ed3d239fdc7bc8659d023b646d2b9e540366"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/compile.js",
+                      "bytes":  4136,
+                      "sha256":  "bfcfdb195be5e5759382141e9bcdbd484876828720a8d935b50fda3c958ba40e"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/drag-planner.js",
+                      "bytes":  1132,
+                      "sha256":  "b31e919d9490167c09786d05ef2ed33c3ef9860cb65c282616ecdd4dae92a870"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/drag-worker.js",
+                      "bytes":  537,
+                      "sha256":  "dddf67b49876a7220adc7f36f1a95b1d98923a89d44324c94dcc342e5819c630"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/editing.js",
+                      "bytes":  4492,
+                      "sha256":  "df9deeb4e6b7d2ec0c45755e2b5af4535604cbc1b2eeac1cc4f0441a80258c99"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/engine.js",
+                      "bytes":  12030,
+                      "sha256":  "da32fe63da12bd69665c8d749e761f6d421248394bef2ffad184c086a739349e"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/examples.js",
+                      "bytes":  7895,
+                      "sha256":  "854c481cc59876d291fa07593dff22082d63ca92e769b1e960b3e280f8a16f6f"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/exercises.js",
+                      "bytes":  5786,
+                      "sha256":  "384e375733a3840cfcd73fe30567ee986066186a532719fe9ab01cd1f7b2f7a1"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/model.js",
+                      "bytes":  20501,
+                      "sha256":  "680d3f562c68ad32bbf3f0b0bef87eec1798e4d3d3b9044d0759ae202f5585f0"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/modes.js",
+                      "bytes":  1700,
+                      "sha256":  "2895aba71c0a3674bbcc1611eaaf3bc9a13a5cc9069fb700cf7d4a04ecb28e12"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/move.js",
+                      "bytes":  761,
+                      "sha256":  "c1b772780f66d8771007861375fb0f5ffbf43eb14ed74e789bff2e676c86dc1c"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/package.json",
+                      "bytes":  32,
+                      "sha256":  "d218e29ec01186542b0d85bdc6691d12514e4cdd0ba3b9cd81f253250c8d1e34"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/project-state.js",
+                      "bytes":  3082,
+                      "sha256":  "187d301ff4c6eaf7ac8e81963f43a151bd82485b03322bb8df2099a7b0e83233"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/router.js",
+                      "bytes":  10378,
+                      "sha256":  "aad1bfaf52c2e2028df4a69da3e32670ca0092b30362d66868961a9311783ff8"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/schematic.js",
+                      "bytes":  4550,
+                      "sha256":  "5db017168ba58dcc18e019bd13c85107a31d260c70f964f9388d955223579fd6"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/symbols.js",
+                      "bytes":  4606,
+                      "sha256":  "1880e30a62f8afdca215e7f9c6163b3a780c255e18845e29f4c69c2f6f41cd3e"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/tools-ui.js",
+                      "bytes":  21604,
+                      "sha256":  "575ca5d19f28db8ef771afdb653cb183f7ef31edeabd3dd41e6a98ba789aadf9"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/waveform.js",
+                      "bytes":  999,
+                      "sha256":  "51ca1a9d87031e2e207452d77046821105c955488099ad994fb374ae4222c66b"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/wire-move.js",
+                      "bytes":  2619,
+                      "sha256":  "bc0c75a65dfd6b54a3bc0fa1322f354515ab6eb3c10c3ca2c075560deec5a93f"
+                  },
+                  {
+                      "path":  "oj-logic-lab/resources/js/wire-points.js",
+                      "bytes":  4294,
+                      "sha256":  "01152002d1f53dbeb38d83e3ea074713b05f9f2581b56825e5795a0034bbe8a0"
+                  },
+                  {
+                      "path":  "oj-logic-lab/src/Addon/PageHandler.php",
+                      "bytes":  805,
+                      "sha256":  "5828849e37abb761a2895735df08a387e02babf594727d6ae410407297599527"
+                  },
+                  {
+                      "path":  "oj-logic-lab/src/Addon/Registration.php",
+                      "bytes":  2104,
+                      "sha256":  "7b1e67b9a5f819ca2e30e2fc899f7ee1adaa9bfacd8978acc04c4adf0b30258c"
+                  },
+                  {
+                      "path":  "oj-logic-lab/src/Core/Autoloader.php",
+                      "bytes":  491,
+                      "sha256":  "68503e8ade1c591657f0f04f0510d5536bda69ba37ae22aa295d03869a79b60e"
+                  },
+                  {
+                      "path":  "oj-logic-lab/src/Core/Plugin.php",
+                      "bytes":  687,
+                      "sha256":  "d0623b1e9ff06060fa524549393096f75a5b89ca63609042b987268bc97b50bd"
+                  }
+              ]
+}

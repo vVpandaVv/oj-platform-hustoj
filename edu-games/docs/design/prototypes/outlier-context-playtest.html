@@ -1,0 +1,98 @@
+<div id="outlier-context-playtest" lang="ko">
+<style>
+#outlier-context-playtest{--p-bg:light-dark(#fff,#1d2324);--p-ink:light-dark(#233033,#ecf3f1);--p-muted:light-dark(#59696d,#b1c1c3);--p-line:light-dark(#d4dfdc,#4b5a5b);--p-field:light-dark(#f2f6f4,#283332);--p-green:light-dark(#087b65,#6ad9b4);--p-green-soft:light-dark(#e0f3e9,#294b3d);--p-gold:light-dark(#a26911,#f4cb78);--p-red:light-dark(#b14337,#ffab9b);--p-blue:light-dark(#346d9b,#a3d1f4);font:400 14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;color:var(--p-ink);letter-spacing:0;min-width:0}
+#outlier-context-playtest *{box-sizing:border-box;letter-spacing:0}
+#outlier-context-playtest .p-review{font-size:12px;color:var(--p-muted);margin-bottom:12px;padding-right:90px}
+#outlier-context-playtest .p-game{background:var(--p-bg);padding:18px 20px}
+#outlier-context-playtest :is(h2,p){margin:0}
+#outlier-context-playtest h2{font-size:22px;font-weight:500}
+#outlier-context-playtest .p-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+#outlier-context-playtest .p-metrics{display:flex;gap:20px;align-items:baseline;font-variant-numeric:tabular-nums}
+#outlier-context-playtest .p-score{display:inline-block;width:64px;text-align:right;font-size:24px;font-weight:500;color:var(--p-green)}
+#outlier-context-playtest .p-clock{font-size:17px}
+#outlier-context-playtest .p-goal{margin:12px 0;font-size:15px;font-weight:500}
+#outlier-context-playtest .p-state{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--p-muted);min-height:20px}
+#outlier-context-playtest .p-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#outlier-context-playtest button{font:inherit;color:var(--p-ink);background:var(--p-bg);border:1px solid var(--p-line);border-radius:8px;min-height:44px;padding:10px 14px}
+#outlier-context-playtest button:disabled{opacity:.65}
+#outlier-context-playtest .p-case{display:block;text-align:left;padding:12px;min-width:0;min-height:174px;position:relative}
+#outlier-context-playtest .p-case[aria-pressed="true"]{background:var(--p-green-soft);border-color:var(--p-green);box-shadow:inset 0 0 0 1px var(--p-green)}
+#outlier-context-playtest .p-card-top{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:40px}
+#outlier-context-playtest .p-target{font-size:25px;font-weight:500;font-variant-numeric:tabular-nums}
+#outlier-context-playtest .p-role{font-size:12px;color:var(--p-muted);min-height:18px}
+#outlier-context-playtest .p-case canvas{display:block;width:100%;height:72px;margin:8px 0}
+#outlier-context-playtest .p-values{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;font-size:12px;font-variant-numeric:tabular-nums;text-align:center}
+#outlier-context-playtest .p-values span{min-width:0}
+#outlier-context-playtest .p-values .p-focus{color:var(--p-gold);font-weight:500;text-decoration:underline;text-underline-offset:3px}
+#outlier-context-playtest .p-feedback{padding:12px 0;min-height:48px;color:var(--p-muted);font-size:13px;border-bottom:1px solid var(--p-line)}
+#outlier-context-playtest .p-feedback[data-tone="good"]{color:var(--p-green)}
+#outlier-context-playtest .p-feedback[data-tone="bad"]{color:var(--p-red)}
+#outlier-context-playtest .p-rule{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:10px;font-size:12px;color:var(--p-muted)}
+#outlier-context-playtest details{font-size:12px;color:var(--p-muted)}
+#outlier-context-playtest details p{margin-top:8px;max-width:65ch}
+#outlier-context-playtest summary{min-height:28px}
+#outlier-context-playtest .p-result{padding:28px 0;text-align:center}
+#outlier-context-playtest .p-result[hidden],#outlier-context-playtest .p-board[hidden]{display:none}
+#outlier-context-playtest .p-result strong{display:block;font-size:32px;font-weight:500;color:var(--p-green);margin:6px 0}
+#outlier-context-playtest .p-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+#outlier-context-playtest .p-actions button{display:inline-flex;align-items:center;gap:7px;border-radius:6px}
+#outlier-context-playtest .p-actions .lucide{width:16px;height:16px}
+#outlier-context-playtest .p-probe{display:none}
+@media(max-width:600px){#outlier-context-playtest .p-game{padding:12px}#outlier-context-playtest .p-board{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#outlier-context-playtest .p-case{padding:8px;min-height:184px}#outlier-context-playtest .p-values{font-size:12px;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:4px}#outlier-context-playtest .p-review{padding-right:0}#outlier-context-playtest h2{font-size:19px}#outlier-context-playtest .p-metrics{gap:14px}}
+@media(prefers-reduced-motion:no-preference){#outlier-context-playtest .p-case{transition:background-color .12s,border-color .12s}}
+</style>
+<div class="p-review">철회된 시안 · 같은 두 슬롯 반복 문제로 실시간 관측판으로 교체</div>
+<section class="p-game" aria-label="같은 값 다른 판정 게임">
+ <header class="p-head"><h2>같은 값, 다른 판정</h2><div class="p-metrics"><span><span id="op-score" class="p-score">0</span> 점</span><span id="op-clock" class="p-clock">1:00</span></div></header>
+ <p class="p-goal">같은 숫자: 무리 밖 → 무리 안</p>
+ <div class="p-state"><span id="op-action">첫 번째 선택 · 이상치 후보</span><span id="op-count">정답 0 · 오답 0</span></div>
+ <div id="op-board" class="p-board"></div>
+ <section id="op-result" class="p-result" aria-label="한 판 결과" hidden><p id="op-finish-title">시간 종료</p><strong id="op-total">0점</strong><p id="op-equation"></p><div class="p-actions"><button type="button" id="op-replay"><i data-lucide="rotate-ccw" aria-hidden="true"></i>새 판 한 번 더</button><button type="button" id="op-stop"><i data-lucide="check" aria-hidden="true"></i>여기서 마치기</button></div></section>
+ <div id="op-feedback" class="p-feedback" aria-live="polite">금색 고리의 숫자를 주변 자료 무리와 비교하세요.</div>
+ <div class="p-rule"><span>정확한 짝 +1 · 반대 판정 −1</span><details id="op-last" hidden><summary>직전 짝의 판정</summary><p id="op-reason"></p></details><details><summary>이 판의 판정 기준</summary><p>정렬한 6개 자료의 아래 3개 중앙값이 Q1, 위 3개 중앙값이 Q3입니다. 주목 값이 Q1−1.5×(Q3−Q1)보다 작거나 Q3+1.5×(Q3−Q1)보다 크면 검토 후보입니다. 이 게임은 명확히 분리된 가상 사례만 사용하며, 후보가 현실의 오류라는 뜻은 아닙니다.</p></details></div>
+</section><span class="p-probe" aria-hidden="true"></span>
+<script>
+(()=>{
+ const Core=(()=>{
+  function rng(s){s.rng=(Math.imul(1664525,s.rng)+1013904223)>>>0;return s.rng/4294967296;}
+  function integer(s,a,b){return a+Math.floor(rng(s)*(b-a+1));}
+  function fences(values){const sorted=[...values].sort((a,b)=>a-b);if(sorted.length!==6)throw new Error('Six observations required');const q1=sorted[1],q3=sorted[4],iqr=q3-q1;return{q1,q3,lo:q1-1.5*iqr,hi:q3+1.5*iqr};}
+  function isOutlier(card){const f=fences(card.values);return card.target<f.lo||card.target>f.hi;}
+  function makePair(target,step,direction,pair=1,normalPosition=0){const centre=target+direction*10*step;const out=[-2,-1,0,1,2].map(n=>centre+n*step).concat(target);const offsets=normalPosition<0?[0,1,2,3,4,5]:normalPosition>0?[-5,-4,-3,-2,-1,0]:[-3,-2,-1,0,1,2];const normal=offsets.map(n=>target+n*step);return[{id:pair*2,pair,target,values:out},{id:pair*2+1,pair,target,values:normal}];}
+  function refill(s,pair,slots){const occupied=new Set(s.cards.filter(c=>c.pair!==pair).map(c=>c.target));let target;do{target=integer(s,60,150);}while(occupied.has(target));const nextPair=++s.sequence,step=integer(s,1,3),direction=integer(s,0,1)?1:-1,normalPosition=integer(s,-1,1),pairCards=makePair(target,step,direction,nextPair,normalPosition);if(rng(s)<.5)pairCards.reverse();slots.forEach((slot,i)=>{s.cards[slot]=pairCards[i];});}
+  function fresh(seed=47,replays=0){const s={revision:2,seed,rng:seed>>>0,sequence:0,cards:[],selected:null,startedAt:null,pending:null,lastPair:null,ended:false,score:0,correct:0,wrong:0,replays,version:0,message:'금색 고리의 숫자를 주변 자료 무리와 비교하세요.',tone:'neutral',choice:null};for(let p=0;p<3;p++){const slots=[s.cards.length,s.cards.length+1];refill(s,-1,slots);}for(let i=s.cards.length-1;i>0;i--){const j=integer(s,0,i);[s.cards[i],s.cards[j]]=[s.cards[j],s.cards[i]];}return s;}
+  function tick(s,now){if(s.ended)return s;if(s.startedAt!==null&&now-s.startedAt>=60000){s.ended=true;s.pending=null;s.selected=null;s.message='한 판이 끝났습니다.';s.tone='neutral';s.version++;return s;}if(s.pending&&now>=s.pending.until){const pair=s.pending.pair,slots=s.cards.flatMap((c,i)=>c.pair===pair?[i]:[]);refill(s,pair,slots);s.pending=null;s.version++;}return s;}
+  function pick(s,id,now){tick(s,now);if(s.ended||s.pending)return s;const card=s.cards.find(c=>c.id===id);if(!card)return s;if(s.startedAt===null)s.startedAt=now;
+   if(s.selected===id){s.selected=null;s.message='첫 번째 선택 · 이상치 후보';s.tone='neutral';s.version++;return s;}
+   if(s.selected===null){s.selected=id;s.message=`${card.target}인 다른 장에서, 이 값이 이상치가 아닌 쪽을 고르세요.`;s.tone='neutral';s.version++;return s;}
+   const first=s.cards.find(c=>c.id===s.selected);if(first.target!==card.target){s.message=`같은 숫자 ${first.target}인 다른 장을 선택하세요.`;s.tone='neutral';s.version++;return s;}
+   const good=isOutlier(first)&&!isOutlier(card);s.score+=good?1:-1;s.correct+=good?1:0;s.wrong+=good?0:1;s.lastPair={first,second:card,good};s.message=good?`${card.target}: 첫 장에서는 무리 밖, 둘째 장에서는 무리 안 · +1`:`${card.target}: 첫 장은 무리 안, 둘째 장은 무리 밖입니다 · −1`;s.tone=good?'good':'bad';s.pending={pair:first.pair,until:now+450};s.selected=null;s.version++;return s;
+  }
+  function valid(s){if(s?.revision!==2||s.cards?.length!==6||!Number.isFinite(s.rng)||!Number.isFinite(s.score)||s.score!==s.correct-s.wrong)return false;const targets=new Map();for(const c of s.cards){if(!Number.isInteger(c.id)||!Number.isInteger(c.pair)||!Number.isFinite(c.target)||c.values?.length!==6||!c.values.every(Number.isFinite)||!c.values.includes(c.target))return false;const group=targets.get(c.target)||[];group.push(c);targets.set(c.target,group);}return targets.size===3&&[...targets.values()].every(a=>a.length===2&&a[0].pair===a[1].pair&&isOutlier(a[0])!==isOutlier(a[1]));}
+  return{fresh,makePair,fences,isOutlier,pick,tick,valid};
+ })();
+ if(typeof module==='object'&&module.exports){module.exports=Core;return;}
+ const root=document.getElementById('outlier-context-playtest'),$=s=>root.querySelector(s);
+ let state=Core.fresh(),serial=0,framePending=false,keyboardSlot=null;
+ state.message='금색 고리의 숫자를 주변 자료 무리와 비교하세요.';
+ function restore(value){const p=value?.privateContent;if(p?.revision!==1||!Core.valid(p.state)||Number(p.serial||0)<serial)return false;state=p.state;serial=p.serial||0;Core.tick(state,Date.now());return true;}
+ restore(window.openai?.widgetState);
+ function colors(){const probe=$('.p-probe'),out={};for(const key of ['ink','muted','line','gold','green','red']){probe.style.color=`var(--p-${key})`;out[key]=getComputedStyle(probe).color;}return out;}
+ function draw(){const c=colors();root.querySelectorAll('.p-case canvas').forEach(canvas=>{const card=state.cards.find(v=>v.id===Number(canvas.dataset.id));if(!card)return;const w=Math.round(canvas.getBoundingClientRect().width),dpr=window.devicePixelRatio||1;canvas.width=w*dpr;canvas.height=72*dpr;const x=canvas.getContext('2d');x.scale(dpr,dpr);const sorted=[...card.values].sort((a,b)=>a-b),pad=Math.max(2,(sorted[5]-sorted[0])*.12),lo=sorted[0]-pad,hi=sorted[5]+pad,X=n=>12+(n-lo)/(hi-lo)*(w-24);x.strokeStyle=c.line;x.lineWidth=1;x.beginPath();x.moveTo(8,43);x.lineTo(w-8,43);x.stroke();let targetDone=false;card.values.forEach((n,i)=>{const isTarget=n===card.target&&!targetDone;if(isTarget)targetDone=true;const y=29-(i%2)*7;x.beginPath();x.arc(X(n),y,isTarget?6:3.5,0,Math.PI*2);if(isTarget){x.strokeStyle=c.gold;x.lineWidth=2;x.stroke();}else{x.fillStyle=c.ink;x.fill();}});x.fillStyle=c.muted;x.font='400 11px "Malgun Gothic",sans-serif';x.textAlign='left';x.fillText(sorted[0],8,65);x.textAlign='right';x.fillText(sorted[5],w-8,65);});}
+ function remaining(){return state.startedAt===null?60:Math.max(0,Math.ceil((60000-(Date.now()-state.startedAt))/1000));}
+ function render(){
+  $('#op-score').textContent=state.score;$('#op-count').textContent=`정답 ${state.correct} · 오답 ${state.wrong}`;$('#op-action').textContent=state.ended?'한 판 결과':state.selected===null?'첫 번째 선택 · 이상치 후보':'두 번째 선택 · 같은 숫자, 이상치 아님';$('#op-board').hidden=state.ended;$('#op-result').hidden=!state.ended;$('#op-total').textContent=`${state.score}점`;$('#op-equation').textContent=`정확한 짝 ${state.correct} − 반대 판정 ${state.wrong}`;$('#op-finish-title').textContent=state.choice==='stop'?'이번 플레이 종료':'시간 종료';$('#op-feedback').textContent=state.message;$('#op-feedback').dataset.tone=state.tone;
+  $('#op-board').innerHTML=state.cards.map(card=>{const nums=[...card.values].sort((a,b)=>a-b),role=state.pending?.pair===card.pair?(Core.isOutlier(card)?'무리 밖 · 후보':'무리 안'):state.selected===card.id?'① 후보 선택':'주목 값';return`<button type="button" class="p-case" data-id="${card.id}" aria-pressed="${state.selected===card.id}" ${state.pending?'disabled':''} aria-label="주목 값 ${card.target}. 자료 ${nums.join(', ')}"><span class="p-card-top"><span class="p-target">${card.target}</span><span class="p-role">${role}</span></span><canvas data-id="${card.id}" role="img" aria-label="주변 자료와 주목 값의 분포"></canvas><span class="p-values">${nums.map(n=>`<span class="${n===card.target?'p-focus':''}">${n}</span>`).join('')}</span></button>`;}).join('');
+  $('#op-last').hidden=!state.lastPair;if(state.lastPair){const explain=(card,n)=>{const f=Core.fences(card.values);return`${n}장 [${[...card.values].sort((a,b)=>a-b).join(' · ')}]: 기준 ${f.lo}~${f.hi}, 주목 값 ${card.target}은 ${Core.isOutlier(card)?'구간 밖의 검토 후보':'구간 안'}.`;};$('#op-reason').textContent=explain(state.lastPair.first,'첫 ')+ ' '+explain(state.lastPair.second,'둘째 ');}
+  if(keyboardSlot!==null&&!state.pending&&!state.ended)$('#op-board').children[keyboardSlot]?.focus({preventScroll:true});clock();draw();
+ }
+ function clock(){const seconds=remaining();$('#op-clock').textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;}
+ function save(){serial++;window.openai?.setWidgetState?.({modelContent:{prototype:'outlier-context-pairs',score:state.score,correct:state.correct,wrong:state.wrong,finished:state.ended,replays:state.replays,choice:state.choice},privateContent:{revision:1,state,serial}})?.catch(()=>{});}
+ $('#op-board').addEventListener('click',event=>{const card=event.target.closest('.p-case');if(!card)return;keyboardSlot=event.detail===0?[...$('#op-board').children].indexOf(card):null;const version=state.version;Core.pick(state,Number(card.dataset.id),Date.now());if(version!==state.version){render();save();}});
+ $('#op-replay').addEventListener('click',()=>{state=Core.fresh(state.seed+107,state.replays+1);state.message='금색 고리의 숫자를 주변 자료 무리와 비교하세요.';render();save();});
+ $('#op-stop').addEventListener('click',()=>{state.choice='stop';state.message='결과를 그대로 남겨 두었습니다.';state.version++;render();save();});
+ setInterval(()=>{const version=state.version;Core.tick(state,Date.now());if(version!==state.version){render();save();}else clock();},100);
+ function redraw(){if(framePending)return;framePending=true;requestAnimationFrame(()=>{framePending=false;draw();});}new ResizeObserver(redraw).observe(root);new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['class','style','data-theme']});matchMedia('(prefers-color-scheme:dark)').addEventListener('change',redraw);window.addEventListener('openai:set_globals',event=>{if(restore(event.detail?.globals?.widgetState))render();else redraw();});render();
+})();
+</script>
+</div>

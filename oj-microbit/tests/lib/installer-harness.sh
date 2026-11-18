@@ -88,10 +88,21 @@ prepare_credentials() {
 run_wp_bridge() {
   printf 'bridge:%s\n' "$1" >> "$TRACE"
   if [[ $1 == configure && ${FAIL_STAGE:-} == wordpress ]]; then return 42; fi
-  [[ $1 != configure ]] || printf '%s\n' "$URL" > "$CASE_ROOT/wordpress-setting"
+  if [[ $1 == configure ]]; then
+    printf '%s\n' "$URL" > "$CASE_ROOT/wordpress-setting"
+    COMMITTED=true ACTIVATING=false
+    [[ ${FAIL_STAGE:-} != post-commit ]] || return 45
+  fi
 }
 probe_runner() {
   printf 'probe:%s\n' "$2" >> "$TRACE"
+  if [[ $2 == restored-health ]]; then printf 'probe-restored-url:%s\n' "$URL" >> "$TRACE"; fi
+  if [[ $2 == canary && ${FAIL_STAGE:-} == signal-term ]]; then kill -TERM $; fi
+  if [[ $2 == canary && ${FAIL_STAGE:-} == signal-int ]]; then kill -INT $; fi
+  if [[ $2 == health && ${FAIL_STAGE:-} == health ]]; then return 1; fi
+  if [[ $2 == compile && ${FAIL_STAGE:-} == compile ]]; then return 1; fi
+  if [[ $2 == canary && ( ${FAIL_STAGE:-} == rollback-health || ${FAIL_STAGE:-} == disable-rollback ) ]]; then return 1; fi
+  if [[ $2 == restored-health && ${FAIL_STAGE:-} == rollback-health ]]; then return 1; fi
   if [[ $2 == canary && ${FAIL_STAGE:-} == legacy-docker-unavailable ]]; then : > "$CASE_ROOT/docker-unavailable"; return 1; fi
   [[ $2 != canary || ${FAIL_STAGE:-} != canary ]]
 }
@@ -158,11 +169,12 @@ systemctl() {
     is-active) [[ -f $CASE_ROOT/active ]] && return 0; return 3;;
     is-enabled) [[ -f $CASE_ROOT/enabled ]];;
     show)
-      if [[ $* == *MainPID* ]]; then
+      if [[ $* == *WorkingDirectory* && $* == *--value* ]]; then sed -n 's/^WorkingDirectory=//p' "$UNIT_FILE";
+      elif [[ $* == *MainPID* ]]; then
         if [[ -f $CASE_ROOT/active ]]; then printf '12345\n'; else printf '0\n'; fi
       else printf 'WorkingDirectory=previous-release\n'; fi;;
     enable) : > "$CASE_ROOT/enabled";;
-    disable) rm -f "$CASE_ROOT/enabled";;
+    disable) [[ ${FAIL_STAGE:-} != disable-rollback ]] || return 43; rm -f "$CASE_ROOT/enabled";;
     restart)
       if [[ ${FAIL_STAGE:-} == restart && ! -f $CASE_ROOT/restart-failed ]]; then : > "$CASE_ROOT/restart-failed"; return 43; fi
       : > "$CASE_ROOT/active";;

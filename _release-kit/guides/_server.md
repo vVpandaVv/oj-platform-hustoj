@@ -1255,7 +1255,7 @@ OJ 서버 설치는 상시 메뉴에 두지 않습니다. 필수 준비가 빠�
 
 **필요한 플러그인:** OJ Microbit. MakeCode 편집·HEX 다운로드·USB 업로드는 학생 브라우저에서 처리하며, 센서 입력 실험과 자동 채점을 사용하려면 이 실행기가 필요합니다. 아래는 WordPress와 같은 Ubuntu 24.04 amd64 서버에 설치하는 순서입니다. 실행 서비스는 loopback에만 연결하고 학생 코드는 네트워크 없는 일회성 Docker 작업에서 실행합니다. Docker daemon 접근 권한이 필요한 서비스이므로 중요한 다른 애플리케이션과 분리한 실행기 호스트 배치도 지원합니다. 별도 호스트 연결은 HTTPS와 WordPress 서버만 허용하는 방화벽을 사용합니다.
 
-**바꾸는 파일:** `/opt/oj-microbit/1.0.0-rc.9/runner/`, `/etc/oj-microbit/runner.env`, `/etc/systemd/system/oj-microbit-runner.service`. 업데이트 때는 새 버전 폴더에 배치하고 서비스의 `WorkingDirectory`와 이미지 이름을 바꿉니다. 기존 버전 폴더·인증키는 덮어쓰지 않습니다.
+**바꾸는 파일:** `/opt/oj-microbit/1.0.0-rc.15/runner/`, `/etc/oj-microbit/runner.env`, `/etc/systemd/system/oj-microbit-runner.service`. 업데이트 때는 새 버전 폴더에 배치하고 서비스의 `WorkingDirectory`와 이미지 이름을 바꿉니다. 기존 버전 폴더·인증키는 덮어쓰지 않습니다.
 
 ### 22-0. 한 명령 자동 설치 — 권장
 
@@ -1265,7 +1265,7 @@ WordPress에 현재 ZIP을 설치·활성화한 뒤 SSH에서 다음 명령을 �
 sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh
 ```
 
-동봉 `runner/install.sh`가 전용 Node 24.22.1 준비, Docker가 완전히 없을 때만 공식 저장소·필요 패키지 설치, 실행기 배치·이미지 빌드, 인증키 재사용/생성, 전용 systemd 등록·재시작, 실제 GPIO high/low 채점, WordPress 연결 설정까지 진행합니다. 실행기는 `127.0.0.1:3037`만 사용하며 외부 포트를 열지 않습니다. 기존 HUSTOJ Docker가 있으면 APT·저장소·Docker 시작/재시작 없이 재사용하고 필요한 curl·tar·xz·sha256sum·ss·CA가 없으면 중단합니다. 중단된 Docker와 충돌 패키지는 자동 수리·제거하지 않습니다. 사이트의 전역 Node는 교체하지 않습니다.
+동봉 `runner/install.sh`가 전용 Node 24.22.1 준비, Docker가 완전히 없을 때만 공식 저장소·필요 패키지 설치, 실행기 배치·이미지 빌드, 인증키 재사용/생성, 전용 systemd 등록·재시작, 정확한 릴리스/oj-live/1·GPIO high/low 채점·실제 PXT 컴파일 검사, WordPress 연결 설정까지 진행합니다. 실행기는 `127.0.0.1:3037`만 사용하며 외부 포트를 열지 않습니다. 기존 HUSTOJ Docker가 있으면 APT·저장소·Docker 시작/재시작 없이 재사용하고 필요한 curl·tar·xz·sha256sum·ss·CA가 없으면 중단합니다. 중단된 Docker와 충돌 패키지는 자동 수리·제거하지 않습니다. 사이트의 전역 Node는 교체하지 않습니다.
 
 포트가 다른 프로세스 소유이면 종료하지 않고 중단하므로 `--port 4040`처럼 실행기 포트만 바꿉니다. 활성화 직전에도 소유권을 재검사합니다. npm·이미지 빌드 전에 설치 경로·Docker 데이터 파일시스템의 여유가 각각 4GiB 이상이어야 합니다. 이미지 빌드·채점은 HUSTOJ와 CPU·메모리·디스크 I/O를 공유하므로 최초 빌드는 점검 시간에 진행하고 동봉 `docs/HUSTOJ-COEXISTENCE.md`의 전후 자원·병행 부하를 확인합니다. 유닛은 Docker를 암묵적으로 시작하는 Requires 의존성을 넣지 않습니다.
 
@@ -1282,16 +1282,16 @@ WordPress가 다른 위치이면 `--wp-root`를 지정합니다. 소유 계정�
 sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh --wp-root /home/judge/src/web --wp-user www-data
 ```
 
-변경 계획만 확인하거나 설치 후 상태를 진단할 수 있습니다. `--dry-run`은 설치·네트워크·잠금 파일을 만들지 않고, `--check`는 설정을 바꾸거나 학습 코드를 실행하지 않습니다.
+최신 ZIP을 설치한 뒤 위의 같은 명령을 다시 실행하면 현재 ZIP의 실행기 버전으로 업데이트합니다. 이전 버전과 백업은 보존합니다. --check는 서비스 경로·이미지·health releaseVersion이 현재 ZIP과 맞는지도 확인하므로 이전 버전 복원을 새 업데이트 성공으로 보고하지 않습니다. 변경 계획만 확인하거나 설치 후 상태를 진단할 수 있습니다. `--dry-run`은 설치·네트워크·잠금 파일을 만들지 않고, `--check`는 설정을 바꾸거나 학습 코드를 실행하지 않습니다.
 
 ```bash
 sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh --dry-run
 sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh --check
 ```
 
-기존 인증키는 명령행에 넣지 않습니다. 환경 파일·서비스 파일·WordPress 옵션의 기존 값은 `/opt/oj-microbit/backups/` 아래 root 전용 디렉터리에 보존합니다. 같은 소스의 동일 버전은 재사용하고, 다른 소스가 같은 버전/이미지에 있으면 덮어쓰지 않습니다. 설치 중 관리자가 WordPress 설정을 바꾸면 그 변경을 덮어쓰지 않고 중단합니다. 일반 검증 실패는 이전 서비스 설정·활성 상태를 복구합니다. 설치 중 Docker가 중단되면 이를 다시 시작하지 않도록 이전 파일을 복원하고 마이크로비트 서비스만 중지하며 수동 복구를 안내합니다. 새로 준비한 OS 패키지·Node·이미지와 버전 폴더는 보존합니다. 강제 전원 종료나 DB 응답 유실 때는 백업과 현재 상태를 대조해야 합니다.
+기존 인증키는 명령행에 넣지 않습니다. 환경 파일·서비스 파일·WordPress 옵션의 기존 값은 `/opt/oj-microbit/backups/` 아래 root 전용 디렉터리에 보존합니다. 같은 소스의 동일 버전은 재사용하고, 다른 소스가 같은 버전/이미지에 있으면 덮어쓰지 않습니다. 설치 중 관리자가 WordPress 설정을 바꾸면 그 변경을 덮어쓰지 않고 중단합니다. 연결 확정 전 검증 실패·INT/TERM은 이전 서비스 설정·활성/사용 상태와 이전 포트·키를 복구하고 인증 health GET으로 확인합니다. 복구 명령이나 health가 실패하면 수동 확인 필요를 표시합니다. 연결 확정 뒤 오류는 새 실행기와 WordPress 연결의 일관성을 유지하고 --check를 안내합니다. 플러그인 ZIP·DB 전체는 자동 다운그레이드하지 않습니다. 설치 중 Docker가 중단되면 이를 다시 시작하지 않도록 이전 파일을 복원하고 마이크로비트 서비스만 중지하며 수동 복구를 안내합니다. 새로 준비한 OS 패키지·Node·이미지와 버전 폴더는 보존합니다. 강제 전원 종료나 DB 응답 유실 때는 백업과 현재 상태를 대조해야 합니다.
 
-**다시 불러오기:** 자동 설치기가 systemd 재시작과 연결 설정까지 처리합니다. **확인:** 마지막 GPIO 점검·WordPress 연결 성공 후 설정 화면의 준비 상태와 학생 채점을 확인합니다. 현재 개발 PC에서는 실제 Ubuntu/systemd/Docker 설치를 검증하지 않았으므로 운영 전 시험 서버에서 실행합니다. 상세 동작·오류 코드는 동봉 `docs/INSTALLER.md`를 참고합니다.
+**다시 불러오기:** 자동 설치기가 systemd 재시작과 연결 설정까지 처리합니다. **확인:** 마지막 릴리스·GPIO·컴파일 점검·WordPress 연결 성공 후 설정 화면의 준비 상태와 학생 채점을 확인합니다. 현재 개발 PC에서는 실제 Ubuntu/systemd/Docker 설치를 검증하지 않았으므로 운영 전 시험 서버에서 실행합니다. 상세 동작·오류 코드는 동봉 `docs/INSTALLER.md`를 참고합니다.
 
 아래 22-1~22-4는 수동 설치·검토용 대안입니다. 자동 설치와 같은 버전 디렉터리에 수동 파일을 섞지 않습니다.
 
@@ -1352,13 +1352,13 @@ WordPress 관리자에서 OJ Microbit ZIP을 설치한 뒤 SSH에서 진행합�
 getent passwd oj-microbit
 sudo useradd --system --user-group --home-dir /opt/oj-microbit --shell /usr/sbin/nologin oj-microbit
 sudo usermod -aG docker oj-microbit
-sudo install -d -m 0755 /opt/oj-microbit/1.0.0-rc.9
-sudo cp -a /home/judge/src/web/wp-content/plugins/oj-microbit/runner /opt/oj-microbit/1.0.0-rc.9/runner
-sudo chown -R root:root /opt/oj-microbit/1.0.0-rc.9
-cd /opt/oj-microbit/1.0.0-rc.9/runner
+sudo install -d -m 0755 /opt/oj-microbit/1.0.0-rc.15
+sudo cp -a /home/judge/src/web/wp-content/plugins/oj-microbit/runner /opt/oj-microbit/1.0.0-rc.15/runner
+sudo chown -R root:root /opt/oj-microbit/1.0.0-rc.15
+cd /opt/oj-microbit/1.0.0-rc.15/runner
 sudo env PATH=/opt/oj-microbit-node-24.22.1/bin:/usr/bin:/bin /opt/oj-microbit-node-24.22.1/bin/npm ci --omit=dev --ignore-scripts --no-audit --no-fund
-sudo chmod -R go-w /opt/oj-microbit/1.0.0-rc.9
-sudo docker build -t oj-microbit-worker:1.0.0-rc.9 .
+sudo chmod -R go-w /opt/oj-microbit/1.0.0-rc.15
+sudo docker build -t oj-microbit-worker:1.0.0-rc.15 .
 ```
 
 플러그인 ZIP은 실행기 소스와 lockfile을 포함하며 node_modules는 포함하지 않습니다. 운영 서버의 코드 실행 모드는 `docker`를 유지합니다. 개발용 `process` 모드는 운영 요청에 사용하지 않습니다.
@@ -1378,7 +1378,7 @@ MICROBIT_RUNNER_TOKEN=인증키를_여기에_입력
 MICROBIT_RUNNER_HOST=127.0.0.1
 MICROBIT_RUNNER_PORT=3037
 MICROBIT_RUNNER_MODE=docker
-MICROBIT_WORKER_IMAGE=oj-microbit-worker:1.0.0-rc.9
+MICROBIT_WORKER_IMAGE=oj-microbit-worker:1.0.0-rc.15
 NODE_ENV=production
 ```
 
@@ -1400,7 +1400,7 @@ Type=simple
 User=oj-microbit
 Group=oj-microbit
 SupplementaryGroups=docker
-WorkingDirectory=/opt/oj-microbit/1.0.0-rc.9/runner
+WorkingDirectory=/opt/oj-microbit/1.0.0-rc.15/runner
 EnvironmentFile=/etc/oj-microbit/runner.env
 Environment=PATH=/opt/oj-microbit-node-24.22.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 Environment=DOCKER_HOST=unix:///var/run/docker.sock
@@ -1451,7 +1451,7 @@ sudo systemctl disable --now oj-microbit-runner
 먼저 **20단계의 DB·웹·서버 설정 백업**과 별도 시험 환경의 복원 수단을 확보하고, 설치 ZIP과 동봉 체크섬을 같은 폴더에서 확인합니다. WordPress ZIP은 설치·활성화하되 실패 복원 시험 전에 기존 실행기를 유지합니다. 신규 서버에 기존 실행기가 없으면 롤백 시험은 별도 이전 버전 기준 환경에서 수행합니다.
 
 ```bash
-sha256sum --check oj-microbit-1.0.0-rc.9.zip.sha256
+sha256sum --check oj-microbit-1.0.0-rc.15.zip.sha256
 sudo install -d -m 0700 /root/oj-microbit-acceptance
 sudo install -d -m 0700 -o www-data -g www-data /var/lib/oj-microbit-acceptance
 sudo vi /home/judge/src/web/wp-content/oj-microbit-acceptance.json

@@ -14,20 +14,20 @@ module.exports=async({page,browser,url,out,ready,state,sessions})=>{
     await page.setViewportSize({width:1280,height:1200});
     await go('data-structure-lab');await act('[data-begin]');
     let s=await state(page),first=s.incoming[0];
-    await drag(page.locator('[data-cargo=incoming]'),page.locator('[data-cargo-drop=stack]'));await revision(s.revision);
+    await drag(page.locator('[data-drag-source=incoming]'),page.locator('[data-drop-lane=stack]'));await revision(s.revision);
     s=await state(page);check(s.stack.length===1&&s.stack[0]===first,'drag inserts exactly once');
-    await act('[data-do=push][data-lane=stack]');s=await state(page);
-    check(await page.locator('[data-cargo=stack]').count()===1,'only the top crate is actionable');
-    const top=s.stack.at(-1),wanted=s.orders[0];
-    await drag(page.locator('[data-cargo=stack]'),page.locator('[data-cargo-drop=dispatch]'));await revision(s.revision);
+    await act('[data-wh=put-stack]');s=await state(page);
+    check(await page.locator('[data-drag-source=stack]').count()===1,'only the top crate is actionable');
+    const top=s.stack.at(-1),wanted=s.orders[0].items[0];
+    await drag(page.locator('[data-drag-source=stack]'),page.locator('[data-drop-dock="0"]'));await revision(s.revision);
     s=await state(page);check(!s.stack.includes(top),'drag removes the actual top');
-    check(s.feedback.item===top&&s.feedback.to===(top===wanted?'배송 완료':'임시 보관'),'destination agrees with server rule');
+    check(s.feedback.item===top&&s.feedback.to===(top===wanted?'dock-0':'buffer'),'destination agrees with server rule');
     if(s.buffer.length){
-        const item=s.buffer[0];await drag(page.locator('[data-cargo=buffer]').first(),page.locator('[data-cargo-drop=queue]'));await revision(s.revision);
+        const item=s.buffer[0];await drag(page.locator('[data-drag-source=buffer]').first(),page.locator('[data-drop-lane=queue]'));await revision(s.revision);
         s=await state(page);check(s.queue.includes(item)&&!s.buffer.includes(item),'buffer crate can be reinserted');
     }
-    await act('[data-do=reset]');s=await state(page);check(s.feedback.to==='입고대','reset replaces stale shipment feedback');
-    const before=s.revision;await drag(page.locator('[data-cargo=incoming]'),page.locator('.eg-focus-toolbar'));
+    await act('[data-wh=reset]');s=await state(page);check(s.feedback.to==='incoming','reset replaces stale shipment feedback');
+    const before=s.revision;await drag(page.locator('[data-drag-source=incoming]'),page.locator('.eg-focus-toolbar'));
     check((await state(page)).revision===before&&await page.locator('.eo-drag-ghost').count()===0,'invalid drop is harmless');
 
     await go('missing-values');await level('example-median');
@@ -48,10 +48,10 @@ module.exports=async({page,browser,url,out,ready,state,sessions})=>{
     await page.waitForTimeout(1200);check(s.timerPaused&&await page.locator('[data-clock]').innerText()===clock,'review clock stays paused');
     await act('[data-do=next]');check(!(await state(page)).timerPaused,'next resumes clock');
 
-    await go('data-extraction');const count=await page.locator('.ex-outfeed .ex-belt .eh-object').count();
+    await go('data-extraction');const output=await page.locator('.ex-outfeed .ex-belt .eh-object').allTextContents();
     await page.locator('[data-do=gate][data-gate=color][data-value=blue]').click();
     check(await page.locator('[data-do=gate][data-value=blue]').getAttribute('aria-pressed')==='true','swatch changes gate');
-    check(count!==await page.locator('.ex-outfeed .ex-belt .eh-object').count(),'gate changes actual output');
+    check(JSON.stringify(output)!==JSON.stringify(await page.locator('.ex-outfeed .ex-belt .eh-object').allTextContents()),'gate changes actual output objects, even when counts match');
     await page.locator('[data-field=shape]').uncheck();check(!(await page.locator('.ex-ticket').first().innerText()).includes('모양'),'projected labels omit unchecked field');
 
     await go('ai-classifier-lab');await page.locator('[data-do=boundary-view][data-value=incoming]').click();

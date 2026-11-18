@@ -1,6 +1,6 @@
 <?php
 /**
- * Complete assignment submission status for the current teaching roster.
+ * Complete assignment status with optional current-membership enrichment.
  *
  * @package OJAI\Dashboard
  */
@@ -13,6 +13,7 @@ use RuntimeException;
 use OJAI\Dashboard\Submission\Assessment\Port\Non_Submission_Grade_Repository_Port_Interface;
 use OJAI\Dashboard\Submission\Assignment\Port\Assignment_Roster_Port_Interface;
 use OJAI\Dashboard\Submission\Assignment\Port\Learner_Display_Snapshot_Port_Interface;
+use OJAI\Dashboard\Submission\Assignment\Application\Assignment_Failure;
 use OJAI\Dashboard\Submission\Teacher\Application\Read_Teacher_Submissions;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,14 +41,14 @@ final class Read_Submission_Evaluation_Roster {
 	}
 
 	/**
-	 * Read every target and current context learner without partial results.
+	 * Read all stored targets; enrich current membership only when fully available.
 	 *
 	 * @param int    $actor_user_id Authenticated teacher.
 	 * @param string $assignment_id Authorized assignment.
 	 * @param string $context_type Context type.
 	 * @param string $context_id Context identifier.
 	 * @param string $context_revision Authorized revision.
-	 * @return array{items:array<int,array<string,mixed>>}
+	 * @return array{items:array<int,array<string,mixed>>,membership:array{state:string,scope:string}}
 	 * @throws RuntimeException Rejects incomplete pages rather than guessing missing submissions.
 	 */
 	public function read( int $actor_user_id, string $assignment_id, string $context_type, string $context_id, string $context_revision ): array {
@@ -70,7 +71,7 @@ final class Read_Submission_Evaluation_Roster {
 					),
 					'assigned'       => 'active' === $item['target']['state'],
 					'target_state'   => $item['target']['state'],
-					'current_member' => false,
+					'current_member' => null,
 					'status'         => $item['status'],
 					'submission'     => null === $submission ? null : array(
 						'id'                   => $submission['id'],
@@ -91,24 +92,42 @@ final class Read_Submission_Evaluation_Roster {
 		if ( '' !== $cursor ) {
 			throw new RuntimeException( 'Assignment roster page limit exceeded.' );
 		}
-		$current = $this->roster->collect( $actor_user_id, $context_type, $context_id, $context_revision );
-		foreach ( $current->learners() as $learner ) {
-			$user_id = $learner['learner_user_id'];
-			if ( isset( $rows[ $user_id ] ) ) {
-				$rows[ $user_id ]['current_member'] = true;
-				continue;
+		$membership = array(
+			'state' => 'current',
+			'scope' => 'context',
+		);
+		try {
+			$current  = $this->roster->collect( $actor_user_id, $context_type, $context_id, $context_revision );
+			$enriched = array_map( static fn( array $row ): array => array_replace( $row, array( 'current_member' => false ) ), $rows );
+			foreach ( $current->learners() as $learner ) {
+				$user_id = $learner['learner_user_id'];
+				if ( isset( $enriched[ $user_id ] ) ) {
+					$enriched[ $user_id ]['current_member'] = true;
+					continue;
+				}
+				$display              = $this->displays->snapshot( $user_id );
+				$enriched[ $user_id ] = array(
+					'id'             => 'learner:' . $user_id,
+					'learner'        => array(
+						'user_id'      => $user_id,
+						'display_name' => $display['display_name'],
+					),
+					'assigned'       => false,
+					'current_member' => true,
+					'status'         => 'not_assigned',
+					'submission'     => null,
+				);
 			}
-			$display          = $this->displays->snapshot( $user_id );
-			$rows[ $user_id ] = array(
-				'id'             => 'learner:' . $user_id,
-				'learner'        => array(
-					'user_id'      => $user_id,
-					'display_name' => $display['display_name'],
-				),
-				'assigned'       => false,
-				'current_member' => true,
-				'status'         => 'not_assigned',
-				'submission'     => null,
+			$rows = $enriched;
+		} catch ( Assignment_Failure $failure ) {
+			if ( ! in_array( $failure->reason(), array( Assignment_Failure::ROSTER_UNAVAILABLE, Assignment_Failure::ROSTER_INVALID, Assignment_Failure::ROSTER_TOO_LARGE, Assignment_Failure::DISPLAY_UNAVAILABLE ), true ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Preserve explicit access denial and all non-dependency failures.
+				throw $failure;
+			}
+			// Stored targets remain authoritative; unknown membership is not removal.
+			$membership = array(
+				'state' => 'unavailable',
+				'scope' => 'assignment_targets',
 			);
 		}
 		if ( null !== $this->grades ) {
@@ -128,6 +147,9 @@ final class Read_Submission_Evaluation_Roster {
 			}
 			unset( $row );
 		}
-		return array( 'items' => array_values( $rows ) );
+		return array(
+			'items'      => array_values( $rows ),
+			'membership' => $membership,
+		);
 	}
 }

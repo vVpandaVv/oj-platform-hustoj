@@ -1,0 +1,567 @@
+{
+  "date": "2026-11-06",
+  "candidateVersion": "1.0.0-rc.15",
+  "ok": true,
+  "checks": [
+    "Existing independent menus and bounded one-row problem list remain intact",
+    "Focused problem view has one title, readable task, device summary and public parallel/serial examples without hidden tests or eager editor",
+    "Original exact conditions remain behind an explicit technical disclosure",
+    "Problem content fits narrow devices at 320 390 and 440 pixels",
+    "Focused authoring starts with one visible step and no eager MakeCode load",
+    "Staged pin selection and Escape cancellation leave the original exercise and dirty state unchanged",
+    "One four-page dialog adds three pins and a serial LED sequence atomically while retaining the same editor",
+    "Stage Edit loads all selected pins and their existing serial actions and applies multiple changed values together",
+    "Batch pin/value/time pages and focused steps fit 320 390 440 1280 pixels with contained dialog scrolling and keyboard cycling",
+    "New input stage and interval edits move all later pin references together without cloning unrelated output states",
+    "Teacher creates a named private condition directly; grouped visibility is clear and inputs, outputs and timings use the same atomic wizard",
+    "The final focused publish action prepares the existing explicit review and cancellation preserves the original code frame",
+    "Modal editing adds no REST requests; save sends the original schema and retains the same live editor",
+    "Field errors open the correct focused author step and its exact detailed input",
+    "Real unsaved code still prompts once; saving and leaving remains clean",
+    "Focused lesson problem preserves assignment context and scoped solve/history actions",
+    "Focused problem content remains readable with the actual platform dark theme",
+    "Sensor, microbit, LED and motor SVGs and controls fit desktop and mobile; step cards and exact timing stay collapsed",
+    "Student opens the original exact timing and ordered output details only when needed",
+    "Input changes update LED brightness and real motor CSS rotation immediately; speed scales with PWM, unknown values stop motion, reduced motion and pause are honored without REST",
+    "Serial LED preview holds, pauses and replays in order; choosing a pictured scene restores its full input state",
+    "Larger input sets mount one chosen control while retaining every other public input value",
+    "Long examples reveal three scenes per click, switching examples resets inherited inputs, hidden cases stay absent and all interaction adds no REST requests",
+    "Serial output, servo angles and pulses, and I2C details remain available without narrow-screen overflow",
+    "Student overview preserves the assignment boundary and cannot add a solve action to read-only lessons",
+    "Chosen editing-focus design matches heading sizes, form padding and corner shapes at 1280/768/390/320; three horizontal steps have one visible panel and no eager iframe",
+    "Editing-focus typography and button geometry resist broad theme overrides",
+    "Without public examples, real PXT variables survive input 513/100 and LED follows live reads without another HTTP request or compilation",
+    "Repeated result-panel close/open preserves the exact code iframe, driver, project, opaque host and increasing real PXT counter with no REST calls or recompilation",
+    "Expected preview stays explicitly separate while the actual PXT program continues, including problems with only hidden grading cases",
+    "Opening the task description does not navigate, save, reset or reload the current program",
+    "One hundred slider changes update only the existing worker input map; parallel counter keeps increasing with zero REST input traffic",
+    "Actual runtime uses a separate worker inside an opaque-origin sandbox; parent document access is denied",
+    "Pause retains variables and pending timers; input can change while paused and Continue resumes the same runtime",
+    "Continuous sensor, LED and motor controls fit 320/390 pixel screens and dark/reduced-motion modes",
+    "Input changed during a 500ms pause does not restart the pending delay; later analogRead reads the new 777 value",
+    "Changing source replaces the old runtime; genuine compile errors show local diagnostics without a fake output or grade",
+    "Only an explicit From beginning action or source replacement resets the accumulated counter",
+    "A non-yielding program is terminated by the worker watchdog while the page remains usable",
+    "Live I2C sensor changes move the servo while program-written register state and pointer semantics persist without reboot or recompilation",
+    "Lesson compilation retains its permission-scoped endpoint and no live input writes a project, grade or submission",
+    "Explicit local draft recovery starts the recovered source and retains the new panel controls without a second toggle compile or stored grade",
+    "The simulator host refuses executable connections when embedded without the opaque-origin sandbox",
+    "Core programming and class bodies remain separate"
+  ],
+  "pageErrors": 0,
+  "metrics": [
+    {
+      "label": "problem-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1720,
+      "localNav": 0
+    },
+    {
+      "label": "problem-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1602,
+      "localNav": 0
+    },
+    {
+      "label": "problem-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 1543,
+      "localNav": 0
+    },
+    {
+      "label": "author-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 2147,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 2147,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 2147,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 2147,
+      "localNav": 34
+    },
+    {
+      "label": "author-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2101,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2101,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2101,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 2101,
+      "localNav": 34
+    },
+    {
+      "label": "author-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 2083,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 2083,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 2083,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-440",
+      "width": 440,
+      "documentWidth": 440,
+      "height": 2083,
+      "localNav": 34
+    },
+    {
+      "label": "author-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 2197,
+      "localNav": 34
+    },
+    {
+      "label": "batch-pins-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 2197,
+      "localNav": 34
+    },
+    {
+      "label": "batch-values-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 2197,
+      "localNav": 34
+    },
+    {
+      "label": "batch-times-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 2197,
+      "localNav": 34
+    },
+    {
+      "label": "focused-dark-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1604,
+      "localNav": 0
+    },
+    {
+      "label": "student-overview-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 1136,
+      "localNav": 0
+    },
+    {
+      "label": "student-scenes-1280",
+      "cards": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 470,
+          "y": 987.265625,
+          "width": 340,
+          "height": 317.65625
+        },
+        {
+          "x": 824,
+          "y": 987.265625,
+          "width": 340,
+          "height": 317.65625
+        }
+      ]
+    },
+    {
+      "label": "student-overview-768",
+      "width": 768,
+      "documentWidth": 768,
+      "height": 1131,
+      "localNav": 0
+    },
+    {
+      "label": "student-scenes-768",
+      "cards": [
+        {
+          "x": 27,
+          "y": 981.953125,
+          "width": 350,
+          "height": 317.65625
+        },
+        {
+          "x": 391,
+          "y": 981.953125,
+          "width": 350,
+          "height": 317.65625
+        },
+        {
+          "x": 27,
+          "y": 1313.609375,
+          "width": 350,
+          "height": 317.65625
+        }
+      ]
+    },
+    {
+      "label": "student-overview-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1653,
+      "localNav": 0
+    },
+    {
+      "label": "student-scenes-390",
+      "cards": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "x": 19,
+          "y": 1703.890625,
+          "width": 352,
+          "height": 228.609375
+        },
+        {
+          "x": 19,
+          "y": 1946.5,
+          "width": 352,
+          "height": 228.609375
+        }
+      ]
+    },
+    {
+      "label": "student-overview-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1720,
+      "localNav": 0
+    },
+    {
+      "label": "student-scenes-320",
+      "cards": [
+        {
+          "x": 19,
+          "y": 1501.5625,
+          "width": 282,
+          "height": 228.609375
+        },
+        {
+          "x": 19,
+          "y": 1744.171875,
+          "width": 282,
+          "height": 228.609375
+        },
+        {
+          "x": 19,
+          "y": 1986.78125,
+          "width": 282,
+          "height": 228.609375
+        }
+      ]
+    },
+    {
+      "label": "student-wiring-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1919,
+      "localNav": 0
+    },
+    {
+      "label": "expected-controls-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1720,
+      "localNav": 0
+    },
+    {
+      "label": "expected-multiple-inputs-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1829,
+      "localNav": 0
+    },
+    {
+      "label": "student-example-switch-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1847,
+      "localNav": 0
+    },
+    {
+      "label": "student-protocol-버튼을 누르면 LED가 켜졌다 꺼지기",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1740,
+      "localNav": 0
+    },
+    {
+      "label": "student-protocol-details-버튼을 누르면 LED가 켜졌다 꺼지기",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 2207,
+      "localNav": 0
+    },
+    {
+      "label": "student-protocol-센서로 서보 각도와 펄스 제어하기",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1800,
+      "localNav": 0
+    },
+    {
+      "label": "student-protocol-details-센서로 서보 각도와 펄스 제어하기",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 3328,
+      "localNav": 0
+    },
+    {
+      "label": "student-protocol-I²C 센서 값을 읽어 서보 제어하기",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 1826,
+      "localNav": 0
+    },
+    {
+      "label": "student-protocol-details-I²C 센서 값을 읽어 서보 제어하기",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 3673,
+      "localNav": 0
+    },
+    {
+      "label": "student-overview-dark-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 1653,
+      "localNav": 0
+    },
+    {
+      "label": "immersive-author-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-2-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-3-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-1-1280",
+      "width": 1280,
+      "documentWidth": 1280,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-768",
+      "width": 768,
+      "documentWidth": 768,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-2-768",
+      "width": 768,
+      "documentWidth": 768,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-3-768",
+      "width": 768,
+      "documentWidth": 768,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-1-768",
+      "width": 768,
+      "documentWidth": 768,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-2-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-3-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-1-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-2-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-3-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "immersive-author-step-1-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 900,
+      "localNav": 34
+    },
+    {
+      "label": "stateful-execution-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 907,
+      "localNav": 0
+    },
+    {
+      "label": "editor-full-width-390",
+      "width": 390,
+      "documentWidth": 390,
+      "height": 901,
+      "localNav": 0
+    },
+    {
+      "label": "stateful-execution-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 943,
+      "localNav": 0
+    },
+    {
+      "label": "editor-full-width-320",
+      "width": 320,
+      "documentWidth": 320,
+      "height": 978,
+      "localNav": 0
+    }
+  ],
+  "posts": [
+    {
+      "id": 0,
+      "revision": 0
+    },
+    {
+      "id": 72,
+      "revision": 1
+    }
+  ],
+  "microbitJsSha256": "c5a0eab2ec021b84b70b6e3e43839818fafe3cd892916fea33bd5df38103360f",
+  "microbitCssSha256": "916c11b965756e176ca0bc4162e579ced303e2e663b8fcaae86f04881fe92624",
+  "liveSessionSha256": "c2a7932350291fbd8a3c16ea2b5d2b83537bdf39cd972506ce456dc9b6ffc65c",
+  "simulatorHostSha256": "3edabd37e89a42e309bd7bbfead3d85063b5b1c7b171691c791972a3dc7b8a60",
+  "shellCssSha256": "c67bfc7c54a8face97b5ab041a0b6139e096769ed1f8f506a867001de5b89cdc",
+  "actualPlatformMenuResolver": true,
+  "actualPhpRenderer": true,
+  "editorProtocolFixture": true,
+  "actualPxtCompiler": true,
+  "actualPxtRuntime": true,
+  "persistentRuntime": true,
+  "browserWorker": true,
+  "opaqueOriginSandbox": true,
+  "unsandboxedHostRejected": true,
+  "inputHttpRequests": 0,
+  "executionRestFixture": true,
+  "compileRequests": 10,
+  "previewRequests": 0,
+  "previewPeak": 0,
+  "projectWrites": 0,
+  "gradeWrites": 0,
+  "actualWordPress": false,
+  "actualMakeCode": false,
+  "actualDatabase": false,
+  "actualDocker": false,
+  "actualHardware": false
+}

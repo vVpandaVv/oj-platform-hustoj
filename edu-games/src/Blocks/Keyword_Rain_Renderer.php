@@ -11,7 +11,7 @@ final class Keyword_Rain_Renderer extends Abstract_Game_Renderer {
      */
     public static function render(array $attributes = array(), bool $is_block = false): string {
         $config = self::build_config(Keyword_Rain_Module::ID, Keyword_Rain_Module::rules());
-        $wrapper = self::wrapper_attributes($is_block, 'keyword-rain-block');
+        $wrapper = self::wrapper_attributes($is_block, 'keyword-rain-block eg-layout-v2');
 
         ob_start();
         ?>
@@ -23,8 +23,6 @@ final class Keyword_Rain_Renderer extends Abstract_Game_Renderer {
                         <h2><?php esc_html_e('키워드 레인', 'edu-games'); ?></h2>
                     </div>
                     <div class="oj-rain-actions">
-                        <select class="oj-rain-select" data-field="language" aria-label="<?php esc_attr_e('언어 선택', 'edu-games'); ?>"></select>
-                        <select class="oj-rain-select" data-field="difficulty" aria-label="<?php esc_attr_e('난이도', 'edu-games'); ?>"></select>
                         <button type="button" class="oj-rain-button oj-rain-button-ghost" data-action="practice"><?php esc_html_e('연습 준비', 'edu-games'); ?></button>
                         <button type="button" class="oj-rain-button oj-rain-button-primary" data-action="start-ranked"><?php esc_html_e('도전 시작', 'edu-games'); ?></button>
                     </div>
@@ -34,8 +32,11 @@ final class Keyword_Rain_Renderer extends Abstract_Game_Renderer {
                 <div class="oj-rain-modebar" role="tablist" aria-label="<?php esc_attr_e('플레이 방식', 'edu-games'); ?>">
                     <button type="button" class="oj-rain-mode is-active" data-play-type="practice"><?php esc_html_e('연습', 'edu-games'); ?></button>
                     <button type="button" class="oj-rain-mode" data-play-type="ranked"><?php esc_html_e('도전', 'edu-games'); ?></button>
+                    <select class="oj-rain-select" data-field="language" aria-label="언어 선택"></select>
+                    <select class="oj-rain-select" data-field="difficulty" aria-label="난이도"></select>
                 </div>
 
+                <div class="oj-rain-stage" data-game-workspace="rain">
                 <div class="oj-rain-stats" aria-label="<?php esc_attr_e('게임 상태', 'edu-games'); ?>">
                     <div class="oj-rain-stat">
                         <span><?php esc_html_e('점수', 'edu-games'); ?></span>
@@ -73,17 +74,19 @@ final class Keyword_Rain_Renderer extends Abstract_Game_Renderer {
                             <span data-field="status"><?php esc_html_e('대기', 'edu-games'); ?></span>
                         </div>
 
+                        <div class="oj-rain-flight">
                         <div class="oj-rain-arena" data-field="arena" tabindex="0" aria-label="<?php esc_attr_e('키워드가 떨어지는 게임 공간', 'edu-games'); ?>">
                             <div class="oj-rain-drop-layer" data-field="drops"></div>
                             <div class="oj-rain-start-card" data-field="start-card">
-                                <strong><?php esc_html_e('입력창에 단어를 치면 키워드가 사라집니다.', 'edu-games'); ?></strong>
-                                <span><?php esc_html_e('단어가 바닥에 닿으면 기회가 줄어듭니다.', 'edu-games'); ?></span>
+                                <strong><?php esc_html_e('단어 입력 → 즉시 제거', 'edu-games'); ?></strong>
+                                <span><?php esc_html_e('놓치면 기회 −1', 'edu-games'); ?></span>
                             </div>
                         </div>
 
                         <div class="oj-rain-input-row">
                             <input type="text" class="oj-rain-input" data-field="input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="<?php esc_attr_e('떨어지는 단어를 입력하세요', 'edu-games'); ?>">
                             <button type="button" class="oj-rain-button oj-rain-button-primary" data-action="start"><?php esc_html_e('시작', 'edu-games'); ?></button>
+                        </div>
                         </div>
                         <p class="oj-rain-feedback" data-field="feedback" aria-live="polite"></p>
                     </section>
@@ -118,6 +121,7 @@ final class Keyword_Rain_Renderer extends Abstract_Game_Renderer {
                         </section>
                     </aside>
                 </main>
+                </div>
             </div>
         </section>
         <?php

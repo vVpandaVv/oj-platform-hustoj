@@ -3,10 +3,12 @@ declare(strict_types=1);
 namespace OjMicrobit\Support;
 
 use OjMicrobit\Application\Runner;
+use OjMicrobit\Application\LiveCompiler;
+use OjMicrobit\Domain\ProjectSchema;
 use OjMicrobit\Domain\RunnerResultSchema;
 use Throwable;
 
-final class HttpRunner implements Runner
+final class HttpRunner implements Runner, LiveCompiler
 {
     public function status(): array
     {
@@ -28,6 +30,25 @@ final class HttpRunner implements Runner
         $this->compatible($data);
         try { return RunnerResultSchema::normalize($data, $project, $exercise); }
         catch (Throwable) { throw $this->failure('invalid_response', 502); }
+    }
+    public function compile(array $project): array
+    {
+        $data = $this->request('/v1/compile', ['project' => $project], 60);
+        $this->compatible($data);
+        if (($data['liveProtocol'] ?? null) !== 'oj-live/1') { throw $this->failure('version_mismatch', 502); }
+        if (($data['projectHash'] ?? null) !== ProjectSchema::hash($project) || !in_array($data['status'] ?? null, ['compiled', 'compile_error'], true)) { throw $this->failure('invalid_response', 502); }
+        if (!is_array($data['diagnostics'] ?? null) || count($data['diagnostics']) > 30) { throw $this->failure('invalid_response', 502); }
+        $diagnostics = [];
+        foreach ($data['diagnostics'] as $item) {
+            if (!is_array($item) || !is_string($item['message'] ?? null)) { throw $this->failure('invalid_response', 502); }
+            $diagnostics[] = ['file' => is_string($item['file'] ?? null) ? mb_substr($item['file'], 0, 240) : '', 'line' => is_int($item['line'] ?? null) ? max(1, $item['line']) : 1, 'message' => mb_substr($item['message'], 0, 2000)];
+        }
+        $result = ['status' => $data['status'], 'liveProtocol' => 'oj-live/1', 'runtimeVersion' => $data['runtimeVersion'], 'projectHash' => $data['projectHash'], 'diagnostics' => $diagnostics];
+        if ($data['status'] === 'compiled') {
+            if (!is_string($data['js'] ?? null) || strlen($data['js']) < 1 || strlen($data['js']) > 2097152 || str_contains($data['js'], chr(0))) { throw $this->failure('invalid_response', 502); }
+            $result['js'] = $data['js'];
+        }
+        return $result;
     }
     private function compatible(array $data): void
     {
@@ -67,6 +88,7 @@ final class HttpRunner implements Runner
         if ($status === 503) { throw $this->failure('unavailable', 503, $this->retryAfter($data, 5), $started, $upstreamId); }
         if ($status >= 500 && $status <= 599) { throw $this->failure('unavailable', 503, 5, $started, $upstreamId); }
         if (in_array($status, [400, 413, 415, 422], true)) { throw $this->failure('invalid_input', 400, null, $started, $upstreamId); }
+        if ($status === 404 && $path === '/v1/compile') { throw $this->failure('version_mismatch', 502, null, $started); }
         if ($status !== 200 || !is_array($data)) { throw $this->failure('invalid_response', 502, null, $started, $upstreamId); }
         $resultCode = in_array($data['status'] ?? null, ['graded', 'preview', 'compile_error', 'runtime_error', 'ok'], true) ? $data['status'] : 'response_received';
         RequestContext::log($resultCode, 200, (int) ((hrtime(true) - $started) / 1000000), $upstreamId);

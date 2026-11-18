@@ -256,13 +256,14 @@ test('preview sends external register overrides and does not grant student code 
   const f = appFixture(); const exercise = { ...f.api.i2cExercise(), id: 5, revision: 1 }; let preview;
   f.app.runnerReady = true;
   f.app.api = async (path, body) => { if (body === undefined) return { project: exercise.starterProject, revision: 0, exerciseRevision: 1 };
-    preview = body; return { status: 'preview', passed: null, score: null, trace: [], i2cTrace: [] }; };
+    return { status: 'compiled', liveProtocol:'oj-live/1', js:'compiled-code', diagnostics:[] }; };
+  f.window.OJMicrobitLive={create:()=>({start:async payload=>{preview=payload;},inputs:()=>{},pause:()=>{},resume:()=>{},dispose:()=>{}})};
   await f.app.learn(exercise); f.app.driver.loaded = true; f.app.driver.capture = async () => exercise.starterProject;
   const register = f.root.querySelector('input[aria-label="I²C 레지스터 센서 주소 32 레지스터 0 입력"]');
   register.value = '90'; register.dispatchEvent(new f.window.document.defaultView.Event('input'));
-  [...f.root.querySelectorAll('button')].find(node => node.textContent === '센서 값으로 실행').click();
+  f.root.querySelector('[data-mb-live-run]').click();
   await new Promise(resolve => setTimeout(resolve, 5));
-  assert.equal(JSON.stringify(preview.i2cInputs), '[{"atMs":0,"address":32,"register":0,"value":90}]');
+  assert.equal(preview.i2cInputs.find(e=>e.address===32&&e.register===0).value,90);
   assert.equal(f.app.exercise.i2cDevices[0].registers[0].writable, false); f.app.destroy();
 });
 
@@ -689,7 +690,7 @@ test('same public problem has separate global and two lesson project saves, grad
 
 test('lesson sensor preview and history paging retain the assignment rather than falling back to general practice', async () => {
   const f = lessonFixture(); await f.app.openRoute({ view: 'solve', assignmentId: 11, exerciseId: 3, beforeId: 0 }, 'push');
-  f.app.driver.loaded = true; f.app.driver.capture = async () => f.exercise.starterProject; namedButton(f.root, '센서 값으로 실행').click(); await nextTick(); assert.equal(f.calls.at(-1).route, 'assignments/11/preview');
+  f.window.OJMicrobitLive={create:()=>({start:async()=>{},dispose:()=>{}})};f.app.driver.loaded = true; f.app.driver.capture = async () => f.exercise.starterProject; f.root.querySelector('[data-mb-live-run]').click(); await tinyWait(); assert.equal(f.calls.at(-1).route, 'assignments/11/compile');
   f.app.api = async route => { f.calls.push({ route }); return { items: [{ id: 20, exerciseRevision: 2, result: { status: 'graded', score: 0, passed: false } }], nextBeforeId: route.includes('beforeId') ? null : 20 }; };
   await f.app.history(3); namedButton(f.app.results, '다음 페이지').click(); await nextTick(); assert.equal(f.calls.at(-1).route, 'assignments/11/attempts?limit=20&beforeId=20'); assert.equal(new URL(f.window.location.href).searchParams.get('assignmentId'), '11');
 });
@@ -871,8 +872,8 @@ test('platform navigation suppresses duplicate problem lesson and creation tabs'
   const f=nativeFixture('teacher');f.app.config.shellNavigation=true;for(const view of ['new','list','lessons','edit']){f.app.renderNavigation({view,exerciseId:3});assert.equal(f.root.querySelector('[data-mb-navigation]'),null);}f.app.destroy();
 });
 
-test('compact authoring loads MakeCode only when its code step opens and keeps it on later toggles', () => {
-  const f=nativeFixture('teacher');f.app.config.compactEditor=true;f.app.config.shellNavigation=true;f.app.edit(f.api.sampleExercise());assert.equal(f.app.driver,null);assert.equal(f.root.querySelectorAll('.ojmicrobit-compose-section').length,4);const code=f.root.querySelector('[data-mb-code-section]');code.open=true;code.dispatchEvent(new f.window.document.defaultView.Event('toggle'));const driver=f.app.driver;assert(driver);code.open=false;code.dispatchEvent(new f.window.document.defaultView.Event('toggle'));code.open=true;code.dispatchEvent(new f.window.document.defaultView.Event('toggle'));assert.equal(f.app.driver,driver);assert.equal(f.root.querySelectorAll('iframe').length,1);f.app.destroy();
+test('three-step authoring loads MakeCode only when optional starting code opens and keeps it on later toggles', () => {
+  const f=nativeFixture('teacher');f.app.config.compactEditor=true;f.app.config.shellNavigation=true;f.app.edit(f.api.sampleExercise());assert.equal(f.app.driver,null);assert.equal(f.root.querySelectorAll('.ojmicrobit-compose-section').length,3);f.app.showAuthorStep(2,false);assert.equal(f.app.driver,null);f.app.showAuthorStep(3,false);assert.equal(f.app.driver,null);const code=f.root.querySelector('[data-mb-code-section]');code.open=true;code.dispatchEvent(new f.window.document.defaultView.Event('toggle'));const driver=f.app.driver;assert(driver);code.open=false;code.dispatchEvent(new f.window.document.defaultView.Event('toggle'));code.open=true;code.dispatchEvent(new f.window.document.defaultView.Event('toggle'));assert.equal(f.app.driver,driver);assert.equal(f.root.querySelectorAll('iframe').length,1);f.app.destroy();
 });
 
 test('workspace initialization and view metadata do not warn about unsaved code while real edits do', () => {
@@ -968,11 +969,11 @@ test('focused server field errors open the correct author step before marking th
   const f=wizardFixture(fixtureWithParallel());f.app.showAuthorStep(1,false);f.app.showError({message:'입력값을 확인하세요.',fieldPath:'exercise.scenarios.0.inputs.0.value'});await nextTick();assert.equal(f.app.authorStep,2);assert(f.root.querySelector('[aria-invalid="true"]'));
 });
 test('focused publication review opens from its final action and retains the prepared code frame',async()=>{
-  const f=wizardFixture(fixtureWithParallel());f.app.showAuthorStep(3,false);const driver=f.app.driver;f.app.captureProject=async()=>f.app.project;f.app.showAuthorStep(4,false);namedButton(f.root,'공개 전 점검 →').click();await nextTick();assert.equal(f.app.exercise.status,'published');assert.equal(f.app.authorStep,4);assert(f.root.querySelector('[data-mb-author-panel="4"] [data-mb-publication-review]'));assert.equal(f.app.driver,driver);namedButton(f.root,'작성 계속하기').click();assert.equal(f.app.driver,driver);
+  const f=wizardFixture(fixtureWithParallel());const code=f.root.querySelector('[data-mb-code-section]');code.open=true;code.dispatchEvent(new f.window.document.defaultView.Event('toggle'));const driver=f.app.driver;f.app.captureProject=async()=>f.app.project;f.app.showAuthorStep(3,false);namedButton(f.root,'공개 전 점검 →').click();await nextTick();assert.equal(f.app.exercise.status,'published');assert.equal(f.app.authorStep,3);assert(f.root.querySelector('[data-mb-author-panel="3"] [data-mb-publication-review]'));assert.equal(f.app.driver,driver);namedButton(f.root,'작성 계속하기').click();assert.equal(f.app.driver,driver);
 });
 
 test('compact creation begins empty instead of preloading several input stages', async()=>{
-  const f=wizardFixture();assert.equal(f.app.exercise.connections.length,0);assert.equal(f.app.exercise.scenarios.length,0);assert.equal(f.root.querySelector('iframe'),null);namedButton(f.root,'+ 첫 단계 만들기').click();assert.match(f.app.stageWizard.dialog.textContent,/1. 단계 만들기/);assert.equal(f.app.exercise.scenarios.length,0);
+  const f=wizardFixture();assert.equal(f.app.exercise.connections.length,0);assert.equal(f.app.exercise.scenarios.length,0);assert.equal(f.root.querySelector('iframe'),null);f.root.querySelector('[data-mb-add-public]').click();assert.match(f.app.stageWizard.dialog.textContent,/1. 단계 만들기/);assert.equal(f.app.exercise.scenarios.length,0);
 });
 test('stage helper stores input at explicit time and separates interval from output hold',()=>{
   const {api}=environment();const scenario=api.emptyScenario(1),before=JSON.stringify(scenario);const input=api.applyStageWizard(scenario,[],wizardDefinition({connection:sensorConnection}));assert.equal(input.scenario.durationMs,500);assert.equal(JSON.stringify(scenario),before);assert.deepEqual(plain(input.scenario.inputs),[{atMs:0,pin:0,signal:'analog',value:800}]);
@@ -1019,4 +1020,153 @@ test('student lane view omits edit actions and hidden scenarios without altering
 
 test('adding a new sensor seeds other examples at zero without overwriting their existing values',()=>{
   const ex=environment().api.sampleExercise();ex.scenarios.push({...plain(ex.scenarios[0]),id:'second'});const f=wizardFixture(ex),oldInputs=plain(f.app.exercise.scenarios[1].inputs);f.app.openStageWizard(f.app.exercise.scenarios[0],{mode:'parallel',atMs:0});wizardNext(f);assert.equal(f.app.stageWizard.state.addNew,true);assert.equal(f.app.stageWizard.state.pin,3);wizardNext(f);f.app.stageWizard.state.value=700;wizardNext(f);wizardApply(f);assert.equal(f.app.exercise.scenarios[0].inputs.find(x=>x.pin===3).value,700);assert.deepEqual(plain(f.app.exercise.scenarios[1].inputs.filter(x=>x.pin!==3)),oldInputs);assert.deepEqual(plain(f.app.exercise.scenarios[1].inputs.find(x=>x.pin===3)),{atMs:0,pin:3,signal:'analog',value:0});
+});
+
+function studentOverview(exercise) { const f=appFixture();f.app.config.compactEditor=true;f.app.runnerNotice=()=>{};f.app.problem(exercise || f.api.sampleExercise(),false);return f; }
+test('student overview presents input/output pairs first and loads exact timings only on request',()=>{
+ const f=studentOverview(),before=JSON.stringify(f.app.exercise);assert.equal(f.root.querySelectorAll('[data-mb-scene]').length,3);assert.match(f.root.querySelectorAll('[data-mb-scene]')[1].textContent,/800/);assert.equal(f.root.querySelectorAll('.ojmicrobit-story-step').length,0);assert.equal(f.root.querySelectorAll('[data-mb-technical-tests] tbody').length,0);assert(f.root.querySelector('.ojmicrobit-student-title-row [data-mb-solve]'));
+ const d=f.root.querySelector('[data-mb-technical-tests]');d.open=true;d.dispatchEvent(new f.window.document.defaultView.Event('toggle'));assert.equal(d.querySelectorAll('.ojmicrobit-story-step').length,3);assert.match(d.textContent,/100ms/);assert.match(d.textContent,/200ms/);assert.equal(JSON.stringify(f.app.exercise),before);
+});
+test('student overview carries known inputs across output-only stages without inventing initial values',()=>{
+ const ex=environment().api.sampleExercise();ex.scenarios[0].inputs=[{atMs:0,pin:0,signal:'analog',value:321}];const f=studentOverview(ex),cards=f.root.querySelectorAll('[data-mb-scene]');assert.equal(cards.length,3);assert.match(cards[1].querySelector('.ojmicrobit-student-input').textContent,/321/);assert.match(cards[1].textContent,/입력은 앞 단계와 같아요/);assert.equal(cards[0].querySelectorAll('.ojmicrobit-student-input-row').length,1);
+});
+test('student example switch resets inherited input values and never exposes hidden cases',()=>{
+ const ex=environment().api.sampleExercise();ex.scenarios.push({...plain(ex.scenarios[0]),id:'second',name:'두 번째',inputs:[{atMs:0,pin:0,signal:'analog',value:17}]},{...plain(ex.scenarios[0]),id:'secret',name:'숨긴 값 999',visible:false});const f=studentOverview(ex),picker=f.root.querySelector('[data-mb-scenario-picker]');assert.equal(picker.querySelectorAll('option').length,2);changeValue(f,picker,'1');assert.match(f.root.querySelector('.ojmicrobit-student-input').textContent,/17/);assert.doesNotMatch(f.root.querySelector('[data-mb-public-tests]').textContent,/숨긴 값|999/);assert.doesNotMatch(f.root.querySelector('.ojmicrobit-student-input').textContent,/800/);
+ const d=f.root.querySelector('[data-mb-technical-tests]');d.open=true;d.dispatchEvent(new f.window.document.defaultView.Event('toggle'));assert.match(d.textContent,/두 번째/);assert.doesNotMatch(d.textContent,/숨긴 값|어두움 → 밝음/);
+});
+test('long student scenarios initially show three scenes and reveal the remaining scenes without mutation',()=>{
+ const ex=environment().api.sampleExercise(),s=ex.scenarios[0];s.durationMs=4000;s.inputs=Array.from({length:8},(_,i)=>({atMs:i*500,pin:0,signal:'analog',value:i*100}));const f=studentOverview(ex),before=JSON.stringify(f.app.exercise);assert.equal(f.root.querySelectorAll('[data-mb-scene]').length,3);f.root.querySelector('[data-mb-more-scenes]').click();assert.equal(f.root.querySelectorAll('[data-mb-scene]').length,6);f.root.querySelector('[data-mb-more-scenes]').click();assert.equal(f.root.querySelectorAll('[data-mb-scene]').length,8);assert.equal(f.root.querySelector('[data-mb-more-scenes]').hidden,true);assert.equal(JSON.stringify(f.app.exercise),before);
+});
+test('student overview retains serial servo and I2C byte order in exact conditions',()=>{
+ const api=environment().api,ex=api.i2cExercise(),f=studentOverview(ex),before=JSON.stringify(f.app.exercise);const d=f.root.querySelector('[data-mb-technical-tests]');d.open=true;d.dispatchEvent(new f.window.document.defaultView.Event('toggle'));assert(d.querySelectorAll('tbody').length);assert.equal(JSON.stringify(f.app.exercise),before);
+ const servo=api.servoExercise();f.app.problem(servo,false);assert.match(f.root.querySelector('[data-mb-public-tests]').textContent,/45도|135도|µs/);
+});
+test('student overview leaves an empty public-case list readable and has no hidden selector or timing table',()=>{
+ const ex=environment().api.sampleExercise();ex.scenarios.forEach(s=>s.visible=false);const f=studentOverview(ex);assert.match(f.root.textContent,/공개 예시는 없어요/);assert.equal(f.root.querySelector('[data-mb-scenario-picker]'),null);assert.equal(f.root.querySelector('[data-mb-technical-tests]'),null);
+});
+
+test('expected illustration matches only public exact inputs and never infers a threshold from prose',()=>{
+ const api=environment().api,ex=api.sampleExercise(),m=api.expectedPreviewModel(ex,ex.scenarios[0]),before=JSON.stringify(ex);assert.equal(api.resolveExpectedPreview(m,{'pin:0':800}).scene.events.find(e=>e.pin===1).value,1);assert.equal(api.resolveExpectedPreview(m,{'pin:0':512}).status,'unknown');assert.equal(api.resolveExpectedPreview(m,{'pin:0':1024}).status,'invalid');assert.equal(api.resolveExpectedPreview(m,{'pin:0':0.5}).status,'invalid');assert.equal(api.expectedPreviewModel(ex,{...ex.scenarios[0],visible:false}).scenes.length,0);assert.equal(JSON.stringify(ex),before);
+});
+test('same input with different time-dependent targets requires an explicit preview stage',()=>{
+ const api=environment().api,ex=api.sampleExercise();ex.scenarios[0].inputs=[{atMs:0,pin:0,signal:'analog',value:800}];const m=api.expectedPreviewModel(ex,ex.scenarios[0]);assert.equal(api.resolveExpectedPreview(m,{'pin:0':800}).status,'ambiguous');assert.equal(api.resolveExpectedPreview(m,{'pin:0':800},1).scene.index,1);assert.equal(api.resolveExpectedPreview(m,{'pin:0':800},2).scene.index,2);
+});
+test('preview sequences use earliest allowed state changes and stop their projection at the next input reference',()=>{
+ const api=environment().api,ex=api.sequenceExercise(),s=ex.scenarios[0];s.inputs.push({atMs:300,pin:0,signal:'digital',value:0});s.outputSequences[0].steps[0].holdMs=500;const m=api.expectedPreviewModel(ex,s);assert.equal(m.scenes[0].events.length,1);assert.equal(m.scenes[0].events[0].atMs,0);assert.equal(m.scenes[0].events[0].value,1);assert.equal(m.scenes[0].endMs,300);
+});
+test('multiple conditions for one pin stay unresolved instead of selecting an arbitrary output',()=>{
+ const api=environment().api,ex=api.sampleExercise();ex.scenarios[0].assertions.push({...ex.scenarios[0].assertions[0],expected:1});const m=api.expectedPreviewModel(ex,ex.scenarios[0]);assert.deepEqual(plain(m.scenes[0].unresolved),[1]);assert.equal(m.scenes[0].events.some(e=>e.pin===1),false);assert.equal(m.scenes[0].events.find(e=>e.pin===2).value,0);
+});
+test('I2C preview inputs inherit declared register defaults without fabricating missing GPIO values',()=>{
+ const api=environment().api,ex=api.sampleExercise();ex.i2cDevices=[{address:32,label:'센서',registers:[{register:0,value:10,writable:false}]}];ex.scenarios[0].i2cInputs=[{atMs:500,address:32,register:0,value:99}];const m=api.expectedPreviewModel(ex,ex.scenarios[0]);assert.equal(m.scenes[0].inputs['i2c:32:0'],10);assert.equal(m.scenes[1].inputs['i2c:32:0'],99);assert.equal(m.controls.find(c=>c.key==='i2c:32:0').max,255);
+});
+test('sensor input immediately changes LED and motor drawings; unlisted values clear both outputs without REST or grading changes',()=>{
+ const f=studentOverview(),root=f.root.querySelector('[data-mb-expected-lab]'),before=JSON.stringify(f.app.exercise);let calls=0;f.app.api=async()=>{calls++;};const control=root.querySelector('[data-mb-preview-input="pin:0"] input[type=number]');control.value='800';control.dispatchEvent(new f.window.document.defaultView.Event('input'));assert.equal(root.querySelector('[data-mb-preview-output="1"]').getAttribute('data-value'),'1');assert.equal(root.querySelector('[data-mb-preview-output="2"]').getAttribute('data-value'),'800');assert(root.querySelector('svg .ojmicrobit-hardware-rotor'));control.value='512';control.dispatchEvent(new f.window.document.defaultView.Event('input'));assert.equal(root.querySelector('[data-mb-preview-output="1"]').getAttribute('data-state'),'unknown');assert.equal(root.querySelector('[data-mb-preview-output="2"]').getAttribute('data-value'),null);assert.match(root.querySelector('[data-mb-preview-status]').textContent,/공개 예시에 없어요/);assert.equal(calls,0);assert.equal(JSON.stringify(f.app.exercise),before);assert.equal(f.app.dirty,false);
+});
+test('preview sliders snap to declared input values and explicit stage selection restores the whole input context',()=>{
+ const f=studentOverview(),lab=f.root.querySelector('[data-mb-expected-lab]'),range=lab.querySelector('input[type=range]');range.value='550';range.dispatchEvent(new f.window.document.defaultView.Event('input'));assert.equal(lab.querySelector('input[type=number]').value,'800');changeValue(f,lab.querySelector('[data-mb-preview-stage]'),'2');assert.equal(lab.querySelector('input[type=number]').value,'200');assert.equal(lab.querySelector('[data-mb-preview-output="2"]').getAttribute('data-value'),'200');
+});
+test('preview has at most one pending sequence timer and disposes it on input changes, hiding, and navigation',()=>{
+ const f=appFixture(),tasks=new Map();let serial=0;f.window.setTimeout=(fn,ms)=>{const id=++serial;tasks.set(id,{fn,ms});return id;};f.window.clearTimeout=id=>tasks.delete(id);f.app.config.compactEditor=true;f.app.runnerNotice=()=>{};const ex=f.api.sequenceExercise();f.app.problem(ex,false);assert.equal(tasks.size,1);const old=f.app.expectedLab;f.root.querySelector('[data-mb-preview-replay]').click();assert.equal(tasks.size,1);f.root.querySelector('[data-mb-preview-pause]').click();assert.equal(tasks.size,0);f.root.querySelector('[data-mb-preview-replay]').click();Object.defineProperty(f.window.document,'hidden',{value:true,configurable:true});f.window.document.dispatchEvent(new f.window.document.defaultView.Event('visibilitychange'));assert.equal(tasks.size,0);assert(f.root.querySelector('[data-mb-expected-lab]').classList.contains('is-paused'));Object.defineProperty(f.window.document,'hidden',{value:false,configurable:true});f.root.querySelector('[data-mb-preview-replay]').click();assert.equal(tasks.size,1);f.app.problem(f.api.sampleExercise(),false);assert.notEqual(f.app.expectedLab,old);assert.equal(tasks.size,0);f.app.destroy();assert.equal(tasks.size,0);
+});
+test('serial illustration reaches the next output after the minimum hold and stale replay never overwrites a new input',async()=>{
+ const api=environment().api,ex=api.sequenceExercise();ex.scenarios[0].outputSequences[0].steps[0].holdMs=20;const f=studentOverview(ex),lab=f.root.querySelector('[data-mb-expected-lab]');assert.equal(lab.querySelector('[data-mb-preview-output="1"]').getAttribute('data-value'),'1');await new Promise(r=>setTimeout(r,45));assert.equal(lab.querySelector('[data-mb-preview-output="1"]').getAttribute('data-value'),'0');lab.querySelector('[data-mb-preview-replay]').click();const input=lab.querySelector('input[type=number]');input.value='0';input.dispatchEvent(new f.window.document.defaultView.Event('input'));await new Promise(r=>setTimeout(r,45));assert.equal(lab.querySelector('[data-mb-preview-output="1"]').getAttribute('data-state'),'unknown');
+});
+
+test('many input pins render one chosen control while retaining the other public input context',()=>{
+ const api=environment().api,ex=api.sampleExercise();ex.connections.push({pin:3,direction:'input',signal:'digital',device:'button',label:'버튼'});ex.scenarios[0].inputs.push({atMs:0,pin:3,signal:'digital',value:1});const f=studentOverview(ex),lab=f.root.querySelector('[data-mb-expected-lab]');assert.equal(lab.querySelectorAll('[data-mb-preview-input]').length,1);changeValue(f,lab.querySelector('[data-mb-preview-sensor]'),'1');assert(lab.querySelector('[data-mb-preview-input="pin:3"]'));assert.equal(lab.querySelector('input[type=number]').value,'1');changeValue(f,lab.querySelector('[data-mb-preview-stage]'),'1');assert.equal(lab.querySelector('input[type=number]').value,'1');changeValue(f,lab.querySelector('[data-mb-preview-sensor]'),'0');assert.equal(lab.querySelector('input[type=number]').value,'800');assert.equal(lab.querySelectorAll('[data-mb-preview-input]').length,1);
+});
+
+test('teacher can create an explicitly private condition atomically using the visible control',()=>{
+ const f=wizardFixture();assert(f.root.querySelector('[data-mb-add-public]'));assert(f.root.querySelector('[data-mb-add-hidden]'));const before=JSON.stringify(f.app.exercise);f.root.querySelector('[data-mb-add-hidden]').click();assert.match(f.app.stageWizard.dialog.textContent,/비공개 채점/);namedButton(f.app.stageWizard.dialog,'작성 취소').click();assert.equal(JSON.stringify(f.app.exercise),before);f.root.querySelector('[data-mb-add-hidden]').click();wizardNext(f);f.app.stageWizard.state.channels.push(...batchDefinition().channels.map(x=>({pin:x.pin,selected:true,added:true,connection:plain(x.newConnection),value:x.value,steps:plain(x.steps||[])})));wizardNext(f);wizardNext(f);batchApply(f);assert.equal(f.app.exercise.scenarios.length,1);assert.equal(f.app.exercise.scenarios[0].visible,false);assert(f.root.querySelector('[data-mb-case-group="hidden"] [data-mb-case-id]'));assert.equal(f.root.querySelector('[data-mb-case-group="public"] [data-mb-case-id]'),null);
+});
+test('teacher can switch a case between public examples and private grading without changing its inputs or outputs',()=>{
+ const ex=environment().api.sampleExercise(),f=wizardFixture(ex),scenario=f.app.exercise.scenarios[0],conditions=JSON.stringify([scenario.inputs,scenario.assertions]);f.root.querySelector('[data-mb-case-visibility]').click();assert.equal(scenario.visible,false);assert(f.root.querySelector('[data-mb-case-group="hidden"] [data-mb-case-id]'));assert.equal(JSON.stringify([scenario.inputs,scenario.assertions]),conditions);f.root.querySelector('[data-mb-case-visibility]').click();assert.equal(scenario.visible,true);assert(f.root.querySelector('[data-mb-case-group="public"] [data-mb-case-id]'));
+});
+
+
+
+async function actualFixture(response,compact=false){
+ const f=appFixture(),ex={...f.api.sampleExercise(),id:3,revision:1,scenarios:[]};f.calls=[];f.sessions=[];f.app.runnerReady=true;f.app.config.compactEditor=compact;
+ f.window.OJMicrobitLive={create:(parent,options)=>{const s={payload:null,values:[],pauses:0,resumes:0,disposed:false,start:async payload=>{s.payload=payload;options.onState('running');},inputs:value=>s.values.push(plain(value)),pause:()=>{s.pauses++;options.onState('paused');},resume:()=>{s.resumes++;options.onState('running');},dispose:()=>{s.disposed=true;},emit:frame=>options.onFrame(frame),fail:error=>options.onError(error)};f.sessions.push(s);return s;}};
+ f.app.api=async(route,body,...args)=>{f.calls.push({route,body});if(body===undefined&&route.endsWith('/project'))return{project:ex.starterProject,revision:0,exerciseRevision:1};return response?response(route,body,...args):{status:'compiled',liveProtocol:'oj-live/1',js:'compiled-student-code',diagnostics:[]};};await f.app.learn(ex);f.app.driver.loaded=true;f.app.driver.capture=async()=>f.app.project;return f;
+}
+const tinyWait=()=>new Promise(r=>setTimeout(r,15));
+const frame=(value,atMs=20)=>({atMs,trace:[{atMs,pin:2,signal:'pwm',value,kind:'write'}],i2cTrace:[]});
+async function startActual(f){f.app.liveLastStart=0;f.root.querySelector('[data-mb-live-run]').click();await tinyWait();return f.sessions.at(-1);}
+test('editing-focus result toggles keep the same code frame, project and live runtime without requests or pause',async()=>{
+ const f=await actualFixture(undefined,true),session=await startActual(f),driver=f.app.driver,editor=f.root.querySelector('[data-mb-editor] iframe'),lab=f.app.liveLab,signature=JSON.stringify(f.app.project),generation=f.app.generation,before=f.calls.length;
+ assert.equal(f.app.workspaceView.panel.hidden,true);
+ for(let i=0;i<8;i++){f.app.setWorkspaceResults(true);assert.equal(f.app.workspaceView.toggle.getAttribute('aria-expanded'),'true');f.app.setWorkspaceResults(false);session.emit(frame(100+i));}
+ assert.equal(f.app.driver,driver);assert.equal(f.root.querySelector('[data-mb-editor] iframe'),editor);assert.equal(f.app.liveLab,lab);assert.equal(f.sessions.length,1);assert.equal(session.disposed,false);assert.equal(session.pauses,0);assert.equal(session.resumes,0);assert.equal(f.app.generation,generation);assert.equal(JSON.stringify(f.app.project),signature);assert.equal(f.calls.length,before);assert.equal(f.root.querySelector('[data-mb-actual-output="2"]').getAttribute('data-value'),'107');assert.equal(f.app.dirty,false);f.app.destroy();
+});
+test('reading the problem in editing-focus view does not navigate, discard unsaved code or restart execution',async()=>{
+ const f=await actualFixture(undefined,true),session=await startActual(f),driver=f.app.driver,before=f.calls.length;f.app.dirty=true;
+ f.app.setWorkspaceProblem(true);assert.equal(f.app.workspaceView.problem.hidden,false);assert.equal(f.app.workspaceView.question.getAttribute('aria-expanded'),'true');f.app.setWorkspaceProblem(false);assert.equal(f.app.driver,driver);assert.equal(f.app.dirty,true);assert.equal(session.disposed,false);assert.equal(session.pauses,0);assert.equal(f.calls.length,before);f.app.destroy();
+});
+test('expected-output tab is separate from real code and works with no public examples without new requests',async()=>{
+ const f=await actualFixture(undefined,true),session=await startActual(f),before=f.calls.length;
+ f.root.querySelector('[data-mb-result-expected]').click();assert.equal(f.root.querySelector('[data-mb-live-lab]').hidden,true);assert.equal(f.root.querySelector('[data-mb-workspace-expected]').hidden,false);assert.match(f.root.querySelector('[data-mb-workspace-expected]').textContent,/공개 예시/);session.emit(frame(42));f.root.querySelector('[data-mb-result-actual]').click();assert.equal(f.root.querySelector('[data-mb-actual-output="2"]').getAttribute('data-value'),'42');assert.equal(session.disposed,false);assert.equal(session.pauses,0);assert.equal(f.calls.length,before);f.app.destroy();
+});
+test('condition tabs preserve every private test and lazy starting code while changing only visibility',()=>{
+ const ex=environment().api.sampleExercise();ex.scenarios.push({...plain(ex.scenarios[0]),id:'secret',visible:false,name:'비공개 경계 검사'});const f=wizardFixture(ex),before=JSON.stringify(f.app.exercise),publicGroup=f.root.querySelector('[data-mb-case-group="public"]'),privateGroup=f.root.querySelector('[data-mb-case-group="hidden"]');
+ assert.equal(publicGroup.hidden,false);assert.equal(privateGroup.hidden,true);f.app.showCaseGroup(false);assert.equal(publicGroup.hidden,true);assert.equal(privateGroup.hidden,false);assert.equal(f.root.querySelector('[data-mb-case-tab="hidden"]').getAttribute('aria-pressed'),'true');f.app.showAuthorStep(3,false);f.app.showAuthorStep(2,false);assert.equal(f.app.driver,null);assert.equal(JSON.stringify(f.app.exercise),before);assert.equal(f.app.dirty,false);f.app.destroy();
+});
+test('stateful start compiles fresh student code once without example conditions or grade writes',async()=>{
+ const f=await actualFixture();f.app.inputValues[0]=513;const s=await startActual(f);assert.equal(f.calls.at(-1).route,'exercises/3/compile');assert.deepEqual(Object.keys(f.calls.at(-1).body),['project']);assert.equal(s.payload.inputs[0].value,513);s.emit(frame(123));assert.equal(f.root.querySelector('[data-mb-actual-output="2"]').getAttribute('data-value'),'123');assert.equal(f.app.results.textContent,'');assert.equal(f.app.dirty,false);
+});
+test('changing actual sensors delivers inputs to the same runtime without clearing outputs or compiling',async()=>{
+ const f=await actualFixture(),s=await startActual(f);s.emit(frame(77));const before=f.calls.length;for(const value of [123,512,999]){f.app.inputValues[0]=value;f.app.liveLab.changed(false);}assert.equal(f.sessions.length,1);assert.equal(s.values.at(-1).inputs[0].value,999);assert.equal(f.calls.length,before);assert.equal(f.root.querySelector('[data-mb-actual-output="2"]').getAttribute('data-value'),'77');
+});
+test('pause and continue use the same session and do not compile or reset inputs',async()=>{
+ const f=await actualFixture(),s=await startActual(f);f.root.querySelector('[data-mb-live-stop]').click();f.app.inputValues[0]=800;f.app.liveLab.changed(false);f.root.querySelector('[data-mb-live-run]').click();assert.equal(s.pauses,1);assert.equal(s.resumes,1);assert.equal(f.sessions.length,1);assert.equal(s.values.at(-1).inputs[0].value,800);
+});
+test('explicit reset disposes the old session and starts a new runtime',async()=>{
+ const f=await actualFixture(),s=await startActual(f);f.app.liveLastStart=0;f.root.querySelector('[data-mb-live-reset]').click();await tinyWait();assert.equal(s.disposed,true);assert.equal(f.sessions.length,2);assert.equal(f.calls.filter(c=>c.route.endsWith('/compile')).length,2);
+});
+test('actual code changes discard the old runtime while input changes do not',async()=>{
+ const f=await actualFixture(),s=await startActual(f);f.app.project.files['main.ts']='pins.analogWritePin(AnalogPin.P2, 456)';f.app.liveLab.changed('code');assert.equal(s.disposed,true);f.app.liveLastStart=0;f.root.querySelector('[data-mb-live-run]').click();await tinyWait();assert.match(f.calls.at(-1).body.project.files['main.ts'],/456/);assert.equal(f.sessions.length,2);
+});
+test('save or grade pauses and resumes the existing runtime rather than recreating it',async()=>{
+ const f=await actualFixture(),s=await startActual(f);await f.app.action(async()=>{});assert.equal(s.pauses,1);assert.equal(s.resumes,1);assert.equal(f.sessions.length,1);
+});
+test('a pending compile cannot create a runtime after navigation',async()=>{
+ let finish;const f=await actualFixture(()=>new Promise(r=>finish=r));await startActual(f);f.app.problem({...f.api.sampleExercise(),id:4},false);finish({status:'compiled',liveProtocol:'oj-live/1',js:'old'});await tinyWait();assert.equal(f.sessions.length,0);assert.equal(f.app.liveLab,null);
+});
+test('compile diagnostics clear outputs without producing a grade',async()=>{
+ const f=await actualFixture(()=>({status:'compile_error',diagnostics:[{file:'main.ts',line:2,message:'잘못된 코드'}]}));await startActual(f);assert.equal(f.sessions.length,0);assert.match(f.root.querySelector('[data-mb-live-errors]').textContent,/main.ts:2.*잘못된 코드/);assert.equal(f.app.results.textContent,'');
+});
+test('failed compile disables automatic retry and preserves explicit restart',async()=>{
+ const f=await actualFixture(()=>{throw Error('실행기가 혼잡합니다.');});await startActual(f);assert.equal(f.root.querySelector('[data-mb-live-auto]').checked,false);assert.match(f.root.querySelector('[data-mb-live-status]').textContent,/자동 재시도는 하지 않습니다/);await new Promise(r=>setTimeout(r,650));assert.equal(f.calls.filter(c=>c.route.endsWith('/compile')).length,1);
+});
+test('invalid sensor values do not mutate a running session or clear its last output',async()=>{
+ const f=await actualFixture(),s=await startActual(f);s.emit(frame(55));f.app.inputValues[0]=1024;f.app.liveLab.changed(false);assert.equal(s.values.length,0);assert.equal(f.root.querySelector('[data-mb-actual-output="2"]').getAttribute('data-value'),'55');assert.match(f.root.querySelector('[data-mb-live-status]').textContent,/0~1023/);
+});
+test('page hiding pauses state and does not resume merely because a readiness callback fires',async()=>{
+ const f=await actualFixture(),s=await startActual(f);Object.defineProperty(f.window.document,'hidden',{value:true,configurable:true});f.window.document.dispatchEvent(new f.window.document.defaultView.Event('visibilitychange'));Object.defineProperty(f.window.document,'hidden',{value:false,configurable:true});f.app.liveLab.wake();assert.equal(s.pauses,1);assert.equal(s.resumes,0);f.root.querySelector('[data-mb-live-run]').click();assert.equal(s.resumes,1);
+});
+test('range changes use live input messages immediately without another compile',async()=>{
+ const f=await actualFixture(),s=await startActual(f),control=f.root.querySelector('[data-mb-live-input="0"] input[type="range"]');control.value='657';control.dispatchEvent(new f.window.document.defaultView.Event('input'));assert.equal(s.values.at(-1).inputs[0].value,657);assert.equal(f.calls.filter(c=>c.route.endsWith('/compile')).length,1);
+});
+test('restored local drafts recreate the controller with recovered code',async()=>{
+ for(const compact of [false,true]){const f=await actualFixture(undefined,compact),recovered=plain(f.app.project);recovered.files['main.ts']='pins.analogWritePin(AnalogPin.P2, 789)';f.window.sessionStorage.setItem(f.app.backupKey(),JSON.stringify({project:recovered,exerciseRevision:1}));await f.app.learn(f.app.exercise);const view=f.app.workspaceView;namedButton(f.root,'초안으로 복구').click();assert(f.app.liveLab);if(compact){assert.equal(f.app.workspaceView,view);assert(view.toggle.isConnected);f.app.setWorkspaceResults(true);f.app.setWorkspaceResults(false);}f.app.driver.loaded=true;f.app.driver.capture=async()=>f.app.project;await startActual(f);assert.match(f.calls.at(-1).body.project.files['main.ts'],/789/);f.app.destroy();}
+});
+test('imported projects restart with the newly loaded project rather than previous code',async()=>{
+ for(const compact of [false,true]){const f=await actualFixture(undefined,compact),s=await startActual(f),imported=plain(f.app.project);imported.files['main.ts']='pins.analogWritePin(AnalogPin.P2, 321)';const control=f.root.querySelector('input[type="file"]');Object.defineProperty(control,'files',{value:[{size:100,text:async()=>JSON.stringify(imported)}]});control.dispatchEvent(new f.window.document.defaultView.Event('change'));await tinyWait();assert.equal(s.disposed,true);if(compact){assert(f.app.workspaceView.toggle.isConnected);f.app.setWorkspaceResults(true);}f.app.driver.loaded=true;f.app.driver.capture=async()=>f.app.project;await startActual(f);assert.match(f.calls.at(-1).body.project.files['main.ts'],/321/);f.app.destroy();}
+});
+test('continuous frames accept only actual declared writes and keep a bounded history',async()=>{
+ const f=await actualFixture(),s=await startActual(f);for(let i=0;i<100;i++)s.emit({atMs:i,trace:[{atMs:i,pin:2,signal:'pwm',value:i,kind:'write'},{atMs:i,pin:1,signal:'digital',value:1,kind:'input'}],i2cTrace:[]});assert.equal(f.app.traceTable.children.length,60);assert.equal(f.root.querySelector('[data-mb-actual-output="1"]').getAttribute('data-state'),'unknown');assert.equal(f.root.querySelector('[data-mb-actual-output="2"]').getAttribute('data-value'),'99');
+});
+test('input changes preserve I2C pointer and displayed transaction state',async()=>{
+ const f=await actualFixture(),s=await startActual(f),output=f.window.document.createElement('output');output.textContent='old';f.app.i2cDisplays.set('32',{pointer:5,outputs:new Map([[0,output]])});f.app.liveLab.changed(false);assert.equal(output.textContent,'old');assert.equal(f.app.i2cDisplays.get('32').pointer,5);assert.equal(s.disposed,false);
+});
+test('disposal aborts only the active compile transport and late errors cannot re-open a runtime',async()=>{
+ let aborted=false;const f=await actualFixture((route,body,method,timeout,owner)=>new Promise((resolve,reject)=>{owner.abort=()=>{aborted=true;reject(Error('aborted'));};}));await startActual(f);f.app.closeEditor();await tinyWait();assert.equal(aborted,true);assert.equal(f.app.liveLab,null);
+});
+test('inputs changed during compilation are delivered as the initial latest state without a second compile',async()=>{
+ let finish;const f=await actualFixture(()=>new Promise(r=>finish=r));await startActual(f);f.app.inputValues[0]=799;f.app.liveLab.changed(false);finish({status:'compiled',liveProtocol:'oj-live/1',js:'current'});await tinyWait();assert.equal(f.sessions[0].payload.inputs[0].value,799);assert.equal(f.calls.filter(c=>c.route.endsWith('/compile')).length,1);
+});
+
+test('disabling code auto-start cancels queued startup and re-enabling starts the current project',async()=>{
+ const f=await actualFixture(),control=f.root.querySelector('[data-mb-live-auto]');control.checked=false;control.dispatchEvent(new f.window.document.defaultView.Event('change'));f.app.liveLab.wake();await tinyWait();assert.equal(f.calls.filter(c=>c.route.endsWith('/compile')).length,0);control.checked=true;control.dispatchEvent(new f.window.document.defaultView.Event('change'));await new Promise(r=>setTimeout(r,650));assert.equal(f.sessions.length,1);
 });

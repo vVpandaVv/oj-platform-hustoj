@@ -19,7 +19,7 @@ final class Data_Structure_Lab_Module implements Game_Module {
             'id' => $this->id(),
             'title' => __('자료구조 운용', 'edu-games'),
             'category' => 'algorithms',
-            'description' => __('물건을 스택에 쌓고 큐에 줄 세워 주문 순서대로 배송합니다. 제한된 임시 보관 공간에서 재배치를 줄이며 기록에 도전합니다.', 'edu-games'),
+            'description' => __('스택·큐 창고와 출고장 3곳을 운영합니다. 적재 순서와 주문을 선택하고 재배치 비용·급행 보너스를 관리하며 오늘의 배송 최고점에 도전합니다.', 'edu-games'),
             'status' => 'playable',
             'statusLabel' => __('플레이 가능', 'edu-games'),
             'block' => self::BLOCK,

@@ -326,9 +326,14 @@
               row.non_submission_grade = window.__targetGrades[row.id] || null;
             }
           });
-          return jsonResponse(envelope({ items: rows }));
+          if (new URLSearchParams(location.search).has('membership_unavailable')) {
+            const stored = rows.filter(row => row.assigned);
+            stored.forEach(row => { row.current_member = null; });
+            return jsonResponse(envelope({ items: stored, membership: { state: 'unavailable', scope: 'assignment_targets' } }));
+          }
+          return jsonResponse(envelope({ items: rows, membership: { state: 'current', scope: 'context' } }));
         }
-        if (value.includes('/assignments?')) return jsonResponse(envelope({items:[evaluation.assignment]}));
+        if (value.includes('/assignments?')) return jsonResponse(envelope({items:[{ ...evaluation.assignment, worksheet_id: '01K5A00000000000000000000W' }]}));
         if (value.endsWith('/contexts?limit=100')) return jsonResponse(envelope({ items: [{ type: 'class', id: 'class-5-2', revision: 'membership-17', label: '5학년 2반', selectable: true }] }));
         if (value.includes('/submission-evaluations?')) {
           const items = [evaluation, second];

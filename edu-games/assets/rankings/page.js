@@ -87,11 +87,11 @@
                     const query=`page=${pager.page}&perPage=${pager.perPage}&overview=1`;
                     const path=this.scope==='overall'?`/leaderboards/game/${this.game.id}?${query}`:this.scope==='teams'?`/leaderboards/teams?game=${this.game.id}&${query}`:`/leaderboards/team/${this.team.id}?game=${this.game.id}&${query}`;
                     data=await this.api(path,undefined,this.abort.signal);
-                }else data=await this.api(this.variant.api,{level:this.level,page:pager.page,perPage:pager.perPage,overview:true},this.abort.signal);
+                }else data=await this.api(this.variant.api,{level:this.level,...(this.variant.id==='verified-arcade'?{difficulty:this.level}:{}),page:pager.page,perPage:pager.perPage,overview:true,...(this.variant.version?{version:this.variant.version}:{}),...(this.variant.lineEnding?{lineEnding:this.variant.lineEnding}:{})},this.abort.signal);
                 if(ticket!==this.request||!window.EduGamesRankPager.accept(this.board,key,data,pager.ticket))return;
                 const teams=this.scope==='teams',rows=teams?(data.standings||[]):(data.leaderboard||[]);
                 if(pager.page===1||data.pagination?.page===1)this.leaders=rows.slice(0,3);
-                this.paintMetrics(data);this.paintLeaders(teams);this.paintTable(rows,teams);window.EduGamesRankPager.mount(this.board,key,'[data-rank-row]',teams?'팀':'명');
+                this.paintMetrics(data);this.paintLeaders(teams);this.paintTable(rows,teams);this.paintTypingLabels(data);window.EduGamesRankPager.mount(this.board,key,'[data-rank-row]',teams?'팀':'명');
                 this.field('status').textContent=`전체 ${number(data.pagination?.total??rows.length)}${teams?'팀':'명'}`;
                 this.paintHistory(data.history);
             }catch(error){if(ticket!==this.request||error.name==='AbortError')return;window.EduGamesRankPager.fail(this.board,pager.ticket);this.field('status').textContent=error.message;}
@@ -107,12 +107,21 @@
             this.field('mine-label').textContent=teams?'내 팀':'내 순위';this.field('mine').textContent=teams?(this.team?.name||'미참여'):(mine?.rank?number(mine.rank)+'위':'-');
             this.field('mine-note').textContent=teams?(this.team?number(this.team.memberCount||0)+'명':'소속 팀 없음'):mine?`내 최고 ${number(mine.score)}점`:data?'아직 기록 없음':'기록 조회 중';
         }
+        paintTypingLabels(data){
+            if(!['typing-v2','typing-v3','typing-v3-space'].includes(this.variant.id))return;
+            this.field('top-label').textContent='최고 유효 CPM';
+            const mine=data.overview?.personal;
+            this.field('mine-note').textContent=mine?`내 최고 ${number(mine.score)} 유효 CPM`:'기준을 충족한 기록 없음';
+            this.field('leaders').querySelectorAll('.er-leader div>span>small').forEach(el=>el.textContent='유효 CPM');
+            const header=this.board.querySelector('th.er-numeric');if(header)header.textContent='유효 코드 CPM';
+            this.board.querySelectorAll('td.er-numeric>small').forEach(el=>el.textContent='CPM');
+        }
         identity(row,teams=false){let name=teams?row.teamName:row.playerName||row.name||'도전자';const me=teams?Number(row.teamId)===Number(this.team?.id):Boolean(row.isMe||Number(row.userId)>0&&Number(row.userId)===Number(this.config.userId));if(me&&name==='나')name=this.config.userName||name;return {name,me};}
         avatar(name,tone){return `<span class="er-avatar" data-tone="${tone}" aria-hidden="true">${h(Array.from(name||'도전자').slice(0,1).join(''))}</span>`;}
         paintLeaders(teams){this.field('highlights').hidden=!this.leaders.length;this.field('leaders').innerHTML=this.leaders.map((r,i)=>{const {name,me}=this.identity(r,teams);return `<article class="er-leader" data-place="${Number(r.rank)||i+1}"><span class="er-place">${Number(r.rank)||i+1}</span>${this.avatar(name,['amber','blue','mint'][i])}<div><strong>${h(name)}${me?'<small class="er-me">나</small>':''}</strong><span>${number(teams?r.averageScore:r.score)}<small>점</small></span></div></article>`;}).join('');}
         paintTable(rows,teams){
             if(!rows.length){this.board.innerHTML='<div class="er-empty">'+this.icon('trophy')+'<strong>첫 번째 기록을 기다리고 있어요.</strong><a href="'+h(this.game.url)+'">게임 도전하기 '+this.icon('arrow-right')+'</a></div>';return;}
-            const details=this.variant.id==='arcade'&&!teams,moderated=rows.some(r=>r.deleteUrl);
+            const details=['arcade','typing-v2','typing-v3','typing-v3-space','verified-arcade'].includes(this.variant.id)&&!teams,moderated=rows.some(r=>r.deleteUrl);
             this.board.innerHTML=`<table class="er-table ${details?'has-details':''}"><caption>${h(this.game.title)} · ${h(scopes[this.scope])}</caption><thead><tr><th scope="col">순위</th><th scope="col">${teams?'팀':'플레이어'}</th><th scope="col" class="er-numeric">${teams?'평균 점수':'최고 점수'}</th>${teams?'<th scope="col" class="er-detail">참여 인원</th>':details?'<th scope="col" class="er-detail">정확도</th><th scope="col" class="er-duration">플레이 시간</th>':''}${moderated?'<th scope="col" class="er-moderation-cell"><span class="er-sr">기록 관리</span></th>':''}</tr></thead><tbody>${rows.map(r=>{const {name,me}=this.identity(r,teams),rank=Number(r.rank)||0,score=teams?r.averageScore:r.score;return `<tr data-rank-row class="${me?'is-me':''}"><td><strong class="er-rank ${rank<=3?'er-rank-top':''}">${rank||'-'}</strong></td><td><div class="er-player">${this.avatar(name,me?'blue':rank%3===0?'coral':rank%2?'mint':'blue')}<span>${h(name)}${me?'<small class="er-me">나</small>':''}</span></div></td><td class="er-numeric"><b>${number(score||0)}</b><small>점</small></td>${teams?`<td class="er-detail">${number(r.memberCount||0)}명</td>`:details?`<td class="er-detail">${Number.isFinite(Number(r.accuracy))?number(r.accuracy)+'%':'-'}</td><td class="er-duration">${r.durationSeconds===undefined?'-':number(r.durationSeconds)+'초'}</td>`:''}${moderated?'<td class="er-moderation-cell"></td>':''}</tr>`;}).join('')}</tbody></table>`;
         }
         paintHistory(rows){const field=this.field('history');field.hidden=!rows?.length;if(!rows?.length)return;field.innerHTML=`<details><summary>내 평가 기록 · ${rows.length}회</summary><div class="er-history-list">${rows.map(r=>`<div><span>${h(r.started_at||'')}</span><span>${h({assessment:'평가',practice:'연습',guided:'안내 연습'}[r.mode]||r.mode)}</span><strong>${r.completed_at?'완료':'진행 중'}</strong></div>`).join('')}</div></details>`;}

@@ -23,7 +23,8 @@ function payload(array $overrides = array()): array {
 }
 
 $definitions = edu_games_registry()->all(false);
-check(count($definitions) === 13, 'Expected 13 registered games');
+check(count($definitions) === 15, 'Expected 15 registered modules including preserved history');
+check(count(edu_games_registry()->catalog(false)) === 8, 'Eight active game families after experience separation');
 $balance = array();
 foreach (Classifier::rules()['samples'] as $sample) {
     $fits = array();

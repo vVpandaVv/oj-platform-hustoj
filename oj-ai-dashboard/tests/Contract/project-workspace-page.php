@@ -23,8 +23,14 @@ $projectId   = '01K00000000000000000090001';
 $worksheetId = '01HZY3M4N5P6Q7R8S9T0V1W2X3';
 $repository  = new Project_Page_Test_Repository(
 	array(
-		'project_id' => $projectId,
-		'worksheets' => array( array( 'worksheet_id' => $worksheetId ) ),
+		'project_id'    => $projectId,
+		'worksheets'    => array( array( 'worksheet_id' => $worksheetId ) ),
+		'configuration' => array(
+			'exception_scores' => array(
+				'not_submitted' => '0',
+				'long_absence'  => '6',
+			),
+		),
 	)
 );
 $handler     = new Assessment_Project_Page_Handler( $policy, $repository );
@@ -48,6 +54,7 @@ foreach ( array( 'criteria', 'author', 'review', 'assignment', 'assessment', 're
 	$check( 1 === ( substr_count( $body, ' data-oj-ai-workflow ' ) ), 'Multiple tracks: ' . $stage );
 	$check( ! str_contains( $body, 'data-workspace-navigation' ), 'Global work menus must not duplicate project steps: ' . $stage );
 	$check( str_contains( $body, 'data-project-worksheet="' . $worksheetId . '"' ), 'Selected worksheet not resolved' );
+	$check( ( 'assessment' === $stage ) === ( str_contains( $body, 'data-score-not-submitted="0"' ) && str_contains( $body, 'data-score-long-absence="6"' ) ), 'Latest project exception scores not scoped to grading' );
 	if ( in_array( $stage, array( 'author', 'review' ), true ) ) {
 		$check( str_contains( $body, 'id="oj-ai-worksheet-authoring-app"' ), 'Real editor is missing' );
 	}

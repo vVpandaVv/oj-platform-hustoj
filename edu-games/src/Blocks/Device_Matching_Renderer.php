@@ -11,7 +11,7 @@ final class Device_Matching_Renderer extends Abstract_Game_Renderer {
      */
     public static function render(array $attributes = array(), bool $is_block = false): string {
         $config = self::build_config(Device_Matching_Module::ID, Device_Matching_Module::rules());
-        $wrapper = self::wrapper_attributes($is_block, 'device-matching-block');
+        $wrapper = self::wrapper_attributes($is_block, 'device-matching-block eg-layout-v2');
 
         ob_start();
         ?>
@@ -30,6 +30,12 @@ final class Device_Matching_Renderer extends Abstract_Game_Renderer {
                 </header>
                 <p data-field="challenge-goal" aria-live="polite"></p>
 
+                <div class="oj-device-table" data-game-workspace="matching">
+                <div class="oj-device-table-head">
+                    <div class="oj-device-stagebar">
+                        <div><span data-field="stage-meta">대기 중</span><h3 data-field="stage-title">사진과 설명의 짝 찾기</h3></div>
+                        <div class="oj-device-progress" data-field="progress">0 / 0</div>
+                    </div>
                 <div class="oj-device-stats" aria-label="<?php esc_attr_e('게임 상태', 'edu-games'); ?>">
                     <div class="oj-device-stat">
                         <span><?php esc_html_e('단계', 'edu-games'); ?></span>
@@ -52,16 +58,10 @@ final class Device_Matching_Renderer extends Abstract_Game_Renderer {
                         <strong data-field="rank">-</strong>
                     </div>
                 </div>
+                </div>
 
                 <main class="oj-device-layout">
                     <section class="oj-device-panel oj-device-play-panel">
-                        <div class="oj-device-stagebar">
-                            <div>
-                                <span data-field="stage-meta"><?php esc_html_e('대기 중', 'edu-games'); ?></span>
-                                <h3 data-field="stage-title"><?php esc_html_e('카드를 열어 같은 의미의 짝을 찾으세요', 'edu-games'); ?></h3>
-                            </div>
-                            <div class="oj-device-progress" data-field="progress">0 / 0</div>
-                        </div>
                         <div class="oj-device-deck" data-field="deck"></div>
                         <p class="oj-device-feedback" data-field="feedback" aria-live="polite"></p>
                     </section>
@@ -96,6 +96,7 @@ final class Device_Matching_Renderer extends Abstract_Game_Renderer {
                         </section>
                     </aside>
                 </main>
+                </div>
                 <details class="oj-device-credits">
                     <summary><?php echo esc_html(sprintf(__('사진 출처 · 장치 %d종', 'edu-games'), count($config['rules']['devices']))); ?></summary>
                     <ul>

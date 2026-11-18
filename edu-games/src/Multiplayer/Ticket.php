@@ -23,5 +23,5 @@ final class Ticket {
         if(!in_array($p['scope'],array('play','control','board'),true)||($p['scope']!=='play'&&(!Room_Policy::teacher($p)||!is_string($p['room'])||!preg_match('/^[A-Z2-9]{6}$/D',$p['room']))))throw new Failure('화면 입장권이 올바르지 않습니다.',401);
         return array_intersect_key($p,array_flip(array('id','name','manage','admin','scope','room')));
     }
-    private static function purpose(string $game): string {return match($game){Room_Rules::BINARY=>'edu-games-binary-team',Room_Rules::DEVICE=>'edu-games-device-team',default=>throw new Failure('팀전 종류를 확인하세요.',422)};}
+    private static function purpose(string $game): string {return match($game){Room_Rules::BINARY=>'edu-games-binary-team',Room_Rules::DEVICE=>'edu-games-device-team',Room_Rules::VAULT=>'edu-games-cipher-team',default=>throw new Failure('팀전 종류를 확인하세요.',422)};}
 }

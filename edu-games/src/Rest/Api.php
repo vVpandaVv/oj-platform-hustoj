@@ -14,11 +14,13 @@ use EduGames\Rest\Controllers\Teams_Controller;
 final class Api {
     public static function register_routes(): void {
         Games_Controller::register_routes();
+        Controllers\Typing_Controller::register_routes();
         Controllers\Learning_Controller::register_routes();
         Controllers\Warehouse_Controller::register_routes();
         Controllers\Strategy_Controller::register_routes();
         Controllers\Play_Controller::register_routes();
         Controllers\Progress_Controller::register_routes();
+        Controllers\Arcade_Controller::register_routes();
         Controllers\Report_Controller::register_routes();
         Leaderboard_Controller::register_routes();
         Controllers\Ranking_Records_Controller::register_routes();
@@ -26,6 +28,7 @@ final class Api {
         Teams_Controller::register_routes();
         Controllers\Binary_Team_Controller::register_routes();
         Controllers\Binary_Team_Controller::register_routes('device-matching');
+        Controllers\Binary_Team_Controller::register_routes('cipher-vault');
         Games_Admin_Controller::register_routes();
         AI_Model_Lab_Controller::register_routes();
         AI_Model_Lab_Report_Controller::register_routes();

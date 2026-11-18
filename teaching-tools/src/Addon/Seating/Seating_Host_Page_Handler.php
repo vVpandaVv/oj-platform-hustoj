@@ -50,6 +50,10 @@ final class Seating_Host_Page_Handler implements AddonPageHandlerV1 {
                             <?php esc_html_e('명단 직접 입력 (한 줄에 한 명)', 'teaching-tools'); ?>
                             <textarea data-field="students"></textarea>
                         </label>
+                        <label>
+                            <?php esc_html_e('배치 이력 그룹 (선택)', 'teaching-tools'); ?>
+                            <input type="text" maxlength="80" data-field="history-group" placeholder="<?php echo esc_attr__('예: 3반', 'teaching-tools'); ?>">
+                        </label>
                     </div>
                 </div>
 
@@ -75,7 +79,7 @@ final class Seating_Host_Page_Handler implements AddonPageHandlerV1 {
                             <summary><?php esc_html_e('선택 조건 (선택 사항)', 'teaching-tools'); ?></summary>
                             <p class="htt-condition-help"><?php esc_html_e('명단의 이름, 관리용 이름 또는 #학생ID를 입력할 수 있습니다. 동명이인은 명단에 표시된 구분 이름이나 #학생ID를 사용하세요.', 'teaching-tools'); ?></p>
                             <label>
-                                <?php esc_html_e('앞자리 배치 (한 줄에 한 명 — 이름·관리용 이름·#학생ID)', 'teaching-tools'); ?>
+                                <?php esc_html_e('앞자리 배치: 1~2행 (한 줄에 한 명 — 이름·관리용 이름·#학생ID)', 'teaching-tools'); ?>
                                 <textarea data-field="front-names"></textarea>
                             </label>
                             <label>
@@ -140,6 +144,7 @@ final class Seating_Host_Page_Handler implements AddonPageHandlerV1 {
                     <button type="button" class="ojp-button ojp-button--tinted ojp-button--small htt-join-link" data-action="copy-link"><?php esc_html_e('참여 링크 복사', 'teaching-tools'); ?></button>
                 </div>
                 <div class="htt-seating-result-actions">
+                    <button type="button" class="ojp-button ojp-button--primary" data-action="confirm-arrangement"><?php esc_html_e('배치 확정', 'teaching-tools'); ?></button>
                     <?php echo Ui::student_name_mode_control(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside. ?>
                     <button type="button" class="ojp-button ojp-button--plain" data-action="reveal-all" hidden>
                         <?php echo Ui::icon('eye', 18); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -154,6 +159,7 @@ final class Seating_Host_Page_Handler implements AddonPageHandlerV1 {
                         <?php esc_html_e('인쇄', 'teaching-tools'); ?>
                     </button>
                 </div>
+                <p data-field="history-status" role="status" aria-live="polite"></p>
                 <div class="htt-seat-board" data-field="board"></div>
 
                 <label>

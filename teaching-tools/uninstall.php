@@ -20,6 +20,7 @@ global $wpdb;
 $participants_table = $wpdb->prefix . 'teaching_tools_session_participants';
 $sessions_table = $wpdb->prefix . 'teaching_tools_sessions';
 $seating_layouts_table = $wpdb->prefix . 'teaching_tools_seating_layouts';
+$seating_history_table = $wpdb->prefix . 'teaching_tools_seating_history';
 $session_hosts_table = $wpdb->prefix . 'teaching_tools_session_hosts';
 $lesson_templates_table = $wpdb->prefix . 'teaching_tools_lesson_templates';
 
@@ -29,6 +30,7 @@ $wpdb->query("DROP TABLE IF EXISTS {$participants_table}");
 $wpdb->query("DROP TABLE IF EXISTS {$session_hosts_table}");
 $wpdb->query("DROP TABLE IF EXISTS {$sessions_table}");
 $wpdb->query("DROP TABLE IF EXISTS {$seating_layouts_table}");
+$wpdb->query("DROP TABLE IF EXISTS {$seating_history_table}");
 $wpdb->query("DROP TABLE IF EXISTS {$lesson_templates_table}");
 
 delete_option('teaching_tools_db_version');

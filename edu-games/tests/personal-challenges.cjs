@@ -5,6 +5,7 @@ const storage={getItem:k=>stored.get(k)||null,setItem:(k,v)=>{if(writesFail)thro
 function load(folder){
     const source=fs.readFileSync(path.join(root,'blocks',folder,'view.js'),'utf8'),name=source.match(/class (\w+)/)[1];
     const context={document:{readyState:'loading',addEventListener(){}},window:{localStorage:storage},localStorage:storage,performance:{now:()=>1000}};
+    if(folder==='code-typing')vm.runInNewContext(fs.readFileSync(path.join(root,'assets/typing/verified.js'),'utf8'),context);
     vm.runInNewContext(source.replace('const init = () => {',`globalThis.Game = ${name}; const init = () => {`),context);
     return Object.create(context.Game.prototype);
 }

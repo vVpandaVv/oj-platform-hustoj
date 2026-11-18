@@ -81,6 +81,7 @@ final class Games_Controller {
 
     public static function record_score(\WP_REST_Request $request) {
         $game = sanitize_key((string) $request['game']);
+        if($game==='code-typing')return new \WP_Error('edu_games_typing_version_retired','기존 검정의 새 제출은 종료되었습니다. 새로 고침 후 검정 v2를 사용하세요.',array('status'=>409));
         $params = $request->get_json_params();
         $data = is_array($params) ? $params : array();
         $user_id = get_current_user_id();

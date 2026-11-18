@@ -1,0 +1,167 @@
+{
+  "candidateVersion": "1.0.0-rc.12",
+  "date": "2026-11-05",
+  "status": "local_verification_passed_live_acceptance_pending",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "featureFreeze": "feature-freeze-1.0.0-rc.12.json",
+  "requiresPlatform": ">=2.5.9 <3.0.0",
+  "requiresAddonApi": "^1.9",
+  "checks": {
+    "php": 1237,
+    "frontend": 165,
+    "installerShell": 26,
+    "runner": 102,
+    "freeze": 4,
+    "acceptanceRest": 15,
+    "acceptancePython": 26,
+    "total": 1575
+  },
+  "navigation": {
+    "nativeCatalogProvidersRegistered": 0,
+    "consolePages": 3,
+    "publicPages": 2,
+    "consoleMenus": 2,
+    "publicMenus": 2,
+    "teacherProblemLocalNavItems": 2,
+    "coreMenuAliases": 0,
+    "problemRoot": "problems",
+    "lessonRoot": "classes",
+    "duplicateInnerNavigation": false,
+    "publicMenuKeysReplacedForNewParents": true
+  },
+  "platform": {
+    "version": "2.5.9",
+    "addonApi": "1.9.0",
+    "productCodeChanged": false,
+    "existingPackageSha256": "a7ab51aac9728826f26ce67c3abe45f9e1d931550f41a7d061f858708a7f82ee"
+  },
+  "browser": {
+    "report": "browser-focused-validation-1.0.0-rc.12.json",
+    "flows": 38,
+    "pageErrors": 0,
+    "actualPlatformCss": true,
+    "actualPhpHostRenderer": true,
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualDatabase": false,
+    "actualRunner": false,
+    "actualHardware": false,
+    "editorProtocolFixture": true,
+    "actualPxtCompiler": true,
+    "actualPxtRuntime": true,
+    "executionRestFixture": true,
+    "actualIsolatedWorker": false,
+    "previewPeak": 1,
+    "projectWrites": 0,
+    "gradeWrites": 0
+  },
+  "environment": {
+    "php": "8.5.5 Windows, PDO SQLite",
+    "node": "24.22.1 Windows",
+    "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+    "python": "3.14 Windows",
+    "shell": "Git Bash; nonprivileged command/filesystem fixtures"
+  },
+  "verified": [
+    "Public expectations stay distinct from actual student-code SVG output with separate result-source attributes and no invented targets",
+    "With zero public examples, the real PXT compiler/runtime executes current student source at arbitrary analog inputs 513/100 and displays matching actual LED/PWM writes",
+    "Range changes debounce to one latest input; execution is single flight with minimum 1000ms start spacing and 600ms quiet period; stale responses are ignored",
+    "Fresh MakeCode capture detects code changes and real compile diagnostics; imported projects and recovered drafts keep execution responsive",
+    "Stop, hidden document, disposal, transport abort, network/capacity failures and reduced motion are handled without submission or score side effects",
+    "Existing App action waits for current preview before save/grade; actual experiments remain separate from project and graded-attempt writes",
+    "Teacher directly creates named private conditions with the atomic multi-pin wizard; public/private groups and conversion preserve inputs, outputs and timings",
+    "All-private publication has zero student scenarios but retained grading checks; server visibility, permissions, leases and existing GPIO/servo/I2C grading protections remain covered",
+    "DB, permission, runtime, USB bundle and PXT dependency product hashes match rc.11 except release version metadata"
+  ],
+  "actualTrialServer": false,
+  "actualWordPress": false,
+  "actualMySQL": false,
+  "actualDocker": false,
+  "actualHustojParallelLoad": false,
+  "actualBackupRestore": false,
+  "actualHardware": false,
+  "pending": [
+    "Actual WordPress theme, persisted menu visibility/order, roles and subdirectory routing",
+    "Actual group/class ledger permissions and concurrent revocation",
+    "MySQL/MariaDB plans, transactions, concurrent locks and workload",
+    "Representative lessons and student sessions with actual HUSTOJ judging",
+    "Matched plugin/database backup restore and privacy/retention completion",
+    "Physical HEX/WebUSB if official device support is included",
+    "Evaluation policy for independent addon result pages"
+  ],
+  "limitations": [
+    "SQLite and WordPress/POSIX/command fixtures do not certify actual MySQL or WordPress authentication",
+    "Browser uses real platform styles and PHP renderer with controlled loopback REST and iframe messages, not the actual MakeCode service",
+    "Existing group and class permission ledgers are reused by independent menus rather than copied into new module tables",
+    "Core programming performance-mode policies are not automatically applied to independent addon pages",
+    "Code-only downgrade to rc.2 or older does not understand lesson scopes; restore a matching database snapshot too"
+  ],
+  "validationNotes": [
+    "Frontend 165, publication review 22, freeze 4 and browser 38 flow checks passed before packaging. Official release-kit executes complete scripts/verify.ps1 as the mandatory archive creation gate.",
+    "Automatic experiments restart the program from the beginning per request; they do not preserve runtime state and need server/compile latency.",
+    "Browser uses actual PXT compiler/runtime behind controlled REST and controller fixtures, not actual MakeCode service, WordPress authentication or Docker isolation.",
+    "Actual deployment, MySQL, HUSTOJ parallel load, recovery, MakeCode service and hardware acceptance remain pending."
+  ],
+  "expectedPreview": {
+    "source": "visible public examples only",
+    "drawings": [
+      "sensor",
+      "button",
+      "potentiometer",
+      "microbit",
+      "led",
+      "motor",
+      "servo",
+      "i2c"
+    ],
+    "inputMatching": "exact full input state; explicit stage for ambiguity",
+    "unknownInput": "unknown output with no inference",
+    "motion": "CSS rotation proportional to nominal PWM level; no physical RPM",
+    "sequence": "immediate response and minimum hold; bounded to selected group",
+    "maxPendingTimer": 1,
+    "controlsMounted": 1,
+    "pauseOnHidden": true,
+    "disposeOnNavigation": true,
+    "reducedMotion": true,
+    "restRequestsFromPreview": 0,
+    "actualStudentCodeExecution": false,
+    "authorSampleReport": "author-design-validation-1.0.0-rc.12.json"
+  },
+  "actualExecution": {
+    "source": "latest student project; real compiled PXT write/I2C trace",
+    "publicExampleRequired": false,
+    "inputRange": {
+      "analog": [
+        0,
+        1023
+      ],
+      "digital": [
+        0,
+        1
+      ],
+      "i2cRegister": [
+        0,
+        255
+      ]
+    },
+    "restartOnInput": true,
+    "persistentRuntime": false,
+    "serverRequired": true,
+    "debounceMs": 600,
+    "minStartIntervalMs": 1000,
+    "maxConcurrentRequestsPerApp": 1,
+    "maxPendingInputState": 1,
+    "autoRetryOnNetworkOrCapacityFailure": false,
+    "hiddenPause": true,
+    "scoreWrites": 0,
+    "projectWrites": 0,
+    "privateConditionsSentByStudent": false
+  },
+  "privateAuthoring": {
+    "path": "문제 → 마이크로비트 문제 → 문제 생성/편집 → 동작 조건 → + 비공개 채점 조건 추가",
+    "separateGroups": true,
+    "storedFlag": "visible:false",
+    "studentDisclosure": false
+  }
+}

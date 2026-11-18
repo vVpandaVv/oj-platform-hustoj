@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path');
+const file=path.join(__dirname,'quick-play-v3.html');
+const html=fs.readFileSync(file,'utf8'),engine=fs.readFileSync(path.join(__dirname,'quick-play-v3.js'),'utf8');
+const start='/* QUICK_ENGINE_START */',end='/* QUICK_ENGINE_END */';
+const a=html.indexOf(start),b=html.indexOf(end);
+if(a<0||b<a)throw Error('Missing engine markers');
+const output=html.slice(0,a+start.length)+'\n'+engine+'\n'+html.slice(b);
+fs.writeFileSync(file,output,'utf8');
+if(process.argv[2])fs.writeFileSync(path.resolve(process.argv[2]),output,'utf8');
+console.log('Quick play synced: '+Buffer.byteLength(output)+' bytes');

@@ -101,8 +101,16 @@ final class Assessment_Project_Page_Handler implements AddonPageHandlerV1 {
 			'data-project-stage'     => $stage,
 		);
 		$attrs['data-can-template'] = $allowed( Addon_Capabilities::MANAGE_POLICIES ) ? '1' : '0';
-		$attrs['data-can-summary']  = $allowed( Addon_Capabilities::VIEW_REPORTS ) ? '1' : '0';
-		$capabilities               = array(
+		if ( 'assessment' === $stage && '' !== $worksheet_id && $allowed( Addon_Capabilities::REVIEW_ASSESSMENTS ) ) {
+			foreach ( array( 'not_submitted', 'long_absence' ) as $category ) {
+				$score = $project['configuration']['exception_scores'][ $category ] ?? null;
+				if ( null !== $score ) {
+					$attrs[ 'data-score-' . str_replace( '_', '-', $category ) ] = $score;
+				}
+			}
+		}
+		$attrs['data-can-summary'] = $allowed( Addon_Capabilities::VIEW_REPORTS ) ? '1' : '0';
+		$capabilities              = array(
 			'assignment' => Addon_Capabilities::ASSIGN_WORKSHEETS,
 			'assessment' => Addon_Capabilities::REVIEW_ASSESSMENTS,
 			'report'     => Addon_Capabilities::REVIEW_ASSESSMENTS,

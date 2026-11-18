@@ -26,6 +26,15 @@ $builder=new class implements Api\AddonManifestBuilderV1 {
     public function aiTask(Api\AddonAiTaskDefinitionV1 $definition):void {}
 };
 EduGames\Addon\Oj_Platform_Registration::manifest($builder);
+if($fixturePage=getenv('EDU_GAMES_ASSET_PAGE')){
+    if(!isset($builder->pages[$fixturePage]))throw new RuntimeException('Unknown asset fixture page.');
+    $files=array('scripts'=>array(),'styles'=>array());
+    foreach($builder->pages[$fixturePage]->assetBundles() as $id){
+        $files['scripts']=array_merge($files['scripts'],$builder->assets[$id]->scripts());
+        $files['styles']=array_merge($files['styles'],$builder->assets[$id]->styles());
+    }
+    echo json_encode($files,JSON_THROW_ON_ERROR);exit;
+}
 $checks=0;
 function asset_check(bool $condition,string $message):void { global $checks;$checks++;if(!$condition)throw new RuntimeException($message); }
 foreach($builder->assets as $bundle) {
@@ -41,6 +50,7 @@ foreach(EduGames\Learning\Catalog::PROVIDERS as $game=>$provider) {
     foreach($page->assetBundles() as $id){$scripts=array_merge($scripts,$builder->assets[$id]->scripts());$styles=array_merge($styles,$builder->assets[$id]->styles());}
     asset_check(!in_array('assets/learning/view.js',$scripts,true),'No supplementary question runtime on game '.$game);
     asset_check(!in_array('assets/learning/style.css',$styles,true),'No supplementary question style on game '.$game);
+    if(EduGames\Games\Experience_Separation::moved($game)){asset_check(!in_array('assets/strategy/view.js',$scripts,true)&&!in_array('assets/play/core.js',$scripts,true),'Moved experience loads no game engine '.$game);continue;}
     if($game==='data-structure-lab')asset_check(in_array('assets/warehouse/view.js',$scripts,true),'Board script missing');
     if(isset(EduGames\Boards\Catalog::GAMES[$game])){
         $views=array_search('assets/strategy/board-views.js',$scripts,true);$runtime=array_search('assets/strategy/view.js',$scripts,true);
@@ -50,16 +60,22 @@ foreach(EduGames\Learning\Catalog::PROVIDERS as $game=>$provider) {
 $ranking=$builder->assets['addon.edu_games.ranking_assets']->scripts();
 asset_check($ranking[0]==='assets/rankings/pager.js','Ranking pager dependency');
 asset_check($ranking===array('assets/rankings/pager.js','assets/rankings/page.js'),'Dedicated ranking page loads no game engines or duplicate report runtimes');
-asset_check(count($builder->pages)===18,'Personal game/hub/rank routes retained with independent team routes and projector');
+asset_check(count($builder->pages)===21,'Personal game/hub/rank routes retained with independent team routes and projector');
 foreach($builder->pages as $key=>$page){
     $game=substr($key,strlen('addon.edu_games.games.'));
-    $needsPlay=isset(EduGames\Play\Catalog::GAMES[$game]);
+    $needsPlay=isset(EduGames\Play\Catalog::GAMES[$game])&&!EduGames\Games\Experience_Separation::moved($game);
     asset_check(in_array('addon.edu_games.play_assets',$page->assetBundles(),true)===$needsPlay,'Shared runtime only on play/ranking pages '.$key);
     if(!$needsPlay)continue;
     $scripts=array();foreach($page->assetBundles() as $id)$scripts=array_merge($scripts,$builder->assets[$id]->scripts());
     asset_check(count($scripts)===count(array_unique($scripts)),'No duplicate scripts '.$key);
     $chart=array_search('assets/vendor/chartjs/chart.umd.min.js',$scripts,true);
     asset_check($chart!==false&&$chart<array_search('assets/play/missing.js',$scripts,true),'Chart.js before play views '.$key);
+    if($game==='data-structure-lab'){
+        $warehouse=array_search('assets/play/warehouse.js',$scripts,true);
+        asset_check($warehouse!==false&&$warehouse<array_search('assets/play/hands.js',$scripts,true),'Warehouse runtime must load before hands renderer');
+        $styles=array();foreach($page->assetBundles() as $id)$styles=array_merge($styles,$builder->assets[$id]->styles());
+        asset_check(in_array('assets/play/warehouse.css',$styles,true),'Warehouse play styles must ship on the addon page');
+    }
     asset_check(array_slice($scripts,-6)===array('assets/play/missing.js','assets/play/rescue-scenes.js','assets/play/rescue.js','assets/play/hands.js','assets/play/core.js','assets/shell/shell.js'),'Play dependencies and shared shell '.$key);
 }
 
@@ -85,10 +101,10 @@ $ledger=new class implements Kernel\AddonNamespaceLedger {
 };
 $entries=(new Kernel\AddonManifestValidator('2.0.0-dev.30','1.0.0',$core,$ledger))->validate($gateway->close());
 asset_check(count($entries)===1&&$entries[0]->isAccepted(),'Manifest accepted: '.($entries[0]->code()??'no entry'));
-asset_check(count($entries[0]->manifest()->publicPages())===18,'Validator preserves all public pages');
-asset_check(count($entries[0]->manifest()->consolePages())===4,'Validator preserves management/report and team operations pages');
+asset_check(count($entries[0]->manifest()->publicPages())===21,'Validator preserves all public pages');
+asset_check(count($entries[0]->manifest()->consolePages())===5,'Validator preserves management/report, typing evaluations and team operations pages');
 asset_check(count($entries[0]->manifest()->consoleMenus())===1,'One console menu (D-010)');
-asset_check(array_map(fn($item)=>$item->route(),$entries[0]->manifest()->consoleLocalNav())===array('addon.edu_games.manage','addon.edu_games.team_games','addon.edu_games.report','addon.edu_games.ai_model_lab_report'),'Console pages reached through local navigation');
+asset_check(array_map(fn($item)=>$item->route(),$entries[0]->manifest()->consoleLocalNav())===array('addon.edu_games.manage','addon.edu_games.team_games','addon.edu_games.report','addon.edu_games.typing_evaluations','addon.edu_games.ai_model_lab_report'),'Console pages reached through local navigation');
 
 function wp_register_script($handle,$url,$dependencies,$version,$footer):void {
     $GLOBALS['addon_test_scripts'][$handle]=array('url'=>$url,'dependencies'=>$dependencies);
@@ -130,6 +146,7 @@ $renderers=array(
     'device-matching'=>'Device_Matching', 'keyword-rain'=>'Keyword_Rain',
 );
 foreach($renderers as $game=>$name){
+    if(EduGames\Games\Experience_Separation::moved($game)){ $page=$builder->pages['addon.edu_games.games.'.$game];$html=$page->handler()->handle(new Api\AddonPageRequestV1($page->key(),7,[],[],'ko_KR','moved'))->body();asset_check(str_contains($html,'개념 체험'),'Old address provides migration notice '.$game);continue;}
     foreach(array('page','shortcode','block') as $surface){
         $GLOBALS['render_scripts']=array();$GLOBALS['render_styles']=array();
         if($surface==='page'){
@@ -160,8 +177,8 @@ foreach(array('addon.edu_games.games','addon.edu_games.ranking') as $key){
         asset_check(str_contains($html,'data-rankings-page'),'Dedicated ranking page renders');
         asset_check(!str_contains($html,'data-play')&&!str_contains($html,'data-learning')&&!str_contains($html,'data-group-leaderboard'),'Ranking page never appends older game/report interfaces');
         $games=EduGames\Blocks\Ranking_Page_Renderer::games();
-        $missing=array_values(array_filter($games,fn($g)=>$g['id']==='missing-values'))[0];
-        asset_check(array_column($missing['variants'],'id')===array('play','arcade','strategy','assessment'),'Current and historical records stay in separate sources');
+        $vault=array_values(array_filter($games,fn($g)=>$g['id']==='cipher-vault'))[0];
+        asset_check(array_column($vault['variants'],'id')===array('verified-arcade'),'New verified scores stay in a separate source');
     }
 }
 $page=$builder->pages['addon.edu_games.binary_team'];

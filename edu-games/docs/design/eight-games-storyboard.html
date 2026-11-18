@@ -1,0 +1,75 @@
+<div id="eight-game-plan" lang="ko">
+<style>
+#eight-game-plan{--p-bg:light-dark(#fff,#1b1e20);--p-ink:light-dark(#293033,#eef1ee);--p-muted:light-dark(#626e73,#afbbbe);--p-line:light-dark(#dce3e2,#414c50);--p-floor:light-dark(#f2f5f4,#262f32);--p-green:light-dark(#087f71,#6cdbc6);--p-green-soft:light-dark(#ddf3e9,#26483e);--p-blue:light-dark(#3d6f9e,#9ac5ed);--p-blue-soft:light-dark(#e4eef8,#2b4053);--p-red:light-dark(#b8483d,#ff9c8c);--p-red-soft:light-dark(#fbe8e2,#4d322f);--p-gold:light-dark(#886b22,#e9c972);--p-gold-soft:light-dark(#fff1cf,#48412a);font:400 14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;color:var(--p-ink);letter-spacing:0;color-scheme:inherit;min-width:0}
+#eight-game-plan *{box-sizing:border-box;letter-spacing:0}
+#eight-game-plan .p-app{background:var(--p-bg);padding:16px 20px;min-width:0}
+#eight-game-plan :is(h1,h2,p){margin:0}
+#eight-game-plan h1{font-size:22px;line-height:1.35;font-weight:500}
+#eight-game-plan h2{font-size:16px;font-weight:500}
+#eight-game-plan .p-top{display:flex;gap:10px;align-items:center;padding-right:90px;min-height:34px;font-size:12px;color:var(--p-muted);margin-bottom:14px}
+#eight-game-plan .p-top b{font-weight:500;color:var(--p-ink)}
+#eight-game-plan .p-chooser{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-block:1px solid var(--p-line);padding:10px 0;margin-bottom:15px}
+#eight-game-plan label{font-size:13px;color:var(--p-muted)}
+#eight-game-plan select{min-height:44px;border:1px solid var(--p-line);border-radius:5px;color:var(--p-ink);background:var(--p-bg);font:inherit;padding:8px 10px;max-width:100%;min-width:0}
+#eight-game-plan .p-name{display:flex;align-items:baseline;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+#eight-game-plan .p-metric{font-size:13px;color:var(--p-green)}
+#eight-game-plan .p-frames{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+#eight-game-plan figure{margin:0;min-width:0}
+#eight-game-plan figcaption{font-size:12px;color:var(--p-muted);padding:8px 0}
+#eight-game-plan canvas{display:block;width:100%;height:294px;background:var(--p-floor)}
+#eight-game-plan .p-action{display:flex;gap:9px;align-items:center;border-block:1px solid var(--p-line);padding:12px 0;margin-top:12px;font-weight:500}
+#eight-game-plan .p-action .lucide{width:20px;height:20px;flex:none;color:var(--p-green)}
+#eight-game-plan .p-detail{font-size:13px;color:var(--p-muted);padding-top:10px;min-height:36px}
+#eight-game-plan .p-probe{display:none}
+@media(max-width:680px){#eight-game-plan .p-app{padding:12px 10px}#eight-game-plan .p-frames{grid-template-columns:1fr;gap:5px}#eight-game-plan .p-chooser{align-items:flex-start}#eight-game-plan select{width:100%}#eight-game-plan h1{font-size:20px}}
+</style>
+<div class="p-app">
+ <div class="p-top"><b>철회된 후보</b><span>핵심 개념 수행이 부족하여 제작 기준에서 제외</span></div>
+ <div class="p-chooser"><label for="ep-choice">검토할 설계</label><select id="ep-choice"></select></div>
+ <div class="p-name"><h1 id="ep-name"></h1><span class="p-metric" id="ep-metric"></span></div>
+ <div class="p-frames"><figure><figcaption>조작 전</figcaption><canvas id="ep-before" role="img"></canvas></figure><figure><figcaption>조작 후</figcaption><canvas id="ep-after" role="img"></canvas></figure></div>
+ <div class="p-action"><i data-lucide="move-right" aria-hidden="true"></i><span id="ep-action"></span></div>
+ <p class="p-detail" id="ep-detail"></p><span class="p-probe" aria-hidden="true"></span>
+</div>
+<script>
+(()=>{
+ const root=document.getElementById('eight-game-plan'),$=s=>root.querySelector(s);
+ const plans=[
+  ['code','문자 코드 · 암호 도미노','고리 닫으면 타일 하나 = 1점','B 끝을 22 끝에 연결','연결은 22 ↔ B에서 성립. 한 타일 안의 A | 22는 서로 다른 두 끝입니다.'],
+  ['image','이미지 데이터 · 픽셀 큐브','조작 횟수 · 적을수록 좋음','어긋난 행을 왼쪽으로 한 칸 밀기','픽셀과 그 행의 색상 번호가 함께 이동합니다. 물감 구매나 정답 입력은 없습니다.'],
+  ['outlier','이상치 · 분포 합치기','원본 4개 묶음 하나 = 1점','판을 왼쪽으로 밀어 가까운 기록 묶기','20·22·21·23은 묶음으로 보관. 떨어진 60은 삭제하거나 오류로 단정하지 않습니다.'],
+  ['missing','결측값 · 복원 러미','검증 통과 기록 한 장 = 1점','두 기록을 시간대로 잇기 카드와 조합','실제 시간 간격을 적용한 예측은 20과 24. 원래 관측을 가린 복원 실험에서 확인합니다.'],
+  ['chart','시각화 · 그래프 조립','올바른 그래프 한 장 = 1도장','길이 2 조각을 B 막대 위에 붙이기','한 칸은 1. 원자료 A=2, B=4, C=6과 눈금·막대가 모두 일치해야 완성입니다.'],
+  ['extract','데이터 추출 · 조건 회로','같은 출력을 만드는 적은 블록 수','직렬 연결을 분기·합류로 바꾸기','빨강 OR 원은 1·2·3. 같은 원본 1은 합류에서 중복 출력하지 않습니다.'],
+  ['structure','자료구조 · 주머니 연결 4','연결 4의 승패','큐 앞의 4 카드를 꺼내 4열에 놓기','큐 뒤에 새 카드를 넣어도 앞의 4는 유지됩니다. 네 말을 이으면 대국 승리입니다.'],
+  ['boundary','분류 경계 · 깃발 영역전','올바르게 보낸 새 점 하나 = 1점','파란 깃발을 옮겨 분류 영역 바꾸기','영역은 실제 최근접 참조점 규칙으로 계산. 이미 본 예시가 아니라 새 점을 맞혔을 때 득점합니다.']
+ ];
+ let selected='outlier',serial=0;
+ const saved=window.openai?.widgetState?.privateContent;if(saved?.revision===4&&plans.some(p=>p[0]===saved.selected)){selected=saved.selected;serial=saved.serial||0;}
+ $('#ep-choice').innerHTML=plans.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('');
+ function colors(){const probe=$('.p-probe'),c={};for(const n of ['bg','ink','muted','line','floor','green','green-soft','blue','blue-soft','red','red-soft','gold','gold-soft']){probe.style.color=`var(--p-${n})`;c[n]=getComputedStyle(probe).color;}return c;}
+ function context(canvas){const w=Math.round(canvas.getBoundingClientRect().width),h=294,dpr=window.devicePixelRatio||1;canvas.width=w*dpr;canvas.height=h*dpr;const x=canvas.getContext('2d');x.scale(dpr,dpr);return{x,w,h,c:colors()};}
+ function write(v,t,x,y,color='ink',size=14,align='left'){v.x.font=`400 ${size}px "Malgun Gothic",sans-serif`;v.x.fillStyle=v.c[color]||color;v.x.textAlign=align;v.x.fillText(t,x,y);}
+ function box(v,x,y,w,h,fill='bg',stroke='line'){v.x.fillStyle=v.c[fill]||fill;v.x.fillRect(x,y,w,h);if(stroke){v.x.strokeStyle=v.c[stroke]||stroke;v.x.lineWidth=1;v.x.strokeRect(x+.5,y+.5,w-1,h-1);}}
+ function path(v,points,color='green',thick=2){v.x.beginPath();v.x.strokeStyle=v.c[color];v.x.lineWidth=thick;points.forEach(([x,y],i)=>i?v.x.lineTo(x,y):v.x.moveTo(x,y));v.x.stroke();}
+ function domino(v,left,right,x,y,w=92){box(v,x,y,w,48,'bg');path(v,[[x+w/2,y+5],[x+w/2,y+43]],'line',1);write(v,left,x+w/4,y+30,'ink',20,'center');write(v,right,x+w*3/4,y+30,'ink',20,'center');}
+ function code(v,after){write(v,'코드표 A=11  B=22  C=33',16,28,'muted',12);const w=Math.min(100,(v.w-40)/2),x=16;domino(v,'A','22',x,65,w);if(after){domino(v,'B','33',x+w+7,65,w);write(v,'22 ↔ B',x+w,142,'green',16,'center');write(v,'열린 끝: 33',16,185,'ink',18);}else{write(v,'열린 끝: 22',16,144,'ink',18);domino(v,'B','33',x,200,w);domino(v,'C','11',x+w+7,200,w);write(v,'손패',16,191,'muted',12);}if(after)write(v,'이어서 C를 연결할 수 있음',16,239,'muted',12);}
+ const heart=['00000000','02200220','22222222','22222222','02222220','00222200','00022000','00000000'].map(r=>[...r].map(Number));
+ function image(v,after){const cell=Math.min(22,(v.w-80)/8),left=(v.w-8*cell)/2,top=42,pal=['#ffffff','#24363e','#e77860'];write(v,'목표: 하트 그림 복원',16,25,'muted',12);for(let y=0;y<8;y++){let row=heart[y];if(!after&&y===1)row=row.slice(-1).concat(row.slice(0,-1));for(let x=0;x<8;x++){box(v,left+x*cell,top+y*cell,cell,cell,pal[row[x]],'line');}if(y===1){write(v,row.join(' '),left,top+8*cell+27,'green',12);path(v,[[left,top+y*cell],[left+8*cell,top+y*cell]],'green',2);}}write(v,after?'이동 1':'이동 0',v.w-20,27,'green',14,'right');write(v,after?'행의 위치와 색상 번호 복원':'선택 행의 배열도 함께 이동',16,275,'muted',12);}
+ function dataTile(v,x,y,w,values,source='blue'){box(v,x,y,w,w,source+'-soft');const text=values.length===1?String(values[0]):Math.min(...values)+'~'+Math.max(...values);write(v,text,x+w/2,y+w*.48,source,values.length===1?22:14,'center');write(v,values.length+'개',x+w/2,y+w*.78,'muted',11,'center');}
+ function outlier(v,after){const cell=Math.min(48,(v.w-40)/4),left=(v.w-cell*4)/2,top=40;write(v,after?'원본 4개 보관 · 묶음 +1':'같은 출처 · 허용 폭 4',16,25,after?'green':'muted',12);for(let y=0;y<4;y++)for(let x=0;x<4;x++)box(v,left+x*cell,top+y*cell,cell,cell,'bg');if(after){dataTile(v,left,top,cell,[60]);dataTile(v,left,top+2*cell,cell,[41,43],'red');dataTile(v,left+3*cell,top+3*cell,cell,[24]);}else{dataTile(v,left,top,cell,[20,22]);dataTile(v,left+cell,top,cell,[21,23]);dataTile(v,left+cell*2,top,cell,[60]);dataTile(v,left,top+2*cell,cell,[41],'red');dataTile(v,left+cell,top+2*cell,cell,[43],'red');}write(v,after?'보관: 20 · 22 · 21 · 23':'60은 따로 남아 있음',16,266,after?'green':'muted',12);}
+ function missing(v,after){const width=v.w-32;box(v,16,38,width,72);write(v,'1시 10   2시 '+(after?'20':'?')+'   3시 30',28,66,after?'green':'ink',14);write(v,after?'예측 20 → 가린 관측 20':'시간 간격 1시간씩',28,94,'muted',12);box(v,16,122,width,82);write(v,'0시 20 · 1시 22 · 10시 40',28,148,'ink',12);write(v,'2시 '+(after?'24':'?'),28,176,after?'green':'ink',18);box(v,16,217,Math.min(192,width),41,'green-soft');write(v,after?'검증 통과 2장 · +2':'시간대로 잇기 카드',28,243,'green',14);write(v,after?'관측과 예측 표시는 구분':'한 방법 카드로 두 기록을 묶기',16,280,'muted',12);}
+ function chart(v,after){const left=44,bottom=216,plotW=v.w-72,h=150,unit=h/6;write(v,'원자료 A=2  B=4  C=6',16,25,'muted',12);for(let n=0;n<=6;n+=2){const y=bottom-n*unit;path(v,[[left,y],[v.w-18,y]],'line',1);write(v,String(n),left-10,y+4,'muted',11,'right');}const vals=[2,after?4:2,6];vals.forEach((n,i)=>{const x=left+plotW*(i+.5)/3;box(v,x-16,bottom-n*unit,32,n*unit,'blue',null);write(v,['A','B','C'][i],x,bottom+20,'ink',13,'center');});if(!after){box(v,70,250,2*unit,12,'green',null);write(v,'길이 2',126,261,'green',11);}write(v,after?'그래프 완성 · +1 도장':'B 위에 2를 더 붙이기',16,285,after?'green':'muted',13);}
+ function gate(v,text,x,y,w){box(v,x,y,w,39,'bg');write(v,text,x+w/2,y+25,'ink',13,'center');}
+ function extract(v,after){write(v,'목표: 빨강 OR 원',16,25,'ink',15);const mid=v.w/2,bw=Math.min(79,v.w*.27);for(let i=0;i<4;i++){const x=20+(v.w-40)*(i+.5)/4;v.x.fillStyle=v.c[i%2?'blue':'red'];v.x.beginPath();if(i<2)v.x.arc(x,57,7,0,Math.PI*2);else{v.x.moveTo(x,49);v.x.lineTo(x-8,64);v.x.lineTo(x+8,64);v.x.closePath();}v.x.fill();write(v,String(i+1),x,82,'ink',12,'center');}if(after){gate(v,'빨강',25,116,bw);gate(v,'원',v.w-25-bw,116,bw);path(v,[[mid,94],[mid,101],[25+bw/2,101],[25+bw/2,116]],'green');path(v,[[mid,101],[v.w-25-bw/2,101],[v.w-25-bw/2,116]],'green');path(v,[[25+bw/2,155],[25+bw/2,180],[mid,180],[mid,190]],'green');path(v,[[v.w-25-bw/2,155],[v.w-25-bw/2,180],[mid,180]],'green');box(v,mid-bw/2,190,bw,32,'bg');write(v,'합류',mid,212,'ink',13,'center');}else{gate(v,'빨강',mid-bw/2,103,bw);gate(v,'원',mid-bw/2,157,bw);path(v,[[mid,94],[mid,103]],'green');path(v,[[mid,142],[mid,157]],'green');path(v,[[mid,196],[mid,212]],'green');}write(v,after?'출력: 1 · 2 · 3':'출력: 1만 통과',16,248,after?'green':'red',16);write(v,after?'1의 중복 합류는 한 번만 출력':'직렬은 AND로 동작',16,278,'muted',12);}
+ function structure(v,after){const size=Math.min(33,(v.w-32)/6),left=(v.w-size*6)/2,top=45;write(v,after?'내 말 네 개 연결 · 승리':'4열에 두면 네 개 연결',16,25,after?'green':'ink',13);for(let y=0;y<5;y++)for(let x=0;x<6;x++){box(v,left+x*size,top+y*size,size,size,'bg');if(y===4&&(x<3||(after&&x===3))){v.x.beginPath();v.x.arc(left+(x+.5)*size,top+(y+.5)*size,size*.34,0,Math.PI*2);v.x.fillStyle=v.c.green;v.x.fill();}}write(v,after?'큐: 2 → 3':'큐: 4 → 2 → 3',16,245,'green',15);write(v,after?'앞의 4만 꺼내어 사용':'뒤에 3을 넣어도 앞의 4는 유지',16,274,'muted',12);}
+ function boundary(v,after){const w=Math.min(184,v.w-76),h=w,left=(v.w-w)/2,top=33,A=[2,2],B=after?[7,4]:[8,8];const px=p=>left+p[0]/10*w,py=p=>top+h-p[1]/10*h;for(let y=0;y<30;y++)for(let x=0;x<30;x++){const p=[(x+.5)/30*10,(y+.5)/30*10],a=(p[0]-A[0])**2+(p[1]-A[1])**2,b=(p[0]-B[0])**2+(p[1]-B[1])**2;box(v,left+x*w/30,top+y*h/30,w/30+1,h/30+1,Math.abs(a-b)<1e-8?'floor':a<b?'gold-soft':'blue-soft',null);}path(v,[[left,top],[left,top+h],[left+w,top+h]],'line',1);for(const n of [0,5,10]){write(v,String(n),px([n,0]),top+h+17,'muted',11,'center');write(v,String(n),left-9,py([0,n])+4,'muted',11,'right');}for(const [p,c]of [[A,'gold'],[B,'blue']]){box(v,px(p)-5,py(p)-9,10,16,c,null);path(v,[[px(p)-5,py(p)+7],[px(p)-5,py(p)+17]],c,2);}const dots=[[[3,2],'gold'],[[4,1],'gold'],[[6,4],'blue'],[[8,6],'blue']];dots.forEach(([p,c])=>{v.x.beginPath();v.x.arc(px(p),py(p),5,0,Math.PI*2);v.x.fillStyle=v.c[c];v.x.fill();});write(v,'특성 x',left+w/2,top+h+34,'muted',11,'center');write(v,'특성 y',16,20,'muted',11);if(after){const p=[6,3];v.x.beginPath();v.x.arc(px(p),py(p),7,0,Math.PI*2);v.x.fillStyle=v.c.blue;v.x.fill();write(v,'새 점 +1',16,282,'green',15);}else write(v,'가까운 깃발의 영역으로 예측',16,282,'muted',12);}
+ const scenes={code,image,outlier,missing,chart,extract,structure,boundary};
+ function render(){const p=plans.find(p=>p[0]===selected);$('#ep-choice').value=selected;$('#ep-name').textContent=p[1];$('#ep-metric').textContent=p[2];$('#ep-action').textContent=p[3];$('#ep-detail').textContent=p[4];for(const id of ['ep-before','ep-after']){const canvas=$('#'+id);canvas.setAttribute('aria-label',p[1]+(id==='ep-before'?' 조작 전':' 조작 후'));scenes[selected](context(canvas),id==='ep-after');}if(window.lucide)window.lucide.createIcons();}
+ $('#ep-choice').addEventListener('change',e=>{selected=e.target.value;render();window.openai?.setWidgetState?.({modelContent:{concept:selected},privateContent:{revision:4,selected,serial:++serial}})?.catch(()=>{});});
+ window.addEventListener('resize',render);window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+ window.addEventListener('openai:set_globals',e=>{const p=e.detail?.globals?.widgetState?.privateContent;if(p?.revision===4&&(p.serial??0)>serial&&plans.some(v=>v[0]===p.selected)){selected=p.selected;serial=p.serial;render();}});
+ render();
+})();
+</script>
+</div>

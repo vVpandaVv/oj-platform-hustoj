@@ -40,5 +40,5 @@ final class Socket_Relay {
         }
         return array('reply'=>$reply,'views'=>$sessions?$service->snapshots($input['code'],$sessions,$now):array(),'errors'=>$errors);
     }
-    public static function game(mixed $channel): string {return match($channel){'binary-team'=>Room_Rules::BINARY,'device-team'=>Room_Rules::DEVICE,default=>throw new Failure('채널 요청을 확인하세요.',422)};}
+    public static function game(mixed $channel): string {return match($channel){'binary-team'=>Room_Rules::BINARY,'device-team'=>Room_Rules::DEVICE,'cipher-team'=>Room_Rules::VAULT,default=>throw new Failure('채널 요청을 확인하세요.',422)};}
 }

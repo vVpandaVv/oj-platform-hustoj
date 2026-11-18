@@ -1,13 +1,16 @@
 import http from 'node:http';
+import { readFileSync } from 'node:fs';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { executeJob, inspectImage, DEFAULT_IMAGE } from './launcher.mjs';
 import { runtimeVersion } from './version.mjs';
-import { validateRequest } from './validation.mjs';
+import { validateRequest, validateCompileRequest } from './validation.mjs';
+
+const releaseVersion = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 
 function send(response, status, payload) {
   const candidate = payload.error || payload.status || 'ok';
-  response.operationCode = ['ok', 'unavailable', 'unauthorized', 'execution_unavailable', 'execution_timeout', 'not_found', 'json_required', 'busy', 'request_too_large', 'invalid_request', 'graded', 'preview', 'compile_error', 'runtime_error'].includes(candidate) ? candidate : 'invalid_response';
+  response.operationCode = ['ok', 'unavailable', 'unauthorized', 'execution_unavailable', 'execution_timeout', 'not_found', 'json_required', 'busy', 'request_too_large', 'invalid_request', 'graded', 'preview', 'compile_error', 'runtime_error', 'compiled'].includes(candidate) ? candidate : 'invalid_response';
   response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'X-Request-ID': response.requestId,
     ...(payload.retryAfterSeconds ? { 'Retry-After': String(payload.retryAfterSeconds) } : {}) });
   response.end(JSON.stringify({ ...payload, requestId: response.requestId }));
@@ -52,10 +55,10 @@ export function createServer(options = {}) {
     if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) { send(response, 401, { error: 'unauthorized' }); return; }
     if (request.method === 'GET' && request.url === '/health') {
       const ready = mode === 'docker' ? await imageReady() : true;
-      send(response, ready ? 200 : 503, { status: ready ? 'ok' : 'unavailable', ...(ready ? {} : { error: 'execution_unavailable', retryAfterSeconds: 5 }), ready, runtimeVersion, sandbox: mode === 'docker' ? 'docker-no-network' : 'test-process', capacity, active });
+      send(response, ready ? 200 : 503, { status: ready ? 'ok' : 'unavailable', ...(ready ? {} : { error: 'execution_unavailable', retryAfterSeconds: 5 }), ready, runtimeVersion, releaseVersion, liveProtocol:'oj-live/1', sandbox: mode === 'docker' ? 'docker-no-network' : 'test-process', capacity, active });
       return;
     }
-    if (request.method !== 'POST' || !['/v1/run', '/v1/preview'].includes(request.url)) { send(response, 404, { error: 'not_found' }); return; }
+    if (request.method !== 'POST' || !['/v1/run', '/v1/preview', '/v1/compile'].includes(request.url)) { send(response, 404, { error: 'not_found' }); return; }
     if (!/^application\/json(?:;|$)/i.test(request.headers['content-type'] || '')) { send(response, 415, { error: 'json_required' }); return; }
     if (active >= capacity) { send(response, 429, { error: 'busy', retryAfterSeconds: 2 }); return; }
     active++;
@@ -68,7 +71,7 @@ export function createServer(options = {}) {
         chunks.push(chunk);
       }
       let payload;
-      try { payload = JSON.parse(Buffer.concat(chunks).toString('utf8')); validateRequest(payload); }
+      try { payload = JSON.parse(Buffer.concat(chunks).toString('utf8')); if (request.url === '/v1/compile') { validateCompileRequest(payload); payload = {job:'compile',project:payload.project}; } else { validateRequest(payload); delete payload.job; } }
       catch { send(response, 400, { error: 'invalid_request', message: 'Project or exercise input is invalid.' }); return; }
       const result = await launch(payload);
       // This marker belongs to the trusted launcher, never to student code or

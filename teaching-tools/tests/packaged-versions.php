@@ -10,18 +10,21 @@ mkdir($temporary);
 try {
     $archive = new ZipArchive();
     if (true !== $archive->open($zip)) { throw new RuntimeException('Cannot open installation ZIP'); }
-    foreach (array('whiteboard-render', 'host-whiteboard', 'join', 'realtime-client', 'whiteboard-viewer', 'pdf-pages', 'discovery-client', 'global-classroom', 'assigned-activities') as $asset) {
+    foreach (array('whiteboard-render', 'host-whiteboard', 'join', 'realtime-client', 'whiteboard-viewer', 'pdf-pages', 'discovery-client', 'global-classroom', 'assigned-activities', 'seating-engine', 'host-seating', 'student-identities') as $asset) {
         $relative = 'resources/js/' . $asset . '.js';
         $packaged = $archive->getFromName('teaching-tools/' . $relative);
         if (false === $packaged || hash('sha256', $packaged) !== hash_file('sha256', dirname(__DIR__) . '/' . $relative)) {
-            throw new RuntimeException('Packaged whiteboard asset does not match verified source: ' . $asset);
+            throw new RuntimeException('Packaged client asset does not match verified source: ' . $asset);
         }
     }
     foreach (array('src/Rest/Controllers/Realtime_Controller.php', 'src/Rest/Controllers/Whiteboard_Controller.php',
         'src/Rest/Controllers/Classroom_Controller.php', 'src/Rest/Controllers/Sessions_Controller.php',
         'src/Sessions/Tool_Session_Repository.php', 'src/Database/Installer.php', 'src/Addon/Oj_Platform_Registration.php',
         'src/Addon/Whiteboard/Whiteboard_Image_Repository.php', 'src/Addon/Whiteboard/Whiteboard_Host_Page_Handler.php',
-        'src/Addon/Public_Join_Page_Handler.php', 'resources/css/whiteboard.css') as $relative) {
+        'src/Addon/Public_Join_Page_Handler.php', 'resources/css/whiteboard.css',
+        'src/Addon/Seating/Seating_Host_Page_Handler.php', 'src/Addon/Seating/Seating_History_Repository.php',
+        'src/Rest/Controllers/Seating_History_Controller.php', 'src/Rest/Api.php', 'src/Admin/Privacy_Tools.php',
+        'uninstall.php', 'resources/css/seating.css') as $relative) {
         $packaged = $archive->getFromName('teaching-tools/' . $relative);
         if (false === $packaged || hash('sha256', $packaged) !== hash_file('sha256', dirname(__DIR__) . '/' . $relative)) {
             throw new RuntimeException('Packaged role/sharing asset does not match verified source: ' . $relative);
@@ -40,7 +43,7 @@ try {
         throw new RuntimeException('Installed ZIP version metadata is unavailable');
     }
     echo 'Installation ZIP versions verified: plugin ' . $bundled['plugin'] . ', module ' . $bundled['module'] . ', core ' . $bundled['core'] . ".\n";
-    echo "Packaged whiteboard assets match verified source.\n";
+    echo "Packaged whiteboard and seating assets match verified source.\n";
 } finally {
     $resolved = realpath($temporary);
     $allowed = realpath($temporary_root) . DIRECTORY_SEPARATOR;

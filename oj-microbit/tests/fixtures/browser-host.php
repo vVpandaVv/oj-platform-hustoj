@@ -26,7 +26,7 @@ ob_end_clean();
 $argv = $browserHostArguments;
 require_once $workspace . '/oj-microbit/src/Core/Autoloader.php';
 \OjMicrobit\Core\Autoloader::register();
-define('OJ_MICROBIT_VERSION','1.0.0-rc.9');
+define('OJ_MICROBIT_VERSION','1.0.0-rc.15');
 define('OJ_MICROBIT_FILE',$workspace.'/oj-microbit/oj-microbit.php');
 if(!function_exists('wp_json_encode')){function wp_json_encode(mixed $value,int $flags=0):string{return json_encode($value,$flags|JSON_THROW_ON_ERROR);}}
 if(!function_exists('rest_url')){function rest_url(string $path):string{return 'https://example.test/wp-json/'.$path;}}

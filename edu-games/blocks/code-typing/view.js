@@ -56,6 +56,7 @@
             this.modeKeys = Object.keys(this.rules.modes);
             this.fields = {
                 language: root.querySelector('[data-field="language"]'),
+                lineEnding: root.querySelector('[data-field="line-ending"]'),
                 modes: root.querySelector('[data-field="modes"]'),
                 sample: root.querySelector('[data-field="sample"]'),
                 progress: root.querySelector('[data-field="progress"]'),
@@ -77,6 +78,8 @@
             };
 
             this.bestScore = 0;
+            this.lineEnding = 'enter';
+            try { if (localStorage.getItem(`${this.storageKey()}:line-ending`) === 'space-enter') this.lineEnding = 'space-enter'; } catch {}
             try { this.bestScore = Number(window.localStorage.getItem(this.storageKey())) || 0; } catch { /* Storage can be disabled (private mode, blocked site data). */ }
             this.challengeStorageKey = `${this.storageKey()}:challenge-20260911`;
             try {
@@ -117,6 +120,23 @@
             this.account = window.EduGamesProgress?.connect(this.config, this.root, data => {
                 this.speedRecords = data.records || {}; this.bestScore = Number(data.bestScore) || 0; this.renderChallenge();
             });
+            this.verified = window.EduTypingVerified?.mount(this);
+            if (!this.verified) {
+                const portal = this.root.querySelector('[data-typing-assignments]');
+                const panel = this.root.querySelector('[data-typing-assignment-panel]');
+                if (portal && !this.config.isLoggedIn) {portal.hidden = true;if(panel)panel.hidden=true;}
+                else if (portal) {
+                    this.root.dataset.typingAssessment = 'unavailable';
+                    if(panel)panel.open=true;
+                    const status = document.createElement('p');
+                    status.className = 'ete-student-empty'; status.setAttribute('role','status');
+                    status.textContent = '학급 검정 모듈을 불러오지 못했습니다.';
+                    const retry = document.createElement('button');
+                    retry.type = 'button'; retry.className = 'ete-student-secondary';
+                    retry.textContent = '다시 불러오기'; retry.onclick = () => window.location.reload();
+                    portal.replaceChildren(status,retry);
+                }
+            }
         }
 
         storageKey() {
@@ -191,6 +211,7 @@
             // of the CURRENT sample have already been logged.
             this.lineLog = [];
             this.loggedLineCount = 0;
+            this.practiceTyping = null;
         }
 
         bindEvents() {
@@ -201,6 +222,7 @@
 
                 const modeButton = event.target.closest("[data-mode]");
                 if (modeButton) {
+                    if (this.isAssessment() && this.state.status === 'running') return;
                     this.state.mode = modeButton.dataset.mode;
                     this.ensureCurrentSample(true);
                     this.renderControls();
@@ -237,6 +259,13 @@
 
             this.fields.input.addEventListener("input", () => this.handleInput());
             this.fields.input.addEventListener("keydown", (event) => this.handleEditorKeydown(event));
+            this.fields.lineEnding?.addEventListener('change', () => {
+                if (this.state.status === 'running' || (this.isAssessment() && this.verified?.evaluation)) { this.renderLineEndingControl(); return; }
+                this.lineEnding = this.fields.lineEnding.value === 'space-enter' ? 'space-enter' : 'enter';
+                try { localStorage.setItem(`${this.storageKey()}:line-ending`, this.lineEnding); } catch {}
+                this.renderLineEndingControl(); this.renderChallenge();
+                if (this.isAssessment()) this.verified?.loadLeaderboard();
+            });
         }
 
         renderControls() {
@@ -248,11 +277,25 @@
 
             this.fields.modes.innerHTML = this.modeKeys.map((mode) => `
                 <button type="button" class="${mode === this.state.mode ? "is-active" : ""}" data-mode="${escapeHtml(mode)}" role="tab" aria-selected="${mode === this.state.mode ? "true" : "false"}">
-                    ${escapeHtml(this.rules.modes[mode].label || mode)}
+                    ${escapeHtml(mode==='assessment'?'개인 검정':this.rules.modes[mode].label || mode)}
                 </button>
             `).join("");
 
             this.renderSampleOptions();
+            this.renderLineEndingControl();
+        }
+
+        lineEndingMode() {
+            const fixed = this.isAssessment() ? this.verified?.s || this.verified?.evaluation : null;
+            return fixed ? fixed.lineEnding || 'enter' : this.lineEnding;
+        }
+
+        renderLineEndingControl() {
+            const field = this.fields.lineEnding;
+            if (!field) return;
+            field.value = this.lineEndingMode();
+            field.disabled = this.state.status === 'running' || (this.isAssessment() && !!this.verified?.evaluation);
+            field.title = this.isAssessment() && this.verified?.evaluation ? '교사가 지정한 줄 끝 입력 방식' : 'Space 허용은 제시 코드의 줄 끝에서만 적용';
         }
 
         renderSampleOptions() {
@@ -266,7 +309,7 @@
             // Assessment mode chains samples together automatically (see
             // advanceAssessmentSample) — the dropdown just reflects the
             // current one, it isn't meant to be changed mid-run.
-            this.fields.sample.disabled = this.isAssessment();
+            this.fields.sample.disabled = this.isAssessment() && (this.state.status === 'running' || !!this.verified?.evaluation);
             this.fields.sample.innerHTML = samples.map((sample) => `
                 <option value="${escapeHtml(sample.id)}"${sample.id === this.state.sampleId ? " selected" : ""}>
                     ${escapeHtml(sample.title || sample.id)}
@@ -342,6 +385,7 @@
         }
 
         start() {
+            if(this.isAssessment()&&this.verified){this.verified.prepare();return;}
             this.clearTimer();
             if (this.state.status === "finished") {
                 this.prepareNextRound();
@@ -354,6 +398,7 @@
             this.state.myRank = null;
             this.state.finishReason = "";
             this.state.timeLimitSeconds = this.sessionTimeLimit();
+            this.resetAssessmentSession();
             this.fields.input.value = "";
             this.fields.input.disabled = false;
             this.fields.input.focus();
@@ -362,7 +407,7 @@
             this.setFeedback("첫 글자를 입력하면 기록이 시작됩니다.");
         }
 
-        beginRound(initialInput = "") {
+        beginRound(initialInput = "", kind = 'type') {
             this.clearTimer();
             this.ensureCurrentSample();
             if (!this.activeSample) {
@@ -378,6 +423,7 @@
             this.state.finishReason = "";
             this.state.timeLimitSeconds = this.sessionTimeLimit();
             this.fields.input.value = this.state.input;
+            this.trackPracticeInput(this.state.input, kind);
             this.fields.input.disabled = false;
             if (this.isAssessment()) {
                 // The token embedded in the page's initial config is
@@ -407,6 +453,7 @@
         }
 
         resetSession(showMessage) {
+            this.verified?.clear();
             this.clearTimer();
             this.state.status = "idle";
             this.state.input = "";
@@ -423,9 +470,12 @@
             this.updateShellState();
             this.renderAll();
             this.setFeedback(showMessage ? "초기화했습니다. 첫 글자를 입력하면 다시 시작됩니다." : "언어와 예제를 고른 뒤 첫 글자를 입력하세요.");
+            this.verified?.controls();
+            if(this.verified&&this.isAssessment())this.verified.loadLeaderboard();
         }
 
         tick() {
+            if(this.isAssessment()&&this.verified){this.verified.tick();return;}
             if (this.state.status !== "running") {
                 return;
             }
@@ -438,8 +488,11 @@
             this.renderStats();
         }
 
-        handleInput() {
+        handleInput(kind = 'type') {
             const value = normalizeNewlines(this.fields.input.value);
+            if(this.isAssessment()&&!this.verified){this.fields.input.value='';this.setFeedback('검정 모듈을 불러오지 못했습니다. 새로 고침하세요.');return;}
+
+            if(this.isAssessment()&&this.verified&&this.state.status!=='finished'){this.verified.input(value);return;}
 
             if (this.state.status === "finished") {
                 this.fields.input.value = this.state.input;
@@ -450,7 +503,7 @@
                 this.state.input = value;
                 this.fields.input.value = value;
                 if (value.length > 0) {
-                    this.beginRound(value);
+                    this.beginRound(value, kind);
                     return;
                 }
                 this.renderStream();
@@ -462,6 +515,7 @@
                 return;
             }
 
+            this.trackPracticeInput(value, kind);
             this.state.input = value;
             this.fields.input.value = this.state.input;
 
@@ -502,7 +556,20 @@
         }
 
         handleEditorKeydown(event) {
+            const input = this.fields.input, caret = input.selectionStart;
+            if (this.state.status !== 'finished' && !event.isComposing && !event.ctrlKey && !event.metaKey && !event.altKey
+                && (event.key === ' ' || event.key === 'Spacebar') && this.lineEndingMode() === 'space-enter'
+                && caret === input.selectionEnd && this.currentSample().content[caret] === '\n') {
+                event.preventDefault();
+                const value = input.value.slice(0, caret) + '\n' + input.value.slice(caret);
+                if (this.isAssessment() && this.verified) this.verified.input(value, 'linebreak');
+                else { input.value = value; this.handleInput('linebreak'); }
+                if (input.value === value) input.selectionStart = input.selectionEnd = caret + 1;
+                return;
+            }
+            if(this.isAssessment()&&this.verified&&this.state.status!=='finished'){this.verified.keydown(event);return;}
             if (this.state.status === "finished") {
+                if(this.isAssessment()&&this.verified?.evaluation){event.preventDefault();return;}
                 if (this.isNextRoundKey(event)) {
                     event.preventDefault();
                     this.prepareNextRound();
@@ -534,7 +601,6 @@
             }
 
             event.preventDefault();
-            const input = this.fields.input;
             const start = input.selectionStart;
             const end = input.selectionEnd;
             const spaces = "    ";
@@ -604,12 +670,14 @@
         }
 
         async finish(reason = "completed") {
+            if(this.isAssessment()&&this.verified){await this.verified.finish();return;}
             this.clearTimer();
             const metrics = this.metrics();
             this.state.status = "finished";
             this.state.finishReason = reason;
             this.state.durationSeconds = metrics.elapsedSeconds;
             this.state.score = metrics.score;
+            this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{text:Math.round(metrics.cpm) + ' CPM · 정확도 ' + metrics.accuracy.toFixed(1) + '%',tone:'success'}}));
             this.fields.input.disabled = false;
             this.bestScore = Math.max(this.bestScore, metrics.score);
             try { window.localStorage.setItem(this.storageKey(), String(this.bestScore)); } catch { /* Storage can be disabled; the server record is unaffected. */ }
@@ -629,7 +697,7 @@
                 return;
             }
 
-            this.setFeedback(`${this.practiceRound}회 완료했습니다. 점수 ${metrics.score}점, 정확도 ${metrics.accuracy.toFixed(1)}%, 속도 ${Math.round(metrics.cpm)} CPM입니다. Space를 누르면 입력 내용이 지워지고 다음 예제가 열립니다.`);
+            this.setFeedback(`${this.practiceRound}회 완료 · Space로 다음 예제`);
         }
 
         async refreshSessionToken() {
@@ -675,6 +743,7 @@
 
             shell.classList.toggle("is-running", this.state.status === "running");
             shell.classList.toggle("is-finished", this.state.status === "finished");
+            this.verified?.controls();
         }
 
         renderAll() {
@@ -688,7 +757,7 @@
             const language = this.rules.languages[this.state.language] || {};
             const mode = this.rules.modes[this.state.mode] || {};
             const recordLabel = this.isAssessment()
-                ? `기록 저장 · 총 ${this.formatTime(this.sessionTimeLimit())} · 다 쓰면 이어서 다음 코드`
+                ? `${this.verified?.label() || '검정'} · 총 ${this.formatTime(this.sessionTimeLimit())} · ${this.verified?.evaluation?.title || '개인 검정'}`
                 : (this.isKeywordMode() ? "랜덤 반복" : "입력 시 다음 예제");
 
             this.fields.sampleTitle.textContent = sample.title || "";
@@ -697,7 +766,9 @@
                 output.hidden = this.state.status !== 'finished' || typeof sample.expectedOutput !== 'string';
                 output.querySelector('pre').textContent = sample.expectedOutput || '';
             }
-            this.fields.sampleMeta.textContent = `${sample.languageVersion || language.label || this.state.language} · ${sample.sourceKind || '단어 목록'} · ${mode.label || this.state.mode} · ${recordLabel}`;
+            this.fields.sampleMeta.textContent = this.isAssessment()
+                ? `${sample.languageVersion || language.label || this.state.language} · ${this.verified?.label() || '개인 검정'}`
+                : `${sample.languageVersion || language.label || this.state.language} · ${sample.sourceKind || '단어 목록'} · ${mode.label || this.state.mode} · ${recordLabel}`;
         }
 
         // Splits the current sample into per-line index ranges (each line's
@@ -740,6 +811,7 @@
         }
 
         renderStream() {
+            if(this.isAssessment()&&this.verified?.s){this.verified.renderStream();return;}
             if (!this.fields.stream) {
                 return;
             }
@@ -769,8 +841,8 @@
             this.fields.stream.innerHTML = html;
 
             const currentElement = this.fields.stream.querySelector(".oj-typing-line-slot.is-current");
-            if (currentElement) {
-                currentElement.scrollIntoView({ block: "center", behavior: "smooth" });
+            if (currentElement && this.state.status === 'running') {
+                this.fields.stream.scrollTop = Math.max(0, currentElement.offsetTop - this.fields.stream.offsetTop - this.fields.stream.clientHeight / 2 + currentElement.clientHeight / 2);
             }
 
             this.highlightNextKey();
@@ -883,6 +955,7 @@
 
             if (nextChar === "\n") {
                 this.markKey('[data-special-key="enter"]');
+                if (this.lineEndingMode() === 'space-enter') this.markKey('[data-special-key="space"]');
                 return;
             }
 
@@ -947,11 +1020,12 @@
         renderStats() {
             const metrics = this.metrics();
             this.renderChallenge();
+            this.renderLineEndingControl();
             this.fields.progress.textContent = `${metrics.progress.toFixed(0)}%`;
             this.fields.accuracy.textContent = `${metrics.accuracy.toFixed(1)}%`;
-            this.fields.speed.textContent = `${Math.round(metrics.cpm)} CPM`;
+            this.fields.speed.textContent = `${Math.round(metrics.cpm * 10) / 10} CPM`;
             this.fields.mistakes.textContent = String(metrics.mistakes);
-            this.fields.score.textContent = String(metrics.score);
+            this.fields.score.textContent = String(this.isAssessment()&&this.verified?metrics.validCharacters:metrics.score);
             this.fields.rank.textContent = this.state.myRank ? `${this.state.myRank}위` : "-";
             if (this.fields.samples) {
                 this.fields.samples.textContent = this.isAssessment()
@@ -992,7 +1066,8 @@
         }
 
         challengeKey() {
-            return `${this.state.language}:${this.state.mode}:${this.isAssessment() ? this.sessionTimeLimit() : this.isKeywordMode() ? 'streak' : this.currentSample().id}`;
+            const key = `${this.state.language}:${this.state.mode}:${this.isAssessment() ? this.sessionTimeLimit() : this.isKeywordMode() ? 'streak' : this.currentSample().id}`;
+            return this.isAssessment() ? key : `${key}:typing-v3:${this.lineEnding}`;
         }
 
         recordChallenge(metrics) {
@@ -1012,6 +1087,7 @@
         }
 
         renderChallenge() {
+            if(this.isAssessment()&&this.verified){const field=this.root.querySelector('[data-field=challenge-goal]');if(field)field.textContent=`${this.verified.label()} · 입력 정확도 ${this.verified.evaluation?.minAccuracy||95}% 기준 · 유효 코드 CPM`;return;}
             const field = this.root.querySelector('[data-field="challenge-goal"]');
             if (!field) return;
             const best = Number(this.speedRecords[this.challengeKey()]) || 0;
@@ -1019,10 +1095,10 @@
                 const current = this.keywordStreakLanguage === this.state.language ? this.keywordStreak : 0;
                 field.textContent = `${this.account?.synced ? '계정' : '이 기기'} 정확도 100% 연속 ${current}개 · 최고 ${best}개 · 다음 목표 ${Math.max(5, Math.ceil((best + 1) / 5) * 5)}개`;
             } else {
-                const ceiling = this.isAssessment() ? Infinity : this.currentSample().content.length * 60;
+                const ceiling = this.isAssessment() ? Infinity : window.EduTypingVerified.code(this.currentSample().content) * 60;
                 const next = Math.min(ceiling, Math.max(60, Math.ceil((best + 1) / 20) * 20));
                 const target = best >= ceiling ? '측정 상한 달성 · 다른 예제 도전' : `다음 목표 ${next} CPM`;
-                field.textContent = `정확도 97% 이상 · ${this.account?.synced ? '계정' : '이 기기'} 최고 ${best || '-'} CPM · ${target} · ${this.isAssessment() ? '같은 언어·제한시간' : '같은 예제'} 기준`;
+                field.textContent = `입력 정확도 97% 이상 · ${this.account?.synced ? '계정' : '이 기기'} 최고 ${best || '-'} 유효 CPM · ${target}`;
             }
         }
 
@@ -1034,17 +1110,17 @@
 
         practiceMetrics(elapsedSeconds) {
             const current = this.currentSampleStats();
+            const measured = window.EduTypingVerified.metrics(this.practiceState(), elapsedSeconds);
             const completed = this.state.input === this.currentSample().content;
             const progress = current.targetLength ? Math.min(100, (current.typedLength / current.targetLength) * 100) : 0;
-            const accuracy = current.typedLength ? (current.correct / current.typedLength) * 100 : 100;
-            const minutes = Math.max(elapsedSeconds / 60, 1 / 60);
-            const cpm = current.correct / minutes;
+            const accuracy = measured.attempted ? measured.inputAccuracy : 100;
+            const cpm = measured.effectiveCpm;
             const wpm = cpm / 5;
             const score = this.scoreFor({
                 targetLength: current.targetLength,
                 accuracy,
                 cpm,
-                mistakes: current.mistakes,
+                mistakes: measured.mistakes,
                 progress,
                 completed,
             });
@@ -1054,13 +1130,34 @@
                 accuracy,
                 cpm,
                 wpm,
-                mistakes: current.mistakes,
-                correct: current.correct,
+                mistakes: measured.mistakes,
+                correct: measured.validCharacters,
+                validCharacters: measured.validCharacters,
+                attempted: measured.attempted,
+                correctAttempts: measured.correctAttempts,
+                finalAccuracy: measured.finalAccuracy,
                 score,
                 elapsedSeconds,
                 completed,
                 typedLength: current.typedLength,
             };
+        }
+
+        practiceState() {
+            const sample = this.currentSample();
+            if (!this.practiceTyping || this.practiceTyping.samples[0].content !== sample.content) {
+                this.practiceTyping = window.EduTypingVerified.fresh([sample], 0, 97, window.EduTypingVerified.VERSION, this.lineEnding);
+            }
+            return this.practiceTyping;
+        }
+
+        trackPracticeInput(value, kind = 'type') {
+            const s = this.practiceState(), before = Array.from(s.input), after = Array.from(value);
+            let start = 0, tail = 0;
+            while (start < before.length && start < after.length && before[start] === after[start]) start++;
+            while (tail < before.length - start && tail < after.length - start && before[before.length - 1 - tail] === after[after.length - 1 - tail]) tail++;
+            const text = after.slice(start, after.length - tail).join(''), remove = before.length - start - tail;
+            if (text || remove) window.EduTypingVerified.edit(s, {start, delete: remove, text, kind, at: 0});
         }
 
         // Assessment metrics combine every sample chained through this
@@ -1069,6 +1166,7 @@
         // only thing that ever ends the run, so a single sample's "how much
         // of it is done" no longer means anything at the session level.
         assessmentMetrics(elapsedSeconds) {
+            if(this.verified)return this.verified.metric();
             const current = this.currentSampleStats();
             const correct = this.session.totalCorrect + current.correct;
             const mistakes = this.session.totalMistakes + current.mistakes;
@@ -1097,6 +1195,7 @@
         }
 
         effectiveElapsedSeconds() {
+            if(this.isAssessment()&&this.verified)return (this.verified.s?.durationSeconds||this.verified.evaluation?.durationSeconds||300)-this.verified.remaining();
             let elapsed = this.state.durationSeconds;
 
             if (this.state.status === "running" && this.state.startedAt > 0) {
@@ -1155,6 +1254,7 @@
         // Fixed session duration for assessment mode, independent of which
         // sample is currently active — see advanceAssessmentSample.
         sessionTimeLimit() {
+            if(this.isAssessment()&&this.verified?.evaluation)return this.verified.evaluation.durationSeconds;
             const mode = this.rules.modes[this.state.mode] || {};
 
             return Math.max(0, Number(mode.timeLimitSeconds) || 0);
@@ -1248,6 +1348,7 @@
         }
 
         async loadLeaderboard() {
+            if(this.isAssessment()&&this.verified)return this.verified.loadLeaderboard();
             if (!this.config.restUrl || !this.fields.leaderboard) {
                 return;
             }

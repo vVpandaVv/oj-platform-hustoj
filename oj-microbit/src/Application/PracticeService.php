@@ -114,6 +114,17 @@ final class PracticeService
             return $this->publicResult($result, $exercise) + ['id' => $attemptId, 'exerciseRevision' => $exercise['revision']];
         });
     }
+    public function compile(int $id, array $input): array
+    {
+        foreach (['assignmentId', 'classId', 'exerciseId'] as $key) { if (array_key_exists($key, $input)) { throw new InvalidArgumentException('수업 코드는 수업 링크에서 실행해 주세요.'); } }
+        $this->summaryAccess($id, false);
+        if (!is_array($input['project'] ?? null)) { throw new InvalidArgumentException('실행할 프로젝트를 확인해 주세요.'); }
+        $project = ProjectSchema::normalize($input['project']);
+        if (!$this->runner instanceof LiveCompiler) { throw new OperationError('version_mismatch', 502, '상태 유지 실행을 사용하려면 마이크로비트 실행기를 최신 버전으로 업데이트해 주세요.'); }
+        return $this->records->withRunLease($this->access->actorId(), function () use ($id, $project): array {
+            $result = $this->runner->compile($project); $this->summaryAccess($id, false); return $result;
+        });
+    }
     public function preview(int $id, array $input): array
     {
         foreach (['assignmentId', 'classId', 'exerciseId'] as $key) { if (array_key_exists($key, $input)) { throw new InvalidArgumentException('수업 제출은 수업 문제 링크에서 진행해 주세요.'); } }

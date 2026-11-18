@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { StringDecoder } from 'node:string_decoder';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-export const DEFAULT_IMAGE = 'oj-microbit-worker:1.0.0-rc.9';
+export const DEFAULT_IMAGE = 'oj-microbit-worker:1.0.0-rc.15';
 
 export function dockerJobArguments(image, name) {
   // Preserve the image's independent timeout ENTRYPOINT; do not override it.

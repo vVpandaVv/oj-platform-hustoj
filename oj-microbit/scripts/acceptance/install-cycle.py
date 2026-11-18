@@ -35,6 +35,7 @@ parse_args "$@"; check_source; check_wordpress_files
 EXPLICIT_PORT=false; PORT=''; read_environment
 check_node_runtime
 BRIDGE_PATH="$old_runner/install-tools/configure-wordpress.php"
+VERSION=$(basename "$(dirname "$old_runner")")
 healthy=false
 for attempt in {1..20}; do
   if probe_runner "$old_runner" health >/dev/null 2>&1; then healthy=true; break; fi

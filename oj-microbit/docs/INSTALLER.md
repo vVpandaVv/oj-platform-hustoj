@@ -10,6 +10,8 @@ sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh
 
 포트 사전 점검용 `ss`(iproute2)는 신규 Docker 호스트에서도 미리 필요합니다. 명령이 없으면 패키지를 변경하기 전에 중단합니다. 기본 Ubuntu 서버와 다른 최소 설치 환경은 이를 먼저 준비합니다.
 
+rc.13 상태 유지 실험은 컴파일 경로 oj-live/1이 필요합니다. 기존 채점이 준비 상태여도 플러그인 ZIP 교체 후 위 설치 명령으로 실행기를 새 버전에 배치합니다. 새 컨테이너 종류·포트는 추가하지 않고 기존 마이크로비트 실행기만 갱신합니다. 센서 변경은 브라우저에서 처리하므로 실행기·WordPress·DB에 입력마다 요청하지 않습니다.
+
 ## 자동 처리 순서
 
 1. OS·플랫폼·WordPress 경로·실행 계정을 검사하고 중복 설치 잠금을 잡습니다. APT보다 먼저 기존 Docker를 판별하고 다른 서비스의 포트 점유를 거부합니다.
@@ -41,9 +43,26 @@ sudo bash /home/judge/src/web/wp-content/plugins/oj-microbit/runner/install.sh -
 
 기본 WordPress 경로는 `/home/judge/src/web`입니다. 계정은 wp-config.php 소유자로 판별하며 root 소유라면 www-data를 선택합니다. 실제 계정이 다르면 `--wp-user`를 사용합니다. 주소는 동일 호스트의 `http://127.0.0.1:포트`로만 설정합니다. 환경 파일의 기존 포트를 재사용하며 명시한 `--port`가 우선합니다. 인증키를 받는 명령행 옵션은 없습니다.
 
+## 업데이트 판정과 복구 범위
+
+최신 ZIP으로 WordPress 플러그인을 교체한 뒤 **같은 설치 명령**을 다시 실행합니다. 명령은 현재 플러그인의 runner/package.json 버전을 사용합니다. 같은 버전·같은 소스는 재사용하고 다른 버전은 새 경로·이미지로 배치합니다. 인터넷의 플러그인 최신 버전을 별도로 선택하는 작업은 하지 않습니다.
+
+설치 성공에는 현재 서비스의 releaseVersion, oj-live/1, 실제 GPIO 채점, 실제 PXT 컴파일 자체 검사가 모두 필요합니다. WordPress 연결은 이 검사들 뒤에 확정합니다. --check는 서비스 실행 경로·이미지·릴리스·준비 상태와 WordPress 연결을 읽기 전용으로 확인하며 GPIO/컴파일 작업을 생성하지 않습니다. 업데이트가 실패해 이전 실행기로 복원됐다면 새 ZIP 기준 --check는 그 버전 차이를 알려 줍니다.
+
+| 실패 시점·상태 | 처리 |
+|---|---|
+| npm·이미지 빌드 등 서비스 교체 전 실패 | 기존 서비스·연결 유지, 새 준비 자료는 남김 |
+| 서비스 활성화 뒤, WordPress 연결 확정 전 실패 | 이전 환경·유닛·활성/사용 상태 복원, 이전 포트·키로 인증 health GET 확인 |
+| INT·TERM 중단 | 동일한 실패 처리와 정리. 강제 종료·전원 차단은 별도 |
+| Docker 중단·socket activation 위험 | Docker를 깨우지 않고 이전 파일 복원, 마이크로비트 서비스만 중지·수동 복구 안내 |
+| 이전 서비스 health 확인 실패 | 파일 복구를 정상 서비스 복구로 표시하지 않고 수동 확인 필요로 알림 |
+| WordPress 연결 확정 후의 출력·검증 오류 | 주소·키가 어긋나지 않도록 새 실행기/설정 유지, --check와 백업 점검 안내 |
+
+자동 복구 대상은 **마이크로비트 실행기 환경·서비스 설정**입니다. WordPress 플러그인 ZIP이나 DB 전체를 자동 다운그레이드하지 않습니다. 이전 실행기가 새 플러그인의 기능을 지원하지 않으면 설치 전 플러그인·DB 백업도 함께 대조합니다. 과거 폴더·이미지·백업을 자동 삭제하지 않습니다. 전원 차단·SIGKILL·DB 응답 유실·복구 명령 자체의 실패는 자동 정상화를 보장하지 않습니다. 자세한 근거는 [최종 점검](INSTALLER-AUDIT-1.0.0-rc.14.md)입니다.
+
 ## 기존 자료·실패·재실행
 
-- `/opt/oj-microbit/1.0.0-rc.9/runner`, `/opt/oj-microbit-node-24.22.1`에 배치합니다. 정식 숫자 버전과 `-rc.N` 후보 버전을 지원합니다. 같은 버전의 소스와 이미지 해시가 같으면 재사용하고, 다르면 덮어쓰지 않습니다. 수동 설치 폴더와 자동 설치 폴더를 같은 버전에서 섞지 않습니다.
+- `/opt/oj-microbit/1.0.0-rc.15/runner`, `/opt/oj-microbit-node-24.22.1`에 배치합니다. 정식 숫자 버전과 `-rc.N` 후보 버전을 지원합니다. 같은 버전의 소스와 이미지 해시가 같으면 재사용하고, 다르면 덮어쓰지 않습니다. 수동 설치 폴더와 자동 설치 폴더를 같은 버전에서 섞지 않습니다.
 - `/etc/oj-microbit/runner.env`는 root 전용, `/etc/systemd/system/oj-microbit-runner.service`는 root 소유입니다. 환경 파일·서비스 파일·WordPress 옵션과 이전 실행 경로는 `/opt/oj-microbit/backups/`의 root 전용 디렉터리에 보관합니다.
 - WordPress의 보관 기간·삭제 설정·다른 옵션 키와 과제·프로젝트·채점 기록은 유지합니다. 설정은 options 한 행만 조건부로 갱신하고, 설치 중 관리자의 변경은 원래 직렬화 값과 SQL에서 비교해 보호합니다. 실제 WordPress 옵션 API가 준비되는 위치는 [공식 SHORTINIT 소스](https://github.com/WordPress/WordPress/blob/6.6/wp-settings.php)를 기준으로 확인했습니다.
 - wp-config.php 상수가 실행 주소·키를 지정하면 동일 값일 때 재사용하고, 충돌하면 중단합니다. 스크립트는 wp-config.php를 자동 편집하지 않습니다.

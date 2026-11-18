@@ -31,7 +31,7 @@ final class Registration
             $addon->capability(new AddonCapabilityDefinitionV1('oj_microbit_teach', '마이크로비트 과제 관리', 'educator'));
             $addon->capability(new AddonCapabilityDefinitionV1('oj_microbit_learn', '마이크로비트 실습 참여', 'learner'));
             $addon->assetBundle(new AddonAssetBundleDefinitionV1('addon.oj_microbit.ui', 'oj-microbit-ui',
-                ['resources/css/microbit.css'], ['resources/vendor/microbit-usb.js', 'resources/js/microbit.js'], [], OJ_MICROBIT_VERSION));
+                ['resources/css/microbit.css'], ['resources/vendor/microbit-usb.js', 'resources/js/live-session.js', 'resources/js/microbit.js'], [], OJ_MICROBIT_VERSION));
             $addon->consolePage(new AddonConsolePageDefinitionV1('addon.oj_microbit.teacher', '/oj-console/addons/oj-microbit', new PageHandler('teacher', 'problems'),
                 'oj_microbit_teach', ['addon.oj_microbit.ui']));
             $addon->consolePage(new AddonConsolePageDefinitionV1('addon.oj_microbit.teacher_new', '/oj-console/addons/oj-microbit/new', new PageHandler('teacher', 'problems', 'new'),

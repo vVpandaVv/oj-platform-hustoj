@@ -65,6 +65,10 @@ node readcontents-library/tests/workspace-resize-ui.mjs
 
 ## 학생 레슨 목차·본문 배치 검사
 
+연결판 심화 링크 검사는 `D:/php/php.exe readcontents-library/tests/optional-reading.php`로 실행한다. 애드온 레슨과 레거시 레슨·주제 숏코드가 반환한 HTML을 검사하며, WordPress 저장소와 사용자 권한은 메모리 대역을 사용한다. PHP ZIP 확장을 켜고 출시된 연결판 ZIP 경로를 인수로 추가하면 각 원본 문서에서 지정한 세 블록만 빠지는지도 검사한다.
+
+일반 단원 링크 검사는 `D:/php/php.exe readcontents-library/tests/lesson-links.php`로 실행한다. 대상과 모든 부모의 상태, 미등록 대상, 다시 공개한 뒤 표시 복원, 하위 폴더의 상대·절대 URL, 외부 출처 구분, 중첩 문장 보존, 목적지별 조회 횟수와 저장 원문 불변을 확인한다.
+
 ```powershell
 & 'D:/php/php.exe' readcontents-library/tests/reader-layout.php
 node readcontents-library/tests/reader-layout-ui.mjs

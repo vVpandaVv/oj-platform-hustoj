@@ -77,7 +77,7 @@ final class Oj_Platform_Registration {
         self::register_public_hub($addon);
         $addon->assetBundle(new AddonAssetBundleDefinitionV1(
             'addon.edu_games.binary_team_assets', 'edu-games-binary-team',
-            array('blocks/binary-arcade/style.css','blocks/device-matching/style.css','assets/binary-team/style.css','assets/device-team/style.css','assets/binary-team/operations.css'), array('assets/binary-team/socket.js','assets/device-team/board.js','assets/binary-team/operations.js','assets/binary-team/view.js'), array(), EDU_GAMES_VERSION
+            array('blocks/binary-arcade/style.css','blocks/device-matching/style.css','assets/binary-team/style.css','assets/device-team/style.css','assets/binary-team/operations.css','assets/arcade/style.css'), array('assets/binary-team/socket.js','assets/device-team/board.js','assets/arcade/vault-board.js','assets/arcade/vault-team.js','assets/binary-team/operations.js','assets/binary-team/view.js'), array(), EDU_GAMES_VERSION
         ));
         $addon->publicPage(new AddonPublicPageDefinitionV1(
             'addon.edu_games.binary_team', '/oj-addons/edu-games/binary-team',
@@ -85,6 +85,7 @@ final class Oj_Platform_Registration {
             array('addon.edu_games.shell_assets', 'addon.edu_games.binary_team_assets')
         ));
         self::register_play_assets($addon);
+        $addon->publicPage(new AddonPublicPageDefinitionV1('addon.edu_games.cipher_team','/oj-addons/edu-games/cipher-team',new Cipher_Team_Page_Handler(),Capabilities::PLAY,['addon.edu_games.shell_assets','addon.edu_games.binary_team_assets']));
         $addon->publicPage(new AddonPublicPageDefinitionV1(
             'addon.edu_games.device_team','/oj-addons/edu-games/device-team',new Device_Team_Page_Handler(),Capabilities::PLAY,
             array('addon.edu_games.shell_assets','addon.edu_games.binary_team_assets')
@@ -95,8 +96,8 @@ final class Oj_Platform_Registration {
         ));
         $addon->assetBundle(new AddonAssetBundleDefinitionV1(
             'addon.edu_games.shell_assets', 'edu-games-shell',
-            array('assets/shell/shell.css'), array('assets/shell/shell.js'),
-            array(), self::asset_version(array('assets/shell/shell.css','assets/shell/shell.js'))
+            array('assets/shell/shell.css','assets/shell/layouts.css'), array('assets/shell/shell.js'),
+            array(), self::asset_version(array('assets/shell/shell.css','assets/shell/layouts.css','assets/shell/shell.js'))
         ));
         self::register_public_ranking($addon);
         self::register_game_pages($addon);
@@ -112,6 +113,8 @@ final class Oj_Platform_Registration {
     }
 
     private static function register_console(AddonManifestBuilderV1 $addon): void {
+        $addon->assetBundle(new AddonAssetBundleDefinitionV1('addon.edu_games.typing_evaluations_assets','edu-games-typing-evaluations',array('resources/css/typing-evaluations.css'),array('resources/js/typing-evaluations.js'),array(),EDU_GAMES_VERSION));
+        $addon->consolePage(new AddonConsolePageDefinitionV1('addon.edu_games.typing_evaluations','/oj-console/addons/edu-games/typing-evaluations',new Typing_Evaluations_Page_Handler(),Capabilities::MANAGE,array('addon.edu_games.typing_evaluations_assets')));
         $addon->consolePage(new AddonConsolePageDefinitionV1(
             'addon.edu_games.team_games','/oj-console/addons/edu-games/team-games',new Team_Operations_Page_Handler(),Capabilities::MANAGE,
             array('addon.edu_games.shell_assets','addon.edu_games.binary_team_assets')
@@ -182,6 +185,7 @@ final class Oj_Platform_Registration {
             $addon->consoleLocalNav(new AddonConsoleLocalNavItemV1(
                 'addon.edu_games.nav_report', __('게임 기록', 'edu-games'), 'addon.edu_games.manage_menu', 'addon.edu_games.report', 20
             ));
+            $addon->consoleLocalNav(new AddonConsoleLocalNavItemV1('addon.edu_games.nav_typing_evaluations',__('코드 타이핑 평가','edu-games'),'addon.edu_games.manage_menu','addon.edu_games.typing_evaluations',25));
             $addon->consoleLocalNav(new AddonConsoleLocalNavItemV1(
                 'addon.edu_games.nav_ai_model_lab', __('AI 모델 훈련소 성적', 'edu-games'), 'addon.edu_games.manage_menu', 'addon.edu_games.ai_model_lab_report', 30
             ));
@@ -192,8 +196,8 @@ final class Oj_Platform_Registration {
         $addon->assetBundle(new AddonAssetBundleDefinitionV1(
             'addon.edu_games.hub_assets',
             'edu-games-hub',
-            array('resources/css/public-hub.css'),
-            array(),
+            array('resources/css/public-hub.css','assets/typing/entry.css'),
+            array('assets/typing/entry.js'),
             array(),
             EDU_GAMES_VERSION
         ));
@@ -279,14 +283,19 @@ final class Oj_Platform_Registration {
 
             $styles = array('assets/rankings/pager.css', 'blocks/' . $block_folder . '/style.css');
             $scripts = array('assets/rankings/pager.js', 'assets/learning/progress.js', 'blocks/' . $block_folder . '/view.js');
-            if (isset(\EduGames\Play\Catalog::GAMES[$game_id])) {
+            if (\EduGames\Games\Experience_Separation::moved($game_id)) {$styles=[];$scripts=[];}
+            if (in_array($game_id,['cipher-vault','dance-bot'],true)) {$styles=['assets/rankings/pager.css','assets/arcade/style.css'];$scripts=['assets/rankings/pager.js','assets/arcade/vault-board.js','assets/arcade/view.js'];}
+            if($game_id===Code_Typing_Module::ID){$styles[]='assets/typing/entry.css';$styles[]='assets/typing/verified.css';array_splice($scripts,2,0,array('assets/typing/entry.js','assets/typing/verified.js'));}
+            if (isset(\EduGames\Play\Catalog::GAMES[$game_id]) && !\EduGames\Games\Experience_Separation::moved($game_id)) {
                 $scripts[] = 'assets/vendor/chartjs/chart.umd.min.js';
             }
-            if ($game_id === Data_Structure_Lab_Module::ID) {
+            if ($game_id === Data_Structure_Lab_Module::ID && !\EduGames\Games\Experience_Separation::moved($game_id)) {
                 $styles[] = 'assets/warehouse/style.css';
                 $scripts[] = 'assets/warehouse/view.js';
+                $styles[] = 'assets/play/warehouse.css';
+                $scripts[] = 'assets/play/warehouse.js';
             }
-            if (isset(\EduGames\Boards\Catalog::GAMES[$game_id])) {
+            if (isset(\EduGames\Boards\Catalog::GAMES[$game_id]) && !\EduGames\Games\Experience_Separation::moved($game_id)) {
                 $styles[] = 'assets/strategy/style.css';
                 $scripts[] = 'assets/strategy/board-views.js';
                 $scripts[] = 'assets/strategy/view.js';
@@ -302,7 +311,7 @@ final class Oj_Platform_Registration {
             ));
 
             $bundles = array('addon.edu_games.assets_' . $key_suffix);
-            if (isset(\EduGames\Play\Catalog::GAMES[$game_id])) {
+            if (isset(\EduGames\Play\Catalog::GAMES[$game_id]) && !\EduGames\Games\Experience_Separation::moved($game_id)) {
                 $bundles[] = 'addon.edu_games.play_assets';
             }
             $bundles[] = 'addon.edu_games.shell_assets';
@@ -332,6 +341,8 @@ final class Oj_Platform_Registration {
             Device_Matching_Module::ID => array(Device_Matching_Renderer::class, 'render'),
             Image_Data_Module::ID => array(Image_Data_Renderer::class, 'render'),
             Keyword_Rain_Module::ID => array(Keyword_Rain_Renderer::class, 'render'),
+            'cipher-vault' => [\EduGames\Blocks\Arcade_Renderer::class,'vault'],
+            'dance-bot' => [\EduGames\Blocks\Arcade_Renderer::class,'dance'],
             Missing_Values_Module::ID => array(Missing_Values_Renderer::class, 'render'),
             Outlier_Detection_Module::ID => array(Outlier_Detection_Renderer::class, 'render'),
         );

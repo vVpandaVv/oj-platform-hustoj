@@ -7,6 +7,11 @@ use EduGames\Database\Installer;
 use EduGames\Rankings\Leaderboard_Service;
 
 final class Player_Statistics_Service {
+    private static function source(): string {
+        $legacy=Installer::scores_table();$arcade=\EduGames\Arcade\Repository::table();
+        $total="CASE WHEN game_slug='cipher-vault' THEN 24 ELSE 8 END";
+        return "(SELECT id,user_id,game_slug,score,rounds_played,correct_count,duration_seconds,accuracy,meta,created_at FROM {$legacy} UNION ALL SELECT id,user_id,game_slug,score,({$total})+wrong_count AS rounds_played,{$total} AS correct_count,elapsed_ms/1000.0 AS duration_seconds,100.0*({$total})/(({$total})+wrong_count) AS accuracy,'{}' AS meta,created_at FROM {$arcade} WHERE status='finished') edu_statistics";
+    }
     /**
      * @return array<string, mixed>
      */
@@ -23,7 +28,7 @@ final class Player_Statistics_Service {
 
         global $wpdb;
 
-        $table = Installer::scores_table();
+        $table = self::source();
         $game_slug = sanitize_key($game_slug);
         $where = 'WHERE user_id = %d';
         $args = array($user_id);
@@ -63,7 +68,7 @@ final class Player_Statistics_Service {
             'games' => self::games_for_user($user_id),
             'recent' => self::normalize_recent(is_array($recent_rows) ? $recent_rows : array()),
             'modeBreakdown' => self::mode_breakdown(is_array($recent_rows) ? $recent_rows : array()),
-            'myRank' => '' !== $game_slug ? Leaderboard_Service::rank_for_user($game_slug, $user_id) : null,
+            'myRank' => '' !== $game_slug && !in_array($game_slug,['cipher-vault','dance-bot'],true) ? Leaderboard_Service::rank_for_user($game_slug, $user_id) : null,
         );
     }
 
@@ -73,7 +78,7 @@ final class Player_Statistics_Service {
     private static function games_for_user(int $user_id): array {
         global $wpdb;
 
-        $table = Installer::scores_table();
+        $table = self::source();
         $rows = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT game_slug,

@@ -45,8 +45,9 @@ final class LessonActor implements Access, LessonAccess
         return ['items' => $items, 'nextCursor' => $start + $limit < count($all) ? 'r:' . ($start + $limit) : null, 'contextRevision' => 'class-r1', 'rosterRevision' => 'roster-r1', 'classTitle' => '실습 수업 ' . $classId];
     }
 }
-final class LessonRunner implements Runner
+final class LessonRunner implements Runner, \OjMicrobit\Application\LiveCompiler
 {
+    public function compile(array $project): array { if (is_callable($this->after)) { ($this->after)(); } return ['status' => 'compiled', 'liveProtocol' => 'oj-live/1', 'js' => 'compiled-code', 'diagnostics' => []]; }
     public mixed $after = null; public bool $fail = false; public float $score = 100; public int $calls = 0;
     public function status(): array { return ['ready' => true]; }
     public function run(array $project, array $exercise): array
@@ -88,6 +89,14 @@ throws(fn () => $learn->saveProject($a['id'], ['project' => $p8, 'revision' => 0
 verify($learn->project($a['id'])['project'] === $p7, 'A failed lesson project CAS retains the actual source');
 throws(fn () => $global->run($problemId, ['project' => $p0, 'assignmentId' => $a['id']]), InvalidArgumentException::class, 'A forged general request cannot attribute itself to a lesson');
 throws(fn () => $learn->run($a['id'], ['project' => $p7, 'assignmentId' => $b['id']]), InvalidArgumentException::class, 'Lesson identity comes only from the authorized route');
+$compileBefore = (int) $db->pdo->query('SELECT COUNT(*) FROM wp_oj_microbit_attempts')->fetchColumn();
+verify($learn->compile($a['id'], ['project' => $p7])['assignmentId'] === $a['id'], 'Live compile preserves the authorized lesson identity');
+throws(fn () => $outsider->compile($a['id'], ['project' => $p7]), OperationError::class, 'A public problem does not grant lesson compile access');
+throws(fn () => $learn->compile($a['id'], ['project' => $p7, 'assignmentId' => $b['id']]), InvalidArgumentException::class, 'Compile context is taken only from its authorized route');
+$runner->after = static function () use ($student): void { $student->classes = [8]; };
+throws(fn () => $learn->compile($a['id'], ['project' => $p7]), OperationError::class, 'Lesson access is rechecked after compilation');
+$runner->after = null; $student->classes = [7, 8];
+verify((int) $db->pdo->query('SELECT COUNT(*) FROM wp_oj_microbit_attempts')->fetchColumn() === $compileBefore && $learn->project($a['id'])['project'] === $p7, 'Compiling changes neither lesson submissions nor saved projects');
 $g = $global->run($problemId, ['project' => $p0]); $r7 = $learn->run($a['id'], ['project' => $p7]); $runner->score = 40; $r8 = $learn->run($b['id'], ['project' => $p8]);
 verify(array_column($global->attempts($problemId)['items'], 'id') === [$g['id']], 'General history contains only assignment zero even for the same problem and learner');
 verify(array_column($learn->attempts($a['id'])['items'], 'id') === [$r7['id']] && array_column($learn->attempts($b['id'])['items'], 'id') === [$r8['id']], 'Each lesson history records explicit assignment identity rather than time or group membership inference');

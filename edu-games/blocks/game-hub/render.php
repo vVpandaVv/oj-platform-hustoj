@@ -6,9 +6,10 @@
 if (! defined('ABSPATH')) {
     exit;
 }
+\EduGames\Blocks\Game_Hub_Presentation::assets();
 
 $show_technical_details = function_exists('is_super_admin') && is_super_admin();
-$registered_games = function_exists('edu_games_registry') ? edu_games_registry()->all() : array();
+$registered_games = function_exists('edu_games_registry') ? edu_games_registry()->catalog() : array();
 $games = array_filter(
     $registered_games,
     static function (array $game) use ($show_technical_details): bool {
@@ -68,6 +69,7 @@ endif;
         <h2><?php esc_html_e('학습 게임 허브', 'edu-games'); ?></h2>
     </header>
 
+    <?php echo \EduGames\Blocks\Typing_Entry_Renderer::hub(add_query_arg('edu_game','code-typing',$base_url)); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- renderer escapes config. ?>
     <?php if (empty($games)) : ?>
         <div class="eg-empty"><?php esc_html_e('등록된 게임 모듈이 없습니다.', 'edu-games'); ?></div>
     <?php else : ?>
@@ -87,18 +89,11 @@ endif;
                 $game_url = $is_clickable ? add_query_arg('edu_game', rawurlencode((string) ($game['id'] ?? '')), $base_url) : '';
                 ?>
                 <?php if ($is_clickable) : ?>
-                    <a class="<?php echo esc_attr($card_class); ?>" href="<?php echo esc_url($game_url); ?>">
+                    <a class="<?php echo esc_attr($card_class); ?>" data-tone="<?php echo esc_attr(\EduGames\Blocks\Game_Hub_Presentation::tone((string)$game['id'])); ?>" href="<?php echo esc_url($game_url); ?>">
                 <?php else : ?>
-                    <article class="<?php echo esc_attr($card_class); ?>">
+                    <article class="<?php echo esc_attr($card_class); ?>" data-tone="<?php echo esc_attr(\EduGames\Blocks\Game_Hub_Presentation::tone((string)$game['id'])); ?>">
                 <?php endif; ?>
-                    <div>
-                        <div class="eg-hub-card-meta">
-                            <span class="eg-hub-category"><?php echo esc_html($category_label); ?></span>
-                            <span class="eg-hub-status"><?php echo esc_html($status_label); ?></span>
-                        </div>
-                        <h3><?php echo esc_html($title); ?></h3>
-                        <p><?php echo esc_html($description); ?></p>
-                    </div>
+                    <?php echo \EduGames\Blocks\Game_Hub_Presentation::card($game,$is_clickable,$status_label); ?>
                     <?php if ($show_technical_details) : ?>
                         <dl>
                             <?php if ('' !== $block) : ?>
@@ -121,7 +116,6 @@ endif;
                             <?php endif; ?>
                         </dl>
                     <?php endif; ?>
-                    <span class="eg-hub-open"><?php echo esc_html($is_clickable ? __('게임 열기', 'edu-games') : __('준비 중', 'edu-games')); ?></span>
                 <?php if ($is_clickable) : ?>
                     </a>
                 <?php else : ?>

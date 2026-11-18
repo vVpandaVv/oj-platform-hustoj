@@ -13,6 +13,7 @@ use ReadContents\Library\Editor\Content\ContentNode;
 use ReadContents\Library\Editor\Content\ContentNodeType;
 use ReadContents\Library\Editor\Content\ContentStatus;
 use ReadContents\Library\Editor\PublicSite\LessonOutlineRenderer;
+use ReadContents\Library\Editor\PublicSite\OptionalReadingBlocks;
 use ReadContents\Library\Editor\PublicSite\PlateHtmlRenderer;
 use ReadContents\Library\Editor\Storage\ContentRepository;
 
@@ -55,7 +56,9 @@ final class TopicPageHandler implements AddonPageHandlerV1
             $html .= '<p class="ojp-notice ojp-notice--warning" role="status">초안 미리보기입니다. 학생에게는 보이지 않습니다.</p>';
         }
 
-        $html .= (new PlateHtmlRenderer())->render($document->plateValue);
+        // The dispatcher already required CAPABILITY_VIEW for this same lesson route.
+        $blocks = OptionalReadingBlocks::forReader($document->plateValue, $repository, true);
+        $html .= (new PlateHtmlRenderer())->render($blocks);
         $html .= $this->renderSectionSiblings($lesson, $repository);
         $html .= '</article></div></section>';
         $html .= '<script type="module" src="'
@@ -155,10 +158,6 @@ final class TopicPageHandler implements AddonPageHandlerV1
         ContentRepository $repository
     ): bool
     {
-        if (! $lesson || ContentNodeType::LESSON !== $lesson->type) {
-            return false;
-        }
-
         $can_edit = user_can($actor_user_id, AddonCapabilityKeyV1::wordpress(AddonRoutes::CAPABILITY_EDIT))
             || user_can($actor_user_id, AddonCapabilityKeyV1::wordpress(AddonRoutes::CAPABILITY_PUBLISH));
 
@@ -166,6 +165,6 @@ final class TopicPageHandler implements AddonPageHandlerV1
             fn (string $id): ?ContentNode => $repository->getNode($id)
         );
 
-        return $can_edit || $access_policy->isPubliclyReadable($lesson);
+        return $access_policy->canReadLesson($lesson, $can_edit);
     }
 }

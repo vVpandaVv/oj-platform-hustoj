@@ -20,21 +20,25 @@ export function canaryPayload() {
   };
 }
 
-export async function checkRunner(mode, url, token, runtimeVersion, fetchRequest = fetch) {
+export async function checkRunner(mode, url, token, runtimeVersion, fetchRequest = fetch, releaseVersion) {
   const target = new URL(url);
   if (target.protocol !== 'http:' || target.hostname !== '127.0.0.1' || target.username || target.password || target.pathname !== '/' || target.search || target.hash) throw new Error('The installer only checks its local loopback runner.');
-  if (!['health', 'canary'].includes(mode) || !/^[\x21-\x7e]{32,256}$/.test(token)) throw new Error('Invalid runner check configuration.');
-  const payload = mode === 'canary' ? canaryPayload() : null;
-  const response = await fetchRequest(new URL(payload ? '/v1/run' : '/health', target), {
+  if (!['health', 'canary', 'compile', 'restored-health'].includes(mode) || !/^[\x21-\x7e]{32,256}$/.test(token)) throw new Error('Invalid runner check configuration.');
+  const payload = mode === 'canary' ? canaryPayload() : mode === 'compile' ? { project: canaryPayload().project } : null;
+  const response = await fetchRequest(new URL(mode === 'compile' ? '/v1/compile' : payload ? '/v1/run' : '/health', target), {
     method: payload ? 'POST' : 'GET',
     headers: { Authorization: `Bearer ${token}`, ...(payload ? { 'Content-Type': 'application/json' } : {}) },
     ...(payload ? { body: JSON.stringify(payload) } : {}), redirect: 'error', signal: AbortSignal.timeout(payload ? 60000 : 5000)
   });
   if (!response.ok) throw new Error('Runner request failed.');
   const result = await response.json();
-  if (result.sandbox !== 'docker-no-network' || result.runtimeVersion !== runtimeVersion) throw new Error('Runner isolation or runtime version does not match.');
+  if (result.sandbox !== 'docker-no-network' || (mode === 'restored-health' ? typeof result.runtimeVersion !== 'string' || !/^pxt-microbit\/[0-9.]+;pxt-core\/[0-9.]+;oj-gpio\/[1-9][0-9]*$/.test(result.runtimeVersion) : result.runtimeVersion !== runtimeVersion)) throw new Error('Runner isolation or runtime version does not match.');
   if (!payload) {
     if (result.ready !== true || result.status !== 'ok') throw new Error('Runner is not ready.');
+    if (mode === 'health' && (result.liveProtocol !== 'oj-live/1' || releaseVersion !== undefined && result.releaseVersion !== releaseVersion)) throw new Error('Runner live protocol or installed release does not match.');
+  } else if (mode === 'compile') {
+    const projectHash = createHash('sha256').update(JSON.stringify(payload.project)).digest('hex');
+    if (result.status !== 'compiled' || result.liveProtocol !== 'oj-live/1' || result.projectHash !== projectHash || typeof result.js !== 'string' || !result.js.length || result.js.length > 2097152 || !Array.isArray(result.diagnostics) || result.diagnostics.length || result.score !== undefined || result.scenarios !== undefined) throw new Error('Stateful compiler canary failed.');
   } else {
     const projectHash = createHash('sha256').update(JSON.stringify(payload.project)).digest('hex');
     if (result.status !== 'graded' || result.passed !== true || result.score !== 100 || result.projectHash !== projectHash || result.scenarios?.length !== 2 || result.scenarios.some((item, index) => item.id !== payload.exercise.scenarios[index].id || item.passed !== true || item.assertions?.length !== 1 || item.assertions[0].passed !== true)) throw new Error('Real GPIO canary grading failed.');
@@ -50,10 +54,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       token += chunk;
       if (token.length > 256) throw new Error('Invalid token length.');
     }
-    await checkRunner(process.argv[2], process.argv[3], token, process.argv[4]);
-    process.stdout.write(`Runner ${process.argv[2] === 'canary' ? 'GPIO canary' : 'health'} passed.\n`);
+    await checkRunner(process.argv[2], process.argv[3], token, process.argv[4], fetch, process.argv[5] || undefined);
+    process.stdout.write(`Runner ${process.argv[2] === 'canary' ? 'GPIO canary' : process.argv[2] === 'compile' ? 'stateful compile canary' : process.argv[2] === 'restored-health' ? 'restored health' : 'health'} passed.\n`);
   } catch {
-    process.stderr.write('Runner check failed (readiness, isolation, runtime, authentication, or actual GPIO result).\n');
+    process.stderr.write('Runner check failed (readiness, isolation, release/runtime, authentication, GPIO, or live compilation).\n');
     process.exitCode = 1;
   }
 }

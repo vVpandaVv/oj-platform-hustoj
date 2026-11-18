@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
+import { readFileSync } from 'node:fs';
 import { createImageReadinessCheck, createServer } from '../src/server.mjs';
 import { request } from './fixtures.mjs';
 import { executeJob } from '../src/launcher.mjs';
@@ -23,7 +24,7 @@ test('HTTP service requires authentication even for health and validates request
     assert.equal((await fetch(`${url}/health`)).status, 401);
     const health = await fetch(`${url}/health`, { headers });
     assert.equal(health.status, 200);
-    assert.equal((await health.json()).sandbox, 'test-process');
+    const healthData=await health.json();assert.equal(healthData.sandbox,'test-process');assert.equal(healthData.releaseVersion,JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8')).version);
     assert.equal((await fetch(`${url}/v1/run`, { method: 'POST', headers, body: '{}' })).status, 400);
     assert.equal((await fetch(`${url}/v1/run`, { method: 'POST', headers: { Authorization: headers.Authorization }, body: '{}' })).status, 415);
   });
@@ -161,4 +162,17 @@ test('genuine compiler/runtime student failures remain HTTP 200 grades and the s
     const response = await fetch(`${url}/v1/run`, { method: 'POST', headers, body: JSON.stringify(request()) });
     assert.equal((await response.json()).passed, true);
   }, { logger: () => {} });
+});
+
+test('HTTP compile is authenticated, bounded and advertises the live protocol',async()=>{
+ await withServer(async url=>{
+  assert.equal((await fetch(url+'/v1/compile',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,401);
+  assert.equal((await (await fetch(url+'/health',{headers})).json()).liveProtocol,'oj-live/1');
+  assert.equal((await fetch(url+'/v1/compile',{method:'POST',headers,body:'{}'})).status,400);
+  const result=await(await fetch(url+'/v1/compile',{method:'POST',headers,body:JSON.stringify({project:request().project,exercise:{secret:'must be stripped'}})})).json();
+  assert.equal(result.status,'compiled');assert.equal(result.liveProtocol,'oj-live/1');assert.equal(result.exercise,undefined);assert.equal(result.score,undefined);
+ });
+});
+test('normal grading cannot switch its job by supplying an untrusted compile marker',async()=>{
+ let seen;await withServer(async url=>{const payload=request();payload.job='compile';await fetch(url+'/v1/run',{method:'POST',headers,body:JSON.stringify(payload)});assert.equal(seen.job,undefined);assert(seen.exercise);},{execute:async payload=>{seen=payload;return{status:'graded'};}});
 });

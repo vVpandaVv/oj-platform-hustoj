@@ -26,7 +26,9 @@ const trees = [{
     }],
   }],
 }, ...Array.from({ length: 12 }, (_, i) => ({
-  topic: node(`extra-${i}`, 'topic', `추가 읽기자료 ${i + 1}`), chapters: [],
+  topic: node(`extra-${i}`, 'topic', i === 0
+    ? '데이터통신과 네트워크 심화편: TransmissionControlProtocol과 인터넷 프로토콜의 동작'
+    : `추가 읽기자료 ${i + 1}`), chapters: [],
 }))];
 const documents = {};
 function getDocument(id) {

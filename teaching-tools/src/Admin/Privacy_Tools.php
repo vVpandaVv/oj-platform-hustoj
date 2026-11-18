@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TeachingTools\Admin;
 
 use TeachingTools\Addon\Whiteboard\Whiteboard_Image_Repository;
+use TeachingTools\Addon\Seating\Seating_History_Repository;
 use TeachingTools\Database\Installer;
 
 final class Privacy_Tools {
@@ -97,6 +98,18 @@ final class Privacy_Tools {
         foreach (self::owned_items($user_id) as $item) {
             $data[] = $item;
         }
+        foreach (Seating_History_Repository::for_user($user_id) as $row) {
+            $positions = json_decode((string) $row['positions'], true) ?: array();
+            if ((int) $row['owner_user_id'] !== $user_id) {
+                $positions = array_values(array_filter($positions, static fn (array $position): bool => $position['id'] === 'u:' . $user_id));
+            }
+            if ([] === $positions) { continue; }
+            $data[] = self::export_item('seating-history-' . (int) $row['id'], array(
+                __('저장 항목', 'teaching-tools') => __('확정 자리배치 이력', 'teaching-tools'),
+                __('확정 시각', 'teaching-tools') => (string) $row['created_at'],
+                __('좌석', 'teaching-tools') => (string) wp_json_encode($positions),
+            ));
+        }
 
         return array('data' => $data, 'done' => true);
     }
@@ -189,6 +202,13 @@ final class Privacy_Tools {
             }
             $removed = $removed || $deleted > 0;
         }
+        $history_removed = Seating_History_Repository::erase_user($user_id);
+        if (false === $history_removed) {
+            $wpdb->query('ROLLBACK');
+
+            return false;
+        }
+        $removed = $removed || $history_removed > 0;
         $committed = false !== $wpdb->query('COMMIT');
         if (! $committed) {
             $wpdb->query('ROLLBACK');

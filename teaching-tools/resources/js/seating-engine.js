@@ -10,9 +10,8 @@ window.HttSeatingEngine = (function () {
 
     var DEFAULT_APART_GAP = 2;
     var MAX_APART_GAP = 10;
-    // Used only when nobody requested a front seat, where the exact count is
-    // moot (see arrange() for the demand-driven calculation used otherwise).
     var DEFAULT_FRONT_ROW_COUNT = 2;
+    var HISTORY_LIMIT = 5;
 
     function makeSeatId(row, col) {
         return row + '-' + col;
@@ -198,10 +197,84 @@ window.HttSeatingEngine = (function () {
         return Boolean(includeDiagonal) && rowGap < minimumSeatDistance && colGap < minimumSeatDistance;
     }
 
-    function seatDistanceSquared(a, b) {
-        var rowGap = a.row - b.row;
-        var colGap = a.col - b.col;
-        return rowGap * rowGap + colGap * colGap;
+    function studentKey(student, settings) {
+        return String(Object.prototype.hasOwnProperty.call(settings.studentKeys, student) ? settings.studentKeys[student] : student);
+    }
+
+    function pairKey(left, right) { return [left, right].sort().join('\0'); }
+
+    function prepareHistory(history) {
+        var result = { rounds: [], seats: new Map(), pairs: new Map() };
+        (Array.isArray(history) ? history : []).slice(0, HISTORY_LIMIT).forEach(function (round) {
+            var positions = new Map();
+            var grid = new Map();
+            (Array.isArray(round.positions) ? round.positions : []).forEach(function (position) {
+                var id = String(position.id || '');
+                if (!id || !Number.isInteger(position.row) || !Number.isInteger(position.col)
+                    || position.row < 0 || position.col < 0 || position.row >= 20 || position.col >= 20) { return; }
+                positions.set(id, position);
+                grid.set(makeSeatId(position.row, position.col), id);
+            });
+            if (!positions.size) { return; }
+            var index = result.rounds.length;
+            var weight = HISTORY_LIMIT - index;
+            var pairs = new Set();
+            positions.forEach(function (position, id) {
+                var key = id + '\0' + makeSeatId(position.row, position.col);
+                var cost = result.seats.get(key) || { latest: 0, count: 0, weight: 0 };
+                cost.latest = Math.max(cost.latest, index === 0 ? 1 : 0);
+                cost.count++; cost.weight += weight;
+                result.seats.set(key, cost);
+                var mate = grid.get(makeSeatId(position.row, position.col ^ 1));
+                if (mate && mate !== id) { pairs.add(pairKey(id, mate)); }
+            });
+            pairs.forEach(function (key) {
+                var cost = result.pairs.get(key) || { latest: 0, count: 0, weight: 0 };
+                cost.latest = Math.max(cost.latest, index === 0 ? 1 : 0);
+                cost.count++; cost.weight += weight;
+                result.pairs.set(key, cost);
+            });
+            result.rounds.push(positions);
+        });
+        return result;
+    }
+
+    function repeatSeatCost(student, seat, settings) {
+        var id = studentKey(student, settings);
+        var exact = settings.history.seats.get(id + '\0' + seat.id);
+        var previous = settings.history.rounds[0] && settings.history.rounds[0].get(id);
+        var nearby = previous && Math.max(Math.abs(previous.row - seat.row), Math.abs(previous.col - seat.col)) <= 1 ? 1 : 0;
+        return { exact: exact, nearby: nearby };
+    }
+
+    function repeatCost(student, seat, map, settings) {
+        if (!settings.history.rounds.length) { return 0; }
+        var seatCost = repeatSeatCost(student, seat, settings);
+        var mate = map.get(makeSeatId(seat.row, seat.col ^ 1));
+        var pair = mate && settings.history.pairs.get(pairKey(studentKey(student, settings), studentKey(mate, settings)));
+        var exact = seatCost.exact;
+        return ((exact ? exact.latest : 0) + (pair ? pair.latest * 2 : 0)) * 10000
+            + ((exact ? exact.count : 0) + (pair ? pair.count * 2 : 0)) * 200
+            + ((exact ? exact.weight : 0) + (pair ? pair.weight * 2 : 0)) * 10 + seatCost.nearby;
+    }
+
+    function evaluateRepetition(map, seatIndex, settings) {
+        var latestSeat = 0, latestMate = 0, recentSeat = 0, recentMate = 0, weight = 0, nearby = 0;
+        if (settings.history.rounds.length) {
+            map.forEach(function (student, seatId) {
+                var seat = seatIndex.get(seatId);
+                var cost = repeatSeatCost(student, seat, settings);
+                if (cost.exact) { latestSeat += cost.exact.latest; recentSeat++; weight += cost.exact.weight; }
+                nearby += cost.nearby;
+                if (seat.col % 2 !== 0) { return; }
+                var mate = map.get(makeSeatId(seat.row, seat.col + 1));
+                var pair = mate && settings.history.pairs.get(pairKey(studentKey(student, settings), studentKey(mate, settings)));
+                if (pair) { latestMate += pair.latest; recentMate++; weight += pair.weight * 2; }
+            });
+        }
+        return { rounds: settings.history.rounds.length, latestSeat: latestSeat, latestMate: latestMate,
+            recentSeat: recentSeat, recentMate: recentMate, nearby: nearby,
+            score: [latestSeat + latestMate * 2, recentSeat + recentMate * 2, weight, nearby] };
     }
 
     function removeSeat(seats, seatId) {
@@ -247,8 +320,6 @@ window.HttSeatingEngine = (function () {
     function apartSeatMetrics(student, seat, map, seatIndex, settings) {
         var touching = 0;
         var violations = 0;
-        var closestDistance = 0;
-        var hasPartner = false;
 
         settings.apartPairs.forEach(function (pair) {
             var left = pair[0];
@@ -262,9 +333,6 @@ window.HttSeatingEngine = (function () {
                 return;
             }
 
-            var distance = seatDistanceSquared(seat, otherSeat);
-            closestDistance = hasPartner ? Math.min(closestDistance, distance) : distance;
-            hasPartner = true;
             if (isTouching(seat, otherSeat)) {
                 touching += 1;
             }
@@ -273,7 +341,7 @@ window.HttSeatingEngine = (function () {
             }
         });
 
-        return { touching: touching, violations: violations, closestDistance: closestDistance };
+        return { touching: touching, violations: violations };
     }
 
     function chooseApartAwareSeat(student, seats, map, seatIndex, settings) {
@@ -283,7 +351,7 @@ window.HttSeatingEngine = (function () {
                 seat: seat,
                 touching: metrics.touching,
                 violations: metrics.violations,
-                closestDistance: metrics.closestDistance,
+                repeatCost: repeatCost(student, seat, map, settings),
                 tieBreaker: Math.random(),
             };
         });
@@ -291,7 +359,7 @@ window.HttSeatingEngine = (function () {
         ranked.sort(function (a, b) {
             return a.touching - b.touching
                 || a.violations - b.violations
-                || b.closestDistance - a.closestDistance
+                || a.repeatCost - b.repeatCost
                 || a.tieBreaker - b.tieBreaker;
         });
         return ranked[0] ? ranked[0].seat : null;
@@ -322,7 +390,7 @@ window.HttSeatingEngine = (function () {
                         rightSeat: rightSeat,
                         touching: leftMetrics.touching + rightMetrics.touching,
                         violations: leftMetrics.violations + rightMetrics.violations,
-                        distance: seatDistanceSquared(leftSeat, rightSeat),
+                        repeatCost: repeatCost(left, leftSeat, map, settings) + repeatCost(right, rightSeat, probe, settings),
                         tieBreaker: Math.random(),
                     });
                 });
@@ -332,7 +400,7 @@ window.HttSeatingEngine = (function () {
         placements.sort(function (a, b) {
             return a.touching - b.touching
                 || a.violations - b.violations
-                || b.distance - a.distance
+                || a.repeatCost - b.repeatCost
                 || a.tieBreaker - b.tieBreaker;
         });
 
@@ -374,22 +442,19 @@ window.HttSeatingEngine = (function () {
             }
         }
 
-        var shuffledPairs = shuffle(pairs);
-        for (var p = 0; p < shuffledPairs.length; p += 1) {
-            var pair = shuffledPairs[p];
-            var order = Math.random() > 0.5 ? [left, right] : [right, left];
-            var firstMap = new Map(map);
-            if (violatesPartial(order[0], pair[0], firstMap, seatIndex, settings)) {
-                continue;
-            }
-            firstMap.set(pair[0].id, order[0]);
-            if (violatesPartial(order[1], pair[1], firstMap, seatIndex, settings)) {
-                continue;
-            }
-            return pair;
-        }
-
-        return null;
+        var placements = [];
+        shuffle(pairs).forEach(function (pair) {
+            shuffle([[left, right], [right, left]]).forEach(function (order) {
+                var firstMap = new Map(map);
+                if (violatesPartial(order[0], pair[0], firstMap, seatIndex, settings)) { return; }
+                var cost = repeatCost(order[0], pair[0], firstMap, settings);
+                firstMap.set(pair[0].id, order[0]);
+                if (violatesPartial(order[1], pair[1], firstMap, seatIndex, settings)) { return; }
+                placements.push({ seats: pair, students: order, cost: cost + repeatCost(order[1], pair[1], firstMap, settings) });
+            });
+        });
+        placements.sort(function (a, b) { return a.cost - b.cost; });
+        return placements[0] || null;
     }
 
     function constructCandidate(activeSeats, students, lockedAssignments, lockedNames, seatIndex, settings) {
@@ -419,16 +484,19 @@ window.HttSeatingEngine = (function () {
             if (remaining.indexOf(left) === -1 || remaining.indexOf(right) === -1) {
                 return;
             }
-            var pairSeats = chooseBuddySeats(left, right, openSeats.filter(isFrontSeat), map, seatIndex, settings);
+            var frontSeats = openSeats.filter(isFrontSeat);
+            var priorityMembers = (pendingFront[left] ? 1 : 0) + (pendingFront[right] ? 1 : 0);
+            // Do not spend another priority student's reserved front seat on a non-priority buddy.
+            if (frontSeats.length - 2 < Object.keys(pendingFront).length - priorityMembers) { return; }
+            var pairSeats = chooseBuddySeats(left, right, frontSeats, map, seatIndex, settings);
             if (!pairSeats) {
                 // Leave both in `remaining`/`pendingFront` — the front-seat
                 // and generic buddy stages below still get a chance at them.
                 return;
             }
-            var flipped = Math.random() > 0.5;
-            map.set(pairSeats[0].id, flipped ? right : left);
-            map.set(pairSeats[1].id, flipped ? left : right);
-            openSeats = removeSeat(removeSeat(openSeats, pairSeats[0].id), pairSeats[1].id);
+            map.set(pairSeats.seats[0].id, pairSeats.students[0]);
+            map.set(pairSeats.seats[1].id, pairSeats.students[1]);
+            openSeats = removeSeat(removeSeat(openSeats, pairSeats.seats[0].id), pairSeats.seats[1].id);
             remaining = remaining.filter(function (name) { return name !== left && name !== right; });
             delete pendingFront[left];
             delete pendingFront[right];
@@ -455,14 +523,7 @@ window.HttSeatingEngine = (function () {
 
         shuffle(Object.keys(pendingFront)).forEach(function (student) {
             var frontSeats = openSeats.filter(isFrontSeat);
-            // Fall back to any open seat when the front zone itself is out
-            // of room, rather than dropping the student from the whole
-            // arrangement — evaluateAssignment() already reports an unmet
-            // front-row request as its own error, so this degrades to
-            // "couldn't get a front seat" instead of "couldn't be seated
-            // at all".
-            var seat = chooseFrontSeat(student, frontSeats, map, seatIndex, settings)
-                || chooseApartAwareSeat(student, openSeats, map, seatIndex, settings);
+            var seat = chooseFrontSeat(student, frontSeats, map, seatIndex, settings);
             remaining = remaining.filter(function (name) { return name !== student; });
             if (!seat) {
                 notes.push(student + ' 학생을 앉힐 좌석이 없습니다.');
@@ -483,10 +544,9 @@ window.HttSeatingEngine = (function () {
                 notes.push(left + ', ' + right + ' 조합을 붙여 앉힐 좌석이 부족합니다.');
                 return;
             }
-            var flipped = Math.random() > 0.5;
-            map.set(pairSeats[0].id, flipped ? right : left);
-            map.set(pairSeats[1].id, flipped ? left : right);
-            openSeats = removeSeat(removeSeat(openSeats, pairSeats[0].id), pairSeats[1].id);
+            map.set(pairSeats.seats[0].id, pairSeats.students[0]);
+            map.set(pairSeats.seats[1].id, pairSeats.students[1]);
+            openSeats = removeSeat(removeSeat(openSeats, pairSeats.seats[0].id), pairSeats.seats[1].id);
             remaining = remaining.filter(function (name) { return name !== left && name !== right; });
         });
 
@@ -560,6 +620,7 @@ window.HttSeatingEngine = (function () {
             apart: uniqueApart,
             hard: uniqueList(unseatedErrors.concat(uniqueFront, uniqueTouchingApart, uniqueApart)),
             soft: uniqueList(soft),
+            repetition: evaluateRepetition(map, seatIndex, settings),
         };
     }
 
@@ -571,7 +632,7 @@ window.HttSeatingEngine = (function () {
             evaluation.apart.length,
             evaluation.soft.length,
             candidate.notes.length,
-        ];
+        ].concat(evaluation.repetition.score);
     }
 
     function isBetterRank(candidate, current) {
@@ -595,6 +656,8 @@ window.HttSeatingEngine = (function () {
      * @param {number} [options.apartGap]
      * @param {Array<[string,string]>} [options.buddyPairs]
      * @param {boolean} [options.diagonal]
+     * @param {Object<string,string>} [options.studentKeys] name -> stable history identity
+     * @param {Array<{positions:Array<{id:string,row:number,col:number}>}>} [options.history] newest first
      */
     function arrange(options) {
         var rows = clampNumber(options.rows, 1, 20, 5);
@@ -604,16 +667,7 @@ window.HttSeatingEngine = (function () {
         var lockedAssignmentsRaw = options.lockedAssignments || {};
         var frontNames = uniqueList(options.frontNames);
 
-        // Demand-driven front-row zone: enough rows to seat every front
-        // request, plus one spare row of slack. The extra row matters even
-        // when everyone fits exactly (e.g. 6 requests, 6 columns → 1 row is
-        // "enough" by headcount alone) because buddy pairs need a whole
-        // free desk (2 seats) to land on together, not just any 1 leftover
-        // seat — a zero-slack front zone full of odd singletons is exactly
-        // the "seats exist but only one at a time" failure this replaces.
-        var frontRowCount = frontNames.length > 0
-            ? Math.min(rows, Math.ceil(frontNames.length / cols) + 1)
-            : Math.min(rows, DEFAULT_FRONT_ROW_COUNT);
+        var frontRowCount = Math.min(rows, DEFAULT_FRONT_ROW_COUNT);
 
         var seats = [];
         for (var row = 0; row < rows; row += 1) {
@@ -635,6 +689,7 @@ window.HttSeatingEngine = (function () {
         if (!activeSeats.length) {
             return { error: '사용 가능한 좌석이 없습니다.' };
         }
+        if (students.length > activeSeats.length) { return { error: '학생 수보다 사용 가능한 좌석이 적습니다. 행·열 또는 제외 좌석을 조정하세요.' }; }
 
         var settings = {
             frontNames: frontNames,
@@ -643,6 +698,8 @@ window.HttSeatingEngine = (function () {
             apartGap: clampNumber(options.apartGap, 1, MAX_APART_GAP, DEFAULT_APART_GAP),
             buddyPairs: options.buddyPairs || [],
             diagonal: options.diagonal !== false,
+            studentKeys: options.studentKeys || {},
+            history: prepareHistory(options.history),
         };
 
         var seatIndex = new Map(seats.map(function (seat) { return [seat.id, seat]; }));
@@ -660,10 +717,14 @@ window.HttSeatingEngine = (function () {
             lockedAssignments.set(seat.id, seat.student);
             lockedNames.add(seat.student);
         });
+        var freeFront = activeSeats.filter(function (seat) { return seat.isFront && !lockedAssignments.has(seat.id); }).length;
+        var pendingFrontCount = frontNames.filter(function (student) { return roster.has(student) && !lockedNames.has(student); }).length;
+        if (pendingFrontCount > freeFront) { return { error: '앞자리 우선 학생을 1~2행에 모두 배치할 수 없습니다. 앞자리 인원·제외 좌석·고정 좌석을 조정하세요.' }; }
 
         var lockedSeatIds = new Set(lockedAssignments.keys());
         var best = null;
         var attempts = Math.max(700, Math.min(3500, students.length * activeSeats.length * 4));
+        var firstValid = -1;
 
         for (var attempt = 0; attempt < attempts; attempt += 1) {
             var candidate = constructCandidate(activeSeats, students, lockedAssignments, lockedNames, seatIndex, settings);
@@ -673,9 +734,10 @@ window.HttSeatingEngine = (function () {
             if (!best || isBetterRank(rank, best.rank)) {
                 best = { map: candidate.map, notes: candidate.notes, unseated: candidate.unseated, evaluation: evaluation, rank: rank };
             }
-            if (rank.every(function (value) { return value === 0; })) {
-                break;
-            }
+            var valid = rank.slice(0, 6).every(function (value) { return value === 0; });
+            if (valid && firstValid < 0) { firstValid = attempt; }
+            if (rank.every(function (value) { return value === 0; })) { break; }
+            if (firstValid >= 0 && attempt - firstValid >= 180) { break; }
         }
 
         if (!best) {

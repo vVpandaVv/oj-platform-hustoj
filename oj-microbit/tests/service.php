@@ -69,8 +69,10 @@ final class Actor implements Access
     public function requireClassManagement(array $classIds): void { if (array_diff($classIds, $this->managedClasses) !== []) { throw new \OjMicrobit\Support\OperationError('access_denied', 403, '학급 관리 권한 없음'); } }
     public function requireClassParticipation(array $classIds): void { if ($this->classes === null || array_intersect($classIds, $this->classes) === []) { throw new \OjMicrobit\Support\OperationError('access_denied', 403, '학급 참여 권한 없음'); } }
 }
-final class InspectRunner implements Runner
+final class InspectRunner implements Runner, \OjMicrobit\Application\LiveCompiler
 {
+    public array $compileCalls = [];
+    public function compile(array $project): array { $this->compileCalls[] = ['project' => $project]; if (is_callable($this->after)) { ($this->after)(); } return ['status' => 'compiled', 'liveProtocol' => 'oj-live/1', 'projectHash' => \OjMicrobit\Domain\ProjectSchema::hash($project), 'js' => 'compiled-code', 'diagnostics' => []]; }
     public array $calls = []; public mixed $after = null; public mixed $decorate = null;
     public function status(): array { return ['ready' => true]; }
     public function run(array $project, array $exercise): array {
@@ -127,6 +129,17 @@ $legacy = $service->attempt(1, 1)['result'];
 verify(!isset($legacy['scenarios'][0]['assertions']) && $legacy['trace'] === [], 'Legacy result without original visibility fails closed');
 
 $runner->decorate = null;
+$beforeProjects = $records->projects; $beforeResults = $records->results; $records->reads = [];
+$compiled = $service->compile(1, ['project' => $project]);
+verify($compiled['status'] === 'compiled' && $compiled['liveProtocol'] === 'oj-live/1', 'Live compilation returns code for a persistent browser session');
+verify(array_keys($runner->compileCalls[0]) === ['project'], 'Compiler receives only the normalized project, never hidden exercise conditions');
+verify($records->projects === $beforeProjects && $records->results === $beforeResults, 'Live compilation writes neither projects nor attempts');
+verify(count(array_filter($records->reads, static fn ($read) => $read[0] === 'exercise')) === 0, 'Live compilation uses summary access checks without reading scenario JSON');
+throws(fn () => $service->compile(1, ['project' => $project, 'assignmentId' => 1]), InvalidArgumentException::class, 'General compile cannot forge a lesson context');
+$runner->after = static function () use ($records): void { $records->records[1]['status'] = 'draft'; };
+throws(fn () => $service->compile(1, ['project' => $project]), DomainException::class, 'Compile rechecks publication after the worker returns');
+verify(!$records->locked && $records->results === $beforeResults, 'Revoked compilation releases its lease and creates no grade');
+$runner->after = null; $records->records[1]['status'] = 'published';
 $preview = $service->preview(1, ['project' => $project, 'durationMs' => 500, 'inputs' => [['atMs' => 0, 'pin' => 0, 'signal' => 'analog', 'value' => 600]]]);
 verify($preview['status'] === 'preview' && $preview['passed'] === null && $preview['score'] === null && $preview['preview'], 'Preview returns non-grade null verdict');
 verify(count($records->results) === 1, 'Preview does not create a graded attempt');

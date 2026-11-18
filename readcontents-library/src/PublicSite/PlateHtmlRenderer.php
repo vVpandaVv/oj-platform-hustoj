@@ -122,14 +122,17 @@ final class PlateHtmlRenderer
      */
     private function renderLink(array $node): string
     {
-        $url = $this->safeUrl((string) ($node['url'] ?? $node['href'] ?? ''));
+        $href = (string) ($node['url'] ?? $node['href'] ?? '');
+        // Add-on routes are relative to the WordPress site, including subdirectory installs.
+        $url = $this->safeUrl(str_starts_with($href, '/oj-addons/') && function_exists('home_url') ? home_url($href) : $href);
         $children = $this->renderChildren($node);
 
         if ('' === $url) {
             return $children;
         }
 
-        return '<a href="' . $url . '" rel="noopener noreferrer">' . $children . '</a>';
+        $target = ($node['target'] ?? '') === '_blank' ? ' target="_blank"' : '';
+        return '<a href="' . $url . '"' . $target . ' rel="noopener noreferrer">' . $children . '</a>';
     }
 
     /**

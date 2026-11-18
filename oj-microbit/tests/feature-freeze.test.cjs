@@ -5,11 +5,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
 const root = path.resolve(__dirname, '..');
-const freeze = JSON.parse(fs.readFileSync(path.join(root, 'docs/feature-freeze-1.0.0-rc.9.json'), 'utf8'));
+const freeze = JSON.parse(fs.readFileSync(path.join(root, 'docs/feature-freeze-1.0.0-rc.15.json'), 'utf8'));
 const sha = value => createHash('sha256').update(value).digest('hex');
 
-test('reviewed public-problem and lesson files match the rc.9 freeze', () => {
-  assert.ok(freeze.files.length >= 51);
+test('reviewed public-problem and lesson files match the rc.15 freeze', () => {
+  assert.ok(freeze.files.length >= 65);
   for (const entry of freeze.files) {
     assert.equal(sha(fs.readFileSync(path.join(root, entry.path))), entry.sha256, 'Frozen product file changed: ' + entry.path);
   }
@@ -22,7 +22,7 @@ test('product entrypoints differ only in release version metadata', () => {
 });
 test('candidate metadata, schema and frozen grading dependencies stay coherent', () => {
   const version = freeze.candidateVersion;
-  assert.equal(version, '1.0.0-rc.9');
+  assert.equal(version, '1.0.0-rc.15');
   const main = fs.readFileSync(path.join(root, 'oj-microbit.php'), 'utf8');
   assert.ok(main.includes('Version: ' + version));
   assert.ok(main.includes("define('OJ_MICROBIT_VERSION', '" + version + "')"));
@@ -37,12 +37,12 @@ test('candidate metadata, schema and frozen grading dependencies stay coherent',
   assert.ok(fs.readFileSync(path.join(root, 'src/Addon/Registration.php'), 'utf8').includes("'^1.9'"));
   assert.ok(fs.readFileSync(path.join(root, 'src/Storage/Installer.php'), 'utf8').includes("SCHEMA_VERSION = '5'"));
 });
-test('previous RC freeze manifests are preserved and simulator changes remain excluded', () => {
-  const previousBytes = fs.readFileSync(path.join(root, 'docs/feature-freeze-1.0.0-rc.8.json'));
+test('previous RC freeze manifests are preserved and reviewed editing-focus changes are scoped and grading models remain frozen', () => {
+  const previousBytes = fs.readFileSync(path.join(root, 'docs/feature-freeze-1.0.0-rc.14.json'));
   assert.equal(sha(previousBytes), freeze.previousRelease.freezeManifestSha256);
   const previous = JSON.parse(previousBytes);
-  assert.equal(previous.candidateVersion, '1.0.0-rc.8'); assert.equal(previous.databaseSchema, 5);
-  const earlierBytes = fs.readFileSync(path.join(root, 'docs/feature-freeze-1.0.0-rc.7.json'));
+  assert.equal(previous.candidateVersion, '1.0.0-rc.14'); assert.equal(previous.databaseSchema, 5);
+  const earlierBytes = fs.readFileSync(path.join(root, 'docs/feature-freeze-1.0.0-rc.13.json'));
   assert.equal(sha(earlierBytes), previous.previousRelease.freezeManifestSha256);
   const files = new Map(freeze.files.map(entry => [entry.path, entry]));
   for (const entry of previous.files) {
@@ -50,13 +50,13 @@ test('previous RC freeze manifests are preserved and simulator changes remain ex
     assert.ok(candidate, 'Frozen file removed without migration: ' + entry.path);
     if (candidate.sha256 !== entry.sha256) {
       assert.equal(candidate.previousSha256, entry.sha256);
-      assert.ok(['design_fidelity', 'release_metadata'].includes(candidate.reviewScope), entry.path);
+      assert.ok(['editing_focus_ui', 'release_metadata'].includes(candidate.reviewScope), entry.path);
     } else { assert.equal(candidate.previousSha256, undefined); }
-    if (entry.path.startsWith('runner/src/') || entry.path.startsWith('resources/vendor/')) {
+    if (entry.path.startsWith('resources/vendor/') || entry.path.startsWith('src/Storage/') || entry.path.startsWith('runner/src/') && entry.path !== 'runner/src/server.mjs') {
       assert.equal(candidate.sha256, entry.sha256, 'Runtime change exceeds requested publication/lesson scope: ' + entry.path);
     }
   }
   for (const entry of freeze.files.filter(item => !previous.files.some(old => old.path === item.path))) {
-    assert.ok(['design_fidelity', 'release_metadata'].includes(entry.reviewScope), 'Unreviewed product addition: ' + entry.path);
+    assert.ok(['editing_focus_ui', 'release_metadata'].includes(entry.reviewScope), 'Unreviewed product addition: ' + entry.path);
   }
 });

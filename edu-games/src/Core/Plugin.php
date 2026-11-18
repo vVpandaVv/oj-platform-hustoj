@@ -67,6 +67,15 @@ final class Plugin {
         add_action('init', array(Missing_Values_Shortcode::class, 'register'));
         add_action('init', array(Outlier_Detection_Shortcode::class, 'register'));
         add_action('init', array(Game_Pages_Shortcodes::class, 'register'));
+        add_action('init', static function (): void {
+            foreach (['cipher_vault'=>[\EduGames\Blocks\Arcade_Renderer::class,'vault'],'dance_bot'=>[\EduGames\Blocks\Arcade_Renderer::class,'dance'],'cipher_team'=>[\EduGames\Blocks\Cipher_Team_Renderer::class,'render']] as $tag=>$callback) {
+                $shortcode=static fn($atts=[],$content=null)=>$callback(is_array($atts)?$atts:[],false);
+                add_shortcode($tag,$shortcode);add_shortcode('oj_'.$tag,$shortcode);
+            }
+            register_block_type('edu-games/cipher-vault',['api_version'=>3,'title'=>'암호 금고','render_callback'=>static fn($atts,$content='', $block=null)=>\EduGames\Blocks\Arcade_Renderer::vault($atts,true)]);
+            register_block_type('edu-games/dance-bot',['api_version'=>3,'title'=>'댄스봇','render_callback'=>static fn($atts,$content='', $block=null)=>\EduGames\Blocks\Arcade_Renderer::dance($atts,true)]);
+            register_block_type('edu-games/cipher-team',['api_version'=>3,'title'=>'암호 금고 팀전','render_callback'=>static fn($atts,$content='', $block=null)=>\EduGames\Blocks\Cipher_Team_Renderer::render($atts,true)]);
+        });
         add_action('init', array(AI_Classifier_Lab_Assets::class, 'register'));
         add_action('init', array(AI_Model_Lab_Assets::class, 'register'));
         add_action('init', array(Binary_Arcade_Assets::class, 'register'));

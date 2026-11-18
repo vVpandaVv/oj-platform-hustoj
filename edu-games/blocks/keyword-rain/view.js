@@ -382,6 +382,7 @@
         }
 
         handleMiss(drop) {
+            const before = this.state.score;
             this.state.missedCount += 1;
             this.state.combo = 0;
 
@@ -395,6 +396,8 @@
                 result: "miss",
                 level: this.state.level,
             });
+
+            this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{delta:this.state.score-before,text:drop.text + ' · 놓침',tone:'miss'}}));
 
             if (this.state.playType === "ranked" && this.state.lives <= 0) {
                 this.finishRanked();
@@ -453,6 +456,7 @@
             this.state.combo += 1;
             this.state.maxCombo = Math.max(this.state.maxCombo, this.state.combo);
             this.state.score += gained;
+            this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{delta:gained,text:drop.text + ' · 정확한 입력',tone:'success'}}));
             this.state.level = Math.floor(this.state.correctCount / this.rules.levelEvery) + 1;
             this.state.history.push({
                 word: drop.text,

@@ -1,4 +1,5 @@
 import { grade } from './grade.mjs';
+import { compileLive } from './live-compile.mjs';
 
 let bytes = 0;
 const chunks = [];
@@ -9,7 +10,7 @@ try {
     chunks.push(chunk);
   }
   const payload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-  const result = await grade(payload);
+  const result = payload.job === 'compile' ? await compileLive(payload) : await grade(payload);
   process.stdout.write(JSON.stringify({ result }));
 } catch (error) {
   process.stdout.write(JSON.stringify({ error: { code: error instanceof TypeError || error instanceof SyntaxError ? 'invalid_request' : 'execution_failed', message: String(error.message || error).slice(0, 1000) } }));

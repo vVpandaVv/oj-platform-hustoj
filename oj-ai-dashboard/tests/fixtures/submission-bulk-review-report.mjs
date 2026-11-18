@@ -6,7 +6,7 @@ export function installBulkFixture({ stage, mode = 'normal', teacher = false }) 
   const details = new Map();
   const rows = [];
   const notes = new Set(['evaluation-3']);
-  const reviewed = stage === 'report';
+  const reviewed = stage === 'report' || stage === 'release';
   for (let n = 1; n <= 6; n += 1) {
     const id = `evaluation-${n}`;
     const learner = { user_id: n, display_name: `학생 ${n}`, login: `1010${n}`, management_name: `1반 ${n}번` };
@@ -16,13 +16,13 @@ export function installBulkFixture({ stage, mode = 'normal', teacher = false }) 
       priority: { review_needed_count: 0 }, feedback: { count: 0 }, release: {},
       review: { official_scope: reviewed ? 'this_evaluation' : 'none', official_id: reviewed ? `official-${n}` : null },
       latest_run: { id: `run-${n}`, run_no: 1, state: 'succeeded' } };
-    const detail = { evaluation, selected_result: { id: `result-${n}`, abstained: false, safety_flagged: false, summary: '주어진 자료의 근거를 연결하여 설명함.',
+    const detail = { evaluation, selected_result: { id: `result-${n}`, maximum_score: '20', abstained: false, safety_flagged: false, summary: '주어진 자료의 근거를 연결하여 설명함.',
       items: [{ binding_key: hash, criterion_id: 'criterion-1', label: '근거 설명', decision: 'score', candidate_points: '16', maximum_points: '20', flags: [], evidence: [], position: 0 }] },
       review_precondition: { expected_result_id: `result-${n}`, expected_result_hash: hash, expected_official_review_id: reviewed ? `official-${n}` : null, expected_official_review_hash: reviewed ? hash : null, expected_review_no: reviewed ? 1 : 0 },
-      reviews: reviewed ? [{ id: `official-${n}`, is_official: true, review_no: 1, decision: 'accepted', official_score: '16' }] : [], feedback: [], runs: [],
+      reviews: reviewed ? [{ id: `official-${n}`, result_id: `result-${n}`, is_official: true, review_no: 1, decision: 'accepted', official_score: '16' }] : [], feedback: [], releases: [], runs: [],
       source: { responses: [], bindings: [{ binding_key: hash, label: '근거 설명', maximum_points: '20' }] } };
     if (reviewed) {
-      if (n === 2) { detail.feedback = [{ id: 'feedback-2', state: 'approved', review_id: 'official-2', profile: { value: { source_hash: hash } } }]; evaluation.feedback.count = 1; }
+      if (n === 2) { detail.feedback = [{ id: 'feedback-2', hash, state: 'approved', review_id: 'official-2', profile: { value: { source_hash: hash } } }]; evaluation.feedback.count = 1; }
       if (n === 4) detail.runs = [{ operation: 'feedback_draft', state: 'queued' }, { operation: 'special_note_draft', state: 'queued' }];
     } else {
       if (n === 3) { detail.selected_result.abstained = true; detail.selected_result.items[0].candidate_points = null; }
@@ -35,6 +35,11 @@ export function installBulkFixture({ stage, mode = 'normal', teacher = false }) 
       detail.reviews = [{ id: `draft-${n}`, result_id: `result-${n}`, review_no: 1, decision: 'draft', official_score: n === 1 ? '12' : '0',
         score_decisions: { value: { items: n === 3 ? [] : [{ binding_key: hash, source: 'teacher_assigned', official_points: n === 1 ? '12.0000' : '0.0000', reason_code: 'manual_assessment', reason_note: '답안을 확인함.' }] } } }];
     }
+    if (stage === 'release') {
+      if (n === 1) { detail.reviews[0].official_score = '0'; detail.reviews[0].decision = 'adjusted'; }
+      if (n === 3) { evaluation.release = { current_id: 'existing-release', current_hash: hash, state: 'released', count: 1 }; detail.releases = [{ id: 'existing-release', state: 'released' }]; }
+      if (n === 4) { evaluation.state = 'review_required'; evaluation.review.official_scope = 'none'; detail.review_precondition.expected_official_review_id = null; detail.reviews = []; }
+    }
     if (n === 5) evaluation.submission.is_source_current = false;
     details.set(id, detail);
     rows.push({ id: `target-${n}`, learner, assigned: n !== 6, current_member: true, status: 'submitted',
@@ -46,7 +51,10 @@ export function installBulkFixture({ stage, mode = 'normal', teacher = false }) 
   window.__bulkPosts = [];
   window.__bulkReads = [];
   window.__bulkMode = mode;
-  window.__bulkMutate = id => { details.get(id).review_precondition.expected_result_hash = 'b'.repeat(64); };
+  window.__bulkMutate = id => {
+    details.get(id).review_precondition.expected_result_hash = 'b'.repeat(64);
+    details.get(id).review_precondition.expected_official_review_hash = 'b'.repeat(64);
+  };
   window.__bulkReadCount = 0;
   const receipts = new Map();
   window.fetch = async (url, options = {}) => {
@@ -67,6 +75,11 @@ export function installBulkFixture({ stage, mode = 'normal', teacher = false }) 
         d.evaluation.state = 'reviewed';
         d.evaluation.review = { official_scope: 'this_evaluation', official_id: `official-${id}` };
         result = envelope({ evaluation: { id }, result: { id: body.expected.expected_result_id, hash: body.expected.expected_result_hash }, review: { id: `official-${id}`, decision: body.payload.decision }, official_review: { id: `official-${id}` } });
+      } else if (path.endsWith('/release')) {
+        d.evaluation.release = { current_id: `release-${id}`, current_hash: hash, state: 'released', count: 1 };
+        d.releases.push({ id: `release-${id}`, state: 'released' });
+        result = envelope({ evaluation_id: id, official_review: { id: body.expected.expected_official_review_id, hash: body.expected.expected_official_review_hash },
+          release: { id: `release-${id}`, hash, projection_hash: hash, state: 'released', release_no: 1, feedback_revision_id: body.expected.expected_feedback_revision_id } });
       } else {
         const operation = path.endsWith('/generate-feedback') ? 'feedback_draft' : 'special_note_draft';
         d.runs.unshift({ id: `new-${id}`, state: 'queued', operation });

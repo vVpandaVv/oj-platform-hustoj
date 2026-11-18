@@ -25,7 +25,8 @@ final class Validator {
             }
             $rules=Code_Typing_Module::rules(); $key=$p['key']??null; $input=$p['input']??null;
             if (!is_string($key)||strlen($key)>120||!is_string($input)||strlen($input)>40000) throw new \InvalidArgumentException('타이핑 기록을 확인하세요.');
-            $parts=explode(':',$key); if(count($parts)!==3||!isset($rules['languages'][$parts[0]],$rules['modes'][$parts[1]])) throw new \InvalidArgumentException('연습 종류를 확인하세요.');
+            $parts=explode(':',$key);$modern=count($parts)===5&&$parts[3]==='typing-v3'&&in_array($parts[4],array('enter','space-enter'),true);
+            if((count($parts)!==3&&!$modern)||!isset($rules['languages'][$parts[0]],$rules['modes'][$parts[1]])) throw new \InvalidArgumentException('연습 종류를 확인하세요.');
             if ($parts[1]==='keyword'&&$parts[2]==='streak') {
                 $target=$p['target']??null; $streak=$p['streak']??null;
                 if(!is_string($target)||strlen($target)>3000||$input!==$target||!is_int($streak)||$streak<1||$streak>10000) throw new \InvalidArgumentException('완료된 키워드 연습만 기록합니다.');
@@ -40,9 +41,9 @@ final class Validator {
             $target=preg_split('//u',$sample['content'],-1,PREG_SPLIT_NO_EMPTY); $typed=preg_split('//u',$input,-1,PREG_SPLIT_NO_EMPTY);
             $seconds=$p['seconds']??null;
             if(!is_array($typed)||count($typed)<count($target)||!is_numeric($seconds)||!is_finite((float)$seconds)||$seconds<1||$seconds>86400) throw new \InvalidArgumentException('완료된 코드와 소요 시간을 확인하세요.');
-            $correct=0; foreach($target as $i=>$char) if($typed[$i]===$char)$correct++;
+            $correct=0;$validCode=0; foreach($target as $i=>$char) if($typed[$i]===$char){$correct++;if(!preg_match('/\s/u',$char))$validCode++;}
             if(!$target||$correct/count($typed)<.97) throw new \InvalidArgumentException('정확도 97% 이상인 완료 기록만 저장합니다.');
-            return array($key=>min(6000,(int)round($correct*60/(float)$seconds)));
+            return array($key=>min(6000,(int)round(($modern?$validCode:$correct)*60/(float)$seconds)));
         }
         if ($game==='device-matching') {
             $row=self::score($game,$p['scoreId']??null);

@@ -11,7 +11,7 @@ use EduGames\Support\Capabilities;
 final class Learning_Controller {
     public static function register_routes(): void {
         foreach(array('start','update','resume','summary') as $action){
-            register_rest_route('edu-games/v1','/learning/(?P<game>[a-z0-9-]+)/'.$action,array('methods'=>'POST','callback'=>array(__CLASS__,$action),'permission_callback'=>array(__CLASS__,'allowed')));
+            register_rest_route('edu-games/v1','/learning/(?P<game>[a-z0-9-]+)/'.$action,array('methods'=>'POST','callback'=>array(__CLASS__,$action),'permission_callback'=>static fn($r)=>self::allowed($r)||($action==='summary'&&Capabilities::can_play()&&isset(Catalog::PROVIDERS[(string)$r['game']])&&Game_Visibility::can_read_records((string)$r['game']))));
         }
     }
     public static function allowed(\WP_REST_Request $request): bool {

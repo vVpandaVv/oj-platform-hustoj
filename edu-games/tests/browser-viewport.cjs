@@ -69,7 +69,7 @@ module.exports=async({page,url,out,ready,state})=>{
         if(missing.kind==='cohort')for(let i=0;i<missing.rows.length;i++)await page.locator('[data-do=select][data-id="'+i+'"]').click();
         await page.locator('[data-do=method]').first().click();await act('[data-do=restore]');await measure('missing-review-'+width);
         await page.goto(url+'/?game=data-structure-lab');await ready(page);await act('[data-begin]');
-        await act('[data-do=push][data-lane=stack]');await act('[data-do=pop][data-lane=stack]');await measure('warehouse-feedback-'+width);
+        await act('[data-wh=put-stack]');await act('button[data-wh=pop-stack]:not(.wh-crate)');await measure('warehouse-feedback-'+width);
         await page.goto(url+'/?game=ai-model-lab');await ready(page);await act('[data-begin]');
         for(let i=0;i<9;i++){await page.locator('[data-digit="'+i+'"]').first().click();await act('[data-do=teach]');}
         await measure('full-memory-'+width);

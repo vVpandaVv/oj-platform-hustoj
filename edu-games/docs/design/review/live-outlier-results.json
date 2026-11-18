@@ -1,0 +1,62 @@
+{
+  "kind": "live-game-rule-regressions",
+  "studentPlaytests": 0,
+  "checks": [
+    {
+      "name": "old-two-slots-remain-a-pair",
+      "repeatedSlots": [
+        1,
+        5
+      ],
+      "samePairRounds": 30,
+      "score": -2,
+      "meaning": "Pair continuity, not a claim that every orientation was correct"
+    },
+    {
+      "name": "same-observation-changes-decision",
+      "same45": "ordinary → candidate",
+      "sameHighValue": "candidate → ordinary",
+      "referenceActuallyChanged": true
+    },
+    {
+      "name": "one-observation-one-score-and-no-fast-click-farming",
+      "repeatedCorrectClicks": 100,
+      "score": 1,
+      "repeatedWrongClicks": 50,
+      "oneLossPerReferenceEpoch": true
+    },
+    {
+      "name": "a-former-wrong-choice-can-become-correct-only-after-data-change",
+      "reEvaluationUsesNewReference": true
+    },
+    {
+      "name": "source-values-are-immutable-and-catches-preserve-context",
+      "originalValuesUnchanged": true,
+      "reviewSnapshotUnchanged": true
+    },
+    {
+      "name": "pause-resume-and-real-end-conditions",
+      "pausedTimeExcluded": true,
+      "threeMistakesEnd": true,
+      "timeLimitEnd": true,
+      "resultStable": true,
+      "completedScore": 27
+    },
+    {
+      "name": "no-impossible-expiry-and-state-size-limit",
+      "seeds": 30,
+      "immediateReaderMisses": 0,
+      "minimumOpportunityMs": 2400,
+      "privateStateUnder16KiB": true
+    },
+    {
+      "name": "fixed-slot-and-maximum-value-policies",
+      "computerSeeds": 60,
+      "readerScore": 1609,
+      "retrospectiveBestFixedSlotScore": 87,
+      "maximumOnlyScore": 60,
+      "fixedSlotLifeLossSessions": 360,
+      "notAStudentEnjoymentMeasure": true
+    }
+  ]
+}

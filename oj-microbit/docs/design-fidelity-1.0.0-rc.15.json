@@ -1,0 +1,400 @@
+{
+  "referenceSha256": "e0f2197e50d48f844100ae867adc0aed4c78ea5ad52242f16729c6156ac46a13",
+  "referenceChanges": "Only prototype chrome omitted and platform font applied; no live MakeCode content comparison",
+  "fidelity": [
+    {
+      "screen": "author",
+      "width": 1280,
+      "actual": {
+        "surface": {
+          "x": 254,
+          "y": 184.53125,
+          "width": 996,
+          "height": 587.078125,
+          "fontSize": "14px",
+          "borderRadius": "12px",
+          "padding": "0px"
+        },
+        "title": {
+          "x": 277,
+          "y": 231.125,
+          "width": 96.84375,
+          "height": 30.796875,
+          "fontSize": "22px",
+          "borderRadius": "0px",
+          "padding": "0px"
+        },
+        "input": {
+          "x": 277,
+          "y": 372.046875,
+          "width": 650,
+          "height": 43.6875,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "textarea": {
+          "x": 277,
+          "y": 464.171875,
+          "width": 650,
+          "height": 135,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "next": {
+          "x": 1105.46875,
+          "y": 714.609375,
+          "width": 121.53125,
+          "height": 38,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "5px 10px"
+        }
+      },
+      "sample": {
+        "surface": {
+          "x": 0,
+          "y": 0,
+          "width": 998,
+          "height": 590.5,
+          "fontSize": "14px",
+          "borderRadius": "14px",
+          "padding": "0px"
+        },
+        "title": {
+          "x": 23,
+          "y": 45.59375,
+          "width": 105.421875,
+          "height": 30.796875,
+          "fontSize": "22px",
+          "borderRadius": "0px",
+          "padding": "0px"
+        },
+        "input": {
+          "x": 23,
+          "y": 184.21875,
+          "width": 650,
+          "height": 42.140625,
+          "fontSize": "13px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "textarea": {
+          "x": 23,
+          "y": 273.5,
+          "width": 650,
+          "height": 135,
+          "fontSize": "13px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "next": {
+          "x": 853.46875,
+          "y": 529.5,
+          "width": 121.53125,
+          "height": 38,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "5px 10px"
+        }
+      }
+    },
+    {
+      "screen": "author",
+      "width": 768,
+      "actual": {
+        "surface": {
+          "x": 0,
+          "y": 168.53125,
+          "width": 744,
+          "height": 587.078125,
+          "fontSize": "14px",
+          "borderRadius": "12px",
+          "padding": "0px"
+        },
+        "title": {
+          "x": 23,
+          "y": 215.125,
+          "width": 96.84375,
+          "height": 30.796875,
+          "fontSize": "22px",
+          "borderRadius": "0px",
+          "padding": "0px"
+        },
+        "input": {
+          "x": 23,
+          "y": 356.046875,
+          "width": 650,
+          "height": 43.6875,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "textarea": {
+          "x": 23,
+          "y": 448.171875,
+          "width": 650,
+          "height": 135,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "next": {
+          "x": 599.46875,
+          "y": 698.609375,
+          "width": 121.53125,
+          "height": 38,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "5px 10px"
+        }
+      },
+      "sample": {
+        "surface": {
+          "x": 0,
+          "y": 0,
+          "width": 746,
+          "height": 590.5,
+          "fontSize": "14px",
+          "borderRadius": "14px",
+          "padding": "0px"
+        },
+        "title": {
+          "x": 23,
+          "y": 45.59375,
+          "width": 105.421875,
+          "height": 30.796875,
+          "fontSize": "22px",
+          "borderRadius": "0px",
+          "padding": "0px"
+        },
+        "input": {
+          "x": 23,
+          "y": 184.21875,
+          "width": 650,
+          "height": 42.140625,
+          "fontSize": "13px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "textarea": {
+          "x": 23,
+          "y": 273.5,
+          "width": 650,
+          "height": 135,
+          "fontSize": "13px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "next": {
+          "x": 601.46875,
+          "y": 529.5,
+          "width": 121.53125,
+          "height": 38,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "5px 10px"
+        }
+      }
+    },
+    {
+      "screen": "author",
+      "width": 390,
+      "actual": {
+        "surface": {
+          "x": 0,
+          "y": 168.53125,
+          "width": 366,
+          "height": 582.1875,
+          "fontSize": "14px",
+          "borderRadius": "12px",
+          "padding": "0px"
+        },
+        "title": {
+          "x": 15,
+          "y": 211.125,
+          "width": 83.15625,
+          "height": 26.59375,
+          "fontSize": "19px",
+          "borderRadius": "0px",
+          "padding": "0px"
+        },
+        "input": {
+          "x": 15,
+          "y": 347.15625,
+          "width": 336,
+          "height": 46.796875,
+          "fontSize": "16px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "textarea": {
+          "x": 15,
+          "y": 442.390625,
+          "width": 336,
+          "height": 135,
+          "fontSize": "16px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "next": {
+          "x": 206.015625,
+          "y": 683.71875,
+          "width": 144.984375,
+          "height": 38,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "5px 10px"
+        }
+      },
+      "sample": {
+        "surface": {
+          "x": 0,
+          "y": 0,
+          "width": 368,
+          "height": 579.046875,
+          "fontSize": "14px",
+          "borderRadius": "10px",
+          "padding": "0px"
+        },
+        "title": {
+          "x": 15,
+          "y": 39.59375,
+          "width": 105.421875,
+          "height": 26.59375,
+          "fontSize": "19px",
+          "borderRadius": "0px",
+          "padding": "0px"
+        },
+        "input": {
+          "x": 15,
+          "y": 170.921875,
+          "width": 338,
+          "height": 46.796875,
+          "fontSize": "16px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "textarea": {
+          "x": 15,
+          "y": 264.859375,
+          "width": 338,
+          "height": 135,
+          "fontSize": "16px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "next": {
+          "x": 231.46875,
+          "y": 524.046875,
+          "width": 121.53125,
+          "height": 38,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "5px 10px"
+        }
+      }
+    },
+    {
+      "screen": "author",
+      "width": 320,
+      "actual": {
+        "surface": {
+          "x": 0,
+          "y": 168.53125,
+          "width": 296,
+          "height": 582.1875,
+          "fontSize": "14px",
+          "borderRadius": "12px",
+          "padding": "0px"
+        },
+        "title": {
+          "x": 15,
+          "y": 211.125,
+          "width": 83.15625,
+          "height": 26.59375,
+          "fontSize": "19px",
+          "borderRadius": "0px",
+          "padding": "0px"
+        },
+        "input": {
+          "x": 15,
+          "y": 347.15625,
+          "width": 266,
+          "height": 46.796875,
+          "fontSize": "16px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "textarea": {
+          "x": 15,
+          "y": 442.390625,
+          "width": 266,
+          "height": 135,
+          "fontSize": "16px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "next": {
+          "x": 159.359375,
+          "y": 683.71875,
+          "width": 121.640625,
+          "height": 38,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "5px 10px"
+        }
+      },
+      "sample": {
+        "surface": {
+          "x": 0,
+          "y": 0,
+          "width": 298,
+          "height": 579.046875,
+          "fontSize": "14px",
+          "borderRadius": "10px",
+          "padding": "0px"
+        },
+        "title": {
+          "x": 15,
+          "y": 39.59375,
+          "width": 105.421875,
+          "height": 26.59375,
+          "fontSize": "19px",
+          "borderRadius": "0px",
+          "padding": "0px"
+        },
+        "input": {
+          "x": 15,
+          "y": 170.921875,
+          "width": 268,
+          "height": 46.796875,
+          "fontSize": "16px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "textarea": {
+          "x": 15,
+          "y": 264.859375,
+          "width": 268,
+          "height": 135,
+          "fontSize": "16px",
+          "borderRadius": "7px",
+          "padding": "10px 12px"
+        },
+        "next": {
+          "x": 161.46875,
+          "y": 524.046875,
+          "width": 121.53125,
+          "height": 38,
+          "fontSize": "14px",
+          "borderRadius": "7px",
+          "padding": "5px 10px"
+        }
+      }
+    }
+  ],
+  "actualWordPress": false,
+  "actualMakeCode": false
+}

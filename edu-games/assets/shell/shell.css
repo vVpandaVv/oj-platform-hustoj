@@ -1,4 +1,9 @@
 /* Shared game chrome. Board geometry and instructional colors remain game-owned. */
+.edu-game .eg-cipher-nav{display:flex;gap:0;margin:0 0 12px;border-bottom:1px solid var(--eg-line);overflow-x:auto}
+.edu-game .eg-cipher-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 16px;flex:0 0 auto;text-decoration:none;border-bottom:3px solid transparent;color:var(--eg-muted);font-size:14px;font-weight:600}
+.edu-game .eg-cipher-nav a[aria-current="page"]{color:var(--eg-accent);border-bottom-color:var(--eg-accent);background:var(--eg-tint)}
+.edu-game .eg-cipher-nav a:focus-visible{outline:2px solid var(--eg-accent);outline-offset:-3px}
+.edu-game.eg-focused .eg-cipher-nav{display:none}
 .edu-game.edu-game {
     --eg-ink: var(--ojp-color-ink,#1d1d1f); --eg-muted: var(--ojp-color-muted,#626269); --eg-line: var(--ojp-color-line,#d2d2d7);
     --eg-surface: var(--ojp-color-surface,#fff); --eg-fill: var(--ojp-color-subtle,#f5f5f7); --eg-accent: var(--ojp-color-primary,#0071e3);
@@ -600,3 +605,247 @@
 .edu-game :is(.oj-code-rank-row,.oj-device-rank-row,.oj-typing-rank-row,.oj-binary-rank-row,.oj-rain-rank-row) {background:var(--eg-surface);color:var(--eg-ink);border-color:var(--eg-line)}
 .edu-game :is(.oj-code-rank-row,.oj-device-rank-row,.oj-typing-rank-row,.oj-binary-rank-row,.oj-rain-rank-row).is-me {background:var(--eg-tint)}
 .edu-game :is(.oj-code-rank-row,.oj-device-rank-row,.oj-typing-rank-row,.oj-binary-rank-row,.oj-rain-rank-row) :is(strong,b,span) {color:inherit}
+
+/* Board-first play: compact chrome, large objects, and a receipt from the actual action. */
+.edu-game.eg-arcade .eg-game-header {margin-bottom:8px;padding-bottom:10px;gap:12px}
+.edu-game.eg-arcade .eg-game-header h2 {font-size:24px}
+.edu-game.eg-arcade .eg-objective {display:flex;align-items:center;gap:12px;min-height:44px;margin:0 0 12px;border-bottom:1px solid var(--eg-line);padding:6px 0;position:relative}
+.edu-game.eg-arcade .eg-objective>strong {flex:1;min-width:0;font-size:15px;line-height:1.5;font-weight:600;word-break:keep-all}
+.edu-game.eg-arcade .eg-score-help {position:relative;flex-shrink:0;font-size:12px;color:var(--eg-muted);margin:0;padding:0;border:0}
+.edu-game.eg-arcade .eg-score-help>summary {cursor:pointer;min-height:36px;align-content:center}
+.edu-game.eg-arcade .eg-score-help>p {position:absolute;right:0;top:100%;z-index:5;width:250px;max-width:70vw;margin:0;padding:12px;background:var(--eg-surface);border:1px solid var(--eg-line);border-radius:6px;color:var(--eg-ink);line-height:1.6;box-shadow:0 5px 20px color-mix(in srgb,var(--eg-ink) 12%,transparent)}
+.edu-game.eg-arcade .eg-action-receipt {flex:0 1 38%;min-width:0;min-height:32px;align-items:center;justify-content:flex-end;gap:8px;display:flex;color:var(--eg-success);font-size:13px;line-height:1.4}
+.edu-game.eg-arcade .eg-action-receipt[data-empty] {visibility:hidden}
+.edu-game.eg-arcade .eg-action-receipt strong {font-size:22px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.edu-game.eg-arcade .eg-action-receipt[data-tone=miss] {color:var(--eg-danger)}
+.edu-game.eg-arcade .eg-icon-command {width:44px;height:44px;min-width:44px;flex:0 0 44px;padding:10px;display:inline-grid;place-items:center}
+.edu-game.eg-arcade .eg-icon-command svg {width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2}
+.edu-game.eg-arcade .eg-extra-stats {display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:16px;padding:12px 0}
+.edu-game.eg-arcade .eg-extra-stats>div {display:grid;gap:4px}
+.edu-game.eg-arcade .eg-extra-stats span {font-size:12px;color:var(--eg-muted)}
+.edu-game.eg-arcade .eg-extra-stats strong {font-size:22px}
+.edu-game.eg-arcade :is(.oj-device-stats,.oj-rain-stats,.oj-typing-stats) {grid-template-columns:repeat(3,minmax(0,1fr));margin-block:8px 12px;padding:10px 12px;min-height:66px}
+.edu-game.eg-arcade :is(.oj-device-stat,.oj-rain-stat,.oj-typing-stat)>span {font-size:12px}
+.edu-game.eg-arcade :is(.oj-device-stat,.oj-rain-stat,.oj-typing-stat)>strong {font-size:24px;line-height:1.25}
+.edu-game.eg-arcade :is(.oj-device-layout,.oj-rain-layout,.oj-binary-layout) {gap:0}
+.edu-game.eg-arcade :is(.oj-device-stagebar,.oj-rain-panel-head,.oj-typing-panel-head,.oj-image-panel-head) {margin:0;padding:8px 0;gap:12px}
+.edu-game.eg-arcade :is(.oj-device-stagebar h3,.oj-rain-panel-head h3,.oj-typing-panel-head h3,.oj-image-panel-head h3) {font-size:17px;line-height:1.4;margin:0}
+.edu-game.eg-arcade :is(.oj-device-stagebar [data-field=stage-meta],.oj-rain-panel-head [data-field=meta],.oj-typing-panel-head [data-field=sample-meta]) {font-size:12px;color:var(--eg-muted)}
+.edu-game.eg-arcade :is(.oj-device-feedback,.oj-rain-feedback,.oj-image-feedback,.oj-typing-feedback) {min-height:30px;padding:6px 0;margin:4px 0;font-size:14px;line-height:1.5}
+.edu-game.eg-arcade .oj-device-deck {width:100%;gap:10px}
+.edu-game.eg-arcade .oj-device-photo-wrap img {object-fit:contain}
+.edu-game.eg-arcade .oj-device-text-card {min-height:0}
+.edu-game.eg-arcade .oj-rain-arena {height:clamp(280px,50dvh,460px)}
+.edu-game.eg-arcade .oj-rain-input-row {margin-top:8px}
+.edu-game.eg-arcade .oj-rain-start-card {max-width:none;background:transparent;border:0;box-shadow:none}
+.edu-game.eg-arcade .oj-rain-start-card strong {font-size:24px}
+.edu-game.eg-arcade .oj-rain-start-card span {font-size:14px}
+.edu-game.eg-arcade .oj-typing-controls {padding:6px 0;gap:10px;margin-bottom:8px}
+.edu-game.eg-arcade .oj-typing-stream {height:clamp(280px,49dvh,500px);margin-top:6px}
+.edu-game.eg-arcade .oj-image-stats {padding-block:8px;margin-block:8px}
+.edu-game.eg-arcade .oj-image-stat strong {font-size:20px}
+.edu-game.eg-arcade .oj-image-board-stage {width:min(100%,900px);margin-inline:auto}
+.edu-game.eg-arcade .oj-image-palette {gap:5px;grid-template-columns:repeat(16,minmax(0,1fr))}
+.edu-game.eg-arcade .oj-image-palette button {min-height:44px;grid-template-columns:24px 1fr;grid-template-rows:1fr;padding:5px;gap:4px}
+.edu-game.eg-arcade .oj-image-palette button span {width:24px;height:28px;grid-row:auto}
+.edu-game.eg-arcade .oj-image-palette button em {display:none}
+.edu-game.eg-arcade .oj-image-controls {padding:6px 0;gap:10px;grid-template-columns:minmax(0,1fr) 130px 220px}
+.edu-game.eg-arcade .oj-image-controls.is-restore {grid-template-columns:minmax(0,1fr) 130px}
+.edu-game.eg-arcade .oj-image-controls>label {font-size:12px;display:grid;gap:2px}
+.edu-game.eg-arcade .oj-image-side .oj-image-panel-head {display:none}
+.edu-game.eg-arcade .oj-image-panel-head [data-field=sample-meta] {display:none}
+.edu-game.eg-arcade .oj-image-panel-head {background:transparent}
+.edu-game.eg-arcade .oj-image-answer-choices {grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:6px 0}
+.edu-game.eg-arcade .ep-heading>span {display:none}
+.edu-game.eg-arcade .ep-settings {margin:0 0 6px;font-size:12px}
+.edu-game.eg-arcade .ep-settings>summary {min-height:28px}
+.edu-game.eg-arcade .eh-scoreboard {margin:4px 0 12px;padding:10px 14px;gap:12px;border:1px solid var(--eg-line);background:var(--eg-fill);color:var(--eg-ink)}
+.edu-game.eg-arcade .eh-scoreboard>div>span {color:var(--eg-muted)}
+.edu-game.eg-arcade .eh-scoreboard strong {font-size:24px;color:var(--eg-ink)}
+.edu-game.eg-arcade .eh-scoreboard .eh-score-stat strong {color:var(--eg-accent)}
+.edu-game.eg-arcade .eh-scoreboard .eh-start {background:var(--eg-accent);border-color:var(--eg-accent);color:var(--eg-on-accent)}
+.edu-game.eg-arcade .eh-scoreboard progress {background:var(--eg-line);accent-color:var(--eg-accent)}
+.edu-game.eg-arcade .eh-scoreboard progress::-webkit-progress-bar {background:var(--eg-line)}
+.edu-game.eg-arcade .eh-scoreboard progress::-webkit-progress-value {background:var(--eg-accent)}
+.edu-game.eg-arcade .eh-scoreboard progress::-moz-progress-bar {background:var(--eg-accent)}
+.edu-game.eg-arcade[data-time-low] .eh-time-stat strong {color:var(--eg-danger)}
+.edu-game.eg-arcade .eh-playfield {padding:0}
+.edu-game.eg-arcade :is(.eh-actionbar,.eh-controls) {padding:8px 0;margin-top:8px}
+.edu-game.eg-arcade .eh-actionbar {position:static}
+.edu-game.eg-arcade :is(.eo-stage-heading,.cf-heading,.em-repair-heading,.coach-goal) {padding-block:6px;margin-block:4px}
+.edu-game.eg-arcade :is(.eo-stage-heading h4,.cf-heading h4,.em-repair-heading h4,.ex-order strong) {font-size:18px;line-height:1.4}
+.edu-game.eg-arcade :is(.eo-distribution,.eo-review,.em-evidence,.em-record,.cf-lane,.ex-gate,.ex-order) {border-color:var(--eg-line);background:var(--eg-fill);color:var(--eg-ink)}
+.edu-game.eg-arcade .eo-scanner {max-width:none}
+.edu-game.eg-arcade .eo-ready {min-height:44px}
+.edu-game.eg-arcade .eo-ready>span {display:block;font-size:12px;margin-top:4px}
+.edu-game.eg-arcade .eo-dispatch {padding-block:8px}
+.edu-game.eg-arcade .em-evidence {padding:10px 12px;margin:6px 0;font-size:14px;line-height:1.5;border-left:3px solid var(--eg-accent)}
+.edu-game.eg-arcade .em-toolbox {margin:8px 0;gap:8px}
+.edu-game.eg-arcade .em-toolbox button {min-height:58px;border-radius:6px}
+.edu-game.eg-arcade .em-repair-board {gap:16px}
+.edu-game.eg-arcade .em-record {border-radius:4px}
+.edu-game.eg-arcade .em-target {border-radius:6px}
+.edu-game.eg-arcade .em-calculation {flex-wrap:wrap}
+.edu-game.eg-arcade .ex-order {padding:12px 0;border-inline:0}
+.edu-game.eg-arcade .ex-factory {gap:14px}
+.edu-game.eg-arcade .cf-workspace {gap:18px}
+.edu-game.eg-arcade .cf-lane {padding:12px;border-radius:0}
+.edu-game.eg-arcade :is(.machine-receipt,.em-feedback,.er-feedback,.eo-verdict) {margin-top:8px;padding-top:8px}
+.edu-game.eg-arcade .er-mission {padding:8px 0;gap:12px;border-bottom:1px solid var(--eg-line)}
+.edu-game.eg-arcade .er-mission h3 {font-size:20px;margin:3px 0}
+.edu-game.eg-arcade .er-mission p {font-size:14px;line-height:1.5}
+.edu-game.eg-arcade .er-reward {font-size:12px;margin:6px 0;gap:12px}
+.edu-game.eg-arcade .er-workspace {gap:18px}
+.edu-game.eg-arcade :is(.er-chart,.ev-chart) {height:clamp(250px,39dvh,380px)}
+.edu-game.eg-arcade .eg-source-note {font-size:12px;color:var(--eg-muted);margin-top:6px}
+.edu-game.eg-arcade .coach-machine {gap:20px}
+.edu-game.eg-arcade .coach-photo-head {margin:6px 0;gap:8px}
+.edu-game.eg-arcade .coach-photo-head h4 {font-size:16px}
+.edu-game.eg-arcade .eh-digit {border-radius:4px}
+.edu-game.eg-arcade .coach-robot {padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--eg-fill);border:1px solid var(--eg-line)}
+.edu-game.eg-arcade .coach-eyes {display:none}
+.edu-game.eg-arcade .coach-robot strong {font-size:36px}
+.edu-game.eg-arcade .coach-chain {margin:8px 0;min-height:80px}
+.edu-game.eg-arcade .coach-meter-list {margin-bottom:8px}
+.edu-game.eg-arcade .wh-hud {background:var(--eg-fill);color:var(--eg-ink);border:1px solid var(--eg-line)}
+.edu-game.eg-arcade .wh-hud>div>span {color:var(--eg-muted)}
+.edu-game.eg-arcade .wh-hud strong {color:var(--eg-ink)}
+.edu-game.eg-arcade .wh-hud>div:first-child strong {color:var(--eg-accent)}
+.edu-game.eg-arcade .wh-hud [data-wh=begin] {color:var(--eg-on-accent);background:var(--eg-accent)}
+.edu-game.eg-arcade .wh-feedback {background:var(--eg-fill);color:var(--eg-ink)}
+@media(min-width:900px) {
+    .edu-game.eg-arcade .eo-scanner {display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:8px 20px}
+    .edu-game.eg-arcade .eo-stage-heading {grid-column:1/-1}
+    .edu-game.eg-arcade .eo-distribution {grid-column:1;grid-row:2/5}
+    .edu-game.eg-arcade .eo-means {grid-column:1;grid-row:5;padding:8px 0}
+    .edu-game.eg-arcade .eo-review {grid-column:2;grid-row:2;display:block;padding:12px;min-height:80px}
+    .edu-game.eg-arcade .eo-tray {padding-top:6px}
+    .edu-game.eg-arcade .eo-dispatch {grid-column:2;grid-row:3;flex-wrap:wrap}
+    .edu-game.eg-arcade .eo-verdict {grid-column:2;grid-row:4/6;display:block}
+    .edu-game.eg-arcade .eo-verdict-values {grid-template-columns:repeat(4,minmax(0,1fr));margin-top:6px}
+}
+.edu-game.eg-arcade.eg-focused .eg-objective {margin-bottom:6px;padding-block:0;min-height:34px}
+.edu-game.eg-arcade.eg-focused .eg-game-header {padding:0;margin:0;border:0}
+.edu-game.eg-arcade.eg-focused :is(.oj-rain-topbar,.oj-typing-topbar) {display:none}
+.edu-game.eg-arcade.eg-focused :is(.oj-device-topbar,.oj-image-topbar,.oj-binary-topbar) {height:0;min-height:0;padding:0;margin:0;border:0}
+.edu-game.eg-arcade.eg-focused :is(.oj-image-actions,.oj-binary-actions) {position:fixed;top:6px;right:68px;width:auto;display:flex;gap:4px}
+.edu-game.eg-arcade.eg-focused :is(.oj-image-actions,.oj-binary-actions)>button {height:40px;min-height:40px;padding:6px 8px;font-size:12px}
+.edu-game.eg-arcade.eg-focused .oj-binary-actions>[data-action=start] {display:none}
+.edu-game.eg-arcade.eg-focused .eg-objective>strong {font-size:13px}
+.edu-game.eg-arcade.eg-focused .eg-action-receipt {min-height:28px;font-size:12px}
+.edu-game.eg-arcade.eg-focused .eg-action-receipt strong {font-size:18px}
+.edu-game.eg-arcade.eg-focused .eg-source-note {display:none}
+.edu-game.eg-arcade.eg-focused .eh-scoreboard {padding:6px 12px;margin:4px 0 8px}
+.edu-game.eg-arcade.eg-focused .eh-scoreboard strong {font-size:20px}
+.edu-game.eg-arcade.eg-focused :is(.oj-device-stats,.oj-rain-stats,.oj-typing-stats) {min-height:50px;margin:4px 0 8px;padding:6px 10px}
+.edu-game.eg-arcade.eg-focused :is(.oj-device-stat,.oj-rain-stat,.oj-typing-stat)>strong {font-size:20px}
+.edu-game.eg-arcade.eg-focused .oj-rain-arena {height:clamp(160px,calc(var(--eg-view-height) - 280px),460px)}
+.edu-game.eg-arcade.eg-focused .oj-rain-panel-head {min-height:26px;padding:2px 0}
+.edu-game.eg-arcade.eg-focused .oj-rain-panel-head :is(h3,[data-field=meta]) {display:none}
+.edu-game.eg-arcade.eg-focused .oj-rain-input-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:0;margin-top:6px}
+.edu-game.eg-arcade.eg-focused .oj-rain-input-row :is(input,button) {min-height:44px;height:44px;padding:6px 10px;font-size:16px}
+.edu-game.eg-arcade.eg-focused :is(.oj-rain-feedback,.oj-device-feedback,.oj-image-feedback,.oj-typing-feedback) {font-size:12px;line-height:1.4;min-height:20px;padding:3px 0;margin:0}
+.edu-game.eg-arcade.eg-focused .oj-typing-stream {height:clamp(140px,calc(var(--eg-view-height) - 285px),500px)}
+.edu-game.eg-arcade.eg-focused :is(.er-chart,.ev-chart) {height:clamp(150px,calc(var(--eg-view-height) - 465px),280px)}
+.edu-game.eg-arcade.eg-focused .ev-pie-pair .ev-chart {height:clamp(130px,calc(var(--eg-view-height) - 350px),240px)}
+.edu-game.eg-arcade.eg-focused .oj-image-board-stage {width:min(100%,calc((var(--eg-view-height) - 365px) + 260px))}
+.edu-game.eg-arcade.eg-focused .oj-image-panel-head {display:none}
+.edu-game.eg-arcade.eg-focused .oj-image-stats {padding:4px 0;margin:4px 0 6px}
+.edu-game.eg-arcade.eg-focused .oj-image-stat {padding:2px 6px}
+.edu-game.eg-arcade.eg-focused .oj-image-stat span {margin:0;font-size:11px}
+.edu-game.eg-arcade.eg-focused .oj-image-stat strong {font-size:18px}
+.edu-game.eg-arcade.eg-focused .oj-image-layout {gap:6px}
+.edu-game.eg-arcade.eg-focused .oj-image-palette {padding:4px 0}
+.edu-game.eg-arcade.eg-focused .oj-image-answer-choices {grid-template-columns:repeat(4,minmax(0,1fr));padding:4px 0}
+.edu-game.eg-arcade.eg-focused .oj-image-answer-choices button {min-height:36px;padding:4px;font-size:13px}
+.edu-game.eg-arcade.eg-focused .eo-ready {display:none}
+.edu-game.eg-arcade.eg-focused .em-repair-heading {display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 0;margin:0}
+.edu-game.eg-arcade.eg-focused .em-repair-heading h4 {margin:0;font-size:16px}
+.edu-game.eg-arcade.eg-focused .em-toolbox {gap:6px;margin:6px 0}
+.edu-game.eg-arcade.eg-focused .em-toolbox button {min-height:50px;padding:4px;font-size:13px}
+.edu-game.eg-arcade.eg-focused .em-evidence {font-size:13px;line-height:1.4;padding:8px 10px}
+.edu-game.eg-arcade.eg-focused .coach-goal {padding:4px 8px;margin:2px 0}
+.edu-game.eg-arcade.eg-focused .coach-chain {min-height:56px;margin:4px 0}
+.edu-game.eg-arcade.eg-focused .coach-chain .eh-digit {width:44px;flex-basis:44px}
+.edu-game.eg-arcade.eg-focused .coach-photo-head {margin:4px 0}
+.edu-game.eg-arcade.eg-focused .coach-memory {grid-auto-rows:44px}
+.edu-game.eg-arcade.eg-focused .coach-slot {min-height:44px}
+.edu-game.eg-arcade.eg-focused .coach-robot {padding:4px 8px}
+.edu-game.eg-arcade.eg-focused .coach-candidates .eh-digit canvas {max-width:36px}
+.edu-game.eg-arcade.eg-focused .coach-validation .eh-digit canvas {max-width:32px}
+.edu-game.eg-arcade.eg-focused .oj-device-deck {gap:5px;padding:5px}
+.edu-game.eg-arcade.eg-focused .oj-device-stagebar {padding-block:4px}
+.edu-game.eg-arcade.eg-focused .eh-controls {padding-block:4px}
+.edu-game.eg-arcade.eg-focused .eh-caption {font-size:11px;line-height:1.4;margin:4px 0}
+.edu-game.eg-arcade.eg-focused .ev-pie-pair .ev-chart {height:210px}
+.edu-game.eg-arcade.eg-focused .ev-allocation {padding-block:1px;gap:1px 4px}
+.edu-game.eg-arcade.eg-focused .ev-allocations {gap:2px}
+.edu-game.eg-arcade.eg-focused .ev-cargo {margin-block:2px}
+.edu-game.eg-arcade.eg-focused .er-mission {padding-block:4px}
+.edu-game.eg-arcade.eg-focused .er-mission>div>span {display:none}
+.edu-game.eg-arcade.eg-focused .er-mission h3 {margin:2px 0}
+.edu-game.eg-arcade .em-source-list {font-size:12px;line-height:1.4;border:0;margin:0;padding:0}
+.edu-game.eg-arcade .em-source-list summary {cursor:pointer;min-height:22px}
+.edu-game.eg-arcade.eg-focused .em-source-list[open] {position:fixed;inset:25% 10%;z-index:2;padding:16px;background:var(--eg-surface);border:1px solid var(--eg-line);overflow:auto}
+@media(max-width:700px) {
+    .edu-game.eg-arcade .eg-objective {flex-wrap:wrap;gap:2px 12px}
+    .edu-game.eg-arcade .eg-objective>strong {flex-basis:calc(100% - 80px);font-size:14px}
+    .edu-game.eg-arcade .eg-score-help {order:1;margin-left:auto}
+    .edu-game.eg-arcade .eg-action-receipt {order:2;flex-basis:100%;min-height:26px;justify-content:flex-start}
+    .edu-game.eg-arcade .eg-action-receipt strong {font-size:18px}
+    .edu-game.eg-arcade .eg-game-header {flex-wrap:wrap}
+    .edu-game.eg-arcade :is(.oj-device-stats,.oj-rain-stats,.oj-typing-stats) {gap:6px;padding:8px}
+    .edu-game.eg-arcade :is(.oj-device-stat,.oj-rain-stat,.oj-typing-stat)>strong {font-size:20px}
+    .edu-game.eg-arcade .eh-scoreboard {grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .edu-game.eg-arcade .eh-scoreboard .eh-start {grid-column:1/-1}
+    .edu-game.eg-arcade .oj-image-answer-choices {grid-template-columns:repeat(2,minmax(0,1fr))}
+    .edu-game.eg-arcade .oj-image-controls {grid-template-columns:1fr 120px}
+    .edu-game.eg-arcade .oj-image-controls .oj-image-sample-select {grid-column:1/-1}
+    .edu-game.eg-arcade .oj-image-palette {grid-template-columns:repeat(8,minmax(0,1fr))}
+    .edu-game.eg-arcade .oj-image-palette button {grid-template-columns:1fr;justify-items:center;gap:2px}
+    .edu-game.eg-arcade .er-mission h3 {font-size:17px}
+    .edu-game.eg-arcade .er-mission>div {flex-basis:200px}
+    .edu-game.eg-arcade .eh-actionbar {gap:6px}
+    .edu-game.eg-arcade .coach-machine {gap:12px}
+    .edu-game.eg-arcade.eg-focused .eh-scoreboard {grid-template-columns:repeat(4,minmax(0,1fr));padding:6px 8px;gap:6px}
+    .edu-game.eg-arcade.eg-focused .eg-objective {height:44px;min-height:44px;flex-wrap:nowrap;gap:8px}
+    .edu-game.eg-arcade.eg-focused .eg-objective>strong {flex-basis:0;font-size:13px;line-height:1.4}
+    .edu-game.eg-arcade.eg-focused .eg-action-receipt {order:0;flex:1;justify-content:flex-start;min-height:0}
+    .edu-game.eg-arcade.eg-focused .eg-action-receipt[data-empty] {display:none}
+    .edu-game.eg-arcade.eg-focused .eg-objective:has(.eg-action-receipt:not([data-empty]))>strong {display:none}
+    .edu-game.eg-arcade.eg-focused .em-toolbox {grid-template-columns:repeat(3,minmax(0,1fr))}
+    .edu-game.eg-arcade.eg-focused .em-toolbox:has(>:nth-child(4):last-child) {grid-template-columns:repeat(4,minmax(0,1fr))}
+    .edu-game.eg-arcade.eg-focused .coach-photo-head {display:grid;grid-template-columns:minmax(0,1fr) 30px 30px;gap:2px}
+    .edu-game.eg-arcade.eg-focused .coach-photo-head h4 {font-size:13px;margin:0}
+    .edu-game.eg-arcade.eg-focused .coach-photo-head>span {grid-column:1;grid-row:2;font-size:10px}
+    .edu-game.eg-arcade.eg-focused .coach-photo-head>button {grid-row:1/3;min-height:32px;padding:2px}
+    .edu-game.eg-arcade.eg-focused .coach-photo-head>button:first-of-type {grid-column:2}
+    .edu-game.eg-arcade.eg-focused .coach-photo-head>button:last-of-type {grid-column:3}
+    .edu-game.eg-arcade.eg-focused .coach-photo-head>label {grid-column:1/-1;font-size:11px}
+    .edu-game.eg-arcade.eg-focused .coach-memory {grid-template-columns:repeat(4,minmax(0,1fr))}
+    .edu-game.eg-arcade.eg-focused .coach-machine .eh-digit canvas {max-width:26px}
+    .edu-game.eg-arcade.eg-focused .coach-memory {grid-auto-rows:36px;gap:3px}
+    .edu-game.eg-arcade.eg-focused .coach-memory .eh-digit canvas {max-width:16px}
+    .edu-game.eg-arcade.eg-focused .coach-slot {min-height:36px}
+    .edu-game.eg-arcade.eg-focused .coach-chain .eh-digit {width:36px;flex-basis:36px}
+    .edu-game.eg-arcade.eg-focused .er-chart,.edu-game.eg-arcade.eg-focused .ev-chart {height:160px}
+    .edu-game.eg-arcade.eg-focused .ev-passengers {display:none}
+    .edu-game.eg-arcade.eg-focused .dispatch-board .er-dispatch {padding-top:0;gap:2px}
+    .edu-game.eg-arcade.eg-focused .er-dispatch h4 {margin:2px 0;font-size:13px;line-height:1.4}
+    .edu-game.eg-arcade.eg-focused .ev-pie-pair .ev-chart {height:125px}
+    .edu-game.eg-arcade.eg-focused .ev-gauges {margin-block:4px;gap:8px}
+    .edu-game.eg-arcade.eg-focused .ev-gauges>div {gap:3px}
+    .edu-game.eg-arcade.eg-focused .ev-water {height:50px}
+    .edu-game.eg-arcade.eg-focused .em-calculation>span {padding:1px 2px;min-width:22px;font-size:11px}
+    .edu-game.eg-arcade.eg-focused .em-calculation>strong {font-size:18px}
+    .edu-game.eg-arcade.eg-focused .em-calculation>b {font-size:12px;margin-inline:2px}
+    .edu-game.eg-arcade.eg-focused .er-mission p {font-size:13px;line-height:1.4;margin:4px 0}
+    .edu-game.eg-arcade.eg-focused .eg-card-inspector {min-height:68px}
+    .edu-game.eg-arcade.eg-focused .oj-device-deck {gap:4px;padding:4px}
+    .edu-game.eg-arcade.eg-focused .dispatch-allocation-rail {display:none}
+    .edu-game.eg-arcade.eg-focused .ev-cargo {display:none}
+    .edu-game.eg-arcade.eg-focused[data-review] .er-mission p {display:none}
+    .edu-game.eg-arcade.eg-focused[data-game=data-structure-lab] .wh-storage {height:140px}
+    .edu-game.eg-arcade.eg-focused[data-game=data-structure-lab] .wh-floor {padding:6px}
+    .edu-game.eg-arcade.eg-focused[data-game=data-structure-lab] .wh-game .wh-dock {min-height:90px}
+}

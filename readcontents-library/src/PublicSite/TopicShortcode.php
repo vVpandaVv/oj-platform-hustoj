@@ -13,6 +13,7 @@ use ContentsEditor\Content\ContentNodeType;
 use ContentsEditor\Content\ContentStatus;
 use ContentsEditor\Infrastructure\Assets;
 use ContentsEditor\Storage\ContentRepository;
+use ReadContents\Library\Editor\PublicSite\OptionalReadingBlocks;
 use Throwable;
 
 final class TopicShortcode
@@ -215,7 +216,7 @@ final class TopicShortcode
                 esc_attr($document->schemaVersion),
                 esc_html(__('선택한 레슨', 'contents-editor')),
                 esc_html((string) ($selected_lesson['title'] ?? '')),
-                $this->renderer->render($document->plateValue)
+                $this->renderer->render(OptionalReadingBlocks::forShortcode($document->plateValue))
             );
         } else {
             $lesson_html = $this->notice(__('공개된 레슨이 없습니다.', 'contents-editor'));

@@ -3,10 +3,10 @@ declare(strict_types=1);
 namespace EduGames\Multiplayer;
 
 final class Room_Rules {
-    public const BINARY='binary-conversion',DEVICE='device-matching';
+    public const BINARY='binary-conversion',DEVICE='device-matching',VAULT='cipher-vault';
     public static function game(array $s): string {return $s['game']??self::BINARY;}
     public static function engine(string $game): string {
-        return match($game){self::BINARY=>Binary_Room::class,self::DEVICE=>Device_Room::class,default=>throw new Failure('팀전 게임을 확인하세요.',422)};
+        return match($game){self::BINARY=>Binary_Room::class,self::DEVICE=>Device_Room::class,self::VAULT=>Vault_Room::class,default=>throw new Failure('팀전 게임을 확인하세요.',422)};
     }
     public static function create(string $code,array $actor,array $config,int $now,string $seed,string $game): array {
         $s=self::engine($game)::create($code,$actor,$config,$now,$seed);$s['game']=$game;return $s;

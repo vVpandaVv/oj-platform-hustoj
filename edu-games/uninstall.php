@@ -15,6 +15,10 @@ $tables = array(
     $wpdb->prefix . 'edu_games_ai_model_lab_attempts',
     $wpdb->prefix . 'edu_games_binary_rooms',
     $wpdb->prefix . 'edu_games_binary_results',
+    $wpdb->prefix . 'edu_games_typing_runs',
+    $wpdb->prefix . 'edu_games_typing_targets',
+    $wpdb->prefix . 'edu_games_typing_evaluations',
+    $wpdb->prefix . 'edu_games_arcade_runs',
 );
 
 foreach ($tables as $table) {

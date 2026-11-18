@@ -1,0 +1,25 @@
+.code-typing-block[data-typing-evaluation-selected] :is(.oj-typing-controls,.oj-typing-actions,[data-field=challenge-goal]) {display:none}
+.code-typing-block .oj-typing-legacy-link {font-size:12px;color:var(--eg-muted,#626269)}
+.code-typing-block.eg-focused .oj-typing-legacy-link {display:none}
+.code-typing-block [data-typing-retry] {margin:6px 0}
+.code-typing-block[data-typing-verified-running] .oj-typing-actions {display:none}
+.code-typing-block .oj-typing-stat [data-field="speed"] {font-variant-numeric:tabular-nums}
+.code-typing-block.eg-focused[data-typing-evaluation-selected]:not([data-typing-verified-running]) .oj-typing-stream {height:clamp(120px,calc(var(--eg-view-height) - 510px),300px)}
+.code-typing-block.eg-focused .edu-typing-entry {margin-bottom:10px}
+.code-typing-block.eg-focused:not([data-typing-evaluation-selected]) .oj-typing-assignments {display:none}
+.code-typing-block.eg-focused .ete-student-selected {padding:8px 0}
+.code-typing-block.eg-focused .ete-student-selected h2 {font-size:16px}
+.code-typing-block.eg-focused .ete-student-selected-title h2 {display:none}
+.code-typing-block .oj-typing-key-special[data-special-key=shift] {position:relative;inset:auto;font:inherit;color:inherit}
+.code-typing-block[data-typing-evaluation-ready] .oj-typing-stats {display:none}
+.code-typing-block[data-typing-evaluation-selected] .oj-typing-shell.is-finished .oj-typing-keyboard {display:none}
+.code-typing-block[data-typing-evaluation-selected] .oj-typing-rank-panel {display:none}
+.code-typing-block[data-typing-result-confirmed] .oj-typing-stats {display:none}
+.code-typing-block[data-typing-result-confirmed]:not([data-typing-review-open]) :is(.oj-typing-stream-panel,[data-field=expected-output]) {display:none}
+.code-typing-block[data-typing-result-confirmed] .oj-typing-feedback {display:none}
+.code-typing-block[data-typing-result-confirmed] .oj-typing-stream {height:180px}
+.code-typing-block[data-typing-evaluation-selected][data-typing-verified-running] .oj-typing-stats {grid-template-columns:repeat(4,minmax(0,1fr))}
+.code-typing-block[data-typing-evaluation-selected] .oj-typing-stat {order:2}
+.code-typing-block[data-typing-evaluation-selected] .oj-typing-stat:has([data-field=speed]) {order:0}
+.code-typing-block[data-typing-evaluation-selected] .oj-typing-stat:has([data-field=accuracy]) {order:1}
+.code-typing-block[data-typing-evaluation-selected] .oj-typing-stat:has(:is([data-field=progress],[data-field=rank],[data-field=samples])) {display:none}

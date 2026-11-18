@@ -22,13 +22,23 @@ final class Bot_Runner {
             $s=$engine::tick($s,$at);if($s['status']!=='playing')break;
             $p=$bots[$id];$b=$s['boards'][$p['team']];$state=$s['botState'][$id];$state['step']++;
             $salt=$s['seed'].':'.$id.':'.$state['step'];
-            $command=self::roll($salt.':idle',100)<$profile['idle']?null:($device?self::card($b,(int)$id,$state,$profile,$s['seed'],$at):self::binary($b,(int)$id,$at,$state,$profile,$s['seed']));
+            $command=self::roll($salt.':idle',100)<$profile['idle']?null:(Room_Rules::game($s)===Room_Rules::VAULT?self::vault($b,(int)$id,$state,$profile,$s['seed'],$at):($device?self::card($b,(int)$id,$state,$profile,$s['seed'],$at):self::binary($b,(int)$id,$at,$state,$profile,$s['seed'])));
             $state['next']=$at+$delay+self::roll($salt.':jitter',(int)($delay*.45));$s['botState'][$id]=$state;
             if($command)try{$s=$engine::command($s,array('id'=>(int)$id,'name'=>$p['name'],'bot'=>true),$command,$at);}catch(Failure $e){}
         }
         return $engine::tick($s,$now);
     }
     private static function roll(string $key,int $range): int {return hexdec(substr(hash('sha256',$key),0,7))%max(1,$range);}
+    private static function vault(array $b,int $id,array &$state,array $profile,string $seed,int $now): ?array {
+        $owned=null;foreach($b['vaults'] as $v)if($v['owner']===$id&&!$v['opened']){$owned=$v;break;}
+        if(!$owned){foreach($b['vaults'] as $v)if(!$v['owner']&&!$v['opened']){$state['vault']=$v['id'];$state['thoughtAt']=$now+$profile['readMs']+$profile['thinkMs']*max(2,(int)ceil(strlen($v['text'])/4));$state['tried']=false;return ['type'=>'open','vault'=>$v['id']];}return null;}
+        if(($owned['cooldownUntil']??0)>$now)return null;
+        if($now<($state['thoughtAt']??0))return ['type'=>'touch','vault'=>$owned['id']];
+        if($owned['effect']==='shuffle'){foreach($owned['order'] as $i=>$position)if($i!==$position)return ['type'=>'swap','vault'=>$owned['id'],'first'=>$i,'second'=>array_search($i,$owned['order'],true)];}
+        if(!$owned['repaired']||$owned['effect']==='erase')return ['type'=>'repair','vault'=>$owned['id'],'code'=>\EduGames\Arcade\Vault_Rules::codes($owned)[$owned['repairIndex']]];
+        $wrong=empty($state['tried'])&&self::roll($seed.':'.$id.':'.$owned['id'],100)<$profile['mistake'];$state['tried']=true;
+        $answer=$owned['mode']==='encode'?implode(' ',\EduGames\Arcade\Vault_Rules::codes($owned)):$owned['text'];return ['type'=>'answer','vault'=>$owned['id'],'answer'=>$wrong?'?':$answer];
+    }
     private static function binary(array $b,int $id,int $now,array &$state,array $profile,string $seed): ?array {
         if($b['endedAt']!==null)return null;
         $rows=$b['rows'];usort($rows,static fn($a,$b)=>($b['owner']===$id)<=>($a['owner']===$id));

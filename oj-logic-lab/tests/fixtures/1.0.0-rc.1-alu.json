@@ -1,0 +1,502 @@
+{
+  "version": "1.0.0-rc.1",
+  "rcExact": true,
+  "project": {
+    "schema": 1,
+    "formatVersion": 1,
+    "title": "RC 기존 회로 · alu",
+    "nodes": [
+      {
+        "id": "a",
+        "type": "BUS_IN",
+        "x": 60,
+        "y": 60,
+        "label": "A",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": "0101",
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "b",
+        "type": "BUS_IN",
+        "x": 60,
+        "y": 204,
+        "label": "B",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": "0011",
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "s0",
+        "type": "SWITCH",
+        "x": 60,
+        "y": 396,
+        "label": "S0",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "s1",
+        "type": "SWITCH",
+        "x": 60,
+        "y": 540,
+        "label": "S1",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "zero",
+        "type": "ZERO",
+        "x": 60,
+        "y": 708,
+        "label": "CI=0",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "and",
+        "type": "AND",
+        "x": 384,
+        "y": 60,
+        "label": "AND",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "or",
+        "type": "OR",
+        "x": 384,
+        "y": 252,
+        "label": "OR",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "xor",
+        "type": "XOR",
+        "x": 384,
+        "y": 444,
+        "label": "XOR",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "add",
+        "type": "WADD",
+        "x": 384,
+        "y": 636,
+        "label": "ADD",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "m0",
+        "type": "MUX",
+        "x": 720,
+        "y": 132,
+        "label": "논리 1",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "m1",
+        "type": "MUX",
+        "x": 720,
+        "y": 516,
+        "label": "논리 2",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "m2",
+        "type": "MUX",
+        "x": 1056,
+        "y": 324,
+        "label": "연산 선택",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      },
+      {
+        "id": "y",
+        "type": "BUS_OUT",
+        "x": 1392,
+        "y": 324,
+        "label": "RESULT",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 4
+        }
+      }
+    ],
+    "wires": [
+      {
+        "id": "w0",
+        "from": {
+          "node": "a",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "and",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w1",
+        "from": {
+          "node": "b",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "and",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w2",
+        "from": {
+          "node": "a",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "or",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w3",
+        "from": {
+          "node": "b",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "or",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w4",
+        "from": {
+          "node": "a",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "xor",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w5",
+        "from": {
+          "node": "b",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "xor",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w6",
+        "from": {
+          "node": "a",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "add",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w7",
+        "from": {
+          "node": "b",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "add",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w8",
+        "from": {
+          "node": "zero",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "add",
+          "pin": "CI"
+        }
+      },
+      {
+        "id": "w9",
+        "from": {
+          "node": "and",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m0",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w10",
+        "from": {
+          "node": "or",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m0",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w11",
+        "from": {
+          "node": "xor",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m1",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w12",
+        "from": {
+          "node": "add",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m1",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w13",
+        "from": {
+          "node": "s0",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m0",
+          "pin": "S"
+        }
+      },
+      {
+        "id": "w14",
+        "from": {
+          "node": "s0",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m1",
+          "pin": "S"
+        }
+      },
+      {
+        "id": "w15",
+        "from": {
+          "node": "m0",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m2",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w16",
+        "from": {
+          "node": "m1",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m2",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w17",
+        "from": {
+          "node": "s1",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "m2",
+          "pin": "S"
+        }
+      },
+      {
+        "id": "w18",
+        "from": {
+          "node": "m2",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "y",
+          "pin": "A"
+        }
+      }
+    ],
+    "components": [],
+    "stimuli": [
+      {
+        "id": "s0",
+        "time": 240,
+        "node": "a",
+        "value": "0000"
+      }
+    ],
+    "netNames": {
+      "a:Q": "RC 신호 이름"
+    },
+    "notes": [
+      {
+        "id": "rcNote1",
+        "text": "RC에서 작성한 주석\n모든 회로와 설정 유지",
+        "x": 24,
+        "y": 24
+      }
+    ],
+    "exercise": null,
+    "settings": {
+      "mode": "advanced",
+      "step": 17,
+      "speed": 31,
+      "wave": {
+        "span": 160,
+        "start": 48,
+        "signals": [
+          "a:Q"
+        ]
+      }
+    }
+  }
+}

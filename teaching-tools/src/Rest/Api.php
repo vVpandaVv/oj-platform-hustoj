@@ -13,6 +13,7 @@ use TeachingTools\Rest\Controllers\Quickboard_Controller;
 use TeachingTools\Rest\Controllers\Realtime_Controller;
 use TeachingTools\Rest\Controllers\Roster_Controller;
 use TeachingTools\Rest\Controllers\Seating_Layout_Controller;
+use TeachingTools\Rest\Controllers\Seating_History_Controller;
 use TeachingTools\Rest\Controllers\Sessions_Controller;
 use TeachingTools\Rest\Controllers\Session_Host_Controller;
 use TeachingTools\Rest\Controllers\Whiteboard_Controller;
@@ -25,6 +26,7 @@ final class Api {
         Ladder_Controller::register_routes();
         Lesson_Template_Controller::register_routes();
         Seating_Layout_Controller::register_routes();
+        Seating_History_Controller::register_routes();
         Quiz_Controller::register_routes();
         Quickboard_Controller::register_routes();
         Integration_Controller::register_routes();

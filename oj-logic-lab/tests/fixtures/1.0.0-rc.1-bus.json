@@ -1,0 +1,215 @@
+{
+  "version": "1.0.0-rc.1",
+  "rcExact": true,
+  "project": {
+    "schema": 1,
+    "formatVersion": 1,
+    "title": "RC 기존 회로 · bus",
+    "nodes": [
+      {
+        "id": "a",
+        "type": "BUS_IN",
+        "x": 96,
+        "y": 96,
+        "label": "A · 8비트",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": "01111111",
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 8
+        }
+      },
+      {
+        "id": "b",
+        "type": "BUS_IN",
+        "x": 96,
+        "y": 216,
+        "label": "B · 8비트",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": "00000001",
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 8
+        }
+      },
+      {
+        "id": "zero",
+        "type": "ZERO",
+        "x": 96,
+        "y": 336,
+        "label": "CI = 0",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "adder",
+        "type": "WADD",
+        "x": 492,
+        "y": 168,
+        "label": "8비트 덧셈",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 8
+        }
+      },
+      {
+        "id": "sum",
+        "type": "BUS_OUT",
+        "x": 900,
+        "y": 168,
+        "label": "SUM",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 8
+        }
+      },
+      {
+        "id": "co",
+        "type": "LED",
+        "x": 900,
+        "y": 288,
+        "label": "C OUT",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      }
+    ],
+    "wires": [
+      {
+        "id": "w0",
+        "from": {
+          "node": "a",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "adder",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w1",
+        "from": {
+          "node": "b",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "adder",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w2",
+        "from": {
+          "node": "zero",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "adder",
+          "pin": "CI"
+        }
+      },
+      {
+        "id": "w3",
+        "from": {
+          "node": "adder",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "sum",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w4",
+        "from": {
+          "node": "adder",
+          "pin": "CO"
+        },
+        "to": {
+          "node": "co",
+          "pin": "A"
+        }
+      }
+    ],
+    "components": [],
+    "stimuli": [
+      {
+        "id": "s0",
+        "time": 240,
+        "node": "a",
+        "value": "00000000"
+      }
+    ],
+    "netNames": {
+      "a:Q": "RC 신호 이름"
+    },
+    "notes": [
+      {
+        "id": "rcNote1",
+        "text": "RC에서 작성한 주석\n모든 회로와 설정 유지",
+        "x": 24,
+        "y": 24
+      }
+    ],
+    "exercise": null,
+    "settings": {
+      "mode": "advanced",
+      "step": 17,
+      "speed": 31,
+      "wave": {
+        "span": 160,
+        "start": 48,
+        "signals": [
+          "a:Q"
+        ]
+      }
+    }
+  }
+}

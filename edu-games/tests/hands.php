@@ -30,10 +30,10 @@ reject(fn()=>$out::apply($s,array('type'=>'scan','ids'=>array(0,0))));
 $missing=Catalog::game('missing-values');$s=$missing::create('board-01');
 for($i=0;$i<9;$i++){$s=$missing::apply($s,hands_move('missing-values',$s));check($s['feedback']['hits']===3,'appropriate method reconstructs all targets');$s=$missing::apply($s,array('type'=>'next'));}
 $factory=Catalog::game('data-extraction');$s=$factory::create('board-01');$g=$s['order'];$g['join']='and';$a=$factory::selected($s['items'],$g);$g['join']='or';$b=$factory::selected($s['items'],$g);check(count($a)<count($b),'AND and OR visibly differ');
-$stack=Catalog::game('data-structure-lab');$s=$stack::create('board-01');$s['incoming']=array('A','B','C');$s['orders']=array('B','A','C');
+$stack=Catalog::game('data-structure-lab');$s=$stack::create('board-01');$s['incoming']=array('A','B','C');$s['orders'][0]['items']=array('B','A','C');$s['handling']+=array('A'=>0,'B'=>0,'C'=>0);
 for($i=0;$i<3;$i++)$s=$stack::apply($s,array('type'=>'push','lane'=>'stack'));
-$s=$stack::apply($s,array('type'=>'pop','lane'=>'stack'));check($s['buffer']===array('C')&&$s['stack']===array('A','B'),'LIFO and temporary storage');
-$s=$stack::apply($s,array('type'=>'pop','lane'=>'stack'));check($s['orders']===array('A','C')&&$s['score']>0,'correct shipment scores');
+$s=$stack::apply($s,array('type'=>'pop','lane'=>'stack','order'=>1));check($s['buffer']===array('C')&&$s['stack']===array('A','B'),'LIFO and temporary storage');
+$s=$stack::apply($s,array('type'=>'pop','lane'=>'stack','order'=>1));check($s['orders'][0]['items']===array('A','C')&&$s['score']>0,'correct shipment scores');
 $s=$stack::apply($s,array('type'=>'return','lane'=>'queue','id'=>0));check($s['queue']===array('C')&&!$s['buffer'],'buffer returns via entrance');
 $gate=Catalog::game('ai-classifier-lab');$s=$gate::create('board-01');$good=$gate::apply($s,array('type'=>'classify','line'=>array(64,26)));$bad=$gate::apply($s,array('type'=>'classify','line'=>array(0,0)));check($good['score']>$bad['score']&&$bad['feedback']['hits']===array(0,4),'one-class policy not rewarded');check($s['incoming']!==$good['incoming'],'fresh measured examples');
 for($i=0;$i<3;$i++)$s=$gate::apply($s,array('type'=>'classify','line'=>array(64,26)));

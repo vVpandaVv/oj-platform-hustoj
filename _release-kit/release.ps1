@@ -60,7 +60,7 @@ function Sync-Latest {
     $set = @()
     $sums = @()
     foreach ($info in $allInfos) {
-        $files = @(); $hashes = @(); $status = 'ready'
+        $files = @(); $hashes = @(); $signatureFiles = @(); $signatureHashes = @(); $status = 'ready'
         foreach ($name in $info.Packages) {
             $zip = Join-Path $info.OutDir $name
             if (-not (Test-Path -LiteralPath $zip)) { $status = 'missing'; continue }
@@ -68,6 +68,13 @@ function Sync-Latest {
             $hash = Get-Sha256 $zip
             Write-Utf8 (Join-Path $packagesDir "$name.sha256") "$hash  $name`n"
             $files += $name; $hashes += $hash; $sums += "$hash  $name"
+            $signature = "$zip.sig.json"
+            if (Test-Path -LiteralPath $signature) {
+                $signatureName = "$name.sig.json"
+                Copy-Item -LiteralPath $signature -Destination $packagesDir
+                $signatureHash = Get-Sha256 $signature
+                $signatureFiles += $signatureName; $signatureHashes += $signatureHash; $sums += "$signatureHash  $signatureName"
+            } elseif (Get-Prop $info.Plugin 'signatureRequired' $false) { throw "Release signature missing: $signature" }
         }
         $contents = @()
         $contentHashes = @()
@@ -76,7 +83,7 @@ function Sync-Latest {
             $contents += $file.Target
             $contentHashes += $file.Sha256
         }
-        $set += [ordered]@{ id = $info.Id; name = $info.Name; version = $info.Version; status = $status; files = $files; sha256 = $hashes; contentFiles = $contents; contentSha256 = $contentHashes; requiresWp = $info.RequiresWp; requiresPhp = $info.RequiresPhp; platformRequires = $info.PlatformRequires }
+        $set += [ordered]@{ id = $info.Id; name = $info.Name; version = $info.Version; status = $status; files = $files; sha256 = $hashes; signatureFiles = $signatureFiles; signatureSha256 = $signatureHashes; contentFiles = $contents; contentSha256 = $contentHashes; requiresWp = $info.RequiresWp; requiresPhp = $info.RequiresPhp; platformRequires = $info.PlatformRequires }
         if ($status -ne 'ready') { Write-Warning "$($info.Id) $($info.Version) is not packaged yet; latest set is incomplete." }
     }
     Write-Utf8 (Join-Path $latest 'SHA256SUMS.txt') (($sums -join "`n") + "`n")
@@ -104,6 +111,9 @@ function Sync-ContentLatest {
         $sums = @()
         foreach ($entry in $set.plugins) {
             for ($i = 0; $i -lt @($entry.files).Count; $i++) { $sums += "$($entry.sha256[$i])  $($entry.files[$i])" }
+            $signatureFiles = @(Get-Prop $entry 'signatureFiles' @())
+            $signatureHashes = @(Get-Prop $entry 'signatureSha256' @())
+            for ($i = 0; $i -lt $signatureFiles.Count; $i++) { $sums += "$($signatureHashes[$i])  $($signatureFiles[$i])" }
         }
         foreach ($file in $plan.Files) { $sums += "$($file.Sha256)  content/$($file.Target)" }
         Write-Utf8 (Join-Path $registry.latestRoot 'SHA256SUMS.txt') (($sums -join "`n") + "`n")
@@ -139,6 +149,7 @@ function Assert-PluginPolicy($Info) {
 
 function Invoke-Check {
     $errors = @(); $warnings = @()
+    $securityTools = $null
     try {
         $contentPlan = Get-ContentPlan $registry $allInfos
         $errors += @(Get-ContentChecks $registry $contentPlan)
@@ -146,6 +157,13 @@ function Invoke-Check {
     try { & (Join-Path $PSScriptRoot 'check-addon-notices.ps1') } catch { $errors += $_.Exception.Message }
     foreach ($info in $allInfos) {
         try { Assert-PluginPolicy $info } catch { $errors += $_.Exception.Message }
+        if (Get-Prop $info.Plugin 'securityCheck') {
+            try {
+                if (-not $securityTools) { $securityTools = Get-Tools }
+                $securityScript = Join-Path $info.SourceDir $info.Plugin.securityCheck
+                Invoke-Checked "$($info.Id) security gate" { & $securityTools.Php $securityScript }
+            } catch { $errors += $_.Exception.Message }
+        }
         $guide = Join-Path $PSScriptRoot $info.Plugin.guide
         if (-not (Test-Path -LiteralPath $guide)) { $errors += "$($info.Id): guide source missing ($($info.Plugin.guide))" }
         if (-not (Test-Path -LiteralPath (Join-Path $info.OutDir $info.Packages[0]))) { $warnings += "$($info.Id) $($info.Version): not packaged yet" }
@@ -167,6 +185,15 @@ function Invoke-Check {
             for ($k = 0; $k -lt @($entry.files).Count; $k++) {
                 $p = Join-Path (Join-Path $registry.latestRoot 'packages') $entry.files[$k]
                 if (-not (Test-Path -LiteralPath $p) -or (Get-Sha256 $p) -ne $entry.sha256[$k]) { $errors += "latest/packages/$($entry.files[$k]): checksum mismatch or missing" }
+            }
+            $signatureFiles = @(Get-Prop $entry 'signatureFiles' @())
+            $signatureHashes = @(Get-Prop $entry 'signatureSha256' @())
+            if ($info -and (Get-Prop $info.Plugin 'signatureRequired' $false) -and $entry.version -eq $info.Version -and $entry.status -eq 'ready' -and $signatureFiles.Count -ne @($entry.files).Count) {
+                $errors += "$($entry.id): release signature inventory missing"
+            }
+            for ($k = 0; $k -lt $signatureFiles.Count; $k++) {
+                $p = Join-Path (Join-Path $registry.latestRoot 'packages') $signatureFiles[$k]
+                if ($k -ge $signatureHashes.Count -or -not (Test-Path -LiteralPath $p) -or (Get-Sha256 $p) -ne $signatureHashes[$k]) { $errors += "latest/packages/$($signatureFiles[$k]): signature checksum mismatch or missing" }
             }
             if ($contentPlan) {
                 $expected = @($contentPlan.Files | Where-Object { $_.PluginId -eq $entry.id })

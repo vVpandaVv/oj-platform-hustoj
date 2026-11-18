@@ -27,6 +27,7 @@ final class Game_Play_Page_Handler implements AddonPageHandlerV1 {
     }
 
     public function handle(AddonPageRequestV1 $request): AddonPageResponseV1 {
+        if (\EduGames\Games\Experience_Separation::moved($this->game_id)) return Page_Response::themed('개념 체험',\EduGames\Games\Experience_Separation::notice($this->game_id));
         if (! Capabilities::can_preview_closed() && ! Game_Visibility::is_open($this->game_id)) {
             return AddonPageResponseV1::unavailable(
                 __('이 게임은 현재 공개되지 않았습니다.', 'edu-games'),

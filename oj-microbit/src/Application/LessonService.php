@@ -133,6 +133,18 @@ final class LessonService
             return ResultVisibility::learner($result) + ['id' => $attempt, 'exerciseRevision' => $exercise['revision'], 'assignmentId' => $id];
         });
     }
+    public function compile(int $id, array $input): array
+    {
+        $this->rejectBodyContext($input); $assignment = $this->context($id, false, true); $this->requirePublicSource($assignment['exerciseId'], false);
+        if (!is_array($input['project'] ?? null)) { throw new InvalidArgumentException('실행할 수업 프로젝트를 확인해 주세요.'); }
+        $project = ProjectSchema::normalize($input['project']);
+        if (!$this->runner instanceof LiveCompiler) { throw new OperationError('version_mismatch', 502, '상태 유지 실행을 사용하려면 마이크로비트 실행기를 최신 버전으로 업데이트해 주세요.'); }
+        return $this->records->withRunLease($this->access->actorId(), function () use ($id, $assignment, $project): array {
+            $result = $this->runner->compile($project); $current = $this->context($id, false, true); $this->requirePublicSource($assignment['exerciseId'], false);
+            if ($current['revision'] !== $assignment['revision']) { throw new OperationError('conflict', 409, '컴파일 중 수업 적용이 변경됐습니다. 다시 열어 주세요.'); }
+            return $result + ['assignmentId' => $id];
+        });
+    }
     public function preview(int $id, array $input): array
     {
         $this->rejectBodyContext($input); $assignment = $this->context($id, false, true); $exercise = $this->requirePublicSource($assignment['exerciseId'], true);

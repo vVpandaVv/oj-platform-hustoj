@@ -1,12 +1,14 @@
 # HUSTOJ Docker 공존 최종 점검
 
-대상: OJ Microbit 0.4.2. 점검일: 2026-10-28. 구성: WordPress 호스트 직접 설치 + 기존 HUSTOJ Docker + 같은 로컬 Docker의 마이크로비트 작업 이미지.
+대상: OJ Microbit 1.0.0-rc.15. 점검일: 2026-11-05. 구성: WordPress 호스트 직접 설치 + 기존 HUSTOJ Docker + 같은 로컬 Docker의 마이크로비트 작업 이미지.
+
+rc.14의 업데이트·같은 버전 재실행·컴파일 검사 실패·이전 포트 복원·INT/TERM·복원 health 실패·연결 완료 후 오류를 추가 점검했습니다. [업데이트와 복구 판정](INSTALLER-AUDIT-1.0.0-rc.14.md)에 결과와 한계를 기록합니다.
 
 ## 점검 결과와 반영 사항
 
 설치기는 HUSTOJ 컨테이너·이미지·볼륨·네트워크·DB를 수정하는 기능을 갖지 않습니다. 기존 Docker를 재사용하는 경로는 패키지 설치/갱신·저장소 수정·Docker 서비스 시작/재시작을 하지 않도록 보완했습니다. 소스 검사와 외부 명령을 대체한 Bash 회귀를 수행했으며 **실제 HUSTOJ가 실행 중인 Ubuntu에서 적용한 결과는 아닙니다**. 검증 결과는 [VALIDATION.md](VALIDATION.md)에 남깁니다.
 
-| 발견한 간접 영향 경로 | 0.4.2 조치 |
+| 발견한 간접 영향 경로 | 1.0.0-rc.15 조치 |
 |---|---|
 | 기존 Docker 판단 전에 공통 도구를 APT로 설치하면 패키지 후처리가 기존 서비스에 영향을 줄 가능성 | APT보다 먼저 Docker 판별. 재사용 경로는 도구·CA만 확인하며 누락 시 중단. 기존 Docker를 고치려고 패키지를 재설치하지 않음 |
 | Docker CLI가 없지만 daemon·socket·관련 패키지/자료가 남아 있는 구성 | 신규 설치로 간주하지 않고 중단. 기존 구성을 운영자가 별도 복구 |
@@ -18,8 +20,8 @@
 
 ## 허용하는 변경 범위
 
-- 전용 Node `/opt/oj-microbit-node-24.22.1`, 버전 경로 `/opt/oj-microbit/0.4.2/runner`, root 전용 실행기 설정·백업·설치 잠금, `oj-microbit` 서비스 계정/docker 그룹만 준비합니다. 시스템 전역 Node를 교체하지 않습니다.
-- 이미지 빌드는 `oj-microbit-worker:0.4.2`만 생성하며 daemon 설정·HUSTOJ Compose 파일·기존 컨테이너·볼륨·네트워크를 변경하지 않습니다. 빌드 캐시·기본 이미지·디스크 사용량은 늘어날 수 있습니다.
+- 전용 Node `/opt/oj-microbit-node-24.22.1`, 버전 경로 `/opt/oj-microbit/1.0.0-rc.15/runner`, root 전용 실행기 설정·백업·설치 잠금, `oj-microbit` 서비스 계정/docker 그룹만 준비합니다. 시스템 전역 Node를 교체하지 않습니다.
+- 이미지 빌드는 `oj-microbit-worker:1.0.0-rc.15`만 생성하며 daemon 설정·HUSTOJ Compose 파일·기존 컨테이너·볼륨·네트워크를 변경하지 않습니다. 빌드 캐시·기본 이미지·디스크 사용량은 늘어날 수 있습니다.
 - systemd는 유닛 목록을 다시 읽고 **oj-microbit-runner.service만** 활성화·재시작·복원합니다. Docker·HUSTOJ·웹 서버·PHP-FPM을 재시작하지 않습니다. 유닛의 의존성으로 Docker를 시작하지도 않습니다.
 - WordPress 연결은 자체 `oj_microbit_settings` 옵션 한 행을 비교 후 갱신합니다. 과제·학생 기록과 다른 설정을 보존합니다. ZIP 활성화의 자체 스키마 점검은 별도이며 HUSTOJ DB에 연결하지 않습니다.
 - 실제 채점과 설치 canary는 이름을 직접 생성한 `oj-microbit-job-…` 일회성 컨테이너만 실행·회수합니다. 전체 컨테이너를 대상으로 한 stop/rm/prune, compose down, Docker 네트워크/볼륨 정리는 없습니다.

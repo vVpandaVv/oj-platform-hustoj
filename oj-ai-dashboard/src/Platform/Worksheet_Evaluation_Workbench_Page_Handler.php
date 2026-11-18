@@ -283,12 +283,14 @@ final class Worksheet_Evaluation_Workbench_Page_Handler implements AddonPageHand
 	 * @return string
 	 */
 	private function submission_markup( AddonPageRequestV1 $request, bool $can_assess, bool $can_review, bool $can_manage_student_notes ): string {
-		return '<section id="oj-ai-submission-review-app" class="oj-ai-submission-review" ' . $this->submission_attributes( $request, $can_assess, $can_review, $can_manage_student_notes ) . '>'
+		$can_publish = $this->authorize( $request, 'submission.result.publish', array( Addon_Capabilities::PUBLISH_FEEDBACK ) )->is_allowed();
+		return '<section id="oj-ai-submission-review-app" class="oj-ai-submission-review" ' . $this->submission_attributes( $request, $can_assess, $can_review, $can_manage_student_notes, $can_publish ) . '>'
 			. '<header class="oj-ai-submission-review__header ojp-page-header"><div><p class="ojp-eyebrow">활동지 평가</p><h1>학생 제출 평가</h1><p data-role="submission-summary">그룹(반)을 선택하세요.</p></div>'
 			. '<div class="oj-ai-submission-review__header-actions ojp-heading-actions" data-review-role="workflow-actions">'
 			. ( $can_assess ? '<button type="button" class="oj-ai-submission-review__primary ojp-button ojp-button--primary" data-review-action="bulk-grade" hidden disabled>' . Addon_Icon::markup( 'list' ) . ' 일괄 채점</button>' : '' )
 			. ( $can_review ? '<button type="button" class="oj-ai-submission-review__secondary ojp-button" data-workflow-bulk="accept" hidden disabled>' . Addon_Icon::markup( 'list' ) . ' AI 점수 일괄 승인</button><button type="button" class="oj-ai-submission-review__secondary ojp-button" data-workflow-bulk="teacher" hidden disabled>' . Addon_Icon::markup( 'list' ) . ' 교사 점수 일괄 승인</button><button type="button" class="oj-ai-submission-review__secondary ojp-button" data-workflow-bulk="feedback" hidden disabled>' . Addon_Icon::markup( 'list' ) . ' 피드백 일괄 요청</button>' : '' )
 			. ( $can_manage_student_notes ? '<button type="button" class="oj-ai-submission-review__secondary ojp-button" data-workflow-bulk="note" hidden disabled>' . Addon_Icon::markup( 'list' ) . ' 특기사항 일괄 요청</button>' : '' )
+			. ( $can_publish ? '<button type="button" class="oj-ai-submission-review__secondary ojp-button" data-workflow-bulk="release" hidden disabled>' . Addon_Icon::markup( 'list' ) . ' 학생 결과 일괄 공개</button>' : '' )
 			. ( $can_assess || $can_review ? '<button type="button" class="oj-ai-submission-review__secondary ojp-button" data-review-action="download-scores" hidden disabled title="배포 전체 점수 CSV 다운로드">' . Addon_Icon::markup( 'download' ) . ' 점수 다운로드</button>' : '' )
 			. '<button type="button" class="oj-ai-submission-review__icon-button ojp-button ojp-button--plain" data-review-action="refresh" aria-label="새로고침" title="새로고침">' . Addon_Icon::markup( 'refresh-cw' ) . '</button></div></header>'
 			. '<div class="oj-ai-submission-review__filters">'
@@ -375,7 +377,7 @@ final class Worksheet_Evaluation_Workbench_Page_Handler implements AddonPageHand
 	}
 
 	/**
-	 * Confirmation and target selection for existing review/report commands.
+	 * Confirmation and target selection for review, report and publication commands.
 	 *
 	 * @return string
 	 */
@@ -383,6 +385,9 @@ final class Worksheet_Evaluation_Workbench_Page_Handler implements AddonPageHand
 		return '<dialog class="oj-ai-submission-review__dialog" data-review-role="workflow-dialog" aria-labelledby="oj-ai-workflow-bulk-title"><form method="dialog">'
 			. '<header><h2 id="oj-ai-workflow-bulk-title" data-review-role="workflow-title"></h2><button type="submit" value="cancel" class="oj-ai-submission-review__dialog-close ojp-button ojp-button--plain" aria-label="닫기" title="닫기">' . Addon_Icon::markup( 'x' ) . '</button></header>'
 			. '<p data-review-role="workflow-scope"></p><p data-review-role="workflow-policy"></p><p data-review-role="workflow-preview-status" role="status" aria-live="polite"></p>'
+			. '<fieldset data-review-role="workflow-release-options" hidden><legend>공개 범위</legend>'
+			. '<label><span>점수 공개 범위</span><select data-review-role="workflow-score-visibility"><option value="total">총점만</option><option value="total_and_criteria" selected>총점 + 기준별 점수</option><option value="hidden">점수 비공개</option></select></label>'
+			. '<label><span>피드백 공개</span><select data-review-role="workflow-feedback-visibility"><option value="hidden" selected>비공개</option><option value="shown">승인된 피드백 공개</option></select></label></fieldset>'
 			. '<label class="oj-ai-submission-review__bulk-check"><input type="checkbox" data-review-role="workflow-select-all" checked><span>대상 전체 선택</span></label>'
 			. '<div class="oj-ai-submission-review__bulk-targets" data-review-role="workflow-targets"></div>'
 			. '<details><summary>제외 대상</summary><ul class="oj-ai-submission-review__bulk-exclusions" data-review-role="workflow-exclusions"></ul></details>'
@@ -414,10 +419,10 @@ final class Worksheet_Evaluation_Workbench_Page_Handler implements AddonPageHand
 	 * @param bool               $can_assess Can assess.
 	 * @param bool               $can_review Can review.
 	 * @param bool               $can_manage_student_notes Can manage student notes.
+	 * @param bool               $can_publish Can publish results.
 	 * @return string
 	 */
-	private function submission_attributes( AddonPageRequestV1 $request, bool $can_assess, bool $can_review, bool $can_manage_student_notes ): string {
-		$can_publish = $this->authorize( $request, 'submission.result.publish', array( Addon_Capabilities::PUBLISH_FEEDBACK ) )->is_allowed();
+	private function submission_attributes( AddonPageRequestV1 $request, bool $can_assess, bool $can_review, bool $can_manage_student_notes, bool $can_publish ): string {
 		return $this->attributes(
 			$this->base_attributes( $request ) + array(
 				'data-can-assess'               => $can_assess ? '1' : '0',

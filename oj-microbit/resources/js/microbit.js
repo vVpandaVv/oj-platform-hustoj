@@ -366,6 +366,33 @@
     scenarioEntries(scenario, function (entry, fieldName, kind) { var at = entry[fieldName]; if (!groups.has(at)) { groups.set(at, { atMs: at, inputs: [], assertions: [], outputSequences: [], i2cInputs: [], i2cAssertions: [] }); } groups.get(at)[kind].push(entry); });
     var list = Array.from(groups.values()).sort(function (a, b) { return a.atMs - b.atMs; }); list.forEach(function (group, index) { group.endMs = list[index + 1] ? list[index + 1].atMs : scenario.durationMs; group.lengthMs = group.endMs - group.atMs; }); return list;
   }
+  /** A public-example illustration, never a synthesized rule or a grading execution. */
+  function expectedPreviewModel(exercise, scenario) {
+    if (!scenario || !scenario.visible) { return { controls: [], outputs: [], scenes: [] }; }
+    var controls = exercise.connections.filter(function (c) { return c.direction === 'input'; }).map(function (c) { return { key: 'pin:' + c.pin, pin: c.pin, label: c.label, signal: c.signal, device: c.device, min: 0, max: c.signal === 'digital' ? 1 : 1023 }; }), known = {}, baseRegisters = new Map();
+    (exercise.i2cDevices || []).forEach(function (device) { device.registers.forEach(function (register) { baseRegisters.set(device.address + ':' + register.register, { device: device, register: register }); }); });
+    var busKeys = new Set((scenario.i2cInputs || []).map(function (entry) { return entry.address + ':' + entry.register; }));
+    busKeys.forEach(function (key) { var initial = baseRegisters.get(key), parts = key.split(':'), control = { key: 'i2c:' + key, label: initial ? initial.device.label : 'I²C 장치', signal: 'register', device: 'i2c', address: Number(parts[0]), register: Number(parts[1]), min: 0, max: 255 }; controls.push(control); if (initial) { known[control.key] = initial.register.value; } });
+    var scenes = flowGroups(scenario).map(function (group, index) {
+      group.inputs.forEach(function (entry) { known['pin:' + entry.pin] = entry.value; }); group.i2cInputs.forEach(function (entry) { known['i2c:' + entry.address + ':' + entry.register] = entry.value; });
+      var plans = new Map(), events = [], unresolved = [];
+      function plan(pin, signal, steps) { if (!plans.has(pin)) { plans.set(pin, []); } plans.get(pin).push({ signal: signal, steps: steps }); }
+      group.assertions.forEach(function (entry) { plan(entry.pin, entry.signal, [entry]); }); group.outputSequences.forEach(function (entry) { plan(entry.pin, entry.signal, entry.steps); });
+      plans.forEach(function (items, pin) { if (items.length !== 1) { unresolved.push(pin); return; } var at = 0, item = items[0]; item.steps.forEach(function (step) { if (at < group.lengthMs) { events.push({ atMs: at, pin: pin, signal: item.signal, value: step.expected }); } at += step.holdMs; }); });
+      events.sort(function (a, b) { return a.atMs - b.atMs || a.pin - b.pin; });
+      return { index: index, atMs: group.atMs, endMs: group.endMs, inputs: Object.assign({}, known), events: events, unresolved: unresolved, signature: JSON.stringify({ events: events, unresolved: unresolved }) };
+    });
+    controls.forEach(function (control) { control.values = Array.from(new Set(scenes.map(function (scene) { return scene.inputs[control.key]; }).filter(Number.isInteger))).sort(function (a, b) { return a - b; }); });
+    return { controls: controls, outputs: exercise.connections.filter(function (c) { return c.direction === 'output'; }), scenes: scenes };
+  }
+  function resolveExpectedPreview(model, values, preferredIndex) {
+    if (model.controls.some(function (c) { var n = values[c.key]; return !Number.isInteger(n) || n < c.min || n > c.max; })) { return { status: 'invalid', scene: null }; }
+    var candidates = model.scenes.filter(function (scene) { return model.controls.every(function (c) { return scene.inputs[c.key] !== undefined && scene.inputs[c.key] === values[c.key]; }); });
+    if (!candidates.length) { return { status: 'unknown', scene: null }; }
+    var preferred = candidates.find(function (scene) { return scene.index === preferredIndex; });
+    if (!preferred && candidates.some(function (scene) { return scene.signature !== candidates[0].signature; })) { return { status: 'ambiguous', scene: null }; }
+    return { status: 'match', scene: preferred || candidates[0] };
+  }
   /** Atomic UI projection onto the existing pin/timing contract; no extra persisted fields. */
   function applyStageWizard(scenario, connections, definition, hasI2C) {
     var next = clone(scenario), nextConnections = clone(connections), groups = flowGroups(scenario), mode = definition.mode || 'stage', at = definition.atMs;
@@ -526,14 +553,15 @@
   }
   App.prototype.message = function (text, error) {
     this.status.textContent = text; this.status.classList.toggle('is-error', Boolean(error)); this.root.classList.toggle('has-focus-surface', Boolean(this.content.querySelector('.ojmicrobit-focus-surface')));
-    var local = this.content.querySelector('[data-mb-author-status]');
+    var local = this.content.querySelector('[data-mb-author-status], [data-mb-workspace-status]');
     this.status.hidden = Boolean(local && !error);
     if (local) { local.textContent = error ? '' : text; }
+    this.refreshWorkspaceSaveState();
   };
-  App.prototype.api = async function (path, body, method, timeoutMs) {
+  App.prototype.api = async function (path, body, method, timeoutMs, owner) {
     var controller = global.AbortController ? new global.AbortController() : null, timedOut = false, self = this;
     var timer = controller ? global.setTimeout(function () { timedOut = true; controller.abort(); }, timeoutMs || (/\/(run|preview)$/.test(path) ? 90000 : 20000)) : null;
-    if (controller) { this.requests.add(controller); }
+    if (controller) { this.requests.add(controller); } if (owner) { owner.abort = controller ? function () { controller.abort(); } : null; }
     try {
     var response = await global.fetch(this.config.restUrl.replace(/\/$/, '') + '/' + path.replace(/^\//, ''), {
       method: method || (body === undefined ? 'GET' : 'POST'), credentials: 'same-origin', cache: 'no-store',
@@ -545,20 +573,21 @@
     if (!response.ok) { var failure = new Error(result.message || '요청을 처리하지 못했습니다.'), data = result.data || {}; failure.status = response.status; failure.code = result.code; failure.fieldPath = data.fieldPath; failure.requestId = data.requestId; failure.retryAfterSeconds = data.retryAfterSeconds; if (/\/(run|preview)$/.test(path) && Number.isInteger(data.retryAfterSeconds) && data.retryAfterSeconds >= 1 && data.retryAfterSeconds <= 300) { this.setRunCooldown(data.retryAfterSeconds); } throw failure; }
     return result;
     } catch (error) { if (timedOut) { throw new Error('서버 응답 시간이 초과되었습니다. 저장·채점 요청은 처리되었을 수 있으니 현재 내용이나 채점 기록을 확인한 뒤 다시 시도해 주세요.'); } throw error; }
-    finally { if (timer !== null) { global.clearTimeout(timer); } if (controller) { self.requests.delete(controller); } }
+    finally { if (timer !== null) { global.clearTimeout(timer); } if (controller) { self.requests.delete(controller); } if (owner) { owner.abort = null; } }
   };
   App.prototype.action = async function (operation, label) {
     if (this.busy) { this.message('앞선 작업을 마칠 때까지 기다려 주세요.'); return; }
-    this.busy = true; this.root.setAttribute('aria-busy', 'true'); this.content.inert = true;
+    this.busy = true; if (this.liveLab) { this.liveLab.hold(); } this.root.setAttribute('aria-busy', 'true'); this.content.inert = true;
     if (label) { this.message(label); }
-    try { return await operation(); } catch (error) { if (!this.destroyed) { this.showError(error); } }
-    finally { this.busy = false; this.root.removeAttribute('aria-busy'); this.content.inert = false; }
+    try { if (this.liveExecutionFlight) { try { await this.liveExecutionFlight; } catch (ignore) {} } if (this.destroyed) { return; } return await operation(); } catch (error) { if (!this.destroyed) { this.showError(error); } }
+    finally { this.busy = false; this.root.removeAttribute('aria-busy'); this.content.inert = false; if (this.liveLab) { this.liveLab.wake(); } }
   };
   App.prototype.showError = function (error) {
     var path = typeof error.fieldPath === 'string' ? error.fieldPath.replace(/^exercise\./, '') : '', requestId = /^[a-f0-9]{32}$/i.test(error.requestId || '') ? ' · 문의 번호 ' + error.requestId : '', message = String(error.message || '작업을 완료하지 못했습니다.').replace(/^(?:exercise\.)?[A-Za-z][\w.\[\]-]*:\s*/, '');
     this.message((path ? fieldLabel(path) + ': ' : '') + message + (Number.isInteger(error.retryAfterSeconds) && error.retryAfterSeconds > 0 && error.retryAfterSeconds <= 300 ? ' · ' + error.retryAfterSeconds + '초 뒤 다시 실행하세요.' : '') + requestId, true);
     this.clearFieldErrors();
-    if (!path) { return; } if (this.focusedAuthor && this.focusedAuthor.isConnected) { this.showAuthorStep(/^(connections|i2cDevices|scenarios)/.test(path) ? 2 : /^(starterProject|project)/.test(path) ? 3 : /^(status|audience|publicationReview)/.test(path) ? 4 : 1, false); } var self = this, match = /^scenarios\.(\d+)/.exec(path);
+    if (!path) { return; } if (this.focusedAuthor && this.focusedAuthor.isConnected) { this.showAuthorStep(/^(connections|i2cDevices|scenarios|starterProject|project)/.test(path) ? 2 : /^(status|audience|publicationReview)/.test(path) ? 3 : 1, false); if (/^(starterProject|project)/.test(path) && this.startCodeDetails) { this.startCodeDetails.open = true; } } var self = this, match = /^scenarios\.(\d+)/.exec(path);
+    if (match && this.config.compactEditor && this.exercise.scenarios[Number(match[1])]) { this.showCaseGroup(this.exercise.scenarios[Number(match[1])].visible); }
     function locate() { return Array.from(self.content.querySelectorAll('[data-mb-field]')).find(function (node) { return node.getAttribute('data-mb-field') === path; }); }
     if (!locate() && match && this.exercise && this.exercise.scenarios[Number(match[1])]) { var scenario = this.exercise.scenarios[Number(match[1])], advanced = Array.from(this.content.querySelectorAll('[data-mb-advanced]')).find(function (node) { return node.getAttribute('data-mb-advanced') === scenario.id; }); if (advanced) { advanced.open = true; this.fillAdvancedScenario(advanced, scenario); } }
     global.setTimeout(function () {
@@ -589,14 +618,14 @@
     });
   };
   App.prototype.clearTrace = function () { this.traceTimers.forEach(function (timer) { global.clearTimeout(timer); }); this.traceTimers = []; this.previewSequence += 1; };
-  App.prototype.closeEditor = function () { if (this.driver) { this.driver.dispose(); this.driver = null; } if (this.reviewDriver) { this.reviewDriver.dispose(); this.reviewDriver = null; } this.publication = null; this.clearTrace(); };
+  App.prototype.closeEditor = function () { this.workspaceView = null; this.startCodeDetails = null; this.clearLiveExecution(); this.clearExpectedPreview(); if (this.driver) { this.driver.dispose(); this.driver = null; } if (this.reviewDriver) { this.reviewDriver.dispose(); this.reviewDriver = null; } this.publication = null; this.clearTrace(); };
   App.prototype.start = async function () {
     var self = this, initial = global.location ? problemRoute(global.location.href, this.teacher, this.config.initialSection, this.config.initialView) : { view: this.config.initialSection === 'lessons' ? 'lessons' : 'list', exerciseId: 0, beforeId: 0 };
     var redirect = this.nativePageTarget(initial); if (this.needsPageNavigation(redirect)) { this.leaveFor(redirect, true); return; }
     this.renderNavigation(initial);
-    var readiness = this.api('status').then(function (result) { self.runnerReady = result.ready !== undefined ? result.ready : result.runnerReady !== undefined ? result.runnerReady : self.config.runnerReady; self.runnerMessage = result.message || (result.runner && result.runner.message) || ''; }, function () { self.runnerReady = false; self.runnerMessage = '실행 서비스의 연결 상태를 확인하지 못했습니다.'; });
+    this.runnerStatusPending = true; var readiness = this.api('status').then(function (result) { self.runnerReady = result.ready !== undefined ? result.ready : result.runnerReady !== undefined ? result.runnerReady : self.config.runnerReady; self.runnerMessage = result.message || (result.runner && result.runner.message) || ''; }, function () { self.runnerReady = false; self.runnerMessage = '실행 서비스의 연결 상태를 확인하지 못했습니다.'; });
     await this.action(function () { return self.openRoute(initial, 'replace'); }, '마이크로비트 문제를 불러오고 있습니다.');
-    await readiness; if (!this.destroyed && !this.exercise) { this.runnerNotice(); }
+    await readiness; this.runnerStatusPending = false; if (this.liveLab) { this.liveLab.wake(); } if (!this.destroyed && !this.exercise) { this.runnerNotice(); }
   };
   App.prototype.setRoute = function (route, mode) {
     this.route = route; this.root.setAttribute('data-mb-view', route.view); this.renderNavigation(route);
@@ -796,7 +825,7 @@
   };
   App.prototype.backButton = function () { var self = this, section = this.assignment ? 'lessons' : 'problems', menu = global.location && internalUrl(this.config[section === 'lessons' ? 'lessonMenuUrl' : 'problemMenuUrl'], global.location.href); if (this.config.nativeNavigation && menu) { return this.menuLink(section === 'lessons' ? '마이크로비트 수업 목록' : '마이크로비트 문제 목록', menu); } return button(this.assignment ? '수업 목록' : '문제 목록', function () { self.navigate({ view: self.assignment ? self.teacher ? 'lesson' : 'lessons' : 'list', exerciseId: 0, classId: self.assignment && self.assignment.classId, beforeId: 0 }); }); };
   App.prototype.edit = function (exercise) {
-    this.closeEditor(); this.focusedAuthor = null; this.publicationHost = null; this.assignment = null; this.exercise = exerciseModel(exercise); this.project = canonicalProject(exercise.starterProject); this.projectRevision = 0; this.dirty = false; this.generation += 1;
+    this.closeEditor(); this.focusedAuthor = null; this.publicationHost = null; this.caseVisibility = true; this.assignment = null; this.exercise = exerciseModel(exercise); this.project = canonicalProject(exercise.starterProject); this.projectRevision = 0; this.dirty = false; this.generation += 1;
     this.content.replaceChildren(); var self = this, draft = this.exercise, toolbar = el('div', 'ojmicrobit-toolbar'); if (!this.config.shellNavigation) { toolbar.append(this.backButton()); this.content.append(toolbar); }
     var title = el('h2', '', draft.id ? '마이크로비트 문제 편집' : '새 마이크로비트 문제'); this.editTitle = this.config.shellNavigation ? this.root.querySelector('.ojp-page-header h1') : title; if (!this.config.shellNavigation) { this.content.append(title); }
     if (!this.config.compactEditor) { this.content.append(el('p', 'ojmicrobit-workflow', '① 문제 작성 · ② 전체 공개 · ③ 수업에 적용 · ④ 수업 결과 확인')); }
@@ -820,51 +849,50 @@
   };
   App.prototype.setupFocusedAuthor = function (general, editorBox, actions) {
     if (this.editTitle && this.editTitle.isConnected) { this.editTitle.hidden = true; }
-    var surface = el('section', 'ojmicrobit-focus-surface ojmicrobit-author-surface'), header = el('header', 'ojmicrobit-focus-header'), headingRow = el('div', 'ojmicrobit-focus-heading-row'), title = el('h1', '', this.exercise.id ? '문제 편집' : '문제 만들기');
+    var surface = el('section', 'ojmicrobit-focus-surface ojmicrobit-author-surface ojmicrobit-immersive'), header = el('header', 'ojmicrobit-focus-header'), headingRow = el('div', 'ojmicrobit-focus-heading-row'), title = el('h1', '', this.exercise.id ? '문제 편집' : '문제 만들기');
     surface.setAttribute('data-mb-focus-surface', 'author'); this.editTitle = title;
-    header.append(el('p', 'ojmicrobit-focus-breadcrumb', '마이크로비트 문제 / ' + (this.exercise.id ? '문제 편집' : '문제 생성')));
-    var draftBadge = el('span', 'ojmicrobit-focus-chip', this.exercise.status === 'published' ? '공개' : '초안'); draftBadge.setAttribute('data-mb-focus-status', ''); headingRow.append(title, draftBadge); header.append(headingRow);
-    var subtitle = el('p', 'ojmicrobit-focus-subtitle', this.exercise.title); header.append(subtitle); this.content.querySelector('[data-mb-field="title"]').addEventListener('input', function (event) { subtitle.textContent = event.target.value; });
+    header.append(el('p', 'ojmicrobit-focus-breadcrumb', '마이크로비트 · ' + (this.exercise.id ? '문제 편집' : '새 문제')));
+    var draftBadge = el('span', 'ojmicrobit-author-draft', this.exercise.status === 'published' ? '공개' : '작성 중'); draftBadge.setAttribute('data-mb-focus-status', ''); headingRow.append(title, draftBadge); header.append(headingRow);
     var self = this, layout = el('div', 'ojmicrobit-author-layout'), nav = el('nav', 'ojmicrobit-author-nav'), panels = el('div', 'ojmicrobit-author-panels');
     layout.setAttribute('data-mb-focused-author', ''); nav.setAttribute('aria-label', '문제 작성 단계');
-    var names = ['안내 작성', '동작 조건', '코드 준비', '공개 점검'], headings = ['어떤 문제인가요?', '어떻게 동작해야 하나요?', '학생은 어디서 시작하나요?', '학생에게 보여주기 전에'];
+    var names = ['문제 설명', '장치·동작', '공개 설정'];
     var statusField = this.content.querySelector('[data-mb-field="status"]').closest('label'), connections = this.content.querySelector('[data-mb-connections]'), bus = this.content.querySelector('[data-mb-i2c-devices]'), scenarios = this.content.querySelector('[data-mb-scenarios]'), audience = this.content.querySelector('[data-mb-audience]');
     names.forEach(function (name, index) {
-      var tab = button('', function () { self.showAuthorStep(index + 1, true); }), panel = el('details', 'ojmicrobit-compose-section'), title = el('h2', 'ojmicrobit-author-heading', headings[index]);
-      var label = el('span', '', name.split(' ')[0]); label.append(el('span', 'ojmicrobit-author-long', ' ' + name.split(' ').slice(1).join(' '))); tab.append(el('span', 'ojmicrobit-author-index', String(index + 1)), label); tab.setAttribute('aria-label', name); tab.setAttribute('data-mb-author-tab', String(index + 1)); tab.id = 'mb-author-tab-' + (index + 1); panel.id = 'mb-author-panel-' + (index + 1); tab.setAttribute('aria-controls', panel.id); panel.setAttribute('aria-labelledby', tab.id); panel.setAttribute('data-mb-author-panel', String(index + 1));
-      panel.append(el('summary', '', name), title); title.tabIndex = -1;
-      panel.prepend(el('span', 'ojmicrobit-focus-kicker', ['문제 안내', '동작 조건', '시작 코드', '공개 점검'][index]));
-      if (index === 0) { panel.append(general); general.querySelector('[data-mb-field="description"]').rows = 4; var descriptionLabel = general.querySelector('[data-mb-field="description"]').closest('label').querySelector('.ojp-label'); if (descriptionLabel) { descriptionLabel.textContent = '학생에게 보여줄 설명'; } var titleLabel = general.querySelector('[data-mb-field="title"]').closest('label').querySelector('.ojp-label'); if (titleLabel) { titleLabel.textContent = '문제 제목'; } }
+      var tab = button('', function () { self.showAuthorStep(index + 1, true); }), panel = el('section', 'ojmicrobit-compose-section'), title = el('h2', 'ojmicrobit-author-heading ojmicrobit-visually-hidden', name);
+      tab.append(el('span', 'ojmicrobit-author-index', String(index + 1)), el('span', '', name)); tab.setAttribute('aria-label', name); tab.setAttribute('data-mb-author-tab', String(index + 1)); tab.id = 'mb-author-tab-' + (index + 1); panel.id = 'mb-author-panel-' + (index + 1); tab.setAttribute('aria-controls', panel.id); panel.setAttribute('aria-labelledby', tab.id); panel.setAttribute('data-mb-author-panel', String(index + 1));
+      panel.append(title); title.tabIndex = -1;
+      if (index === 0) { panel.append(general); general.querySelector('[data-mb-field="description"]').rows = 4; var descriptionLabel = general.querySelector('[data-mb-field="description"]').closest('label').querySelector('.ojp-label'); if (descriptionLabel) { descriptionLabel.textContent = '학생이 만들 동작'; } var titleLabel = general.querySelector('[data-mb-field="title"]').closest('label').querySelector('.ojp-label'); if (titleLabel) { titleLabel.textContent = '문제 제목'; } }
       if (index === 1) {
-        panel.append(el('p', 'ojmicrobit-muted', '한 상황에 입력과 기대 동작을 함께 정해요.'), scenarios);
+        panel.append(scenarios);
         var devices = el('details', 'ojmicrobit-focus-devices'); devices.append(el('summary', '', '연결한 장치·I²C 설정 (필요할 때)'), connections, bus); panel.append(devices);
+        var code = el('details', 'ojmicrobit-start-code'); code.setAttribute('data-mb-code-section', ''); code.append(el('summary', '', '학생용 시작 코드 준비 · 선택 사항'), editorBox); panel.append(code); self.focusEditorHost = editorBox; self.startCodeDetails = code;
+        code.addEventListener('toggle', function () { if (code.open && code.isConnected && !self.driver) { self.mountEditor(editorBox, true); } });
       }
-      if (index === 2) { panel.append(editorBox); panel.setAttribute('data-mb-code-section', ''); self.focusEditorHost = editorBox; }
-      if (index === 3) { var publication = el('div', 'ojmicrobit-focus-publication'); publication.append(statusField, audience, el('p', 'ojmicrobit-muted', '초안 저장은 작성 내용을 보관해요. 학생에게 공개하려면 시작 코드와 공개 예시를 점검한 뒤 확인하고 공개하세요.')); panel.append(publication); self.publicationHost = panel; }
-      panel.addEventListener('toggle', function () { if (panel.open && panel.isConnected && !self.switchingAuthorStep) { self.showAuthorStep(index + 1, false); } });
+      if (index === 2) { var publication = el('div', 'ojmicrobit-focus-publication'); publication.append(statusField, audience, el('p', 'ojmicrobit-muted', '공개 문제는 누구나 풀고 채점할 수 있어요. 수업 적용과 수업별 결과는 마이크로비트 수업 메뉴에서 관리해요.')); panel.append(publication); self.publicationHost = panel; }
       nav.append(tab); panels.append(panel);
     });
     layout.append(nav, panels); surface.append(header, layout, actions); this.content.prepend(surface); this.focusedAuthor = layout; this.authorActions = actions; actions.classList.add('ojmicrobit-author-footer'); actions.setAttribute('data-mb-author-actions', '');
-    var remove = actions.querySelector('[data-mb-delete-exercise]'); if (remove) { var maintenance = el('details', 'ojmicrobit-focus-maintenance'); maintenance.append(el('summary', '', '문제 관리'), remove); panels.querySelector('[data-mb-author-panel="4"]').append(maintenance); }
+    var remove = actions.querySelector('[data-mb-delete-exercise]'); if (remove) { var maintenance = el('details', 'ojmicrobit-focus-maintenance'); maintenance.append(el('summary', '', '문제 관리'), remove); panels.querySelector('[data-mb-author-panel="3"]').append(maintenance); }
     var save = actions.querySelector('button'); save.textContent = this.exercise.status === 'published' ? '변경 저장' : '초안 저장'; save.setAttribute('data-mb-save-exercise', ''); save.setAttribute('data-mb-variant', 'secondary'); save.classList.remove('ojp-button--primary');
     var next = button('', function () {
-      if (self.authorStep < 4) { self.showAuthorStep(self.authorStep + 1, true); return; }
+      if (self.authorStep < 3) { self.showAuthorStep(self.authorStep + 1, true); return; }
       self.action(async function () {
         self.exercise.status = 'published'; self.dirty = true; var control = self.content.querySelector('[data-mb-field="status"]'); Array.from(control.options).forEach(function (option) { option.selected = option.value === 'published'; });
         self.openPublicationReview(await self.exercisePayload());
       }, '공개할 내용을 준비하고 있습니다.');
     }, true); next.setAttribute('data-mb-author-next', ''); actions.append(next);
-    var footerCopy = el('div', 'ojmicrobit-author-footer-copy'), note = el('span', 'ojmicrobit-author-progress'), feedback = el('span', 'ojmicrobit-author-status'); note.setAttribute('data-mb-author-progress', ''); feedback.setAttribute('data-mb-author-status', ''); feedback.setAttribute('role', 'status'); footerCopy.append(note, feedback); actions.prepend(footerCopy);
+    var previous = button('이전', function () { self.showAuthorStep(self.authorStep - 1, true); }); previous.setAttribute('data-mb-author-previous', ''); actions.prepend(previous);
+    var footerCopy = el('div', 'ojmicrobit-author-footer-copy'), note = el('span', 'ojmicrobit-author-progress'), feedback = el('span', 'ojmicrobit-author-status'); note.setAttribute('data-mb-author-progress', ''); feedback.setAttribute('data-mb-author-status', ''); feedback.setAttribute('role', 'status'); footerCopy.append(note, feedback); previous.after(footerCopy);
     this.showAuthorStep(1, false);
   };
   App.prototype.showAuthorStep = function (step, focus) {
-    if (!this.focusedAuthor || !this.focusedAuthor.isConnected || ![1, 2, 3, 4].includes(step)) { return; }
+    if (!this.focusedAuthor || !this.focusedAuthor.isConnected || ![1, 2, 3].includes(step)) { return; }
     this.switchingAuthorStep = true; this.authorStep = step;
-    this.focusedAuthor.querySelectorAll('[data-mb-author-panel]').forEach(function (panel) { var selected = Number(panel.getAttribute('data-mb-author-panel')) === step; panel.hidden = !selected; panel.open = selected; });
+    this.focusedAuthor.querySelectorAll('[data-mb-author-panel]').forEach(function (panel) { panel.hidden = Number(panel.getAttribute('data-mb-author-panel')) !== step; });
     this.focusedAuthor.querySelectorAll('[data-mb-author-tab]').forEach(function (tab) { if (Number(tab.getAttribute('data-mb-author-tab')) === step) { tab.setAttribute('aria-current', 'step'); } else { tab.removeAttribute('aria-current'); } });
-    var names = ['안내 작성', '동작 조건', '코드 준비', '공개 점검'], next = this.authorActions.querySelector('[data-mb-author-next]'); next.textContent = step === 4 ? '공개 전 점검 →' : '다음: ' + (step === 2 ? '시작 코드' : names[step]) + ' →';
-    this.authorActions.querySelector('[data-mb-author-progress]').textContent = '현재 작성 · ' + names[step - 1];
-    if (step === 3 && !this.driver) { this.mountEditor(this.focusEditorHost, true); }
+    var names = ['문제 설명', '장치·동작', '공개 설정'], next = this.authorActions.querySelector('[data-mb-author-next]'); next.textContent = step === 3 ? '공개 전 점검 →' : '다음: ' + names[step] + ' →';
+    this.authorActions.querySelector('[data-mb-author-progress]').textContent = '초안 저장으로 작성 내용을 보관하세요.';
+    this.authorActions.querySelector('[data-mb-author-previous]').disabled = step === 1;
     this.switchingAuthorStep = false;
     if (focus) { this.focusedAuthor.querySelector('[data-mb-author-panel="' + step + '"] .ojmicrobit-author-heading').focus(); }
   };
@@ -903,7 +931,7 @@
   };
   App.prototype.openPublicationReview = function (candidate) {
     if (this.reviewDriver) { this.reviewDriver.dispose(); this.reviewDriver = null; }
-    if (this.focusedAuthor && this.focusedAuthor.isConnected) { this.showAuthorStep(4, false); }
+    if (this.focusedAuthor && this.focusedAuthor.isConnected) { this.showAuthorStep(3, false); }
     this.publication = { candidate: candidate, starterMode: '', response: null }; this.renderPublicationReview(); this.message('시작 코드와 배포 대상을 선택하고 공개 전 점검을 진행하세요.');
   };
   App.prototype.renderPublicationReview = function () {
@@ -1097,6 +1125,7 @@
   App.prototype.openStageBatchWizard = function (scenario, options) {
     if (this.busy || this.stageWizard) { return; } options = options || {};
     var self = this, exercise = this.exercise, working = scenario || emptyScenario(exercise.scenarios.length + 1), groups = flowGroups(working), editing = options.atMs !== undefined, at = editing ? options.atMs : groups.length ? working.durationMs : 0;
+    if (!scenario && options.visible === false) { working.visible = false; working.name = '비공개 채점 ' + (exercise.scenarios.filter(function (item) { return !item.visible; }).length + 1); }
     var original = JSON.stringify({ connections: exercise.connections, scenarios: exercise.scenarios }), channels;
     try { channels = editing ? stageBatchChannels(working, exercise.connections, at) : []; } catch (error) { this.message(error.message, true); return; }
     exercise.connections.forEach(function (connection) { if (!channels.some(function (item) { return item.pin === connection.pin; })) { channels.push({ pin: connection.pin, selected: false, added: false, connection: clone(connection), value: 0, steps: [{ expected: connection.signal === 'servo' ? 90 : connection.signal === 'servo_pulse' ? 1000 : 0, holdMs: 200, withinMs: 100, tolerance: 0 }] }); } });
@@ -1130,6 +1159,7 @@
       dialog.replaceChildren(); var head = el('div', 'ojmicrobit-wizard-header'), title = el('h2', '', ['1. 단계 만들기', '2. 사용할 핀 여러 개 선택', '3. 핀별 입력값과 출력값', '4. 간격과 유지시간'][state.page]); title.id = 'mb-batch-wizard-title'; title.tabIndex = -1; dialog.setAttribute('aria-labelledby', title.id);
       head.append(el('span', 'ojmicrobit-muted', (state.page + 1) + ' / 4'), button('작성 취소', close)); dialog.append(head, title); var body = el('div', 'ojmicrobit-wizard-body');
       if (state.page === 0) {
+        if (!scenario) { body.append(field('검사 이름', input(working.name, 'text', function (value) { working.name = value; state.touched = true; }))); var caseKind = select(working.visible ? 'public' : 'hidden', [['public', '공개 예시 · 학생 설명과 채점'], ['hidden', '비공개 채점 · 학생에게 숨김']], function (value) { working.visible = value === 'public'; state.touched = true; }); caseKind.setAttribute('aria-label', '검사 종류'); body.append(field('검사 종류', caseKind)); } else { body.append(el('p', 'ojmicrobit-wizard-relation', working.visible ? '공개 예시 · 학생에게 보여주는 조건' : '비공개 채점 · 학생에게 숨기는 조건')); }
         body.append(el('p', 'ojmicrobit-wizard-relation', editing ? '이 단계의 여러 입력·출력을 함께 수정해요.' : '여러 핀의 입력·출력을 한 단계에 함께 만들어요.'), el('p', '', at ? '기준 시점: 예시 시작 후 ' + at / 1000 + '초' : '기준 시점: 프로그램을 시작할 때'), el('p', 'ojmicrobit-muted', '핀 여러 개 선택 → 각 핀의 값 → 시간 → 한 번에 적용 순서예요. 핀마다 도우미를 다시 열지 않아도 돼요.'));
         if (group && (group.i2cInputs.length || group.i2cAssertions.length)) { body.append(el('p', 'ojmicrobit-muted', '이 단계의 I²C 거래는 보존해요. 버스 값은 세부 채점 설정에서 수정하세요.')); }
       } else if (state.page === 1) {
@@ -1183,7 +1213,7 @@
           if (state.page < 3) { state.page++; state.touched = true; render(); return; }
           validateValues(); if (self.exercise !== exercise || original !== JSON.stringify({ connections: exercise.connections, scenarios: exercise.scenarios })) { throw new Error('작성 중 원본이 바뀌었어요. 창을 닫고 다시 열어 주세요.'); }
           var applied = applyStageBatch(working, exercise.connections, { mode: editing ? 'edit' : 'new', atMs: at, intervalMs: state.intervalMs, channels: selected().map(function (item) { return { pin: item.pin, newConnection: item.added ? item.connection : null, value: item.value, steps: item.steps }; }) }, Boolean(exercise.i2cDevices.length));
-          self.commitStageBatch(scenario, applied); self.renderConnections(); self.renderScenarios(); close(); self.message('선택한 핀을 한 번에 적용했어요. 같은 시점의 핀과 이어지는 동작을 확인하세요.');
+          self.commitStageBatch(scenario, applied); self.caseVisibility = applied.scenario.visible; self.renderConnections(); self.renderScenarios(); close(); self.message('선택한 핀을 한 번에 적용했어요. 같은 시점의 핀과 이어지는 동작을 확인하세요.');
         } catch (error) { fail(error.message); }
       }, true)); dialog.append(foot); title.focus();
     }
@@ -1384,9 +1414,16 @@
     if (previous) { previous.querySelectorAll('details[data-mb-advanced]').forEach(function (node) { if (node.open) { openAdvanced.add(node.getAttribute('data-mb-advanced')); } }); previous.querySelectorAll('details[data-mb-time]').forEach(function (node) { if (node.open) { openTimes.add(node.getAttribute('data-mb-time')); } }); previous.querySelectorAll('details[data-mb-sequence-details]').forEach(function (node) { if (node.open) { self.sequenceDetails.add(node.getAttribute('data-mb-sequence-details')); } }); }
     var management = el('details', 'ojmicrobit-focus-management'); management.append(el('summary', '', '예시 관리 · 이름·공개·복제·삭제'));
     var box = section('입력과 기대 동작', '단계를 만들고 → 핀을 고르고 → 값을 정하고 → 시간을 설정하세요. 병렬은 같은 시점의 핀, 직렬은 한 핀에서 이어지는 값이에요.'); box.setAttribute('data-mb-scenarios', ''); markField(box, 'scenarios'); box.tabIndex = -1;
+    var publicGroup, hiddenGroup; if (this.config.compactEditor) {
+      var tabs = el('div', 'ojmicrobit-condition-tabs'); tabs.setAttribute('role', 'group'); tabs.setAttribute('aria-label', '조건 공개 범위');
+      [['public', '공개 예시', true], ['hidden', '비공개 채점', false]].forEach(function (entry) { var tab = button(entry[1] + ' ' + self.exercise.scenarios.filter(function (item) { return item.visible === entry[2]; }).length, function () { self.showCaseGroup(entry[2]); }); tab.setAttribute('data-mb-case-tab', entry[0]); tabs.append(tab); }); box.append(tabs);
+      publicGroup = el('section', 'ojmicrobit-case-group'); publicGroup.setAttribute('data-mb-case-group', 'public'); hiddenGroup = el('section', 'ojmicrobit-case-group'); hiddenGroup.setAttribute('data-mb-case-group', 'hidden');
+      publicGroup.append(el('p', 'ojmicrobit-muted', '학생에게 보여줄 예시예요. 제출 시 채점에도 사용해요.')); hiddenGroup.append(el('p', 'ojmicrobit-muted', '학생에게 숨기고 서버에서만 검사해요.'));
+      var addPublic = button('+ 공개 예시 추가', function () { self.openStageBatchWizard(null, { visible: true }); }), addHidden = button('+ 비공개 채점 조건 추가', function () { self.openStageBatchWizard(null, { visible: false }); }, true); addPublic.setAttribute('data-mb-add-public', ''); addHidden.setAttribute('data-mb-add-hidden', ''); addPublic.disabled = addHidden.disabled = this.exercise.scenarios.length >= 20; publicGroup.append(addPublic); hiddenGroup.append(addHidden); box.append(publicGroup, hiddenGroup);
+    }
     this.exercise.scenarios.forEach(function (scenario, index) {
-      var card = el('section', 'ojmicrobit-example'), heading = el('div', 'ojmicrobit-example-heading'); heading.append(el('h3', '', '예시 ' + (index + 1)), el('span', 'ojp-status-badge ojp-status-badge--info', '처음부터 실행')); card.append(heading); if (self.config.compactEditor) { heading.hidden = true; }
-      var options = el('details', 'ojmicrobit-example-options'); options.append(el('summary', '', '예시 이름·공개 설정')); var fields = el('div', 'ojmicrobit-fields'); fields.append(field('예시 이름', markField(input(scenario.name, 'text', function (value) { scenario.name = value; self.dirty = true; }), 'scenarios.' + index + '.name')), field('학생에게 이 예시 공개', markField(checkInput(scenario.visible, function (value) { scenario.visible = value; self.dirty = true; }), 'scenarios.' + index + '.visible'))); options.append(fields); card.append(options);
+      var card = el('section', 'ojmicrobit-example'), heading = el('div', 'ojmicrobit-example-heading'); heading.append(el('h3', '', '예시 ' + (index + 1)), el('span', 'ojp-status-badge ojp-status-badge--info', '처음부터 실행')); card.append(heading); if (self.config.compactEditor) { heading.replaceChildren(el('h3', '', scenario.name), el('span', 'ojmicrobit-focus-chip', scenario.visible ? '학생에게 공개' : '학생에게 비공개')); var toggleVisibility = button(scenario.visible ? '비공개 채점으로 전환' : '공개 예시로 전환', function () { scenario.visible = !scenario.visible; self.caseVisibility = scenario.visible; self.dirty = true; self.renderScenarios(); }); toggleVisibility.setAttribute('data-mb-case-visibility', scenario.id); heading.append(toggleVisibility); card.setAttribute('data-mb-case-id', scenario.id); }
+      var options = el('details', 'ojmicrobit-example-options'); options.append(el('summary', '', '예시 이름·공개 설정')); var fields = el('div', 'ojmicrobit-fields'); fields.append(field('예시 이름', markField(input(scenario.name, 'text', function (value) { scenario.name = value; self.dirty = true; }), 'scenarios.' + index + '.name')), field('학생에게 이 예시 공개', markField(checkInput(scenario.visible, function (value) { scenario.visible = value; self.caseVisibility = scenario.visible; self.dirty = true; if (self.config.compactEditor) { self.renderScenarios(); } }), 'scenarios.' + index + '.visible'))); options.append(fields); card.append(options);
       var projection = projectScenarioSteps(scenario);
       if (self.config.compactEditor) { self.appendStageFlow(card, scenario); }
       else if (projection.simple) { projection.steps.forEach(function (step, stepIndex) { card.append(self.stepCard(scenario, step, stepIndex, projection.steps.length, openTimes)); });
@@ -1394,10 +1431,16 @@
       } else { self.appendScenarioStory(card, scenario); card.append(el('p', 'ojmicrobit-muted', '세밀한 조건이 있는 예시예요. 수정하려면 아래 세부 설정을 여세요.')); }
       var advanced = el('details', 'ojmicrobit-advanced'); advanced.setAttribute('data-mb-advanced', scenario.id); advanced.open = openAdvanced.has(scenario.id); advanced.append(el('summary', '', self.config.compactEditor ? '시간·허용 오차 자세히' : '세부 채점 설정 (선택)')); if (advanced.open) { self.fillAdvancedScenario(advanced, scenario); }
       advanced.addEventListener('toggle', function () { if (!advanced.isConnected) { return; } if (advanced.open) { self.closedAdvanced.delete(scenario.id); self.fillAdvancedScenario(advanced, scenario); } else { self.closedAdvanced.add(scenario.id); self.renderScenarios(); var replacement = Array.from(self.content.querySelectorAll('[data-mb-advanced]')).find(function (node) { return node.getAttribute('data-mb-advanced') === scenario.id; }); if (replacement) { replacement.querySelector('summary').focus(); } } }); var stage = self.config.compactEditor && card.querySelector('[data-mb-flow-stage]'); if (stage) { stage.append(advanced); } else { card.append(advanced); }
-      var actions = el('div', 'ojmicrobit-toolbar'); actions.append(button('예시 복제 · 처음부터 검사', function () { var copied = clone(scenario); copied.id = 'case-' + uid().slice(0, 12); copied.name += ' 복사본'; self.exercise.scenarios.splice(index + 1, 0, copied); self.dirty = true; self.renderScenarios(); }), button('예시 삭제', function () { self.exercise.scenarios.splice(index, 1); self.dirty = true; self.renderScenarios(); })); if (self.config.compactEditor) { options.remove(); if (self.exercise.scenarios.length > 1) { management.append(el('h3', '', '예시 ' + (index + 1))); } management.append(options, actions); } else { card.append(actions); } box.append(card);
+      var actions = el('div', 'ojmicrobit-toolbar'); actions.append(button('예시 복제 · 처음부터 검사', function () { var copied = clone(scenario); copied.id = 'case-' + uid().slice(0, 12); copied.name += ' 복사본'; self.exercise.scenarios.splice(index + 1, 0, copied); self.dirty = true; self.renderScenarios(); }), button('예시 삭제', function () { self.exercise.scenarios.splice(index, 1); self.dirty = true; self.renderScenarios(); })); if (self.config.compactEditor) { options.remove(); var visibility = heading.querySelector('[data-mb-case-visibility]'); if (visibility) { options.append(visibility); } if (self.exercise.scenarios.length > 1) { management.append(el('h3', '', '예시 ' + (index + 1))); } management.append(options, actions); } else { card.append(actions); } if (self.config.compactEditor) { (scenario.visible ? publicGroup : hiddenGroup).append(card); } else { box.append(card); }
     });
-    var addExample = button(this.exercise.scenarios.length ? '+ 별도 예시 만들기 · 처음부터 실행' : '+ 첫 단계 만들기', function () { if (self.config.compactEditor) { self.openStageBatchWizard(null); } else { self.exercise.scenarios.push(newScenario(self.exercise, self.exercise.scenarios.length + 1)); self.dirty = true; self.renderScenarios(); } }, !this.exercise.scenarios.length); addExample.setAttribute('data-mb-stage-new', ''); if (this.config.compactEditor && this.exercise.scenarios.length) { management.append(addExample); var deviceSummary = el('div', 'ojmicrobit-focus-device-summary'); deviceSummary.setAttribute('data-mb-focus-device-summary', ''); deviceSummary.append(el('span', '', '연결한 핀')); this.exercise.connections.forEach(function (item) { deviceSummary.append(el('span', '', 'P' + item.pin + ' ' + item.label)); }); var configure = button('연결 변경', function () { var settings = self.content.querySelector('.ojmicrobit-focus-devices'); if (settings) { settings.open = !settings.open; configure.setAttribute('aria-expanded', String(settings.open)); } }); configure.setAttribute('aria-expanded', 'false'); deviceSummary.append(configure); box.append(deviceSummary, management); } else { addExample.classList.add('ojmicrobit-focus-add'); box.append(addExample); }
+    var addExample = button(this.exercise.scenarios.length ? '+ 별도 예시 만들기 · 처음부터 실행' : '+ 첫 단계 만들기', function () { if (self.config.compactEditor) { self.openStageBatchWizard(null); } else { self.exercise.scenarios.push(newScenario(self.exercise, self.exercise.scenarios.length + 1)); self.dirty = true; self.renderScenarios(); } }, !this.exercise.scenarios.length); addExample.setAttribute('data-mb-stage-new', ''); if (this.config.compactEditor) { var deviceSummary = el('div', 'ojmicrobit-focus-device-summary'); deviceSummary.setAttribute('data-mb-focus-device-summary', ''); deviceSummary.append(el('span', '', '연결할 장치')); this.exercise.connections.forEach(function (item) { var itemLabel = el('span', 'ojmicrobit-connected-device'); itemLabel.append(hardwarePicture(item.device), el('span', '', 'P' + item.pin + ' ' + item.label)); deviceSummary.append(itemLabel); }); var configure = button('연결 변경', function () { var settings = self.content.querySelector('.ojmicrobit-focus-devices'); if (settings) { settings.open = !settings.open; configure.setAttribute('aria-expanded', String(settings.open)); } }); configure.setAttribute('aria-expanded', 'false'); deviceSummary.append(configure); box.prepend(deviceSummary); box.append(management); } else { addExample.classList.add('ojmicrobit-focus-add'); box.append(addExample); }
     if (previous) { previous.replaceWith(box); } else { this.content.append(box); }
+    if (this.config.compactEditor) { this.showCaseGroup(this.caseVisibility !== false); }
+  };
+  App.prototype.showCaseGroup = function (visible) {
+    this.caseVisibility = Boolean(visible); var selected = visible ? 'public' : 'hidden';
+    this.content.querySelectorAll('[data-mb-case-group]').forEach(function (group) { group.hidden = group.getAttribute('data-mb-case-group') !== selected; });
+    this.content.querySelectorAll('[data-mb-case-tab]').forEach(function (tab) { tab.setAttribute('aria-pressed', String(tab.getAttribute('data-mb-case-tab') === selected)); });
   };
   App.prototype.fillAdvancedScenario = function (advanced, scenario) {
     var self = this; while (advanced.children.length > 1) { advanced.lastChild.remove(); }
@@ -1432,8 +1475,8 @@
     var usbStatus = el('span', 'ojmicrobit-muted', global.navigator.usb && global.isSecureContext ? 'USB 연결 전' : '이 브라우저는 HEX 파일 전송을 이용하세요.');
     tools.append(connectButton, uploadButton, usbStatus); parent.append(tools, frameStatus, frame);
     this.driver = new EditorDriver(frame, { project: this.project, editorUrl: this.config.editorUrl,
-      onStatus: function (text, error) { frameStatus.textContent = text; frameStatus.classList.toggle('is-error', error); },
-      onProject: function (project) { var changed = projectSignature(self.project) !== projectSignature(project); self.project = project; if (changed) { self.dirty = true; self.backup(); } },
+      onStatus: function (text, error) { frameStatus.textContent = self.config.compactEditor && !error && self.driver && self.driver.loaded ? 'MakeCode 연결됨' : text; frameStatus.classList.toggle('is-error', error); if (self.liveLab) { self.liveLab.wake(); } },
+      onProject: function (project) { var changed = projectSignature(self.project) !== projectSignature(project); self.project = project; if (changed) { self.dirty = true; self.backup(); self.refreshWorkspaceSaveState(); if (self.liveLab) { self.liveLab.changed('code'); } } else if (self.liveLab) { self.liveLab.wake(); } },
       onHex: function (result) { download(result.hex, result.name + '.hex', 'application/octet-stream'); self.message('MakeCode에서 생성한 HEX 파일을 다운로드했습니다.'); }
     });
     var details = el('details', 'ojmicrobit-import'), summary = el('summary', '', '프로젝트 파일 가져오기·내보내기'); details.append(summary);
@@ -1443,10 +1486,19 @@
       if (self.dirty && !await self.confirm('가져온 프로젝트로 현재 편집 내용을 바꿀까요?')) { file.value = ''; return; }
       self.action(async function () { self.project = canonicalProject(JSON.parse(await chosen.text())); self.dirty = true;
         if (self.driver) { self.driver.dispose(); } frame.remove(); frame = el('iframe', 'ojmicrobit-editor'); parent.insertBefore(frame, details);
-        self.driver = new EditorDriver(frame, { project: self.project, editorUrl: self.config.editorUrl, onProject: function (project) { var changed = projectSignature(self.project) !== projectSignature(project); self.project = project; if (changed) { self.dirty = true; self.backup(); } }, onStatus: function (text) { frameStatus.textContent = text; }, onHex: function (result) { download(result.hex, result.name + '.hex', 'application/octet-stream'); } }); self.backup(); self.message('프로젝트를 가져왔습니다. 저장하면 서버에도 보관합니다.');
+        self.driver = new EditorDriver(frame, { project: self.project, editorUrl: self.config.editorUrl, onProject: function (project) { var changed = projectSignature(self.project) !== projectSignature(project); self.project = project; if (changed) { self.dirty = true; self.backup(); self.refreshWorkspaceSaveState(); if (self.liveLab) { self.liveLab.changed('code'); } } else if (self.liveLab) { self.liveLab.wake(); } }, onStatus: function (text) { frameStatus.textContent = self.config.compactEditor && self.driver && self.driver.loaded ? 'MakeCode 연결됨' : text; if (self.liveLab) { self.liveLab.wake(); } }, onHex: function (result) { download(result.hex, result.name + '.hex', 'application/octet-stream'); } }); if (self.liveLab) { self.liveLab.changed('code'); } self.backup(); self.message('프로젝트를 가져왔습니다. 저장하면 서버에도 보관합니다.');
       });
     });
     details.append(field('저장한 프로젝트 파일', file), button('프로젝트 내보내기', function () { self.action(async function () { var project = await self.captureProject(); download(JSON.stringify(project, null, 2), 'microbit-project.ojmicrobit.json'); }); })); parent.append(details);
+    if (this.config.compactEditor) {
+      tools.classList.add('ojmicrobit-editor-toolbar'); frameStatus.classList.add('ojmicrobit-editor-connection');
+      var modes = el('div', 'ojmicrobit-editor-modes'), modeButtons = Array.from(tools.querySelectorAll('button')).slice(0, 2), more = el('details', 'ojmicrobit-editor-more'), choices = el('div', 'ojmicrobit-editor-menu');
+      modes.setAttribute('role', 'group'); modes.setAttribute('aria-label', '코드 표시 방식');
+      modeButtons.forEach(function (control, index) { control.setAttribute('aria-pressed', String(index === (makeHeader(self.project, '').editor === 'blocksprj' ? 0 : 1))); control.addEventListener('click', function () { modeButtons.forEach(function (other) { other.setAttribute('aria-pressed', String(other === control)); }); }); modes.append(control); });
+      Array.from(tools.childNodes).forEach(function (node) { choices.append(node); }); more.append(el('summary', '', '파일·기기'), choices); tools.append(modes);
+      if (!starter && this.workspaceView) { var toggle = button('실행 결과 열기', function () { self.setWorkspaceResults(self.workspaceView.panel.hidden, true); }); toggle.setAttribute('data-mb-toggle-results', ''); toggle.setAttribute('aria-controls', this.workspaceView.panel.id); tools.append(toggle); this.workspaceView.toggle = toggle; }
+      choices.append(button('프로젝트 가져오기·내보내기', function () { more.open = false; details.open = !details.open; if (details.open) { file.focus(); } })); tools.append(more); if (this.workspaceView && !starter) { this.setWorkspaceResults(!this.workspaceView.panel.hidden); }
+    }
   };
   App.prototype.backupKey = function () { return 'oj_microbit_' + this.config.userId + '_' + (this.exercise && this.exercise.id || 'new') + (this.assignment ? '_assignment_' + this.assignment.id : ''); };
   App.prototype.backup = function () {
@@ -1471,23 +1523,23 @@
     this.content.append(actions); this.results = el('div'); this.content.append(this.results); if (this.config.compactEditor) { this.setupFocusedProblem(info, toolbar, tests, actions); } this.message(this.config.shellNavigation ? '' : '문제 설명과 연결·공개 예시를 확인한 뒤 문제를 풀어 보세요.'); this.runnerNotice();
   };
   App.prototype.setupFocusedProblem = function (info, toolbar, tests, actions) {
-    var wrapper = el('div', 'ojmicrobit-focused-problem ojmicrobit-focus-surface'), body = el('div', 'ojmicrobit-focus-read-body'), header = el('header', 'ojmicrobit-problem-heading ojmicrobit-focus-header'), exercise = this.exercise;
+    var wrapper = el('div', 'ojmicrobit-focused-problem ojmicrobit-focus-surface ojmicrobit-immersive'), body = el('div', 'ojmicrobit-focus-read-body'), header = el('header', 'ojmicrobit-problem-heading ojmicrobit-focus-header'), exercise = this.exercise;
     wrapper.setAttribute('data-mb-focus-surface', 'problem');
     var description = info.querySelector('.ojmicrobit-description'), wiring = info.querySelector('details'), brief = el('section', 'ojmicrobit-problem-brief'), devices = el('section', 'ojmicrobit-problem-devices'), list = el('div', 'ojmicrobit-device-summary');
-    header.append(el('p', 'ojmicrobit-focus-breadcrumb', '마이크로비트 문제 / #' + exercise.id), el('span', 'ojmicrobit-focus-chip is-accent', exercise.status === 'published' ? '공개 문제' : '교사 미리보기'), el('h1', 'ojmicrobit-focus-problem-title', exercise.title));
+    var meta = el('div', 'ojmicrobit-student-header-meta'), heading = el('div', 'ojmicrobit-student-title-row'); meta.append(el('p', 'ojmicrobit-focus-breadcrumb', '마이크로비트 문제 / #' + exercise.id), el('span', 'ojmicrobit-focus-chip is-accent', exercise.status === 'published' ? '공개 문제' : '교사 미리보기')); heading.append(el('h1', 'ojmicrobit-focus-problem-title', exercise.title)); header.append(meta, heading);
     brief.append(el('h2', '', '이번에 만들 동작'), description); devices.append(el('h2', '', '연결할 장치'));
     exercise.connections.forEach(function (connection) { var item = el('span'); item.append(el('strong', '', 'P' + connection.pin), el('span', '', connection.label)); list.append(item); }); devices.append(list);
     (exercise.i2cDevices || []).forEach(function (device) { devices.append(el('p', 'ojmicrobit-muted', 'I²C · ' + device.label + ' · 주소 ' + addressText(device.address))); });
     if (wiring) { devices.append(wiring); }
     info.replaceChildren(brief, devices); info.classList.add('ojmicrobit-problem-overview'); toolbar.classList.add('ojmicrobit-problem-tools');
-    tests.classList.add('ojmicrobit-focused-examples'); var publicTitle = tests.querySelector('[data-mb-public-title]'); publicTitle.textContent = '이렇게 동작하면 돼요'; var publicCount = exercise.scenarios.filter(function (item) { return item.visible; }).length; if (publicCount) { publicTitle.append(el('small', '', publicCount === 1 ? '공개 예시 1' : '공개 예시 ' + publicCount + '개')); } actions.classList.add('ojmicrobit-problem-actions');
+    tests.classList.add('ojmicrobit-focused-examples'); var publicTitle = tests.querySelector('[data-mb-public-title]'); publicTitle.textContent = '기대 동작을 살펴보세요'; var publicCount = exercise.scenarios.filter(function (item) { return item.visible; }).length; if (publicCount) { publicTitle.append(el('small', '', publicCount === 1 ? '공개 예시 1' : '공개 예시 ' + publicCount + '개')); } actions.classList.add('ojmicrobit-problem-actions');
     var note = el('div', 'ojmicrobit-problem-footer-copy'); note.append(el('p', 'ojmicrobit-muted', exercise.sourceUnavailable || this.assignment && this.assignment.workAvailable === false ? '이 문제는 읽기 전용입니다. 허용된 제출 내역을 확인할 수 있어요.' : '실제 보드 없이 풀 수 있어요.'));
     var context = this.content.querySelector('[data-mb-context]'); if (context) { context.classList.add('ojmicrobit-focus-context'); if (this.assignment) { header.append(context); } else { note.append(context); } }
     Array.from(actions.querySelectorAll('button')).forEach(function (control) {
-      if (control.textContent === '문제 풀기') { control.textContent = 'MakeCode로 문제 풀기 →'; control.setAttribute('aria-label', '문제 풀기'); control.setAttribute('data-mb-solve', ''); }
+      if (control.textContent === '문제 풀기') { control.textContent = 'MakeCode로 문제 풀기 →'; control.setAttribute('aria-label', '문제 풀기'); control.setAttribute('data-mb-solve', ''); heading.append(control); }
       if (control.getAttribute('data-mb-variant') !== 'primary') { control.classList.add('ojmicrobit-focus-history-link'); note.append(control); }
     });
-    actions.prepend(note); info.before(wrapper); body.append(info, tests); var technical = tests.querySelector('[data-mb-technical-tests]'); if (technical) { body.append(technical); } wrapper.append(header, body, actions, this.results);
+    actions.prepend(note); info.before(wrapper); body.append(info, tests); wrapper.append(header, body, actions, this.results);
   };
   App.prototype.learn = async function (exercise, preview, assignment) {
     // Fetch and validate before closing the current editor so a permission or
@@ -1503,19 +1555,19 @@
     var recovery;
     try { recovery = JSON.parse(global.sessionStorage.getItem(this.backupKey()) || 'null'); } catch (error) { recovery = null; }
     if (recovery && recovery.project && recovery.exerciseRevision === exercise.revision && JSON.stringify(recovery.project) !== JSON.stringify(this.project)) {
-      var recoveryBox = section('이 브라우저에 저장되지 않은 초안이 있습니다.');
+      var recoveryBox = section('이 브라우저에 저장되지 않은 초안이 있습니다.'); recoveryBox.setAttribute('data-mb-recovery', '');
       recoveryBox.append(button('초안 파일 내려받기', function () { download(JSON.stringify(recovery.project, null, 2), 'microbit-recovery.ojmicrobit.json'); }),
-        button('초안으로 복구', function () { self.project = canonicalProject(recovery.project); self.dirty = true; self.closeEditor(); self.content.querySelector('[data-mb-editor]').replaceChildren(); self.mountEditor(self.content.querySelector('[data-mb-editor]')); recoveryBox.remove(); self.message('브라우저 초안을 복구했습니다. 서버 저장을 눌러 보관하세요.'); })); this.content.append(recoveryBox);
+        button('초안으로 복구', function () { self.project = canonicalProject(recovery.project); self.dirty = true; self.clearLiveExecution(); if (self.driver) { self.driver.dispose(); self.driver = null; } self.content.querySelector('[data-mb-editor]').replaceChildren(); self.mountEditor(self.content.querySelector('[data-mb-editor]')); peripheral.replaceChildren(el('h2', '', '내 코드의 실제 실행 결과'), el('p')); self.mountPeripherals(peripheral); recoveryBox.remove(); self.message('브라우저 초안을 복구했습니다. 서버 저장을 눌러 보관하세요.'); })); this.content.append(recoveryBox);
     }
     var workspace = el('div', 'ojmicrobit-workspace'), editor = section('MakeCode 편집기', '기본 보드 시뮬레이터는 MakeCode 안에서 실행합니다. 외부 센서·액추에이터는 오른쪽 핀 실습 화면에서 확인하세요.'); editor.setAttribute('data-mb-editor', '');
     var peripheral = section('외부 센서·액추에이터', '입력값으로 새 실행을 시작하고, 서버에서 실행한 핀 출력 기록을 시간에 따라 재생합니다.');
-    workspace.append(editor, peripheral); this.content.append(workspace); this.mountEditor(editor); this.mountPeripherals(peripheral);
+    workspace.append(editor, peripheral); this.content.append(workspace);
     var actions = el('div', 'ojmicrobit-toolbar');
     if (!preview) { actions.append(button('임시 저장', function () { self.action(async function () {
       var project = await self.captureProject(), before = JSON.stringify(project), result = await self.api(prefix + '/project', { project: project, revision: self.projectRevision });
       self.projectRevision = result.revision; if (JSON.stringify(self.project) === before) { self.dirty = false; try { global.sessionStorage.removeItem(self.backupKey()); } catch (error) { /* No browser draft. */ } }
       self.message('코드를 임시 저장했습니다. 제출·채점 기록은 만들지 않았습니다.');
-    }, '프로젝트를 저장하고 있습니다.'); })); }
+    }, '프로젝트를 저장하고 있습니다.'); })); actions.lastChild.setAttribute('data-mb-save-project', ''); }
     if (!preview) { actions.append(button('제출하여 채점', function () { self.action(async function () {
       if (!self.runnerReady) { throw new Error('채점 서버 연결 후 사용할 수 있습니다.'); }
       var project = await self.captureProject(), result = await self.api(prefix + '/run', { project: project }); self.renderResult(result);
@@ -1523,26 +1575,110 @@
     }, '프로젝트를 컴파일하고 입력 시나리오에 따라 채점하고 있습니다.'); }, true));
     actions.lastChild.setAttribute('data-mb-run-action', '');
     actions.append(button('내 제출 내역', function () { self.navigate(self.scopedRoute('history')); })); }
-    this.content.append(actions, el('p', 'ojmicrobit-muted', preview ? '미리보기에서는 센서 실험·HEX 다운로드를 사용할 수 있습니다. 제출하여 채점은 학생 화면에서 진행합니다.' : '임시 저장은 작성 중인 코드만 보관합니다. 제출하여 채점을 누르면 제출 내역이 남습니다.')); this.results = el('div'); this.content.append(this.results); this.renderPublicTests(); this.message('코드를 작성하고 센서로 실험한 뒤 제출하여 채점하세요.');
+    var actionHint = el('p', 'ojmicrobit-muted', preview ? '미리보기에서는 센서 실험·HEX 다운로드를 사용할 수 있습니다. 제출하여 채점은 학생 화면에서 진행합니다.' : '임시 저장은 작성 중인 코드만 보관합니다. 제출하여 채점을 누르면 제출 내역이 남습니다.'); this.content.append(actions, actionHint); this.results = el('div'); this.content.append(this.results); this.renderPublicTests();
+    if (this.config.compactEditor) { this.setupImmersiveWorkspace(info, toolbar, workspace, editor, peripheral, actions, actionHint); }
+    this.mountEditor(editor); this.mountPeripherals(peripheral); this.message('코드를 작성하고 실행 결과를 열어 센서로 실험해 보세요.');
     if (this.runRetryUntil > Date.now()) { this.setRunCooldown(Math.ceil((this.runRetryUntil - Date.now()) / 1000)); }
   };
+  App.prototype.refreshWorkspaceSaveState = function () {
+    var state = this.content.querySelector('[data-mb-workspace-saved]'); if (state) { state.textContent = this.previewTeacher ? '교사 미리보기' : this.dirty ? '저장 필요' : '저장됨'; }
+  };
+  App.prototype.setWorkspaceResults = function (open, focus) {
+    var view = this.workspaceView; if (!view || !view.surface.isConnected) { return; }
+    // Visibility only: never move an iframe, capture/reimport code, or touch the live session.
+    view.panel.hidden = !open; view.surface.classList.toggle('is-results-open', Boolean(open));
+    if (view.toggle) { view.toggle.textContent = open ? '실행 결과 닫기' : '실행 결과 열기'; view.toggle.setAttribute('aria-expanded', String(Boolean(open))); }
+    if (focus) { (open ? view.close : view.toggle).focus(); }
+  };
+  App.prototype.setWorkspaceProblem = function (open, focus) {
+    var view = this.workspaceView; if (!view || !view.surface.isConnected) { return; }
+    view.problem.hidden = !open; view.surface.classList.toggle('is-problem-open', Boolean(open)); view.question.setAttribute('aria-expanded', String(Boolean(open)));
+    if (focus) { (open ? view.problemClose : view.question).focus(); }
+  };
+  App.prototype.setupImmersiveWorkspace = function (info, toolbar, workspace, editor, peripheral, actions, actionHint) {
+    var self = this, surface = el('section', 'ojmicrobit-focus-surface ojmicrobit-immersive ojmicrobit-immersive-solve'), header = el('header', 'ojmicrobit-immersive-heading'), title = el('div'), headingActions = el('div', 'ojmicrobit-immersive-heading-actions'), saved = el('span', 'ojmicrobit-workspace-saved'), summary = el('div', 'ojmicrobit-immersive-summary');
+    surface.setAttribute('data-mb-focus-surface', 'workspace');
+    title.append(el('p', 'ojmicrobit-focus-breadcrumb', this.previewTeacher ? '마이크로비트 · 교사 미리보기' : this.assignment ? '수업 · ' + (this.assignment.classTitle || '수업 #' + this.assignment.classId) : '마이크로비트 · 공개 문제'), el('h1', '', this.exercise.title));
+    saved.setAttribute('data-mb-workspace-saved', ''); saved.setAttribute('role', 'status'); headingActions.append(saved);
+    var save = actions.querySelector('[data-mb-save-project]'), grade = actions.querySelector('[data-mb-run-action]');
+    if (save) { save.textContent = '임시 저장'; headingActions.append(save); } if (grade) { grade.textContent = '채점하기'; headingActions.append(grade); }
+    header.append(title, headingActions);
+    var question = button('문제 보기', function () { self.setWorkspaceProblem(self.workspaceView.problem.hidden, true); }); question.setAttribute('data-mb-workspace-question', '');
+    summary.append(el('span', '', this.exercise.description.split(/\r?\n/)[0] || '문제 설명을 읽고 코드를 만들어 보세요.'), question);
+    var problem = el('section', 'ojmicrobit-workspace-problem'), problemHeading = el('div', 'ojmicrobit-workspace-panel-heading'), problemTitle = el('h2', '', '문제 설명'), problemClose = button('닫기', function () { self.setWorkspaceProblem(false, true); });
+    problem.id = 'mb-workspace-problem-' + uid(); problem.hidden = true; problem.setAttribute('aria-label', '문제 설명'); question.setAttribute('aria-controls', problem.id); question.setAttribute('aria-expanded', 'false'); problemClose.setAttribute('aria-label', '문제 설명 닫기'); problemHeading.append(problemTitle, problemClose); problem.append(problemHeading, info); info.querySelector('h2').textContent = '이번에 만들 동작';
+    var devices = el('div', 'ojmicrobit-workspace-wiring'); this.exercise.connections.forEach(function (connection) { var item = el('span'); item.append(hardwarePicture(connection.device), el('span', '', 'P' + connection.pin + ' ' + connection.label)); devices.append(item); }); problem.append(devices);
+    var tests = this.content.querySelector('[data-mb-public-tests]'); if (tests) { problem.append(tests); }
+    var panel = el('aside', 'ojmicrobit-workspace-results'), panelHeading = el('div', 'ojmicrobit-workspace-panel-heading'), labels = el('div'), close = button('닫기', function () { self.setWorkspaceResults(false, true); }); panel.id = 'mb-workspace-results-' + uid(); panel.hidden = true; panel.setAttribute('aria-label', '실행 결과'); labels.append(el('h2', '', '실행 결과'), el('p', 'ojmicrobit-muted', '내 코드가 만든 반응')); close.setAttribute('aria-label', '실행 결과 닫기'); close.setAttribute('data-mb-close-results', ''); panelHeading.append(labels, close);
+    var tabs = el('div', 'ojmicrobit-workspace-result-tabs'), expected = el('section', 'ojmicrobit-workspace-expected'), expectedReady = false; expected.hidden = true; tabs.setAttribute('role', 'group'); tabs.setAttribute('aria-label', '결과 구분'); expected.setAttribute('data-mb-workspace-expected', '');
+    function chooseExpected(value) { peripheral.hidden = value; expected.hidden = !value; actual.setAttribute('aria-pressed', String(!value)); target.setAttribute('aria-pressed', String(value)); labels.querySelector('p').textContent = value ? '공개 예시의 목표 동작' : '내 코드가 만든 반응'; if (value && !expectedReady) { expectedReady = true; expected.append(el('p', 'ojmicrobit-expected-source', '기대 동작 미리보기 · 작성한 코드의 실행 결과와 별개입니다.')); self.renderStudentExamples(expected); } }
+    var actual = button('내 코드 실행', function () { chooseExpected(false); }), target = button('기대 동작', function () { chooseExpected(true); }); actual.setAttribute('aria-pressed', 'true'); target.setAttribute('aria-pressed', 'false'); actual.setAttribute('data-mb-result-actual', ''); target.setAttribute('data-mb-result-expected', ''); tabs.append(actual, target); panel.append(panelHeading, tabs, peripheral, expected);
+    editor.classList.add('ojmicrobit-immersive-editor'); workspace.classList.add('ojmicrobit-immersive-workspace'); workspace.replaceChildren(editor, panel);
+    var footer = el('footer', 'ojmicrobit-workspace-footer'), feedback = el('span', 'ojmicrobit-muted'), links = el('div'); feedback.setAttribute('data-mb-workspace-status', ''); feedback.setAttribute('role', 'status');
+    if (toolbar.firstChild) { var back = toolbar.firstChild; back.textContent = this.assignment ? '수업 목록' : '문제 목록'; links.append(back); } while (actions.firstChild) { var history = actions.firstChild; history.textContent = '제출 기록'; links.append(history); } footer.append(feedback, links);
+    surface.append(header, summary); var recovery = this.content.querySelector('[data-mb-recovery]'); if (recovery) { surface.append(recovery); } surface.append(problem, workspace, footer); this.content.prepend(surface); toolbar.remove(); actions.remove(); actionHint.remove();
+    var context = this.content.querySelector('[data-mb-context]'); if (context) { context.classList.add('ojmicrobit-workspace-context'); footer.prepend(context); } var previewNote = this.content.querySelector('.ojp-notice'); if (this.previewTeacher && previewNote && !previewNote.hasAttribute('data-mb-context')) { previewNote.remove(); }
+    this.workspaceView = { surface: surface, panel: panel, close: close, editor: editor, problem: problem, problemClose: problemClose, question: question, toggle: null };
+    surface.addEventListener('keydown', function (event) { if (event.key === 'Escape') { if (!problem.hidden) { self.setWorkspaceProblem(false, true); } else if (!panel.hidden) { self.setWorkspaceResults(false, true); } } });
+  };
+  App.prototype.clearLiveExecution = function () { if (this.liveLab) { this.liveLab.dispose(); this.liveLab = null; } };
+  App.prototype.mountLiveExecution = function (parent) {
+    var self=this,root=parent,session=null,revision=0,pending=true,automatic=true,disposed=false,timer=null,paused=false,wantPause=false,actionPaused=false,transport={abort:null};
+    root.classList.add('ojmicrobit-live-lab');root.setAttribute('data-mb-live-lab','');root.setAttribute('data-result-source','student-code');
+    var title=root.querySelector('h2');if(title)title.textContent='내 코드의 실제 실행 결과';var intro=root.querySelector('p');if(intro)intro.textContent='코드를 계속 실행하며 센서 입력만 바꿔요. 변수·타이머·I²C 상태가 유지되고, 코드 변경이나 처음부터 다시 시작 때만 초기화해요.';
+    var tools=el('div','ojmicrobit-toolbar ojmicrobit-live-tools'),enabled=checkInput(true,function(value){automatic=value;if(!value){pending=false;cancel();}else if(!session){restart(false);}});enabled.setAttribute('data-mb-live-auto','');
+    var run=button('실행 시작 / 계속',function(){if(session){paused=false;wantPause=false;actionPaused=false;session.resume();root.classList.remove('is-paused');status.textContent='이전 실행 상태에서 계속 실행해요.';}else{restart(true);}},true),pause=button('일시정지',function(){pauseSession('변수·타이머를 보존하고 일시정지했어요. 실행 시작 / 계속으로 이어갈 수 있어요.');}),reset=button('처음부터 다시 시작',function(){restart(true);});
+    run.setAttribute('data-mb-live-run','');run.setAttribute('data-mb-run-action','');pause.setAttribute('data-mb-live-stop','');reset.setAttribute('data-mb-live-reset','');tools.append(field('코드 변경 시 자동 시작',enabled),run,pause,reset);if(intro)intro.after(tools);else root.prepend(tools);
+    if(self.config.compactEditor){var options=el('details','ojmicrobit-live-options');options.append(el('summary','','실행 설정'),tools.querySelector('label'));tools.append(options);run.textContent='실행 / 계속';reset.textContent='처음부터';if(intro){var help=el('details','ojmicrobit-live-help');help.append(el('summary','','실행 방식 안내'),intro);root.append(help);}}
+    var status=el('p','ojmicrobit-live-status','MakeCode 연결 후 상태 유지 실행을 시작해요.'),errors=el('ul','ojmicrobit-diagnostics');status.setAttribute('role','status');status.setAttribute('data-mb-live-status','');errors.setAttribute('data-mb-live-errors','');root.append(status,errors);
+    function cancel(){if(timer!==null){global.clearTimeout(timer);timer=null;}}
+    function clearOutputs(){self.clearTrace();root.classList.add('is-paused');root.removeAttribute('data-code-signature');if(self.traceTable)self.traceTable.replaceChildren();if(self.i2cTraceTable)self.i2cTraceTable.replaceChildren();self.actuators.forEach(function(d){d.output.textContent='출력 대기';d.meter.value=0;d.indicator.classList.remove('is-active');if(d.card){d.card.classList.remove('is-on');d.card.setAttribute('data-state','unknown');d.card.removeAttribute('data-value');}});self.i2cDisplays.forEach(function(d){d.pointer=0;d.outputs.forEach(function(out){out.textContent='대기';});});}
+    function snapshot(){var inputs=self.exercise.connections.filter(function(c){return c.direction==='input';}).map(function(c){var n=self.inputValues[c.pin],max=c.signal==='digital'?1:1023;if(!Number.isInteger(n)||n<0||n>max)throw Error('P'+c.pin+' 입력값은 0~'+max+' 정수예요.');return{atMs:0,pin:c.pin,signal:c.signal,value:n};});var i2cInputs=[];(self.exercise.i2cDevices||[]).forEach(function(d){d.registers.forEach(function(r){var n=self.i2cValues.get(d.address+':'+r.register);if(!Number.isInteger(n)||n<0||n>255)throw Error('I²C 입력값은 0~255 정수예요.');i2cInputs.push({atMs:0,address:d.address,register:r.register,value:n});});});return{inputs:inputs,i2cInputs:i2cInputs};}
+    function pauseSession(text){cancel();wantPause=true;if(session)session.pause();paused=true;actionPaused=false;root.classList.add('is-paused');status.textContent=text;}
+    function fail(error){if(disposed)return;if(session){session.dispose();session=null;}pending=false;paused=true;automatic=false;enabled.checked=false;clearOutputs();status.textContent=String(error.message||error)+' 자동 재시도는 하지 않습니다. 실행 시작 / 계속으로 다시 시도하세요.';}
+    function restart(force){if(disposed)return;revision++;cancel();if(session){session.dispose();session=null;}paused=false;wantPause=Boolean(global.document.hidden);actionPaused=false;pending=automatic||force;clearOutputs();errors.replaceChildren();status.textContent=pending?'새 코드를 컴파일한 뒤 처음부터 실행해요.':'코드가 바뀌었어요. 실행 시작 / 계속을 눌러 주세요.';if(pending)wake(force?0:600);}
+    function changed(reason){if(disposed)return;if(reason==='code'){restart(false);return;}try{var values=snapshot();if(session){session.inputs(values);status.textContent=paused?'일시정지 상태에서 입력만 바꿨어요. 실행을 계속하면 이 값을 읽어요.':'실행 상태를 유지하고 센서 입력만 전달했어요.';}else if(pending){status.textContent='현재 입력으로 연결 후 실행해요.';wake();}else{status.textContent='입력을 준비했어요. 실행 시작 / 계속을 누르세요.';}}catch(error){status.textContent=error.message;}}
+    function wake(delay){if(disposed||self.busy||global.document.hidden)return;if(actionPaused&&session&&!wantPause){actionPaused=false;paused=false;session.resume();root.classList.remove('is-paused');}if(wantPause||!pending||self.liveExecutionFlight||timer!==null||!self.driver||!self.driver.loaded||self.runnerStatusPending)return;if(!self.runnerReady){status.textContent='상태 유지 실행을 시작하려면 최신 마이크로비트 실행기 연결이 필요해요.';return;}var wait=Math.max(delay||0,(self.liveLastStart||0)+1000-Date.now());timer=global.setTimeout(function(){timer=null;compile();},Math.max(0,wait));}
+    async function compile(){
+      if(disposed||self.busy||!pending||self.liveExecutionFlight||global.document.hidden)return;var token=revision,generation=self.generation,projectKey;
+      try{snapshot();}catch(error){pending=false;status.textContent=error.message;return;}
+      if(self.runRetryUntil>Date.now()){fail(Error('서버가 안내한 대기 시간 뒤 실행하세요.'));return;}
+      if(!global.OJMicrobitLive){fail(Error('상태 유지 시뮬레이터 파일을 불러오지 못했어요. 새 ZIP 설치와 캐시를 확인하세요.'));return;}
+      pending=false;self.liveLastStart=Date.now();status.textContent='최신 코드를 컴파일하고 있어요. 센서 변경은 다시 컴파일하지 않아요.';
+      var flight=(async function(){var project=await self.captureProject();if(disposed||token!==revision||generation!==self.generation)return null;projectKey=projectSignature(project);return self.api(self.practicePath(self.exercise.id,self.assignment)+'/compile',{project:project},undefined,undefined,transport);})();self.liveExecutionFlight=flight;
+      try{
+        var result=await flight;if(!result||disposed||token!==revision||generation!==self.generation||projectKey!==projectSignature(self.project))return;
+        if(result.status==='compile_error'){clearOutputs();status.textContent='컴파일 오류예요. 코드를 고치면 새로 실행해요.';(result.diagnostics||[]).slice(0,5).forEach(function(d){errors.append(el('li','',(d.file||'')+(d.line?':'+d.line:'')+' '+d.message));});return;}
+        if(result.status!=='compiled'||result.liveProtocol!=='oj-live/1'||typeof result.js!=='string')throw Error('상태 유지 실행을 지원하는 최신 실행기로 업데이트해 주세요.');
+        var values=snapshot(),created=global.OJMicrobitLive.create(root,{hostUrl:self.config.simulatorHostUrl,onFrame:function(frame){if(!disposed&&session===created){self.appendLiveFrame(frame);}},onState:function(state){if(disposed||session!==created)return;root.setAttribute('data-live-state',state);if(state==='running'&&(wantPause||self.busy||global.document.hidden)){created.pause();paused=true;root.classList.add('is-paused');return;}paused=state==='paused';root.classList.toggle('is-paused',paused);},onError:fail});session=created;
+        await created.start({js:result.js,connections:clone(self.exercise.connections),i2cDevices:clone(self.exercise.i2cDevices||[]),inputs:values.inputs,i2cInputs:values.i2cInputs});
+        if(disposed||token!==revision||session!==created)return;root.classList.remove('is-paused');root.setAttribute('data-code-signature',projectKey);status.textContent=self.config.compactEditor?'실행 중 · 변수와 타이머 유지':'같은 프로그램을 계속 실행 중이에요. 센서 변경은 변수·타이머를 초기화하지 않아요.';
+        if(wantPause||self.busy||global.document.hidden)created.pause();
+      }catch(error){if(!disposed&&token===revision&&generation===self.generation)fail(error);}
+      finally{if(self.liveExecutionFlight===flight)self.liveExecutionFlight=null;if(self.liveLab)self.liveLab.wake();}
+    }
+    function visibility(){if(global.document.hidden){if(session)pauseSession('화면이 숨겨져 실행 상태를 보존하고 일시정지했어요. 돌아오면 실행 시작 / 계속을 누르세요.');else{cancel();paused=true;wantPause=true;}}}
+    global.document.addEventListener('visibilitychange',visibility);
+    var lab={changed:changed,wake:wake,hold:function(){cancel();if(session&&!paused){session.pause();paused=true;actionPaused=true;root.classList.add('is-paused');}},dispose:function(){if(disposed)return;disposed=true;revision++;cancel();if(session)session.dispose();session=null;if(transport.abort)transport.abort();self.clearTrace();global.document.removeEventListener('visibilitychange',visibility);}};this.liveLab=lab;wake(600);return lab;
+  };
   App.prototype.mountPeripherals = function (parent) {
+    this.clearLiveExecution();
     var self = this; this.actuators = new Map(); this.inputValues = {}; this.traceTable = null; this.i2cValues = new Map(); this.i2cDisplays = new Map(); this.i2cTraceTable = null;
     var board = el('div', 'ojmicrobit-pinboard'); parent.append(board);
     this.exercise.connections.forEach(function (connection) {
-      var card = el('div', 'ojmicrobit-device'), title = el('div', 'ojmicrobit-device-title'); title.append(el('strong', '', connection.label), el('span', 'ojp-status-badge ojp-status-badge--neutral', 'P' + connection.pin + ' · ' + connection.signal)); card.append(title);
+      var card = el('div', 'ojmicrobit-device'), title = el('div', 'ojmicrobit-device-title'), pinLabel = el('span', 'ojp-status-badge ojp-status-badge--neutral', 'P' + connection.pin + (self.config.compactEditor ? '' : ' · ' + connection.signal)); pinLabel.setAttribute('aria-label', 'P' + connection.pin + ' · ' + connection.signal); title.append(el('strong', '', connection.label), pinLabel); card.append(title, hardwarePicture(connection.device));
       if (connection.direction === 'input') {
         var control, value = el('output', 'ojmicrobit-device-value', '0'); self.inputValues[connection.pin] = 0;
         if (connection.signal === 'digital') {
-          control = input('', 'checkbox'); control.addEventListener('change', function () { self.inputValues[connection.pin] = control.checked ? 1 : 0; value.textContent = self.inputValues[connection.pin]; self.sensorHint.textContent = '입력이 바뀌었습니다. 센서 값으로 실행을 눌러 출력을 확인하세요.'; });
+          control = input('', 'checkbox'); control.addEventListener('change', function () { self.inputValues[connection.pin] = control.checked ? 1 : 0; value.textContent = self.inputValues[connection.pin]; card.classList.toggle('is-on', self.inputValues[connection.pin] > 0); if (self.liveLab) { self.liveLab.changed(false); } });
         } else {
-          control = input(0, 'range'); control.min = '0'; control.max = '1023'; control.step = '1'; control.addEventListener('input', function () { self.inputValues[connection.pin] = Number(control.value); value.textContent = control.value; self.sensorHint.textContent = '입력이 바뀌었습니다. 센서 값으로 실행을 눌러 출력을 확인하세요.'; });
+          control = input(0, 'range'); control.min = '0'; control.max = '1023'; control.step = '1'; control.addEventListener('input', function () { self.inputValues[connection.pin] = Number(control.value); value.textContent = control.value; self.sensorHint.textContent = '입력이 바뀌었습니다. 새 실행 결과를 기다려 주세요.'; if (self.liveLab) { self.liveLab.changed(false); } });
         }
-        control.setAttribute('aria-label', connection.label + ' P' + connection.pin + ' 입력'); card.append(field(connection.signal === 'digital' ? '입력 켜기' : '센서 값', control), value);
+        control.setAttribute('aria-label', connection.label + ' P' + connection.pin + ' 입력'); card.setAttribute('data-mb-live-input', String(connection.pin)); var exact = input(0, 'number'); exact.min = 0; exact.max = connection.signal === 'digital' ? 1 : 1023; exact.step = 1; exact.setAttribute('aria-label', 'P' + connection.pin + ' 센서 직접 입력'); exact.addEventListener('input', function () { self.inputValues[connection.pin] = exact.value.trim() === '' ? undefined : Number(exact.value); if (connection.signal === 'digital') { control.checked = self.inputValues[connection.pin] === 1; } else { control.value = self.inputValues[connection.pin]; } value.textContent = exact.value; card.classList.toggle('is-on', self.inputValues[connection.pin] > 0); card.style.setProperty('--mb-preview-knob', (-135 + 270 * (self.inputValues[connection.pin] || 0) / 1023) + 'deg'); if (self.liveLab) { self.liveLab.changed(false); } }); control.addEventListener(connection.signal === 'digital' ? 'change' : 'input', function () { exact.value = self.inputValues[connection.pin]; card.style.setProperty('--mb-preview-knob', (-135 + 270 * self.inputValues[connection.pin] / 1023) + 'deg'); }); card.append(field(connection.signal === 'digital' ? '입력 켜기' : '센서 값', control), field('직접 입력', exact), value);
       } else {
         var indicator = el('div', 'ojmicrobit-indicator ' + (connection.device === 'servo' ? 'is-servo' + (connection.signal === 'servo_pulse' ? ' is-pulse' : '') : connection.device === 'motor' ? 'is-motor' : 'is-led')), output = el('output', 'ojmicrobit-device-value', '출력 대기'), meter = el('meter'); meter.min = 0; meter.max = connection.signal === 'digital' ? 1 : connection.signal === 'servo' ? 180 : connection.signal === 'servo_pulse' ? 20000 : 1023; meter.value = 0; meter.setAttribute('aria-label', connection.label + ' 출력');
-        indicator.setAttribute('aria-hidden', 'true'); indicator.append(el('span')); card.append(indicator, meter, output);
-        self.actuators.set(String(connection.pin), { connection: connection, indicator: indicator, output: output, meter: meter });
+        indicator.hidden = true; indicator.setAttribute('aria-hidden', 'true'); card.setAttribute('data-mb-actual-output', String(connection.pin)); card.setAttribute('data-state', 'unknown'); indicator.append(el('span')); card.append(indicator, meter, output);
+        self.actuators.set(String(connection.pin), { connection: connection, indicator: indicator, output: output, meter: meter, card: card });
       }
       board.append(card);
     });
@@ -1550,29 +1686,29 @@
       var card = el('div', 'ojmicrobit-device ojmicrobit-i2c-device'), title = el('div', 'ojmicrobit-device-title'), registers = table(['레지스터', '실험 입력값', '실제 거래 값']);
       title.append(el('strong', '', device.label), el('span', 'ojp-status-badge ojp-status-badge--neutral', 'I²C ' + addressText(device.address))); card.append(title);
       var display = { pointer: 0, outputs: new Map() }; self.i2cDisplays.set(String(device.address), display);
-      device.registers.forEach(function (register) { var row = el('tr'), key = device.address + ':' + register.register, control = boundedInput(register.value, 0, 255, function (value) { self.i2cValues.set(key, value); self.sensorHint.textContent = '레지스터 입력이 바뀌었습니다. 센서 값으로 실행을 눌러 확인하세요.'; }), output = el('output', 'ojmicrobit-register-value', '대기');
+      device.registers.forEach(function (register) { var row = el('tr'), key = device.address + ':' + register.register, control = boundedInput(register.value, 0, 255, function (value) { self.i2cValues.set(key, value); if (self.liveLab) { self.liveLab.changed(false); } }), output = el('output', 'ojmicrobit-register-value', '대기');
         self.i2cValues.set(key, register.value); control.setAttribute('aria-label', device.label + ' 주소 ' + device.address + ' 레지스터 ' + register.register + ' 입력');
         cell(row, String(register.register) + (register.writable ? ' · 쓰기 허용' : ' · 읽기 전용')); cell(row, control); cell(row, output); display.outputs.set(register.register, output); registers.body.append(row);
       }); card.append(registers.wrap); board.append(card);
     });
-    this.sensorHint = el('p', 'ojmicrobit-muted', '센서 값을 정한 뒤 실행하세요. 화면의 출력은 실제 실행 기록을 받은 뒤 표시합니다.'); this.sensorHint.setAttribute('aria-live', 'polite'); parent.append(this.sensorHint);
-    var tools = el('div', 'ojmicrobit-toolbar'), duration = input(2000, 'number'); duration.min = 100; duration.max = 10000; tools.append(field('실행 시간(ms)', duration), button('센서 값으로 실행', function () { self.action(async function () {
-      if (!self.runnerReady) { throw new Error('채점 서버 연결 후 센서를 실행할 수 있습니다.'); }
-      self.clearTrace(); var sequence = self.previewSequence, exerciseId = self.exercise.id, project = await self.captureProject();
-      var inputs = self.exercise.connections.filter(function (connection) { return connection.direction === 'input'; }).map(function (connection) { return { atMs: 0, pin: connection.pin, signal: connection.signal, value: self.inputValues[connection.pin] || 0 }; });
-      var i2cInputs = []; (self.exercise.i2cDevices || []).forEach(function (device) { device.registers.forEach(function (register) { var value = self.i2cValues.get(device.address + ':' + register.register); if (value !== register.value) { i2cInputs.push({ atMs: 0, address: device.address, register: register.register, value: value }); } }); });
-      self.sensorHint.textContent = '입력값으로 프로그램을 실행하고 있습니다.';
-      var result = await self.api(self.practicePath(exerciseId, self.assignment) + '/preview', { project: project, inputs: inputs, i2cInputs: i2cInputs, durationMs: Number(duration.value) });
-      if (sequence !== self.previewSequence || !self.exercise || self.exercise.id !== exerciseId) { return; }
-      if (result.status === 'compile_error' || result.status === 'runtime_error') { self.renderResult(result); self.sensorHint.textContent = '실행에 실패했습니다. 출력 기록을 재생하지 않습니다.'; throw new Error(result.status === 'compile_error' ? '코드의 컴파일 오류를 확인해 주세요.' : '실행 오류가 발생했습니다. 오류 내용을 확인해 주세요.'); }
-      self.playTrace(result.trace || [], Number(duration.value), result.i2cTrace || []); self.message('입력값으로 실행했습니다. 핀 출력과 I²C 거래 기록을 재생합니다.');
-    }, '센서 입력을 적용해 실행하고 있습니다.'); })); tools.lastChild.setAttribute('data-mb-run-action', ''); parent.append(tools);
-    var trace = table(['시각(ms)', '핀', '출력 종류', '값']); this.traceTable = trace.body; parent.append(trace.wrap);
+    this.sensorHint = el('p', 'ojmicrobit-muted', '실행된 코드의 실제 핀 출력만 표시해요. 기록이 없는 핀은 출력 대기로 남아요.'); this.sensorHint.setAttribute('aria-live', 'polite'); parent.append(this.sensorHint);
+    this.mountLiveExecution(parent);
+    var trace = table(['시각(ms)', '핀', '출력 종류', '값']); this.traceTable = trace.body; var traceDetails = el('details', 'ojmicrobit-live-trace'); traceDetails.append(el('summary', '', '실제 핀 출력 기록'), trace.wrap); parent.append(traceDetails);
     if ((this.exercise.i2cDevices || []).length) { parent.append(el('h3', '', '실제 I²C 거래 기록')); var i2cTrace = table(['시각(ms)', '주소', '동작', '바이트', 'repeated']); this.i2cTraceTable = i2cTrace.body; parent.append(i2cTrace.wrap); }
+  };
+  App.prototype.appendLiveFrame = function(frame){
+    var self=this,deviceWrites=new Map(),registerWrites=new Map(),pinRows=[],busRows=[];
+    (frame.trace||[]).forEach(function(e){var d=self.actuators.get(String(e.pin)),max=e.signal==='digital'?1:e.signal==='servo'?180:e.signal==='servo_pulse'?20000:1023;if(e.kind!=='write'||!d||d.connection.signal!==e.signal||!Number.isFinite(e.atMs)||e.atMs<0||e.atMs>frame.atMs||!Number.isInteger(e.value)||e.value<(e.signal==='servo_pulse'?1:0)||e.value>max)return;deviceWrites.set(String(e.pin),e);pinRows.push(e);});
+    (frame.i2cTrace||[]).forEach(function(e){var d=self.i2cDisplays.get(String(e.address));if(!d||e.kind!=='i2c'||!Number.isFinite(e.atMs)||e.atMs<0||e.atMs>frame.atMs||!['read','write'].includes(e.operation)||!Array.isArray(e.data)||e.data.length>64||e.data.some(function(v){return!Number.isInteger(v)||v<0||v>255;}))return;function register(v){if(d.outputs.has(d.pointer))registerWrites.set(d.outputs.get(d.pointer),v);d.pointer=(d.pointer+1)%256;}if(e.operation==='write'&&e.data.length){d.pointer=e.data[0];e.data.slice(1).forEach(register);}if(e.operation==='read')e.data.forEach(register);busRows.push(e);});
+    deviceWrites.forEach(function(e,pin){var d=self.actuators.get(pin),max=e.signal==='digital'?1:e.signal==='servo'?180:e.signal==='servo_pulse'?20000:1023,ratio=e.value/max;d.output.textContent=self.config.compactEditor?(e.signal==='digital'?(e.value?'켜짐':'꺼짐'):e.signal==='pwm'?'세기 '+e.value:String(e.value)+(e.signal==='servo'?'°':e.signal==='servo_pulse'?'µs':'')):String(e.value)+(e.signal==='pwm'?' · '+Math.round(ratio*100)+'%':e.signal==='servo'?'°':e.signal==='servo_pulse'?'µs':'');d.meter.value=e.value;d.indicator.classList.toggle('is-active',e.signal==='servo'||e.value>0);if(d.card){d.card.setAttribute('data-state',e.value>0?'on':'off');d.card.setAttribute('data-value',String(e.value));d.card.classList.toggle('is-on',e.value>0);d.card.style.setProperty('--mb-preview-level',String(ratio));d.card.style.setProperty('--mb-preview-spin',(0.28+2.8*(1-ratio))+'s');if(e.signal==='servo')d.card.style.setProperty('--mb-preview-angle',(e.value-90)+'deg');}});
+    registerWrites.forEach(function(v,out){out.textContent=v;});
+    pinRows.slice(-60).forEach(function(e){var row=el('tr');cell(row,Math.round(e.atMs));cell(row,'P'+e.pin);cell(row,e.signal);cell(row,e.value);self.traceTable.prepend(row);});while(self.traceTable&&self.traceTable.children.length>60)self.traceTable.lastChild.remove();
+    if(self.i2cTraceTable){busRows.slice(-100).forEach(function(e){var row=el('tr');cell(row,Math.round(e.atMs));cell(row,addressText(e.address));cell(row,e.operation==='read'?'읽기':'쓰기');cell(row,bytesText(e.data));cell(row,e.repeated?'true':'false');self.i2cTraceTable.prepend(row);});while(self.i2cTraceTable.children.length>100)self.i2cTraceTable.lastChild.remove();}
+    self.sensorHint.textContent='실행 경과 '+(Math.floor(frame.atMs/100)/10)+'초 · 센서 입력을 바꿔도 실행 상태를 유지해요.';
   };
   App.prototype.playTrace = function (trace, durationMs, i2cTrace) {
     this.clearTrace(); this.traceTable.replaceChildren(); var self = this, sequence = this.previewSequence;
-    this.actuators.forEach(function (device) { device.output.textContent = '출력 대기'; device.meter.value = 0; device.indicator.classList.remove('is-active'); device.indicator.style.removeProperty('--mb-level'); device.indicator.style.removeProperty('--mb-angle'); });
+    this.actuators.forEach(function (device) { if (device.card) { device.card.setAttribute('data-state', 'unknown'); device.card.removeAttribute('data-value'); device.card.classList.remove('is-on'); } device.output.textContent = '출력 대기'; device.meter.value = 0; device.indicator.classList.remove('is-active'); device.indicator.style.removeProperty('--mb-level'); device.indicator.style.removeProperty('--mb-angle'); });
     if (this.i2cTraceTable) { this.i2cTraceTable.replaceChildren(); } this.i2cDisplays.forEach(function (device) { device.pointer = 0; device.outputs.forEach(function (output) { output.textContent = '대기'; }); });
     var writes = trace.filter(function (entry) { var device = self.actuators.get(String(entry.pin)); return entry.kind === 'write' && Number.isFinite(entry.atMs) && entry.atMs >= 0 && entry.atMs <= durationMs && device && device.connection.signal === entry.signal; }).slice(0, 5000);
     var transactions = (i2cTrace || []).filter(function (entry) { return entry.kind === 'i2c' && Number.isFinite(entry.atMs) && entry.atMs >= 0 && entry.atMs <= durationMs && self.i2cDisplays.has(String(entry.address)); }).slice(0, 5000);
@@ -1597,6 +1733,7 @@
         device.output.textContent = String(entry.value) + (entry.signal === 'pwm' ? ' · ' + Math.round(ratio * 100) + '%' : entry.signal === 'servo' ? '°' : entry.signal === 'servo_pulse' ? 'µs' : ''); device.meter.value = entry.value;
         device.indicator.classList.toggle('is-active', entry.signal === 'servo' || entry.value > 0); device.indicator.style.setProperty('--mb-level', String(ratio));
         if (entry.signal === 'servo') { device.indicator.style.setProperty('--mb-angle', (entry.value - 90) + 'deg'); }
+        if (device.card) { device.card.setAttribute('data-state', entry.value > 0 ? 'on' : 'off'); device.card.setAttribute('data-value', String(entry.value)); device.card.classList.toggle('is-on', entry.value > 0); device.card.style.setProperty('--mb-preview-level', String(ratio)); device.card.style.setProperty('--mb-preview-spin', (0.28 + 2.8 * (1 - ratio)) + 's'); if (entry.signal === 'servo') { device.card.style.setProperty('--mb-preview-angle', (entry.value - 90) + 'deg'); } }
       });
       registerWrites.forEach(function (value, output) { output.textContent = value; });
       pinRows.slice(-60).forEach(function (entry) { var row = el('tr'); cell(row, Math.round(entry.atMs)); cell(row, 'P' + entry.pin); cell(row, entry.signal); cell(row, entry.value); self.traceTable.prepend(row); });
@@ -1618,9 +1755,91 @@
       if (self.config.compactEditor) { self.appendFocusInputs(card, group, true); if (!inputs.length) { card.append(el('p', 'ojmicrobit-story-input', '센서 값은 이전과 같아요.')); } } else { card.append(el('p', 'ojmicrobit-story-input', inputs.length ? '센서 값  ' + inputs.join(' · ') : '센서 값은 이전과 같아요.')); } self.appendFlowLanes(card, scenario, group, false); list.append(card);
     }); parent.append(list);
   };
+  function svgShape(parent, name, attributes, text) { var node = global.document.createElementNS('http://www.w3.org/2000/svg', name); Object.keys(attributes || {}).forEach(function (key) { node.setAttribute(key, String(attributes[key])); }); if (text !== undefined) { node.textContent = text; } parent.append(node); return node; }
+  function hardwarePicture(kind) {
+      var svg = global.document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('viewBox', '0 0 120 90'); svg.setAttribute('class', 'ojmicrobit-hardware-picture'); svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('focusable', 'false');
+      if (kind === 'led') { svgShape(svg, 'path', { d: 'M42 55V35a18 18 0 0 1 36 0v20Z', class: 'ojmicrobit-hardware-bulb' }); svgShape(svg, 'path', { d: 'M42 55h36M51 57v26M69 57v26', class: 'ojmicrobit-hardware-stroke' }); svgShape(svg, 'path', { d: 'M60 5V1M31 17l-6-6M89 17l6-6M24 36h-8M96 36h8', class: 'ojmicrobit-hardware-rays' }); }
+      else if (kind === 'motor') { svgShape(svg, 'rect', { x: 9, y: 32, width: 44, height: 29, rx: 7, class: 'ojmicrobit-hardware-body' }); svgShape(svg, 'path', { d: 'M14 61v13h12M53 46h13', class: 'ojmicrobit-hardware-stroke' }); var rotor = svgShape(svg, 'g', { class: 'ojmicrobit-hardware-rotor' }); svgShape(rotor, 'circle', { cx: 85, cy: 46, r: 24, class: 'ojmicrobit-hardware-ring' }); svgShape(rotor, 'path', { d: 'M85 46C51 27 75 8 85 46M85 46c33-21 39 9 0 0M85 46c1 39-28 29 0 0', class: 'ojmicrobit-hardware-propeller' }); svgShape(rotor, 'circle', { cx: 85, cy: 46, r: 5, class: 'ojmicrobit-hardware-center' }); }
+      else if (kind === 'servo') { svgShape(svg, 'rect', { x: 32, y: 37, width: 56, height: 36, rx: 6, class: 'ojmicrobit-hardware-body' }); var arm = svgShape(svg, 'g', { class: 'ojmicrobit-hardware-arm' }); svgShape(arm, 'path', { d: 'M60 35h35', class: 'ojmicrobit-hardware-stroke' }); svgShape(arm, 'circle', { cx: 60, cy: 35, r: 6, class: 'ojmicrobit-hardware-center' }); }
+      else if (kind === 'i2c') { svgShape(svg, 'rect', { x: 32, y: 20, width: 56, height: 50, rx: 6, class: 'ojmicrobit-hardware-body' }); svgShape(svg, 'path', { d: 'M22 30h10M22 45h10M22 60h10M88 30h10M88 45h10M88 60h10', class: 'ojmicrobit-hardware-stroke' }); svgShape(svg, 'text', { x: 60, y: 49, 'text-anchor': 'middle', fill: 'currentColor' }, 'I²C'); }
+      else if (kind === 'board') { svgShape(svg, 'rect', { x: 11, y: 7, width: 98, height: 76, rx: 10, class: 'ojmicrobit-hardware-board' }); svgShape(svg, 'text', { x: 60, y: 21, 'text-anchor': 'middle', class: 'ojmicrobit-hardware-board-text' }, 'micro:bit'); for (var y = 0; y < 5; y += 1) { for (var x = 0; x < 5; x += 1) { svgShape(svg, 'rect', { x: 43 + x * 7, y: 29 + y * 7, width: 4, height: 4, rx: 1, class: 'ojmicrobit-hardware-dot' }); } } svgShape(svg, 'text', { x: 60, y: 76, 'text-anchor': 'middle', class: 'ojmicrobit-hardware-board-text' }, 'P0  P1  P2'); }
+      else { svgShape(svg, 'rect', { x: 20, y: 12, width: 80, height: 65, rx: 10, class: 'ojmicrobit-hardware-body' }); if (kind === 'light_sensor') { svgShape(svg, 'circle', { cx: 60, cy: 43, r: 16, class: 'ojmicrobit-hardware-ring' }); svgShape(svg, 'path', { d: 'M50 35l14 3-8 10 14 3', class: 'ojmicrobit-hardware-stroke' }); svgShape(svg, 'path', { d: 'M38 20l8 9M80 20l-8 9M25 31l12 4', class: 'ojmicrobit-hardware-stroke' }); } else if (kind === 'button') { svgShape(svg, 'circle', { cx: 60, cy: 44, r: 20, class: 'ojmicrobit-hardware-push' }); } else { svgShape(svg, 'circle', { cx: 60, cy: 44, r: 21, class: 'ojmicrobit-hardware-ring' }); svgShape(svg, 'path', { d: 'M60 44V27', class: 'ojmicrobit-hardware-knob' }); } svgShape(svg, 'path', { d: 'M40 77v8M60 77v8M80 77v8', class: 'ojmicrobit-hardware-stroke' }); }
+      return svg;
+    }
+  App.prototype.clearExpectedPreview = function () { if (this.expectedLab) { this.expectedLab.dispose(); this.expectedLab = null; } };
+  App.prototype.mountExpectedPreview = function (parent, scenario) {
+    var self = this, model = expectedPreviewModel(this.exercise, scenario), root = el('section', 'ojmicrobit-expected-lab'), intro = el('div', 'ojmicrobit-expected-heading'), controls = el('div', 'ojmicrobit-expected-inputs'), outputs = el('div', 'ojmicrobit-expected-outputs'), flow = el('div', 'ojmicrobit-expected-flow'), values = {}, fields = new Map(), displays = new Map(), timer = null, epoch = 0, disposed = false, preferred = 0, paused = false, current = null;
+    root.setAttribute('data-mb-expected-lab', ''); root.setAttribute('data-result-source', 'public-expectation'); root.setAttribute('aria-label', '기대 동작 미리보기'); intro.append(el('h3', '', '입력 → 마이크로비트 → 출력'), el('p', 'ojmicrobit-muted', '슬라이더는 공개 예시 값으로 맞춰져요. 다른 값은 직접 입력할 수 있어요.')); root.append(intro);
+    var tools = el('div', 'ojmicrobit-expected-tools'), stage = select('0', [['', '입력과 일치하는 단계 없음']].concat(model.scenes.map(function (scene) { return [String(scene.index), (scene.index + 1) + '단계 · ' + (scene.atMs ? '시작 후 ' + scene.atMs / 1000 + '초' : '처음')]; })), function (value) { if (value !== '') { showScene(Number(value)); } }); stage.options[0].disabled = true; stage.setAttribute('data-mb-preview-stage', ''); tools.append(field('살펴볼 단계', stage));
+    var replay = button('다시 보기', function () { play(resolveExpectedPreview(model, values, preferred)); }), pause = button('일시 정지', function () { stop(); paused = true; root.classList.add('is-paused'); status.textContent = '미리보기를 멈췄어요. 다시 보기로 처음부터 확인할 수 있어요.'; }); replay.setAttribute('data-mb-preview-replay', ''); pause.setAttribute('data-mb-preview-pause', ''); tools.append(replay, pause); root.append(tools);
+    function change(control, value) { values[control.key] = value; preferred = null; syncFields(); play(resolveExpectedPreview(model, values, preferred)); }
+    function renderInput(index) {
+      fields.clear(); controls.replaceChildren(); var control = model.controls[index]; if (!control) { return; }
+      var card = el('div', 'ojmicrobit-expected-sensor'), number = input('', 'number'), value = el('output', 'ojmicrobit-expected-sensor-value'); card.setAttribute('data-mb-preview-input', control.key); number.min = control.min; number.max = control.max; number.step = 1; number.setAttribute('aria-label', control.label + ' ' + (control.pin !== undefined ? 'P' + control.pin : '레지스터 ' + control.register) + ' 미리보기 입력값'); card.append(hardwarePicture(control.device), el('strong', '', control.label), el('span', 'ojmicrobit-muted', control.pin !== undefined ? 'P' + control.pin : 'I²C ' + addressText(control.address) + ' · ' + control.register));
+      number.addEventListener('input', function () { change(control, number.value.trim() === '' ? undefined : Number(number.value)); }); var range;
+      if (control.signal === 'digital') { range = input('', 'checkbox'); range.setAttribute('aria-label', control.label + ' 누른 상태'); range.addEventListener('change', function () { change(control, range.checked ? 1 : 0); }); card.append(field('켜기 / 누르기', range)); }
+      else { range = input(0, 'range'); range.min = control.min; range.max = control.max; range.step = 1; range.setAttribute('aria-label', control.label + ' 공개 예시 값'); range.disabled = !control.values.length; range.addEventListener('input', function () { var n = Number(range.value); if (control.values.length) { n = control.values.reduce(function (nearest, candidate) { return Math.abs(candidate - n) < Math.abs(nearest - n) ? candidate : nearest; }, control.values[0]); } change(control, n); }); card.append(range); }
+      value.hidden = control.signal !== 'digital'; card.append(field('입력값', number), value); controls.append(card); fields.set(control.key, { control: control, card: card, number: number, range: range, value: value }); syncFields();
+    }
+    if (model.controls.length > 1) { var sensorPicker = select('0', model.controls.map(function (control, index) { return [String(index), control.label + ' · ' + (control.pin !== undefined ? 'P' + control.pin : addressText(control.address) + '/' + control.register)]; }), function (value) { renderInput(Number(value)); }); sensorPicker.setAttribute('data-mb-preview-sensor', ''); tools.prepend(field('조절할 입력', sensorPicker)); }
+    if (model.controls.length) { renderInput(0); }
+    if (!model.controls.length) { controls.append(el('p', 'ojmicrobit-muted', '별도 입력 없이 실행하는 예시예요. 살펴볼 단계를 골라주세요.')); }
+    var board = el('div', 'ojmicrobit-expected-board'); board.append(el('span', '', '→'), hardwarePicture('board'), el('span', '', '→')); flow.append(controls, board, outputs); root.append(flow);
+    model.outputs.forEach(function (connection) { var card = el('div', 'ojmicrobit-expected-actuator'), output = el('output', 'ojmicrobit-expected-output', '조건 미정'); card.setAttribute('data-mb-preview-output', String(connection.pin)); card.setAttribute('data-state', 'unknown'); card.append(hardwarePicture(connection.device), el('strong', '', connection.label), el('span', 'ojmicrobit-muted', 'P' + connection.pin), output); outputs.append(card); displays.set(connection.pin, { card: card, output: output, connection: connection }); });
+    if (!model.outputs.length) { outputs.append(el('p', 'ojmicrobit-muted', '핀 출력 조건은 없어요. I²C 거래는 아래 정확한 채점 조건에서 확인하세요.')); }
+    var status = el('p', 'ojmicrobit-expected-status'), help = el('p', 'ojmicrobit-muted', '공개 예시의 기대값을 보여줘요. 순서가 있는 동작은 즉시 반응하고 최소 유지시간으로 재생해요. 학생 코드의 실행·채점 결과는 풀이 화면에서 확인하세요.'); status.setAttribute('data-mb-preview-status', ''); status.setAttribute('role', 'status'); root.append(status, help); parent.append(root);
+    function stop() { epoch += 1; if (timer !== null) { global.clearTimeout(timer); timer = null; } }
+    function syncFields() { fields.forEach(function (field, key) { var n = values[key], valid = Number.isInteger(n) && n >= field.control.min && n <= field.control.max; field.number.value = n === undefined ? '' : String(n); field.number.setAttribute('aria-invalid', valid ? 'false' : 'true'); if (field.control.signal === 'digital') { field.range.checked = n === 1; field.range.indeterminate = !valid; } else { field.range.value = valid ? n : field.control.min; field.range.setAttribute('aria-valuetext', valid ? String(n) : '입력값 확인 필요'); } field.card.style.setProperty('--mb-preview-knob', (valid ? -135 + 270 * n / field.control.max : 0) + 'deg'); field.card.classList.toggle('is-on', valid && n > 0); field.value.textContent = valid ? String(n) : '값을 확인해 주세요'; }); }
+    function display(event) { var device = displays.get(event.pin); if (!device || device.connection.signal !== event.signal) { return; } var n = event.value, max = event.signal === 'digital' ? 1 : event.signal === 'servo' ? 180 : event.signal === 'servo_pulse' ? 20000 : 1023, level = Math.min(1, Math.max(0, n / max)); device.card.setAttribute('data-state', n > 0 ? 'on' : 'off'); device.card.setAttribute('data-value', String(n)); device.card.classList.toggle('is-on', n > 0); device.card.style.setProperty('--mb-preview-level', String(level)); device.card.style.setProperty('--mb-preview-spin', (0.28 + 2.8 * (1 - level)) + 's'); if (event.signal === 'servo') { device.card.style.setProperty('--mb-preview-angle', (n - 90) + 'deg'); } device.output.textContent = event.signal === 'pwm' ? '세기 ' + n : self.flowValue(device.connection, n); }
+    function play(result) {
+      stop(); current = result; paused = false; root.classList.remove('is-paused'); displays.forEach(function (device) { device.card.classList.remove('is-on'); device.card.setAttribute('data-state', 'unknown'); device.card.removeAttribute('data-value'); device.output.textContent = '조건 미정'; });
+      if (result.status !== 'match') { Array.from(stage.options).forEach(function (option) { option.selected = option.value === ''; }); status.textContent = result.status === 'invalid' ? '입력 범위의 정수 값을 넣어주세요.' : result.status === 'ambiguous' ? '같은 입력을 쓰는 단계가 여러 개예요. 살펴볼 단계를 골라주세요.' : '이 입력값의 기대 출력은 공개 예시에 없어요. 슬라이더나 살펴볼 단계에서 공개된 값을 골라주세요.'; return; }
+      var scene = result.scene, cursor = 0, token = epoch, started = Date.now(); Array.from(stage.options).forEach(function (option) { option.selected = option.value === String(scene.index); });
+      function pump() { if (disposed || token !== epoch) { return; } timer = null; if (global.document.hidden) { pause.click(); return; } var elapsed = Date.now() - started; while (cursor < scene.events.length && scene.events[cursor].atMs <= elapsed) { display(scene.events[cursor]); cursor += 1; } if (cursor < scene.events.length) { timer = global.setTimeout(function () { if (!root.isConnected) { stop(); return; } pump(); }, Math.max(1, scene.events[cursor].atMs - elapsed)); } }
+      status.textContent = (scene.index + 1) + '단계의 기대 동작이에요.' + (scene.unresolved.length ? ' 복합 조건이 있는 핀은 아래 시간 조건에서 확인하세요.' : '') + ' 선택한 단계 구간의 순서를 보여줘요.'; pump();
+    }
+    function showScene(index) { var scene = model.scenes[index]; if (!scene || disposed) { return; } values = Object.assign({}, scene.inputs); preferred = index; syncFields(); play(resolveExpectedPreview(model, values, preferred)); }
+    function visibility() { if (global.document.hidden) { stop(); paused = true; root.classList.add('is-paused'); status.textContent = '화면을 벗어나 미리보기를 멈췄어요. 다시 보기로 확인하세요.'; } }
+    global.document.addEventListener('visibilitychange', visibility);
+    var lab = { root: root, model: model, showScene: showScene, dispose: function () { if (disposed) { return; } stop(); disposed = true; paused = true; root.classList.add('is-paused'); global.document.removeEventListener('visibilitychange', visibility); } }; this.expectedLab = lab;
+    if (model.scenes.length) { showScene(0); } else { play({ status: 'unknown', scene: null }); } return lab;
+  };
+  App.prototype.renderStudentExamples = function (parent) {
+    var self = this, visible = self.exercise.scenarios.filter(function (scenario) { return scenario.visible; });
+    if (!visible.length) { parent.append(el('p', 'ojmicrobit-muted', '공개 예시는 없어요. 문제 설명을 읽고 MakeCode 풀이 화면에서 내 코드를 직접 실행할 수 있어요.')); return; }
+    var picker = el('div', 'ojmicrobit-student-example-picker'), view = el('div', 'ojmicrobit-student-example-view');
+    if (visible.length > 1) { var choice = select('0', visible.map(function (scenario, index) { return [String(index), '예시 ' + (index + 1) + ' · ' + (scenario.name || '입력과 출력')]; }), function (value) { render(visible[Number(value)]); }); choice.setAttribute('data-mb-scenario-picker', ''); picker.append(field('살펴볼 예시', choice), el('p', 'ojmicrobit-muted', '예시마다 프로그램을 처음부터 따로 실행해요.')); parent.append(picker); }
+    parent.append(view);
+    function render(scenario) {
+      self.clearExpectedPreview(); view.replaceChildren(); var groups = flowGroups(scenario), inputs = new Map(), bus = new Map(), shown = 0;
+      var intro = el('p', 'ojmicrobit-student-example-hint', '입력을 바꾸면 그림에서 기대 출력을 바로 확인할 수 있어요.'); view.append(intro); var lab = self.mountExpectedPreview(view, scenario), cards = el('details', 'ojmicrobit-student-scene-details'); cards.setAttribute('data-mb-example-cards', ''); cards.append(el('summary', '', '단계별 입력·출력 ' + groups.length + '개 보기')); view.append(cards);
+      var grid = el('ol', 'ojmicrobit-student-overview-grid'); grid.setAttribute('data-mb-stage-overview', ''); grid.setAttribute('aria-label', '입력에 따른 기대 출력'); cards.append(grid);
+      function appendNext() {
+        var limit = Math.min(shown + 3, groups.length);
+        for (; shown < limit; shown += 1) {
+          var group = groups[shown], card = el('li', 'ojmicrobit-student-scene'), head = el('div', 'ojmicrobit-student-scene-heading'); card.setAttribute('data-mb-scene', String(shown));
+          head.append(el('span', 'ojmicrobit-student-scene-number', String(shown + 1)), el('h3', '', group.atMs === 0 ? '처음' : '시작 후 ' + group.atMs / 1000 + '초')); var showPicture = button('그림으로 보기', function (index) { return function () { lab.showScene(index); if (lab.root.scrollIntoView) { lab.root.scrollIntoView({ block: 'nearest' }); } }; }(shown)); showPicture.setAttribute('data-mb-preview-scene', String(shown)); head.append(showPicture); card.append(head);
+          group.inputs.forEach(function (entry) { inputs.set(entry.pin, entry); }); group.i2cInputs.forEach(function (entry) { bus.set(entry.address + ':' + entry.register, entry); });
+          var inputBox = el('div', 'ojmicrobit-student-input'); inputBox.append(el('span', 'ojmicrobit-student-label', '입력'));
+          inputs.forEach(function (entry) { var connection = self.exercise.connections.find(function (item) { return item.pin === entry.pin; }) || { label: '센서', signal: entry.signal }, row = el('div', 'ojmicrobit-student-input-row'), name = el('span'); name.append(el('span', '', connection.label), el('small', '', 'P' + entry.pin)); row.append(name, el('strong', '', self.flowValue(connection, entry.value))); inputBox.append(row); });
+          bus.forEach(function (entry) { var row = el('div', 'ojmicrobit-student-input-row'); row.append(el('span', '', 'I²C ' + addressText(entry.address) + ' · 레지스터 ' + entry.register), el('strong', '', entry.value)); inputBox.append(row); });
+          if (!inputs.size && !bus.size) { inputBox.append(el('p', 'ojmicrobit-muted', '별도 입력 없음')); } else if (!group.inputs.length && !group.i2cInputs.length && shown) { inputBox.append(el('p', 'ojmicrobit-student-unchanged', '입력은 앞 단계와 같아요.')); }
+          var outputs = el('div', 'ojmicrobit-student-outputs'); outputs.append(el('span', 'ojmicrobit-student-label', '기대 출력')); self.appendFlowLanes(outputs, scenario, group, false); card.append(inputBox, el('div', 'ojmicrobit-student-down', '↓'), outputs);
+          var parallel = outputs.querySelector('[data-mb-parallel-caption]'); if (parallel) { parallel.remove(); }
+          if (!group.assertions.length && !group.outputSequences.length && !group.i2cAssertions.length) { outputs.append(el('p', 'ojmicrobit-muted', '이 시점에는 입력만 바뀌어요.')); }
+          grid.append(card);
+        }
+        grid.setAttribute('data-mb-scene-count', String(grid.childNodes.length));
+        if (more) { more.hidden = shown >= groups.length; more.textContent = '다음 단계 ' + Math.min(3, groups.length - shown) + '개 보기 · ' + (groups.length - shown) + '개 남음'; }
+      }
+      var more = button('', appendNext); more.setAttribute('data-mb-more-scenes', ''); appendNext(); cards.append(more);
+      view.append(el('p', 'ojmicrobit-student-timing-hint', '얼마나 빨리 반응하고 얼마나 유지해야 하는지는 아래 시간 조건에서 확인하세요.')); self.renderTechnicalTests(view, [scenario]);
+    }
+    render(visible[0]);
+  };
   App.prototype.renderPublicTests = function (expanded) {
     var self = this, tests = el(expanded ? 'section' : 'details', 'ojmicrobit-card ojmicrobit-example-readout'), populated = false, title = el(expanded ? 'h2' : 'summary', '', '입력과 기대 동작'); tests.setAttribute('data-mb-public-tests', ''); title.setAttribute('data-mb-public-title', ''); tests.append(title);
-    function fill() { if (populated) { return; } populated = true;
+    function fill() { if (populated) { return; } populated = true; if (expanded) { self.renderStudentExamples(tests); return; }
       var visible = self.exercise.scenarios.filter(function (scenario) { return scenario.visible; });
       visible.forEach(function (scenario, index) { var example = el('section', 'ojmicrobit-story-example'); if (visible.length > 1) { example.append(el('h3', '', scenario.name || '예시 ' + (index + 1))); } self.appendScenarioStory(example, scenario); tests.append(example); });
       if (!visible.length) { tests.append(el('p', 'ojmicrobit-muted', '공개 예시는 없어요. 문제 설명에 따라 만들어 보세요.')); }
@@ -1628,11 +1847,11 @@
     }
     tests.addEventListener('toggle', function () { if (tests.open) { fill(); } }); if (expanded) { fill(); } this.content.append(tests);
   };
-  App.prototype.renderTechnicalTests = function (parent) {
-    var self = this, tests = el('details', 'ojmicrobit-card'), populated = false; tests.setAttribute('data-mb-technical-tests', ''); tests.append(el('summary', '', '세부 채점 조건 보기'));
+  App.prototype.renderTechnicalTests = function (parent, scenarios) {
+    var self = this, tests = el('details', 'ojmicrobit-card'), populated = false; tests.setAttribute('data-mb-technical-tests', ''); tests.append(el('summary', '', scenarios ? '시간·동작 순서와 정확한 채점 조건 보기' : '세부 채점 조건 보기'));
     tests.addEventListener('toggle', function () { if (!tests.open || populated) { return; } populated = true;
-    self.exercise.scenarios.filter(function (scenario) { return scenario.visible; }).forEach(function (scenario) {
-      tests.append(el('h3', '', scenario.name + ' · ' + scenario.durationMs + 'ms')); var rows = table(['기준 시각', '출력 핀', '기대값', '응답 제한', '유지 시간', '오차']);
+    (scenarios || self.exercise.scenarios.filter(function (scenario) { return scenario.visible; })).forEach(function (scenario) {
+      if (scenarios) { self.appendScenarioStory(tests, scenario); } tests.append(el('h3', '', scenario.name + ' · ' + scenario.durationMs + 'ms')); var rows = table(['기준 시각', '출력 핀', '기대값', '응답 제한', '유지 시간', '오차']);
       if ((scenario.inputs || []).length) { var inputs = table(['입력 시각', '센서 핀', '입력값']); scenario.inputs.forEach(function (entry) { var row = el('tr'); cell(row, entry.atMs / 1000 + '초'); cell(row, 'P' + entry.pin + ' · ' + entry.signal); cell(row, entry.value); inputs.body.append(row); }); tests.append(inputs.wrap); }
       if ((scenario.i2cInputs || []).length) { var busInputs = table(['입력 시각', 'I²C 주소', '레지스터', '입력값']); scenario.i2cInputs.forEach(function (entry) { var row = el('tr'); cell(row, entry.atMs / 1000 + '초'); cell(row, addressText(entry.address)); cell(row, entry.register); cell(row, entry.value); busInputs.body.append(row); }); tests.append(busInputs.wrap); }
       scenario.assertions.forEach(function (assertion) { var row = el('tr'); cell(row, assertion.afterMs + 'ms'); cell(row, 'P' + assertion.pin + ' · ' + assertion.signal); cell(row, assertion.expected); cell(row, assertion.withinMs + 'ms'); cell(row, assertion.holdMs + 'ms'); cell(row, assertion.tolerance); rows.body.append(row); }); tests.append(rows.wrap);
@@ -1681,7 +1900,7 @@
   };
   App.prototype.destroy = function () { if (this.stageWizard) { this.stageWizard.close(); } this.destroyed = true; this.requests.forEach(function (controller) { controller.abort(); }); if (this.runRetryTimer) { global.clearTimeout(this.runRetryTimer); } this.closeEditor(); global.removeEventListener('beforeunload', this.beforeUnload); global.removeEventListener('pageshow', this.pageShow); global.removeEventListener('popstate', this.popState); if (this.usb) { this.usb.disconnect().catch(function () {}); } };
 
-  var api = { problemRoute: problemRoute, problemUrl: problemUrl, EditorDriver: EditorDriver, canonicalProject: canonicalProject, validHex: validHex, sampleExercise: sampleExercise, servoExercise: servoExercise, i2cExercise: i2cExercise, sequenceExercise: sequenceExercise, exerciseModel: exerciseModel, updateOutputSequence: updateOutputSequence, sequenceBudget: sequenceBudget,
+  var api = { expectedPreviewModel: expectedPreviewModel, resolveExpectedPreview: resolveExpectedPreview, problemRoute: problemRoute, problemUrl: problemUrl, EditorDriver: EditorDriver, canonicalProject: canonicalProject, validHex: validHex, sampleExercise: sampleExercise, servoExercise: servoExercise, i2cExercise: i2cExercise, sequenceExercise: sequenceExercise, exerciseModel: exerciseModel, updateOutputSequence: updateOutputSequence, sequenceBudget: sequenceBudget,
     stageBatchChannels: stageBatchChannels, applyStageBatch: applyStageBatch, projectScenarioSteps: projectScenarioSteps, retimeScenarioStep: retimeScenarioStep, duplicateScenarioStep: duplicateScenarioStep, removeScenarioStep: removeScenarioStep, appendScenarioStep: appendScenarioStep, newScenario: newScenario, blankExercise: blankExercise, emptyScenario: emptyScenario, flowGroups: flowGroups, applyStageWizard: applyStageWizard, fieldLabel: fieldLabel, App: App, routeSection: routeSection, internalUrl: internalUrl };
   if (typeof module === 'object' && module.exports) { module.exports = api; }
   global.OJMicrobit = api;

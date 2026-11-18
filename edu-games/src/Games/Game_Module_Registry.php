@@ -36,10 +36,16 @@ final class Game_Module_Registry {
         $this->register(new Code_Typing_Module());
         $this->register(new Device_Matching_Module());
         $this->register(new Keyword_Rain_Module());
+        $this->register(new Modules\Cipher_Vault\Cipher_Vault_Module());
+        $this->register(new Modules\Dance_Bot\Dance_Bot_Module());
     }
 
     public function register(Game_Module $module): void {
         $this->modules[$module->id()] = $module;
+    }
+
+    public function catalog(bool $apply_visibility = true): array {
+        return Experience_Separation::catalog($this->all($apply_visibility));
     }
 
     /**

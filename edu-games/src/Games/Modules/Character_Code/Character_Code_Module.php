@@ -17,9 +17,9 @@ final class Character_Code_Module implements Game_Module {
     public function definition(): array {
         return array(
             'id' => $this->id(),
-            'title' => __('문자 코드 암호 게임', 'edu-games'),
+            'title' => __('문자 코드 연습 · 이전 기록', 'edu-games'),
             'category' => 'data-basics',
-            'description' => __('알파벳, 공백, 숫자를 코드표로 암호화하고 복호화하는 타임어택 퍼즐입니다.', 'edu-games'),
+            'description' => __('코드표를 익히는 개인 연습과 이전 타임어택 기록입니다. 금고 개인전·팀전은 암호 금고에서 진행합니다.', 'edu-games'),
             'status' => 'playable',
             'statusLabel' => __('플레이 가능', 'edu-games'),
             'block' => self::BLOCK,
@@ -33,11 +33,12 @@ final class Character_Code_Module implements Game_Module {
      */
     public static function rules(): array {
         return array(
-            'symbols' => array_merge(range('A', 'Z'), array(' '), array_map('strval', range(0, 9))),
+            'symbols' => array_merge(range('A', 'Z'), array_map('strval', range(0, 9)), array(' ')),
+            'codeTable' => self::code_table(),
             'phraseMetadata' => self::phrase_metadata(),
             'codeRange' => array(
-                'min' => 10,
-                'max' => 99,
+                'min' => 0,
+                'max' => 36,
             ),
             'defaultMode' => 'decode',
             'defaultDifficulty' => 'easy',
@@ -94,6 +95,16 @@ final class Character_Code_Module implements Game_Module {
                 'minimumRoundScore' => 20,
             ),
         );
+    }
+
+    /** @return array<string|int, string> */
+    private static function code_table(): array {
+        $table = array();
+        foreach (array_merge(range('A', 'Z'), array_map('strval', range(0, 9))) as $index => $symbol) {
+            $table[$symbol] = str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
+        }
+        $table[' '] = '00';
+        return $table;
     }
 
     /**

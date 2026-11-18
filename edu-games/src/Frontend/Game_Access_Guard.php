@@ -24,6 +24,7 @@ final class Game_Access_Guard {
             return self::can_access('binary-conversion') ? $pre_render : self::closed_notice();
         }
         if ($block_name === 'edu-games/device-team') return self::can_access('device-matching') ? $pre_render : self::closed_notice();
+        if ($block_name === 'edu-games/cipher-team') return self::can_access('cipher-vault') ? $pre_render : self::closed_notice();
 
         if (! str_starts_with($block_name, $prefix)) {
             return $pre_render;
@@ -31,6 +32,7 @@ final class Game_Access_Guard {
 
         foreach (edu_games_registry()->all(false) as $game_id => $definition) {
             if (($definition['block'] ?? '') === $block_name) {
+                if (\EduGames\Games\Experience_Separation::moved($game_id)) return \EduGames\Games\Experience_Separation::notice($game_id);
                 return self::can_access($game_id) ? $pre_render : self::closed_notice();
             }
         }
@@ -51,6 +53,8 @@ final class Game_Access_Guard {
         if (! isset($map[$tag])) {
             return $return;
         }
+
+        if (\EduGames\Games\Experience_Separation::moved($map[$tag])) return \EduGames\Games\Experience_Separation::notice($map[$tag]);
 
         if (self::can_access($map[$tag])) {
             return $return;
@@ -77,7 +81,7 @@ final class Game_Access_Guard {
      * @return array<string, string>
      */
     private static function shortcode_game_map(): array {
-        $map = array('binary_team'=>'binary-conversion', 'oj_binary_team'=>'binary-conversion','device_team'=>'device-matching','oj_device_team'=>'device-matching');
+        $map = array('binary_team'=>'binary-conversion', 'oj_binary_team'=>'binary-conversion','device_team'=>'device-matching','oj_device_team'=>'device-matching','cipher_team'=>'cipher-vault','oj_cipher_team'=>'cipher-vault');
 
         foreach (edu_games_registry()->all(false) as $game_id => $definition) {
             $tag = (string) ($definition['shortcode'] ?? '');

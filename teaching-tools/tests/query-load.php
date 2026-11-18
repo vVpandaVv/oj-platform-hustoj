@@ -24,7 +24,7 @@ namespace {
     function rest_ensure_response(mixed $value): mixed { return $value; }
     function get_transient(string $key): mixed { return false; }
     function set_transient(string $key, mixed $value, int $ttl): void {}
-    function get_option(string $key): string { return '2.1.0'; }
+    function get_option(string $key): string { return \TeachingTools\Database\Installer::SCHEMA_VERSION; }
     function is_admin(): bool { return false; }
     function ensure(bool $value, string $message): void { if (!$value) { throw new RuntimeException($message); } }
     final class WP_Error {

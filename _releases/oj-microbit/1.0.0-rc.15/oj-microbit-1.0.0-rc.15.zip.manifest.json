@@ -1,0 +1,1250 @@
+{
+    "plugin":  "oj-microbit",
+    "version":  "1.0.0-rc.15",
+    "builder":  "_release-kit generic",
+    "archive":  "oj-microbit-1.0.0-rc.15.zip",
+    "sha256":  "efe6572cd6a7b3ddf2e406eed52780d982dcaf693403962e072a5a7e27f9623c",
+    "fileCount":  248,
+    "files":  [
+                  {
+                      "path":  "oj-microbit/CHANGELOG.md",
+                      "bytes":  17207,
+                      "sha256":  "0351041eb4ad927412ed1d110f2909ec18c7d07f1e9a0e31bcdaebdb1dfe5d3d"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ACCEPTANCE-CHECKLIST.md",
+                      "bytes":  27132,
+                      "sha256":  "0c9c7a6738fb3bf28626d10edd77eccd70150076d6f4481b885dccc9e4af3a70"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ACCEPTANCE-REPORT-TEMPLATE.md",
+                      "bytes":  3382,
+                      "sha256":  "a5e05ce13ac9920de7f27690d3d35dffd70855d96154608dd325705ca1aeb1f0"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ACTUAL-EXECUTION-1.0.0-rc.12.md",
+                      "bytes":  7169,
+                      "sha256":  "19b0d8167ce1e104625d1214ab2acf2590190246837dc8694a4e0a2d5abd322e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/author-design-validation-1.0.0-rc.10.json",
+                      "bytes":  24858,
+                      "sha256":  "e5f8865a422faf2b89d12a203ece0a359878531ac011f952fdc95b8f49506c7f"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/author-design-validation-1.0.0-rc.11.json",
+                      "bytes":  24857,
+                      "sha256":  "c4779cfb7bdc7800a4f2d69ad07308cb8bc78a9dfa6392a0b7bd015c2733dc7a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/author-design-validation-1.0.0-rc.12.json",
+                      "bytes":  24932,
+                      "sha256":  "0316bf55fa0e99dce0e495f27172164f69fc3a2725bcb20dc71987b7abcaf2ff"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/author-design-validation-1.0.0-rc.13.json",
+                      "bytes":  24932,
+                      "sha256":  "0316bf55fa0e99dce0e495f27172164f69fc3a2725bcb20dc71987b7abcaf2ff"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/BEGINNER-UX-1.0.0-rc.6.md",
+                      "bytes":  4057,
+                      "sha256":  "4e3d37364630afa8275534003eea746280ea2960ade50425d9a42c0d809e1c0e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-beginner-validation-1.0.0-rc.6.json",
+                      "bytes":  3388,
+                      "sha256":  "6378cb0b5651b03e284dcb479543b7e4f4aa87fb99b08c953fd523de003db2e2"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-focused-validation-1.0.0-rc.10.json",
+                      "bytes":  11761,
+                      "sha256":  "85dc11a634e357a9f5d828167e16029608e26e8fae7e09dee2ecb3c44c249d98"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-focused-validation-1.0.0-rc.11.json",
+                      "bytes":  12399,
+                      "sha256":  "6f47d36be71275c9af404b825d001fde15126419f47bd6c7b3015ca43c4b87dc"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-focused-validation-1.0.0-rc.12.json",
+                      "bytes":  14031,
+                      "sha256":  "91185af6d924a5790b82783abdd46abaa94eabf04df8f57e27c1e5333c0a8dbf"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-focused-validation-1.0.0-rc.13.json",
+                      "bytes":  14792,
+                      "sha256":  "9acbffe0f670e5e33fdcef44c12926bd5db7dea3835f76c07edf91e0674d57f9"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-focused-validation-1.0.0-rc.8.json",
+                      "bytes":  5171,
+                      "sha256":  "47adb0e7feed0860c9a6fbf8348c93264cba70271e60d32e64f85d8cb7f0e071"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-focused-validation-1.0.0-rc.9.json",
+                      "bytes":  7836,
+                      "sha256":  "6839d5aac22a64493ec1036ff8e6c5c920177cf8c58ddbb3bb79bd548447e8d8"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-immersive-validation-1.0.0-rc.15.json",
+                      "bytes":  16174,
+                      "sha256":  "ca335ff8e85661d5686f166871f62e398eabe37928ea4f809d228a3c28a26e95"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-p1-validation-0.5.0.json",
+                      "bytes":  663,
+                      "sha256":  "73b2fd2d7d840adcb645d4ed7dcb258db5fe2ef2e40d0b351a23d148706a25a5"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-performance-validation-0.3.1.json",
+                      "bytes":  661,
+                      "sha256":  "42ca6d4a691f50cfc3c278786bd989a5821a8915042af5bda0043989c654c3bf"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-peripherals-validation.json",
+                      "bytes":  725,
+                      "sha256":  "fda9a869559583a7925329bab347aac51fd1cd1f3f8928e29e9ba182187481c2"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-problem-workflow-validation-1.0.0-rc.2.json",
+                      "bytes":  1990,
+                      "sha256":  "30b92a5e002b5a25de2122d80d3fb65242cfc85fd6971fa48a4566b81041a7eb"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-public-lessons-validation-1.0.0-rc.3.json",
+                      "bytes":  3310,
+                      "sha256":  "42b0897eded84fd01612986cc5047aa23df92327449b28e27d69be7cec37513b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-sequence-validation-0.3.0.json",
+                      "bytes":  593,
+                      "sha256":  "e6ff7d61d53f1b32cbef6e8cc88bb20fb59d1ee8a81dd51bd7b954a527975d43"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-stage-wizard-validation-1.0.0-rc.7.json",
+                      "bytes":  4294,
+                      "sha256":  "11cbbe65ad6a6b19711353f361e6ca6b460acb06fea671f0cad92e3736d11c13"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-steps-validation-0.2.1.json",
+                      "bytes":  376,
+                      "sha256":  "c9147c8aac0f4cce6945fff44f98b46aabc26a82f9262b8dae1cabb525829c6d"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-steps-validation-0.3.1.json",
+                      "bytes":  376,
+                      "sha256":  "c9147c8aac0f4cce6945fff44f98b46aabc26a82f9262b8dae1cabb525829c6d"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-steps-validation-0.5.0.json",
+                      "bytes":  376,
+                      "sha256":  "c9147c8aac0f4cce6945fff44f98b46aabc26a82f9262b8dae1cabb525829c6d"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-ui-ux-validation-1.0.0-rc.4.json",
+                      "bytes":  13642,
+                      "sha256":  "630142dcfaaff6567c057b0804847e52dad783f41da971c75d3e1d9adc9702a9"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-ui-ux-validation-1.0.0-rc.5.json",
+                      "bytes":  17467,
+                      "sha256":  "d8c5cad428f65218d5dbc6e58a2f9898f06abfc747b18634021a5a2df7ebb49a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-validation.json",
+                      "bytes":  336,
+                      "sha256":  "7db4c1f74489f3590162459e4ee924e0d1ee32fc6ec75f9b773f219dc0448292"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-validation-0.1.0.json",
+                      "bytes":  336,
+                      "sha256":  "7db4c1f74489f3590162459e4ee924e0d1ee32fc6ec75f9b773f219dc0448292"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/browser-workspace-validation-0.2.1.json",
+                      "bytes":  2773,
+                      "sha256":  "1099c9b5e573f801ef2d86727dfa3d28b02b44096ccef8bc4636fc1c39dbc6f7"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/design-fidelity-1.0.0-rc.15.json",
+                      "bytes":  9691,
+                      "sha256":  "1056a9aa92d6f8e00093b504a312a896b44492568541549b9d5b029e490945e0"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/DESIGN-FIDELITY-1.0.0-rc.9.md",
+                      "bytes":  4864,
+                      "sha256":  "4ab81b1d5df79f48b067e7469c393ae58385da5e02bf765ac44cf8a72dbed91a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/design-fidelity-validation-1.0.0-rc.9.json",
+                      "bytes":  36281,
+                      "sha256":  "b471748e7c5475c00f617990b890a753ebde4bde0c07c860612221141b101387"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/EDITING-FOCUS-1.0.0-rc.15.md",
+                      "bytes":  4349,
+                      "sha256":  "2ffeb9778bffe76c88fd50ef178dd7d3d13c1cbc89320ab3a817c1b5f9dd787c"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/EXPECTED-PREVIEW-1.0.0-rc.11.md",
+                      "bytes":  4678,
+                      "sha256":  "a4b3370587e91d43ca2b7f93cd498a00d4755a8f0066489e2a7c90cd53b8b372"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/FEATURE-FREEZE.md",
+                      "bytes":  3202,
+                      "sha256":  "8706b7ca0f519cb9fc247aa272008c6624a44ad5f88c8e2b5392d27c45753abc"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.1.json",
+                      "bytes":  6841,
+                      "sha256":  "292d6db08eab7114baacb90f85a02c7a05cf1f92357e34dc03129f3732885fe8"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.10.json",
+                      "bytes":  8674,
+                      "sha256":  "027b1d7e9c8d2e77baf59d6e506445a46f5424dd25c5adbdf19581551129edbc"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.11.json",
+                      "bytes":  8657,
+                      "sha256":  "01d62a72eee2f46ee8f3a2ce6f2b16550d4212236dd69a458ae413906f0b9b4a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.12.json",
+                      "bytes":  8720,
+                      "sha256":  "d14c68059e95ee029a34733b181891c06b382d008d3d34e61ad738b059264a38"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.13.json",
+                      "bytes":  11636,
+                      "sha256":  "08bfdecb53f634c3aefdef2293f4145c5b379b311bc8e1e2ec9e40f094b1b981"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.14.json",
+                      "bytes":  11008,
+                      "sha256":  "00ceb8ab5677a28fbcab14ae8454080728ff35375532664132d688905119c529"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.15.json",
+                      "bytes":  11026,
+                      "sha256":  "c6d51cdfede7e7ce761c63aeaca6f0e07a729cbf046f6e48151209f76f3c5647"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.2.json",
+                      "bytes":  9227,
+                      "sha256":  "bf70f028b7fa845c0eca941fb91c3cde7bd4cf7042d6010a9cef7862d5c746bd"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.3.json",
+                      "bytes":  9759,
+                      "sha256":  "a6482ba92173420eb43e5e8caa38950c32cecbf8036725ff04db18968f166a6a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.4.json",
+                      "bytes":  9092,
+                      "sha256":  "235ca6f215e84a47682ec5f2d979d22a02842af5bf981f573b9b46b2f519f9cc"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.5.json",
+                      "bytes":  8949,
+                      "sha256":  "7d8ba164480405e2b770fe280d214cb52d98ae2fca41c9876f973867f9a3d024"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.6.json",
+                      "bytes":  8935,
+                      "sha256":  "a148d36159b025079f8b8d0efb464e1f1c8d296f6fb6681a5abc34bd8e4d2996"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.7.json",
+                      "bytes":  8656,
+                      "sha256":  "49f2d4c4c431e30f3b93e05ee5f2f908f0ce7ad83b4222ed6d4486c03302d73b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.8.json",
+                      "bytes":  8667,
+                      "sha256":  "c44321a3987ba4c27e75ccdde4ac2772fa5a69660b2dba6aa42575388dde9f1f"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/feature-freeze-1.0.0-rc.9.json",
+                      "bytes":  8641,
+                      "sha256":  "3ecd585f1a787aa3181b1ff62d4029cc9d55dfc9aadd096e4e32241e4ff9395b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/field-error-0.5.0.png",
+                      "bytes":  45593,
+                      "sha256":  "d6c3e440d990cdc9e7fbbe80a07c104148bccda8cf322dd329733c307f20d22d"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/FOCUSED-UI-1.0.0-rc.8.md",
+                      "bytes":  6408,
+                      "sha256":  "0d122d980a19eb1f29dc9f03f781958895b0cf5a649d4368f600f178ceae0b06"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/HUSTOJ-COEXISTENCE.md",
+                      "bytes":  8656,
+                      "sha256":  "91acef53a37c008e0e6b6930e1c786ed5ed1253fb0e9493bb9d124b71cf1c9da"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/INSTALLER.md",
+                      "bytes":  12992,
+                      "sha256":  "76de3d0c58cdf24edb5689bce2af3761fd6420fd5b728b0b073a403cb8a98bc4"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/INSTALLER-AUDIT-1.0.0-rc.14.md",
+                      "bytes":  7612,
+                      "sha256":  "e23459a49d84ec025eb3715a16a94586143d6ecae9ced26fcbe66986419c28c4"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/installer-validation-0.4.0.json",
+                      "bytes":  619,
+                      "sha256":  "cc204c3ad3d48a40410f353f2210ed19a39443017816b93f6a505bdfd4004071"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/installer-validation-0.4.1.json",
+                      "bytes":  664,
+                      "sha256":  "5f91c63bd2a08bf89d6d82665ba57b1f343f1349937b874c0a3530d47389dc5d"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/installer-validation-0.4.2.json",
+                      "bytes":  2016,
+                      "sha256":  "7487735ef3ce8965bba10ef0be1907cfb5abb8a947bcd21e55f2b13b61894db9"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/installer-validation-1.0.0-rc.14.json",
+                      "bytes":  1308,
+                      "sha256":  "4fb24f1694ba34f71afc428ea6039b64cfd7166592d11cb4ef090955300f6a8d"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/lesson-results-1.0.0-rc.3.png",
+                      "bytes":  41677,
+                      "sha256":  "e9da960b2a4a7ff66e0b5a9152d04f6b3d55a423b8092e64223e10b7e79cdb92"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/lesson-results-mobile-1.0.0-rc.3.png",
+                      "bytes":  32121,
+                      "sha256":  "90c2e3b5e7d54670d2ef68cbe708fc7ab5966acf668e342c271cb879cddb6389"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/MENU-SEPARATION-1.0.0-rc.5.md",
+                      "bytes":  3335,
+                      "sha256":  "63ffc310c80d097f88e1764a60ed022d297c31ee7fb34d980da5195e793a2c79"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/output-sequence-failure-0.3.0.png",
+                      "bytes":  11072,
+                      "sha256":  "364efcc657e8e64b40a35643ef51a80554b99e29582823e53e2f3ac112c1120c"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/output-sequence-success-0.3.0.png",
+                      "bytes":  8848,
+                      "sha256":  "e1bf5cc072686905705fd792239f006aeb52539ab18782c0c9e7011901379f8b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/P1-FEATURES.md",
+                      "bytes":  9260,
+                      "sha256":  "eb844a8b87a393bda5675a88662d7045cc6e3583dc00035ae4fed4233e3573e5"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/p1-validation-0.5.0.json",
+                      "bytes":  1498,
+                      "sha256":  "4eda45c5264918934e4888a7fc55f6ec8da85901c5229e11359be4746ade61da"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/PROBLEM-WORKFLOW.md",
+                      "bytes":  12659,
+                      "sha256":  "d7259231b282c78ef43bbed28cb8e1c00bd2791de5d44eefeccf97aa2609f23e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/problem-workflow-1.0.0-rc.2.png",
+                      "bytes":  52726,
+                      "sha256":  "364abab7b7413b01d36f1d88f10c3c6a60a83c4211ecd2075f534027d6fe7740"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/problem-workflow-mobile-1.0.0-rc.2.png",
+                      "bytes":  41953,
+                      "sha256":  "5fc5c3128f2b369d05587cdd848d54b62351a7dd9eaa81c607b8dc1622c786d6"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/publication-review-0.5.0.png",
+                      "bytes":  40490,
+                      "sha256":  "1627d14ece85ad76cbbec2d058ee5fabeee08c17507be2cd0ed9acb0e0dede4e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/pxt-sequence-validation-0.3.0.json",
+                      "bytes":  6801,
+                      "sha256":  "1e916affe55946646bde18af2cc6ddb2ef79ec8588df6070bd0023d3c7397be2"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.1.json",
+                      "bytes":  1389,
+                      "sha256":  "1fcbc44bf49187b7d02620d85af15d420ef17283b8028f89ab5fc8832db58c3f"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.10.json",
+                      "bytes":  4919,
+                      "sha256":  "9e8ba32b7778422d2dd9bce515061b9ad2d2042982ceb6293302e05f1d76e2f6"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.11.json",
+                      "bytes":  5509,
+                      "sha256":  "405b15549f3aad776f80fd08cfd489f6632693efab4450deaa4693d6d89dc0ed"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.12.json",
+                      "bytes":  7124,
+                      "sha256":  "642a47de7e7765c30a054c9c31916ba8dc851302d824b80b40775af2b82a324e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.13.json",
+                      "bytes":  7102,
+                      "sha256":  "308ceae975746154167c498481416d874ec32c45fb17cc275bb42259bad1ed5e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.14.json",
+                      "bytes":  7594,
+                      "sha256":  "7e0f9a2f2d2a8734c371bf2d6065f182db792d24ff2308884f9e61bb354d8082"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.15.json",
+                      "bytes":  8157,
+                      "sha256":  "4498d9ef958208445e03b6fab7febae5337c09ee4f14204493bc4c5a640cb04e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.2.json",
+                      "bytes":  2761,
+                      "sha256":  "f05a33de866c91023007845870de2d4226ab467a6b7cafd7c4f7a5d0fcb96655"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.3.json",
+                      "bytes":  3909,
+                      "sha256":  "bde1cdafcb9d23fe0c7a5ac6c63786391de14599dfdb0c19b9bcd4066fba45b6"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.4.json",
+                      "bytes":  4864,
+                      "sha256":  "05cab2700ef252d98e0ea4ff31106fe35d20db570875d42751bbd0d7fb7fc4e7"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.5.json",
+                      "bytes":  3936,
+                      "sha256":  "b152d6f9ce527c079eee1c3c25032e7ff3f5551235750d3d59368d0682714a0e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.6.json",
+                      "bytes":  4163,
+                      "sha256":  "b28f4dbc391af37ffaeeee3a7339b04e1553bab4825dc0953389816050456eef"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.7.json",
+                      "bytes":  4317,
+                      "sha256":  "86dfc515bd8f004d1bf70954925fb6da5b74c23b98baf9a3f63f4ee1d5cd16ba"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.8.json",
+                      "bytes":  4590,
+                      "sha256":  "7776d5a3dd80a61164ca86aa02d9e0baafefa9058a7751dd49a2765d2ba8fc77"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/rc-validation-1.0.0-rc.9.json",
+                      "bytes":  5869,
+                      "sha256":  "3e017198ebee63a1809ec0fe4de8419c68cf89c2ddfddd12c24ab4592f551c49"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/RELEASE-PLAN.md",
+                      "bytes":  13973,
+                      "sha256":  "4e6f6262fbb89da5d0f39c8c001d21d86ee038186f717c085646500b32b01544"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/RELEASE-REVIEW.md",
+                      "bytes":  14895,
+                      "sha256":  "2d2184ac9b5739652c839b2133070111c7f6f5bf028b6a902731c3226e495f30"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/STAGE-WIZARD-1.0.0-rc.7.md",
+                      "bytes":  5876,
+                      "sha256":  "9d150f93304879c94756f5480ddac309e5010a956e687218d528cc8f93646799"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/STATEFUL-EXECUTION-1.0.0-rc.13.md",
+                      "bytes":  8613,
+                      "sha256":  "3b2c5d67c77a7fc084476d2b7c56c2ae9636ff2797ccfad43ee8e333304bb590"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/STUDENT-OVERVIEW-1.0.0-rc.10.md",
+                      "bytes":  3736,
+                      "sha256":  "b5b0b0af82c7f056a99b847936b6ed416ccbe66da2a52ae45af9f8fee811446b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/teacher-i2c-card-0.2.1.png",
+                      "bytes":  42281,
+                      "sha256":  "fc8f037a0a9480e0d109b5db17cba1266d18b47d1ae296d49fa3f743a526cfc9"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/teacher-output-sequence-0.3.0.png",
+                      "bytes":  39937,
+                      "sha256":  "078c42eeeecbdd2963f24b6d31f7cf1daa548e0e6c8e3e4db1ea495ead50135f"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/teacher-step-card-0.2.1.png",
+                      "bytes":  25796,
+                      "sha256":  "0114cb365015171867bb54f3a7f0765880f7156b0cf68b04ac891322c6f4364b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-actual-rc12/actual-execution-dark.png",
+                      "bytes":  138428,
+                      "sha256":  "60da997837085366a1e4bbc5ef809aafa205290aa3136062c656cc954c485935"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-actual-rc12/actual-execution-desktop.png",
+                      "bytes":  148027,
+                      "sha256":  "b501c42493ca7853c3fe12c220304daf3db614333da208967901f9954bb9db9e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-actual-rc12/actual-execution-mobile.png",
+                      "bytes":  137613,
+                      "sha256":  "020527ffa5f6772e20a6e817c7c897c075d57735f02023891696b32be7834c0b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-actual-rc12/teacher-private-checks.png",
+                      "bytes":  28310,
+                      "sha256":  "900c9ba8c1b240e3053908fe42b83e82f9764e1457671cdc550d29384e9ea758"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-before-1.0.0-rc.4.png",
+                      "bytes":  41602,
+                      "sha256":  "879525f26a009ba3cbfd97d6808c4791ea8dd4ce76b973f78805c2bcd873897e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-core-problems-1.0.0-rc.5.png",
+                      "bytes":  35079,
+                      "sha256":  "9be517826102409e5677290dc0cde32abff19638f593217e9fc0a6014566b930"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-create-mobile-1.0.0-rc.5.png",
+                      "bytes":  48728,
+                      "sha256":  "7c96b8eca9e4b2b19092b97d2dd281e803bac3e1e1aa7a14f5b8fb891b60d979"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-create-mobile-1.0.0-rc.6.png",
+                      "bytes":  48853,
+                      "sha256":  "f602ad0b3e2a3e833b5e4a6ae8cae2440206be8ee49f0d7c027b0cec8c368078"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/author-step-1-1280.png",
+                      "bytes":  39884,
+                      "sha256":  "028d588607e458113a5750e67dc9fc0f608bbc476e3bfd39aa6cbee7fb1f1f84"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/author-step-1-390.png",
+                      "bytes":  37176,
+                      "sha256":  "fc2f1f30d2958f364f23e84fd1aa0cececa65b734f7966fc3acbc2403e1aa592"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/author-step-2-1280.png",
+                      "bytes":  56137,
+                      "sha256":  "226773207d59717a1887f78baa0f50333f0f4a176ed07c7a6670f3f53b75fb61"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/author-step-2-390.png",
+                      "bytes":  50567,
+                      "sha256":  "d43f6bc8a36171ba5115decf7dcdde870b3151cba9ee7e2b399e3f217495a736"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/author-step-3-1280.png",
+                      "bytes":  52638,
+                      "sha256":  "22c9a025a17e017f922689da0b72b32c0ea132bc7ccf8a02043108c54b81306e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/author-step-3-390.png",
+                      "bytes":  47360,
+                      "sha256":  "fcbf0fa0701735ba135ab2c36dacff972cb6e2df792787c6e9fe5758a440d9cb"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/author-step-4-1280.png",
+                      "bytes":  46829,
+                      "sha256":  "505105d9d32abceafd04f41fca79514fbadc7e3051d8f461d117b3a72f054b55"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/author-step-4-390.png",
+                      "bytes":  42439,
+                      "sha256":  "0fd4b61e2179dc46246f62ecd5fbb7b9627282570ebae06ad3aba899c0d68c4c"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/comparison-author.png",
+                      "bytes":  159318,
+                      "sha256":  "c5d464bde4365cd57802914a757f04321dafa797aecb7a1baf3be2187259762a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/comparison-author-first.png",
+                      "bytes":  121800,
+                      "sha256":  "a08534c8f8a7701850ce23eb71d83073aaf5443885b7ff315bf1fe99e5c15967"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/comparison-problem.png",
+                      "bytes":  111698,
+                      "sha256":  "04344d0075f9ce263e9a8c887df8dcc10d811bfb1d7e93bd6e286cac45b3ccbc"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-design-rc9/matched-problem-390.png",
+                      "bytes":  50434,
+                      "sha256":  "6c3e6ffd40b10550e3f429b899b5a56aaf29a66f975372093bebd4cb3d8918b7"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-empty-mobile-1.0.0-rc.4.png",
+                      "bytes":  35742,
+                      "sha256":  "a986f05beb26cfdf74e3b5d116686ebe54e2ed75ea57ff0856e5b21eec89f51a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-empty-mobile-1.0.0-rc.5.png",
+                      "bytes":  35758,
+                      "sha256":  "8c1e341e824c53c4f21923902e90ea9b3c8633d81e004b2b75935990de087c0b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-expected-rc11/expected-preview-dark.png",
+                      "bytes":  106514,
+                      "sha256":  "9933d7df4961b8215d582730ed5bf9fc712eeae22e040bfa19177c317bad9f8b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-expected-rc11/expected-preview-desktop.png",
+                      "bytes":  112173,
+                      "sha256":  "b1327d95debd6bb4d72c2379ff79ef2c872b30b54cdc5dfc6f932bbe9000815e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-expected-rc11/expected-preview-mobile.png",
+                      "bytes":  105460,
+                      "sha256":  "009a341f5ff23f18c8a52604ee63f253e60be0f950929f8a377ffb1fd29d9245"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-focused-author-desktop-1.0.0-rc.8.png",
+                      "bytes":  99986,
+                      "sha256":  "c83e404e97449f95925f244d0d9e1d52cb72d463f6d7c495799f2de08b198374"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-focused-author-mobile-1.0.0-rc.8.png",
+                      "bytes":  79088,
+                      "sha256":  "8f40102e3cfa32911bebafba4e330c10394e084f279cfd09420e91ba780af6b2"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-focused-batch-mobile-1.0.0-rc.8.png",
+                      "bytes":  47358,
+                      "sha256":  "6b916bb413a7a2692c58003793a6490681a8313c72f9ec21c2537c6144f10b70"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-focused-dark-mobile-1.0.0-rc.8.png",
+                      "bytes":  82305,
+                      "sha256":  "7d195e4d5b820c156b95e2bf716081a8b4469d9bdc6509687d36a2073cbec0af"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-focused-problem-desktop-1.0.0-rc.8.png",
+                      "bytes":  87509,
+                      "sha256":  "7eeaa8da45cf17c08ab863076933a103bfcde6500fb558d607ce2ca28552b4da"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-focused-problem-mobile-1.0.0-rc.8.png",
+                      "bytes":  79502,
+                      "sha256":  "710b2f45037a639064d5a54a4a3b6a1ff6cc6b72b89346863601503c43806d45"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/actual-author-1280.png",
+                      "bytes":  24983,
+                      "sha256":  "66051932ac98543698e91110bb02ac26c2b43e1bd4b03191da2112c207f5f61a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/actual-author-390.png",
+                      "bytes":  18982,
+                      "sha256":  "2d4547b5994b57a0eaec8b14884572a3de10e744a51d851d101e26c4fd7ca7ae"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/editor-full-width-320.png",
+                      "bytes":  34024,
+                      "sha256":  "51a61133220a4795707d3817d92e207627dcc8bc87f7648c7e20f30fe512fe44"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/editor-full-width-desktop.png",
+                      "bytes":  40280,
+                      "sha256":  "2d6c09a419bdb563c4aadc3b19c44b6273fc1eaf278eeb5ffaedfd21c4de0b02"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/reference-author-1280.png",
+                      "bytes":  32765,
+                      "sha256":  "b8fe5e97306957389e83a49aee600ff793d3ccf9de93d0c2cb56ff0768d6e40b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/reference-author-390.png",
+                      "bytes":  31126,
+                      "sha256":  "a17e2b4635ef096280406ab4e98ea59a8c1e90acbf52f855bcda56acc934044b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/stateful-execution-dark.png",
+                      "bytes":  53187,
+                      "sha256":  "1ef490faa709590b50ab76f884e6ab6360db7a19b66c2f393ccec3c0fc5605cd"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/stateful-execution-desktop.png",
+                      "bytes":  68864,
+                      "sha256":  "7b809c7b1d130b54dd5456e3f6b8daab446c613cca80c8ada34a49440864d6fd"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-immersive-rc15/stateful-execution-mobile.png",
+                      "bytes":  52690,
+                      "sha256":  "8d34ad807418239a13f48d314ef1a0e8ac18daaf0b2c4e102a308161d3c5e713"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-input-cards-1.0.0-rc.6.png",
+                      "bytes":  76465,
+                      "sha256":  "64a8f2be70cfa707dd8f060a31f4d9ef78933928bcb86979396c2d0aeaa5a53c"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-lessons-mobile-1.0.0-rc.5.png",
+                      "bytes":  92583,
+                      "sha256":  "73f8e7c76ce43e0aac2aeb095142f40af8c377d027d79601f1a0ea10518ecb90"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-list-mobile-1.0.0-rc.6.png",
+                      "bytes":  24851,
+                      "sha256":  "69e288124102562210b505777f4e84a60f470693f7c7c0a6128610f72b169219"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-native-problems-mobile-1.0.0-rc.4.png",
+                      "bytes":  13949,
+                      "sha256":  "375a9b56fdce54f4eae1d926c9966ab3092a0e6b5d578d630837fa75a03173f7"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-problems-dark-1.0.0-rc.4.png",
+                      "bytes":  38969,
+                      "sha256":  "791b2a7949dd2c4c0c7752d0649a0174befa2d86ef8cc442f353ff56c47aa84b"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-problems-dark-1.0.0-rc.5.png",
+                      "bytes":  38695,
+                      "sha256":  "578ac02f5fd34b029ea9e04f764746a0d72280bca6265fc19a763290ae0d67a7"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-problems-mobile-1.0.0-rc.4.png",
+                      "bytes":  33558,
+                      "sha256":  "ba9ad65101880cd2a60e7669510f821782c25f674c3e235ae45a1df24cf9e782"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-problems-mobile-1.0.0-rc.5.png",
+                      "bytes":  33560,
+                      "sha256":  "825921966ae1c7d84c9096667941166efae466769910e71ae74f98553b9c9e16"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-stage-flow-desktop-1.0.0-rc.7.png",
+                      "bytes":  146530,
+                      "sha256":  "9fa02d9028df587cc9b2cf68b750adb68d206632b8a0176a996b3b8cd61048d8"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-stage-flow-mobile-1.0.0-rc.7.png",
+                      "bytes":  121645,
+                      "sha256":  "cd930c066bb83f592ec9677d019d1296abaaa4c088ab5c263d4f5b6a8936dbe0"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-stage-pin-dark-1.0.0-rc.7.png",
+                      "bytes":  40251,
+                      "sha256":  "b2f4355831a659155e7523e8523552ad581c20ce659c8d04afe430f4ebd2c425"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-stage-student-mobile-1.0.0-rc.7.png",
+                      "bytes":  94105,
+                      "sha256":  "43e284061d9545670977590bcb1d6bd2e5f933fb2a995f82218f424b4ce5965c"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-stage-time-mobile-1.0.0-rc.7.png",
+                      "bytes":  52404,
+                      "sha256":  "1baae89ff6f881b3fec7ba3a7d21b31801a674cc1702622816f57977f26927e6"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-stateful-rc13/stateful-execution-dark.png",
+                      "bytes":  131508,
+                      "sha256":  "d6b1995584f84fc5b28f9519032a8bc359ed7b2b7e5249513dae730e9ee9a32e"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-stateful-rc13/stateful-execution-desktop.png",
+                      "bytes":  140041,
+                      "sha256":  "0ce0de9f0b43b9168f61c56d945a775441127de3a4fc21b874a416aa800ea64c"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-stateful-rc13/stateful-execution-mobile.png",
+                      "bytes":  130282,
+                      "sha256":  "5dd127fcec63e368e8bea71b588be93fbb82eec028f015c05049899d33b15814"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-student-cards-1.0.0-rc.6.png",
+                      "bytes":  80878,
+                      "sha256":  "16754ed8b08432a34cc24f58d6964e40f6602b08a196a89a8bbcac5a05e52a4d"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-student-dark-1.0.0-rc.6.png",
+                      "bytes":  82343,
+                      "sha256":  "2b8461f2390fdab33943ff65d4c42c851b94330feeb2a68c2301717739fed042"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-student-rc10/student-overview-1280.png",
+                      "bytes":  73495,
+                      "sha256":  "7f25dbf4b4c92dc5d75e348796cb640da9752711b2f204b454d532d788794f18"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-student-rc10/student-overview-390.png",
+                      "bytes":  80663,
+                      "sha256":  "8c8d7e1a780dfa1a54872a99754911e3a5a3a53946e9fdba1884c65a429a4344"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/ui-student-rc10/student-overview-dark-390.png",
+                      "bytes":  81830,
+                      "sha256":  "3c4b05390c246a14f2fd9dad75c876cf3bbf4442bb393367dcd9bf9562c6397a"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/UI-UX-REVIEW-1.0.0-rc.4.md",
+                      "bytes":  4393,
+                      "sha256":  "5ed983e6d37ff77105239712c36a983233840cafd905f16c52b4f9755d9bc248"
+                  },
+                  {
+                      "path":  "oj-microbit/docs/VALIDATION.md",
+                      "bytes":  57703,
+                      "sha256":  "4f5d61facd6952380d37336b4229cfcd6339b6c1321dc402ec9fa0d4c37c0abb"
+                  },
+                  {
+                      "path":  "oj-microbit/LICENSE.txt",
+                      "bytes":  35149,
+                      "sha256":  "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+                  },
+                  {
+                      "path":  "oj-microbit/oj-microbit.php",
+                      "bytes":  812,
+                      "sha256":  "c36512862cbf80569a69bd3142ec1b1cd223a53f5665cf537d0c93d6785f02d8"
+                  },
+                  {
+                      "path":  "oj-microbit/plugin-package.php",
+                      "bytes":  287,
+                      "sha256":  "efe184df5f7fa9a56119559affdbd2cdddf1bf9f1f384c5cf3384c6059d89d22"
+                  },
+                  {
+                      "path":  "oj-microbit/README.md",
+                      "bytes":  23014,
+                      "sha256":  "3b98e6b37cb3664a0c59e3b63b30f25d0c11a1d1b01474a816a3f81caaab3825"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/css/microbit.css",
+                      "bytes":  84067,
+                      "sha256":  "916c11b965756e176ca0bc4162e579ced303e2e663b8fcaae86f04881fe92624"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/js/live-session.js",
+                      "bytes":  3759,
+                      "sha256":  "c2a7932350291fbd8a3c16ea2b5d2b83537bdf39cd972506ce456dc9b6ffc65c"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/js/microbit.js",
+                      "bytes":  310283,
+                      "sha256":  "c5a0eab2ec021b84b70b6e3e43839818fafe3cd892916fea33bd5df38103360f"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/simulator/host.html",
+                      "bytes":  464,
+                      "sha256":  "76311b71a98cf0e03fc36329fab514832fbd2199ab476a24f6e95efb73654c4f"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/simulator/host.js",
+                      "bytes":  659865,
+                      "sha256":  "3edabd37e89a42e309bd7bbfead3d85063b5b1c7b171691c791972a3dc7b8a60"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/simulator/THIRD_PARTY_NOTICES.txt",
+                      "bytes":  2285,
+                      "sha256":  "8ac95cc76ba126fbf70132069f844491f437e5c53a29164b6642c46cc8885eb9"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/tools/build.mjs",
+                      "bytes":  1592,
+                      "sha256":  "5fc0b0fe084e38b3567db21b521fe13d4ffa429b7ed6100d68e34acaf81ba2d4"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/tools/build-live.mjs",
+                      "bytes":  2680,
+                      "sha256":  "56597d918d9c57e041c808cf5c7a8f07ce97a9ccbadf1a9e4db622746b170457"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/tools/live-host-template.js",
+                      "bytes":  1475,
+                      "sha256":  "f9e8f94d3ef9d042bd93602578c481fefa0f060423bf19caade7dc615e0ebc86"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/tools/live-worker-template.js",
+                      "bytes":  3702,
+                      "sha256":  "99aa17477bbc7fa94a57a006f9fbc4d582c3b531c29d2962bab2848e51e0da02"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/tools/package.json",
+                      "bytes":  348,
+                      "sha256":  "a3debe47aa723bac76794d9d6de74603be57381901411c3383ba58ffb23b31c4"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/tools/package-lock.json",
+                      "bytes":  26631,
+                      "sha256":  "1ca687578b936e424d1de60b30fd791c7295ec9ce6d5d81ccf4fd7714dd8d4da"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/tools/usb-entry.js",
+                      "bytes":  761,
+                      "sha256":  "f87c0841c0af9350a889bc251480a82c083e26a3e3e4a5aa6bf77718f4077888"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/vendor/microbit-usb.js",
+                      "bytes":  54248,
+                      "sha256":  "74fff5a21241f15506eabf11e00dbc8ad34c1701844538a40358bebaf385d023"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/vendor/README.md",
+                      "bytes":  1291,
+                      "sha256":  "a04c87d14a53e29515d0119b9c56f307ceed44e9edf928add3d84f3ddedd6901"
+                  },
+                  {
+                      "path":  "oj-microbit/resources/vendor/THIRD_PARTY_NOTICES.txt",
+                      "bytes":  4128,
+                      "sha256":  "86633ad2b92c56e07c4887c1b75bcfb3cb1640c1b03ecc5f88839eb2055a50b3"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/.dockerignore",
+                      "bytes":  40,
+                      "sha256":  "45e6cf63d058d299c3ccb2f6bff356ba3c2e3402e90cde1857cffdbd824a1c7d"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/Dockerfile",
+                      "bytes":  616,
+                      "sha256":  "20e511a131f3005b485b0018a7802ea6e87ae0a3d1ab71244f2008034fe2308a"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/install.sh",
+                      "bytes":  35852,
+                      "sha256":  "0a1474b65283466fb8c15ad820444ef62c9918e4f4f437ceb39d6232b3575e50"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/install-tools/configure-wordpress.php",
+                      "bytes":  3627,
+                      "sha256":  "1c84268f666bf24c2222bae0d42328459843aac4efd65ab7184d8081ca25e9ba"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/install-tools/runner-check.mjs",
+                      "bytes":  4991,
+                      "sha256":  "f7bf2d7a230bab8ad1b275a21fbb4d54b0974c7a3c1ffb13ef0672f526531087"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/install-tools/WordPressConfigurator.php",
+                      "bytes":  8082,
+                      "sha256":  "7c0f571533edd4dfe46074c877246d97d39302406bd96faedb1a7e0aef08c4d0"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/package.json",
+                      "bytes":  451,
+                      "sha256":  "b6849786582d2c279624df8468dc05503f03b766a276d396621eb6654fef3021"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/package-lock.json",
+                      "bytes":  323912,
+                      "sha256":  "a294046c67d2e3b99aed4e3b3ac140f8e45ffbbdf0badcaf1b4a864913caaed2"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/README.md",
+                      "bytes":  20664,
+                      "sha256":  "ca780f569623bfaac9f1a35405a147db11a14e0d3737aba9c5e04968a0ea0375"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/assertions.mjs",
+                      "bytes":  5201,
+                      "sha256":  "acd02cb837d01bc19f0461e1b891ccebc71b51b23242ad7696e0ba7e2330ff7c"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/compiler.mjs",
+                      "bytes":  4096,
+                      "sha256":  "d90bab49631b3dddd71da2e3335a66da3570caf63b1dc67c591f51b92e822ed5"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/grade.mjs",
+                      "bytes":  2982,
+                      "sha256":  "cb69e8e335ade65fc66ae897af67e0a18d9404b9092e623d95e7d00e4a2e352e"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/job.mjs",
+                      "bytes":  779,
+                      "sha256":  "2cb65e11e07a334f07eb5b1c14339beb714f5ffb1d1893bc9248697d1e39f44a"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/launcher.mjs",
+                      "bytes":  4536,
+                      "sha256":  "3127a056380d062cf66a463d8151301f9a229cb734e5baee9f202d32237fae73"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/live-compile.mjs",
+                      "bytes":  747,
+                      "sha256":  "1ee396ce92e16ec81bff1c54d30a9a6694487c0e3597db8f6e57670976c71c93"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/peripherals.mjs",
+                      "bytes":  4611,
+                      "sha256":  "e1c402fd935695ef59a5799a6777d1211719c556a2c9093bb8462ce2591adf4d"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/server.mjs",
+                      "bytes":  6938,
+                      "sha256":  "83774eaeee2e69b31227b408412f4627b786f3d5414f12ba53f290dde7280106"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/simulator.mjs",
+                      "bytes":  8522,
+                      "sha256":  "afee0bda9a971cdaae21ae842e93e7391a3ab803b77e6de1f330b9d111438b99"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/validation.mjs",
+                      "bytes":  14187,
+                      "sha256":  "5affdd919a8e9d91d27782ab169c8d321d091bc9627de3faea0e6fbdb06cf9ab"
+                  },
+                  {
+                      "path":  "oj-microbit/runner/src/version.mjs",
+                      "bytes":  354,
+                      "sha256":  "d28765176ce07cae667a94283ee71e08295a61061c0e4ba70b0735397fbb9723"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/AcceptanceSupport.php",
+                      "bytes":  9626,
+                      "sha256":  "2af5571ef6d3ccdce933b18876f9e9f65e2e9aedae004c17f908cb791cb93ef1"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/config.example.json",
+                      "bytes":  1066,
+                      "sha256":  "81d9ffd10ee75f9f4cc615c465491b2c6fb0c822973871bdbd08a93d01c4f8bc"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/host_check.py",
+                      "bytes":  22018,
+                      "sha256":  "d8cb47b70dd9e0f64ca0672789bb179c41004dfe6396986972df346dae3024d7"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/host-check.sh",
+                      "bytes":  606,
+                      "sha256":  "5cff1d67b137d9fc5d253faa71a854a64183399e361fc3022565afb38da9b026"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/install-cycle.py",
+                      "bytes":  13258,
+                      "sha256":  "6059ef091ecce2563b2724b5ef4f98c5f9c9373cd23404cbd54a1d53b36a55e6"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/install-cycle.sh",
+                      "bytes":  244,
+                      "sha256":  "5fb4f60bb515c2e4f7f7d64c61aaf34cd2b79c053e37e3a2d96e0c404a2f69cf"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/rest-check.mjs",
+                      "bytes":  41773,
+                      "sha256":  "ba3c6a226fc8ef7f893cfb24763b290f0de01f2594a91b3dc2397e1d3196c3eb"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/WordPressDbProbe.php",
+                      "bytes":  20271,
+                      "sha256":  "3509647df2ed93ff71ffb03674ddddd6814520ba5b12678843df4c8b1d3591a5"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/WordPressNoncePreparer.php",
+                      "bytes":  2895,
+                      "sha256":  "4395bf735d8560e4808a7734fd0134c586c82175bb13d9917352389ba65182b0"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/wp-db-check.php",
+                      "bytes":  5051,
+                      "sha256":  "b5cba62c2cdb17c0da4ccd508dbdb24ee44907da05cb2500eeb275eb047503ab"
+                  },
+                  {
+                      "path":  "oj-microbit/scripts/acceptance/wp-nonce.php",
+                      "bytes":  4775,
+                      "sha256":  "64e1efcf8e3d3423fbea71772061ea5d96fb068f29a2cdf3994fe26040a05b64"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Addon/NativeLearningProvider.php",
+                      "bytes":  6255,
+                      "sha256":  "3458fc58c38cd7358a8f1b5e9dc31649eb35e4e99771e2a4d2e112ecb1eb2693"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Addon/PageHandler.php",
+                      "bytes":  3895,
+                      "sha256":  "fd7ec8393a87dea197fa1c379b630bbce77e182ded05bd9d57da8d9a82c21bae"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Addon/Registration.php",
+                      "bytes":  5499,
+                      "sha256":  "376f17ac421a386fa79f3b7f62784abd48980f8d030d9ff428e0739d02e68eb9"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Addon/RestController.php",
+                      "bytes":  17959,
+                      "sha256":  "c24e61e5bbdd7c8ba2c3916d5b76bfccfefff61c634d4399ade25be2cccfb790"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Application/Access.php",
+                      "bytes":  975,
+                      "sha256":  "897da38701deaf56be4fbe2cbe52a7b371f400f44e3766703300f31fbd13d695"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Application/LessonAccess.php",
+                      "bytes":  437,
+                      "sha256":  "2c7efae6ece8acde87d1612d65fab3bc8b3e009019be377f466da9f9aae95fce"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Application/LessonRepository.php",
+                      "bytes":  1095,
+                      "sha256":  "ae3ab918abde5f0903294d594d42a5f1d544f3ae0eeecf91f3f7598accb21c93"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Application/LessonService.php",
+                      "bytes":  15158,
+                      "sha256":  "b6bc7020d11791974b596d28d69fa3ace65d244b46dcfdc6801ddf97e75037a4"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Application/LiveCompiler.php",
+                      "bytes":  144,
+                      "sha256":  "f48291bdd41088dc871562aee9fb7cb11d7b4a155c9b6a894824756a2ec9f869"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Application/PracticeService.php",
+                      "bytes":  15216,
+                      "sha256":  "77468f778423606770e00596d74034aae47630bc23ddd6933d75beb8d35b1421"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Application/Repository.php",
+                      "bytes":  1122,
+                      "sha256":  "12ec594301acddc38080f5662cf2f45e8b5a85f6a66c210757fe3a6b4a7ecd7a"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Application/Runner.php",
+                      "bytes":  188,
+                      "sha256":  "6bac4ec60af6a5403ee13f58ec2d7dd4d88be96ac9906adb3855fb46a4bc9ab5"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Core/Autoloader.php",
+                      "bytes":  464,
+                      "sha256":  "e46db0573f3a647ff797257208b736dafcbe721de70da07c737e1554689ffbde"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Core/Plugin.php",
+                      "bytes":  4239,
+                      "sha256":  "27956cdcc28d959443461fd66a223a3af7c0c44718aaf8122a2e17b2ad26f8a9"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/ExerciseSchema.php",
+                      "bytes":  13731,
+                      "sha256":  "60cf24d27c12146f23893a2707221d43514f137aeda414790ef41f8264b41b60"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/I2cSchema.php",
+                      "bytes":  7760,
+                      "sha256":  "bb213afe392208397eb2799ae46477e5c936362c6b62db70a6cbd5b321a54b9b"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/OutputSequenceSchema.php",
+                      "bytes":  7685,
+                      "sha256":  "4136940086b71d2809ac8aef6b41176952b5521820694a7af02f3d9a67cb8fa9"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/ProjectSchema.php",
+                      "bytes":  9724,
+                      "sha256":  "ee2e810cbbd9ebf991918e54018f390abd881e9fbf670628bffd0a9a91ca568f"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/PublicationReview.php",
+                      "bytes":  5153,
+                      "sha256":  "a60fcc3ca6a74793677a9cde4010f97a22830d97e02e17cdd0baa777f64fd01c"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/ResultVisibility.php",
+                      "bytes":  1922,
+                      "sha256":  "d9b3ab10e757b9a3bff33b8984a48fc14820e9997177e05d36fc8914aa8844a9"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/RunnerResultSchema.php",
+                      "bytes":  11951,
+                      "sha256":  "37e573c1171fe6104ac958f79ca833ac7b5e0860e992761c63f8b14d90255803"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/SchemaValue.php",
+                      "bytes":  2327,
+                      "sha256":  "1533627943e47033b1332bd1b9d0993ab4b890d77847cd58aca210aef5954df0"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Domain/SignalSchema.php",
+                      "bytes":  567,
+                      "sha256":  "5e046b26afdcb0ffb0942a6e3ec734329f1719b1d32890469a2b24449cd4fcee"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Storage/Installer.php",
+                      "bytes":  11469,
+                      "sha256":  "f7c4a3d60af627917ebe166af846a52383acf4a520cd223277e7d38d172a3c82"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Storage/WpdbLessonRepository.php",
+                      "bytes":  18334,
+                      "sha256":  "db06dd00859e9a352d1ab7e27a420f30d14e5ed1ae900e60bd1f93ee8caf437c"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Storage/WpdbRepository.php",
+                      "bytes":  25879,
+                      "sha256":  "4494cc79e21229caa8952321240f52ba74113c5c314e74e1c847bffd364b7762"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/ClassAudienceAccess.php",
+                      "bytes":  4841,
+                      "sha256":  "d3e94a99aa2168743632de5acb091f2b598c0186c04823e469c3d9aa7f828d3c"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/ClassLessonAccess.php",
+                      "bytes":  6244,
+                      "sha256":  "41b07ffb29f87614f7534046015799b394bb6a0279f2b91096ce4b84a0d487da"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/GroupAudienceAccess.php",
+                      "bytes":  4865,
+                      "sha256":  "beb4e0cf47bd99cfe4e621e7309158f048619b18b9850f615f6e0dbdd99790bf"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/HttpRunner.php",
+                      "bytes":  8695,
+                      "sha256":  "81b4a7629de0eece4ef8266f18513d9dec2bf41b8cdc11ec2d51cc388bd87f57"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/LearnerCapabilities.php",
+                      "bytes":  2884,
+                      "sha256":  "496f57e4f987cda5a913544df149e3cad1e9c2d424272e00a2af6f90062500c5"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/OperationError.php",
+                      "bytes":  979,
+                      "sha256":  "ea03658c7e0fe509b39e8cdcb850b4c7d46c261ec7d1cd262482bc144b696fb8"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/PlatformAccess.php",
+                      "bytes":  3082,
+                      "sha256":  "d9193baa198aa962fee52187ce379f16d3ada6803e3d552c4848041377bdee42"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/Privacy.php",
+                      "bytes":  13346,
+                      "sha256":  "308d1bad9db36d65500049aec078e60c3aa3e294168174eabb06724553cfcbf3"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/RequestContext.php",
+                      "bytes":  974,
+                      "sha256":  "c85cae7bb473351db3789c32a0a3aca86501c780388115365d1a8e0715bc0bc2"
+                  },
+                  {
+                      "path":  "oj-microbit/src/Support/Settings.php",
+                      "bytes":  12043,
+                      "sha256":  "0135beb4dd5bc500eef5171266ab13d93739d73b88a05f8d543fd769bb69fe4c"
+                  },
+                  {
+                      "path":  "oj-microbit/uninstall.php",
+                      "bytes":  1105,
+                      "sha256":  "4d7c5a74e5f34af4b0908cb1496feb965390e4a5a86cbddd751c4f009ed1c27f"
+                  }
+              ]
+}

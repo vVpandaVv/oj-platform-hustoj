@@ -21,6 +21,9 @@
 
         var contextSelect = root.querySelector('[data-field="context-select"]');
         var studentsInput = root.querySelector('[data-field="students"]');
+        var historyGroupInput = root.querySelector('[data-field="history-group"]');
+        var historyStatusEl = root.querySelector('[data-field="history-status"]');
+        var confirmButton = root.querySelector('[data-action="confirm-arrangement"]');
         var rowsInput = root.querySelector('[data-field="rows"]');
         var colsInput = root.querySelector('[data-field="cols"]');
         var frontInput = root.querySelector('[data-field="front-names"]');
@@ -53,7 +56,10 @@
                     + '<li>학급/그룹 명단을 불러오거나 직접 입력한 뒤 배치를 실행하세요.</li>'
                     + '<li>제외할 자리는 미리보기 그리드를 클릭해 표시할 수 있습니다.</li>'
                     + '<li>"선택 조건"에는 이름, 관리용 이름 또는 #학생ID를 입력할 수 있습니다. 동명이인은 명단에 보이는 구분 이름이나 #학생ID를 사용하세요.</li>'
-                    + '<li>앞자리 배치·떨어뜨리기·짝 지어 앉히기를 설정할 수 있으며, 앞자리를 희망하는 인원이 많으면 앞자리 구역이 자동으로 몇 줄로 늘어납니다.</li>'
+                    + '<li>앞자리 우선은 항상 1~2행입니다. 인원이 앞자리 좌석보다 많으면 조건을 조정해야 합니다.</li>'
+                    + '<li>최근 확정한 5회의 자리와 짝을 최대한 피합니다. 결과의 "배치 확정"을 눌러야 이력에 반영되며, 시험 삼아 다시 뽑은 후보나 단순 저장·불러오기는 이력에 쌓이지 않습니다.</li>'
+                    + '<li>이력은 교사 계정별로 서버에 저장됩니다. 이력 그룹을 비우면 같은 명단끼리 비교합니다. 명단이 바뀌어도 이어가려면 같은 이력 그룹 이름을 사용하세요.</li>'
+                    + '<li>가져온 명단은 학생 ID로, 직접 입력한 명단은 이름으로 이력을 연결합니다. 직접 입력한 동명이인은 서로 구분되는 이름을 사용하세요.</li>'
                     + '<li>"짝 지어 앉히기"는 각 행에서 1·2번, 3·4번, 5·6번처럼 좌우로 붙은 실제 책상 자리에만 나란히 앉힙니다(앞뒤로는 붙이지 않음).</li>'
                     + '<li>배치 결과에서 자리 두 개를 순서대로 클릭하면 서로 자리를 바꿉니다.</li>'
                     + '<li>배치를 이름 붙여 저장하고 나중에 다시 불러올 수 있습니다. 결과 화면에서도 이름·관리용 이름·익명 번호 표시를 바꿀 수 있습니다.</li>'
@@ -71,11 +77,48 @@
         var currentCols = 0;
         var selectedSeatId = null;
         var revealMode = false;
+        var historyPayload = null;
+        var confirmationKey = null;
+        var confirmationBusy = false;
+        var resultConfirmed = false;
+        var historyRounds = 0;
+
+        function makeConfirmationKey() {
+            var bytes = new Uint8Array(16);
+            if (window.crypto && window.crypto.getRandomValues) { window.crypto.getRandomValues(bytes); }
+            else { for (var i = 0; i < bytes.length; i++) { bytes[i] = Math.floor(Math.random() * 256); } }
+            bytes[6] = (bytes[6] & 15) | 64; bytes[8] = (bytes[8] & 63) | 128;
+            var hex = Array.from(bytes, function (byte) { return byte.toString(16).padStart(2, '0'); }).join('');
+            return hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16) + '-' + hex.slice(16, 20) + '-' + hex.slice(20);
+        }
+
+        function makeHistoryPayload(entries) {
+            return {
+                historyGroup: historyGroupInput.value.trim(),
+                roster: entries.map(function (entry) { return { id: entry.id, displayName: entry.displayName, name: entry.name }; }),
+            };
+        }
+
+        function markUnconfirmed() {
+            resultConfirmed = false;
+            confirmButton.disabled = false;
+            confirmButton.textContent = '배치 확정';
+            historyStatusEl.textContent = '최근 확정 배치 ' + historyRounds + '회 참고 · 현재 배치 미확정';
+        }
+
+        function lockSetup() {
+            var controls = Array.from(setup.querySelectorAll('input, textarea, select, button'));
+            var disabled = controls.map(function (control) { return control.disabled; });
+            controls.forEach(function (control) { control.disabled = true; });
+            return function () { controls.forEach(function (control, index) { control.disabled = disabled[index]; }); };
+        }
 
         function request(path, method, body) {
             try {
                 if (window.HttAudience) { body = window.HttAudience.prepare(root, path, method, body); }
             } catch (error) { return Promise.reject(error); }
+            var controller = new AbortController();
+            var timeout = window.setTimeout(function () { controller.abort(); }, 12000);
             return fetch(config.restUrl + path, {
                 method: method,
                 headers: Object.assign(
@@ -84,6 +127,7 @@
                 ),
                 body: body ? JSON.stringify(body) : undefined,
                 credentials: 'same-origin',
+                signal: controller.signal,
             }).then(function (response) {
                 return response.json().then(function (data) {
                     if (!response.ok) {
@@ -92,7 +136,10 @@
                     if (window.HttAudience) { window.HttAudience.completed(root, path, data); }
                     return data;
                 });
-            });
+            }).catch(function (error) {
+                if (error.name === 'AbortError') { throw new Error('요청 시간이 초과되었습니다. 연결을 확인하고 다시 시도하세요.'); }
+                throw error;
+            }).finally(function () { window.clearTimeout(timeout); });
         }
 
         function showMessages(messages) {
@@ -265,6 +312,7 @@
         }
 
         function onSeatClick(seatId) {
+            if (confirmationBusy) { return; }
             var seat = currentSeats.find(function (s) { return s.id === seatId; });
             if (!seat || seat.disabled) {
                 return;
@@ -297,6 +345,7 @@
                 seat.locked = other.locked;
                 other.student = swapStudent;
                 other.locked = swapLocked;
+                if (seat.student || other.student) { markUnconfirmed(); }
             }
 
             selectedSeatId = null;
@@ -315,7 +364,10 @@
             });
         }
 
-        function showArrangement(seats, rows, cols, mode, concealResults) {
+        function showArrangement(seats, rows, cols, mode, concealResults, payload) {
+            historyPayload = payload;
+            confirmationKey = makeConfirmationKey();
+            markUnconfirmed();
             currentRows = rows;
             revealMode = Boolean(concealResults);
             seats = relabelSeats(seats, identities.selectedMode(root)).map(function (seat) {
@@ -344,7 +396,7 @@
             });
         }
 
-        function runArrangement() {
+        async function runArrangement() {
             var entries = identities.fromText(studentsInput.value, rosterEntries);
             if (!entries.length) {
                 showMessages([{ type: 'warning', text: '학생 이름을 한 명 이상 입력하세요.' }]);
@@ -372,50 +424,67 @@
             var apartPairs = apartCondition.values;
             var buddyPairs = buddyCondition.values;
             var apartGap = parseInt(apartGapInput.value, 10) || 2;
+            var unlock = lockSetup();
+            try {
+                var payload = makeHistoryPayload(entries);
+                var recent = await request('/seating-history/query', 'POST', payload);
+                historyRounds = recent.items.length;
+                var studentKeys = {};
+                entries.forEach(function (entry) { studentKeys[entry.name] = recent.studentKeys[String(entry.id)]; });
+                var result = engine.arrange({
+                    rows: rows,
+                    cols: cols,
+                    students: students,
+                    disabledSeatIds: Object.keys(excludedSeatIds),
+                    frontNames: frontNames,
+                    apartPairs: apartPairs,
+                    buddyPairs: buddyPairs,
+                    apartGap: apartGap,
+                    diagonal: diagonalInput.checked,
+                    studentKeys: studentKeys,
+                    history: recent.items,
+                });
 
-            var result = engine.arrange({
-                rows: rows,
-                cols: cols,
-                students: students,
-                disabledSeatIds: Object.keys(excludedSeatIds),
-                frontNames: frontNames,
-                apartPairs: apartPairs,
-                buddyPairs: buddyPairs,
-                apartGap: apartGap,
-                diagonal: diagonalInput.checked,
-            });
+                if (result.error) {
+                    showMessages([{ type: 'warning', text: result.error }]);
+                    return;
+                }
 
-            if (result.error) {
-                showMessages([{ type: 'warning', text: result.error }]);
-                return;
-            }
+                var hasConflict = result.evaluation.hard.length || result.evaluation.soft.length || result.notes.length;
+                var summaryMessages = result.unseated.length
+                    ? [{ type: 'warning', text: '좌석이 부족해 일부 학생은 배치되지 않았습니다: ' + result.unseated.join(', ') }]
+                    : [{ type: hasConflict ? 'warning' : 'info', text: hasConflict ? '가능한 자리를 우선해 좌석을 배치했습니다.' : '좌석 배치가 완료되었습니다.' }];
+                showMessages(summaryMessages.concat(
+                    result.evaluation.hard.map(function (text) { return { type: 'warning', text: text }; }),
+                    result.evaluation.soft.map(function (text) { return { type: 'warning', text: text }; }),
+                    result.notes.map(function (text) { return { type: 'warning', text: text }; })
+                ));
 
-            var hasConflict = result.evaluation.hard.length || result.evaluation.soft.length || result.notes.length;
-            var summaryMessages = result.unseated.length
-                ? [{ type: 'warning', text: '좌석이 부족해 일부 학생은 배치되지 않았습니다: ' + result.unseated.join(', ') }]
-                : [{ type: hasConflict ? 'warning' : 'info', text: hasConflict ? '가능한 자리를 우선해 좌석을 배치했습니다.' : '좌석 배치가 완료되었습니다.' }];
-            showMessages(summaryMessages.concat(
-                result.evaluation.hard.map(function (text) { return { type: 'warning', text: text }; }),
-                result.evaluation.soft.map(function (text) { return { type: 'warning', text: text }; }),
-                result.notes.map(function (text) { return { type: 'warning', text: text }; })
-            ));
+                var repetition = result.evaluation.repetition;
+                if (repetition.rounds && (repetition.recentSeat || repetition.recentMate)) {
+                    var item = document.createElement('div');
+                    item.className = 'message info';
+                    item.textContent = '조건을 우선 적용한 결과, 최근 ' + repetition.rounds + '회와 같은 자리 ' + repetition.recentSeat + '명·같은 짝 ' + repetition.recentMate + '쌍이 남았습니다.';
+                    messagesEl.appendChild(item);
+                }
 
-            var enrichedSeats = result.seats.map(function (seat) {
-                var entry = seat.student ? entryByName[seat.student] : null;
-                return {
-                    id: seat.id,
-                    row: seat.row,
-                    col: seat.col,
-                    disabled: seat.disabled,
-                    locked: seat.locked,
-                    student: entry ? identities.storedStudent(entry) : null,
-                };
-            });
+                var enrichedSeats = result.seats.map(function (seat) {
+                    var entry = seat.student ? entryByName[seat.student] : null;
+                    return {
+                        id: seat.id,
+                        row: seat.row,
+                        col: seat.col,
+                        disabled: seat.disabled,
+                        locked: seat.locked,
+                        student: entry ? identities.storedStudent(entry) : null,
+                    };
+                });
 
-            var mode = root.querySelector('input[name="htt-seating-mode"]:checked').value;
-            showArrangement(enrichedSeats, rows, cols, mode, revealModeInput.checked).catch(function (error) {
+                var mode = root.querySelector('input[name="htt-seating-mode"]:checked').value;
+                await showArrangement(enrichedSeats, rows, cols, mode, revealModeInput.checked, payload);
+            } catch (error) {
                 showMessages([{ type: 'warning', text: error.message }]);
-            });
+            } finally { unlock(); }
         }
 
         function loadLayoutList() {
@@ -472,22 +541,48 @@
         rowsInput.addEventListener('input', renderExclusionGrid);
         colsInput.addEventListener('input', renderExclusionGrid);
 
-        loadLayoutButton.addEventListener('click', function () {
+        loadLayoutButton.addEventListener('click', async function () {
             if (!layoutSelect.value) {
                 showMessages([{ type: 'warning', text: '불러올 배치를 선택하세요.' }]);
                 return;
             }
 
-            request('/seating-layouts/' + layoutSelect.value, 'GET').then(function (data) {
+            var unlock = lockSetup();
+            try {
+                var data = await request('/seating-layouts/' + layoutSelect.value, 'GET');
+                var seats = relabelSeats(data.seats, identities.selectedMode(root));
+                var payload = makeHistoryPayload(seats.filter(function (seat) { return seat.student; }).map(function (seat) { return seat.student; }));
+                var recent = await request('/seating-history/query', 'POST', payload);
+                historyRounds = recent.items.length;
                 var mode = root.querySelector('input[name="htt-seating-mode"]:checked').value;
-                showArrangement(data.seats, data.rows, data.cols, mode, revealModeInput.checked).then(function () {
-                    showMessages([{ type: 'info', text: '"' + data.name + '" 배치를 불러왔습니다.' }]);
-                }).catch(function (error) {
-                    showMessages([{ type: 'warning', text: error.message }]);
-                });
-            }).catch(function (error) {
+                await showArrangement(seats, data.rows, data.cols, mode, revealModeInput.checked, payload);
+                showMessages([{ type: 'info', text: '"' + data.name + '" 배치를 불러왔습니다.' }]);
+            } catch (error) {
                 showMessages([{ type: 'warning', text: error.message }]);
-            });
+            } finally { unlock(); }
+        });
+
+        confirmButton.addEventListener('click', async function () {
+            if (!historyPayload || !currentSeats.length || confirmationBusy || resultConfirmed) { return; }
+            confirmationBusy = true;
+            confirmButton.disabled = true;
+            newArrangementButton.disabled = true;
+            historyStatusEl.textContent = '배치 이력 저장 중…';
+            try {
+                await request('/seating-history', 'POST', Object.assign({}, historyPayload, {
+                    confirmationKey: confirmationKey,
+                    rows: currentRows, cols: currentCols,
+                    positions: currentSeats.filter(function (seat) { return seat.student && !seat.disabled; }).map(function (seat) {
+                        return { id: seat.student.id, row: seat.row, col: seat.col };
+                    }),
+                }));
+                resultConfirmed = true;
+                confirmButton.textContent = '확정됨';
+                historyStatusEl.textContent = '배치 확정 완료 · 다음 자동 배치부터 이 자리를 참고합니다.';
+            } catch (error) {
+                historyStatusEl.textContent = error.message;
+                confirmButton.disabled = false;
+            } finally { confirmationBusy = false; newArrangementButton.disabled = false; }
         });
 
         deleteLayoutButton.addEventListener('click', function () {
@@ -638,6 +733,8 @@
             endRequest.then(function () {
                 joinCode = null;
                 currentSeats = [];
+                historyPayload = null;
+                confirmationKey = null;
                 selectedSeatId = null;
                 revealMode = false;
                 revealAllButton.hidden = true;

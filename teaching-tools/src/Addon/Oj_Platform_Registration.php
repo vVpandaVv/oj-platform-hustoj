@@ -435,8 +435,9 @@ final class Oj_Platform_Registration {
                 __('표시 이름과 관리용 이름', 'teaching-tools'),
                 __('수업 응답·신호·판서', 'teaching-tools'),
                 __('저장한 자리배치', 'teaching-tools'),
+                __('최근 확정 자리배치 이력 (학생 식별자·좌석, 이력 그룹별 최근 5회)', 'teaching-tools'),
             ),
-            __('설정한 보존기간 후 자동 삭제하거나 관리자가 즉시 삭제', 'teaching-tools'),
+            __('수업 세션은 설정한 보존기간 후 자동 삭제. 확정 자리배치 이력은 그룹별 최근 5회를 유지하며 개인정보 삭제 요청 또는 플러그인 삭제 시 제거', 'teaching-tools'),
             __('플랫폼의 동의 문서 화면에서 수업 자료의 보존기간과 이용 목적을 검토하세요.', 'teaching-tools')
         ));
     }

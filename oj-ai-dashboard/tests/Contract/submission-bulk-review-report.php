@@ -13,7 +13,7 @@ ob_end_clean();
 
 $policy = new G4_S04_Feedback_UI_Policy();
 $html   = (string) g4_s04_feedback_ui_page( $policy, 'bulk-review-report' )->body();
-foreach ( array( 'accept', 'teacher', 'feedback', 'note' ) as $action ) {
+foreach ( array( 'accept', 'teacher', 'feedback', 'note', 'release' ) as $action ) {
 	g4_s04_feedback_ui_assert( str_contains( $html, 'data-workflow-bulk="' . $action . '" hidden disabled' ), 'Bulk action is missing or enabled before scope load.' );
 }
 g4_s04_feedback_ui_assert( str_contains( $html, 'data-review-role="workflow-dialog"' ), 'Confirmation must be discoverable.' );
@@ -26,6 +26,10 @@ g4_s04_feedback_ui_assert( ! str_contains( $denied, 'data-workflow-bulk="feedbac
 $policy->denied_actions = array( 'submission.student_note.manage' );
 $denied                 = (string) g4_s04_feedback_ui_page( $policy, 'bulk-note-denied' )->body();
 g4_s04_feedback_ui_assert( ! str_contains( $denied, 'data-workflow-bulk="note"' ), 'Denied special-note request must not render.' );
+$policy->denied_actions = array( 'submission.result.publish' );
+$denied                 = (string) g4_s04_feedback_ui_page( $policy, 'bulk-release-denied' )->body();
+g4_s04_feedback_ui_assert( ! str_contains( $denied, 'data-workflow-bulk="release"' ), 'Denied publication must not render a bulk release command.' );
+g4_s04_feedback_ui_assert( str_contains( $html, 'data-review-role="workflow-release-options" hidden' ), 'Publication settings must remain hidden for other workflows.' );
 
 if ( '1' === getenv( 'OJAI_BULK_FIXTURE' ) ) {
 	// This CLI-only fixture emits the production page, never a web response.

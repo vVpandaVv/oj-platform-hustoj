@@ -2,6 +2,7 @@
 
 - [oj-platform/](../oj-integration-rebuild/oj-platform/)
 - [edu-games/](../edu-games/)
+- [oj-concept-lab/](../oj-concept-lab/)
 - [learning-materials/](../learning-materials/)
 - [oj-ai-dashboard/](../oj-ai-dashboard/)
 - [oj-code-lab/](../oj-code-lab/)
@@ -11,4 +12,6 @@
 - [oj-primm/](../oj-primm/)
 - [oj-microbit/](../oj-microbit/)
 - [oj-research/](../oj-integration-rebuild/oj-research/)
+- [oj-network-lab/](../oj-network-lab/)
+- [oj-logic-lab/](../oj-logic-lab/)
 - [공통 실시간 서버](../_shared/oj-realtime-hub/)

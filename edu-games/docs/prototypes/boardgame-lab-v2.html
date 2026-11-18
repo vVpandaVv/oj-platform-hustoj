@@ -1,0 +1,466 @@
+<div id="edu-board-lab" lang="ko">
+<style>
+#edu-board-lab{--e-bg:light-dark(#fff,#191d1f);--e-text:light-dark(#252c2e,#eef2ef);--e-muted:light-dark(#617075,#b0bdc1);--e-line:light-dark(#d7e1df,#3b484b);--e-floor:light-dark(#eff4f2,#232d2f);--e-green:light-dark(#087d70,#6edcc5);--e-green-soft:light-dark(#dcf2e9,#24483d);--e-red:light-dark(#b84436,#ff9c88);--e-red-soft:light-dark(#fae6e0,#4c302e);--e-gold:light-dark(#8d681b,#e9c66f);--e-gold-soft:light-dark(#fff0c9,#49412a);font:400 14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;color:var(--e-text);color-scheme:inherit;letter-spacing:0;min-width:0}
+#edu-board-lab *{box-sizing:border-box;letter-spacing:0}
+#edu-board-lab :is(h1,h2,h3,p){margin:0}
+#edu-board-lab h1{font-size:24px;font-weight:500;line-height:1.3}
+#edu-board-lab h2{font-size:17px;font-weight:500}
+#edu-board-lab h3{font-size:13px;font-weight:500}
+#edu-board-lab :is(button,select){font:inherit;color:inherit}
+#edu-board-lab button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:8px 12px;border:1px solid var(--e-line);border-radius:6px;background:var(--e-bg)}
+#edu-board-lab button:hover:not(:disabled){background:var(--e-floor)}
+#edu-board-lab button:disabled{opacity:.42}
+#edu-board-lab button[aria-pressed=true]{background:var(--e-green-soft);border-color:var(--e-green);color:var(--e-green)}
+#edu-board-lab button.e-primary{color:light-dark(#fff,#132d28);background:var(--e-green);border-color:var(--e-green)}
+#edu-board-lab button.e-primary:hover:not(:disabled){background:var(--e-green);filter:brightness(.94)}
+#edu-board-lab .lucide{width:18px;height:18px;flex:none}
+#edu-board-lab .e-app{background:var(--e-bg);padding:16px 20px;min-width:0}
+#edu-board-lab .e-top{display:flex;align-items:center;gap:12px;min-height:36px;padding-right:90px;margin-bottom:12px}
+#edu-board-lab .e-brand{font-weight:500;white-space:nowrap}
+#edu-board-lab .e-board-no{font-size:12px;color:var(--e-muted);padding-left:12px;border-left:1px solid var(--e-line)}
+#edu-board-lab .e-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-block:1px solid var(--e-line);margin-bottom:16px}
+#edu-board-lab .e-tabs button{border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;padding:10px 4px;font-size:13px}
+#edu-board-lab .e-tabs button[aria-selected=true]{border-bottom-color:var(--e-green);color:var(--e-green);background:var(--e-green-soft)}
+#edu-board-lab .e-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+#edu-board-lab .e-heading p{font-size:13px;color:var(--e-muted);margin-top:4px}
+#edu-board-lab .e-heading>.e-row{flex-wrap:nowrap;flex:none}
+#edu-board-lab .e-icon{width:40px;min-width:40px;padding:6px;flex:none}
+#edu-board-lab .e-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#edu-board-lab .e-spread{justify-content:space-between}
+#edu-board-lab .e-small{font-size:12px;color:var(--e-muted)}
+#edu-board-lab .e-hud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-block:1px solid var(--e-line);padding:9px 0;margin-bottom:14px;gap:10px}
+#edu-board-lab .e-hud>div{border-left:1px solid var(--e-line);padding-left:12px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0}
+#edu-board-lab .e-hud>div:first-child{border:0;padding-left:0}
+#edu-board-lab .e-hud span{font-size:12px;color:var(--e-muted)}
+#edu-board-lab .e-hud b{font-size:21px;font-weight:500;font-variant-numeric:tabular-nums}
+#edu-board-lab .e-board{padding:16px;background:var(--e-floor);min-width:0}
+#edu-board-lab .e-controls{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+#edu-board-lab .e-feedback{display:flex;gap:8px;align-items:center;color:var(--e-muted);font-size:13px;min-height:42px;padding-top:10px}
+#edu-board-lab .e-feedback::before{content:'';width:6px;height:6px;background:var(--e-green);flex:none}
+#edu-board-lab .e-note{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--e-muted);margin-top:8px;min-height:24px}
+#edu-board-lab .e-result{border-block:2px solid var(--e-green);padding:14px 0;margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#edu-board-lab .e-result.fail{border-color:var(--e-red)}
+#edu-board-lab .e-result b{font-weight:500;font-size:22px}
+#edu-board-lab .e-result p{font-size:13px;color:var(--e-muted);margin-top:3px}
+#edu-board-lab .e-packs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:9px 0 16px}
+#edu-board-lab .e-pack{min-height:64px;justify-content:space-between;padding:12px 16px;border-bottom-width:4px}
+#edu-board-lab .e-pack b{font-size:24px;font-weight:500}
+#edu-board-lab .e-pigments{display:flex;gap:5px;flex-wrap:wrap;max-width:90px}
+#edu-board-lab .e-drop{display:inline-block;width:14px;height:18px;background:var(--paint);border-radius:7px 7px 5px 5px;flex:none}
+#edu-board-lab .e-market-stage{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:20px;align-items:center}
+#edu-board-lab .e-paint-work{display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,.66fr);gap:8px;max-width:400px;margin:auto}
+#edu-board-lab .e-pixels{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));aspect-ratio:1;border:1px solid var(--e-line);background:var(--e-line);gap:1px}
+#edu-board-lab button.e-pixel{min-height:0;min-width:0;padding:0;border:0;border-radius:0;aspect-ratio:1;background:var(--paint);opacity:1;position:relative}
+#edu-board-lab button.e-pixel.blank{background:light-dark(#e4e9e7,#53615f)}
+#edu-board-lab button.e-pixel.blank::after{content:'';width:5px;height:5px;background:var(--e-muted)}
+#edu-board-lab button.e-pixel.wrong::after{content:'';position:absolute;inset:3px;border:2px dashed var(--e-red)}
+#edu-board-lab .e-code-rows{display:grid;grid-template-rows:repeat(8,minmax(0,1fr));font:400 12px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace}
+#edu-board-lab .e-code-rows>div{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));align-items:center;justify-items:center;border-bottom:1px solid var(--e-line)}
+#edu-board-lab .e-code-rows>div.active{background:var(--e-green-soft);color:var(--e-green)}
+#edu-board-lab .e-gallery{display:flex;flex-direction:column;gap:9px}
+#edu-board-lab .e-postcard{justify-content:flex-start;text-align:left;padding:8px;gap:12px;min-width:0}
+#edu-board-lab .e-postcard canvas{width:56px;height:56px;image-rendering:pixelated;flex:none}
+#edu-board-lab .e-postcard span{display:grid;gap:3px;min-width:0}
+#edu-board-lab .e-palette{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:14px}
+#edu-board-lab .e-palette button{min-width:62px;font-variant-numeric:tabular-nums}
+#edu-board-lab .e-palette b{font-size:18px;font-weight:500}
+#edu-board-lab .e-legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--e-muted);margin:10px 0}
+#edu-board-lab .e-legend span{display:inline-flex;gap:4px;align-items:center}
+#edu-board-lab .e-swatch{width:12px;height:12px;background:var(--paint);display:inline-block}
+#edu-board-lab .e-crate{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;min-width:36px;background:var(--e-green-soft);color:var(--e-green);border-radius:4px;border-bottom:4px solid color-mix(in srgb,var(--e-green) 30%,transparent);font-size:17px;font-weight:500}
+#edu-board-lab .e-crate[data-letter=B]{background:var(--e-red-soft);color:var(--e-red);border-bottom-color:color-mix(in srgb,var(--e-red) 30%,transparent)}
+#edu-board-lab .e-crate[data-letter=C]{background:var(--e-gold-soft);color:var(--e-gold);border-bottom-color:color-mix(in srgb,var(--e-gold) 30%,transparent)}
+#edu-board-lab .e-orders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+#edu-board-lab .e-order{background:var(--e-bg);padding:10px;display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:3px solid var(--e-gold);border-radius:4px}
+#edu-board-lab .e-order b{font-size:15px;font-weight:500;margin-left:8px;color:var(--e-gold);white-space:nowrap}
+#edu-board-lab .e-racers{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+#edu-board-lab .e-player{min-width:0}
+#edu-board-lab .e-player-title{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+#edu-board-lab .e-player-title canvas{width:30px;height:32px;image-rendering:pixelated}
+#edu-board-lab .e-storage{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;border-block:1px solid var(--e-line);padding:10px 0}
+#edu-board-lab .e-bay{min-width:0;text-align:center}
+#edu-board-lab .e-bay h3{font-size:12px;color:var(--e-muted);min-height:32px}
+#edu-board-lab .e-stack{display:flex;flex-direction:column-reverse;gap:3px;align-items:center;justify-content:flex-start;min-height:100px}
+#edu-board-lab .e-queue{display:flex;gap:3px;align-items:center;justify-content:center;flex-wrap:wrap;align-content:center;min-height:100px}
+#edu-board-lab .e-storage .e-crate{width:30px;height:30px;min-width:30px;font-size:15px}
+#edu-board-lab .e-feed{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:8px;min-height:36px}
+#edu-board-lab .e-feed .e-crate{width:25px;min-width:25px;height:27px;font-size:13px}
+#edu-board-lab .e-plan{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+#edu-board-lab .e-plan>div{display:flex;align-items:center;justify-content:center;text-align:center;min-height:52px;font-size:12px;gap:6px;background:var(--e-bg);border-bottom:3px solid var(--e-green);padding:5px}
+#edu-board-lab .e-plan>div.bad{border-bottom-color:var(--e-red)}
+#edu-board-lab .e-trace{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;margin-top:12px;font-size:12px;color:var(--e-muted)}
+#edu-board-lab .e-trace span{display:block;overflow-wrap:anywhere}
+#edu-board-lab .e-trace .claim{color:var(--e-green)}
+#edu-board-lab .e-night-track{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:15px}
+#edu-board-lab .e-night-track span{display:inline-flex;justify-content:center;align-items:center;width:34px;height:34px;border:1px solid var(--e-line);border-radius:50%;font-size:12px}
+#edu-board-lab .e-night-track span.current{background:var(--e-green);color:light-dark(#fff,#132d28);border-color:var(--e-green)}
+#edu-board-lab .e-stations{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#edu-board-lab button.e-station{display:flex;flex-direction:column;gap:8px;padding:12px 8px;min-height:205px;position:relative;background:var(--e-bg)}
+#edu-board-lab button.e-station[aria-pressed=true]{border-color:var(--e-green);box-shadow:inset 0 -3px var(--e-green);color:var(--e-text)}
+#edu-board-lab .e-station canvas{width:96px;height:64px;image-rendering:pixelated}
+#edu-board-lab .e-station b{font-weight:500;font-size:35px;line-height:1.15;font-variant-numeric:tabular-nums}
+#edu-board-lab .e-station .e-warning{font-size:11px;color:var(--e-muted);min-height:16px}
+#edu-board-lab .e-station .e-warning[data-odd=true]{color:var(--e-red)}
+#edu-board-lab .e-held{position:absolute;top:9px;right:8px;font-size:11px;color:var(--e-gold)}
+#edu-board-lab .e-inspector{border-block:1px solid var(--e-line);padding:12px 0;margin-top:14px;display:grid;gap:6px;min-height:76px}
+#edu-board-lab .e-toolbox{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+#edu-board-lab .e-cost{font-size:11px;color:var(--e-muted);padding-left:5px;border-left:1px solid var(--e-line)}
+#edu-board-lab .e-rule{font-size:12px;color:var(--e-muted);margin-top:12px;text-align:center}
+@media(max-width:680px){
+ #edu-board-lab .e-app{padding:12px 10px}
+ #edu-board-lab h1{font-size:22px}
+ #edu-board-lab .e-tabs button{font-size:12px;gap:4px;padding:10px 3px;flex-wrap:wrap}
+ #edu-board-lab .e-tabs .lucide{width:16px;height:16px}
+ #edu-board-lab .e-board{padding:12px}
+ #edu-board-lab .e-hud>div{display:grid;gap:1px;padding-left:8px}
+ #edu-board-lab .e-hud b{font-size:20px}
+ #edu-board-lab .e-market-stage{grid-template-columns:1fr;gap:12px}
+ #edu-board-lab .e-gallery{flex-direction:row;gap:6px}
+ #edu-board-lab .e-postcard{flex:1;justify-content:center;padding:5px;gap:4px;flex-direction:column;text-align:center}
+ #edu-board-lab .e-postcard canvas{width:40px;height:40px}
+ #edu-board-lab .e-postcard span{gap:0;font-size:12px}
+ #edu-board-lab .e-paint-work{grid-template-columns:minmax(150px,1fr) minmax(95px,.68fr);gap:6px;width:100%}
+ #edu-board-lab .e-code-rows{font-size:11px}
+ #edu-board-lab .e-pack{padding:8px;min-height:58px;gap:5px}
+ #edu-board-lab .e-pack{flex-wrap:wrap}
+ #edu-board-lab .e-pack .e-pigments{width:100%;max-width:none;justify-content:center}
+ #edu-board-lab .e-drop{width:10px;height:14px}
+ #edu-board-lab .e-pigments{gap:3px}
+ #edu-board-lab .e-pack b{font-size:21px}
+ #edu-board-lab .e-racers{grid-template-columns:1fr;gap:12px}
+ #edu-board-lab .e-racers .e-player:last-child .e-storage{padding:6px 0}
+ #edu-board-lab .e-racers .e-player:last-child :is(.e-stack,.e-queue){min-height:65px}
+ #edu-board-lab .e-orders{gap:6px}
+ #edu-board-lab .e-order{padding:8px 3px;gap:3px;flex-wrap:wrap}
+ #edu-board-lab .e-order .e-crate{width:28px;min-width:28px;height:31px;font-size:14px}
+ #edu-board-lab .e-order b{font-size:13px;margin-left:2px}
+ #edu-board-lab .e-stations{gap:6px}
+ #edu-board-lab button.e-station{padding:10px 4px;min-height:180px;gap:7px}
+ #edu-board-lab .e-station canvas{width:64px;height:43px}
+ #edu-board-lab .e-station b{font-size:28px}
+ #edu-board-lab .e-station .e-warning{font-size:11px;min-height:32px}
+ #edu-board-lab .e-station .e-small{font-size:11px}
+ #edu-board-lab .e-held{position:static;min-height:16px}
+ #edu-board-lab .e-legend{gap:8px}
+ #edu-board-lab button{min-height:44px}
+ #edu-board-lab button.e-pixel{min-height:0}
+}
+@media(prefers-reduced-motion:reduce){#edu-board-lab *{animation:none!important;transition:none!important}}
+</style>
+<div class="e-app" aria-label="게임 방식 비교">
+ <header class="e-top"><span class="e-brand">EDU PLAY</span><span class="e-board-no" id="eb-seed"></span></header>
+ <nav class="e-tabs" role="tablist" aria-label="게임 선택">
+  <button type="button" role="tab" id="eb-tab-market" aria-controls="eb-panel" data-game="market"><i data-lucide="palette" aria-hidden="true"></i>픽셀 마켓</button>
+  <button type="button" role="tab" id="eb-tab-race" aria-controls="eb-panel" data-game="race"><i data-lucide="package" aria-hidden="true"></i>스택 스프린트</button>
+  <button type="button" role="tab" id="eb-tab-night" aria-controls="eb-panel" data-game="night"><i data-lucide="moon-star" aria-hidden="true"></i>밤의 관측소</button>
+ </nav>
+ <section id="eb-panel" role="tabpanel">
+  <div class="e-heading"><div><h1 id="eb-title"></h1><p id="eb-goal"></p></div><div class="e-row"><button type="button" class="e-icon" data-act="retry" aria-label="같은 판 다시 도전" data-tooltip="같은 판 다시 도전"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button><button type="button" class="e-icon" data-act="new" aria-label="새 판" data-tooltip="새 판"><i data-lucide="shuffle" aria-hidden="true"></i></button></div></div>
+  <div class="e-hud" id="eb-hud"></div>
+  <div class="e-board" id="eb-board"></div>
+  <div class="e-controls" id="eb-controls"></div>
+  <div class="e-feedback" id="eb-feedback" role="status" aria-live="polite"></div>
+  <div id="eb-result"></div>
+ </section>
+</div>
+<script>
+/* ENGINE_START */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.EduBoardLab = api;
+})(typeof globalThis === 'object' ? globalThis : this, function () {
+  'use strict';
+  const copy = v => JSON.parse(JSON.stringify(v));
+  const sum = a => a.reduce((n, v) => n + v, 0);
+  function random(seed) {
+    let x = (seed >>> 0) || 1;
+    const next = () => { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; return (x >>> 0) / 4294967296; };
+    for (let i=0; i<8; i++) next();
+    return next;
+  }
+  function shuffle(a, r) {
+    a = a.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+  const patterns = [
+    { name: '로켓', rows: ['00011000','00122100','01233210','01233210','01222210','12222221','00144100','00044000'], needs: [5,2,1] },
+    { name: '물고기', rows: ['00011100','00133310','10131431','11333331','10133310','00133210','00122100','00011000'], needs: [2,5,1] },
+    { name: '꽃', rows: ['00444400','04444440','04422440','00444400','00033000','00333000','03333000','00033000'], needs: [1,2,5] }
+  ];
+  function createMarket(seed) {
+    const r = random(seed);
+    const paintings = patterns.map(p => {
+      const target = p.rows.join('').split('').map(Number), mask = [];
+      p.needs.forEach((n, k) => mask.push(...shuffle(target.map((c,i) => c === k + 2 ? i : -1).filter(i => i >= 0), r).slice(0,n)));
+      const board = target.slice(); mask.forEach(i => { board[i] = null; });
+      return { name: p.name, target, mask, board };
+    });
+    const deck = shuffle(Array.from({length:45},(_,i) => ({color:2+i%3,count:2+Math.floor(r()*3)})),r);
+    return { seed, round:0, maxRounds:10, paintings, market:deck.slice(0,3), deck, deckAt:3, stock:[0,0,0,0,0], selected:0, color:2, waste:0, undo:null, done:false, last:'그림 두 장 완성 · 남은 물감은 여섯 방울까지' };
+  }
+  function marketInfo(s) {
+    const completed = s.paintings.filter(p => p.mask.every(i => p.board[i] === p.target[i])).length;
+    const correct = sum(s.paintings.map(p => p.mask.filter(i => p.board[i] === p.target[i]).length));
+    return { completed, correct, score: completed * 10 + correct - s.waste, win:completed >= 2 };
+  }
+  function marketMove(s, a) {
+    if (a.type === 'select' && s.paintings[a.index]) s.selected = a.index;
+    else if (a.type === 'color' && a.color >= 2 && a.color <= 4) s.color = a.color;
+    else if (a.type === 'take' && s.round < s.maxRounds && s.market[a.index]) {
+      const p = s.market[a.index], n = Math.min(p.count, 6-sum(s.stock));
+      s.stock[p.color] += n; s.waste += p.count - n; s.round++; s.undo = null;
+      s.market[a.index] = s.deck[s.deckAt++]; s.color = p.color;
+      s.last = `물감 ${n}방울 확보${n < p.count ? ` · 넘친 ${p.count-n}방울은 버림` : ''}`;
+    } else if (a.type === 'refresh' && s.round < s.maxRounds) {
+      s.market = s.deck.slice(s.deckAt, s.deckAt+3); s.deckAt += 3; s.round++; s.undo = null;
+      s.last = '한 차례를 써서 물감을 모두 새로 받았습니다';
+    } else if (a.type === 'discard' && s.stock[s.color]>0) {
+      const n=s.stock[s.color];s.stock[s.color]=0;s.waste+=n;s.undo=null;
+      s.last=`${s.color}번 물감 ${n}방울 비움 · 보관 공간 확보`;
+    } else if (a.type === 'paint') {
+      const p = s.paintings[s.selected], i = a.index;
+      if (!p.mask.includes(i) || !s.stock[s.color] || p.board[i] === s.color) return s;
+      s.undo = { painting:s.selected, index:i, before:p.board[i], color:s.color };
+      p.board[i] = s.color; s.stock[s.color]--;
+      const complete = p.mask.every(j => p.board[j] === p.target[j]);
+      s.last = complete ? `${p.name} 완성 · +10점` : p.target[i] === s.color ? '행의 숫자와 색이 맞았습니다' : '이 칸의 색이 행 코드와 다릅니다';
+    } else if (a.type === 'undo' && s.undo) {
+      const u = s.undo; s.paintings[u.painting].board[u.index] = u.before; s.stock[u.color]++; s.undo = null;
+      s.last = '마지막 붓질 취소 · 물감 회수';
+    } else if (a.type === 'finish' && (s.round >= s.maxRounds || marketInfo(s).completed >= 2)) {
+      s.done = true; s.last = marketInfo(s).win ? '그림 전시 성공' : '이번 전시는 미완성 · 같은 물감으로 다시 도전';
+    }
+    return s;
+  }
+
+  const ops = ['pushS','pushQ','popS','popQ','return'];
+  const opNames = {pushS:'위로 넣기',pushQ:'뒤로 넣기',popS:'위에서 꺼내기',popQ:'앞에서 꺼내기',return:'출고 취소'};
+  const pairKeys = ['AA','AB','AC','BA','BB','BC','CA','CB','CC'];
+  function freshOrder(s) {
+    for (let tries = 0; tries < 60; tries++) {
+      const c = s.orderDeck[s.deckAt++ % s.orderDeck.length];
+      if (!s.orders.some(p => p && p.key === c.key)) return copy(c);
+    }
+    const key = pairKeys.find(k => !s.orders.some(p => p && p.key === k));
+    return {key,points:3};
+  }
+  function legal(p, op) {
+    return op === 'pushS' ? p.feed.length > 0 && p.stack.length < 4
+      : op === 'pushQ' ? p.feed.length > 0 && p.queue.length < 4
+      : op === 'popS' ? p.stack.length > 0 && p.out.length < 2
+      : op === 'popQ' ? p.queue.length > 0 && p.out.length < 2
+      : op === 'return' && p.out.length > 0;
+  }
+  function applyOrder(p, op, orders, refill) {
+    if (!legal(p, op)) return {ok:false,claimed:null};
+    if (op === 'pushS') p.stack.push(p.feed.shift());
+    if (op === 'pushQ') p.queue.push(p.feed.shift());
+    if (op === 'popS') p.out.push(p.stack.pop());
+    if (op === 'popQ') p.out.push(p.queue.shift());
+    if (op === 'return') p.feed.push(...p.out.splice(0));
+    const i = orders.findIndex(c => c && c.key === p.out.join(''));
+    if (i < 0) return {ok:true,claimed:null};
+    const c = orders[i]; p.score += c.points; p.claimed.push(c); p.out = [];
+    orders[i] = null; if (refill) orders[i] = refill();
+    return {ok:true,claimed:c};
+  }
+  function preview(s, plan = s.plan, actor = 'you') {
+    const p = copy(s[actor]), orders = copy(s.orders), valid = [];
+    plan.forEach(op => valid.push(applyOrder(p,op,orders,null).ok));
+    return {player:p,orders,valid};
+  }
+  function potential(p, orders) {
+    let best = 0;
+    for (const c of orders.filter(Boolean)) {
+      let n = c.key.startsWith(p.out.join('')) ? p.out.length * 4 : -8;
+      const top = p.stack[p.stack.length-1], front = p.queue[0], want = c.key[p.out.length];
+      if (want && (top === want || front === want)) n += 4;
+      best = Math.max(best,n);
+    }
+    return best - (p.out.length === 2 ? 12 : 0);
+  }
+  function botPlan(s) {
+    let best = -Infinity, plan = [];
+    function visit(p, orders, path, useful) {
+      if (path.length === 3) {
+        const value = (p.score-s.bot.score)*100 + potential(p,orders) + useful*.05;
+        if (value > best) { best = value; plan = path; }
+        return;
+      }
+      for (const op of ops) {
+        if (!legal(p,op)) continue;
+        const q = copy(p), next = copy(orders); applyOrder(q,op,next,null);
+        visit(q,next,path.concat(op),useful+1);
+      }
+    }
+    visit(copy(s.bot),copy(s.orders),[],0);
+    return plan;
+  }
+  function createRace(seed) {
+    const r = random(seed), pawn = () => ({stack:['A','B'],queue:['C'],feed:['A','C','B'],out:[],score:0,claimed:[]});
+    const orderDeck = shuffle(Array.from({length:54},(_,i)=>({key:pairKeys[i%9],points:3+(i%3)})),r);
+    const s = {seed,round:0,maxRounds:8,you:pawn(),bot:pawn(),orders:[{key:'BA',points:3},{key:'AC',points:4},{key:'CB',points:5}],orderDeck,deckAt:0,plan:[],botPlan:[],trace:[],supply:Array.from({length:8},()=>['A','B','C'][Math.floor(r()*3)]),done:false,last:'주문은 공용 · 먼저 꺼낸 쪽이 가져갑니다'};
+    s.botPlan = botPlan(s); return s;
+  }
+  function raceInfo(s) {
+    return {score:s.you.score,other:s.bot.score,result:s.you.score > s.bot.score ? 'win' : s.you.score === s.bot.score ? 'draw' : 'lose',win:s.you.score>s.bot.score};
+  }
+  function raceMove(s,a,onStep) {
+    if (a.type === 'plan' && ops.includes(a.op) && s.plan.length < 3) {
+      const p = preview(s).player;
+      if (legal(p,a.op)) { s.plan.push(a.op); s.last = '예약만으로는 물건이 움직이지 않습니다'; }
+    } else if (a.type === 'undo') { s.plan.pop(); s.last = '마지막 예약 취소'; }
+    else if (a.type === 'resolve' && s.plan.length) {
+      s.trace = [];
+      const first = s.round % 2 ? 'bot' : 'you', actors = first === 'you' ? ['you','bot'] : ['bot','you'];
+      for (let step = 0; step < 3; step++) for (const actor of actors) {
+        const op = (actor === 'you' ? s.plan : s.botPlan)[step];
+        if (!op) continue;
+        const result = applyOrder(s[actor],op,s.orders,()=>freshOrder(s));
+        s.trace.push({actor,op,ok:result.ok,claimed:result.claimed});
+        if (typeof onStep==='function') onStep(copy({you:s.you,bot:s.bot,orders:s.orders,trace:s.trace,step,actor}));
+      }
+      const c = s.supply[s.round]; for (const who of ['you','bot']) if (s[who].feed.length < 7) s[who].feed.push(c);
+      s.round++; s.plan = []; s.done = s.round >= s.maxRounds;
+      if (!s.done) s.botPlan = botPlan(s);
+      const claims = s.trace.filter(t=>t.claimed).map(t=>`${t.actor==='you'?'나':'로봇'} ${t.claimed.key} +${t.claimed.points}`);
+      s.last = claims.length ? claims.join(' · ') : '이번에는 주문 선점 없음 · 남은 물건으로 다음 계획';
+    }
+    return s;
+  }
+
+  function createNight(seed) {
+    const r = random(seed), kind = ((seed % 6)+6)%6, culprit = Math.floor(r()*3);
+    const names = ['도서관','체육관','운동장'];
+    if (kind === 3) names[culprit] = '급식 조리실';
+    const world = Array.from({length:4},(_,n)=>Array.from({length:3},(_,i)=>{
+      let truth = 22+Math.floor(r()*5), fault = '', event = false;
+      if (kind === 3 && i === culprit) truth = 42+Math.floor(r()*4);
+      if (n === 2 && i === (culprit+1)%3) {truth = 38;event = true;}
+      if ((kind === 0 || kind === 5) && i === culprit) fault = 'unit';
+      if (kind === 1 && i === culprit) fault = 'stuck';
+      if (kind === 2 && i === culprit && n === 1) fault = 'spike';
+      if (kind === 4 && i === culprit && (n === 0 || n === 3)) fault = 'spike';
+      if (kind === 5 && i === (culprit+2)%3 && n === 1) fault = 'spike';
+      const raw = fault === 'unit' ? Math.round((truth*1.8+32)*10)/10 : fault === 'stuck' ? 42 : fault === 'spike' ? truth+40 : truth;
+      return {truth,raw,fault,event};
+    }));
+    return {seed,kind,culprit,names,world,night:0,maxNights:4,budget:6,selected:0,fixes:[null,null,null],checked:[null,null,null],inspected:[false,false,false],held:[false,false,false],accepted:0,bad:0,eventKept:0,eventMissed:0,history:[],done:false,last:'높은 값도 진짜일 수 있습니다 · 확인 도구는 여섯 개'};
+  }
+  function reading(s,i) {
+    if (s.checked[i] !== null) return s.checked[i];
+    const d = s.world[s.night][i];
+    if (s.fixes[i] === 'unit') return Math.round((d.raw-32)/1.8*10)/10;
+    if (s.fixes[i] === 'restart' && d.fault === 'stuck') return d.truth;
+    return d.raw;
+  }
+  function sourceNote(s,i) {
+    const d = s.world[s.night][i];
+    const context = s.kind === 3 && i === s.culprit ? '조리실 평소 40~47°C' : d.event ? '옆 장비도 38°C · 실제 고온' : '같은 장소의 평소 값 22~26°C';
+    const metadata = !s.inspected[i] ? '원본 설정 미확인' : d.fault === 'unit' ? '단위: °F · 설정이 계속 유지됨' : d.fault === 'stuck' ? '센서: 같은 42를 반복 전송 중' : d.fault === 'spike' ? '기록: 이번 전송에만 잡음' : '단위: °C · 장비 정상';
+    return {context,metadata};
+  }
+  function nightInfo(s) {
+    return {score:s.accepted*3-s.bad*4+s.eventKept*2+s.budget,win:s.accepted>=11&&s.eventMissed===0};
+  }
+  function nightMove(s,a) {
+    const i = s.selected;
+    if (a.type === 'select' && a.index>=0 && a.index<3) s.selected = a.index;
+    else if (a.type === 'hold') {s.held[i] = !s.held[i];s.last=s.held[i]?'이번 값만 보류 · 다음 밤 센서는 그대로':'측정값 사용으로 복귀';}
+    else if (a.type === 'inspect' && s.budget>=1 && !s.inspected[i]) {s.budget--;s.inspected[i]=true;s.last=sourceNote(s,i).metadata;}
+    else if (a.type === 'measure' && s.budget>=1 && s.checked[i]===null) {s.budget--;s.checked[i]=s.world[s.night][i].truth;s.last='독립 장비로 다시 측정 · 이번 밤만 대체';}
+    else if ((a.type === 'unit' || a.type === 'restart') && s.budget>=2 && s.fixes[i]!==a.type) {s.budget-=2;s.fixes[i]=a.type;s.last=a.type==='unit'?'화씨→섭씨 변환 적용 · 다음 밤에도 유지':'센서 재시작 · 반복 전송 오류를 복구';}
+    else if (a.type === 'close') {
+      const results = s.world[s.night].map((d,j)=>{
+        const used = !s.held[j], correct = Math.abs(reading(s,j)-d.truth)<.2;
+        if (used && correct) s.accepted++;
+        if (used && !correct) s.bad++;
+        if (d.event) {if(used&&correct)s.eventKept++;else s.eventMissed++;}
+        return {name:s.names[j],value:reading(s,j),truth:d.truth,used,correct,event:d.event};
+      });
+      s.history.push(results);s.night++;
+      s.last = `${results.filter(d=>d.used&&d.correct).length}/3개 정확 · ${results.filter(d=>d.used&&!d.correct).length}개 잘못 사용`;
+      s.checked=[null,null,null];s.held=[false,false,false];s.done=s.night>=s.maxNights;
+    }
+    return s;
+  }
+  function create(game,seed=17) {
+    return game==='market'?createMarket(seed):game==='race'?createRace(seed):createNight(seed);
+  }
+  function move(game,state,action,onStep) {
+    if (state.done && !['select','color'].includes(action.type)) return state;
+    const s = copy(state);
+    return game==='market'?marketMove(s,action):game==='race'?raceMove(s,action,onStep):nightMove(s,action);
+  }
+  function info(game,s) {return game==='market'?marketInfo(s):game==='race'?raceInfo(s):nightInfo(s);}
+  return {create,move,info,preview,legal,ops,opNames,reading,sourceNote,botPlan,copy};
+});
+
+/* ENGINE_END */
+</script>
+<script>
+(()=>{
+ 'use strict';
+ const root=document.getElementById('edu-board-lab'), $=s=>root.querySelector(s), E=globalThis.EduBoardLab;
+ const names={market:['픽셀 마켓','물감을 모아 그림 두 장 완성 · 더 모으면 세 장 도전'],race:['스택 스프린트','주문은 셋 · 로봇보다 먼저 맞는 순서로 출고'],night:['밤의 관측소','네 밤 동안 정확한 측정값 11개 · 진짜 고온은 지키기']};
+ const palette=['#ffffff','#25363f','#e87359','#61b8a7','#efc653'];
+ const ico=n=>`<i data-lucide="${n}" aria-hidden="true"></i>`;
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const button=(label,act,extra='',primary=false)=>`<button type="button" data-act="${act}" ${extra} ${primary?'class="e-primary"':''}>${label}</button>`;
+ const crate=l=>`<span class="e-crate" data-letter="${l}">${l}</span>`;
+ let game='market',states={market:E.create('market',24),race:E.create('race',24),night:E.create('night',24)},best={},serial=0,playing=false,playStep=0,playActor='you';
+ function restore(v){const p=v?.privateContent;if(p?.revision!==2||!names[p.game])return;game=p.game;for(const k of Object.keys(states))if(p.states?.[k]?.seed!==undefined)states[k]=p.states[k];best=p.best||{};serial=p.serial||0;}
+ restore(window.openai?.widgetState);
+ const persist=()=>window.openai?.setWidgetState?.({modelContent:{game,finished:states[game].done},privateContent:{revision:2,serial:++serial,game,states,best}})?.catch(()=>{});
+ function finishMove(s){states[game]=s;if(s.done){const k=game+':'+s.seed;best[k]=Math.max(best[k]??-999,E.info(game,s).score);}render();persist();}
+ function doMove(a){
+  if(game==='race'&&a.type==='resolve'&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+   const initial=states.race,frames=[],next=E.move('race',initial,a,v=>frames.push(v));
+   if(frames.length){let index=0;playing=true;const tick=()=>{if(index===frames.length){playing=false;finishMove(next);return;}const f=frames[index++],last=f.trace[f.trace.length-1];playStep=f.step;playActor=f.actor;states.race={...initial,...f,last:(last.actor==='you'?'나':'로봇')+' · '+E.opNames[last.op]+(last.claimed?' · '+last.claimed.key+' 선점!':'')};render();setTimeout(tick,300);};tick();return;}
+  }
+  finishMove(E.move(game,states[game],a));
+ }
+ function market(){
+  const s=states.market,p=s.paintings[s.selected],info=E.info('market',s),total=s.stock.reduce((n,v)=>n+v,0);
+  return `<div class="e-row e-spread"><h3>이번 물감</h3><span class="e-small">${s.round<10?'한 묶음 선택':'마지막 붓질 후 전시'} · 보관 ${total}/6</span></div>
+  <div class="e-packs">${s.market.map((m,i)=>`<button type="button" class="e-pack" data-act="take" data-index="${i}" ${s.done||s.round>=10?'disabled':''} aria-label="${m.color}번 색 물감 ${m.count}방울 가져오기"><span class="e-pigments">${Array.from({length:m.count},()=>`<i class="e-drop" style="--paint:${palette[m.color]}"></i>`).join('')}</span><span class="e-small">${m.color}번</span><b>${m.count}</b></button>`).join('')}</div>
+  <div class="e-market-stage"><div><div class="e-row e-spread"><h3>${p.name}</h3><span class="e-small">남은 칸 ${p.mask.filter(i=>p.board[i]!==p.target[i]).length}</span></div><div class="e-legend">${palette.map((c,i)=>`<span><i class="e-swatch" style="--paint:${c}"></i>${i}</span>`).join('')}</div><div class="e-paint-work"><div class="e-pixels" aria-label="${p.name} 그림판">${p.board.map((c,i)=>`<button type="button" class="e-pixel ${c===null?'blank':''} ${c!==null&&c!==p.target[i]?'wrong':''}" style="--paint:${palette[c]||'transparent'}" data-act="paint" data-index="${i}" data-row="${Math.floor(i/8)}" ${!p.mask.includes(i)||s.done?'disabled':''} aria-label="${Math.floor(i/8)+1}행 ${i%8+1}열, ${c===null?'빈칸':c+'번 색'}"></button>`).join('')}</div><div class="e-code-rows" aria-label="행별 색상 코드">${Array.from({length:8},(_,r)=>`<div data-code-row="${r}">${p.target.slice(r*8,r*8+8).map(c=>`<span>${c}</span>`).join('')}</div>`).join('')}</div></div></div>
+  <div class="e-gallery">${s.paintings.map((p,i)=>`<button type="button" class="e-postcard" data-act="painting" data-index="${i}" aria-pressed="${s.selected===i}"><canvas width="8" height="8" data-picture="${i}" aria-hidden="true"></canvas><span>${p.name}<small class="e-small">${p.mask.every(j=>p.board[j]===p.target[j])?'완성':p.mask.filter(j=>p.board[j]===p.target[j]).length+'/8'}</small></span></button>`).join('')}</div></div>
+  <div class="e-palette"><span class="e-small">붓</span>${[2,3,4].map(c=>`<button type="button" data-act="color" data-color="${c}" aria-pressed="${s.color===c}" aria-label="${c}번 색 붓 선택"><i class="e-drop" style="--paint:${palette[c]}"></i>${c}<b>${s.stock[c]}</b></button>`).join('')}${button(ico('trash-2'),'discard',`class="e-icon" aria-label="선택 물감 비우기" data-tooltip="선택 물감 비우기, 버린 방울만큼 감점" ${s.done||!s.stock[s.color]?'disabled':''}`)}</div>
+  <div class="e-note e-spread"><span>넘친 물감 ${s.waste} · 버린 물감은 -1점</span><span>완성 +10 · 맞는 칸 +1</span></div>`;
+ }
+ function playerBoard(p,who){return `<section class="e-player"><div class="e-player-title">${who==='bot'?'<canvas width="16" height="18" data-robot aria-hidden="true"></canvas>':ico('user-round')}<h3>${who==='you'?'나':'로봇'}</h3></div><div class="e-storage"><section class="e-bay"><h3>스택 ↑ 꺼내기</h3><div class="e-stack">${p.stack.map(crate).join('')||'<span class="e-small">비었음</span>'}</div></section><section class="e-bay"><h3>큐 ← 꺼내기</h3><div class="e-queue">${p.queue.map(crate).join('')||'<span class="e-small">비었음</span>'}</div></section><section class="e-bay"><h3>출고 순서</h3><div class="e-queue">${p.out.map(crate).join('')||'<span class="e-small">대기</span>'}</div></section></div><div class="e-feed"><span class="e-small">입고 →</span>${p.feed.slice(0,6).map(crate).join('')}${p.feed.length>6?`<span class="e-small">+${p.feed.length-6}</span>`:''}</div></section>`;}
+ function race(){const s=states.race,p=E.preview(s);return `<div class="e-row e-spread" style="margin-bottom:9px"><h3>먼저 출고하면 내 주문</h3><span class="e-small">${s.round%2?'로봇':'내'} 선공 · 한 동작씩 번갈아</span></div><div class="e-orders">${s.orders.map(o=>`<div class="e-order">${o.key.split('').map(crate).join('')}<b>+${o.points}</b></div>`).join('')}</div><div class="e-racers">${playerBoard(s.you,'you')}${playerBoard(s.bot,'bot')}</div><div class="e-plan" aria-label="예약한 명령 세 칸">${[0,1,2].map(i=>`<div class="${p.valid[i]===false?'bad':''}"><span class="e-small">${i+1}</span>${s.plan[i]?({pushS:'스택 넣기',pushQ:'큐 넣기',popS:'스택 꺼내기',popQ:'큐 꺼내기',return:'출고 취소'}[s.plan[i]]):'+'}</div>`).join('')}</div><div class="e-note e-spread"><span>예약 후 출고: ${p.player.out.join(' → ')||'비어 있음'}</span><span>입고 예정 ${s.supply[Math.min(s.round,7)]}</span></div>${s.trace.length?`<div class="e-trace">${s.trace.map(t=>`<span class="${t.claimed?'claim':''}">${t.actor==='you'?'나':'로봇'} · ${E.opNames[t.op]}${!t.ok?' (막힘)':''}${t.claimed?' · '+t.claimed.key+' +'+t.claimed.points:''}</span>`).join('')}</div>`:''}`;}
+ function night(){
+  const s=states.night,view=s.done?{...s,night:3,checked:s.history[3].map(v=>v.value),held:s.history[3].map(v=>!v.used)}:s,n=E.sourceNote(view,s.selected);
+  return `<div class="e-night-track" aria-label="네 밤 진행">${[0,1,2,3].map(i=>`<span class="${i===Math.min(s.night,3)?'current':''}">${i+1}밤</span>`).join('')}</div><div class="e-stations">${s.names.map((name,i)=>{const v=E.reading(view,i),range=s.kind===3&&i===s.culprit?[40,47]:[22,26],odd=v<range[0]||v>range[1];return `<button type="button" class="e-station" data-act="station" data-index="${i}" aria-pressed="${s.selected===i}"><span class="e-held">${view.held[i]?'보류':''}</span><canvas width="48" height="32" data-building="${i}" aria-hidden="true"></canvas><span>${name}</span><b>${v}</b><span class="e-warning">${odd?'평소 범위 밖':'평소 범위 안'}</span><span class="e-small">표시 단위 °C</span></button>`;}).join('')}</div><div class="e-inspector"><div class="e-row e-spread"><b style="font-weight:500">${s.names[s.selected]}</b><span class="e-small">${view.held[s.selected]?'이번 값 보류':'측정값 사용'}</span></div><span class="e-small">${n.context}</span><span class="e-small">${n.metadata}</span></div><div class="e-toolbox">${button(ico('scan-line')+'다시 재기 <span class="e-cost">1</span>','measure',s.done||s.budget<1||s.checked[s.selected]!==null?'disabled':'data-tooltip="이번 밤만 독립 장비의 값으로 대체"')}${button(ico('notebook-tabs')+'설정 보기 <span class="e-cost">1</span>','inspect',s.done||s.budget<1||s.inspected[s.selected]?'disabled':'')}${button(ico('thermometer')+'°C로 변환 <span class="e-cost">2</span>','unit',s.done||s.budget<2||s.fixes[s.selected]==='unit'?'disabled':'data-tooltip="화씨를 섭씨로 변환, 다음 밤에도 유지"')}${button(ico('wrench')+'재시작 <span class="e-cost">2</span>','restart',s.done||s.budget<2||s.fixes[s.selected]==='restart'?'disabled':'data-tooltip="반복 전송 고장을 수리"')}${button(ico('archive')+(s.held[s.selected]?'다시 사용':'이번 값 보류'),'hold',s.done?'disabled':'')}</div><div class="e-rule">보류하면 고쳐지지 않습니다 · 실제 고온도 버리지 않기</div>`;
+ }
+ function result(s){if(!s.done)return '';const f=E.info(game,s),win=f.win,draw=f.result==='draw',title=game==='race'?(win?'로봇보다 먼저 해냈어요':draw?'무승부 · 다음엔 한 주문 더':'이번엔 로봇의 승리'):game==='market'?(win?'전시 성공':'전시 미완성'):(win?'네 밤의 관측 성공':'관측 기록을 다시 살펴보세요');const detail=game==='market'?`그림 ${f.completed}장 · 맞는 칸 ${f.correct} · 넘친 물감 ${s.waste}`:game==='race'?`나 ${s.you.score} : ${s.bot.score} 로봇 · 8라운드`: `정확 ${s.accepted}/12 · 잘못 사용 ${s.bad} · 고온 경보 누락 ${s.eventMissed} · 남은 도구 ${s.budget}`;return `<section class="e-result ${win||draw?'':'fail'}" aria-label="게임 결과"><div><h2>${title}</h2><p>${detail}</p></div><b>${f.score}점</b><div class="e-row">${button(ico('rotate-ccw')+'같은 판 재도전','retry','',true)}${button(ico('shuffle')+'새 판','new')}</div></section>`;}
+ function render(){
+  root.querySelectorAll('.e-tabs button,.e-heading button').forEach(b=>b.disabled=playing);
+  const s=states[game],f=E.info(game,s);$('#eb-title').textContent=names[game][0];$('#eb-goal').textContent=names[game][1];$('#eb-seed').textContent='보드 '+s.seed+' · 같은 판 최고 '+(best[game+':'+s.seed]??'-');$('#eb-panel').setAttribute('aria-labelledby','eb-tab-'+game);
+  root.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.game===game)));
+  const hud=game==='market'?[['완성',f.completed+' / 2'],['가져오기',s.round+' / 10'],['점수',f.score]]:game==='race'?[['나',s.you.score],['로봇',s.bot.score],['라운드',Math.min(s.round+1,8)+' / 8']]:[['남은 도구',s.budget+' / 6'],['정확한 기록',s.accepted+' / 12'],['밤',Math.min(s.night+1,4)+' / 4']];
+  $('#eb-hud').innerHTML=hud.map(([l,v])=>`<div><span>${l}</span><b>${esc(v)}</b></div>`).join('');$('#eb-board').innerHTML=({market,race,night}[game])();
+  let controls='';if(!s.done){if(game==='market')controls=button(ico('undo-2'),'undo',`class="e-icon" aria-label="마지막 붓질 취소" data-tooltip="마지막 붓질 취소" ${!s.undo?'disabled':''}`)+button(ico('refresh-cw')+'물감 교체 · 1차례','refresh',s.round>=10?'disabled':'')+((s.round>=10||f.completed>=2)?button(ico('flag')+'전시 마감','finish','',true):'');if(game==='race'){const p=E.preview(s).player;controls=E.ops.map(op=>button(ico(op==='return'?'undo-2':op.startsWith('push')?'arrow-down-to-line':'arrow-up-from-line')+(op==='return'?'':({pushS:'스택 넣기',pushQ:'큐 넣기',popS:'스택 꺼내기',popQ:'큐 꺼내기'}[op])),'plan',`data-op="${op}" ${op==='return'?'aria-label="출고 취소" data-tooltip="출고를 취소하고 입고 뒤로 돌리기"':''} ${s.plan.length>=3||!E.legal(p,op)?'disabled':''}`)).join('')+button(ico('delete'),'undo',`aria-label="마지막 예약 취소" ${!s.plan.length?'disabled':''}`)+button(ico('play')+'동시 실행','resolve',!s.plan.length?'disabled':'',true);}if(game==='night')controls=button(ico('moon-star')+(s.night===3?'관측 마치기':'밤 마치기'),'close','',true);}
+  $('#eb-controls').innerHTML=controls;$('#eb-feedback').textContent=s.last;$('#eb-result').innerHTML=result(s);paint();root.querySelectorAll('button').forEach(b=>{b.classList.add('cursor-interaction');if(playing)b.disabled=true;});if(playing){const slot=root.querySelectorAll('.e-plan>div')[playStep],actor=root.querySelectorAll('.e-player-title')[playActor==='you'?0:1];if(slot)slot.style.background='var(--e-green-soft)';if(actor)actor.style.color='var(--e-green)';}if(window.lucide)window.lucide.createIcons();
+ }
+ function paint(){
+  if(playing){const note=$('.e-board .e-note>span');if(note)note.textContent=`${playStep+1}번째 명령 실행 중`;root.querySelectorAll('.e-plan>div.bad').forEach(el=>el.classList.remove('bad'));}
+  root.querySelectorAll('.e-station').forEach(b=>{const s=states.night,i=+b.dataset.index,n=Math.min(s.night,3),v=s.done?s.history[n][i].value:E.reading(s,i),range=s.kind===3&&i===s.culprit?[40,47]:[22,26];b.querySelector('.e-warning').dataset.odd=String(v<range[0]||v>range[1]);});
+  root.querySelectorAll('[data-picture]').forEach(c=>{const p=states.market.paintings[+c.dataset.picture],ctx=c.getContext('2d');p.board.forEach((v,i)=>{ctx.fillStyle=v===null?'#b0bcb8':palette[v];ctx.fillRect(i%8,Math.floor(i/8),1,1);});});
+  root.querySelectorAll('[data-robot]').forEach(c=>{const x=c.getContext('2d');x.fillStyle='#25363f';x.fillRect(4,14,3,3);x.fillRect(10,14,3,3);x.fillStyle='#66bbaa';x.fillRect(3,7,10,7);x.fillStyle='#c9e9de';x.fillRect(2,2,12,6);x.fillStyle='#263e42';x.fillRect(4,3,3,3);x.fillRect(9,3,3,3);x.fillStyle='#edc75f';x.fillRect(7,0,2,2);x.fillRect(6,10,4,2);});
+  root.querySelectorAll('[data-building]').forEach(c=>{const i=+c.dataset.building,x=c.getContext('2d');x.fillStyle='#15252a';x.fillRect(0,0,48,32);x.fillStyle='#9ab8b4';x.fillRect(5,3,1,1);x.fillRect(37,5,1,1);x.fillStyle='#e7d99d';x.fillRect(40,2,4,4);x.fillStyle='#37494a';x.fillRect(0,28,48,4);x.fillStyle=['#90aba6','#9baca1','#91a8b4'][i];x.fillRect(8,13-i*2,32,16+i*2);x.fillStyle='#456360';x.fillRect(6,10-i*2,36,4);x.fillStyle='#e8cf7b';for(let y=0;y<2;y++)for(let a=0;a<4;a++)x.fillRect(11+a*7,16-i*2+y*6,3,3);x.fillStyle='#203b3a';x.fillRect(21,23,6,6);x.fillStyle='#579483';x.fillRect(2,20,4,9);});
+  requestAnimationFrame(()=>{const grid=$('.e-pixels'),codes=$('.e-code-rows');if(grid&&codes)codes.style.height=grid.getBoundingClientRect().height+'px';});
+ }
+ root.addEventListener('click',e=>{if(playing)return;const tab=e.target.closest('[data-game]');if(tab){game=tab.dataset.game;render();persist();return;}const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const t=b.dataset.act;if(t==='retry'||t==='new'){states[game]=E.create(game,states[game].seed+(t==='new'?1:0));render();persist();return;}const type=({painting:'select',station:'select'}[t]||t);doMove({type,index:Number(b.dataset.index),color:Number(b.dataset.color),op:b.dataset.op});});
+ function markRow(e){const c=e.target.closest('.e-pixel');if(!c)return;root.querySelectorAll('[data-code-row]').forEach(r=>r.classList.toggle('active',r.dataset.codeRow===c.dataset.row));}
+ root.addEventListener('pointerover',markRow);root.addEventListener('focusin',markRow);window.addEventListener('resize',paint);
+ window.addEventListener('openai:set_globals',e=>{const v=e.detail?.globals?.widgetState;if(v?.privateContent?.revision===2&&(v.privateContent.serial??0)>serial){restore(v);render();}});
+ render();
+ if(globalThis.Tweak){const style={compact:false};const tweak=new Tweak({container:$('.e-app'),onChange:()=>{$('.e-board').style.padding=style.compact?'10px':'16px';paint();}});tweak.addToggle(style,'compact',{label:'게임판 여백 줄이기'});}
+})();
+</script>
+</div>

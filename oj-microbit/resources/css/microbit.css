@@ -351,3 +351,336 @@
 @media (pointer: coarse) {
   .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-button, .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-author-nav > button, .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-stage-heading button, .ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-focus-device-summary > button { min-height: 44px; }
 }
+.ojmicrobit .ojmicrobit-focus-surface [hidden][hidden] { display: none; }
+/* Student overview: compare a few input/output scenes before opening exact timing. */
+.ojmicrobit .ojmicrobit-focused-problem { min-height: 0; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-focus-header { width: 100%; max-width: 1100px; margin: 0 auto; padding: 22px 26px 20px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-header-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-header-meta .ojmicrobit-focus-breadcrumb { margin: 0; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-title-row > h1 { flex: 1; min-width: 0; margin: 0; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-title-row > button { flex: 0 0 auto; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-focus-read-body { max-width: 1100px; padding: 0 26px 24px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-overview { display: grid; gap: 14px; margin: 0 0 24px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-brief { padding: 16px 18px; border-left-width: 3px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-brief > h2 { margin-bottom: 8px; font-size: 16px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-brief .ojmicrobit-description { font-size: 15px; line-height: 1.75; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-devices { min-width: 0; margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 14px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-devices > h2 { margin: 0; font-size: 13px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-device-summary { font-size: 13px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-devices > details { margin: 0; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-devices > details[open] { width: 100%; flex-basis: 100%; min-width: 0; max-width: 100%; }
+.ojmicrobit .ojmicrobit-focused-examples > h2 { margin-bottom: 8px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-example-hint { color: var(--ojp-color-muted); font-size: 13px; margin-bottom: 14px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-example-picker { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin: 16px 0; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-example-picker > label { flex: 1 1 260px; max-width: 440px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-example-picker > p { font-size: 12px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-overview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 14px 0 0; padding: 0; list-style: none; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene { min-width: 0; padding: 16px; border: 1px solid var(--ojp-color-line); border-radius: 10px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene-heading { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene-heading > h3 { font-size: 14px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene-number { display: grid; place-items: center; flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--ojp-color-fill-2); color: var(--ojp-color-muted); font-size: 12px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-label { display: block; font-size: 11px; color: var(--ojp-color-muted); margin-bottom: 7px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-input { padding: 12px; border-radius: 8px; background: var(--ojp-color-accent-bg); }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-input-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-input-row + .ojmicrobit-student-input-row { margin-top: 10px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-input-row > span { display: grid; gap: 2px; font-size: 13px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-input-row small { color: var(--ojp-color-primary-hover); font-size: 11px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-input-row > strong { font-size: 25px; line-height: 1.2; color: var(--ojp-color-primary-hover); }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-unchanged { margin-top: 7px; font-size: 11px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-down { text-align: center; font-size: 20px; line-height: 1; color: var(--ojp-color-muted); margin: 10px 0; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-mode[data-mb-parallel-caption] { margin-bottom: 8px; font-size: 11px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-lanes.is-parallel { border: 0; padding: 0; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-lanes { gap: 10px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-lane { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 8px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-actions { gap: 5px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-action { min-width: 0; padding: 7px 9px; flex: 0 1 auto; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-action > strong { font-size: 14px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene [data-mb-action-count="1"] .ojmicrobit-flow-action > span { display: none; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-example-view > [data-mb-more-scenes]:not([hidden]) { display: block; margin: 12px auto 0; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-timing-hint { margin: 14px 0 0; font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-example-view > [data-mb-technical-tests] { margin: 8px 0 0; padding: 0; border: 0; background: transparent; font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-example-view > [data-mb-technical-tests] > summary { padding: 8px 0; cursor: pointer; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-example-view > [data-mb-technical-tests][open] { padding: 16px; border: 1px solid var(--ojp-color-line); border-radius: 8px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-actions { margin-top: 0; padding: 14px 26px; }
+.ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-footer-copy { display: flex; align-items: baseline; gap: 8px 16px; flex-wrap: wrap; }
+@media (max-width: 900px) {
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-focus-header { padding: 18px 18px 16px; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-title-row { align-items: stretch; flex-direction: column; gap: 12px; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-focus-read-body { padding: 0 18px 20px; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-overview-grid { grid-template-columns: minmax(0, 1fr); }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-lane { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-lane-name small { display: block; margin: 0; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-problem-actions { padding: 14px 18px; }
+}
+
+@media (max-width: 620px) {
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene { display: grid; grid-template-columns: minmax(80px, .9fr) 16px minmax(0, 1.3fr); gap: 10px 8px; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene-heading { grid-column: 1 / -1; margin: 0; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-input { grid-column: 1; grid-row: 2; padding: 10px; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-input-row { display: grid; gap: 8px; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-down { grid-column: 2; grid-row: 2; align-self: center; margin: 0; transform: rotate(-90deg); }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-outputs { grid-column: 3; grid-row: 2; min-width: 0; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-lane { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-lane-name small { display: inline; margin-left: 5px; }
+  .ojmicrobit .ojmicrobit-focused-problem .ojmicrobit-student-scene .ojmicrobit-flow-lane-name { font-size: 12px; }
+}
+
+/* Public-example hardware illustration: no network execution or background replay. */
+.ojmicrobit .ojmicrobit-expected-lab { padding: 18px; margin: 16px 0 8px; border: 1px solid var(--ojp-color-line); border-radius: 12px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-expected-heading { display: grid; gap: 5px; margin-bottom: 14px; }
+.ojmicrobit .ojmicrobit-expected-tools { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.ojmicrobit .ojmicrobit-expected-tools > label { flex: 1 1 180px; max-width: 340px; }
+.ojmicrobit .ojmicrobit-expected-tools .ojp-label { font-size: 12px; }
+.ojmicrobit .ojmicrobit-expected-flow { display: grid; grid-template-columns: minmax(0, 1fr) 120px minmax(0, 1.4fr); align-items: center; gap: 16px; }
+.ojmicrobit .ojmicrobit-expected-inputs, .ojmicrobit .ojmicrobit-expected-outputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; min-width: 0; }
+.ojmicrobit .ojmicrobit-expected-outputs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ojmicrobit .ojmicrobit-expected-sensor, .ojmicrobit .ojmicrobit-expected-actuator { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 14px; border: 1px solid var(--ojp-color-line); border-radius: 10px; min-width: 0; text-align: center; color: var(--ojp-color-ink); background: var(--ojp-color-subtle); }
+.ojmicrobit .ojmicrobit-expected-sensor > strong, .ojmicrobit .ojmicrobit-expected-actuator > strong { font-size: 14px; }
+.ojmicrobit .ojmicrobit-expected-sensor > .ojp-field { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; width: 100%; }
+.ojmicrobit .ojmicrobit-expected-sensor .ojp-label { font-size: 12px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-expected-sensor input[type="number"] { width: 84px; padding: 7px 8px; text-align: center; }
+.ojmicrobit .ojmicrobit-expected-sensor input[type="range"] { width: 100%; max-width: 240px; accent-color: var(--ojp-color-primary); margin: 9px 0; min-height: 26px; }
+.ojmicrobit .ojmicrobit-expected-sensor input[type="checkbox"] { accent-color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-expected-sensor-value { font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-expected-output { font-size: 18px; line-height: 1.5; font-weight: 700; color: var(--ojp-color-primary-hover); }
+.ojmicrobit .ojmicrobit-expected-board { display: flex; flex-direction: row; align-items: center; gap: 8px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-expected-board > span { font-size: 20px; }
+.ojmicrobit .ojmicrobit-expected-status { margin: 14px 0 6px; font-size: 13px; color: var(--ojp-color-primary-hover); }
+.ojmicrobit .ojmicrobit-expected-lab > p { margin-top: 10px; }
+.ojmicrobit .ojmicrobit-hardware-picture { display: block; width: 120px; max-width: 100%; height: 90px; overflow: visible; color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-expected-board .ojmicrobit-hardware-picture { width: 64px; flex: 0 0 64px; height: 52px; }
+.ojmicrobit .ojmicrobit-hardware-body { fill: var(--ojp-color-accent-bg); stroke: currentColor; stroke-width: 2; }
+.ojmicrobit .ojmicrobit-hardware-ring { fill: var(--ojp-color-surface); stroke: currentColor; stroke-width: 2; }
+.ojmicrobit .ojmicrobit-hardware-stroke, .ojmicrobit .ojmicrobit-hardware-knob { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ojmicrobit .ojmicrobit-hardware-knob { transform-origin: 60px 44px; transform: rotate(var(--mb-preview-knob, 0deg)); }
+.ojmicrobit .ojmicrobit-hardware-bulb { fill: var(--ojp-color-fill-2); stroke: currentColor; stroke-width: 2; }
+.ojmicrobit .ojmicrobit-hardware-rays { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; opacity: 0; }
+.ojmicrobit .is-on .ojmicrobit-hardware-bulb { fill: currentColor; opacity: calc(.2 + .8 * var(--mb-preview-level, 1)); filter: drop-shadow(0 0 7px currentColor); }
+.ojmicrobit .is-on .ojmicrobit-hardware-rays { opacity: var(--mb-preview-level, 1); }
+.ojmicrobit .ojmicrobit-hardware-push { fill: var(--ojp-color-fill-2); stroke: currentColor; stroke-width: 2; }
+.ojmicrobit .is-on .ojmicrobit-hardware-push { fill: currentColor; }
+.ojmicrobit .ojmicrobit-hardware-propeller, .ojmicrobit .ojmicrobit-hardware-center { fill: currentColor; }
+.ojmicrobit .ojmicrobit-hardware-rotor { transform-origin: 85px 46px; animation: ojmicrobit-rotate var(--mb-preview-spin, 2s) linear infinite; animation-play-state: paused; }
+.ojmicrobit .is-on .ojmicrobit-hardware-rotor { animation-play-state: running; }
+.ojmicrobit .is-paused .ojmicrobit-hardware-rotor { animation-play-state: paused; }
+.ojmicrobit .ojmicrobit-hardware-arm { transform-origin: 60px 35px; transform: rotate(var(--mb-preview-angle, 0deg)); }
+.ojmicrobit .ojmicrobit-hardware-board { fill: var(--ojp-color-ink); }
+.ojmicrobit .ojmicrobit-hardware-board-text { fill: var(--ojp-color-surface); font: 10px var(--ojp-font-sans); }
+.ojmicrobit .ojmicrobit-hardware-dot { fill: var(--ojp-color-primary); }
+.ojmicrobit [data-state="unknown"] > .ojmicrobit-hardware-picture { opacity: .35; }
+.ojmicrobit .ojmicrobit-student-scene-details { margin: 12px 0 0; padding: 0; font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-student-scene-details > summary { padding: 8px 0; cursor: pointer; }
+.ojmicrobit .ojmicrobit-student-scene-details > [data-mb-more-scenes]:not([hidden]) { display: block; margin: 12px auto; }
+.ojmicrobit .ojmicrobit-student-scene-heading > button { min-height: 30px; padding: 4px 6px; font-size: 11px; margin-left: auto; }
+@media (max-width: 700px) {
+  .ojmicrobit .ojmicrobit-expected-flow { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .ojmicrobit .ojmicrobit-expected-board { flex-direction: row; justify-content: center; }
+  .ojmicrobit .ojmicrobit-expected-board .ojmicrobit-hardware-picture { width: 78px; height: 58px; }
+  .ojmicrobit .ojmicrobit-expected-inputs { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  .ojmicrobit .ojmicrobit-expected-tools > label { flex-basis: 100%; max-width: none; }
+  .ojmicrobit .ojmicrobit-expected-lab { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ojmicrobit .ojmicrobit-expected-lab .ojmicrobit-hardware-rotor { animation: none; }
+}
+
+/* Actual student-code execution is visually distinct from the public expectation view. */
+.ojmicrobit .ojmicrobit-live-lab { border-top: 3px solid var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-live-lab > h2 { font-size: 19px; }
+.ojmicrobit .ojmicrobit-live-lab > p { font-size: 13px; line-height: 1.65; }
+.ojmicrobit .ojmicrobit-live-tools { align-items: end; padding: 12px; border: 1px solid var(--ojp-color-line); border-radius: 8px; background: var(--ojp-color-accent-bg); }
+.ojmicrobit .ojmicrobit-live-tools > label { flex: 1 1 130px; min-width: 0; font-size: 12px; }
+.ojmicrobit .ojmicrobit-live-tools input[type="number"] { width: 100%; max-width: 140px; }
+.ojmicrobit .ojmicrobit-live-tools button { min-height: 40px; }
+.ojmicrobit .ojmicrobit-live-lab [data-mb-live-input] { grid-column: 1 / -1; }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-device { text-align: center; }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-device > .ojmicrobit-hardware-picture { margin: 0 auto 10px; }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-device > .ojp-field { margin: 10px 0; }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-device input[type="range"] { width: 100%; accent-color: var(--ojp-color-primary); }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-device input[type="number"] { width: 100%; max-width: 130px; }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-device .ojp-label { font-size: 12px; }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-indicator { display: none; }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-device meter { width: 100%; margin-top: 8px; }
+.ojmicrobit .ojmicrobit-live-status { color: var(--ojp-color-primary-hover); font-size: 13px; }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-diagnostics:empty { display: none; }
+.ojmicrobit .ojmicrobit-live-trace { min-width: 0; margin-top: 12px; font-size: 12px; }
+.ojmicrobit .ojmicrobit-live-trace > summary { cursor: pointer; padding: 8px 0; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-case-create { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 20px; }
+.ojmicrobit .ojmicrobit-case-group { margin: 20px 0; padding: 0; min-width: 0; }
+.ojmicrobit .ojmicrobit-case-group > h3 { font-size: 16px; margin: 0 0 5px; }
+.ojmicrobit .ojmicrobit-case-group > p { margin-bottom: 12px; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-example-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.ojmicrobit .ojmicrobit-author-panels .ojmicrobit-example-heading > h3 { flex: 1 1 160px; min-width: 0; font-size: 14px; }
+.ojmicrobit .ojmicrobit-focus-surface .ojmicrobit-example-heading > button { padding: 5px 8px; min-height: 32px; font-size: 12px; }
+@media (max-width: 520px) {
+  .ojmicrobit .ojmicrobit-case-create > button { flex: 1 1 100%; }
+  .ojmicrobit .ojmicrobit-live-tools > button { flex: 1 1 auto; }
+  .ojmicrobit .ojmicrobit-live-lab .ojmicrobit-pinboard { gap: 8px; }
+  .ojmicrobit .ojmicrobit-live-lab .ojmicrobit-device { padding: 12px; }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .ojmicrobit .ojmicrobit-live-lab .ojmicrobit-hardware-rotor{animation:none;}
+}
+
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-pinboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ojmicrobit .ojmicrobit-live-lab .ojmicrobit-i2c-device { grid-column: 1 / -1; }
+.ojmicrobit .ojmicrobit-live-tools input[type="checkbox"] { width: 18px; height: 18px; min-height: 0; }
+.ojmicrobit .ojmicrobit-live-lab [data-mb-live-input] { display: grid; grid-template-columns: 85px minmax(0, 1fr); column-gap: 12px; align-items: center; text-align: left; }
+.ojmicrobit .ojmicrobit-live-lab [data-mb-live-input] > .ojmicrobit-device-title { grid-column: 1 / -1; }
+.ojmicrobit .ojmicrobit-live-lab [data-mb-live-input] > .ojmicrobit-hardware-picture { grid-column: 1; grid-row: 2 / 5; width: 85px; height: 76px; margin: 0; }
+.ojmicrobit .ojmicrobit-live-lab [data-mb-live-input] > .ojp-field { grid-column: 2; margin: 4px 0; }
+.ojmicrobit .ojmicrobit-live-lab [data-mb-live-input] > output { grid-column: 2; margin: 2px 0; font-size: 12px; }
+
+/* Editing-focus layout: neither editor nor runtime iframe moves on panel toggles. */
+.ojmicrobit .ojmicrobit-immersive { position: relative; min-height: 0; background: var(--ojp-color-surface); font: 400 14px/1.55 var(--ojp-font-sans); }
+.ojmicrobit .ojmicrobit-immersive h1 { font-size: 22px; line-height: 1.4; font-weight: 500; letter-spacing: -.6px; }
+.ojmicrobit .ojmicrobit-immersive h2 { font-size: 16px; font-weight: 600; }
+.ojmicrobit .ojmicrobit-immersive h3 { font-size: 14px; font-weight: 600; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-button { min-height: 34px; padding: 5px 10px; font: 400 14px/1.55 var(--ojp-font-sans); border-radius: 7px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-button[aria-pressed="true"] { color: var(--ojp-color-primary-hover); background: var(--ojp-color-accent-bg); font-weight: 600; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-focus-breadcrumb { margin: 0 0 5px; font-size: 12px; }
+.ojmicrobit .ojmicrobit-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-focus-header { padding: 22px 22px 18px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-layout { display: block; padding: 0 22px 22px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-nav { display: flex; gap: 0; margin-bottom: 18px; padding: 0; border-bottom: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-immersive .ojp-input, .ojmicrobit .ojmicrobit-immersive .ojp-select, .ojmicrobit .ojmicrobit-immersive .ojp-textarea { font: 400 14px/1.55 var(--ojp-font-sans); border-radius: 7px; }
+.ojmicrobit .ojmicrobit-immersive .ojp-label { font-size: 13px; font-weight: 400; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-panels:has(.ojmicrobit-start-code[open]) { max-width: none; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-nav > button { flex: 1 1 0; width: auto; justify-content: center; gap: 7px; min-height: 44px; padding: 9px 6px 12px; border-radius: 0; border-bottom: 2px solid transparent; font-size: 14px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-nav > button[aria-current="step"] { border-bottom-color: var(--ojp-color-primary); background: transparent; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-index { width: 21px; height: 21px; flex-basis: 21px; font-size: 12px; }
+.ojmicrobit .ojmicrobit-author-draft { color: var(--ojp-color-muted); font-size: 12px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-panels { max-width: 650px; min-height: 330px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-panels .ojmicrobit-fields { margin: 0 0 20px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-panels [data-mb-field="description"] { min-height: 135px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-footer { padding: 18px 22px; gap: 12px; margin-top: 0; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-footer > button { min-height: 38px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-footer-copy { flex: 1 1 140px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-progress { color: var(--ojp-color-muted); font-size: 12px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-focus-device-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 0; margin: 0 0 18px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-focus-device-summary > span:first-child { flex-basis: 100%; font-size: 14px; font-weight: 600; }
+.ojmicrobit .ojmicrobit-connected-device { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 7px 9px; border-radius: 7px; background: var(--ojp-color-subtle); }
+.ojmicrobit .ojmicrobit-connected-device .ojmicrobit-hardware-picture { width: 22px; height: 22px; margin: 0; }
+.ojmicrobit .ojmicrobit-condition-tabs { display: flex; gap: 7px; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-condition-tabs > button { font-size: 12px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-case-group { padding: 0; margin: 0; border: 0; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-case-group > p { font-size: 12px; margin-bottom: 12px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-case-group > button { margin-bottom: 18px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-case-group .ojmicrobit-example-heading > .ojmicrobit-focus-chip { display: none; }
+.ojmicrobit .ojmicrobit-start-code { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-start-code > summary { color: var(--ojp-color-muted); cursor: pointer; font-size: 12px; }
+.ojmicrobit .ojmicrobit-start-code[open] > summary { margin-bottom: 14px; }
+.ojmicrobit .ojmicrobit-immersive-solve { container-type: inline-size; container-name: microbit-workspace; padding: 22px; }
+.ojmicrobit .ojmicrobit-immersive-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
+.ojmicrobit .ojmicrobit-immersive-heading > div:first-child { min-width: 0; }
+.ojmicrobit .ojmicrobit-immersive-heading-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; flex: 0 0 auto; }
+.ojmicrobit .ojmicrobit-workspace-saved { font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-immersive-summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 13px; margin-bottom: 14px; border-radius: 8px; background: var(--ojp-color-subtle); }
+.ojmicrobit .ojmicrobit-immersive-summary > span { min-width: 0; font-size: 13px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-immersive-summary > button { flex-shrink: 0; border: 0; background: transparent; color: var(--ojp-color-primary-hover); }
+.ojmicrobit .ojmicrobit-immersive-workspace { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 14px; margin: 0; }
+.ojmicrobit .is-results-open .ojmicrobit-immersive-workspace { grid-template-columns: minmax(0, 1fr) 270px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-immersive-editor { min-width: 0; padding: 0; margin: 0; border: 1px solid var(--ojp-color-line); border-radius: 10px; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-immersive-editor > h2, .ojmicrobit .ojmicrobit-immersive-editor > p:not(.ojmicrobit-editor-connection) { display: none; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-editor-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 0; padding: 9px 10px; border-bottom: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-editor-modes { display: flex; gap: 0; padding: 2px; border-radius: 7px; background: var(--ojp-color-subtle); margin-right: auto; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-editor-modes > button { flex: 0 0 auto; border: 0; min-height: 30px; padding: 4px 9px; font-size: 12px; background: transparent; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-editor-modes > button[aria-pressed="true"] { background: var(--ojp-color-surface); color: var(--ojp-color-ink); box-shadow: 0 1px 4px var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-editor-more { position: relative; font-size: 12px; }
+.ojmicrobit .ojmicrobit-editor-more > summary { padding: 7px 5px; cursor: pointer; }
+.ojmicrobit .ojmicrobit-editor-menu { position: absolute; right: 0; top: 100%; z-index: 15; display: grid; gap: 6px; width: 240px; max-width: calc(100vw - 56px); padding: 10px; border: 1px solid var(--ojp-color-line); border-radius: 9px; background: var(--ojp-color-surface); box-shadow: 0 8px 24px var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-editor-menu > button { justify-content: start; font-size: 12px; }
+.ojmicrobit .ojmicrobit-editor-menu > span { font-size: 11px; padding: 4px; }
+.ojmicrobit .ojmicrobit-immersive-editor .ojmicrobit-editor-connection { margin: 0; padding: 4px 10px; font-size: 11px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-immersive-editor .ojmicrobit-editor { display: block; width: 100%; height: clamp(480px, calc(100dvh - 260px), 720px); border: 0; border-radius: 0 0 10px 10px; }
+.ojmicrobit .ojmicrobit-immersive-editor .ojmicrobit-import { padding: 0 12px 10px; margin: 0; font-size: 11px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-immersive-editor .ojmicrobit-import:not([open]) { display: none; }
+.ojmicrobit .ojmicrobit-workspace-results { padding: 15px; border: 1px solid var(--ojp-color-line); border-radius: 10px; min-width: 0; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-workspace-panel-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-workspace-panel-heading > button { min-height: 28px; border: 0; padding: 3px; font-size: 12px; }
+.ojmicrobit .ojmicrobit-workspace-panel-heading .ojmicrobit-muted { font-size: 12px; margin-top: 2px; }
+.ojmicrobit .ojmicrobit-workspace-result-tabs { display: flex; gap: 4px; padding-bottom: 10px; border-bottom: 1px solid var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-workspace-result-tabs > button { flex: 1 1 0; border: 0; font-size: 12px; padding: 5px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-live-lab { border: 0; padding: 0; margin: 0; background: transparent; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-live-lab > h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-live-tools { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; padding: 0; border: 0; background: transparent; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-live-tools > button { flex: 0 1 auto; min-height: 28px; padding: 4px 6px; font-size: 11px; }
+.ojmicrobit .ojmicrobit-live-options { font-size: 11px; width: 100%; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-live-options > summary, .ojmicrobit .ojmicrobit-live-help > summary { cursor: pointer; padding: 5px 0; }
+.ojmicrobit .ojmicrobit-live-options .ojp-field { display: flex; flex-direction: row-reverse; justify-content: start; align-items: center; margin: 4px 0; }
+.ojmicrobit .ojmicrobit-live-options .ojp-label { font-size: 11px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-live-help { font-size: 11px; color: var(--ojp-color-muted); margin: 0 0 10px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-live-help > p { font-size: 12px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-pinboard { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-device { min-width: 0; padding: 12px; margin: 0; background: var(--ojp-color-subtle); border: 0; border-radius: 8px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-device-title { display: flex; flex-wrap: wrap; justify-content: start; gap: 5px; font-size: 12px; margin: 0; text-align: start; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-device-title > strong { flex: 0 1 auto; min-width: 0; font-weight: 400; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-device-title > .ojp-status-badge { background: transparent; color: var(--ojp-color-muted); font-size: 11px; padding: 0; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-live-input] { position: relative; display: block; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-live-input] > .ojmicrobit-device-title { padding-left: 25px; padding-right: 75px; min-height: 28px; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-live-input] > .ojmicrobit-hardware-picture { position: absolute; top: 14px; left: 12px; width: 20px; height: 20px; margin: 0; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-live-input] > .ojp-field { margin: 8px 0 0; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-live-input] > .ojp-field > .ojp-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-live-input] > .ojp-field:has(input[type="number"]) { position: absolute; top: 8px; right: 10px; width: 70px; margin: 0; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-live-input] input[type="number"] { padding: 4px; font-size: 16px; text-align: end; background: var(--ojp-color-surface); }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-live-input] > .ojmicrobit-device-value { display: none; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-actual-output] { display: grid; grid-template-columns: 54px minmax(0, 1fr); column-gap: 12px; row-gap: 2px; padding: 0 0 12px; border-radius: 0; border-bottom: 1px solid var(--ojp-color-line); background: transparent; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-actual-output] > .ojmicrobit-device-title { grid-column: 2; grid-row: 1; align-self: end; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-actual-output] > .ojmicrobit-hardware-picture { grid-column: 1; grid-row: 1 / 3; width: 54px; height: 54px; margin: 0; border-radius: 50%; background: var(--ojp-color-subtle); padding: 7px; }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-actual-output].is-on > .ojmicrobit-hardware-picture { background: var(--ojp-color-accent-bg); }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-actual-output] > .ojmicrobit-device-value { grid-column: 2; grid-row: 2; padding: 0; margin: 0; text-align: start; font: 500 16px/1.55 var(--ojp-font-sans); }
+.ojmicrobit .ojmicrobit-workspace-results [data-mb-actual-output] > meter { display: none; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-live-status { font-size: 11px; margin-top: 10px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-live-lab > .ojmicrobit-muted { font-size: 11px; margin-top: 12px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojp-table-wrap { max-height: 220px; overflow: auto; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-expected-flow { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-expected-board { display: none; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-expected-outputs { display: grid; grid-template-columns: minmax(0, 1fr); }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-expected-lab { padding: 0; border: 0; background: transparent; margin: 12px 0; }
+.ojmicrobit .ojmicrobit-workspace-results .ojmicrobit-expected-source { font-size: 12px; color: var(--ojp-color-primary-hover); margin: 12px 0; }
+.ojmicrobit .ojmicrobit-workspace-footer { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 8px 12px; margin-top: 12px; }
+.ojmicrobit .ojmicrobit-workspace-footer > [data-mb-workspace-status] { font-size: 12px; flex: 1 1 200px; }
+.ojmicrobit .ojmicrobit-workspace-footer > div { display: flex; gap: 12px; }
+.ojmicrobit .ojmicrobit-immersive .ojmicrobit-workspace-footer button, .ojmicrobit .ojmicrobit-immersive .ojmicrobit-workspace-footer a { border: 0; background: transparent; min-height: 28px; padding: 0; font-size: 12px; color: var(--ojp-color-muted); }
+.ojmicrobit .ojmicrobit-workspace-footer > .ojmicrobit-workspace-context { flex-basis: 100%; padding: 0; margin: 0; background: transparent; border: 0; color: var(--ojp-color-muted); font-size: 11px; }
+.ojmicrobit .ojmicrobit-workspace-problem { position: absolute; top: 90px; right: 22px; z-index: 20; width: 430px; max-width: calc(100% - 44px); padding: 20px; border: 1px solid var(--ojp-color-line); border-radius: 10px; background: var(--ojp-color-surface); box-shadow: 0 8px 28px var(--ojp-color-line); }
+.ojmicrobit .ojmicrobit-workspace-problem .ojmicrobit-card { padding: 0; margin: 0 0 18px; border: 0; background: transparent; }
+.ojmicrobit .ojmicrobit-workspace-problem .ojmicrobit-card > h2 { margin-bottom: 10px; font-size: 14px; }
+.ojmicrobit .ojmicrobit-workspace-problem .ojmicrobit-description { font-size: 13px; }
+.ojmicrobit .ojmicrobit-workspace-wiring { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.ojmicrobit .ojmicrobit-workspace-wiring > span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }
+.ojmicrobit .ojmicrobit-workspace-wiring .ojmicrobit-hardware-picture { width: 24px; height: 24px; margin: 0; }
+.ojmicrobit .ojmicrobit-immersive [hidden][hidden] { display: none; }
+@container microbit-workspace (max-width: 760px) {
+  .ojmicrobit .is-results-open .ojmicrobit-immersive-workspace { grid-template-columns: minmax(0, 1fr); }
+  .ojmicrobit .is-results-open .ojmicrobit-immersive-editor { display: none; }
+  .ojmicrobit .is-problem-open .ojmicrobit-immersive-workspace, .ojmicrobit .is-problem-open .ojmicrobit-immersive-summary, .ojmicrobit .is-problem-open .ojmicrobit-workspace-footer { display: none; }
+  .ojmicrobit .ojmicrobit-workspace-problem { position: static; width: 100%; max-width: 100%; box-shadow: none; }
+  .ojmicrobit .ojmicrobit-immersive-heading { align-items: start; }
+  .ojmicrobit .ojmicrobit-immersive-heading-actions { flex-basis: 100px; }
+  .ojmicrobit .ojmicrobit-workspace-saved { display: none; }
+}
+@media (max-width: 700px) {
+  .ojmicrobit .ojmicrobit-immersive-solve { padding: 16px 14px; }
+  .ojmicrobit .ojmicrobit-immersive h1 { font-size: 19px; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-focus-header { padding: 18px 14px; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-layout { padding: 0 14px 18px; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-nav > button { font-size: 12px; gap: 5px; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-footer { padding: 16px 14px; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-progress { display: none; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-footer-copy { flex-basis: 100%; order: 2; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-author-footer > [data-mb-author-next] { margin-left: auto; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-editor-toolbar > .ojmicrobit-button { flex: 0 1 auto; font-size: 12px; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-editor-modes > button { font-size: 11px; padding-inline: 7px; }
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-editor { height: 520px; }
+  .ojmicrobit .ojmicrobit-immersive .ojp-input, .ojmicrobit .ojmicrobit-immersive .ojp-select, .ojmicrobit .ojmicrobit-immersive .ojp-textarea { font-size: 16px; }
+}
+@media (pointer: coarse) {
+  .ojmicrobit .ojmicrobit-immersive .ojmicrobit-button, .ojmicrobit .ojmicrobit-editor-more > summary, .ojmicrobit .ojmicrobit-live-options > summary, .ojmicrobit .ojmicrobit-live-help > summary { min-height: 44px; }
+  .ojmicrobit .ojmicrobit-immersive input[type="range"] { min-height: 44px; }
+}

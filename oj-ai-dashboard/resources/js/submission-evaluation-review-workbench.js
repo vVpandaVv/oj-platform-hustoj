@@ -520,8 +520,10 @@
       const key = `${row.learner?.user_id}:${row.submission?.id}:${row.submission?.official_revision_id}`;
       const evaluation = row.assigned && row.submission?.official_revision_id ? evaluated.get(key) : null;
       const candidate = row.assigned && row.submission?.official_revision_id ? pending.get(key) : null;
+      const missingState = submissionState.category !== 'not_submitted' ? ''
+        : row.non_submission_grade?.status === 'confirmed' ? 'reviewed' : 'not_evaluated';
       return {
-        ...(evaluation || candidate || { id: row.id, state: row.assigned && !row.submission?.official_revision_id && row.non_submission_grade?.status === 'confirmed' ? 'reviewed' : '', submission: row.submission }),
+        ...(evaluation || candidate || { id: row.id, state: missingState, submission: row.submission }),
         kind: evaluation ? 'evaluation' : candidate ? 'candidate' : 'roster',
         learner: row.learner, assignment,
         roster: row, submissionStatus: submissionState.category, submissionLabel: submissionState.label,
@@ -718,7 +720,24 @@
     teacher: { label: '교사 점수 일괄 승인', endpoint: 'review', operation: null, approval: true },
     feedback: { label: '피드백 일괄 요청', endpoint: 'generate-feedback', operation: 'feedback_draft' },
     note: { label: '특기사항 일괄 요청', endpoint: 'generate-student-note', operation: 'special_note_draft' },
+    release: { label: '학생 결과 일괄 공개', endpoint: 'release', release: true },
   });
+
+  function bulkReleaseReason(detail, options) {
+    const evaluation = detail.evaluation;
+    const expected = detail.review_precondition;
+    const official = officialReview(detail);
+    if (evaluation.state !== 'reviewed' || !official) return '점수 미확정';
+    if (!['accepted', 'adjusted'].includes(official.decision) || official.id !== expected.expected_official_review_id
+      || !/^[a-f0-9]{64}$/.test(expected.expected_official_review_hash || '') || official.id !== evaluation.review?.official_id
+      || official.result_id !== detail.selected_result?.id || official.result_id !== expected.expected_result_id) return '확정 점수 확인 필요';
+    try { normalizeDecimal(official.official_score, detail.selected_result.maximum_score); }
+    catch (_error) { return '확정 점수 확인 필요'; }
+    if (evaluation.release?.current_id || evaluation.release?.count > 0 || detail.releases?.length) return '공개·회수 이력 있음 · 개별 정정 공개';
+    try { releaseResultCommand('release-preview', detail, options?.scoreVisibility, options?.feedbackVisibility); }
+    catch (error) { return error.message; }
+    return '';
+  }
 
   function savedTeacherBulkItems(detail) {
     const result = detail.selected_result;
@@ -750,12 +769,13 @@
     });
   }
 
-  function workflowBulkReason(action, detail, hasNote = false) {
+  function workflowBulkReason(action, detail, hasNote = false, options = null) {
     const evaluation = detail?.evaluation;
     const expected = detail?.review_precondition;
     if (!WORKFLOW_BULK[action] || !evaluation || !expected) return '평가 정보 확인 필요';
     if (evaluation.submission?.is_source_current !== true
       || !['submitted', 'auto_submitted', 'proxy_submitted', 'locked'].includes(evaluation.submission?.state)) return '제출 변경 또는 재제출 중';
+    if (action === 'release') return bulkReleaseReason(detail, options);
     if (WORKFLOW_BULK[action].approval) {
       if (evaluation.state !== 'review_required') return '검토 대기 아님';
       if (expected.expected_official_review_id || evaluation.review?.official_id) return '기존 확정 점수 있음';
@@ -783,7 +803,8 @@
     return '';
   }
 
-  function workflowBulkCommand(action, detail, commandId) {
+  function workflowBulkCommand(action, detail, commandId, options = null) {
+    if (action === 'release') return releaseResultCommand(commandId, detail, options?.scoreVisibility, options?.feedbackVisibility);
     if (action === 'accept') return reviewCommand(commandId, detail.review_precondition, 'accepted');
     if (action === 'teacher') {
       const items = savedTeacherBulkItems(detail);
@@ -801,6 +822,13 @@
 
   function workflowBulkReceipt(action, id, body, envelope) {
     const data = envelope?.data;
+    if (action === 'release') return data?.evaluation_id === id
+      && data?.official_review?.id === body.expected.expected_official_review_id
+      && data?.official_review?.hash === body.expected.expected_official_review_hash
+      && Boolean(data?.release?.id) && /^[a-f0-9]{64}$/.test(data?.release?.hash || '')
+      && /^[a-f0-9]{64}$/.test(data?.release?.projection_hash || '')
+      && data?.release?.state === 'released' && data?.release?.release_no === 1
+      && data?.release?.feedback_revision_id === body.expected.expected_feedback_revision_id;
     if (WORKFLOW_BULK[action].approval) {
       return data?.evaluation?.id === id && data?.result?.id === body.expected.expected_result_id
         && data?.result?.hash === body.expected.expected_result_hash && data?.review?.decision === body.payload.decision
@@ -831,10 +859,12 @@
             if (!pending) {
               const { detail, hasNote } = await read(target);
               if (stopped) break;
-              const reason = workflowBulkReason(action, detail, hasNote);
-              const currentBody = reason ? null : workflowBulkCommand(action, detail, target.body.command_id);
+              const reason = workflowBulkReason(action, detail, hasNote, target.releaseOptions);
+              const currentBody = reason ? null : workflowBulkCommand(action, detail, target.body.command_id, target.releaseOptions);
               if (detail?.evaluation?.id !== target.id || detail?.evaluation?.assignment?.id !== target.assignmentId
                 || detail?.evaluation?.submission?.source_revision_id !== target.revisionId
+                || action === 'release' && (detail.evaluation.context?.type !== context.type
+                  || detail.evaluation.context?.id !== context.id || detail.evaluation.context?.revision !== context.revision)
                 || reason || JSON.stringify(currentBody) !== JSON.stringify(target.body)) {
                 results.push({ ...target, status: 'skipped', reason: reason || '확인 후 평가 정보가 변경됨' });
                 index += 1;
@@ -846,8 +876,8 @@
             // A lost response must replay the original command, not generate a second request.
             const response = await send(pending.path, { method: 'POST', idempotencyKey: pending.body.command_id, body: pending.body });
             if (!workflowBulkReceipt(action, target.id, pending.body, response)) throw new Error('처리 응답을 확인하지 못했습니다. 이어하기로 확인해 주세요.');
-            const failedRun = !WORKFLOW_BULK[action].approval && ['failed', 'cancelled'].includes(response.data.run.state);
-            results.push({ ...target, status: failedRun ? 'failed' : 'succeeded', reason: failedRun ? '생성 작업 실패 또는 취소 · 개별 확인 필요' : WORKFLOW_BULK[action].approval ? '승인 완료' : '생성 요청 등록' });
+            const failedRun = Boolean(WORKFLOW_BULK[action].operation) && ['failed', 'cancelled'].includes(response.data.run.state);
+            results.push({ ...target, status: failedRun ? 'failed' : 'succeeded', reason: failedRun ? '생성 작업 실패 또는 취소 · 개별 확인 필요' : action === 'release' ? '공개 완료' : WORKFLOW_BULK[action].approval ? '승인 완료' : '생성 요청 등록' });
           } catch (error) {
             if (![404, 409, 422].includes(error?.status)) throw error;
             results.push({ ...target, status: 'failed', reason: error.status === 409 ? '변경 충돌 · 개별 확인 필요' : error.status === 404 ? '접근 대상 없음' : '입력·처리 조건 확인 필요' });
@@ -1554,6 +1584,7 @@
   }
 
   function workflowPermission(action) {
+    if (action === 'release') return root.dataset.canPublish === '1';
     return action === 'note' ? state.canManageStudentNotes : state.canReview;
   }
 
@@ -1561,7 +1592,8 @@
   function updateWorkflowBulkButtons() {
     root.querySelectorAll('[data-workflow-bulk]').forEach(control => {
       const action = control.dataset.workflowBulk;
-      control.hidden = !workflowPermission(action) || (WORKFLOW_BULK[action].approval ? workflowStage !== 'assessment' : workflowStage !== 'report');
+      const stage = action === 'release' ? 'release' : WORKFLOW_BULK[action].approval ? 'assessment' : 'report';
+      control.hidden = !workflowPermission(action) || workflowStage !== stage;
       control.disabled = control.hidden || !currentAssignment() || assignmentsUnavailable || !currentContext()
         || state.submitting || workflowBusy() || Boolean(state.batch && !state.batch.controller.snapshot().done);
       control.title = !currentAssignment() ? '배포를 선택하세요.' : WORKFLOW_BULK[action].label;
@@ -1596,8 +1628,38 @@
     all.disabled = state.workflowPreparing || !boxes.length;
     const confirm = root.querySelector('[data-workflow-control="confirm"]');
     confirm.disabled = state.workflowPreparing || !count || !state.workflowPlan
-      || (WORKFLOW_BULK[state.workflowPlan.action].approval && !workflowNode('reviewed').checked);
-    confirm.textContent = WORKFLOW_BULK[state.workflowPlan?.action]?.approval ? `${count}명 승인` : `${count}명 요청`;
+      || ((WORKFLOW_BULK[state.workflowPlan.action].approval || state.workflowPlan.action === 'release') && !workflowNode('reviewed').checked);
+    confirm.textContent = state.workflowPlan?.action === 'release' ? `${count}명 공개`
+      : WORKFLOW_BULK[state.workflowPlan?.action]?.approval ? `${count}명 승인` : `${count}명 요청`;
+  }
+
+  function renderWorkflowTargets(plan, selected = null) {
+    workflowNode('targets').replaceChildren();
+    workflowNode('exclusions').replaceChildren();
+    plan.targets.forEach((target, index) => {
+      const label = node('label', 'oj-ai-submission-review__bulk-check');
+      const checkbox = node('input'); checkbox.type = 'checkbox'; checkbox.checked = !selected || selected.has(target.id); checkbox.value = String(index);
+      append(label, checkbox, learnerNameNode('span', target.learner, target.scoreLabel ? ` · ${target.scoreLabel}` : ''));
+      workflowNode('targets').appendChild(label);
+    });
+    plan.excluded.forEach(item => workflowNode('exclusions').appendChild(learnerNameNode('li', item.learner, ` · ${item.reason}`)));
+    workflowNode('preview-status').textContent = `대상 ${plan.targets.length}명 · 제외 ${plan.excluded.length}명`;
+  }
+
+  function refreshReleasePreview(plan, selected = null) {
+    const options = { scoreVisibility: workflowNode('score-visibility').value, feedbackVisibility: workflowNode('feedback-visibility').value };
+    plan.targets = [];
+    plan.excluded = [...plan.baseExcluded];
+    for (const { target, detail } of plan.releaseCandidates) {
+      const reason = workflowBulkReason('release', detail, false, options);
+      if (reason) plan.excluded.push({ ...target, reason });
+      else plan.targets.push({ ...target, releaseOptions: options,
+        scoreLabel: officialTotalLabel([officialReview(detail).official_score]),
+        body: workflowBulkCommand('release', detail, target.commandId, options) });
+    }
+    workflowNode('reviewed').checked = false;
+    renderWorkflowTargets(plan, selected);
+    updateWorkflowSelection();
   }
 
   async function openWorkflowBulk(action) {
@@ -1606,21 +1668,27 @@
     if (hasDetailChanges()) { showNotice('변경한 점수 또는 보고서를 먼저 저장해 주세요.', 'error'); return; }
     const assignment = currentAssignment();
     const context = currentContext();
-    const plan = { action, assignment, context, targets: [], excluded: [] };
+    const plan = { action, assignment, context, targets: [], excluded: [], releaseCandidates: [] };
     const requestId = ++state.workflowRequest;
     state.workflowPlan = plan;
     state.workflowPreparing = true;
     workflowNode('title').textContent = WORKFLOW_BULK[action].label;
     workflowNode('scope').textContent = `${context.label} · ${assignment.title} · 배포 전체 (검색·상태 필터와 무관)`;
-    workflowNode('policy').textContent = action === 'teacher'
+    workflowNode('policy').textContent = action === 'release'
+      ? '미공개 확정 결과만 공개합니다. 기존 공개·회수 이력은 제외합니다. 피드백 공개 시 승인된 피드백이 필요합니다.' : action === 'teacher'
       ? '저장된 교사 점수만 확정합니다. 미채점 항목·기존 확정 점수·변경된 제출은 제외하며 학생에게 공개하지 않습니다.'
       : action === 'accept'
       ? '기존 확정 점수·반려·판단 보류·개별 확인 대상 제외. 점수만 확정하며 학생에게 공개하지 않습니다.'
       : '점수 확정·초안 없는 학생 대상. 기존 초안·승인 기록·생성 중인 작업 제외. 생성 후 개별 검토가 필요하며 자동 승인·공개하지 않습니다.';
-    workflowNode('attestation').hidden = !WORKFLOW_BULK[action].approval;
-    workflowNode('attestation').querySelector('span').textContent = action === 'teacher'
+    workflowNode('attestation').hidden = !WORKFLOW_BULK[action].approval && action !== 'release';
+    workflowNode('attestation').querySelector('span').textContent = action === 'release'
+      ? '선택한 학생과 점수·피드백 공개 범위를 확인했습니다.' : action === 'teacher'
       ? '선택한 학생의 저장 점수와 채점 근거를 검토했습니다.' : '선택한 학생의 AI 점수와 채점 근거를 검토했습니다.';
     workflowNode('reviewed').checked = false;
+    workflowNode('release-options').hidden = action !== 'release';
+    workflowNode('score-visibility').value = 'total_and_criteria';
+    workflowNode('feedback-visibility').value = 'hidden';
+    workflowNode('release-options').disabled = true;
     workflowNode('targets').replaceChildren();
     workflowNode('exclusions').replaceChildren();
     workflowNode('preview-status').textContent = '대상을 확인하는 중입니다.';
@@ -1639,12 +1707,19 @@
         let reason = item.kind !== 'evaluation' ? '평가 결과 없음'
           : !item.roster.assigned || item.submissionStatus !== 'submitted' ? '공식 제출 대상 아님'
             : !['submitted', 'auto_submitted', 'proxy_submitted', 'locked'].includes(item.roster.status) ? '재제출 작성 중' : '';
+        if (action === 'release' && item.kind !== 'evaluation' && item.roster.non_submission_grade?.status === 'confirmed') {
+          reason = '미제출 학생 확정 점수 · 공개할 제출 평가 없음';
+        }
         if (!reason) {
           try {
             const { detail, hasNote } = await readWorkflowTarget(action, target, context);
-            reason = workflowBulkReason(action, detail, hasNote);
-            if (detail.evaluation.assignment?.id !== assignment.id || detail.evaluation.submission?.source_revision_id !== target.revisionId) reason = '제출 또는 배포 변경';
-            if (!reason) {
+            if (detail.evaluation.assignment?.id !== assignment.id || detail.evaluation.submission?.source_revision_id !== target.revisionId
+              || action === 'release' && (detail.evaluation.context?.type !== context.type || detail.evaluation.context?.id !== context.id || detail.evaluation.context?.revision !== context.revision)) reason = '제출 또는 배포 변경';
+            else if (action === 'release') {
+              target.commandId = token('bulk-release');
+              plan.releaseCandidates.push({ target, detail });
+            } else reason = workflowBulkReason(action, detail, hasNote);
+            if (!reason && action !== 'release') {
               target.body = workflowBulkCommand(action, detail, token(`bulk-${action}`));
               if (action === 'teacher') target.scoreLabel = officialTotalLabel(savedTeacherBulkItems(detail).map(item => item.official_points));
             }
@@ -1654,19 +1729,14 @@
           }
         }
         if (reason) plan.excluded.push({ ...target, reason });
-        else plan.targets.push(target);
-        workflowNode('preview-status').textContent = `${plan.targets.length + plan.excluded.length} / ${items.length}명 확인 중`;
+        else if (action !== 'release') plan.targets.push(target);
+        workflowNode('preview-status').textContent = `${plan.targets.length + plan.excluded.length + plan.releaseCandidates.length} / ${items.length}명 확인 중`;
       }
       if (requestId !== state.workflowRequest || !elements.workflowDialog.open) return;
-      plan.targets.forEach((target, index) => {
-        const label = node('label', 'oj-ai-submission-review__bulk-check');
-        const checkbox = node('input'); checkbox.type = 'checkbox'; checkbox.checked = true; checkbox.value = String(index);
-        const score = action === 'teacher' ? ` · ${target.scoreLabel}` : '';
-        append(label, checkbox, learnerNameNode('span', target.learner, score));
-        workflowNode('targets').appendChild(label);
-      });
-      plan.excluded.forEach(item => workflowNode('exclusions').appendChild(learnerNameNode('li', item.learner, ` · ${item.reason}`)));
-      workflowNode('preview-status').textContent = `대상 ${plan.targets.length}명 · 제외 ${plan.excluded.length}명`;
+      if (action === 'release') {
+        plan.baseExcluded = [...plan.excluded];
+        refreshReleasePreview(plan);
+      } else renderWorkflowTargets(plan);
     } catch (error) {
       if (requestId !== state.workflowRequest) return;
       state.workflowPlan = null;
@@ -1674,6 +1744,7 @@
     } finally {
       if (requestId === state.workflowRequest) {
         state.workflowPreparing = false;
+        workflowNode('release-options').disabled = false;
         updateWorkflowSelection();
         updateBatchButton();
       }
@@ -1685,7 +1756,7 @@
     const progress = job.controller.snapshot();
     elements.workflowProgress.hidden = false;
     const count = status => progress.results.filter(item => item.status === status).length;
-    workflowNode('progress-status').textContent = `${WORKFLOW_BULK[job.action].label} · ${progress.done ? '처리 완료' : progress.running ? '처리 중' : '중지됨'} · ${progress.results.length}/${progress.total}명 · ${WORKFLOW_BULK[job.action].approval ? '승인' : '요청 등록'} ${count('succeeded')}명 · 제외 ${count('skipped')}명 · 실패 ${count('failed')}명${job.error ? ` · ${job.error}` : ''}`;
+    workflowNode('progress-status').textContent = `${WORKFLOW_BULK[job.action].label} · ${progress.done ? '처리 완료' : progress.running ? '처리 중' : '중지됨'} · ${progress.results.length}/${progress.total}명 · ${job.action === 'release' ? '공개' : WORKFLOW_BULK[job.action].approval ? '승인' : '요청 등록'} ${count('succeeded')}명 · 제외 ${count('skipped')}명 · 실패 ${count('failed')}명${job.error ? ` · ${job.error}` : ''}`;
     workflowNode('results').replaceChildren(...progress.results.map(item => learnerNameNode('li', item.learner, ` · ${item.reason}`)));
     root.querySelector('[data-workflow-control="resume"]').hidden = progress.running || progress.done || job.blocked;
     root.querySelector('[data-workflow-control="stop"]').hidden = !progress.running;
@@ -1706,7 +1777,8 @@
       job.blocked = [401, 403].includes(error?.status);
       job.error = problemMessage(error, '연결을 확인한 뒤 이어서 처리해 주세요.');
       if (error?.status === 403) {
-        if (job.action === 'note') revokeStudentNotePermission(); else revokeReviewPermission();
+        if (job.action === 'release') root.dataset.canPublish = '0';
+        else if (job.action === 'note') revokeStudentNotePermission(); else revokeReviewPermission();
       }
     } finally {
       state.submitting = false;
@@ -1722,7 +1794,7 @@
     const plan = state.workflowPlan;
     if (!plan || state.workflowPreparing || state.submitting || workflowBusy() || !workflowPermission(plan.action)
       || plan.assignment !== currentAssignment() || plan.context !== currentContext() || hasDetailChanges()
-      || plan.action === 'accept' && !workflowNode('reviewed').checked) return;
+      || (WORKFLOW_BULK[plan.action].approval || plan.action === 'release') && !workflowNode('reviewed').checked) return;
     const targets = [...workflowNode('targets').querySelectorAll('input:checked')].map(box => plan.targets[Number(box.value)]).filter(Boolean);
     if (!targets.length) return;
     const job = { ...plan, targets, error: '', blocked: false, controller: null };
@@ -1809,7 +1881,8 @@
       append(entry, title, node('span', 'oj-ai-submission-review__assignment', item.assignment?.title || '활동지'), meta);
       if (item.roster && type === 'evaluation') entry.appendChild(badge(labelFor(STATE_LABELS, item.state), toneForState(item.state)));
       if (type === 'roster' && item.roster.non_submission_grade?.status === 'confirmed') entry.appendChild(badge('교사 확정', 'success'));
-      if (item.roster && !item.roster.current_member) entry.appendChild(node('span', 'oj-ai-submission-review__assignment', '현재 그룹·수업 명단에서 제외됨'));
+      if (item.roster?.current_member === false) entry.appendChild(node('span', 'oj-ai-submission-review__assignment', '현재 그룹·수업 명단에서 제외됨'));
+      else if (item.roster?.current_member === null) entry.appendChild(node('span', 'oj-ai-submission-review__assignment', '현재 명단 확인 불가'));
       if (attention) entry.appendChild(node('span', 'oj-ai-submission-review__priority', attention));
       elements.list.appendChild(entry);
     });
@@ -1873,10 +1946,8 @@
       for (const category of ['rubric', 'not_submitted', 'long_absence']) {
         const control = node('input'); control.type = 'radio'; control.name = 'category'; control.value = category;
         control.checked = category === 'rubric';
-        const configured = category === 'rubric' || item.roster.grading.exception_scores?.[category] != null;
-        control.dataset.unavailable = configured ? '0' : '1'; control.disabled = !configured;
         const label = node('label');
-        append(label, control, node('span', '', `${targetGradeLabel(category)}${configured ? '' : ' (미설정)'}`));
+        append(label, control, node('span'));
         append(modes, label);
       }
       append(form, modes, targetRubricFields(item, grade, false));
@@ -1914,14 +1985,31 @@
     form.dataset.exceptionPolicy = '';
     const status = node('p', 'oj-ai-submission-review__muted'); status.dataset.policyStatus = '';
     append(form, status);
+    const project = root.closest('[data-project-worksheet]');
+    const sameWorksheet = project?.dataset.projectWorksheet && project.dataset.projectWorksheet === item.assignment.worksheet_id;
+    const suggestions = [];
     for (const category of ['not_submitted', 'long_absence']) {
       const control = node('input'); control.type = 'number'; control.name = category;
       control.min = '0'; control.max = limits.maximum_score; control.step = '0.0001'; control.placeholder = '미설정';
       control.value = limits.exception_scores?.[category] ?? '';
       const label = node('label'); append(label, node('span', '', `${targetGradeLabel(category)} (배점 ${limits.maximum_score}점)`), control); append(form, label);
+      const saved = sameWorksheet ? project.getAttribute(`data-score-${category.replace('_', '-')}`) : null;
+      if (saved != null) suggestions.push([control, saved]);
     }
+    details.open = item.roster.non_submission_grade?.status !== 'confirmed'
+      && ['not_submitted', 'long_absence'].some(key => limits.exception_scores?.[key] == null);
     const reason = node('textarea'); reason.name = 'reason'; reason.rows = 2; reason.maxLength = 500; reason.required = true;
     const label = node('label'); append(label, node('span', '', '변경 사유'), reason); append(form, label);
+    if (suggestions.length) {
+      const load = button('평가 기준 점수 가져오기', '', 'oj-ai-submission-review__secondary');
+      load.addEventListener('click', () => {
+        for (const [control, saved] of suggestions) control.value = saved;
+        if (!reason.value.trim()) reason.value = '평가 기준의 별도 점수 적용';
+        const invalid = suggestions.find(([control]) => !control.validity.valid);
+        if (invalid) invalid[0].reportValidity();
+      });
+      append(form, load);
+    }
     const save = button('별도 점수 저장', '', 'oj-ai-submission-review__secondary'); save.type = 'submit'; append(form, save);
     const reset = button('변경 취소', '', 'oj-ai-submission-review__secondary');
     reset.addEventListener('click', () => {
@@ -2027,15 +2115,20 @@
   }
 
   function syncTargetGrade(item, form) {
-    const category = form.elements.category?.value;
+    let category = form.elements.category?.value;
     if (!category || !form.elements.score) return;
+    if (category !== 'rubric' && item.roster.grading.exception_scores?.[category] == null) {
+      form.elements.category.value = 'rubric';
+      category = 'rubric';
+    }
     const rubric = category === 'rubric';
     form.querySelectorAll('[data-target-binding]').forEach(fieldset => { fieldset.disabled = !rubric || state.submitting; });
     form.querySelectorAll('input[name="category"]').forEach(control => {
       const available = control.value === 'rubric' || item.roster.grading.exception_scores?.[control.value] != null;
       control.dataset.unavailable = available ? '0' : '1';
       control.disabled = state.submitting || !available;
-      control.closest('label').querySelector('span').textContent = `${targetGradeLabel(control.value)}${available ? '' : ' (미설정)'}`;
+      const suffix = !available ? ' (미설정)' : control.value === 'rubric' ? '' : ` (${Number(item.roster.grading.exception_scores[control.value])}점)`;
+      control.closest('label').querySelector('span').textContent = targetGradeLabel(control.value) + suffix;
     });
     const items = targetGradeItems(form);
     form.elements.score.value = rubric
@@ -3532,9 +3625,11 @@
       state.nextEvaluationCursor = '';
       state.nextCandidateCursor = '';
       const counts = rosterCounts(state.items);
-      elements.summary.textContent = `${context.label} · 전체 ${counts.total}명 · 제출 ${counts.submitted}명 · 미제출 ${counts.not_submitted}명${counts.not_assigned ? ` · 배포 대상 아님 ${counts.not_assigned}명` : ''}`;
+      const membershipUnavailable = rosterEnvelope.data.membership?.state === 'unavailable';
+      elements.summary.textContent = `${context.label} · ${membershipUnavailable ? '기존 배포 기록' : '전체'} ${counts.total}명 · 제출 ${counts.submitted}명 · 미제출 ${counts.not_submitted}명${counts.not_assigned ? ` · 배포 대상 아님 ${counts.not_assigned}명` : ''}`;
       elements.content.hidden = false;
       showNotice(state.items.length ? '' : '학생 명단이 없습니다.');
+      if (membershipUnavailable) showNotice('현재 명단 연동 지연 · 기존 배포 대상만 표시 중입니다.');
       renderList();
       const items = visibleItems();
       const next = items.find(item => item.id === preferredId && itemType(item) === preferredType)
@@ -4538,6 +4633,12 @@
       return;
     }
     if (elements.workflowDialog?.contains(event.target)) {
+      if (event.target.matches('[data-review-role="workflow-score-visibility"],[data-review-role="workflow-feedback-visibility"]')
+        && state.workflowPlan?.action === 'release' && !state.workflowPreparing) {
+        const selected = new Set([...workflowNode('targets').querySelectorAll('input:checked')].map(box => state.workflowPlan.targets[Number(box.value)]?.id));
+        refreshReleasePreview(state.workflowPlan, selected);
+        return;
+      }
       if (event.target === workflowNode('select-all')) workflowNode('targets').querySelectorAll('input').forEach(box => { box.checked = event.target.checked; });
       updateWorkflowSelection();
       return;

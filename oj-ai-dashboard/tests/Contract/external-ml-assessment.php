@@ -534,5 +534,91 @@ foreach ( array(
 	$error_gateway->run_once();
 	ml_ai_assert( 'ml_ai_' . $suffix === $error_store->runs[1]['error_code'], 'Failure mapping permits only safe fixed categories.' );
 }
+$fixed_snapshot           = $source->data;
+$fixed_snapshot['rubric'] = array(
+	array(
+		'id'          => 'model',
+		'label'       => '모델 개발',
+		'description' => '기록된 학습 수행과 선택 이유',
+		'max_score'   => 15,
+		'levels'      => array(
+			array(
+				'id'          => 'full',
+				'label'       => '충분',
+				'description' => '모델의 선택 근거를 명확히 설명함',
+				'score'       => 15,
+			),
+			array(
+				'id'          => 'partial',
+				'label'       => '부분',
+				'description' => '학습했으나 선택 근거가 일부 부족함',
+				'score'       => 12,
+			),
+			array(
+				'id'          => 'participating',
+				'label'       => '참여',
+				'description' => '학습 활동을 수행함',
+				'score'       => 6,
+			),
+		),
+	),
+);
+$fixed_snapshot           = Assessment_Profile::snapshot( $fixed_snapshot, $id );
+$fixed_input              = Assessment_Profile::input( $fixed_snapshot );
+$fixed_schema             = $fixed_input['output_contract']['json_schema']['properties']['criteria']['items']['anyOf'][0];
+ml_ai_assert( array( 15.0, 12.0, 6.0 ) === $fixed_schema['properties']['score']['anyOf'][0]['enum'], 'Fixed rubrics constrain numeric generation to their exact points.' );
+ml_ai_assert( array( 'full', 'partial', 'participating' ) === $fixed_schema['properties']['levelId']['anyOf'][0]['enum'], 'Native generation selects an actual teacher level ID.' );
+ml_ai_assert( json_encode( $fixed_input['rubric'][0]['levels'] ) === json_encode( $fixed_snapshot['rubric'][0]['levels'] ), 'The model receives complete level descriptors as structured data.' );
+$fixed_output = array(
+	'schema'       => Assessment_Profile::CONTRACT,
+	'needs_review' => false,
+	'criteria'     => array(
+		array(
+			'id'       => 'model',
+			'levelId'  => 'partial',
+			'score'    => 12,
+			'feedback' => '선택 근거를 보완하세요.',
+			'evidence' => '학습 기록과 보고서 문항',
+		),
+	),
+	'summary'      => '교사 검토 전 초안',
+	'limitations'  => array(),
+);
+ml_ai_assert( 12.0 === Assessment_Profile::output( $fixed_output, $fixed_snapshot )['total_score'], 'A valid level and fixed score remain assessable.' );
+foreach ( array( 11.99, 12.0001, 12.01, 13 ) as $wrong_points ) {
+	$wrong_output                         = $fixed_output;
+	$wrong_output['criteria'][0]['score'] = $wrong_points;
+	$held                                 = Assessment_Profile::output( $wrong_output, $fixed_snapshot );
+	ml_ai_assert( $held['needs_review'] && null === $held['total_score'] && null === $held['criteria'][0]['score'], 'Off-grid points are withheld, never rounded to a grade.' );
+}
+$wrong_output                           = $fixed_output;
+$wrong_output['criteria'][0]['levelId'] = 'full';
+ml_ai_assert( Assessment_Profile::output( $wrong_output, $fixed_snapshot )['needs_review'], 'The level ID and points must agree.' );
+$legacy_fixed = $fixed_output;
+unset( $legacy_fixed['criteria'][0]['levelId'] );
+ml_ai_assert( 'partial' === Assessment_Profile::output( $legacy_fixed, $fixed_snapshot )['criteria'][0]['levelId'], 'Older score-only results map only to the exact unique level.' );
+foreach ( array( 'duplicate_id', 'duplicate_score', 'fraction', 'out_of_range', 'max_mismatch', 'missing_description', 'empty' ) as $bad_level_case ) {
+	$bad_fixed = $fixed_snapshot;
+	if ( 'duplicate_id' === $bad_level_case ) {
+		$bad_fixed['rubric'][0]['levels'][1]['id'] = 'full'; }
+	if ( 'duplicate_score' === $bad_level_case ) {
+		$bad_fixed['rubric'][0]['levels'][1]['score'] = 15; }
+	if ( 'fraction' === $bad_level_case ) {
+		$bad_fixed['rubric'][0]['levels'][1]['score'] = 12.001; }
+	if ( 'out_of_range' === $bad_level_case ) {
+		$bad_fixed['rubric'][0]['levels'][0]['score'] = 16; }
+	if ( 'max_mismatch' === $bad_level_case ) {
+		$bad_fixed['rubric'][0]['levels'][0]['score'] = 14; }
+	if ( 'missing_description' === $bad_level_case ) {
+		unset( $bad_fixed['rubric'][0]['levels'][0]['description'] ); }
+	if ( 'empty' === $bad_level_case ) {
+		$bad_fixed['rubric'][0]['levels'] = array(); }
+	$rejected = false;
+	try {
+		Assessment_Profile::snapshot( $bad_fixed, $id );
+	} catch ( InvalidArgumentException ) {
+		$rejected = true; }
+	ml_ai_assert( $rejected, 'An invalid fixed rubric must fail at the source boundary: ' . $bad_level_case );
+}
 restore_error_handler();
 echo "ML assessment bridge: consent, authorization, immutable source, no PII identifiers, idempotency, score validation, abstention and drift passed.\n";

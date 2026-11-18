@@ -9,8 +9,9 @@ function esc_html_e($value,$domain=''){echo esc_html($value);}
 function esc_attr_e($value,$domain=''){echo esc_attr($value);}
 function esc_attr__($value,$domain=''){return esc_attr($value);}
 function esc_url($value){return esc_attr($value);}
-function rest_url($path){return '/'.$path;}
+function rest_url($path){return ($GLOBALS['fixture_rest_prefix']??'').'/'.$path;}
 function wp_create_nonce($action){return 'fixture-nonce';}
+function wp_timezone_string(){return 'Asia/Seoul';}
 function wp_enqueue_style(...$args){}
 function wp_enqueue_script(...$args){}
 function wp_get_current_user(){return (object)array('display_name'=>'검증 계정');}
@@ -18,7 +19,17 @@ function get_block_wrapper_attributes($args){return 'class="'.esc_attr($args['cl
 use EduGames\Learning\Run;
 use EduGames\Learning\Catalog;
 $input=json_decode(stream_get_contents(STDIN),true,512,JSON_THROW_ON_ERROR);
+if(isset($input['restPrefix']))$GLOBALS['fixture_rest_prefix']=$input['restPrefix'];
+if(isset($input['userId']))$GLOBALS['test_user_id']=(int)$input['userId'];
 $game=$input['game'];$action=$input['action'];
+if(in_array($game,array('typing-evaluations','public-game-hub'),true)&&$action==='html'){
+    define('EDU_GAMES_URL','/plugins/edu-games/');
+    define('EDU_GAMES_VERSION',(require EDU_GAMES_PATH.'plugin-package.php')['version']);
+    spl_autoload_register(static function($class){$prefix='CodingPanda\\OjPlatform\\';if(str_starts_with($class,$prefix)){$file=dirname(EDU_GAMES_PATH).'/oj-integration-rebuild/oj-platform/src/'.str_replace('\\','/',substr($class,strlen($prefix))).'.php';if(is_file($file))require $file;}});
+    $request=new CodingPanda\OjPlatform\AddonApi\V1\AddonPageRequestV1('addon.edu_games.typing_evaluations',1,[],[],'ko_KR','test-typing');
+    $handler=$game==='typing-evaluations'?new EduGames\Addon\Typing_Evaluations_Page_Handler():new EduGames\Addon\Public_Game_Hub_Page_Handler();
+    echo $handler->handle($request)->body();exit;
+}
 if($action==='progress'){
     try{echo json_encode(EduGames\Progress\Validator::entries($game,$input['payload']),JSON_THROW_ON_ERROR);}catch(InvalidArgumentException $e){fwrite(STDERR,$e->getMessage());exit(1);}exit;
 }

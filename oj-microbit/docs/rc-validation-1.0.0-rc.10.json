@@ -1,0 +1,113 @@
+{
+  "candidateVersion": "1.0.0-rc.10",
+  "date": "2026-11-05",
+  "status": "local_verification_passed_live_acceptance_pending",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "featureFreeze": "feature-freeze-1.0.0-rc.10.json",
+  "requiresPlatform": ">=2.5.9 <3.0.0",
+  "requiresAddonApi": "^1.9",
+  "checks": {
+    "php": 1233,
+    "frontend": 140,
+    "installerShell": 26,
+    "runner": 102,
+    "freeze": 4,
+    "acceptanceRest": 15,
+    "acceptancePython": 26,
+    "total": 1546
+  },
+  "navigation": {
+    "nativeCatalogProvidersRegistered": 0,
+    "consolePages": 3,
+    "publicPages": 2,
+    "consoleMenus": 2,
+    "publicMenus": 2,
+    "teacherProblemLocalNavItems": 2,
+    "coreMenuAliases": 0,
+    "problemRoot": "problems",
+    "lessonRoot": "classes",
+    "duplicateInnerNavigation": false,
+    "publicMenuKeysReplacedForNewParents": true
+  },
+  "platform": {
+    "version": "2.5.9",
+    "addonApi": "1.9.0",
+    "productCodeChanged": false,
+    "existingPackageSha256": "a7ab51aac9728826f26ce67c3abe45f9e1d931550f41a7d061f858708a7f82ee"
+  },
+  "browser": {
+    "report": "browser-focused-validation-1.0.0-rc.10.json",
+    "flows": 26,
+    "pageErrors": 0,
+    "actualPlatformCss": true,
+    "actualPhpHostRenderer": true,
+    "actualWordPress": false,
+    "actualMakeCode": false,
+    "actualDatabase": false,
+    "actualRunner": false,
+    "actualHardware": false,
+    "editorProtocolFixture": true
+  },
+  "environment": {
+    "php": "8.5.5 Windows, PDO SQLite",
+    "node": "24.22.1 Windows",
+    "nodeSha256": "d702daa815eabbff763c7d3808e235cf031cf2ca70211b56847bc72f51e240e5",
+    "python": "3.14 Windows",
+    "shell": "Git Bash; nonprivileged command/filesystem fixtures"
+  },
+  "verified": [
+    "Student pages prioritize paired inputs and expected outputs with a solve action beside the title; exact timing and original conditions load only on opening the disclosure",
+    "Long scenarios reveal three scenes per click; scenario selection resets state and excludes hidden tests without changing data or adding REST queries",
+    "Known input values and I2C register inputs carry across later time groups; absent initial values and unchecked outputs are never fabricated",
+    "Serial output, servo angle/pulse, I2C exact conditions and read-only lesson permissions remain intact",
+    "Student scenes fit 1280/768/390/320; wiring and protocol details scroll within the page without horizontal document overflow",
+    "Authoring, modal atomic editing, same iframe reuse, save and publication checks retain the previous focused behavior",
+    "Frozen DB schema/query, grader, permission, USB and dependency source hashes match rc.9"
+  ],
+  "actualTrialServer": false,
+  "actualWordPress": false,
+  "actualMySQL": false,
+  "actualDocker": false,
+  "actualHustojParallelLoad": false,
+  "actualBackupRestore": false,
+  "actualHardware": false,
+  "pending": [
+    "Actual WordPress theme, persisted menu visibility/order, roles and subdirectory routing",
+    "Actual group/class ledger permissions and concurrent revocation",
+    "MySQL/MariaDB plans, transactions, concurrent locks and workload",
+    "Representative lessons and student sessions with actual HUSTOJ judging",
+    "Matched plugin/database backup restore and privacy/retention completion",
+    "Physical HEX/WebUSB if official device support is included",
+    "Evaluation policy for independent addon result pages"
+  ],
+  "limitations": [
+    "SQLite and WordPress/POSIX/command fixtures do not certify actual MySQL or WordPress authentication",
+    "Browser uses real platform styles and PHP renderer with controlled loopback REST and iframe messages, not the actual MakeCode service",
+    "Existing group and class permission ledgers are reused by independent menus rather than copied into new module tables",
+    "Core programming performance-mode policies are not automatically applied to independent addon pages",
+    "Code-only downgrade to rc.2 or older does not understand lesson scopes; restore a matching database snapshot too"
+  ],
+  "validationNotes": [
+    "Frontend 140, frozen-product 4 and browser 26 flow checks passed before packaging. The official release-kit builder runs the complete scripts/verify.ps1 gate before producing the install archive.",
+    "Actual WordPress installation, theme/cache behavior, MakeCode service, MySQL, Docker/HUSTOJ load and hardware remain separate acceptance requirements."
+  ],
+  "studentOverview": {
+    "initialScenesPerExample": 3,
+    "nextScenesPerClick": 3,
+    "visibleExampleSelection": true,
+    "retainsKnownInputState": true,
+    "initialTimingDetailsPopulated": false,
+    "detailsAndSelectionRestRequests": 0,
+    "desktopThreeSceneSingleRow": true,
+    "mobileInputOutputSideBySide": true,
+    "views": [
+      1280,
+      768,
+      390,
+      320
+    ],
+    "authorSampleReport": "author-design-validation-1.0.0-rc.10.json",
+    "actualLiveSite": false
+  }
+}

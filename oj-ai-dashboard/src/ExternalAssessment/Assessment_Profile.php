@@ -95,6 +95,9 @@ class Assessment_Profile {
 			self::text( $criterion['label'] ?? null, 800 );
 			self::text( $criterion['description'] ?? null, 8000, true );
 			$maximum += self::number( $criterion['max_score'] ?? null, 0.01, 10000 );
+			if ( array_key_exists( 'levels', $criterion ) ) {
+				self::levels( $criterion );
+			}
 		}
 		if ( $maximum > 250000 ) {
 			throw new InvalidArgumentException( 'ml_ai_invalid_rubric' );
@@ -120,7 +123,7 @@ class Assessment_Profile {
 				'label'       => $item['label'],
 				'description' => $item['description'],
 				'max_score'   => $item['max_score'],
-			),
+			) + ( array_key_exists( 'levels', $item ) ? array( 'levels' => self::levels( $item ) ) : array() ),
 			$snapshot['rubric']
 		);
 		return array(
@@ -205,6 +208,28 @@ class Assessment_Profile {
 			),
 			$rubric
 		);
+		foreach ( $rubric as $index => $criterion ) {
+			if ( ! array_key_exists( 'levels', $criterion ) ) {
+				continue;
+			}
+			$levels = self::levels( $criterion );
+			// Constrain generation to the teacher's fixed points. Pair consistency
+			// is also validated below, including providers in JSON compatibility mode.
+			$items[ $index ]['properties']['score']['anyOf'][0] = array(
+				'type' => 'number',
+				'enum' => array_column( $levels, 'score' ),
+			);
+			$items[ $index ]['required'][]                      = 'levelId';
+			$items[ $index ]['properties']['levelId']           = array(
+				'anyOf' => array(
+					array(
+						'type' => 'string',
+						'enum' => array_column( $levels, 'id' ),
+					),
+					array( 'type' => 'null' ),
+				),
+			);
+		}
 		return array(
 			'type'                 => 'object',
 			'additionalProperties' => false,
@@ -293,18 +318,41 @@ class Assessment_Profile {
 			}
 			if ( ! array_key_exists( 'score', $item ) ) {
 				throw new InvalidArgumentException( 'ml_ai_invalid_output' ); }
-			$score        = null === $item['score'] ? null : round( self::number( $item['score'], 0, (float) $criterion['max_score'] ), 2 );
+			$score       = null === $item['score'] ? null : self::number( $item['score'], 0, (float) $criterion['max_score'] );
+			$level_id    = null;
+			$level_error = false;
+			if ( array_key_exists( 'levels', $criterion ) ) {
+				$levels      = self::levels( $criterion );
+				$matches     = array_values( array_filter( $levels, static fn( array $level ): bool => null !== $score && (float) $level['score'] === $score ) );
+				$level_id    = 1 === count( $matches ) ? $matches[0]['id'] : null;
+				$level_error = ( null !== $score && null === $level_id );
+				foreach ( array( 'levelId', 'level_id' ) as $key ) {
+					if ( array_key_exists( $key, $item ) && $item[ $key ] !== $level_id ) {
+						$level_error = true;
+					}
+				}
+				if ( $level_error ) {
+					// Never round an off-grid score into a different rubric decision.
+					// Preserve valid sibling criteria for the teacher's partial review.
+					$score    = null;
+					$level_id = null;
+				}
+			} elseif ( null !== $score ) {
+				$score = round( $score, 2 );
+			}
 			$needs_review = $needs_review || null === $score;
 			$total       += $score ?? 0;
 			$maximum     += (float) $criterion['max_score'];
+			$feedback     = self::text( $item['feedback'] ?? null, 2000 );
 			$criteria[]   = array(
 				'id'        => $criterion['id'],
 				'label'     => $criterion['label'],
 				'score'     => $score,
 				'max_score' => $criterion['max_score'],
-				'feedback'  => self::text( $item['feedback'] ?? null, 2000 ),
+				'feedback'  => $level_error ? '교사 확인 필요: AI가 제시한 등급과 점수가 과제의 등급별 채점표와 일치하지 않아 이 항목의 점수를 반영하지 않았습니다.' : $feedback,
 				'evidence'  => self::text( $item['evidence'] ?? null, 4000 ),
-			);
+			) + ( array_key_exists( 'levels', $criterion ) ? array( 'levelId' => $level_id ) : array() )
+				+ ( $level_error ? array( 'reviewCode' => 'rubric_level_mismatch' ) : array() );
 		}
 		return array(
 			'criteria'     => $criteria,
@@ -314,6 +362,46 @@ class Assessment_Profile {
 			'summary'      => self::text( $output['summary'] ?? null, 5000 ),
 			'limitations'  => array_values( array_unique( array_merge( static::input( $snapshot )['limitations'], self::texts( $output['limitations'] ?? array(), 20, 1000 ) ) ) ),
 		);
+	}
+
+	/**
+	 * Validate the optional ML fixed-level rubric without coupling to its plugin.
+	 *
+	 * @param array $criterion Server-owned criterion.
+	 * @return array Validated, allowlisted levels.
+	 * @throws InvalidArgumentException If the levels are ambiguous or invalid.
+	 */
+	private static function levels( array $criterion ): array {
+		$levels = $criterion['levels'] ?? null;
+		if ( ! is_array( $levels ) || ! array_is_list( $levels ) || count( $levels ) < 2 || count( $levels ) > 10 ) {
+			throw new InvalidArgumentException( 'ml_ai_invalid_rubric_levels' );
+		}
+		$result = array();
+		$ids    = array();
+		$scores = array();
+		foreach ( $levels as $level ) {
+			if ( ! is_array( $level ) || ! is_string( $level['id'] ?? null )
+				|| 1 !== preg_match( '/^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/D', $level['id'] ) || isset( $ids[ $level['id'] ] ) ) {
+				throw new InvalidArgumentException( 'ml_ai_invalid_rubric_levels' );
+			}
+			$score = self::number( $level['score'] ?? null, 0, (float) $criterion['max_score'] );
+			$key   = sprintf( '%.2f', $score );
+			if ( $score !== round( $score, 2 ) || isset( $scores[ $key ] ) ) {
+				throw new InvalidArgumentException( 'ml_ai_invalid_rubric_levels' );
+			}
+			$ids[ $level['id'] ] = true;
+			$scores[ $key ]      = true;
+			$result[]            = array(
+				'id'          => $level['id'],
+				'label'       => self::text( $level['label'] ?? null, 800 ),
+				'description' => self::text( $level['description'] ?? null, 8000 ),
+				'score'       => $score,
+			);
+		}
+		if ( max( array_column( $result, 'score' ) ) !== (float) $criterion['max_score'] ) {
+			throw new InvalidArgumentException( 'ml_ai_invalid_rubric_levels' );
+		}
+		return $result;
 	}
 
 	/**

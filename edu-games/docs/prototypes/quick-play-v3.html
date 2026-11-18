@@ -1,0 +1,291 @@
+<div id="edu-quick-play" lang="ko">
+<style>
+#edu-quick-play{--q-bg:light-dark(#fff,#191d1f);--q-ink:light-dark(#252b2e,#edf1ef);--q-muted:light-dark(#626e73,#afbbbf);--q-line:light-dark(#d9e1e2,#3e494d);--q-floor:light-dark(#f0f4f4,#252e31);--q-green:light-dark(#087e70,#6bdbc4);--q-green-soft:light-dark(#dff3eb,#23483d);--q-red:light-dark(#bd4437,#ff9c88);--q-red-soft:light-dark(#fbe6e1,#4e302d);--q-blue:light-dark(#4778aa,#9ac2ee);--q-blue-soft:light-dark(#e2edf7,#293f54);--q-gold:light-dark(#936c16,#eac76b);--q-gold-soft:light-dark(#fff0c9,#49412a);font:400 14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;letter-spacing:0;color:var(--q-ink);color-scheme:inherit;position:relative;min-width:0}
+#edu-quick-play *{box-sizing:border-box;letter-spacing:0}
+#edu-quick-play :is(h1,h2,h3,p){margin:0}
+#edu-quick-play h1{font-weight:500;font-size:24px;line-height:1.3}
+#edu-quick-play h2{font-weight:500;font-size:17px}
+#edu-quick-play h3{font-weight:500;font-size:14px}
+#edu-quick-play button{font:inherit;color:inherit;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:8px 12px;background:var(--q-bg);border:1px solid var(--q-line);border-radius:5px}
+#edu-quick-play button:hover:not(:disabled){background:var(--q-floor)}
+#edu-quick-play button:disabled{cursor:default}
+#edu-quick-play .lucide{width:18px;height:18px;flex:none}
+#edu-quick-play .q-app{background:var(--q-bg);padding:16px 20px;min-width:0}
+#edu-quick-play .q-top{display:flex;align-items:center;gap:10px;padding-right:90px;min-height:30px;margin-bottom:10px}
+#edu-quick-play .q-brand{font-size:13px;font-weight:500;white-space:nowrap}
+#edu-quick-play .q-state{font-size:12px;color:var(--q-muted);padding-left:10px;border-left:1px solid var(--q-line)}
+#edu-quick-play .q-tabs{display:grid;grid-template-columns:1fr 1fr;border-block:1px solid var(--q-line);margin-bottom:14px}
+#edu-quick-play .q-tabs button{border:0;border-radius:0;background:transparent;border-bottom:3px solid transparent;padding:8px}
+#edu-quick-play .q-tabs button[aria-selected=true]{color:var(--q-green);background:var(--q-green-soft);border-bottom-color:var(--q-green)}
+#edu-quick-play .q-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
+#edu-quick-play .q-heading p{font-size:14px;color:var(--q-muted);margin-top:4px}
+#edu-quick-play .q-icon{width:44px;flex:none;padding:8px}
+#edu-quick-play .q-hud{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px;align-items:center;border-block:1px solid var(--q-line);padding:10px 0}
+#edu-quick-play .q-hud>div{padding-left:14px;border-left:1px solid var(--q-line);min-width:0}
+#edu-quick-play .q-hud>div:first-child{border:0;padding-left:0}
+#edu-quick-play .q-hud small{display:block;color:var(--q-muted);font-size:12px}
+#edu-quick-play .q-hud b{font-weight:500;font-size:27px;line-height:1.25;font-variant-numeric:tabular-nums;display:inline-block;min-width:4ch}
+#edu-quick-play .q-hud .q-best{font-size:22px;color:var(--q-muted)}
+#edu-quick-play .q-time-track{height:4px;background:var(--q-floor);margin-bottom:10px}
+#edu-quick-play .q-time-track>span{display:block;height:100%;width:100%;background:var(--q-green)}
+#edu-quick-play .q-rules{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px;margin-bottom:10px}
+#edu-quick-play .q-rules>span{display:flex;align-items:center;gap:6px}
+#edu-quick-play .q-rules b{font-weight:500}
+#edu-quick-play .q-positive{color:var(--q-green)}
+#edu-quick-play .q-negative{color:var(--q-red)}
+#edu-quick-play .q-neutral{color:var(--q-muted)}
+#edu-quick-play .q-field{padding:16px;background:var(--q-floor);min-width:0}
+#edu-quick-play .q-lanes{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+#edu-quick-play .q-lane{min-width:0}
+#edu-quick-play .q-lane+.q-lane{border-left:1px solid var(--q-line);padding-left:24px}
+#edu-quick-play .q-lane-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
+#edu-quick-play .q-small{font-size:12px;color:var(--q-muted)}
+#edu-quick-play .q-values{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;height:186px;border-bottom:1px solid var(--q-line)}
+#edu-quick-play button.q-value{border:0;border-radius:0;padding:5px 2px 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;background:transparent;gap:6px;height:100%;position:relative}
+#edu-quick-play button.q-value:hover:not(:disabled){background:color-mix(in srgb,var(--q-blue) 8%,transparent)}
+#edu-quick-play .q-number{font-size:22px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums}
+#edu-quick-play .q-bar{display:block;width:min(100%,34px);min-height:4px;flex:none;background:var(--q-blue)}
+#edu-quick-play .q-value.good .q-bar{background:var(--q-green)}
+#edu-quick-play .q-value.bad .q-bar{background:var(--q-red)}
+#edu-quick-play .q-mark{font-size:12px;line-height:18px;min-height:18px;font-weight:500;color:var(--q-muted)}
+#edu-quick-play .q-value.good .q-mark{color:var(--q-green)}
+#edu-quick-play .q-value.bad .q-mark{color:var(--q-red)}
+#edu-quick-play .q-review{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:47px;margin-top:14px;border-top:1px solid var(--q-line);padding-top:10px}
+#edu-quick-play .q-review-item{font-size:12px;color:var(--q-green);display:inline-flex;gap:5px;align-items:center}
+#edu-quick-play .q-review-item b{font-size:17px;font-weight:500}
+#edu-quick-play .q-ledger{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:11px 0;border-bottom:1px solid var(--q-line)}
+#edu-quick-play .q-ledger>div{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;min-width:0;font-size:12px}
+#edu-quick-play .q-ledger b{font-size:17px;font-weight:500;font-variant-numeric:tabular-nums}
+#edu-quick-play .q-feedback{display:flex;align-items:center;gap:8px;font-size:13px;min-height:45px;padding-top:9px}
+#edu-quick-play .q-delta{font-size:20px;font-weight:500;min-width:46px;flex:none;font-variant-numeric:tabular-nums}
+#edu-quick-play .q-cargo{display:inline-flex;align-items:center;justify-content:center;flex:none;width:48px;height:45px;font-weight:500;font-size:24px;background:var(--q-green-soft);color:var(--q-green);border-radius:4px;border-bottom:4px solid color-mix(in srgb,var(--q-green) 30%,transparent)}
+#edu-quick-play .q-cargo[data-type=B]{background:var(--q-red-soft);color:var(--q-red);border-bottom-color:color-mix(in srgb,var(--q-red) 30%,transparent)}
+#edu-quick-play .q-cargo[data-type=C]{background:var(--q-gold-soft);color:var(--q-gold);border-bottom-color:color-mix(in srgb,var(--q-gold) 30%,transparent)}
+#edu-quick-play .q-shipping{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--q-line);padding-bottom:12px;margin-bottom:15px}
+#edu-quick-play .q-truck{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#edu-quick-play .q-truck canvas{width:64px;height:36px;image-rendering:pixelated}
+#edu-quick-play .q-next-label{font-size:12px;color:var(--q-muted);display:block;margin-bottom:3px}
+#edu-quick-play .q-order{display:flex;gap:8px;align-items:center}
+#edu-quick-play .q-order>span{display:grid;gap:3px;text-align:center;justify-items:center}
+#edu-quick-play .q-order small{font-size:11px;color:var(--q-muted)}
+#edu-quick-play .q-order .q-cargo{border:1px solid var(--q-line);border-radius:0;background:transparent;color:var(--q-muted);font-size:21px;width:42px;height:39px}
+#edu-quick-play .q-order .q-now .q-cargo{border:2px dashed var(--q-green);color:var(--q-green);background:var(--q-green-soft)}
+#edu-quick-play .q-order .q-done{opacity:.45}
+#edu-quick-play .q-storage{display:grid;grid-template-columns:minmax(0,1fr) 82px minmax(0,1fr);gap:14px;align-items:center}
+#edu-quick-play .q-store{min-width:0;text-align:center}
+#edu-quick-play .q-store h3{font-size:16px}
+#edu-quick-play .q-store p{font-size:12px;color:var(--q-muted);margin-top:3px}
+#edu-quick-play .q-stack{display:flex;flex-direction:column-reverse;justify-content:flex-start;align-items:center;gap:4px;height:216px;border-bottom:5px solid var(--q-line);padding:8px;margin-top:12px}
+#edu-quick-play .q-queue{display:flex;align-items:center;justify-content:flex-start;gap:5px;min-height:216px;flex-wrap:wrap;align-content:center;margin-top:12px;padding:8px}
+#edu-quick-play .q-stack>.q-cargo:not(button){width:76px;height:40px;font-size:21px;opacity:.6}
+#edu-quick-play button.q-cargo{border:2px solid currentColor;border-bottom-width:5px;padding:0;min-height:48px;width:86px;height:49px;position:relative}
+#edu-quick-play .q-queue>.q-cargo:not(button){width:38px;height:38px;font-size:20px;opacity:.6}
+#edu-quick-play .q-queue button.q-cargo{width:48px;min-width:48px}
+#edu-quick-play button.q-cargo:hover:not(:disabled){filter:brightness(.97);background:var(--q-green-soft)}
+#edu-quick-play button.q-cargo[data-type=B]:hover:not(:disabled){background:var(--q-red-soft)}
+#edu-quick-play button.q-cargo[data-type=C]:hover:not(:disabled){background:var(--q-gold-soft)}
+#edu-quick-play .q-transfer{display:flex;flex-direction:column;align-items:center;gap:14px}
+#edu-quick-play .q-transfer button{display:flex;flex-direction:column;padding:7px;width:76px;gap:4px}
+#edu-quick-play .q-transfer button:disabled{opacity:.4}
+#edu-quick-play .q-transfer .q-row{display:flex;gap:6px;align-items:center}
+#edu-quick-play .q-transfer .q-cargo{width:24px;height:26px;font-size:15px;border-bottom-width:2px}
+#edu-quick-play .q-transfer small{font-size:11px;color:var(--q-muted)}
+#edu-quick-play .q-front{display:flex;align-items:center;justify-content:center;gap:5px;min-height:25px;font-size:12px;color:var(--q-green)}
+#edu-quick-play .q-flying{position:absolute;z-index:4;pointer-events:none}
+#edu-quick-play .q-pop{position:absolute;z-index:5;pointer-events:none;font-size:23px;font-weight:500;background:var(--q-bg);padding:2px 7px;border-radius:4px}
+#edu-quick-play .q-result{border-block:2px solid var(--q-green);padding:13px 0;margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#edu-quick-play .q-result b{font-size:23px;font-weight:500}
+#edu-quick-play .q-result p{color:var(--q-muted);font-size:13px;margin-top:4px}
+#edu-quick-play button.q-primary{background:var(--q-green);color:light-dark(#fff,#152c27);border-color:var(--q-green)}
+#edu-quick-play button.q-primary:hover:not(:disabled){background:var(--q-green);filter:brightness(.95)}
+@media(max-width:650px){
+ #edu-quick-play .q-app{padding:12px 10px}
+ #edu-quick-play h1{font-size:22px}
+ #edu-quick-play .q-heading p{font-size:13px}
+ #edu-quick-play .q-hud{gap:8px}
+ #edu-quick-play .q-hud>div{padding-left:8px}
+ #edu-quick-play .q-hud b{font-size:24px}
+ #edu-quick-play .q-hud .q-best{font-size:20px}
+ #edu-quick-play .q-field{padding:12px}
+ #edu-quick-play .q-lanes{grid-template-columns:1fr;gap:14px}
+ #edu-quick-play .q-lane+.q-lane{border-left:0;padding-left:0;border-top:1px solid var(--q-line);padding-top:12px}
+ #edu-quick-play .q-values{height:143px;gap:7px}
+ #edu-quick-play .q-number{font-size:23px}
+ #edu-quick-play .q-bar{height:calc(var(--height)*.7)!important}
+ #edu-quick-play .q-review{margin-top:10px}
+ #edu-quick-play .q-ledger{gap:5px}
+ #edu-quick-play .q-ledger>div{gap:2px;display:grid}
+ #edu-quick-play .q-ledger b{font-size:17px}
+ #edu-quick-play .q-storage{grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);gap:5px}
+ #edu-quick-play .q-transfer button{width:62px;padding:6px 3px}
+ #edu-quick-play .q-transfer small{font-size:11px}
+ #edu-quick-play .q-stack{height:210px;padding:6px 0}
+ #edu-quick-play .q-stack>.q-cargo:not(button){width:64px}
+ #edu-quick-play button.q-cargo{width:72px}
+ #edu-quick-play .q-queue{min-height:210px;padding:4px 0;gap:3px}
+ #edu-quick-play .q-queue>.q-cargo:not(button){width:31px;height:34px;font-size:18px}
+ #edu-quick-play .q-shipping{align-items:flex-start;gap:8px}
+ #edu-quick-play .q-truck{gap:5px}
+ #edu-quick-play .q-truck canvas{width:48px;height:27px}
+ #edu-quick-play .q-order{gap:5px}
+ #edu-quick-play .q-order .q-cargo{width:32px;height:35px;font-size:19px}
+ #edu-quick-play .q-store h3{font-size:14px}
+ #edu-quick-play .q-store p{font-size:11px}
+}
+</style>
+<div class="q-app" aria-label="빠른 직접 조작 게임">
+ <header class="q-top"><span class="q-brand">EDU PLAY</span><span class="q-state" id="qp-state">준비</span></header>
+ <nav class="q-tabs" role="tablist" aria-label="게임 선택"><button type="button" id="qp-tab-outlier" role="tab" aria-controls="qp-panel" data-game="outlier">튀는 값 찾기</button><button type="button" id="qp-tab-cargo" role="tab" aria-controls="qp-panel" data-game="cargo">상자 출고</button></nav>
+ <section id="qp-panel" role="tabpanel">
+  <div class="q-heading"><div><h1 id="qp-title"></h1><p id="qp-goal"></p></div><button type="button" class="q-icon" data-act="reset" aria-label="다시 시작" data-tooltip="다시 시작"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button></div>
+  <div class="q-hud"><div><small>점수</small><b id="qp-score">0</b></div><div><small>남은 시간</small><b id="qp-time">0:45</b></div><div><small>내 최고</small><b id="qp-best" class="q-best">-</b></div></div>
+  <div class="q-time-track" role="progressbar" aria-label="남은 시간" aria-valuemin="0" aria-valuemax="45"><span id="qp-time-fill"></span></div>
+  <div class="q-rules" id="qp-rules"></div>
+  <div class="q-field" id="qp-field"></div>
+  <div class="q-ledger" id="qp-ledger"></div>
+  <div class="q-feedback" id="qp-feedback" role="status" aria-live="polite"></div>
+  <div id="qp-result"></div>
+ </section>
+</div>
+<script>
+/* QUICK_ENGINE_START */
+(function(root,factory){
+  const api=factory();
+  if(typeof module==='object'&&module.exports)module.exports=api;else root.EduQuickPlay=api;
+})(typeof globalThis==='object'?globalThis:this,function(){
+  'use strict';
+  const DURATION=45000;
+  const clone=v=>JSON.parse(JSON.stringify(v));
+  function next(s){let x=s.rng||1;x^=x<<13;x^=x>>>17;x^=x<<5;s.rng=x>>>0;return s.rng/4294967296;}
+  function shuffle(s,a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(next(s)*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  const fields=[
+    ['도서관 온도','°C',24,8,65],['세면대 온수','°C',42,14,78],
+    ['버스 대기','분',18,0,48],['사진 파일 크기','KB',120,20,380],
+    ['줄넘기 연습','회',80,12,230],['하루 대출 도서','권',16,0,44]
+  ];
+  function lane(s,index,first=false){
+    const n=first?index:Math.floor(next(s)*fields.length),[name,unit,base,low,high]=fields[n];
+    const peers=shuffle(s,[-2,-1,1,2]).map(v=>base+v);
+    const small=first?index===1:next(s)<.5;
+    const unusual=small?low:high;
+    const values=first?(index===0?[24,23,65,25,22]:[42,43,41,14,44]):shuffle(s,peers.concat(unusual));
+    return{id:++s.nextId,name,unit,values,target:values.indexOf(unusual),peers:values.filter(v=>v!==unusual),wrong:[],readyAt:0,selected:-1};
+  }
+  function token(s,type){return{id:++s.nextId,type:type||['A','B','C'][Math.floor(next(s)*3)]};}
+  function exposed(s,side){return side==='stack'?s.stack[s.stack.length-1]:s.queue[0];}
+  function canTransfer(s,side){return Boolean(exposed(s,side))&&(side==='stack'?s.queue.length:s.stack.length)<4;}
+  function transfer(s,side){const t=side==='stack'?s.stack.pop():s.queue.shift();if(side==='stack')s.queue.push(t);else s.stack.push(t);return t;}
+  function order(s,first=false){
+    if(first){s.order=['B','A','C'];s.orderAt=0;return;}
+    const test={stack:clone(s.stack),queue:clone(s.queue)},wanted=[];
+    // Generate each order from a legal sequence, including at least one immediate shipment.
+    for(let i=0;i<3;i++){
+      if(i>0)for(let j=0,n=Math.floor(next(s)*4);j<n;j++){
+        const side=next(s)<.5?'stack':'queue';if(canTransfer(test,side))transfer(test,side);
+      }
+      let side=next(s)<.5?'stack':'queue';if(!exposed(test,side))side=side==='stack'?'queue':'stack';
+      wanted.push(exposed(test,side).type);if(side==='stack')test.stack.pop();else test.queue.shift();
+    }
+    s.order=wanted;s.orderAt=0;
+  }
+  function event(s,kind,delta,reason,extra={}){s.event={id:++s.eventId,kind,delta,reason,...extra};}
+  function start(s,now){if(s.phase==='ready'){s.phase='running';s.deadline=now+DURATION;}}
+  function advance(s,now){
+    if(s.phase==='running'&&now>=s.deadline){s.phase='done';return;}
+    if(s.game==='outlier'&&s.phase!=='done')s.lanes.forEach((p,i)=>{if(p.readyAt&&now>=p.readyAt)s.lanes[i]=lane(s,i);});
+  }
+  function create(game,seed=31){
+    if(!['outlier','cargo'].includes(game))throw Error('Unknown game');
+    const s={game,seed,rng:seed>>>0||1,phase:'ready',deadline:0,duration:DURATION,good:0,bad:0,nextId:0,eventId:0,event:null};
+    for(let i=0;i<8;i++)next(s);
+    if(game==='outlier'){s.lanes=[lane(s,0,true),lane(s,1,true)];s.review=[];}
+    else{s.stack=['A','B','C'].map(t=>token(s,t));s.queue=['B','C','A'].map(t=>token(s,t));s.delivered=0;s.ordersDone=0;order(s,true);}
+    return s;
+  }
+  function remaining(s,now){return s.phase==='ready'?DURATION:s.phase==='done'?0:Math.max(0,s.deadline-now);}
+  function tick(state,now){
+    const needs=state.phase==='running'&&now>=state.deadline||state.game==='outlier'&&state.phase!=='done'&&state.lanes.some(p=>p.readyAt&&now>=p.readyAt);
+    if(!needs)return state;const s=clone(state);advance(s,now);return s;
+  }
+  function step(state,a,now){
+    let s=clone(state);advance(s,now);if(s.phase==='done')return s;
+    if(s.game==='cargo'&&!['stack','queue'].includes(a.side))return s;
+    if(s.game==='outlier'&&a.type==='pick'){
+      const p=s.lanes[a.lane];
+      if(!p||p.id!==a.id||p.readyAt||!Number.isInteger(a.index)||a.index<0||a.index>=p.values.length||p.wrong.includes(a.index))return s;
+      start(s,now);const v=p.values[a.index],range=`${Math.min(...p.peers)}~${Math.max(...p.peers)}`;
+      if(a.index===p.target){s.good++;p.selected=a.index;p.readyAt=now+280;s.review.unshift({name:p.name,value:v});s.review=s.review.slice(0,4);event(s,'good',10,`${v}: 다른 네 값 ${range}에서 멀리 떨어짐`,{lane:a.lane,index:a.index,value:v});}
+      else{s.bad++;p.wrong.push(a.index);event(s,'bad',-5,`${v}: 다른 값들과 비슷한 크기`,{lane:a.lane,index:a.index,value:v});}
+    }else if(s.game==='cargo'&&a.type==='ship'){
+      const t=exposed(s,a.side);if(!t||t.id!==a.id)return s;start(s,now);
+      const expected=s.order[s.orderAt];
+      if(t.type!==expected){s.bad++;event(s,'bad',-5,`지금은 ${expected} 차례 · ${t.type}은 그대로`,{side:a.side,value:t.type});}
+      else{
+        if(a.side==='stack')s.stack.pop();else s.queue.shift();s.good++;s.delivered++;s.orderAt++;
+        event(s,'good',10,`${t.type} 출고 완료`,{side:a.side,value:t.type});
+        if(s.orderAt===3){s.ordersDone++;for(let i=0;i<3;i++){let side=next(s)<.5?'stack':'queue';if(s[side].length>=4)side=side==='stack'?'queue':'stack';s[side].push(token(s));}order(s);}
+      }
+    }else if(s.game==='cargo'&&a.type==='transfer'){
+      const t=exposed(s,a.side);if(!t||t.id!==a.id||!canTransfer(s,a.side))return s;start(s,now);transfer(s,a.side);
+      event(s,'move',0,`${t.type}: ${a.side==='stack'?'쌓인 상자 위 → 줄 맨 뒤':'줄 맨 앞 → 쌓인 상자 위'}`,{side:a.side,value:t.type});
+    }
+    return s;
+  }
+  function info(s){return{score:s.good*10-s.bad*5,good:s.good,bad:s.bad,formula:`${s.good} × 10 - ${s.bad} × 5 = ${s.good*10-s.bad*5}`};}
+  return{create,step,tick,remaining,info,exposed,canTransfer,DURATION};
+});
+
+/* QUICK_ENGINE_END */
+</script>
+<script>
+(()=>{
+ 'use strict';
+ const root=document.getElementById('edu-quick-play'),$=s=>root.querySelector(s),E=globalThis.EduQuickPlay;
+ const icon=n=>`<i data-lucide="${n}" aria-hidden="true"></i>`;
+ const cargo=(t,active=false,side='')=>t?`<${active?'button type="button"':'span'} class="q-cargo" data-type="${t.type}" ${active?`data-act="ship" data-side="${side}" data-id="${t.id}" aria-label="${t.type} 출고"`:''}>${t.type}</${active?'button':'span'}>`:'';
+ const titles={outlier:['튀는 값 찾기','같은 줄에서 혼자 떨어진 숫자를 누르세요'],cargo:['상자 출고','다음 순서와 같은 상자를 눌러 출고하세요']};
+ let game='outlier',states={outlier:E.create('outlier',31),cargo:E.create('cargo',31)},best={},serial=0;
+ function restore(v){const p=v?.privateContent;if(p?.revision!==3||!titles[p.game])return;game=p.game;for(const k of Object.keys(states))if(p.states?.[k]?.game===k)states[k]=p.states[k];best=p.best||{};serial=p.serial||0;}
+ restore(window.openai?.widgetState);
+ const save=()=>window.openai?.setWidgetState?.({modelContent:{game,score:E.info(states[game]).score,phase:states[game].phase},privateContent:{revision:3,serial:++serial,game,states,best}})?.catch(()=>{});
+ function remember(g){const s=states[g];if(s.phase==='done')best[g]=Math.max(best[g]??-Infinity,E.info(s).score);}
+ function outliers(s){
+  return `<div class="q-lanes">${s.lanes.map((p,l)=>{const top=Math.ceil(Math.max(...p.values)/10)*10;return `<section class="q-lane"><div class="q-lane-head"><h3>${p.name}</h3><span class="q-small">${p.unit}</span></div><div class="q-values" aria-label="${p.name} 측정값">${p.values.map((v,i)=>{const height=Math.max(5,v/top*112),good=p.selected===i,bad=p.wrong.includes(i);return `<button type="button" class="q-value ${good?'good':''} ${bad?'bad':''}" data-act="pick" data-lane="${l}" data-index="${i}" data-id="${p.id}" ${s.phase==='done'||p.readyAt||bad?'disabled':''} aria-label="${p.name} ${v}${p.unit} 검토"><span class="q-mark">${good?'+10':bad?'-5':''}</span><b class="q-number">${v}</b><span class="q-bar" style="--height:${height}px;height:${height}px"></span></button>`;}).join('')}</div></section>`;}).join('')}</div><div class="q-review">${icon('inbox')}<span class="q-small">검토함</span>${s.review.length?s.review.map(p=>`<span class="q-review-item"><b>${p.value}</b>${p.name}</span>`).join(''):'<span class="q-small">아직 비어 있음</span>'}</div>`;
+ }
+ function boxes(s){
+  const top=E.exposed(s,'stack'),front=E.exposed(s,'queue'),off=s.phase==='done';
+  return `<div class="q-shipping"><div class="q-truck"><canvas width="32" height="18" id="qp-truck" aria-hidden="true"></canvas><div><span class="q-next-label">다음 상자</span><b style="font-size:23px;font-weight:500" id="qp-destination">${s.order[s.orderAt]}</b></div></div><div class="q-order" aria-label="출고 순서">${s.order.map((t,i)=>`<span class="${i<s.orderAt?'q-done':i===s.orderAt?'q-now':''}"><small>${i<s.orderAt?'완료':i===s.orderAt?'지금':'다음'}</small><span class="q-cargo" data-type="${t}">${t}</span></span>`).join('')}</div></div><div class="q-storage"><section class="q-store"><h3>쌓인 상자</h3><p>스택 · 맨 위부터</p><div class="q-stack">${s.stack.map((t,i)=>cargo(t,i===s.stack.length-1&&!off,'stack')).join('')||'<span class="q-small">비어 있음</span>'}</div><div class="q-front">${icon('arrow-up')}위 상자 출고</div></section><div class="q-transfer"><button type="button" data-act="transfer" data-side="stack" data-id="${top?.id||0}" ${off||!E.canTransfer(s,'stack')?'disabled':''} aria-label="${top?.type||''}를 줄 맨 뒤로 옮기기"><span class="q-row">${cargo(top)}${icon('arrow-right')}</span><small>뒤로 · 0점</small></button><button type="button" data-act="transfer" data-side="queue" data-id="${front?.id||0}" ${off||!E.canTransfer(s,'queue')?'disabled':''} aria-label="${front?.type||''}를 쌓인 상자 위로 옮기기"><span class="q-row">${icon('arrow-left')}${cargo(front)}</span><small>위로 · 0점</small></button></div><section class="q-store"><h3>줄 선 상자</h3><p>큐 · 맨 앞부터</p><div class="q-queue">${s.queue.map((t,i)=>cargo(t,i===0&&!off,'queue')).join('')||'<span class="q-small">비어 있음</span>'}</div><div class="q-front">${icon('arrow-left')}앞 상자 출고</div></section></div>`;
+ }
+ function updateClock(){const s=states[game],ms=E.remaining(s,Date.now()),secs=Math.ceil(ms/1000);$('#qp-time').textContent='0:'+String(secs).padStart(2,'0');$('#qp-time-fill').style.width=ms/E.DURATION*100+'%';$('.q-time-track').setAttribute('aria-valuenow',String(secs));$('#qp-state').textContent={ready:'준비',running:'진행 중',done:'종료'}[s.phase];}
+ function render(){
+  const s=states[game],f=E.info(s),isOut=game==='outlier';$('#qp-title').textContent=titles[game][0];$('#qp-goal').textContent=titles[game][1];$('#qp-panel').setAttribute('aria-labelledby','qp-tab-'+game);root.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.game===game)));
+  $('#qp-score').textContent=f.score;$('#qp-best').textContent=best[game]??'-';$('#qp-rules').innerHTML=`<span class="q-positive">${icon('check')}<b>${isOut?'잘 찾으면':'맞게 출고'} +10</b></span><span class="q-negative">${icon('x')}<b>${isOut?'잘못 누르면':'틀린 출고'} -5</b></span>${!isOut?'<span class="q-neutral">옮기기 0</span>':''}`;
+  $('#qp-field').innerHTML=isOut?outliers(s):boxes(s);
+  $('#qp-ledger').innerHTML=`<div><span>${isOut?'찾음':'출고'} ${s.good}회</span><b class="q-positive">+${s.good*10}</b></div><div><span>실수 ${s.bad}회</span><b class="q-negative">-${s.bad*5}</b></div><div><span>합계</span><b>${f.score}점</b></div>`;
+  const ev=s.event;$('#qp-feedback').innerHTML=ev?`<span class="q-delta ${ev.delta>0?'q-positive':ev.delta<0?'q-negative':'q-neutral'}">${ev.delta>0?'+':''}${ev.delta}</span><span>${ev.reason}</span>`:`<span class="q-small">${isOut?'높은 값도 낮은 값도 찾기 · 검토는 삭제가 아닙니다':'상자는 테두리가 있는 것부터 · 화살표로 옮기기'}</span>`;
+  $('#qp-result').innerHTML=s.phase==='done'?`<section class="q-result"><div><h2>45초 끝</h2><p>${s.good} × 10 - ${s.bad} × 5 = ${f.score}점</p></div><b>${f.score}점</b><button type="button" class="q-primary" data-act="reset">${icon('rotate-ccw')}다시 도전</button></section>`:'';
+  paintTruck();updateClock();root.querySelectorAll('button').forEach(b=>b.classList.add('cursor-interaction'));if(window.lucide)window.lucide.createIcons();
+ }
+ function paintTruck(){const c=$('#qp-truck');if(!c)return;const x=c.getContext('2d');x.fillStyle='#426d69';x.fillRect(1,2,19,11);x.fillStyle='#76bcb0';x.fillRect(3,4,15,7);x.fillStyle='#f0c55d';x.fillRect(21,5,7,8);x.fillRect(28,9,3,4);x.fillStyle='#dceeee';x.fillRect(23,6,4,3);x.fillStyle='#253b42';x.fillRect(5,12,5,5);x.fillRect(23,12,5,5);x.fillStyle='#a9c0bf';x.fillRect(6,14,3,1);x.fillRect(24,14,3,1);}
+ function feedback(before,after,origin,destination){
+  const ev=after.event;if(!ev||ev.id===before.event?.id)return;
+  const bounds=root.getBoundingClientRect(),reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(origin&&ev.delta){const el=document.createElement('span');el.className='q-pop '+(ev.delta>0?'q-positive':'q-negative');el.textContent=ev.delta>0?'+'+ev.delta:String(ev.delta);el.style.left=Math.max(2,Math.min(bounds.width-68,origin.left-bounds.left+origin.width/2-25))+'px';el.style.top=Math.max(0,origin.top-bounds.top-15)+'px';root.append(el);if(!reduced)el.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(-22px)',opacity:0}],{duration:650,easing:'ease-out',fill:'forwards'});setTimeout(()=>el.remove(),700);}
+  if(origin&&destination&&after.game==='cargo'&&ev.kind==='good'&&!reduced){const el=document.createElement('span');el.className='q-cargo q-flying';el.dataset.type=ev.value;el.textContent=ev.value;el.style.left=origin.left-bounds.left+'px';el.style.top=origin.top-bounds.top+'px';root.append(el);el.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${destination.left-origin.left}px,${destination.top-origin.top}px)`,opacity:0}],{duration:230,easing:'ease-in',fill:'forwards'});setTimeout(()=>el.remove(),260);}
+ }
+ root.addEventListener('click',e=>{
+  const tab=e.target.closest('[data-game]');if(tab){game=tab.dataset.game;states[game]=E.tick(states[game],Date.now());remember(game);render();save();return;}
+  const b=e.target.closest('[data-act]');if(!b||b.disabled)return;
+  if(b.dataset.act==='reset'){states[game]=E.create(game,states[game].seed+1);render();save();return;}
+  const before=states[game],origin=b.getBoundingClientRect(),destination=$('#qp-destination')?.getBoundingClientRect();
+  const after=E.step(before,{type:b.dataset.act,side:b.dataset.side,id:Number(b.dataset.id),lane:Number(b.dataset.lane),index:Number(b.dataset.index)},Date.now());states[game]=after;remember(game);render();feedback(before,after,origin,destination);save();
+ });
+ root.addEventListener('keydown',e=>{if(e.repeat&&['Enter',' '].includes(e.key))e.preventDefault();});
+ const heartbeat=setInterval(()=>{let changed=false;for(const g of Object.keys(states)){const n=E.tick(states[g],Date.now());if(n!==states[g]){states[g]=n;remember(g);changed=true;}}if(changed){render();save();}else updateClock();},80);
+ window.addEventListener('pagehide',()=>clearInterval(heartbeat),{once:true});
+ window.addEventListener('openai:set_globals',e=>{const v=e.detail?.globals?.widgetState;if(v?.privateContent?.revision===3&&(v.privateContent.serial??0)>serial){restore(v);render();}});
+ for(const g of Object.keys(states)){states[g]=E.tick(states[g],Date.now());remember(g);}render();
+ if(globalThis.Tweak){const prefs={roomy:false};const tweak=new Tweak({container:$('.q-app'),onChange:()=>{$('.q-field').style.padding=prefs.roomy?'20px':'12px';}});tweak.addToggle(prefs,'roomy',{label:'게임판 여백'});}
+})();
+</script>
+</div>

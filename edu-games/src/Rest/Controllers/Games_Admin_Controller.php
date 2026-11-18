@@ -34,7 +34,7 @@ final class Games_Admin_Controller {
     }
 
     public static function list_games(\WP_REST_Request $request) {
-        $games = function_exists('edu_games_registry') ? \edu_games_registry()->all(false) : array();
+        $games = function_exists('edu_games_registry') ? \edu_games_registry()->catalog(false) : array();
         $closed_ids = Game_Visibility::closed_ids();
 
         return rest_ensure_response(
@@ -62,7 +62,7 @@ final class Games_Admin_Controller {
     }
 
     public static function save_visibility(\WP_REST_Request $request) {
-        $games = function_exists('edu_games_registry') ? \edu_games_registry()->all(false) : array();
+        $games = function_exists('edu_games_registry') ? \edu_games_registry()->catalog(false) : array();
         $all_ids = array_keys($games);
 
         $params = $request->get_json_params();

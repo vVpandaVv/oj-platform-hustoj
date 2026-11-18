@@ -27,6 +27,7 @@ final class RestController
             ['teacher/assignments/(?P<id>\d+)/attempts/(?P<attemptId>\d+)', 'GET', 'teacherLessonAttempt', true],
             ['assignments', 'GET', 'assignments', false], ['assignments/(?P<id>\d+)', 'GET', 'assignment', false],
             ['assignments/(?P<id>\d+)/project', 'GET', 'lessonProject', false], ['assignments/(?P<id>\d+)/project', 'POST', 'saveLessonProject', false],
+            ['assignments/(?P<id>\d+)/compile', 'POST', 'lessonCompile', false],
             ['assignments/(?P<id>\d+)/run', 'POST', 'lessonRun', false], ['assignments/(?P<id>\d+)/preview', 'POST', 'lessonPreview', false],
             ['assignments/(?P<id>\d+)/attempts', 'GET', 'lessonAttempts', false],
             ['assignments/(?P<id>\d+)/attempts/(?P<attemptId>\d+)', 'GET', 'lessonAttempt', false],
@@ -37,6 +38,7 @@ final class RestController
             ['teacher/exercises/(?P<id>\d+)/attempts/(?P<attemptId>\d+)', 'GET', 'teacherAttempt', true],
             ['exercises', 'GET', 'exercises', false], ['exercises/(?P<id>\d+)', 'GET', 'exercise', false],
             ['exercises/(?P<id>\d+)/project', 'GET', 'project', false], ['exercises/(?P<id>\d+)/project', 'POST', 'saveProject', false],
+            ['exercises/(?P<id>\d+)/compile', 'POST', 'compile', false],
             ['exercises/(?P<id>\d+)/run', 'POST', 'run', false], ['exercises/(?P<id>\d+)/preview', 'POST', 'preview', false],
             ['exercises/(?P<id>\d+)/attempts', 'GET', 'attempts', false],
             ['exercises/(?P<id>\d+)/attempts/(?P<attemptId>\d+)', 'GET', 'attempt', false],
@@ -67,6 +69,7 @@ final class RestController
     public static function lessonProject(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::lessons()->project((int) $r['id'])); }
     public static function saveLessonProject(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::lessons()->saveProject((int) $r['id'], self::input($r))); }
     public static function lessonRun(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::lessons()->run((int) $r['id'], self::input($r))); }
+    public static function lessonCompile(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::lessons()->compile((int) $r['id'], self::input($r))); }
     public static function lessonPreview(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::lessons()->preview((int) $r['id'], self::input($r))); }
     public static function lessonAttempts(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::lessons()->attempts((int) $r['id'], false, ...self::page($r))); }
     public static function teacherLessonAttempts(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::lessons()->attempts((int) $r['id'], true, ...self::page($r))); }
@@ -104,6 +107,7 @@ final class RestController
     public static function project(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::service()->project((int) $r['id'])); }
     public static function saveProject(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::service()->saveProject((int) $r['id'], self::input($r))); }
     public static function run(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::service()->run((int) $r['id'], self::input($r))); }
+    public static function compile(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::service()->compile((int) $r['id'], self::input($r))); }
     public static function preview(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::service()->preview((int) $r['id'], self::input($r))); }
     public static function attempts(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::service()->attempts((int) $r['id'], false, ...self::page($r))); }
     public static function attempt(WP_REST_Request $r): mixed { return self::call(fn () => Plugin::service()->attempt((int) $r['id'], (int) $r['attemptId'])); }

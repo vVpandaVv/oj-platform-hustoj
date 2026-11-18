@@ -86,7 +86,7 @@ verify(RestController::authorize($request, false)->get_error_data()['status'] ==
 $testUserId = 20; $testCapabilities = [];
 throws(fn () => (new PlatformAccess())->requireLearner(), DomainException::class, 'Signed-in user without capability denied');
 RestController::registerRoutes();
-verify(count($testRoutes) === 35, 'All expected REST routes including bounded-history detail, group and legacy lesson pickers and publication review registered');
+verify(count($testRoutes) === 37, 'All expected REST routes including bounded-history detail, group and legacy lesson pickers and publication review registered');
 foreach ($testRoutes as [$namespace, $route, $definition]) { verify($namespace === 'oj-microbit/v1' && is_callable($definition['permission_callback']), 'Every REST route has an authorization callback'); }
 $pageParameters = new ReflectionMethod(RestController::class, 'page');
 verify($pageParameters->invoke(null, new WP_REST_Request()) === [0, 20], 'REST listing defaults to twenty rows and newest cursor');

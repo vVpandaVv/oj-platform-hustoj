@@ -1,0 +1,111 @@
+{
+  "kind": "designer-rule-model-tests",
+  "studentParticipants": 0,
+  "studentEnjoymentCertified": false,
+  "sourceOfStudentPreference": "User-reported classroom observation, not these automated tests",
+  "results": [
+    {
+      "game": "character-code",
+      "actualConversion": true,
+      "abstractWorkUnits": true,
+      "urgent": {
+        "sealed": 15,
+        "missed": 0
+      },
+      "longFirst": {
+        "sealed": 12,
+        "missed": 1
+      }
+    },
+    {
+      "game": "image-data",
+      "cells": 256,
+      "manualRowRuns": 36,
+      "firstSmallPatchCells": 16,
+      "roundTrip": true,
+      "observation": "Interaction counts, not student timings"
+    },
+    {
+      "game": "outlier-detection",
+      "generatedPairs": 3000,
+      "ordinaryEndpoints": 1999,
+      "computerDecisionsPerPolicy": 1200,
+      "informedScore": 1200,
+      "firstVisibleScore": 8,
+      "edgeOnlyScore": 370,
+      "retiredAnswersCannotScore": true,
+      "deadlineEnds": true
+    },
+    {
+      "game": "missing-values",
+      "sameUnits": true,
+      "alwaysMeanError": 40.416666666666664,
+      "appropriateMethodsError": 0,
+      "repeatingObservationDistinctOutcomes": 1,
+      "informativeObservationDistinctOutcomes": 3,
+      "targetNotDirectlyRevealed": true
+    },
+    {
+      "game": "data-visualization",
+      "largestChange": {
+        "from": 1,
+        "to": 2,
+        "amount": 8
+      },
+      "pieHalf": 0.5,
+      "histogram": [
+        3,
+        5,
+        2
+      ],
+      "designActionModel": {
+        "threeRepeatedSetups": 15,
+        "oneSetupAndThreeFindings": 7
+      },
+      "observation": "Setup action counts are a rule-model example, not measured UI timings"
+    },
+    {
+      "game": "data-extraction",
+      "targetRows": 3,
+      "distinctValidSelections": [
+        [
+          "1",
+          "2",
+          "6"
+        ],
+        [
+          "3",
+          "4",
+          "5"
+        ]
+      ],
+      "andCount": 2,
+      "projectedRows": 3,
+      "blindRepeatRedNextRows": 0
+    },
+    {
+      "game": "data-structure",
+      "peekDoesNotRemove": true,
+      "stackFirst": "B",
+      "queueFirst": "A",
+      "priorityAndTie": [
+        "A",
+        "C",
+        "B"
+      ],
+      "oldConsecutiveRackLength": 7,
+      "revisedMatchingRackLength": 4
+    },
+    {
+      "game": "ai-classifier",
+      "trainCorrectBoth": 2,
+      "newCorrectAtCut3": 7,
+      "newCorrectAtCut6": 10,
+      "candidatesAfterRedundantSample": 7,
+      "candidatesAfterInformativeSamples": [
+        6
+      ],
+      "observation": "One-dimensional counterexample; not full two-dimensional gameplay validation"
+    }
+  ]
+}

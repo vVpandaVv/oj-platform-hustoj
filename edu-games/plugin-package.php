@@ -2,7 +2,7 @@
 return array(
     'id' => 'edu-games',
     'name' => 'Edu Games',
-    'version' => '1.10.2',
+    'version' => '1.13.1',
     'main_file' => 'edu-games.php',
     'requires' => array(
         'oj-platform:^2.0.0-dev.30',

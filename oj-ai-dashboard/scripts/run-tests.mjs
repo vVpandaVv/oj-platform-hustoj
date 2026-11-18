@@ -1,6 +1,8 @@
 import { spawnSync } from 'node:child_process';
 
 const checks = [
+  { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/submission-evaluation-roster.php'] },
+  { command: process.execPath, args: ['scripts/e2e-roster-recovery.mjs'] },
   { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/submission-rubric-preview.php'] },
   { command: process.env.OJAI_PHP || 'php', args: ['-d', 'extension=pdo_sqlite', 'tests/Contract/assignment-exception-scores.php'] },
   { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/submission-score-drafts.php'] },
@@ -43,6 +45,8 @@ const checks = [
   { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/submission-source-hash-echo.php'] },
   { command: process.execPath, args: ['tests/Contract/submission-bulk-grading.mjs'] },
   { command: process.execPath, args: ['tests/Contract/submission-bulk-review-report.mjs'] },
+  { command: process.execPath, args: ['tests/Contract/submission-bulk-release.mjs'] },
+  { command: process.execPath, args: ['scripts/e2e-bulk-review-report.mjs'] },
   { command: process.execPath, args: ['tests/Contract/submission-assigned-contexts.mjs'] },
   { command: process.execPath, args: ['tests/Contract/submission-score-download.mjs'] },
   { command: process.env.OJAI_PHP || 'php', args: ['tests/Contract/submission-score-download.php'] },

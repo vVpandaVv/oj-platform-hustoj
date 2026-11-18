@@ -109,7 +109,7 @@ check_source() {
 }
 
 read_environment() {
-  TOKEN=''
+  TOKEN='' ENVIRONMENT_IMAGE='' ENVIRONMENT_MODE=''
   local old_port='' key value line
   if [[ -e $ENV_FILE || -L $ENV_FILE ]]; then
     [[ -f $ENV_FILE && ! -L $ENV_FILE && $(stat -c '%u' "$ENV_FILE") == 0 ]] || { fail 'Existing runner.env must be a root-owned regular file.'; return 1; }
@@ -124,6 +124,8 @@ read_environment() {
       value=$(unquote_environment_value "$value")
       case "$key" in
         MICROBIT_RUNNER_TOKEN) TOKEN=$value ;;
+        MICROBIT_WORKER_IMAGE) ENVIRONMENT_IMAGE=$value ;;
+        MICROBIT_RUNNER_MODE) ENVIRONMENT_MODE=$value ;;
         MICROBIT_RUNNER_PORT) old_port=$value ;;
         MICROBIT_RUNNER_HOST) [[ $value == 127.0.0.1 ]] || { fail 'Existing runner must use loopback 127.0.0.1 for this installer.'; return 1; } ;;
       esac
@@ -507,7 +509,7 @@ UNIT
 
 probe_runner() {
   check_docker_query_safe || return 1
-  printf '%s' "$TOKEN" | "$NODE_BIN" "$1/install-tools/runner-check.mjs" "$2" "$URL" "$EXPECTED_RUNTIME"
+  printf '%s' "$TOKEN" | "$NODE_BIN" "$1/install-tools/runner-check.mjs" "$2" "$URL" "$EXPECTED_RUNTIME" "${VERSION:-}"
 }
 
 wait_for_health() {
@@ -525,9 +527,12 @@ rollback_configuration() {
   if $HAD_ENV; then cp -p -- "$BACKUP_DIR/runner.env" "$ENV_FILE" || failed=1; else rm -f -- "$ENV_FILE" || failed=1; fi
   if $HAD_UNIT; then cp -p -- "$BACKUP_DIR/oj-microbit-runner.service" "$UNIT_FILE" || failed=1; else rm -f -- "$UNIT_FILE" || failed=1; fi
   systemctl daemon-reload || failed=1
-  if $WAS_ENABLED; then systemctl enable "$SERVICE_NAME" >/dev/null 2>&1 || failed=1; else systemctl disable "$SERVICE_NAME" >/dev/null 2>&1 || true; fi
+  if $WAS_ENABLED; then systemctl enable "$SERVICE_NAME" >/dev/null 2>&1 || failed=1; elif $HAD_UNIT; then systemctl disable "$SERVICE_NAME" >/dev/null 2>&1 || failed=1; else systemctl disable "$SERVICE_NAME" >/dev/null 2>&1 || true; fi
   if $WAS_ACTIVE; then
-    if docker_available_for_rollback; then systemctl restart "$SERVICE_NAME" || failed=1
+    if docker_available_for_rollback; then
+      if systemctl restart "$SERVICE_NAME"; then
+        wait_for_restored_health || { log 'Previous files and service were restored, but authenticated health could not be verified. Manual recovery is required.'; failed=1; }
+      else failed=1; fi
     else
       systemctl stop "$SERVICE_NAME" || failed=1
       log 'Previous environment and unit were restored; the runner was stopped and restart was skipped because Docker is unavailable or its running service cannot be confirmed. Manual runner recovery is required.'
@@ -537,6 +542,22 @@ rollback_configuration() {
   fi
   return "$failed"
 }
+
+wait_for_restored_health() (
+  # The new protected helper performs a GET against the restored credential/port.
+  # Older working services need not advertise the new live protocol/release.
+  EXPLICIT_PORT=false PORT=''
+  read_environment || return 1
+  local attempt
+  for attempt in {1..5}; do
+    if systemctl is-active --quiet "$SERVICE_NAME" && probe_runner "$RUNNER_DIR" restored-health >/dev/null 2>&1; then
+      log 'Previous runner authenticated health verified.'
+      return 0
+    fi
+    ((attempt == 5)) || sleep 1
+  done
+  return 1
+)
 
 docker_available_for_rollback() {
   # Avoid querying a dormant socket-activated daemon, and never let a restored
@@ -558,7 +579,9 @@ handle_failure() {
   local code=$1
   trap - ERR INT TERM
   set +e
-  if ${ACTIVATING:-false} && ! ${COMMITTED:-false}; then
+  if ${COMMITTED:-false}; then
+    log 'WordPress connection was committed; the new runner configuration was kept. Run --check and inspect the retained backup before any manual rollback.'
+  elif ${ACTIVATING:-false}; then
     rollback_configuration || log 'Automatic service rollback needs administrator attention; the backup is retained.'
   fi
   printf '[microbit] Failed during: %s. Exit %s.\n' "${CURRENT_STAGE:-preflight}" "$code" >&2
@@ -572,6 +595,8 @@ check_installation() {
   [[ -f $ENV_FILE && -n $TOKEN && -f $UNIT_FILE && -d $RUNNER_DIR ]] || { fail 'Runner installation is incomplete.'; return 1; }
   [[ -z $(find "$RELEASE_DIR" -xdev \( ! -user root -o \( ! -type l -a -perm /022 \) \) -print -quit) ]] || { fail 'Runner release ownership or permissions are unsafe.'; return 1; }
   systemctl is-active --quiet "$SERVICE_NAME" || { fail 'Runner systemd service is not active.'; return 1; }
+  [[ $(systemctl show "$SERVICE_NAME" --property=WorkingDirectory --value) == "$RUNNER_DIR" ]] || { fail 'The active service does not use this plugin release. Update was not completed, or a previous version was restored.'; return 1; }
+  [[ $ENVIRONMENT_IMAGE == "$IMAGE" && $ENVIRONMENT_MODE == docker ]] || { fail 'The active worker environment does not match this plugin release.'; return 1; }
   check_port_available
   check_disk_space
   check_docker_query_safe
@@ -579,7 +604,7 @@ check_installation() {
   probe_runner "$RUNNER_DIR" health
   BRIDGE_PATH=$RUNNER_DIR/install-tools/configure-wordpress.php
   run_wp_bridge check
-  log 'Read-only checks passed. No install/configuration changes or GPIO job were performed.'
+  log 'Read-only checks passed. No install/configuration changes or GPIO/compile job were performed.'
 }
 
 main() {
@@ -599,7 +624,7 @@ main() {
     log "Plan only: Ubuntu 24.04 amd64/systemd; WordPress $WP_ROOT; port ${PORT:-existing-or-3037}."
     log "Install isolated Node $NODE_VERSION into $NODE_ROOT; Docker official repository only when Docker is absent."
     log "Stage root-owned runner $VERSION in $RELEASE_DIR; npm ci --ignore-scripts; build $IMAGE."
-    log 'Reuse/generate credentials; backup environment/unit; start service; authenticated health and real GPIO canary; configure WordPress last.'
+    log 'Reuse/generate credentials; backup environment/unit; start service; authenticated health and real GPIO and stateful compile canaries; configure WordPress last.'
     log 'No files, packages, locks, services, WordPress settings, or network requests were changed.'
     return
   fi
@@ -637,13 +662,14 @@ main() {
   build_worker
   stage '6/8 Backing up and activating the systemd service.'
   activate_service
-  stage '7/8 Verifying authenticated health and real GPIO grading.'
+  stage '7/8 Verifying release, live protocol, GPIO grading and stateful compilation.'
   wait_for_health
   probe_runner "$RUNNER_DIR" canary
+  probe_runner "$RUNNER_DIR" compile
   stage '8/8 Connecting WordPress (final configuration step).'
   run_wp_bridge configure
   ACTIVATING=false
-  log "Installed runner $VERSION at $URL; WordPress connection and GPIO canary passed."
+  log "Installed runner $VERSION at $URL; WordPress connection, GPIO and stateful compile canaries passed."
   log "Previous configuration: $BACKUP_DIR. Previous releases were preserved."
 }
 

@@ -2,6 +2,12 @@
 
 이 서비스는 WordPress 플러그인이 전달한 MakeCode 프로젝트를 **Microsoft PXT 컴파일러로 다시 컴파일**하고, 공식 micro:bit 시뮬레이터의 핀 읽기·쓰기 함수를 계측하여 실행합니다. GPIO·위치 서보·펄스 폭·레지스터 방식 I²C 장치를 실물 없이 검증합니다. 학생이 보내는 점수나 출력 로그는 받지 않습니다. 기본 실행 환경은 네트워크가 없는 일회성 Docker 컨테이너입니다.
 
+## 상태 유지 실험용 컴파일
+
+rc.13의 POST /v1/compile은 검증된 학생 프로젝트만 받아 기존 격리 컨테이너에서 PXT bytecode JavaScript를 생성합니다. liveProtocol은 oj-live/1이며 성공 응답은 compiled, 실패는 compile_error와 진단입니다. 비공개 조건·점수·trace는 포함하지 않습니다. 동일한 인증·용량·요청/응답 크기·시간 제한을 적용합니다. /v1/run은 기존 저장 조건으로 서버 채점하며 브라우저 결과를 받지 않습니다. 새 플러그인의 상태 유지 실험에는 이 실행기 업데이트가 필요합니다.
+
+브라우저 번들은 resources/tools/build-live.mjs로 고정된 PXT simulator source와 동일 GPIO/서보/I²C 계측으로 생성합니다. 같은 런타임의 센서 맵만 바꾸고 변수·타이머·레지스터·포인터를 유지합니다. 라이선스 고지는 resources/simulator/THIRD_PARTY_NOTICES.txt에 포함합니다. 실제 운영 브라우저·CSP·WordPress와 Docker 격리는 별도 검수합니다.
+
 ## 고정된 실행 환경
 
 - Node.js 24.22.1
@@ -26,7 +32,7 @@ WordPress의 업로드 폴더나 공개 웹 경로에서 실행하지 않습니�
 
 ```sh
 npm ci --ignore-scripts --no-audit --no-fund
-docker build -t oj-microbit-worker:1.0.0-rc.9 .
+docker build -t oj-microbit-worker:1.0.0-rc.15 .
 ```
 
 서버 프로세스에는 다음 환경 변수를 설정합니다. 토큰은 32바이트 이상의 예측 불가능한 비밀값을 만들고 WordPress 설정에도 같은 값을 입력합니다. 실제 토큰을 소스·로그·브라우저 설정에 넣지 않습니다.
@@ -36,7 +42,7 @@ docker build -t oj-microbit-worker:1.0.0-rc.9 .
 | `MICROBIT_RUNNER_TOKEN` | 없음, 필수 | WordPress와 실행기 사이의 Bearer 토큰 |
 | `MICROBIT_RUNNER_HOST` | `127.0.0.1` | 수신 주소 |
 | `MICROBIT_RUNNER_PORT` | `3037` | 수신 포트 |
-| `MICROBIT_WORKER_IMAGE` | `oj-microbit-worker:1.0.0-rc.9` | 빌드한 실행 전용 이미지 |
+| `MICROBIT_WORKER_IMAGE` | `oj-microbit-worker:1.0.0-rc.15` | 빌드한 실행 전용 이미지 |
 | `MICROBIT_RUNNER_MODE` | `docker` | 운영 환경은 `docker` 사용 |
 
 ```sh

@@ -50,6 +50,7 @@
             if (!config.reportOnly) {
                 const s = state || config.previews[level.value];
                 root.dataset.phase = state ? state.status === 'playing' ? 'playing' : 'finished' : 'ready';
+                root.toggleAttribute('data-review', s.phase === 'review');
                 $('[data-role=board]').innerHTML = V.render(config.game, s, local);
                 charts = V.mount(config.game, $('[data-role=board]'), s, local, move);
                 if (state && state.remaining !== null && state !== clockState) { clockEnd = performance.now() + state.remaining * 1000; clockState = state; }
@@ -78,6 +79,7 @@
         }
         async function move(action, retry = false) {
             if (busy || (pending && !retry)) return;
+            const before = state;
             const focusKey = V.focusKey ? V.focusKey(root) : (document.activeElement?.dataset?.focus ? '[data-focus="' + CSS.escape(document.activeElement.dataset.focus) + '"]' : null);
             setBusy(true);
             try {
@@ -87,6 +89,23 @@
                 state = await api('update', pending); pending = null;
                 if (state.status !== 'playing') save(null);
                 paint();
+                const delta = state.score - (before?.score || 0);
+                const trained = config.game === 'ai-model-lab' && action?.type === 'label';
+                const hits = trained ? state.validation.filter(p => p.prediction === p.label).length : 0;
+                if (delta || trained || state.feedback !== before?.feedback) {
+                    const actionNames = {'outlier-detection':'검토·통과 판정','missing-values':'빈칸 복원 판정','data-visualization':'출동·배정 판정','data-extraction':'출고 판정','data-structure-lab':'배송 반영','ai-classifier-lab':'새 물건 분류 판정'};
+                    const f = state.feedback;
+                    let text = trained ? `이름 반영 · 확인 인식 ${hits}/${state.validation.length}` : actionNames[config.game] || '검정 결과 반영';
+                    let success = delta >= 0;
+                    if (config.game === 'outlier-detection' && f) { success = f.perfect; text = success ? '정확한 분리' : `놓침 ${f.missed} · 과잉 선택 ${f.falsePositives}`; }
+                    if (config.game === 'missing-values' && f) { success = f.scopeOk && f.hits === 3; text = `복원 ${f.hits}/3${f.scopeOk ? '' : ' · 근거 다시 확인'}`; }
+                    if (config.game === 'data-extraction' && f) { success = !f.errors && !f.columnErrors; text = `물건 오류 ${f.errors} · 라벨 오류 ${f.columnErrors}`; }
+                    if (config.game === 'ai-classifier-lab' && f) { const count = f.hits[0] + f.hits[1]; success = count === 8; text = `새 물건 분류 ${count}/8`; }
+                    if (config.game === 'data-visualization' && f) success = f.correct;
+                    root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{
+                        delta, text, tone: success ? 'success' : 'miss'
+                    }}));
+                }
                 if (state.status !== 'playing') {
                     if ($('[data-role=records]').open) await records();
                     $('[data-result]')?.focus();

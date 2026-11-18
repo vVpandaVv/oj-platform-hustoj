@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-05",
+  "candidateVersion": "1.0.0-rc.14",
+  "status": "offline_audit_passed_live_acceptance_pending",
+  "installerShellTests": 32,
+  "realPxtInstallerChecks": 4,
+  "acceptanceCycleTests": 14,
+  "actualDocker": false,
+  "actualWordPress": false,
+  "actualSystemd": false,
+  "actualHustojParallelLoad": false,
+  "queriesChanged": false,
+  "checked": [
+    "same-version rerun",
+    "new RC release selection",
+    "source/image immutability",
+    "HUSTOJ snapshot and command whitelist",
+    "GPIO and compile gate before configure",
+    "exact selected release and image in --check",
+    "old port/token/env/unit/active/enabled restoration",
+    "INT/TERM",
+    "Docker dependency/dormant socket protection",
+    "restored health failure reporting",
+    "disabled-state restoration failure reporting",
+    "post-commit config consistency"
+  ],
+  "productFileHashes": {
+    "runner/install.sh": "0a1474b65283466fb8c15ad820444ef62c9918e4f4f437ceb39d6232b3575e50",
+    "runner/install-tools/runner-check.mjs": "f7bf2d7a230bab8ad1b275a21fbb4d54b0974c7a3c1ffb13ef0672f526531087",
+    "runner/src/server.mjs": "83774eaeee2e69b31227b408412f4627b786f3d5414f12ba53f290dde7280106",
+    "scripts/acceptance/install-cycle.py": "6059ef091ecce2563b2724b5ef4f98c5f9c9373cd23404cbd54a1d53b36a55e6"
+  }
+}

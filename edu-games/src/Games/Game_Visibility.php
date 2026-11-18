@@ -24,7 +24,11 @@ final class Game_Visibility {
     }
 
     public static function is_open(string $game_id): bool {
+        if (Experience_Separation::moved($game_id)) return false;
         return ! in_array(sanitize_key($game_id), self::closed_ids(), true);
+    }
+    public static function can_read_records(string $game_id): bool {
+        return !in_array(sanitize_key($game_id),self::closed_ids(),true);
     }
 
     /**
@@ -43,7 +47,7 @@ final class Game_Visibility {
 
         $open = array_values(array_filter(array_unique($open)));
         $all = array_values(array_filter(array_unique($all)));
-        $closed = array_values(array_diff($all, $open));
+        $closed = array_values(array_unique(array_merge(array_diff(self::closed_ids(), $all), array_diff($all, $open))));
 
         update_option(self::OPTION_NAME, $closed, false);
     }

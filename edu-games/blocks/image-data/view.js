@@ -352,7 +352,7 @@
             }
             this.renderAll();
             this.setFeedback(this.state.mode === "restore"
-                ? "오른쪽 행별 숫자를 보고 같은 위치에 팔레트 색을 찍은 뒤, 하단 보기에서 정답을 고르세요."
+                ? "색상 코드 → 픽셀 복원 → 그림 이름 선택"
                 : `${this.rules.width}x${this.rules.height} 이미지`);
         }
 
@@ -399,19 +399,23 @@
             if (correct === target.length) {
                 if (!this.state.selectedAnswerId) {
                     this.setFeedback("그림은 맞게 복원했습니다. 하단 보기에서 정답 이름을 선택하세요.");
+                    this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{text:'픽셀 복원 완료 · 그림 이름 선택',tone:'success'}}));
                     return;
                 }
 
                 if (this.state.selectedAnswerId === this.state.sampleId) {
                     this.setFeedback(`복원 성공입니다. 정답은 ${this.currentSample().title || "보기 이미지"}입니다.`);
+                    this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{text:(this.currentSample().title || '그림') + ' · 복원 성공',tone:'success'}}));
                     return;
                 }
 
                 this.setFeedback("그림은 맞게 복원했지만 선택한 정답이 다릅니다.");
+                this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{text:'픽셀 일치 · 그림 이름 다시 선택',tone:'miss'}}));
                 return;
             }
 
             this.setFeedback(`${target.length - correct}개의 픽셀이 배열과 다릅니다. 붉은 테두리의 칸을 다시 확인하세요.`);
+            this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{text:(target.length-correct) + '칸 수정 · 붉은 테두리 확인',tone:'miss'}}));
         }
 
         stopPainting(pointerId = null) {

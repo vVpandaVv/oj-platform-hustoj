@@ -209,3 +209,9 @@ export function validateRequest(payload) {
   if (totalDuration > 120000) reject('Total simulation duration is too long.');
   return payload;
 }
+
+export function validateCompileRequest(payload) {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) throw new TypeError('Invalid compile request.');
+  // Reuse the exact project/dependency policy. This synthetic exercise is validation-only and never executed.
+  validateRequest({ project: payload.project, exercise: { connections: [{pin:0,direction:'output',signal:'digital'}], scenarios:[{id:'compile',durationMs:1,inputs:[],assertions:[]}] } });
+}

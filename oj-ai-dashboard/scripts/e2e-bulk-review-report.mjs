@@ -52,14 +52,20 @@ async function preview(page, action, count) {
 }
 try {
   for (const [name, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 844 }]]) {
-    for (const action of ['accept', 'teacher', 'feedback', 'note']) {
+    for (const action of ['accept', 'teacher', 'feedback', 'note', 'release']) {
       const approval = ['accept', 'teacher'].includes(action);
-      const { page, errors } = await pageFor(approval ? 'assessment' : 'report', viewport, 'normal', action === 'teacher');
+      const releasing = action === 'release';
+      const { page, errors } = await pageFor(releasing ? 'release' : approval ? 'assessment' : 'report', viewport, 'normal', action === 'teacher');
       await page.locator('[data-review-field="search"]').fill('없는 학생');
       await preview(page, action, 2);
       const confirm = page.locator('[data-workflow-control="confirm"]');
-      assert.equal(await confirm.isDisabled(), approval);
-      if (approval) await page.locator('[data-review-role="workflow-reviewed"]').check();
+      assert.equal(await confirm.isDisabled(), approval || releasing);
+      if (approval || releasing) await page.locator('[data-review-role="workflow-reviewed"]').check();
+      if (releasing) {
+        assert.match(await page.locator('[data-review-role="workflow-targets"]').textContent(), /0점/);
+        assert.equal(await page.locator('[data-review-role="workflow-feedback-visibility"]').inputValue(), 'hidden');
+        assert.match(await page.locator('[data-review-role="workflow-exclusions"]').textContent(), /공개·회수 이력/);
+      }
       if (action === 'teacher') {
         assert.match(await page.locator('[data-review-role="workflow-targets"]').textContent(), /12점/);
         assert.match(await page.locator('[data-review-role="workflow-targets"]').textContent(), /0점/);
@@ -77,7 +83,8 @@ try {
       const posts = await page.evaluate(() => window.__bulkPosts);
       assert.equal(posts.length, 2);
       assert.ok(posts.every(post => post.key === post.body.command_id));
-      assert.ok(posts.every(post => !/approve-feedback|student-notes.*approve|release/.test(post.path)));
+      if (releasing) assert.ok(posts.every(post => post.path.endsWith('/release') && post.body.payload.mode === 'release' && post.body.expected.expected_feedback_revision_id === null));
+      else assert.ok(posts.every(post => !/approve-feedback|student-notes.*approve|release/.test(post.path)));
       if (action === 'teacher') {
         assert.ok(posts.every(post => post.body.payload.decision === 'adjusted'));
         assert.deepEqual(posts.map(post => post.body.payload.item_decisions[0].official_points), ['12.0000', '0.0000']);
@@ -88,9 +95,9 @@ try {
       await page.close();
     }
   }
-  for (const mode of ['lost', 'conflict', 'denied', 'slow']) {
-    const { page, errors } = await pageFor('assessment', { width: 1280, height: 900 }, mode);
-    await preview(page, 'accept', 2);
+  for (const action of ['accept', 'release']) for (const mode of ['lost', 'conflict', 'denied', 'slow']) {
+    const { page, errors } = await pageFor(action === 'release' ? 'release' : 'assessment', { width: 1280, height: 900 }, mode);
+    await preview(page, action, 2);
     await page.locator('[data-review-role="workflow-reviewed"]').check();
     await page.locator('[data-workflow-control="confirm"]').click();
     if (mode === 'slow') {
@@ -114,6 +121,52 @@ try {
       if (mode === 'lost') assert.deepEqual(posts[0], posts[1]);
       if (mode === 'conflict') assert.match(await page.locator('[data-review-role="workflow-progress-status"]').textContent(), /실패 1명/);
     }
+    assert.deepEqual(errors, []);
+    await page.close();
+  }
+  {
+    const { page, errors } = await pageFor('release', { width: 1280, height: 900 });
+    await preview(page, 'release', 2);
+    const confirm = page.locator('[data-workflow-control="confirm"]');
+    const checked = page.locator('[data-review-role="workflow-reviewed"]');
+    const score = page.locator('[data-review-role="workflow-score-visibility"]');
+    const feedback = page.locator('[data-review-role="workflow-feedback-visibility"]');
+    await checked.check();
+    await feedback.selectOption('shown');
+    assert.equal(await page.locator('[data-review-role="workflow-targets"] input').count(), 1);
+    assert.equal(await checked.isChecked(), false);
+    assert.equal(await confirm.isDisabled(), true);
+    await score.selectOption('hidden');
+    await feedback.selectOption('hidden');
+    assert.equal(await page.locator('[data-review-role="workflow-targets"] input').count(), 0);
+    assert.equal(await confirm.isDisabled(), true);
+    await score.selectOption('total');
+    const boxes = page.locator('[data-review-role="workflow-targets"] input');
+    assert.equal(await boxes.count(), 2);
+    assert.equal(await boxes.nth(0).isChecked(), false, 'Newly eligible students must not be silently selected.');
+    await boxes.nth(1).check();
+    await feedback.selectOption('shown');
+    await checked.check();
+    await confirm.click();
+    await page.waitForFunction(() => document.querySelector('[data-review-role="workflow-progress-status"]').textContent.includes('처리 완료'));
+    const posts = await page.evaluate(() => window.__bulkPosts);
+    assert.equal(posts.length, 1);
+    assert.equal(posts[0].body.expected.expected_feedback_revision_id, 'feedback-2');
+    assert.equal(posts[0].body.payload.score_visibility, 'total');
+    assert.equal(posts[0].body.payload.feedback_visibility, 'shown');
+    assert.deepEqual(errors, []);
+    await page.close();
+  }
+  {
+    const { page, errors } = await pageFor('release', { width: 1280, height: 900 });
+    await preview(page, 'release', 2);
+    await page.locator('[data-review-role="workflow-reviewed"]').check();
+    await page.locator('[data-review-role="workflow-targets"] input').nth(1).uncheck();
+    await page.evaluate(() => window.__bulkMutate('evaluation-1'));
+    await page.locator('[data-workflow-control="confirm"]').click();
+    await page.waitForFunction(() => document.querySelector('[data-review-role="workflow-progress-status"]').textContent.includes('처리 완료'));
+    assert.equal(await page.evaluate(() => window.__bulkPosts.length), 0);
+    assert.match(await page.locator('[data-review-role="workflow-progress-status"]').textContent(), /제외 1명/);
     assert.deepEqual(errors, []);
     await page.close();
   }
@@ -143,5 +196,5 @@ try {
     assert.deepEqual(errors, []);
     await page.close();
   }
-  console.log('PASS bulk review/report browser: production markup, desktop/mobile, complete roster, selection, confirmation, queue-only requests, response loss, partial conflicts, permission stop and resume.');
+  console.log('PASS bulk review/report/release browser: production markup, desktop/mobile, selection, disclosure options, confirmation reset, exact retry, partial conflicts, permission stop and resume.');
 } finally { await browser.close(); }

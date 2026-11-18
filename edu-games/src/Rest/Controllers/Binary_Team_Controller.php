@@ -7,7 +7,7 @@ use EduGames\Games\Game_Visibility;
 
 final class Binary_Team_Controller {
     public static function register_routes(string $game='binary-conversion'): void {
-        $base=$game==='device-matching'?'/device-team':'/binary-team';$auth=static fn()=>self::allowed($game);
+        $base=match($game){'device-matching'=>'/device-team','cipher-vault'=>'/cipher-team',default=>'/binary-team'};$auth=static fn()=>self::allowed($game);
         register_rest_route('edu-games/v1',$base.'/ticket',array('methods'=>\WP_REST_Server::READABLE,'permission_callback'=>$auth,'callback'=>static fn($r)=>self::run('ticket',$r,$game)));
         register_rest_route('edu-games/v1',$base.'/rooms',array(
             array('methods'=>\WP_REST_Server::READABLE,'permission_callback'=>$auth,'callback'=>static fn($r)=>self::run('rooms',$r,$game)),

@@ -7,14 +7,14 @@ function readTicket(ticket,secret,now=Date.now(),channel='binary-team') {
     const expected=crypto.createHmac('sha256',secret).update(parts[1]).digest();
     if(!crypto.timingSafeEqual(expected,Buffer.from(parts[2],'hex')))return null;
     let p;try{p=JSON.parse(Buffer.from(parts[1],'base64url').toString());}catch{return null;}
-    if(!['binary-team','device-team'].includes(channel)||p.purpose!==`edu-games-${channel}`||!Number.isSafeInteger(p.id)||p.id<1||!Number.isInteger(p.iat)||!Number.isInteger(p.exp)
+    if(!['binary-team','device-team','cipher-team'].includes(channel)||p.purpose!==`edu-games-${channel}`||!Number.isSafeInteger(p.id)||p.id<1||!Number.isInteger(p.iat)||!Number.isInteger(p.exp)
         ||p.exp<=now/1000||p.iat>now/1000+5||p.exp-p.iat!==90||typeof p.name!=='string'||typeof p.manage!=='boolean'||typeof p.admin!=='boolean')return null;
     return p;
 }
 
 function createAdapter({app,rooms,fetch:fetcher=globalThis.fetch,clock=()=>Date.now()}) {
     if(app.id!=='edu-games'||!/^https?:\/\//.test(app.env.WP_API||''))throw Error('Invalid Edu Games registration');
-    const channels=new Map(['binary-team','device-team'].map(name=>[name,rooms.channel(app.id,name)])),connections=new Set();
+    const channels=new Map(['binary-team','device-team','cipher-team'].map(name=>[name,rooms.channel(app.id,name)])),connections=new Set();
     const send=(c,body)=>{if(c?.socket.readyState===1)c.socket.send(JSON.stringify(body));};
     const error=e=>({status:e.status||503,message:e.message||'실시간 서버에 연결하지 못했습니다.'});
     function remove(c){

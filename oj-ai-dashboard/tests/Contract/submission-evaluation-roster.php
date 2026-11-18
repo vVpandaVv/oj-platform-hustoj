@@ -12,6 +12,7 @@ require ABSPATH . 'vendor/autoload.php';
 
 use OJAI\Dashboard\Submission\Assessment\Application\Read_Submission_Evaluation_Roster;
 use OJAI\Dashboard\Submission\Assignment\Domain\Assignment_Roster_Snapshot;
+use OJAI\Dashboard\Submission\Assignment\Application\Assignment_Failure;
 use OJAI\Dashboard\Submission\Assignment\Port\Assignment_Roster_Port_Interface;
 use OJAI\Dashboard\Submission\Assignment\Port\Learner_Display_Snapshot_Port_Interface;
 use OJAI\Dashboard\Submission\Teacher\Application\Read_Teacher_Submissions;
@@ -102,6 +103,12 @@ $platform      = new class() implements Assignment_Roster_Port_Interface {
 	 */
 	public bool $fail = false;
 	/**
+	 * Expected dependency failure injection.
+	 *
+	 * @var string|null
+	 */
+	public ?string $reason = null;
+	/**
 	 * Read count.
 	 *
 	 * @var int
@@ -122,6 +129,9 @@ $platform      = new class() implements Assignment_Roster_Port_Interface {
 		roster_assert( 42 === $actor_user_id && 'group:test' === $context_id, 'Roster must receive authenticated actor and exact context.' );
 		if ( $this->fail ) {
 			throw new RuntimeException( 'Private platform failure.' ); }
+		if ( null !== $this->reason ) {
+			throw Assignment_Failure::because( $this->reason );
+		}
 		return new Assignment_Roster_Snapshot(
 			$context_type,
 			$context_id,
@@ -139,12 +149,22 @@ $platform      = new class() implements Assignment_Roster_Port_Interface {
 };
 $displays      = new class() implements Learner_Display_Snapshot_Port_Interface {
 	/**
+	 * Simulate an unavailable new member label.
+	 *
+	 * @var bool
+	 */
+	public bool $fail = false;
+	/**
 	 * Read a fixture display name.
 	 *
 	 * @param int $learner_user_id Learner identifier.
 	 * @return array<string,string>
+	 * @throws Assignment_Failure If a new member label is unavailable.
 	 */
 	public function snapshot( int $learner_user_id ): array {
+		if ( $this->fail ) {
+			throw Assignment_Failure::because( Assignment_Failure::DISPLAY_UNAVAILABLE );
+		}
 		return array( 'display_name' => 'Student ' . $learner_user_id ); }
 };
 $target        = static fn ( int $id, string $status, ?string $official = null, string $state = 'active' ): array => array(
@@ -185,7 +205,20 @@ roster_assert( ! $rows[3]['assigned'] && 'revoked' === $rows[3]['target_state'],
 roster_assert( ! $rows[5]['assigned'] && $rows[5]['current_member'] && null === $rows[5]['submission'], 'New members must not be treated as assigned.' );
 roster_assert( 'draft' === $rows[1]['status'] && null === $rows[1]['submission']['official_revision_id'], 'Draft remains unsubmitted.' );
 roster_assert( ! str_contains( json_encode( $rows ), 'secret' ) && ! str_contains( json_encode( $rows ), 'private' ), 'Roster must not expose answers, notes or membership metadata.' );
-$fails = static function ( callable $action ): void {
+roster_assert( 'current' === $read()['membership']['state'], 'A complete live roster must be explicitly identified.' );
+foreach ( array( Assignment_Failure::ROSTER_UNAVAILABLE, Assignment_Failure::ROSTER_INVALID, Assignment_Failure::ROSTER_TOO_LARGE ) as $reason ) {
+	$platform->reason = $reason;
+	$recovered        = $read();
+	roster_assert( 'unavailable' === $recovered['membership']['state'] && 'assignment_targets' === $recovered['membership']['scope'], 'Recovery must disclose that current membership is unavailable.' );
+	roster_assert( 5 === count( $recovered['items'] ), 'Recovery must include every stored target and must not invent new members.' );
+	roster_assert( array_fill( 0, 5, null ) === array_column( $recovered['items'], 'current_member' ), 'Unknown membership must not be labelled as removed.' );
+	roster_assert( 'r1' === $recovered['items'][0]['submission']['official_revision_id'] && ! $recovered['items'][3]['assigned'], 'Official source and revoked-target state must be preserved.' );
+}
+$platform->reason = null;
+$displays->fail   = true;
+roster_assert( 5 === count( $read()['items'] ), 'An unavailable new-member label must not hide existing submissions or expose a partial live roster.' );
+$displays->fail = false;
+$fails          = static function ( callable $action ): void {
 	try {
 		$action();
 	} catch ( Throwable ) {
@@ -193,7 +226,10 @@ $fails = static function ( callable $action ): void {
 	throw new RuntimeException( 'Partial or unauthorized roster must fail.' );
 };
 $fails( static fn () => $reader->read( 42, $assignment_id, 'group', 'other', 'context-r1' ) );
-$platform->fail = true;
+$platform->reason = Assignment_Failure::ROSTER_DENIED;
+$fails( $read );
+$platform->reason = null;
+$platform->fail   = true;
 $fails( $read );
 $platform->fail                        = false;
 $source->pages['page2']['next_cursor'] = 'page2';
@@ -373,6 +409,13 @@ $platform->fail = true;
 $controller->permissions_roster( $request );
 $error = $controller->roster( $request );
 roster_assert( $error instanceof WP_Error && 503 === $error->data['status'] && ! str_contains( $error->message, 'Private' ), 'Platform failure must be private and must not return partial counts.' );
+$platform->fail   = false;
+$platform->reason = Assignment_Failure::ROSTER_UNAVAILABLE;
+$controller->permissions_roster( $request );
+$recovered_response = $controller->roster( $request );
+roster_assert( $recovered_response instanceof WP_REST_Response && 200 === $recovered_response->status && 5 === count( $recovered_response->data['data']['items'] ), 'Authorized stored-target recovery must remain usable through REST.' );
+roster_assert( 'unavailable' === $recovered_response->data['data']['membership']['state'] && ! str_contains( json_encode( $recovered_response->data ), 'Private' ), 'Recovery must report its limited scope without private diagnostics.' );
+$platform->reason = null;
 echo "PASS roster REST: exact object and teacher capability, grant consumption, actor injection, denial, context drift, private errors\n";
 
 $grade_store      = new class() implements \OJAI\Dashboard\Submission\Assessment\Port\Non_Submission_Grade_Repository_Port_Interface {

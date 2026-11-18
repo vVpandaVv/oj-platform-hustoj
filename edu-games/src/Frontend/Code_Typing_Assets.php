@@ -16,10 +16,14 @@ final class Code_Typing_Assets {
             self::asset_version('blocks/code-typing/style.css')
         );
 
+        wp_register_script('edu-games-typing-entry',plugins_url('assets/typing/entry.js',EDU_GAMES_FILE),array(),self::asset_version('assets/typing/entry.js'),true);
+        wp_register_style('edu-games-typing-entry',plugins_url('assets/typing/entry.css',EDU_GAMES_FILE),array(),self::asset_version('assets/typing/entry.css'));
+        wp_register_script('edu-games-typing-verified',plugins_url('assets/typing/verified.js',EDU_GAMES_FILE),array('edu-games-typing-entry'),self::asset_version('assets/typing/verified.js'),true);
+        wp_register_style('edu-games-typing-verified',plugins_url('assets/typing/verified.css',EDU_GAMES_FILE),array(),self::asset_version('assets/typing/verified.css'));
         wp_register_script(
             'edu-games-code-typing',
             plugins_url('blocks/code-typing/view.js', EDU_GAMES_FILE),
-            array('edu-games-rank-pager','edu-games-progress'),
+            array('edu-games-rank-pager','edu-games-progress','edu-games-typing-verified'),
             self::asset_version('blocks/code-typing/view.js'),
             true
         );
@@ -31,6 +35,8 @@ final class Code_Typing_Assets {
         }
 
         wp_enqueue_style('edu-games-code-typing');
+        wp_enqueue_style('edu-games-typing-entry');
+        wp_enqueue_style('edu-games-typing-verified');
         wp_enqueue_script('edu-games-code-typing');
     }
 

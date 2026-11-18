@@ -1,15 +1,15 @@
 {
   "contract": "oj_ai.platform_compatibility_baseline@1",
-  "review_id": "API-AUD-2026-11-03",
-  "review_document": "docs/ai-assessment/release-1.2.18-2026-11-03.html",
-  "platform_version": "2.5.8",
-  "addon_api_version": "1.8.0",
-  "public_interfaces": 29,
-  "public_final_classes": 62,
-  "public_files": 91,
+  "review_id": "API-AUD-2026-11-11",
+  "review_document": "docs/ai-assessment/release-1.2.27-2026-11-11.html",
+  "platform_version": "2.5.9",
+  "addon_api_version": "1.9.0",
+  "public_interfaces": 31,
+  "public_final_classes": 67,
+  "public_files": 98,
   "implementation_audit": {
-    "file_count": 180,
-    "sha256": "efb83474467e84895be7dbfe81b028a25c2064bb477aff7d705bb66ded2b796f"
+    "file_count": 188,
+    "sha256": "02a346057249e7e42ea54cee480bbfe1001da5a35c199a7e0c03853f8ffc267f"
   },
   "scope": "Reviewed local provider source and consumer contracts; not a server installation or rollback result."
 }

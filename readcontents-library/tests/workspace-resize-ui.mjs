@@ -139,6 +139,43 @@ try {
   }
 
   await page.goto('https://readcontents-resize.test/');
+  const cards = page.locator('[data-contents-workspace="library"] article[aria-label]');
+  await cards.first().waitFor();
+  const grid = cards.first().locator('..');
+  for (const [available, expected] of [[1200, 4], [960, 3], [620, 2], [300, 1]]) {
+    await grid.evaluate((el, width) => { el.style.maxWidth = width + 'px'; }, available);
+    const layout = await cards.evaluateAll(items => {
+      const [first] = items;
+      const row = items.filter(item => item.offsetTop === first.offsetTop);
+      const aligned = row.map(item => item.lastElementChild.getBoundingClientRect().bottom);
+      const counts = row.map(item => item.children[1].getBoundingClientRect().bottom);
+      return {
+        columns: row.length,
+        width: first.offsetWidth,
+        widthAvailable: first.parentElement.clientWidth,
+        clipped: items.some(item => item.scrollWidth > item.clientWidth + 1 ||
+          [...item.querySelectorAll('button,h3')].some(el => el.scrollWidth > el.clientWidth + 1)),
+        aligned: Math.max(...aligned) - Math.min(...aligned) <= 1 && Math.max(...counts) - Math.min(...counts) <= 1,
+      };
+    });
+    assert.equal(layout.columns, expected, JSON.stringify({available, ...layout}));
+    assert.equal(layout.clipped, false, 'Card titles and actions fit');
+    assert.equal(layout.aligned, true, 'Rows align with mixed title lengths');
+    if (expected === 4) {
+      const sparseWidth = await cards.evaluateAll(items => {
+        items.slice(1).forEach(el => { el.style.display = 'none'; });
+        const width = items[0].offsetWidth;
+        items.slice(1).forEach(el => el.style.removeProperty('display'));
+        return width;
+      });
+      assert.equal(sparseWidth, layout.width, 'A single topic keeps the normal card width');
+    }
+    report.push({ check: 'library-grid', available, ...layout });
+  }
+  await grid.evaluate(el => el.style.removeProperty('max-width'));
+  await page.setViewportSize({ width: 320, height: 800 });
+  assert.ok(await grid.evaluate(el => el.getBoundingClientRect().right <= innerWidth && el.scrollWidth <= el.clientWidth + 1), 'Mobile grid fits without horizontal scrolling');
+  await page.setViewportSize({ width: 1440, height: 900 });
   await openLesson();
   await handle().waitFor();
   assert.equal(await handle().getAttribute('aria-orientation'), 'vertical');

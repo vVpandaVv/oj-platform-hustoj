@@ -11,10 +11,15 @@ final class Ranking_Page_Renderer {
     public static function games(): array {
         $registry=function_exists('edu_games_registry')?edu_games_registry()->all(false):array();$games=array();
         foreach($registry as $id=>$game){
-            if(($game['status']??'')!=='playable'||(!Game_Visibility::is_open($id)&&!Capabilities::can_preview_closed()))continue;
-            $variants=array();$play=isset(\EduGames\Play\Catalog::GAMES[$id]);$canRun=Capabilities::can_play()&&Game_Visibility::is_open($id);
-            if($play&&$canRun){$variants[]=array('id'=>'play','title'=>'현재 게임 · 오늘의 도전','api'=>'/play/'.$id.'/summary','archive'=>'/play/'.$id.'/archive','levels'=>self::levels(\EduGames\Play\Catalog::game($id)));}
-            $variants[]=array('id'=>'arcade','title'=>$play?'이전 아케이드':'개인 최고 기록','levels'=>array());
+            $historical=\EduGames\Games\Experience_Separation::moved($id);
+            if(($game['status']??'')!=='playable'||(!Game_Visibility::can_read_records($id)&&!Capabilities::can_preview_closed()))continue;
+            $variants=array();$play=isset(\EduGames\Play\Catalog::GAMES[$id]);$canRun=Capabilities::can_play()&&Game_Visibility::can_read_records($id);
+            if($play&&$canRun){$variants[]=array('id'=>'play','title'=>$historical?'이전 게임 기록':'현재 게임 · 오늘의 도전','api'=>'/play/'.$id.'/summary','archive'=>'/play/'.$id.'/archive','levels'=>self::levels(\EduGames\Play\Catalog::game($id)));}
+            if($id==='code-typing')foreach(array('typing-v3'=>array('검정 v3 · Enter만',\EduGames\Typing\Rules::VERSION,'enter'),'typing-v3-space'=>array('검정 v3 · Space·Enter 허용',\EduGames\Typing\Rules::VERSION,'space-enter'),'typing-v2'=>array('이전 검정 v2 · 연속 일치 CPM',\EduGames\Typing\Rules::LEGACY_VERSION,'enter')) as $variant=>[$title,$version,$lineEnding])$variants[]=array('id'=>$variant,'title'=>$title,'version'=>$version,'lineEnding'=>$lineEnding,'api'=>'/typing/leaderboard','levels'=>array_map(static fn($s)=>array('id'=>$s['id'],'title'=>strtoupper($s['language']).' · '.$s['title']),\EduGames\Typing\Service::samples()));
+            if(in_array($id,['cipher-vault','dance-bot'],true)) {
+                $variants[]=['id'=>'verified-arcade','title'=>'현재 규칙 · 오늘의 완주 기록','api'=>'/arcade/'.$id.'/ranking','levels'=>[['id'=>'standard','title'=>'표준'],['id'=>'challenge','title'=>'도전']]];
+            } else $variants[]=array('id'=>'arcade','title'=>$play?'이전 아케이드':'개인 최고 기록','levels'=>array());
+            if($id==='code-typing')$variants[count($variants)-1]['title']='이전 검정 · 기존 CPM';
             if(isset(\EduGames\Boards\Catalog::GAMES[$id])&&$canRun)$variants[]=array('id'=>'strategy','title'=>'이전 보드 기록','api'=>'/strategy/'.$id.'/summary','archive'=>'/strategy/'.$id.'/archive','levels'=>self::levels(\EduGames\Boards\Catalog::game($id)));
             if($id==='data-structure-lab'&&$canRun)$variants[]=array('id'=>'warehouse','title'=>'이전 물류 보드','api'=>'/warehouse/summary','levels'=>self::levels(\EduGames\Games\Modules\Data_Structure_Lab\Warehouse_Board::class));
             if(isset(\EduGames\Learning\Catalog::PROVIDERS[$id])&&$canRun)$variants[]=array('id'=>'assessment','title'=>'개념 평가 기록','api'=>'/learning/'.$id.'/summary','levels'=>array_map(static fn($key,$label)=>array('id'=>$key,'title'=>$label),array('all','easy','normal','hard'),array('혼합','기초','보통','심화')));

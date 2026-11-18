@@ -10,7 +10,7 @@ final class Room_Overview {
             $b=$s['boards'][$t['team']]??null;$t['wrong']=$b['wrong']??0;$t['preview']=array();
             if(!$b)continue;
             $t['stageCorrect']=$b['stageCorrect']??0;
-            foreach($b['cards']??$b['rows']??array() as $item)$t['preview'][]=array('state'=>$item['state']??'active','owner'=>$item['owner']);
+            foreach($b['cards']??$b['rows']??$b['vaults']??array() as $item)$t['preview'][]=array('state'=>$item['state']??(!empty($item['opened'])?'matched':'active'),'owner'=>$item['owner']);
         }unset($t);
         $ranked=$v['teams'];usort($ranked,static fn($a,$b)=>($b['score']<=>$a['score'])?:($b['correct']<=>$a['correct'])?:($a['wrong']<=>$b['wrong']));
         $rank=0;$last=null;foreach($ranked as $i=>$t){$key=$t['score'].':'.$t['correct'].':'.$t['wrong'];if($key!==$last)$rank=$i+1;$last=$key;foreach($v['teams'] as &$team)if($team['team']===$t['team'])$team['rank']=$rank;unset($team);}

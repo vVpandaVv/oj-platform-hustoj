@@ -1,0 +1,375 @@
+/* Dedicated workspaces; the original controls and state owners stay mounted. */
+.edu-game.eg-layout-v2 [data-game-workspace] {min-width:0}
+.edu-game.eg-layout-v2 :is(.oj-typing-workbench,.oj-image-workbench,.oj-device-table,.oj-rain-stage,.oj-binary-console) {border:1px solid var(--eg-line);border-radius:8px;overflow:clip;background:var(--eg-surface)}
+.edu-game.eg-layout-v2 .eg-objective {margin-bottom:8px}
+.edu-game.eg-layout-v2 .eg-game-header {padding-bottom:8px;margin-bottom:6px}
+.edu-game.eg-layout-v2 .eg-game-disclosure {margin-top:12px;padding-top:8px}
+
+/* Typing: a code editor first, and a small classroom disclosure, not a dashboard wall. */
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-shell .oj-typing-classroom {margin:0 0 8px;padding:0;border:0;border-bottom:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-shell .oj-typing-classroom>summary {display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;font-size:14px;color:var(--eg-ink);list-style:none}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-classroom>summary::-webkit-details-marker {display:none}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-classroom>summary::after {content:'+';margin-left:auto;font-size:22px;color:var(--eg-muted)}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-classroom[open]>summary::after {content:'−'}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-classroom summary svg {width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-classroom summary b {font-size:13px;color:var(--eg-accent)}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-classroom summary span {font-size:12px;color:var(--eg-muted)}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-classroom .oj-typing-assignments {margin:8px 0 16px}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-shell .oj-typing-workbench .oj-typing-controls {display:flex;align-items:end;gap:12px;flex-wrap:wrap;padding:10px 14px;margin:0;border-bottom:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-code-typing][data-typing-evaluation-selected] .oj-typing-shell .oj-typing-workbench .oj-typing-controls {display:none}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-controls>label {flex:0 1 135px}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-controls>.oj-typing-sample-select {flex:1 1 240px}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-mode-tabs {flex:2 1 400px}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-stats {margin:0;padding:10px 14px;background:var(--eg-fill);border:0;grid-template-columns:1.3fr 1fr 1fr;min-height:64px}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-speed-stat>strong {font-size:30px;color:var(--eg-accent)}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-stream-panel {padding:0 14px;border:0;border-radius:0}
+.edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-stream {height:clamp(240px,calc(100dvh - 390px),510px);margin:0;border:0;border-top:1px solid var(--eg-line);background:var(--eg-surface)}
+.edu-game.eg-layout-v2[data-code-typing].eg-focused .oj-typing-classroom {display:none}
+.edu-game.eg-layout-v2[data-code-typing].eg-focused[data-typing-evaluation-selected]:not([data-typing-verified-running]) .oj-typing-classroom {display:block}
+.edu-game.eg-layout-v2[data-code-typing].eg-focused .oj-typing-workbench .oj-typing-controls {display:none}
+.edu-game.eg-layout-v2[data-code-typing].eg-focused .oj-typing-workbench .oj-typing-stream {height:clamp(140px,calc(var(--eg-view-height) - 230px),540px)}
+.edu-game.eg-layout-v2[data-code-typing].eg-focused[data-typing-evaluation-ready] .oj-typing-workbench .oj-typing-stream {height:clamp(120px,calc(var(--eg-view-height) - 430px),330px)}
+.edu-game.eg-layout-v2[data-code-typing][data-typing-evaluation-selected] .oj-typing-workbench .oj-typing-stats {grid-template-columns:repeat(2,minmax(0,1fr))}
+
+/* Pixel editor: palette, row-aligned canvas, and recognition choices share one workbench. */
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-workbench {padding:10px 14px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-controls {margin:0;padding:0 0 8px;gap:10px;grid-template-columns:minmax(0,1fr) 120px 200px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-controls.is-restore {grid-template-columns:minmax(0,1fr) 120px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-stats {display:flex;flex-wrap:wrap;gap:5px 24px;background:none;border:0;margin:0;padding:4px 0 8px;min-height:28px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-stat {display:flex;align-items:baseline;gap:7px;padding:0;border:0;background:none;min-width:0}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-stat span {margin:0;font-size:11px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-stat strong {font-size:14px;line-height:1.4}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-stats .eg-objective {flex:1;min-width:140px;min-height:24px;height:auto;margin:0;padding:0;border:0;gap:8px;flex-wrap:nowrap;justify-content:flex-end}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-stats .eg-objective>strong {display:none}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-stats .eg-action-receipt {min-height:22px;flex-basis:auto;font-size:12px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-stats .eg-action-receipt[data-empty] {display:none}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-stats .eg-score-help>summary {min-height:24px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-palette-strip {padding:4px 0 8px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-palette {padding:0;gap:5px;grid-template-columns:repeat(16,minmax(0,1fr))}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-palette button {min-height:40px;padding:4px;grid-template-columns:20px 1fr;gap:3px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-palette button span {width:20px;height:24px;grid-row:auto}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-palette button em {display:none}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-layout {display:block;margin:0}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-canvas-panel {padding:0;border:0}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-panel-head {display:none}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-board-wrap {padding:0;overflow:visible;background:var(--eg-fill)}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-board-stage {min-width:0;width:min(100%,calc(clamp(208px,100dvh - 490px,480px) + 210px));grid-template-columns:minmax(0,1fr) 210px;border-color:var(--eg-ink)}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-commitbar {display:flex;align-items:center;gap:12px;padding-top:6px;border-top:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-answer-panel {flex:1;min-width:0;margin:0;padding:0;border:0}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-answer-choices {padding:0;gap:6px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-answer-choices button {min-height:40px;padding:5px;font-size:14px}
+.edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-feedback {font-size:12px;min-height:24px;padding:4px 0;line-height:1.4;margin:0}
+.edu-game.eg-layout-v2[data-image-data].eg-focused .oj-image-shell .oj-image-workbench {padding:6px 10px}
+.edu-game.eg-layout-v2[data-image-data].eg-focused .oj-image-shell .oj-image-controls {display:none}
+.edu-game.eg-layout-v2[data-image-data].eg-focused .oj-image-shell .oj-image-board-stage {width:min(100%,calc(clamp(160px,var(--eg-view-height) - 250px,510px) + 210px))}
+
+/* Card table: a real ready deck, with stage/progress and score on the table edge. */
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-table-head {display:flex;align-items:center;justify-content:space-between;gap:20px;padding:8px 14px;background:var(--eg-fill);border-bottom:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stagebar {flex:1;min-width:0;border:0;padding:0;gap:10px}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stagebar h3 {font-size:15px;line-height:1.4;margin:0}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stats {flex:0 0 320px;min-height:0;margin:0;padding:0;gap:0;background:none;border:0;grid-template-columns:repeat(3,minmax(0,1fr))}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stat {padding:0 12px;border:0;border-left:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stat strong {font-size:22px}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-deck {padding:10px;gap:10px;min-height:0}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-preview-card {height:clamp(90px,calc((100dvh - 330px)/3),168px);display:grid;place-items:center;border-radius:7px;border:1px solid var(--eg-line);background:var(--eg-fill)}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-preview-card .oj-device-card-mark {width:44px;height:44px;display:grid;place-items:center;color:var(--eg-accent);border:1px solid var(--eg-line);border-radius:6px;background:var(--eg-surface)}
+.edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-feedback {padding:5px 14px;margin:0;font-size:13px;min-height:28px}
+.edu-game.eg-layout-v2[data-device-matching].eg-focused .oj-device-shell .oj-device-deck {padding:6px;gap:6px}
+
+/* Keyword rain: a playfield with a fixed input dock, rather than a separate form. */
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-modebar {display:flex;align-items:center;gap:6px;margin:0 0 8px;padding:0;background:none;border:0}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-modebar select {margin-left:auto;max-width:180px;min-height:38px}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-modebar select+select {margin-left:0;max-width:130px}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-stats {margin:0;padding:8px 14px;background:var(--eg-fill);min-height:58px;border:0;border-bottom:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-game-panel {padding:0 12px}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-panel-head {padding:4px 0;border:0;min-height:30px}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-panel-head h3 {display:none}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-flight {border:1px solid var(--eg-line);border-radius:4px;overflow:clip}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-arena {height:clamp(200px,calc(100dvh - 370px),480px);border:0;border-radius:0}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-input-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:8px;margin:0;background:var(--eg-fill);border-top:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-input-row :is(input,button) {height:44px;min-height:44px;margin:0}
+.edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-shell .oj-rain-feedback {font-size:12px;min-height:26px;margin:0;padding:4px 0}
+.edu-game.eg-layout-v2[data-keyword-rain].eg-focused .oj-rain-shell .oj-rain-modebar {display:none}
+.edu-game.eg-layout-v2[data-keyword-rain].eg-focused .oj-rain-shell .oj-rain-arena {height:clamp(160px,calc(var(--eg-view-height) - 235px),520px)}
+
+/* Binary console: the score rail belongs to the eight-row board. */
+.edu-game.eg-layout-v2[data-binary-arcade] .oj-binary-shell .oj-binary-sidebar {position:static;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin:0;padding:8px 0;border:0;border-bottom:1px solid var(--eg-line);background:var(--eg-fill)}
+.edu-game.eg-layout-v2[data-binary-arcade] .oj-binary-shell .oj-binary-sidecard {padding:0 14px;border:0;border-right:1px solid var(--eg-line);border-radius:0;background:none}
+.edu-game.eg-layout-v2[data-binary-arcade] .oj-binary-shell .oj-binary-sidecard strong {font-size:22px}
+.edu-game.eg-layout-v2[data-binary-arcade] .oj-binary-shell .oj-binary-layout {display:block;margin:0}
+.edu-game.eg-layout-v2[data-binary-arcade] .oj-binary-shell .oj-binary-board {border:0;border-radius:0}
+
+/* Outliers: observation board and reversible review tray are separate, persistent zones. */
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-scanner {display:block;max-width:none}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-workspace {display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px;align-items:start}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-observatory {min-width:0}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-control-dock {display:grid;gap:10px;min-width:0}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-review {display:block;min-height:150px;border:1px solid var(--eg-line);border-radius:6px;padding:12px;background:var(--eg-fill)}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-tray {margin-top:12px;align-content:start}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-dispatch {display:grid;gap:6px;padding:0;margin:0}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-dispatch button {width:100%;min-height:44px}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-verdict {display:block;min-height:0;margin:0;padding:8px 0;border-top:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-verdict summary {font-size:13px;cursor:pointer}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-verdict summary span {color:var(--eg-success);margin-left:6px}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-verdict.miss summary span {color:var(--eg-danger)}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-verdict-values {grid-template-columns:repeat(4,minmax(0,1fr));margin-top:8px}
+.edu-game.eg-layout-v2[data-game=outlier-detection] .eo-means {padding:10px 0;margin:0}
+.edu-game.eg-layout-v2[data-game=outlier-detection].eg-focused .eo-means {padding-block:8px}
+
+/* Missing data: observations to the left, tool/estimates/calculation/commit to the right. */
+.edu-game.eg-layout-v2[data-game=missing-values] .em-repair-board {display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:20px;align-items:start}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-repair-targets {padding-top:0;min-width:0}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-toolbox {margin:0 0 12px;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-toolbox button {min-width:0;min-height:54px;padding:5px;justify-items:center;font-size:13px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-method-mark {min-height:18px;font-size:16px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-repair-targets .em-target {min-height:82px;padding:6px 4px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-observations {gap:7px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-record {padding:7px;gap:3px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-evidence {margin:6px 0 10px;font-size:14px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-confirm-dock {margin-top:10px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-confirm-dock button {width:100%;min-height:44px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-formula {margin-top:8px;padding-top:6px}
+.edu-game.eg-layout-v2[data-game=missing-values] .em-comparison {margin:6px 0;padding-top:6px}
+
+/* Extraction factory: input belt, gate console, then output labels and the dispatch button. */
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-factory {display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:14px 24px;align-items:start}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-infeed {grid-column:1/-1;grid-row:auto}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-infeed .ex-belt {min-height:76px;display:flex;justify-content:space-between;gap:8px;padding:8px 12px}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-machine-console {min-width:0}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-gates {grid-column:auto;grid-row:auto;margin:0;padding:12px 0}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-outfeed {grid-column:auto;grid-row:auto;min-width:0;padding-left:18px;border-left:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-outfeed .ex-belt {min-height:72px;padding:8px}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-labels {margin-top:10px;padding-top:8px}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-label-head {flex-wrap:wrap;gap:6px 12px;margin-bottom:6px}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-tickets {grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-ticket {padding:6px;min-width:0}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-ship-dock {display:flex;justify-content:flex-end;margin-top:10px}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-ship-dock button {min-width:120px;min-height:44px}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-last-shipment {margin:8px 0 0;padding-top:8px}
+.edu-game.eg-layout-v2[data-game=data-extraction] .ex-last-shipment summary {display:flex;flex-wrap:wrap;gap:5px 12px;font-size:12px;cursor:pointer}
+
+/* Visualization command desk: mission -> graph -> live instrument and one dispatch action. */
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-operation-board {border:1px solid var(--eg-line);border-radius:8px;padding:10px 14px;background:var(--eg-surface)}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-mission {padding:0 0 8px;margin:0;gap:12px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-mission h3 {font-size:18px;line-height:1.4;margin:0 0 3px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-mission p {font-size:13px;line-height:1.4;margin:0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-workspace {display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:20px;align-items:start;padding-top:8px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-plot-pane {min-width:0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-modes {margin:0 0 8px;gap:6px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-modes button {min-width:0;flex:1;min-height:36px;padding:5px;font-size:13px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-chart-title {margin:0 0 4px;gap:8px;flex-wrap:wrap}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-chart-title h4 {font-size:15px;margin:0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-chart-title span {font-size:11px}
+.edu-game.eg-layout-v2[data-game=data-visualization] :is(.er-chart,.ev-chart) {height:clamp(180px,calc(100dvh - 435px),340px);margin-top:0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .ev-pie-pair .ev-chart {height:220px}
+.edu-game.eg-layout-v2[data-game=data-visualization].eg-focused :is(.er-chart,.ev-chart) {height:clamp(160px,calc(var(--eg-view-height) - 405px),320px)}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch {display:block;min-width:0;padding:0 0 0 14px;border-left:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch>.eh-primary {width:100%;margin:8px 0 0;min-height:44px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch .er-map {height:100px;max-height:none;margin:6px 0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch .er-feedback {margin:0;padding:8px;border:0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch .er-feedback h3 {font-size:16px;margin:0 0 8px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch .er-outcome {grid-template-columns:1fr;gap:10px;margin:8px 0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch .er-outcome>div {gap:3px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-equation {display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;min-height:36px;padding:6px 0;margin:6px 0 0;font-size:12px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-equation strong {font-size:20px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .er-reward {margin:6px 0 0;font-size:12px;gap:12px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .ev-allocation {padding:3px 0;gap:2px 6px;grid-template-columns:minmax(0,1fr) 112px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .ev-region-readout meter {display:block;width:100%;height:10px;margin-top:2px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .ev-allocation-control {min-width:0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .ev-stepper {grid-template-columns:32px minmax(0,1fr) 32px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .ev-stepper :is(input,button) {height:36px;min-height:36px;width:100%;padding:2px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .dispatch-allocation-rail {display:grid;grid-template-columns:minmax(0,1fr) 30px;align-items:center;gap:4px;min-height:24px}
+.edu-game.eg-layout-v2[data-game=data-visualization] .dispatch-allocation-rail input {width:100%;min-height:24px;height:24px;margin:0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .ev-cargo {max-height:24px;min-height:0;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;margin:4px 0}
+.edu-game.eg-layout-v2[data-game=data-visualization] .ev-cargo>span {max-height:18px}
+
+/* AI boundary: a large plot and two live delivery lanes share the sorting board. */
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-workspace {grid-template-columns:minmax(0,1fr) 290px;gap:20px;align-items:start}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-plot-pane {min-width:0;background:var(--eg-fill);border:1px solid var(--eg-line);border-radius:6px;overflow:clip}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-plot-pane .eh-plot {display:block;width:100%;max-height:370px}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-boundary-controls {padding:4px 12px 8px;margin:0;gap:16px;background:var(--eg-surface)}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-routing {min-width:0;display:grid;gap:10px}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-lane {padding:10px;border:1px solid var(--eg-line);border-radius:5px}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-parcels {min-height:52px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-parcel {min-height:44px;padding:4px}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-dispatch-dock button {width:100%;min-height:44px}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .machine-receipt {margin:0;padding:6px 0;border-bottom:0}
+.edu-game.eg-layout-v2[data-game=ai-classifier-lab] .machine-receipt summary {display:flex;justify-content:space-between;gap:8px;cursor:pointer;font-size:12px}
+
+/* Handwriting lab: contact sheet -> label bins -> robot/validation, not one long worksheet. */
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-machine {grid-template-columns:minmax(230px,1.1fr) 108px minmax(230px,1fr);gap:16px;align-items:start}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-label-dock {padding:8px;border-inline:1px solid var(--eg-line);min-width:0}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-label-dock>h4 {font-size:13px;margin:0 0 8px;text-align:center}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-labels {grid-template-columns:1fr;gap:10px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-labels .eh-tray {min-height:74px;padding:6px;gap:3px;border-radius:5px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-labels .eh-tray>button {min-height:40px;font-size:26px;padding:2px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head {margin:4px 0;gap:6px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head h4 {font-size:14px;margin:0}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-machine .eh-digits {grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin:6px 0;min-height:0}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-machine .eh-digit {padding:4px;gap:2px;min-height:0}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-machine .eh-digit canvas {width:100%;max-width:48px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-memory {grid-template-columns:repeat(9,minmax(0,1fr));grid-auto-rows:48px;min-height:0;gap:3px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-memory .eh-digit canvas {max-width:22px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-memory .eh-digit span {min-height:0;font-size:10px;line-height:1.1}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-slot {min-height:48px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-chain {gap:8px;min-height:68px;margin:6px 0;flex-wrap:nowrap}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-chain .eh-digit {width:52px;flex-basis:52px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-meter-list {gap:4px;margin-bottom:6px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-test-dock button {width:100%;min-height:44px;margin-top:6px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab].eg-focused .coach-machine .eh-digit canvas {max-width:44px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab].eg-focused .coach-memory .eh-digit canvas {max-width:22px}
+.edu-game.eg-layout-v2[data-game=ai-model-lab].eg-focused .eh-caption {display:block;font-size:10px;line-height:1.3;margin:2px 0}
+
+/* Warehouse: current hand and selected order are visible above the storage lanes. */
+.edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-hud {grid-template-columns:1fr 1fr 2fr auto;gap:12px}
+.edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-run-stats {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-run-stats span {font-size:11px;color:var(--eg-muted)}
+.edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-route {display:flex;align-items:center;justify-content:center;gap:20px;padding:6px 0 10px;border-bottom:1px solid var(--eg-line)}
+.edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-route>div {display:flex;align-items:center;gap:10px;font-size:12px}
+.edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-route .wh-crate {width:38px;height:36px;flex-basis:38px}
+.edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-route .wh-crate strong {font-size:16px}
+.edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-route .wh-crate small {font-size:9px}
+.edu-game.eg-layout-v2[data-game=data-structure-lab].eg-focused .wh-route {padding:4px 0}
+.edu-game.eg-layout-v2[data-game=data-structure-lab].eg-focused .wh-route .wh-crate {height:28px}
+.edu-game.eg-layout-v2[data-game=data-structure-lab].eg-focused .wh-route .wh-crate strong {font-size:14px}
+.edu-game.eg-layout-v2[data-game=data-structure-lab].eg-focused .wh-route .wh-crate small {font-size:8px}
+
+@media(max-width:700px) {
+    .edu-game.eg-layout-v2[data-code-typing] .oj-typing-shell .oj-typing-workbench .oj-typing-controls {padding:8px;gap:6px}
+    .edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-mode-tabs {flex-basis:100%;order:-1}
+    .edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-controls>label {flex:1 1 100px}
+    .edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-stats {padding:8px;min-height:54px}
+    .edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-speed-stat>strong {font-size:24px}
+    .edu-game.eg-layout-v2[data-code-typing] .oj-typing-workbench .oj-typing-stream-panel {padding:0 8px}
+    .edu-game.eg-layout-v2[data-code-typing] .oj-typing-classroom summary span {max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-workbench {padding:6px 8px}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-controls {grid-template-columns:minmax(0,1fr) 100px}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-controls .oj-image-sample-select {grid-column:1/-1}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-stats {gap:3px 14px}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-palette {grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-palette button {grid-template-columns:18px 1fr;min-height:36px;padding:3px}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-palette button span {width:18px;height:22px}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-board-stage {grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-commitbar {flex-wrap:wrap;gap:5px}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-answer-panel {flex-basis:100%}
+    .edu-game.eg-layout-v2[data-image-data] .oj-image-shell .oj-image-commitbar>[data-action=check] {margin-left:auto;min-height:36px;padding:4px 14px}
+    .edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-table-head {padding:3px 8px;gap:8px;flex-wrap:wrap}
+    .edu-game.eg-layout-v2[data-device-matching].eg-focused .oj-device-shell .oj-device-deck {padding:5px}
+    .edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stagebar {flex-basis:100%}
+    .edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stats {flex:1;min-height:36px}
+    .edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stat {padding:0 8px}
+    .edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-stat strong {font-size:18px}
+    .edu-game.eg-layout-v2[data-device-matching] .oj-device-shell .oj-device-preview-card {height:72px}
+    .edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-modebar {flex-wrap:wrap}
+    .edu-game.eg-layout-v2[data-keyword-rain] .oj-rain-modebar select {flex:1;max-width:140px}
+    .edu-game.eg-layout-v2[data-binary-arcade] .oj-binary-shell .oj-binary-sidebar {grid-template-columns:repeat(3,minmax(0,1fr));row-gap:6px;padding:6px 0}
+    .edu-game.eg-layout-v2[data-binary-arcade] .oj-binary-shell .oj-binary-sidecard {padding:0 10px}
+    .edu-game.eg-layout-v2[data-binary-arcade] .oj-binary-shell .oj-binary-sidecard strong {font-size:18px}
+    .edu-game.eg-layout-v2[data-game=outlier-detection] .eo-workspace {grid-template-columns:1fr;gap:8px}
+    .edu-game.eg-layout-v2[data-game=outlier-detection] .eo-control-dock {grid-template-columns:minmax(0,1fr) 145px;gap:6px 10px}
+    .edu-game.eg-layout-v2[data-game=outlier-detection] .eo-review {min-height:70px;padding:8px;grid-row:1/3}
+    .edu-game.eg-layout-v2[data-game=outlier-detection] .eo-tray {margin-top:5px;min-height:32px}
+    .edu-game.eg-layout-v2[data-game=outlier-detection] .eo-dispatch button {font-size:12px;padding:5px}
+    .edu-game.eg-layout-v2[data-game=outlier-detection] .eo-means strong {font-size:18px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-repair-board {grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:8px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-evidence {font-size:12px;line-height:1.4;padding:6px;margin:4px 0}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-observations {grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-record {padding:4px;gap:2px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-record :is(small,span) {font-size:10px;line-height:1.2}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-record b {font-size:15px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-toolbox {grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;margin-bottom:6px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-toolbox:has(>:nth-child(3):last-child),.edu-game.eg-layout-v2[data-game=missing-values] .em-toolbox:has(>:nth-child(4):last-child) {grid-template-columns:repeat(2,minmax(0,1fr))}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-toolbox button {min-height:48px;font-size:11px;padding:3px;gap:2px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-targets {gap:3px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-repair-targets .em-target {min-height:68px;padding:4px 2px;gap:2px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-target strong {font-size:16px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-target>span {font-size:10px}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-formula {font-size:11px;line-height:1.3}
+    .edu-game.eg-layout-v2[data-game=missing-values] .em-confirm-dock button {font-size:12px;padding:5px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-factory {gap:8px;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-infeed .ex-belt {flex-wrap:wrap;justify-content:flex-start;gap:5px;padding:5px;min-height:56px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-infeed .eh-object {width:22px;height:32px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-outfeed {padding-left:7px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-gates {display:grid;grid-template-columns:1fr;gap:5px;padding:0}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-junction {padding:0;min-width:0}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-gate {padding:4px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-rejected {padding-top:6px;margin-top:6px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-tickets {grid-template-columns:1fr;gap:3px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-ticket {padding:4px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-label-head {gap:5px}
+    .edu-game.eg-layout-v2[data-game=data-extraction] .ex-fields {gap:3px 6px;font-size:11px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-operation-board {padding:6px 8px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-workspace {grid-template-columns:1fr;gap:8px;padding-top:6px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch {border-left:0;border-top:1px solid var(--eg-line);padding:6px 0 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 8px;align-items:center}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch>h4 {grid-column:1/-1;font-size:13px;margin:0}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch>.eh-primary {grid-column:1/-1;min-height:40px;margin:0}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch>.er-map {height:54px;grid-column:1;grid-row:2;margin:0}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch>.ev-supported {grid-column:2;grid-row:2;margin:0}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch>:is(.er-feedback,.ev-allocations,.dispatch-alternatives,.ev-balance,[data-instrument]) {grid-column:1/-1}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch .er-outcome {grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] :is(.er-chart,.ev-chart) {height:165px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .ev-pie-pair .ev-chart {height:120px}
+    .edu-game.eg-layout-v2[data-game=data-visualization].eg-focused :is(.er-chart,.ev-chart) {height:165px}
+    .edu-game.eg-layout-v2[data-game=data-visualization].eg-focused .ev-pie-pair .ev-chart {height:120px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-mission h3 {font-size:16px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-mission p {font-size:12px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-capacity {font-size:11px;padding:0 6px;max-width:100px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-chart-title>span {display:none}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-scope {display:none}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .ev-passengers {display:none}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .ev-gauges {margin:2px 0;gap:30px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .ev-water {height:42px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .ev-power {padding:0;margin:2px 0;gap:3px}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .er-dispatch:has(.ev-allocations) {display:block}
+    .edu-game.eg-layout-v2[data-game=data-visualization] .ev-cargo {display:none}
+    .edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-workspace {grid-template-columns:1fr;gap:8px}
+    .edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-routing {grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+    .edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-routing>:is(.cf-key,.cf-dispatch-dock,.machine-receipt) {grid-column:1/-1}
+    .edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-lane {padding:6px}
+    .edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-parcels {grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
+    .edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-parcel {padding:3px;min-height:40px}
+    .edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-parcel small {font-size:9px}
+    .edu-game.eg-layout-v2[data-game=ai-classifier-lab] .cf-plot-pane .eh-plot {max-height:205px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-machine {grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-label-dock {grid-column:1/-1;grid-row:1;padding:0;border:0}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-label-dock>h4 {display:none}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-labels {grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-labels .eh-tray {min-height:48px;padding:3px;display:flex;align-items:center;gap:5px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-labels .eh-tray>button {font-size:22px;min-height:38px;padding:2px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-labels .eh-tray small {font-size:10px;white-space:nowrap}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-machine .eh-digits {grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-machine .eh-digit {padding:3px;gap:1px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-machine .eh-digit canvas {max-width:30px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head {display:grid;grid-template-columns:minmax(0,1fr) 28px 28px;gap:2px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head h4 {font-size:12px;margin:0}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head>span {grid-row:2;grid-column:1;font-size:10px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head>button {width:28px;min-height:32px;grid-row:1/3;padding:0}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head>button:first-of-type {grid-column:2}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head>button:last-of-type {grid-column:3}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-photo-head>label {grid-column:1/-1;font-size:10px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-inspector .coach-photo-head {display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-inspector .coach-photo-head h4 {flex:1}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-inspector .coach-photo-head label {margin:0}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab].eg-focused .coach-machine .eh-digit canvas {max-width:28px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab].eg-focused .coach-memory .eh-digit canvas {max-width:16px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-memory {grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:36px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-memory .eh-digit canvas {max-width:16px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-slot {min-height:36px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-chain {min-height:44px;gap:3px;flex-wrap:wrap}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-chain .eh-digit {width:44px;flex-basis:44px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-chain .eh-digit span {min-height:0;font-size:10px;line-height:1.2}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-chain>strong {font-size:20px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-robot {padding:4px;font-size:10px;flex-wrap:wrap}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-robot>span {font-size:10px}
+    .edu-game.eg-layout-v2[data-game=ai-model-lab] .coach-test-dock button {font-size:12px;padding:5px}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-hud {grid-template-columns:1fr 1fr auto;gap:6px;padding:6px}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-run-stats {grid-column:1/3;grid-row:2;gap:6px}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-run-stats strong {font-size:14px}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-hud-actions {grid-column:3;grid-row:1/3}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-route {gap:10px;padding:4px 0 6px}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-route>div {gap:5px;font-size:10px}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab] .wh-route .wh-crate {width:28px;height:28px;flex-basis:28px}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab].eg-focused .wh-route {padding:1px 0}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab].eg-focused .wh-route .wh-crate {height:24px}
+    .edu-game.eg-layout-v2[data-game=data-structure-lab].eg-focused .wh-buffer {min-height:54px}
+}

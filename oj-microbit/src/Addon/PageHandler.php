@@ -33,10 +33,11 @@ final class PageHandler implements AddonPageHandlerV1
             'problemPageUrl' => $routes[$problemPage] ?? '', 'lessonPageUrl' => $routes[$lessonPage] ?? '',
             'createPageUrl' => $teacher ? ($routes['addon.oj_microbit.teacher_new'] ?? '') : '',
             'restUrl' => rest_url('oj-microbit/v1/'), 'nonce' => wp_create_nonce('wp_rest'), 'userId' => get_current_user_id(), 'isAdmin' => current_user_can('manage_options'),
+            'simulatorHostUrl' => function_exists('plugins_url') ? plugins_url('resources/simulator/host.html', OJ_MICROBIT_FILE) . '?ver=' . rawurlencode(OJ_MICROBIT_VERSION) : '',
             'runnerReady' => Settings::configured(), 'editorUrl' => 'https://makecode.microbit.org/']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $description = $lessons
             ? ($teacher ? '이 수업에 공개 문제를 적용하고 학생별 제출 결과를 확인합니다.' : '수업에서 문제를 열고 해당 수업의 제출 결과를 확인합니다.')
-            : ($teacher ? '안내 → 장치 → 예시 → 시작 코드 순서로 설정하세요.' : '공개된 문제를 선택해 MakeCode로 풀고 채점합니다.');
+            : ($teacher ? '문제 설명 → 장치·동작 → 공개 설정 순서로 작성하세요.' : '공개된 문제를 선택해 MakeCode로 풀고 채점합니다.');
         return AddonPageResponseV1::page($title, '<div class="ojmicrobit" data-oj-microbit data-config="' . $config . '">'
             . '<header class="ojp-page-header ojmicrobit-page-header"><div><h1>' . $title . '</h1><p>' . $description
             . '</p></div></header><p class="ojmicrobit-status" data-microbit-status role="status" aria-live="polite">실습 화면을 불러오고 있습니다.</p>'

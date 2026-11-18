@@ -417,6 +417,7 @@
                 this.state.correctCount += 1;
                 this.state.problems = this.state.problems.filter((entry) => entry.id !== problem.id);
                 this.addPopup("정답");
+                this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{text:'변환 성공 · 연습',tone:'success'}}));
 
                 if (this.focusedInputId === problem.id) {
                     this.focusedInputId = null;
@@ -429,6 +430,7 @@
             const gained = this.scoreFor(problem);
 
             this.state.score += gained;
+            this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{delta:gained,text:'변환 성공 · 자리값 합산',tone:'success'}}));
             this.state.streak += 1;
             this.state.correctCount += 1;
             this.state.linesLeft = Math.max(0, this.state.linesLeft - 1);

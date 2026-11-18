@@ -1,0 +1,227 @@
+{
+  "version": "0.5.0",
+  "project": {
+    "schema": 1,
+    "title": "0.5.0 기존 회로 · half",
+    "nodes": [
+      {
+        "id": "a",
+        "type": "SWITCH",
+        "x": 120,
+        "y": 120,
+        "label": "A",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 1,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "b",
+        "type": "SWITCH",
+        "x": 120,
+        "y": 336,
+        "label": "B",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "xor",
+        "type": "XOR",
+        "x": 456,
+        "y": 120,
+        "label": "합 · XOR",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "and",
+        "type": "AND",
+        "x": 456,
+        "y": 336,
+        "label": "자리올림 · AND",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "sum",
+        "type": "LED",
+        "x": 804,
+        "y": 120,
+        "label": "SUM",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "carry",
+        "type": "LED",
+        "x": 804,
+        "y": 336,
+        "label": "CARRY",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      }
+    ],
+    "wires": [
+      {
+        "id": "w0",
+        "from": {
+          "node": "a",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "xor",
+          "pin": "A"
+        },
+        "path": [
+          {
+            "x": 252,
+            "y": 120
+          },
+          {
+            "x": 444,
+            "y": 120
+          }
+        ]
+      },
+      {
+        "id": "w1",
+        "from": {
+          "node": "b",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "xor",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w2",
+        "from": {
+          "node": "a",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "and",
+          "pin": "A"
+        },
+        "path": [
+          {
+            "x": 252,
+            "y": 120
+          },
+          {
+            "x": 432,
+            "y": 120
+          },
+          {
+            "x": 432,
+            "y": 360
+          },
+          {
+            "x": 444,
+            "y": 360
+          }
+        ]
+      },
+      {
+        "id": "w3",
+        "from": {
+          "node": "b",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "and",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w4",
+        "from": {
+          "node": "xor",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "sum",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w5",
+        "from": {
+          "node": "and",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "carry",
+          "pin": "A"
+        }
+      }
+    ],
+    "components": [],
+    "stimuli": [],
+    "exercise": null,
+    "settings": {
+      "mode": "beginner",
+      "step": 17,
+      "speed": 31
+    }
+  }
+}

@@ -8,17 +8,10 @@
         .replace(/"/g, "&quot;");
 
     const labelFor = (symbol) => symbol === " " ? "공백" : symbol;
-    const displayText = (text) => escapeHtml(text).replace(/ /g, '<span class="oj-code-space-token">공백</span>');
     const normalizePlainText = (value) => String(value || "").toUpperCase().replace(/[^A-Z0-9 ]/g, "").replace(/\s+/g, " ").trim();
-
-    const shuffle = (items) => {
-        const shuffled = [...items];
-        for (let index = shuffled.length - 1; index > 0; index -= 1) {
-            const swapIndex = Math.floor(Math.random() * (index + 1));
-            [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
-        }
-        return shuffled;
-    };
+    const normalizeCode = (value) => /^\d{1,2}$/.test(String(value).trim()) ? String(value).trim().padStart(2, "0") : String(value).trim();
+    const orderedSymbols = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", " "];
+    const orderedTable = Object.fromEntries(orderedSymbols.map((symbol, index) => [symbol, symbol === " " ? "00" : String(index + 1).padStart(2, "0")]));
 
     class CharacterCodeGame {
         constructor(root) {
@@ -45,6 +38,11 @@
                 leaderboard: root.querySelector('[data-field="leaderboard"]'),
                 rankStatus: root.querySelector('[data-field="rank-status"]'),
                 submitButton: root.querySelector('[data-action="submit"]'),
+                submitLabel: root.querySelector('[data-field="submit-label"]'),
+                scoreBurst: root.querySelector('[data-field="score-burst"]'),
+                scoreDetail: root.querySelector('[data-field="score-detail"]'),
+                timeTrack: root.querySelector('[data-field="time-track"]'),
+                timeFill: root.querySelector('[data-field="time-fill"]'),
             };
             this.personalStorageKey = `${STORAGE_KEY}:${this.config.currentUserId || 0}`;
             this.bestScore = 0;
@@ -78,10 +76,12 @@
                 leaderboard: [],
                 myRank: null,
                 isSaving: false,
+                isFinishing: false,
+                lastAnswer: "",
             };
 
             this.bindEvents();
-            this.newPracticeRound();
+            this.newPracticeRound(false);
             this.loadLeaderboard();
             this.account = window.EduGamesProgress?.connect(this.config, this.root, data => { this.bestScore = Number(data.bestScore) || 0; this.renderStatsOnly(); });
         }
@@ -107,6 +107,7 @@
 
             return {
                 symbols,
+                codeTable: rules.codeTable || orderedTable,
                 phraseMetadata: rules.phraseMetadata || {},
                 modes,
                 difficulties,
@@ -115,8 +116,8 @@
                     ? rules.defaultDifficulty
                     : Object.keys(difficulties)[0],
                 codeRange: {
-                    min: Number(rules.codeRange && rules.codeRange.min) || 10,
-                    max: Number(rules.codeRange && rules.codeRange.max) || 99,
+                    min: Number(rules.codeRange?.min ?? 0),
+                    max: Number(rules.codeRange?.max ?? 36),
                 },
                 scoring: {
                     lengthBonusPerCharacter: Number(rules.scoring && rules.scoring.lengthBonusPerCharacter) || 4,
@@ -178,10 +179,19 @@
             });
 
             this.root.addEventListener("keydown", (event) => {
-                if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+                if (event.isComposing || event.key !== "Enter") return;
+                const input = event.target.closest('[data-rebuild-index]');
+                if (input && !event.ctrlKey && !event.metaKey) {
+                    const next = this.root.querySelector(`[data-rebuild-index="${Number(input.dataset.rebuildIndex) + 1}"]`);
+                    if (next) { event.preventDefault(); next.focus(); return; }
+                }
+                if (event.ctrlKey || event.metaKey || (!event.shiftKey && event.target.matches('[data-answer-input],[data-rebuild-index]'))) {
                     event.preventDefault();
                     this.submit();
                 }
+            });
+            this.root.addEventListener("input", (event) => {
+                if (event.target.matches('[data-answer-input],[data-rebuild-index]')) this.updateInputFeedback();
             });
         }
 
@@ -213,10 +223,10 @@
             this.state.endReason = "";
             this.state.modeHistory = [];
             this.render();
-            this.setFeedback("실전 시작을 누르면 문제마다 제한시간이 주어집니다. 정답이면 시간이 다시 채워지고, 오답이나 시간 초과는 즉시 종료됩니다.");
+            this.setFeedback("정답이면 시간 충전 · 오답·시간 초과로 종료");
         }
 
-        newPracticeRound() {
+        newPracticeRound(focus = true) {
             const wasPractice = this.state.playType === "practice";
             this.clearAdvanceTimer();
             this.clearCountdownTimer();
@@ -229,14 +239,17 @@
             this.state.currentMistakes = 0;
             this.state.endReason = "";
             this.state.solved = false;
+            this.state.lastAnswer = "";
             this.state.currentMode = this.state.practiceMode;
             this.state.table = this.generateCodeTable();
             this.state.challenge = this.createChallenge();
             this.render();
-            this.setFeedback("연습 문제입니다. 점수는 순위에 기록되지 않습니다.");
+            this.setFeedback("연습 · 순위 미반영");
+            if (focus) this.focusAnswer();
         }
 
         startRankedGame() {
+            if (this.state.isFinishing || this.state.isSaving) return;
             this.clearAdvanceTimer();
             this.clearCountdownTimer();
             this.state.playType = "ranked";
@@ -264,7 +277,7 @@
             this.sessionRefreshPromise = this.refreshSessionToken();
             this.prepareRankedRound();
             this.startCountdownTimer();
-            this.setFeedback(`실전 게임이 시작되었습니다. 이번 문제 제한시간은 ${this.state.timeLimitSeconds}초입니다.`);
+            this.setFeedback("기록 도전 시작");
         }
 
         prepareRankedRound() {
@@ -278,7 +291,9 @@
             this.state.hintCount = 0;
             this.state.currentMistakes = 0;
             this.state.solved = false;
+            this.state.lastAnswer = "";
             this.render();
+            this.focusAnswer();
         }
 
         advanceRankedRound() {
@@ -289,10 +304,13 @@
             this.state.round += 1;
             this.prepareRankedRound();
             this.startCountdownTimer();
-            this.setFeedback(`다음 문제가 출제되었습니다. 제한시간 ${this.state.timeLimitSeconds}초입니다.`);
+            this.setFeedback("");
         }
 
         async finishRankedGame(reason = "finished", message = "") {
+            if (this.state.isFinishing || this.state.status === "finished") return;
+            this.state.isFinishing = true;
+            this.state.lastAnswer = this.captureAnswer();
             this.clearAdvanceTimer();
             this.clearCountdownTimer();
             if (reason === "timeout" && !this.state.solved) {
@@ -305,9 +323,12 @@
             this.bestScore = Math.max(this.bestScore, this.state.score);
             try { window.localStorage.setItem(this.personalStorageKey, String(this.bestScore)); } catch { /* Storage can be disabled; the server record is unaffected. */ }
             this.render();
+            this.root.dataset.codeOutcome = reason === "wrong" || reason === "timeout" ? "wrong" : "";
 
             if (!this.config.isLoggedIn) {
                 this.setFeedback(message || "실전 종료. 로그인하면 점수와 순위가 서버에 기록됩니다.");
+                this.state.isFinishing = false;
+                this.renderSubmitButton();
                 return;
             }
 
@@ -317,7 +338,12 @@
                 await this.sessionRefreshPromise;
             }
 
-            this.saveRankedScore();
+            try {
+                await this.saveRankedScore();
+            } finally {
+                this.state.isFinishing = false;
+                this.renderSubmitButton();
+            }
         }
 
         async refreshSessionToken() {
@@ -352,13 +378,8 @@
         }
 
         generateCodeTable() {
-            const min = Math.min(this.rules.codeRange.min, this.rules.codeRange.max);
-            const max = Math.max(this.rules.codeRange.min, this.rules.codeRange.max);
-            const width = String(max).length;
-            const codes = shuffle(Array.from({ length: (max - min) + 1 }, (_, index) => String(index + min).padStart(width, "0")));
-
             return this.symbols.reduce((table, symbol, index) => {
-                table[symbol] = codes[index];
+                table[symbol] = this.rules.codeTable?.[symbol] ?? orderedTable[symbol] ?? String(index + 1).padStart(2, "0");
                 return table;
             }, {});
         }
@@ -372,7 +393,7 @@
             return {
                 text,
                 codes,
-                usedSymbols: shuffle(usedSymbols),
+                usedSymbols: usedSymbols.sort((left, right) => orderedSymbols.indexOf(left) - orderedSymbols.indexOf(right)),
             };
         }
 
@@ -420,9 +441,12 @@
         }
 
         render() {
-            const meta = this.rules.phraseMetadata[this.state.challenge?.text];
-            const metaNode = this.root.querySelector('[data-field="phrase-meta"]');
-            if (metaNode) metaNode.textContent = meta && this.state.playType === 'practice' ? `${meta.tags.join(' · ')} · ${meta.length}글자 · 서로 다른 기호 ${meta.uniqueSymbols}개` : '';
+            this.root.dataset.codePlay = this.state.playType;
+            this.root.dataset.codeStatus = this.state.status;
+            this.root.dataset.codeMode = this.state.currentMode;
+            this.root.dataset.codeOutcome = "";
+            if (this.fields.scoreBurst) this.fields.scoreBurst.textContent = "";
+            if (this.fields.scoreDetail) this.fields.scoreDetail.textContent = "";
             this.root.querySelectorAll("[data-play-type]").forEach((button) => {
                 const active = button.dataset.playType === this.state.playType;
                 button.classList.toggle("is-active", active);
@@ -437,7 +461,10 @@
             });
 
             this.fields.practiceModes.classList.toggle("is-disabled", this.state.playType !== "practice");
+            this.fields.practiceModes.hidden = this.state.playType !== "practice";
             this.fields.difficulty.value = this.state.difficulty;
+            this.fields.difficulty.disabled = this.state.status === "playing";
+            this.root.querySelector('[data-action="hint"]').disabled = this.state.playType !== "practice" || this.state.solved;
             this.fields.modeLabel.textContent = this.getPanelModeLabel();
             this.fields.difficultyLabel.textContent = this.getDifficulty().label;
             this.renderStatsOnly();
@@ -464,7 +491,9 @@
 
         renderStatsOnly() {
             const goal = this.root.querySelector('[data-field="challenge-goal"]');
-            if (goal) goal.textContent = this.state.playType === 'ranked' ? `이 기기 최고 ${this.bestScore}점 · 다음 목표 ${Math.min(999999, Math.max(500, Math.ceil((this.bestScore + 1) / 500) * 500))}점 · 무오답 생존` : '자유 연습 · 디코드·인코드·표 복원';
+            if (goal) goal.textContent = this.state.status === "ranked-idle" ? "몇 문제까지 이어 갈 수 있을까요?"
+                : this.state.status === "finished" ? this.endReasonLabel()
+                : { decode: "숫자를 글자로 바꿔 보세요", encode: "글자를 숫자 코드로 바꿔 보세요", rebuild: "짝을 보고 빈 코드표를 채워 보세요" }[this.state.currentMode];
             this.fields.score.textContent = String(this.state.score);
             this.fields.progressLabel.textContent = this.state.playType === "ranked" ? "문제 시간" : "연습 번호";
             this.fields.round.textContent = this.state.playType === "ranked"
@@ -476,19 +505,22 @@
             );
             this.fields.streak.textContent = String(this.state.streak);
             this.fields.best.textContent = String(this.bestScore);
+            if (this.fields.timeTrack) {
+                const timed = this.state.playType === "ranked";
+                const percent = Math.max(0, Math.min(100, this.state.timeLeftSeconds / Math.max(1, this.state.timeLimitSeconds) * 100));
+                this.fields.timeTrack.hidden = !timed;
+                this.fields.timeTrack.setAttribute("aria-valuenow", String(Math.round(percent)));
+                this.fields.timeFill.style.width = `${percent}%`;
+                this.fields.timeTrack.classList.toggle("is-warning", timed && this.state.timeLeftSeconds <= 5);
+            }
         }
 
         renderPrompt() {
             if (this.state.playType === "ranked" && this.state.status === "ranked-idle") {
-                const difficulty = this.getDifficulty();
-                const start = Number(difficulty.roundTimeSeconds || difficulty.timeLimitSeconds) || this.currentRoundTimeLimit();
-                const minimum = Number(difficulty.minimumRoundTimeSeconds) || Math.ceil(start * 0.55);
-                const decrease = Number(difficulty.timeDecreasePerStep) || 2;
-                const stepSize = Number(difficulty.correctAnswersPerStep) || 3;
                 this.fields.prompt.innerHTML = `
                     <div class="oj-code-intro">
-                        <strong>실전 게임</strong>
-                        <span>문제마다 ${start}초에서 시작합니다. 정답이면 시간이 초기화되고, ${stepSize}문제마다 ${decrease}초씩 줄어 최소 ${minimum}초까지 내려갑니다.</span>
+                        <strong>최고 ${this.bestScore}점</strong>
+                        <span>복호화 · 암호화 · 코드표 복원</span>
                     </div>
                 `;
                 return;
@@ -512,13 +544,13 @@
 
             if (this.state.currentMode === "decode") {
                 this.fields.prompt.innerHTML = `
-                    <div class="oj-code-array">${challenge.codes.map((code) => `<span>${code}</span>`).join("")}</div>
+                    <div class="oj-code-array">${challenge.codes.map((code, index) => `<span data-code-index="${index}">${escapeHtml(code)}</span>`).join("")}</div>
                 `;
                 return;
             }
 
             if (this.state.currentMode === "encode") {
-                this.fields.prompt.innerHTML = `<div class="oj-code-plain">${displayText(challenge.text)}</div>`;
+                this.fields.prompt.innerHTML = `<div class="oj-code-plain">${challenge.text.split("").map((symbol, index) => `<span data-symbol-index="${index}"${symbol === " " ? ' class="oj-code-space-token"' : ''}>${escapeHtml(labelFor(symbol))}</span>`).join("")}</div>`;
                 return;
             }
 
@@ -527,7 +559,7 @@
                     ${challenge.text.split("").map((symbol, index) => `
                         <div class="oj-code-pair">
                             <span>${labelFor(symbol)}</span>
-                            <strong>${challenge.codes[index]}</strong>
+                            <strong>${escapeHtml(challenge.codes[index])}</strong>
                         </div>
                     `).join("")}
                 </div>
@@ -536,25 +568,26 @@
 
         renderAnswer() {
             if (this.state.playType === "ranked" && this.state.status === "ranked-idle") {
-                this.fields.answer.innerHTML = '<div class="oj-code-empty">실전 시작 버튼을 눌러 기록 도전을 시작하세요.</div>';
+                this.fields.answer.innerHTML = `<div class="oj-code-empty">문제당 ${this.currentRoundTimeLimit()}초부터 시작</div>`;
                 return;
             }
 
             if (this.state.playType === "ranked" && this.state.status === "finished") {
-                this.fields.answer.innerHTML = '<div class="oj-code-empty">점수 저장 후 순위표가 갱신됩니다.</div>';
+                const expected = this.state.challenge ? (this.state.currentMode === "decode" ? this.state.challenge.text : this.state.currentMode === "encode" ? this.state.challenge.codes.join(" ") : this.state.challenge.usedSymbols.map(symbol => `${labelFor(symbol)}=${this.state.table[symbol]}`).join(" · ")) : "";
+                this.fields.answer.innerHTML = expected ? `<div class="oj-code-last-answer"><span>내 입력</span><code>${escapeHtml(this.state.lastAnswer || "미입력")}</code><span>정답</span><code>${escapeHtml(expected)}</code></div>` : "";
                 return;
             }
 
             if (this.state.currentMode === "decode") {
                 this.fields.answer.innerHTML = `
-                    <textarea class="oj-code-input" data-answer-input rows="3" spellcheck="false" autocomplete="off" placeholder="원문을 입력하세요"></textarea>
+                    <label class="oj-code-entry"><span class="oj-code-entry-head">원문 <small data-entry-count>0 / ${this.state.challenge.text.length}</small></span><input type="text" class="oj-code-input" data-answer-input spellcheck="false" autocomplete="off" autocapitalize="characters" aria-label="해독한 원문" placeholder="원문 입력"></label>
                 `;
                 return;
             }
 
             if (this.state.currentMode === "encode") {
                 this.fields.answer.innerHTML = `
-                    <textarea class="oj-code-input" data-answer-input rows="3" inputmode="numeric" spellcheck="false" autocomplete="off" placeholder="코드 배열을 입력하세요. 예: 42 17 30"></textarea>
+                    <label class="oj-code-entry"><span class="oj-code-entry-head">숫자 코드 <small data-entry-count>0 / ${this.state.challenge.codes.length}</small></span><textarea class="oj-code-input" data-answer-input rows="2" inputmode="text" spellcheck="false" autocomplete="off" aria-label="암호화한 숫자 코드열" placeholder="예: 01 02 00 27"></textarea></label>
                 `;
                 return;
             }
@@ -563,7 +596,7 @@
                 .map((symbol, index) => `
                     <label class="oj-code-rebuild-cell">
                         <span>${labelFor(symbol)}</span>
-                        <input type="text" inputmode="numeric" maxlength="2" data-rebuild-index="${index}" autocomplete="off" />
+                        <input type="text" inputmode="numeric" maxlength="2" data-rebuild-index="${index}" aria-label="${labelFor(symbol)}의 코드" autocomplete="off" />
                     </label>
                 `)
                 .join("");
@@ -572,61 +605,40 @@
         }
 
         renderCodeTable() {
-            if (!this.state.challenge) {
-                this.fields.tableCount.textContent = "0";
-                this.fields.codeTable.innerHTML = '<div class="oj-code-table-empty">문제가 시작되면 코드표가 표시됩니다.</div>';
-                return;
-            }
-
-            if (this.state.currentMode === "rebuild") {
-                const symbols = this.state.challenge.usedSymbols;
-                this.fields.tableCount.textContent = String(symbols.length);
-                this.fields.codeTable.innerHTML = symbols
-                    .map((symbol) => `
-                        <div class="oj-code-table-cell is-missing">
-                            <span>${labelFor(symbol)}</span>
-                            <strong>??</strong>
-                        </div>
-                    `)
-                    .join("");
-                return;
-            }
-
             this.fields.tableCount.textContent = String(this.symbols.length);
-            this.fields.codeTable.innerHTML = this.symbols
-                .map((symbol) => `
-                    <div class="oj-code-table-cell">
-                        <span>${labelFor(symbol)}</span>
-                        <strong>${this.state.table[symbol]}</strong>
-                    </div>
-                `)
-                .join("");
+            const table = Object.keys(this.state.table).length ? this.state.table : this.generateCodeTable();
+            const missing = this.state.currentMode === "rebuild" && !this.state.solved && this.state.status !== "finished" ? this.state.challenge?.usedSymbols || [] : [];
+            const group = (label, symbols, kind) => `<section class="oj-code-table-group ${kind}"><h4>${label}</h4><div class="oj-code-table-grid">${symbols.map(symbol => `<div class="oj-code-table-cell${missing.includes(symbol) ? ' is-missing' : ''}" data-table-symbol="${escapeHtml(symbol)}"><span>${labelFor(symbol)}</span><strong>${missing.includes(symbol) ? '??' : escapeHtml(table[symbol])}</strong></div>`).join("")}</div></section>`;
+            this.fields.codeTable.innerHTML = group("알파벳", [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], "is-alphabet")
+                + group("숫자 문자", [..."0123456789"], "is-digits") + group("공백", [" "], "is-space");
         }
 
         renderSubmitButton() {
+            const label = this.fields.submitLabel || this.fields.submitButton;
             if (this.state.playType === "ranked" && this.state.status === "ranked-idle") {
-                this.fields.submitButton.textContent = "실전 시작";
+                label.textContent = "실전 시작";
                 this.fields.submitButton.disabled = false;
                 return;
             }
 
             if (this.state.playType === "ranked" && this.state.status === "finished") {
-                this.fields.submitButton.textContent = "다시 시작";
-                this.fields.submitButton.disabled = this.state.isSaving;
+                label.textContent = "다시 시작";
+                this.fields.submitButton.disabled = this.state.isSaving || this.state.isFinishing;
                 return;
             }
 
             if (this.state.playType === "practice" && this.state.solved) {
-                this.fields.submitButton.textContent = "다음 연습";
+                label.textContent = "다음 연습";
                 this.fields.submitButton.disabled = false;
                 return;
             }
 
-            this.fields.submitButton.textContent = "제출";
-            this.fields.submitButton.disabled = this.state.isSaving;
+            label.textContent = "확인";
+            this.fields.submitButton.disabled = this.state.isSaving || (this.state.playType === "ranked" && this.state.solved);
         }
 
         submit() {
+            if (this.state.isSaving || this.state.isFinishing) return;
             if (this.state.playType === "ranked" && this.state.status !== "playing") {
                 this.startRankedGame();
                 return;
@@ -649,21 +661,24 @@
                 return;
             }
 
+            this.state.lastAnswer = this.captureAnswer();
             const result = this.evaluate();
             if (!result.ok) {
                 this.state.streak = 0;
                 this.state.currentMistakes += 1;
                 this.state.mistakes += this.state.playType === "ranked" ? 1 : 0;
                 this.renderStatsOnly();
+                this.showOutcome(false, 0, result.badIndexes || []);
                 if (this.state.playType === "ranked") {
                     this.finishRankedGame("wrong", `${result.message} 오답 제출로 실전이 종료되었습니다.`);
                     return;
                 }
-                this.setFeedback(result.message);
+                this.setFeedback(result.message, "wrong");
                 return;
             }
 
             const gained = this.scoreForRound();
+            const details = this.scoreExplanation();
             this.state.score += gained;
             this.state.streak += 1;
             this.state.correctCount += this.state.playType === "ranked" ? 1 : 0;
@@ -672,13 +687,17 @@
             try { window.localStorage.setItem(this.personalStorageKey, String(this.bestScore)); } catch { /* Storage can be disabled; the server record is unaffected. */ }
             this.renderStatsOnly();
             this.renderSubmitButton();
+            this.showOutcome(true, gained);
+            if (this.fields.scoreDetail) this.fields.scoreDetail.textContent = details;
+            this.root.querySelectorAll('[data-answer-input],[data-rebuild-index]').forEach(input => { input.readOnly = true; });
+            if (this.state.currentMode === "rebuild") this.renderCodeTable();
 
             if (this.state.playType === "practice") {
-                this.setFeedback(`정답입니다. 연습 점수 +${gained}`);
+                this.setFeedback("정답 · 다음 연습에 도전하세요", "correct");
                 return;
             }
 
-            this.setFeedback(`정답입니다. +${gained}점`);
+            this.setFeedback("정답 · 시간 충전", "correct");
             this.clearCountdownTimer();
             this.state.timeLeftSeconds = this.currentRoundTimeLimit();
             this.renderStatsOnly();
@@ -734,7 +753,7 @@
                 const answer = normalizePlainText(input ? input.value : "");
                 return answer === this.state.challenge.text
                     ? { ok: true, message: "정답입니다." }
-                    : { ok: false, message: "원문을 다시 확인하세요." };
+                    : { ok: false, message: "표시한 글자를 확인하세요", badIndexes: this.differentIndexes([...answer], [...this.state.challenge.text]) };
             }
 
             if (this.state.currentMode === "encode") {
@@ -742,17 +761,65 @@
                 const answer = this.parseCodeArray(input ? input.value : "");
                 return this.arraysEqual(answer, this.state.challenge.codes)
                     ? { ok: true, message: "정답입니다." }
-                    : { ok: false, message: "코드 배열을 다시 확인하세요." };
+                    : { ok: false, message: "표시한 숫자 코드를 확인하세요", badIndexes: this.differentIndexes(answer, this.state.challenge.codes) };
             }
 
-            const missing = this.state.challenge.usedSymbols.find((symbol, index) => {
+            const badIndexes = [];
+            this.state.challenge.usedSymbols.forEach((symbol, index) => {
                 const input = this.root.querySelector(`[data-rebuild-index="${index}"]`);
-                return !input || input.value.trim() !== this.state.table[symbol];
+                if (!input || normalizeCode(input.value) !== this.state.table[symbol]) badIndexes.push(index);
             });
 
-            return missing
-                ? { ok: false, message: `${labelFor(missing)} 값을 다시 확인하세요.` }
+            return badIndexes.length
+                ? { ok: false, message: "표시한 빈칸을 확인하세요", badIndexes }
                 : { ok: true, message: "정답입니다." };
+        }
+
+        differentIndexes(left, right) {
+            const indexes = right.flatMap((value, index) => left[index] !== value ? [index] : []);
+            if (left.length > right.length && right.length) indexes.push(right.length - 1);
+            return indexes;
+        }
+
+        captureAnswer() {
+            if (!this.state.challenge) return "";
+            return this.state.currentMode === "rebuild"
+                ? this.state.challenge.usedSymbols.map((symbol, index) => `${labelFor(symbol)}=${this.root.querySelector(`[data-rebuild-index="${index}"]`)?.value || "?"}`).join(" · ")
+                : this.root.querySelector('[data-answer-input]')?.value || "";
+        }
+
+        focusAnswer() {
+            this.root.querySelector('[data-answer-input],[data-rebuild-index]')?.focus({ preventScroll: true });
+        }
+
+        updateInputFeedback() {
+            if (this.state.solved) return;
+            const input = this.root.querySelector('[data-answer-input]');
+            const count = input ? (this.state.currentMode === "encode" ? this.parseCodeArray(input.value).length : normalizePlainText(input.value).length) : -1;
+            const counter = this.root.querySelector('[data-entry-count]');
+            if (counter) counter.textContent = `${count} / ${this.state.challenge.text.length}`;
+            this.root.querySelectorAll('[data-code-index],[data-symbol-index]').forEach((node, index) => {
+                node.classList.toggle("is-entered", index < count);
+                node.classList.toggle("is-current", index === count);
+                node.classList.remove("is-wrong");
+            });
+            this.root.querySelectorAll('[aria-invalid="true"]').forEach(node => node.removeAttribute("aria-invalid"));
+            this.root.dataset.codeOutcome = "";
+            if (this.fields.feedback.dataset.tone === "wrong") this.setFeedback("수정 중");
+        }
+
+        showOutcome(correct, gained, badIndexes = []) {
+            this.root.dataset.codeOutcome = correct ? "correct" : "wrong";
+            if (this.fields.scoreBurst) this.fields.scoreBurst.textContent = correct ? `+${gained}` : "";
+            const input = this.root.querySelector('[data-answer-input]');
+            if (input) input.setAttribute("aria-invalid", correct ? "false" : "true");
+            const selector = this.state.currentMode === "decode" ? '[data-code-index]' : '[data-symbol-index]';
+            this.root.querySelectorAll(selector).forEach((node, index) => node.classList.toggle("is-wrong", !correct && badIndexes.includes(index)));
+            this.root.querySelectorAll('[data-rebuild-index]').forEach((node, index) => node.setAttribute("aria-invalid", !correct && badIndexes.includes(index) ? "true" : "false"));
+            const target = correct ? this.fields.scoreBurst : this.fields.answer;
+            if (target?.animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                target.animate(correct ? [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "translateY(0)" }] : [{ transform: "translateX(0)" }, { transform: "translateX(-4px)" }, { transform: "translateX(4px)" }, { transform: "translateX(0)" }], { duration: correct ? 300 : 180 });
+            }
         }
 
         parseCodeArray(value) {
@@ -761,7 +828,7 @@
                 if (token.length > 2 && token.length % 2 === 0) {
                     return token.match(/.{2}/g) || [];
                 }
-                return [token];
+                return [normalizeCode(token)];
             });
         }
 
@@ -784,6 +851,15 @@
             );
         }
 
+        scoreExplanation() {
+            const mode = this.rules.modes[this.state.currentMode];
+            const scoring = this.rules.scoring;
+            const base = Math.round((Number(mode.baseScore) + this.state.challenge.text.length * scoring.lengthBonusPerCharacter) * this.getDifficulty().multiplier);
+            const combo = Math.min(scoring.maxStreakBonus, this.state.streak * scoring.streakBonusPerAnswer);
+            const penalty = this.state.currentMistakes * (this.state.playType === "ranked" ? scoring.rankedMistakePenalty : scoring.practiceMistakePenalty) + this.state.hintCount * scoring.hintPenalty;
+            return `기본·길이 ${base}${combo ? ` · 연속 +${combo}` : ""}${penalty ? ` · 감점 −${penalty}` : ""}${base + combo - penalty < scoring.minimumRoundScore ? ` · 최소 ${scoring.minimumRoundScore}점` : ""}`;
+        }
+
         hint() {
             if (this.state.playType === "ranked") {
                 this.setFeedback("실전 게임에서는 힌트를 사용할 수 없습니다.");
@@ -803,6 +879,7 @@
                 const nextLength = Math.min(this.state.challenge.text.length, Math.max(current.length + 1, 1));
                 input.value = this.state.challenge.text.slice(0, nextLength);
                 input.focus();
+                this.updateInputFeedback();
                 this.setFeedback("힌트를 적용했습니다.");
                 return;
             }
@@ -813,6 +890,7 @@
                 const nextCodes = this.state.challenge.codes.slice(0, Math.min(current.length + 1, this.state.challenge.codes.length));
                 input.value = nextCodes.join(" ");
                 input.focus();
+                this.updateInputFeedback();
                 this.setFeedback("힌트를 적용했습니다.");
                 return;
             }
@@ -826,6 +904,7 @@
                 const input = this.root.querySelector(`[data-rebuild-index="${nextIndex}"]`);
                 input.value = this.state.table[this.state.challenge.usedSymbols[nextIndex]];
                 input.focus();
+                this.updateInputFeedback();
             }
 
             this.setFeedback("힌트를 적용했습니다.");
@@ -955,8 +1034,9 @@
             window.EduGamesRankPager?.mount(this.fields.leaderboard, this.config.gameId);
         }
 
-        setFeedback(message) {
+        setFeedback(message, tone = "neutral") {
             this.fields.feedback.textContent = message;
+            this.fields.feedback.dataset.tone = tone;
         }
     }
 

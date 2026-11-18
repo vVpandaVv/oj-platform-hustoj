@@ -88,7 +88,7 @@ final class Leaderboard_Controller {
         $team_id = absint($request['team_id']);
         $game = sanitize_key((string) $request->get_param('game'));
 
-        if (! Capabilities::can_preview_closed() && ! Game_Visibility::is_open($game)) {
+        if (! Capabilities::can_preview_closed() && ! Game_Visibility::can_read_records($game)) {
             return new \WP_Error(
                 'edu_games_closed',
                 __('이 게임은 현재 공개되지 않았습니다.', 'edu-games'),
@@ -124,7 +124,7 @@ final class Leaderboard_Controller {
     public static function get_team_standings(\WP_REST_Request $request) {
         $game = sanitize_key((string) $request->get_param('game'));
 
-        if (! Capabilities::can_preview_closed() && ! Game_Visibility::is_open($game)) {
+        if (! Capabilities::can_preview_closed() && ! Game_Visibility::can_read_records($game)) {
             return new \WP_Error(
                 'edu_games_closed',
                 __('이 게임은 현재 공개되지 않았습니다.', 'edu-games'),
@@ -150,7 +150,7 @@ final class Leaderboard_Controller {
     public static function get_game_leaderboard(\WP_REST_Request $request) {
         $game = sanitize_key((string) $request['game']);
 
-        if (! Capabilities::can_preview_closed() && ! Game_Visibility::is_open($game)) {
+        if (! Capabilities::can_preview_closed() && ! Game_Visibility::can_read_records($game)) {
             return new \WP_Error(
                 'edu_games_closed',
                 __('이 게임은 현재 공개되지 않았습니다.', 'edu-games'),

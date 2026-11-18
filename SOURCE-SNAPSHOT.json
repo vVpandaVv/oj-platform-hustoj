@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "snapshotDate": "2026-11-05",
+  "snapshotDate": "2026-11-18",
   "mode": "source-and-release",
-  "sourceBaseCommit": "b140b662dc6df5c3a55867ba7b109c548f0be451",
+  "sourceBaseCommit": "e4a6c5b9cade24d2fe7f81d1a67fb4752e6195f3",
   "workingTreeIncluded": true,
   "sourceInventory": "Current Git index; existing regular files only",
   "ignoredTrackedFilesIncludedWhenAllowlisted": true,
@@ -21,7 +21,7 @@
   },
   "policy": {
     "schemaVersion": 1,
-    "snapshotDate": "2026-11-05",
+    "snapshotDate": "2026-11-18",
     "mode": "source-only",
     "defaultOutput": ".codex-work/github/oj-platform-hustoj",
     "includeRoots": [
@@ -41,7 +41,10 @@
       "_notes/readcontents-server-import-2026-09-12/editor-source/tests",
       "source",
       "developer-kit",
-      "oj-microbit"
+      "oj-microbit",
+      "oj-network-lab",
+      "oj-logic-lab",
+      "oj-concept-lab"
     ],
     "includeFiles": [
       ".editorconfig",
@@ -73,7 +76,10 @@
       "readcontents-library",
       "teaching-tools",
       "_shared/oj-realtime-hub",
-      "oj-microbit"
+      "oj-microbit",
+      "oj-network-lab",
+      "oj-logic-lab",
+      "oj-concept-lab"
     ],
     "excludeDirectoryNames": [
       ".git",
@@ -108,7 +114,8 @@
       "test-artifacts",
       "testartifacts",
       "playwright-report",
-      "blob-report"
+      "blob-report",
+      ".local-secrets"
     ],
     "excludePackageDirectoryNames": [
       "build",
@@ -151,13 +158,24 @@
       "oj-code-lab/docs/release-gates.json",
       "oj-code-lab/docs/validation-results.json",
       "oj-integration-rebuild/oj-platform/docs/research-pilot-redesign.html",
-      "oj-integration-rebuild/scripts/build-feedback-report.py"
+      "oj-integration-rebuild/scripts/build-feedback-report.py",
+      "_release-kit/publish-judge0.py",
+      "_release-kit/guides/_judge0-header.md",
+      "_release-kit/guides/_standalone-header.md",
+      "_release-kit/guides/_standalone-footer.md",
+      "_release-kit/guides/oj-platform-judge0.md",
+      "_release-kit/guides/oj-platform-standalone.md"
     ],
     "excludePrefixes": [
       "oj-code-arena",
       "oj-code-lab/docs/history",
       "oj-integration-rebuild/oj-platform/docs/research-feedback-validation-20260911",
-      "oj-ml-playgrounds"
+      "oj-ml-playgrounds",
+      "_release-kit/.local-secrets",
+      "oj-platform-judge0",
+      "oj-platform-standalone",
+      "judge0",
+      "_release-kit/workflows"
     ],
     "excludeOperationalDocumentNamePatterns": [
       "production-*",
@@ -202,7 +220,9 @@
       "**/*-secrets.json",
       "**/unsent-results.jsonl",
       "**/debug.log*",
-      "**/~$*"
+      "**/~$*",
+      "_release-kit/*judge0*",
+      "_release-kit/*standalone*"
     ],
     "exampleFileSuffixes": [
       ".example",
@@ -244,7 +264,10 @@
       "focus-tracker",
       "oj-primm",
       "oj-microbit",
-      "oj-research"
+      "oj-research",
+      "oj-network-lab",
+      "oj-logic-lab",
+      "oj-concept-lab"
     ]
   },
   "excludedCounts": {
@@ -256,8 +279,8 @@
     "private-development-or-operational-record": 291,
     "private-notes": 386
   },
-  "fileCount": 8202,
-  "totalBytes": 263753035,
+  "fileCount": 8596,
+  "totalBytes": 324013417,
   "manifestSelfExcludedFromFileHashes": true,
   "reviewRequired": "Allowlist and path checks are not a secrets, privacy or license certification; review the manifest and selected files before publication.",
   "files": [
@@ -269,8 +292,8 @@
     },
     {
       "path": ".gitignore",
-      "size": 1325,
-      "sha256": "df417daa8f217b588d34d53d0f1c80143451313f6efa37a53a227a0609d3975c",
+      "size": 1355,
+      "sha256": "fdda9c4eed22cfc9dbfdc10acffdf040959fe1fb1ed8396ce90a53ef1e118027",
       "origin": "working-tree"
     },
     {
@@ -1955,8 +1978,8 @@
     },
     {
       "path": "_release-kit/README.md",
-      "size": 10166,
-      "sha256": "ccd1d9f39b7d164b532373e680aac0b8f8b3af74f29a257c08bb8e1d58da696c",
+      "size": 10218,
+      "sha256": "6da7968c8d3a1b50598d41c1e935d663e5e55add0bc2d9e6359557df238cc544",
       "origin": "working-tree"
     },
     {
@@ -1985,8 +2008,8 @@
     },
     {
       "path": "_release-kit/guides/_overview.md",
-      "size": 3691,
-      "sha256": "6303436c25a45ce213e81f9bb4f26485374d54400bc0a9c62eb6edaef063cc78",
+      "size": 3588,
+      "sha256": "8f8e1c5f14d33c1c03d0bae942a5b26fef4f3e3166c8b1dc2e38e9599305a544",
       "origin": "working-tree"
     },
     {
@@ -2003,14 +2026,14 @@
     },
     {
       "path": "_release-kit/guides/_server.md",
-      "size": 87940,
-      "sha256": "1b78e84a289c6132c2dad55f07606bc383f03ae6b328f679f851375103bf4b6e",
+      "size": 88757,
+      "sha256": "521ea97b21664eb08433a308e6891a925445590e2c57b14ebdbc45ad67f467c3",
       "origin": "working-tree"
     },
     {
       "path": "_release-kit/guides/edu-games.md",
-      "size": 22718,
-      "sha256": "b2388f2f73fc05d126eb789df5f3514efafd4aa16f4bb273314d19b5125cbb4b",
+      "size": 37831,
+      "sha256": "105958decc567f34fdd7785943bd46c22a3d0c85e65bc507acbe3c5066de5cbe",
       "origin": "working-tree"
     },
     {
@@ -2027,8 +2050,8 @@
     },
     {
       "path": "_release-kit/guides/oj-ai-dashboard.md",
-      "size": 24069,
-      "sha256": "29ebe1e721eee51f68a1d22d1d20b96300972e92b3ead906e3570d30aa7074d1",
+      "size": 26805,
+      "sha256": "d0699cd9ef15ef3a57ceba3c9dfa435dcfe9c3680dba63060496f979faf0228b",
       "origin": "working-tree"
     },
     {
@@ -2038,10 +2061,28 @@
       "origin": "working-tree"
     },
     {
+      "path": "_release-kit/guides/oj-concept-lab.md",
+      "origin": "working-tree",
+      "size": 3261,
+      "sha256": "68d33b749de33fb6d2b37a69ff26596e65beee64aa63aca70101187a4b9b9965"
+    },
+    {
+      "path": "_release-kit/guides/oj-logic-lab.md",
+      "origin": "working-tree",
+      "size": 9030,
+      "sha256": "4ffaf3ad89143a4dd8fe2532b2d8350a2f8e24df9898b1f70e273819da788c07"
+    },
+    {
       "path": "_release-kit/guides/oj-microbit.md",
       "origin": "working-tree",
-      "size": 20909,
-      "sha256": "636c580277fba5e430493c0fbef66152b6269f85ee94015f00bc0e1454bd95d4"
+      "size": 28457,
+      "sha256": "ee6551d73ce8569d6f0e77b8bb0932ae5de8f566084bef96252d7f7bf9a28a2a"
+    },
+    {
+      "path": "_release-kit/guides/oj-network-lab.md",
+      "origin": "working-tree",
+      "size": 9782,
+      "sha256": "166dbb9529c85cb3d91f670b47f2dedc447dbecf5e76bfa634070eff26d22f46"
     },
     {
       "path": "_release-kit/guides/oj-platform.md",
@@ -2063,14 +2104,14 @@
     },
     {
       "path": "_release-kit/guides/readcontents-library.md",
-      "size": 6744,
-      "sha256": "8bad829b4b8de3080587794545c68cb841da057436be2160271f68e8361743f8",
+      "size": 9245,
+      "sha256": "2f65a18c3c5d0b5f8e490ae5eba4762308e2227a88c6cc585ac7b82ba8888d9b",
       "origin": "working-tree"
     },
     {
       "path": "_release-kit/guides/teaching-tools.md",
-      "size": 22141,
-      "sha256": "659421e4998c815aa0a81abd0b39d89ce0079050f95a6028dd62cdf507184897",
+      "size": 23919,
+      "sha256": "156b67882798aa8a4daab16bc1e50487196fb06ee7a61aec790cdd8e22313734",
       "origin": "working-tree"
     },
     {
@@ -2123,8 +2164,8 @@
     },
     {
       "path": "_release-kit/lib/Docs.ps1",
-      "size": 12284,
-      "sha256": "188b27c1a0ba39881b4db13679dc95102375a18a830cc5b47ec07151db9a1530",
+      "size": 12676,
+      "sha256": "3fe5f24d3694062bdd85aad70cb93943591d8bec860ca597575c42a40fc2f783",
       "origin": "working-tree"
     },
     {
@@ -2135,14 +2176,14 @@
     },
     {
       "path": "_release-kit/plugins.json",
-      "size": 6899,
-      "sha256": "7222766eb1b4982ddc718a1f91ebec5b737e671b0f3db507089c8e6f66d59048",
+      "size": 8885,
+      "sha256": "81c86f446a94cdd01912efbb20b686356ff61d8d4fb7b694253bd9e408914a04",
       "origin": "working-tree"
     },
     {
       "path": "_release-kit/public-source.json",
-      "size": 5685,
-      "sha256": "068ca5e26f1d8f3095cf1d1e0bc02f00feccb141e2b1c038633108c73ae1e31e",
+      "size": 6379,
+      "sha256": "db832d7b227f1ef886000dcbeaed2ee110cb211b0c136eb4470919e2c6b494ee",
       "origin": "working-tree"
     },
     {
@@ -2153,8 +2194,8 @@
     },
     {
       "path": "_release-kit/release.ps1",
-      "size": 16873,
-      "sha256": "3ddd6748fe17b724ab12d8eaee39c117bbc0579f6006bec881418b39d94643f2",
+      "size": 19044,
+      "sha256": "c00c8fc028cfb6fdd2a3a22956894ab8819ba7a2b8dc914070338a6df81e6a4b",
       "origin": "working-tree"
     },
     {
@@ -2171,8 +2212,8 @@
     },
     {
       "path": "_release-kit/templates/latest-README.md",
-      "size": 1178,
-      "sha256": "308034c318f5d74b15ec4f21c40cf342d432db04c4b82cf03c6c71d8d6f63dd2",
+      "size": 652,
+      "sha256": "53d058bae7f7df8f9e99716ba39f4e5778884e1b5d978e229e55b594842abb65",
       "origin": "working-tree"
     },
     {
@@ -2267,8 +2308,8 @@
     },
     {
       "path": "_releases/README.md",
-      "size": 1904,
-      "sha256": "a41b055a0bf6a739bec3074e18b2ee5560e4953daf00a10490251ec61ec8d650",
+      "size": 2397,
+      "sha256": "e3261a533ca2b543541676de60492c11d14f32b3d2f9e9c2a4b625daa1ec5e53",
       "origin": "generated"
     },
     {
@@ -2294,6 +2335,24 @@
       "origin": "working-tree",
       "size": 87,
       "sha256": "e8d1e4aff4768b17d553cf1d6e6e412cd36e0986406be662f4913243644b7aba"
+    },
+    {
+      "path": "_releases/edu-games/1.13.1/edu-games-1.13.1.manifest.json",
+      "origin": "working-tree",
+      "size": 119731,
+      "sha256": "7c10a4aefff3cacf4b713873023a6a48d436d84be2b91d72f907c43230273a41"
+    },
+    {
+      "path": "_releases/edu-games/1.13.1/edu-games-1.13.1.zip",
+      "origin": "working-tree",
+      "size": 10191210,
+      "sha256": "60b7f8f6d9b618178ca8f15be9e823977789df08b6a3e352c0f8ae964dd4eca6"
+    },
+    {
+      "path": "_releases/edu-games/1.13.1/edu-games-1.13.1.zip.sha256",
+      "origin": "working-tree",
+      "size": 87,
+      "sha256": "644749afdd036fc15017319cb0c0a26ff0b21f2e216e296c659a742f50280eea"
     },
     {
       "path": "_releases/edu-games/1.6.7/edu-games-1.6.7.manifest.json",
@@ -2410,6 +2469,18 @@
       "sha256": "2ad174c3837aea66ce95300c2a73041e0dbd426d21dd834f6ba15d12ac3fd001"
     },
     {
+      "path": "_releases/oj-ai-dashboard/1.2.29/oj-ai-dashboard-1.2.29.zip",
+      "origin": "working-tree",
+      "size": 24617314,
+      "sha256": "f9d68d08538983fdbda1b000a3c3bca7b988bce044e03c48a2631db8561dbc15"
+    },
+    {
+      "path": "_releases/oj-ai-dashboard/1.2.29/oj-ai-dashboard-1.2.29.zip.sha256",
+      "origin": "working-tree",
+      "size": 94,
+      "sha256": "90cb142d1c8d786cdb6e28560cafdb10dd08e063d0a0b06abbb9934f0a7200ee"
+    },
+    {
       "path": "_releases/oj-code-lab/.gitkeep",
       "size": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -2452,6 +2523,60 @@
       "sha256": "5537ea0df76e45b6ffbf3555082fd3f14e67c91ad99a056351b1ffe9c8a49fb2"
     },
     {
+      "path": "_releases/oj-concept-lab/1.0.0/oj-concept-lab-1.0.0.zip",
+      "origin": "working-tree",
+      "size": 129541,
+      "sha256": "b5ce8f12fd3cc458acccea39792cb066222bd9f85c12f85d08ebe7d075b2dfec"
+    },
+    {
+      "path": "_releases/oj-concept-lab/1.0.0/oj-concept-lab-1.0.0.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 5843,
+      "sha256": "146c4320dd496737f89639c4cb9365d2e1331303399d0f99c6b67b78d2f2e9fd"
+    },
+    {
+      "path": "_releases/oj-concept-lab/1.0.0/oj-concept-lab-1.0.0.zip.sha256",
+      "origin": "working-tree",
+      "size": 91,
+      "sha256": "c53ab0d37f3a4749b05bf7f43f42734d272394db5c19b4e5edb211cb18a7b2ec"
+    },
+    {
+      "path": "_releases/oj-logic-lab/1.0.2/oj-logic-lab-1.0.2.zip",
+      "origin": "working-tree",
+      "size": 85815,
+      "sha256": "db1db45f2201d92d36cf6269e4c2853a6de7f1a2cd732dc04ae49c62f92066a8"
+    },
+    {
+      "path": "_releases/oj-logic-lab/1.0.2/oj-logic-lab-1.0.2.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 7772,
+      "sha256": "afd4feb5a7394d8a4859a50e0488cdff51b31ee4b5db4b27e7e26ee8fed56353"
+    },
+    {
+      "path": "_releases/oj-logic-lab/1.0.2/oj-logic-lab-1.0.2.zip.sha256",
+      "origin": "working-tree",
+      "size": 89,
+      "sha256": "c76516836d8dd7effe4a42348f3bedc2949f0c31f980edc283c07fe73c752d2a"
+    },
+    {
+      "path": "_releases/oj-microbit/1.0.0-rc.15/oj-microbit-1.0.0-rc.15.zip",
+      "origin": "working-tree",
+      "size": 5151971,
+      "sha256": "efe6572cd6a7b3ddf2e406eed52780d982dcaf693403962e072a5a7e27f9623c"
+    },
+    {
+      "path": "_releases/oj-microbit/1.0.0-rc.15/oj-microbit-1.0.0-rc.15.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 65146,
+      "sha256": "b8e4bcbef44cc302ccc30b4b1fdd809fcb4f158525f683fd0bb9f3c89e4f4e46"
+    },
+    {
+      "path": "_releases/oj-microbit/1.0.0-rc.15/oj-microbit-1.0.0-rc.15.zip.sha256",
+      "origin": "working-tree",
+      "size": 94,
+      "sha256": "3fcb19a5899ab6cc8cfef94f9e62a8324c5fe909fd64ee67c19723224f065638"
+    },
+    {
       "path": "_releases/oj-microbit/1.0.0-rc.9/oj-microbit-1.0.0-rc.9.zip",
       "origin": "working-tree",
       "size": 3190664,
@@ -2468,6 +2593,24 @@
       "origin": "working-tree",
       "size": 93,
       "sha256": "7e3fe8d74769d9158e6c85e2d7636b6c7e884a386e4ffc29d7cb679b192e779e"
+    },
+    {
+      "path": "_releases/oj-network-lab/1.4.0-rc.4/oj-network-lab-1.4.0-rc.4.zip",
+      "origin": "working-tree",
+      "size": 198101,
+      "sha256": "3936590d0471c223867140446a27400e2a1ca89454222d7f561ab44e567f31f6"
+    },
+    {
+      "path": "_releases/oj-network-lab/1.4.0-rc.4/oj-network-lab-1.4.0-rc.4.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 14993,
+      "sha256": "3b0ec543188b69b64ea4a5e8c4dbe36f8b32da9c471a9c629cc854f255b050cb"
+    },
+    {
+      "path": "_releases/oj-network-lab/1.4.0-rc.4/oj-network-lab-1.4.0-rc.4.zip.sha256",
+      "origin": "working-tree",
+      "size": 96,
+      "sha256": "c7732a998ab2f58377a01d93ad690fe2e3c152ad0b0025e816736ac0e86cc4ef"
     },
     {
       "path": "_releases/oj-platform/.gitkeep",
@@ -2614,10 +2757,46 @@
       "sha256": "a9a904a43c63a53d2ca26bdcd1264e0e54bb8ac2ba1d34bb9b5e2b012604cb48"
     },
     {
+      "path": "_releases/readcontents-library/3.3.16/readcontents-library-3.3.16.zip",
+      "origin": "working-tree",
+      "size": 8801056,
+      "sha256": "aaac81bb84a43e1528a5cdd0090fcf4c9d204c3aea5c67ff61018b83536ac3e8"
+    },
+    {
+      "path": "_releases/readcontents-library/3.3.16/readcontents-library-3.3.16.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 326368,
+      "sha256": "f4a0acf1f154678c64f0cd09d6e747bebf96af73b4fea6858addd2c594fa9ca0"
+    },
+    {
+      "path": "_releases/readcontents-library/3.3.16/readcontents-library-3.3.16.zip.sha256",
+      "origin": "working-tree",
+      "size": 98,
+      "sha256": "29e9f3f2a16a4043be4a4344d3f6285d1e0da9b9a9949fc5fd9460c11a541ab0"
+    },
+    {
       "path": "_releases/teaching-tools/.gitkeep",
       "size": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "origin": "generated"
+    },
+    {
+      "path": "_releases/teaching-tools/1.2.10/teaching-tools-1.2.10.zip",
+      "origin": "working-tree",
+      "size": 3124523,
+      "sha256": "bd82ffe396f784302508c1dfa01c02188d1a528f038f5a570a5abf5e2b13ff1a"
+    },
+    {
+      "path": "_releases/teaching-tools/1.2.10/teaching-tools-1.2.10.zip.manifest.json",
+      "origin": "working-tree",
+      "size": 91809,
+      "sha256": "433b038744edc98ff5b14d95d5dbbf222135873cba953d0759e08ce68b78abca"
+    },
+    {
+      "path": "_releases/teaching-tools/1.2.10/teaching-tools-1.2.10.zip.sha256",
+      "origin": "working-tree",
+      "size": 92,
+      "sha256": "cd4bca7d8d94182e88fe06d10e2ffe3c3f7498a26d922431a9753373840473d1"
     },
     {
       "path": "_releases/teaching-tools/1.2.9/teaching-tools-1.2.9.zip",
@@ -2891,8 +3070,8 @@
     },
     {
       "path": "edu-games/README.md",
-      "size": 59357,
-      "sha256": "9f92c3165622f834b9d2f39efc34690c09eb52639fbf97c04a06a0a50657a804",
+      "size": 68096,
+      "sha256": "500c1f92af650bdc0937ba1b0bcccb071a70bf8ac785fb6a400b4360dbf16444",
       "origin": "working-tree"
     },
     {
@@ -2900,6 +3079,30 @@
       "size": 101,
       "sha256": "abac59b2a56c85ddffbfe2d5bd82b00be67ee15900564888e4254a02bcd52caa",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/assets/arcade/style.css",
+      "origin": "working-tree",
+      "size": 18180,
+      "sha256": "2d35a60d9e6ff4d220f26a069ee41429de6ffc8c27ca5e280363631467718317"
+    },
+    {
+      "path": "edu-games/assets/arcade/vault-board.js",
+      "origin": "working-tree",
+      "size": 9591,
+      "sha256": "516b9355e8fe2127eecd0747fc5d05270c9e657c8919db57980e24f8766da917"
+    },
+    {
+      "path": "edu-games/assets/arcade/vault-team.js",
+      "origin": "working-tree",
+      "size": 4762,
+      "sha256": "1bde97077721ec26843e577ba5a474abd0463019a7a19e7b5d8c42e430b43e33"
+    },
+    {
+      "path": "edu-games/assets/arcade/view.js",
+      "origin": "working-tree",
+      "size": 14497,
+      "sha256": "6d125e5e6aacdd537267633ef7479dc979f120fde53cdb1057bef4307c793aba"
     },
     {
       "path": "edu-games/assets/binary-team/operations.css",
@@ -2910,8 +3113,8 @@
     {
       "path": "edu-games/assets/binary-team/operations.js",
       "origin": "working-tree",
-      "size": 9244,
-      "sha256": "3375ac67f60d51dbede473cbbee380976e61d64faa6c87a6b499d70ca5ac0cdd"
+      "size": 9386,
+      "sha256": "3db28f268cc7a1623840b0d5bab55a8ab2bbb2711d4c68766cd2e11a731b089a"
     },
     {
       "path": "edu-games/assets/binary-team/socket.js",
@@ -2928,8 +3131,8 @@
     {
       "path": "edu-games/assets/binary-team/view.js",
       "origin": "working-tree",
-      "size": 38661,
-      "sha256": "569901322edb9c5edb36c341a635155b77de12a53507279e7f0719b4e7f0df42"
+      "size": 38910,
+      "sha256": "3a66a46922c296937d08c048b23237fdcc4a18074d9bf933edcc0fbb961f60ba"
     },
     {
       "path": "edu-games/assets/device-matching/ATTRIBUTION.md",
@@ -3388,6 +3591,18 @@
       "sha256": "2e615d54bdb2081dfd7b5ab578155241b680cbae90483d62d7eb19521f9bdb74"
     },
     {
+      "path": "edu-games/assets/hub/LICENSE.txt",
+      "origin": "working-tree",
+      "size": 3208,
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+    },
+    {
+      "path": "edu-games/assets/hub/icons.svg",
+      "origin": "working-tree",
+      "size": 3179,
+      "sha256": "d3159f1542f8c026cdf0aee8e8590acd0d22544eb72b3ff3d6ca770cfb9da261"
+    },
+    {
       "path": "edu-games/assets/learning/progress.js",
       "size": 2319,
       "sha256": "ad15931b2d0894ebe9171ec295beb6f6e4c9c5102300eb8ebdf94b29f1c992e5",
@@ -3407,8 +3622,8 @@
     },
     {
       "path": "edu-games/assets/play/core.js",
-      "size": 11928,
-      "sha256": "48bf8787eecabcb8f94a47de33f241289840ac4e0ff2e9942fa352958e6bded8",
+      "size": 13929,
+      "sha256": "87a99bebe37e3efdcc951d0c007df96114934553caa50ec38ba3b54f9b4cbc40",
       "origin": "working-tree"
     },
     {
@@ -3419,26 +3634,26 @@
     },
     {
       "path": "edu-games/assets/play/hands.js",
-      "size": 39259,
-      "sha256": "22797909ff6c36ac28ad0212564c43fbdcf107d50eb4d6759cac4988cbe1ae98",
+      "size": 39943,
+      "sha256": "6b210e5277a3ff2786e512feed78e956eca651b0cbb009ad7bd6c1af05f9a76d",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/assets/play/missing.js",
-      "size": 11257,
-      "sha256": "b854779e96272cedab111e8ca8bb5e2225920c6d01aa3b43fe6f80c19906afcd",
+      "size": 11888,
+      "sha256": "8b0d3635f87bdda60483790dec8dc53ceb1e71762d6abad9750a895c202cdd50",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/assets/play/rescue-scenes.js",
-      "size": 21036,
-      "sha256": "267fba0528b0616a3a27155cef58f39b313ca06db71ef2f16c2c0ccb9ac74dd5",
+      "size": 21173,
+      "sha256": "decb77aa470d0ae6d44471f0101d752755c76ab1e62db10b32d1ba7207ffe041",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/assets/play/rescue.js",
-      "size": 12936,
-      "sha256": "f024603f1f39543fb8a9bef7f5d05382daeae3a41be48e22f6c9c169c8d7341a",
+      "size": 13163,
+      "sha256": "9c45a3b76c7ce85cdb4ae2951f382d63a2031e822253c65714a7117d37bf4f94",
       "origin": "working-tree"
     },
     {
@@ -3454,6 +3669,24 @@
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/assets/play/warehouse-forklift.svg",
+      "origin": "working-tree",
+      "size": 569,
+      "sha256": "3320ac9c95607e7c4c93e1f5f51ea80dd5649141818beae35d9c20ed2775ade0"
+    },
+    {
+      "path": "edu-games/assets/play/warehouse.css",
+      "origin": "working-tree",
+      "size": 14983,
+      "sha256": "168338b06cf2f9bb76b8b4e9a1aba4456036312b6bb084a4b8346b063a28c5ce"
+    },
+    {
+      "path": "edu-games/assets/play/warehouse.js",
+      "origin": "working-tree",
+      "size": 15375,
+      "sha256": "e2e6e1479b30086ab0511b813b51682985dfa34aac49608b899636543784136f"
+    },
+    {
       "path": "edu-games/assets/rankings/page.css",
       "origin": "working-tree",
       "size": 17398,
@@ -3462,8 +3695,8 @@
     {
       "path": "edu-games/assets/rankings/page.js",
       "origin": "working-tree",
-      "size": 20715,
-      "sha256": "6413cb56b12b25a981c8db4612304b3573f35ab7d810ad47b96fb93331a4ee5e"
+      "size": 21738,
+      "sha256": "35208db7f907d408c44ea1f1735cba22a772d6c16055e72f555ccf295c544b5f"
     },
     {
       "path": "edu-games/assets/rankings/pager.css",
@@ -3485,20 +3718,26 @@
     },
     {
       "path": "edu-games/assets/shell/icons.svg",
-      "size": 1856,
-      "sha256": "8070a82ba2d2c1c8108179919c05892d96873430e765eb5f200effacb45c0d38",
+      "size": 6675,
+      "sha256": "cb769c4608ac1dedce8511bd05160d5be8b911a8722de6412c7905d1f244f226",
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/assets/shell/layouts.css",
+      "origin": "working-tree",
+      "size": 42857,
+      "sha256": "5c16f6682118e0bc0fe7fba87290b6e29866fe7e856baca3843131c735652eb0"
+    },
+    {
       "path": "edu-games/assets/shell/shell.css",
-      "size": 55355,
-      "sha256": "fb839608bf7961088ae9b9221b421a4483a25dd408907c5b0eb6cb329f293a41",
+      "size": 77228,
+      "sha256": "e1eed5f462ddcc25a31b5692328b4175976d0282d8129fb99a05a1c84e507dd9",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/assets/shell/shell.js",
-      "size": 9903,
-      "sha256": "9e1d88ac6817efc8e5c8c9f1436440a6db6339304bc68e22443946658b975df4",
+      "size": 16356,
+      "sha256": "03b00efa0b31712bc220c375de7428de903d0f846d726614e391b90d5d8b39da",
       "origin": "working-tree"
     },
     {
@@ -3518,6 +3757,30 @@
       "size": 19279,
       "sha256": "3777e223d7300b33a7e0aefe7735a453718e261749bc483d302fe5f3b377d42b",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/assets/typing/entry.css",
+      "origin": "working-tree",
+      "size": 10296,
+      "sha256": "f004a3e2a4d239f0fceb8af40ff5f8525f0830761befb782e095b910b9279ecf"
+    },
+    {
+      "path": "edu-games/assets/typing/entry.js",
+      "origin": "working-tree",
+      "size": 11033,
+      "sha256": "ecca2ad9a91ac9a90da7747515eadc75840594820a1d7f10a955fd33ed00b842"
+    },
+    {
+      "path": "edu-games/assets/typing/verified.css",
+      "origin": "working-tree",
+      "size": 2494,
+      "sha256": "4fab59df8fd201aa2c23abeb1f330e91a59c5d18484b35df43483554033102de"
+    },
+    {
+      "path": "edu-games/assets/typing/verified.js",
+      "origin": "working-tree",
+      "size": 28520,
+      "sha256": "23a92b49a7feb368f4ca668fe86f2ee1e5dd0323ed9f1a4d5be4653e5ae4864e"
     },
     {
       "path": "edu-games/assets/vendor/README.md",
@@ -3641,8 +3904,8 @@
     },
     {
       "path": "edu-games/blocks/binary-arcade/view.js",
-      "size": 37178,
-      "sha256": "b92f4246586550f59477bf2a6a631deb6ecfd6a57500c058261da957bdf9275e",
+      "size": 37469,
+      "sha256": "9c1bd04e9ec84bdf55c0279b09ac852bf78f0fc776b85a3526ba023cfe4a8df6",
       "origin": "working-tree"
     },
     {
@@ -3671,14 +3934,14 @@
     },
     {
       "path": "edu-games/blocks/character-code/style.css",
-      "size": 11339,
-      "sha256": "84d8db6e51c2369d640a502e2e3238a355fc42410475ade7038bffce87b6b391",
+      "size": 24311,
+      "sha256": "4e8b28e8a7d98fa8ce2d7df5effd6d05696fc43070fd2ad8ccaec77a0f1bb14a",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/blocks/character-code/view.js",
-      "size": 43288,
-      "sha256": "f866ffe29e6737b26d3ca885f21ebf35bbbe4e7222365bbeb451accc86dccda1",
+      "size": 51087,
+      "sha256": "b4875362883ff6199f85e5a6747b46790790f770d2f837ed69ffa90561747ffb",
       "origin": "working-tree"
     },
     {
@@ -3701,8 +3964,8 @@
     },
     {
       "path": "edu-games/blocks/code-typing/view.js",
-      "size": 57614,
-      "sha256": "a17fbe0cd3e3f6c7a247a629ed29b1d2a53ecb243bc29e2ca36add33c17fb118",
+      "size": 65281,
+      "sha256": "f9d62938088420b56aeff3260077f66d6dc21aa22eb15947a7f83c4ba40dcd4c",
       "origin": "working-tree"
     },
     {
@@ -3797,8 +4060,8 @@
     },
     {
       "path": "edu-games/blocks/device-matching/view.js",
-      "size": 34731,
-      "sha256": "9d1e55fb602a3707b7b1d7eb71d101b6ec68d53aee7f5c577a57cce6caf441ff",
+      "size": 35358,
+      "sha256": "bd8562793cfbc9df420da291844b6d68522d89ec40380849a38429b9b8d78a5b",
       "origin": "working-tree"
     },
     {
@@ -3827,8 +4090,8 @@
     },
     {
       "path": "edu-games/blocks/game-hub/render.php",
-      "size": 6972,
-      "sha256": "6d8895308bca9f6837bd3e14c0f9e5614214d4b62e299d6e88ddfb1bf327dfdd",
+      "size": 6908,
+      "sha256": "24dba67b81a7848cefd2ee8ced928ab22ae9f823ad9620ef2fc9d2ac16504444",
       "origin": "working-tree"
     },
     {
@@ -3923,8 +4186,8 @@
     },
     {
       "path": "edu-games/blocks/image-data/view.js",
-      "size": 37615,
-      "sha256": "3effebc4085892314e2846bb97fce37d4f5973c05ac59b73f1088c54f6d83a71",
+      "size": 38213,
+      "sha256": "e1837e3140a4297419b78ad44df158e6856b8e57d537cc3bacb734f110c2b951",
       "origin": "working-tree"
     },
     {
@@ -3947,8 +4210,8 @@
     },
     {
       "path": "edu-games/blocks/keyword-rain/view.js",
-      "size": 31472,
-      "sha256": "b0e09059484727934b831fa80bae172d4bf0905fa750d3491118cf169555ece1",
+      "size": 31830,
+      "sha256": "2bd76291da73d75afe7c716a82bddd72c50f73d42a23050f4229a03687dd0d5b",
       "origin": "working-tree"
     },
     {
@@ -4108,6 +4371,132 @@
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/docs/design/boardgame-development-round-2-2026-11.md",
+      "origin": "working-tree",
+      "size": 16424,
+      "sha256": "8c54bae770b5af8f221742546768cc244ef524fa3ab6c52d4fb2b65a412d70a6"
+    },
+    {
+      "path": "edu-games/docs/design/concept-first-redesign-2026-11.md",
+      "origin": "working-tree",
+      "size": 38001,
+      "sha256": "d3ea533edf51530024028fa1ba7f2022e647be8682feff6c070b88539e116db1"
+    },
+    {
+      "path": "edu-games/docs/design/dynamic-play-review.md",
+      "origin": "working-tree",
+      "size": 11985,
+      "sha256": "a8b65dc43b823bb52bfd72f8c7bdac5571546d2863ae1b3510dd1321d390840c"
+    },
+    {
+      "path": "edu-games/docs/design/eight-games-from-scratch-2026-11.md",
+      "origin": "working-tree",
+      "size": 35059,
+      "sha256": "3f63904d751e4e00722edd05970b15b9847092e7da7561e3b5cddc6ca64b56e5"
+    },
+    {
+      "path": "edu-games/docs/design/eight-games-storyboard.html",
+      "origin": "working-tree",
+      "size": 15068,
+      "sha256": "4349b38d31d07192299921750aa2c6e62fde0b140154ca0192944bc5519f5ead"
+    },
+    {
+      "path": "edu-games/docs/design/game-format-options.md",
+      "origin": "working-tree",
+      "size": 15630,
+      "sha256": "03fb1a74ddcd91c72dbe6775c0670bccb3069232de7e04e57cf29f7d2fa3ca13"
+    },
+    {
+      "path": "edu-games/docs/design/game-lab-split-implementation-2026-11-18.md",
+      "origin": "working-tree",
+      "size": 6070,
+      "sha256": "64b6e6d30add498325c30534904756f268c62d2cac98f29f9036970b218b0f97"
+    },
+    {
+      "path": "edu-games/docs/design/gameplay-rebuild-2026-11.md",
+      "origin": "working-tree",
+      "size": 28380,
+      "sha256": "22dad5d3f2ab13396eb2ed579e6b3ff76152c8892734c6e7cd6c660c597e001f"
+    },
+    {
+      "path": "edu-games/docs/design/gameplay-rules-redesign-2026-11.md",
+      "origin": "working-tree",
+      "size": 33672,
+      "sha256": "7da84a2a2680993e710639509b292a507511ebc04fbfba438495e67c1c7c6bcc"
+    },
+    {
+      "path": "edu-games/docs/design/interest-iteration-review.md",
+      "origin": "working-tree",
+      "size": 21456,
+      "sha256": "3665ce5698395852a94a688b9b9589bd5e84473411583999ce9d75a2491d7b9b"
+    },
+    {
+      "path": "edu-games/docs/design/interface-rollout-audit.md",
+      "origin": "working-tree",
+      "size": 3898,
+      "sha256": "335368aaa8d61de976d9cead4b5359a164231353aa691ce5fc67c1b5c8f3ea04"
+    },
+    {
+      "path": "edu-games/docs/design/middle-school-screen-review-2026-11.md",
+      "origin": "working-tree",
+      "size": 10900,
+      "sha256": "88b93f37ca50d1d8fbb1c2ad6d89c57999d877cceaafaf128838a61ed2d332c5"
+    },
+    {
+      "path": "edu-games/docs/design/play-experience-proposal-2026-11-17.md",
+      "origin": "working-tree",
+      "size": 14252,
+      "sha256": "1697bd1cb9d34358b8889e261249b9edf230badcd397f837d4cd027e864e499c"
+    },
+    {
+      "path": "edu-games/docs/design/play-game-and-lab-directions-2026-11-17.md",
+      "origin": "working-tree",
+      "size": 12679,
+      "sha256": "107966b7dd00dfcd8c762ee0c322390a862007c506c76129acb17749ea18d38c"
+    },
+    {
+      "path": "edu-games/docs/design/play-topic-reset-2026-11-17.md",
+      "origin": "working-tree",
+      "size": 15347,
+      "sha256": "a31093bfe737e6d346d5093234a2d7fdaa7f87867719c99f80bed6c67fc96ae5"
+    },
+    {
+      "path": "edu-games/docs/design/prototypes/outlier-context-playtest.html",
+      "origin": "working-tree",
+      "size": 16533,
+      "sha256": "972eab39b9f8b55c052d7b2831b42647b78c567b708f79204c2db9c7823a5f7d"
+    },
+    {
+      "path": "edu-games/docs/design/prototypes/outlier-live-board.html",
+      "origin": "working-tree",
+      "size": 23958,
+      "sha256": "963bbe3cc1bc3ffd8f4bcc8ba574162821c986d41ad12ed20f5653c7ac922fb6"
+    },
+    {
+      "path": "edu-games/docs/design/review/interest-cases.cjs",
+      "origin": "working-tree",
+      "size": 8809,
+      "sha256": "a1cb491856a88012d4a8c143d98e432d20a05e35675c6b39c7fb06d8b5b47aae"
+    },
+    {
+      "path": "edu-games/docs/design/review/interest-results.json",
+      "origin": "working-tree",
+      "size": 2647,
+      "sha256": "2a4db33b352941143c80bdf4da2a2abffa96bbbaccc7278036d44f3d858eb2d7"
+    },
+    {
+      "path": "edu-games/docs/design/review/live-outlier-results.json",
+      "origin": "working-tree",
+      "size": 1725,
+      "sha256": "c4f382d8adad1a6df16231c9f906e1ad6ae10a5ba471c39397100debb977d965"
+    },
+    {
+      "path": "edu-games/docs/design/review/live-outlier-tests.cjs",
+      "origin": "working-tree",
+      "size": 6371,
+      "sha256": "35d5db790ac58511498e1f4950aa4269abc9a26e5f365ce2169cd517b36fc669"
+    },
+    {
       "path": "edu-games/docs/game-interface-unification.md",
       "size": 16527,
       "sha256": "00137a637faf00f73331ff3782ce0db3f330fcd2be726cd9eff07a30f077407c",
@@ -4121,8 +4510,8 @@
     },
     {
       "path": "edu-games/docs/games/hands-on-implementation.md",
-      "size": 8549,
-      "sha256": "25071e13b824984b7a4f0bef8d32bfe457aa8f142237ccde619424ab97e5e1f9",
+      "size": 8753,
+      "sha256": "2dd1ead26ee1ad5eb5bcf451129e7263b9d6c097eee84f8e4fb8e76096ae2ec5",
       "origin": "working-tree"
     },
     {
@@ -4154,6 +4543,18 @@
       "size": 27360,
       "sha256": "9c6573c9bae17eab671346dd8784eef188e83042d2cdc3f2204b7d199481699a",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/docs/games/typing-verified.md",
+      "origin": "working-tree",
+      "size": 9588,
+      "sha256": "0e4f830241839ad2dbbb50af1cf5a3d60881c9fb329a05958d1b8cb5e3f8d849"
+    },
+    {
+      "path": "edu-games/docs/games/warehouse-rush.md",
+      "origin": "working-tree",
+      "size": 3663,
+      "sha256": "2c5d5ae839690292f8721080ee683a3c1c8e25dfaea0a5bb55fd85ac027ecc61"
     },
     {
       "path": "edu-games/docs/intuitive-play.md",
@@ -4222,15 +4623,213 @@
       "sha256": "47de45c4ceeb19ddeace2e1478f0f3ec2eb93815dc3f2e74dd0226e7400f6180"
     },
     {
+      "path": "edu-games/docs/previews/typing-comparison/comparison-desktop.png",
+      "origin": "working-tree",
+      "size": 60886,
+      "sha256": "03fd76b44855f4552f4bd1d83fdfee93ee54e7c482c1bc3a94fde645009199f2"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-comparison/comparison-detail.png",
+      "origin": "working-tree",
+      "size": 62605,
+      "sha256": "c9a3af27bfab7bcc8e7aaeccf2bbd2a1cc056604eb34a4c606149f22ae67a2ec"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-comparison/comparison-mobile.png",
+      "origin": "working-tree",
+      "size": 36328,
+      "sha256": "ebd9986cccca581861b0adb15376a1e266c4a3cd1e074af5fb8bdfa3700497da"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-matched-cpm/student-390.png",
+      "origin": "working-tree",
+      "size": 39857,
+      "sha256": "c5a583c19ab7b7db112842566ecd90f071880e803b49a934fb5f834b23e7f099"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-matched-cpm/student-desktop.png",
+      "origin": "working-tree",
+      "size": 45241,
+      "sha256": "656b3975a62e147d95f0903bdce7789a44d2025c6ed7819446fae885d4539e7a"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-matched-cpm/teacher-desktop.png",
+      "origin": "working-tree",
+      "size": 73732,
+      "sha256": "b045533c6591d6cd334d759130393ef47645618d0d65406d74d5e5e6d538fa3b"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-participation/hub-desktop.png",
+      "origin": "working-tree",
+      "size": 107167,
+      "sha256": "7146528489d728d003bdea7dd4b2fd86f9a6090665c2c7b078c2be5c06bf60ef"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-participation/hub-mobile.png",
+      "origin": "working-tree",
+      "size": 30150,
+      "sha256": "3b795c4af1a8f2ef1c5b8ef2108527d379057630fb33b78d26f02e14b2e22171"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-participation/student-entry.png",
+      "origin": "working-tree",
+      "size": 89642,
+      "sha256": "99538b46e78acff2e240f76daf722a6b8b7c63efea8319193e28a10a0148b9d0"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-participation/student-ready-mobile.png",
+      "origin": "working-tree",
+      "size": 31624,
+      "sha256": "5dbd78782b671ef24b286073b3a1e82e97b97518dfc071fdafb8670174d4bcfa"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-participation/teacher-desktop.png",
+      "origin": "working-tree",
+      "size": 78544,
+      "sha256": "d440904447f9ecb2aa6bc7b2f98adaba2702b6131e98f33428d9bb2e6a6244ac"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-student/student-dashboard-desktop.png",
+      "origin": "working-tree",
+      "size": 62952,
+      "sha256": "80c0bf0e8a2588355d7d7cacbb2f2be53eb624f068ac0b7294c7fe66e2baa36c"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-student/student-dashboard-mobile.png",
+      "origin": "working-tree",
+      "size": 39636,
+      "sha256": "5d05474200938e62ecd3800f9eb5e873a9c0a88c755559046c0e44d7f136b2d1"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-student/student-result-mobile.png",
+      "origin": "working-tree",
+      "size": 27592,
+      "sha256": "58fe4921fbc233b60f4f188c9c799b1191f9ff794760c6aada0f4fb6cd6a3d4c"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-verified/student-390.png",
+      "origin": "working-tree",
+      "size": 38715,
+      "sha256": "619bd7fcc5ecff546c4e46e6245a73aa25aa83e9392f7b958c3673e2db48448f"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-verified/student-desktop.png",
+      "origin": "working-tree",
+      "size": 43954,
+      "sha256": "a66361b3992f84bb5dc0d7155019b6c15d4fbe5d365ad4f2eaf3385c1ca973ab"
+    },
+    {
+      "path": "edu-games/docs/previews/typing-verified/teacher-desktop.png",
+      "origin": "working-tree",
+      "size": 73129,
+      "sha256": "3df2d70f0858441a92b856696750ef97680531c877c0d93f3bff41f5ffd8fadb"
+    },
+    {
+      "path": "edu-games/docs/previews/warehouse-addon-loading/warehouse-rush-1280.png",
+      "origin": "working-tree",
+      "size": 65216,
+      "sha256": "4027e6a67d4988c1a579bc71ca3038be2d9173161ab5067fb5eb49d2d6895818"
+    },
+    {
+      "path": "edu-games/docs/previews/warehouse-addon-loading/warehouse-rush-390.png",
+      "origin": "working-tree",
+      "size": 49278,
+      "sha256": "b9ae6fad182f7847364c7f750d45c999f766f6024781c1f9abb00004204f52cc"
+    },
+    {
+      "path": "edu-games/docs/previews/warehouse-rush/dark.png",
+      "origin": "working-tree",
+      "size": 48921,
+      "sha256": "d89cfa13446e75f0ad4e6303dd6cce273405a63f61a29588914c9df64b0ebedc"
+    },
+    {
+      "path": "edu-games/docs/previews/warehouse-rush/desktop.png",
+      "origin": "working-tree",
+      "size": 65189,
+      "sha256": "846385522073f77b569b5c2518348d5e87950e5f713f6f7d0ec9974ecc0e3858"
+    },
+    {
+      "path": "edu-games/docs/previews/warehouse-rush/mobile.png",
+      "origin": "working-tree",
+      "size": 49178,
+      "sha256": "69906beff2e0bde7d66775e2dda1b432432aef3ebc30cb417d159a79a02f9c2f"
+    },
+    {
+      "path": "edu-games/docs/previews/warehouse-rush/tablet.png",
+      "origin": "working-tree",
+      "size": 65351,
+      "sha256": "13332946d1bd86d547e56a15d082baf5baa529772299d38aaa76153715ea7d95"
+    },
+    {
+      "path": "edu-games/docs/prototypes/boardgame-lab-v2.html",
+      "origin": "working-tree",
+      "size": 45902,
+      "sha256": "feb95d155fcf33e143ce454d22a2ac25c9d7471312b04722b2d2ec62c3349ec8"
+    },
+    {
+      "path": "edu-games/docs/prototypes/boardgame-lab-v2.js",
+      "origin": "working-tree",
+      "size": 13988,
+      "sha256": "48a75da421da9a605126d9608a65bceb5ffa72f6b5a5b3af979354ba4ce50d87"
+    },
+    {
+      "path": "edu-games/docs/prototypes/boardgame-lab-v2.test.cjs",
+      "origin": "working-tree",
+      "size": 7059,
+      "sha256": "9d4528daf23d3a99b635ab764157cf0cb4348bc8293f629cef9aa8130c6b7bca"
+    },
+    {
+      "path": "edu-games/docs/prototypes/quick-play-v3.html",
+      "origin": "working-tree",
+      "size": 29563,
+      "sha256": "daa667af6c42e0edcbb54fd2d13f331b2e23e6cb0101531ae9b528ba8c2fbaf3"
+    },
+    {
+      "path": "edu-games/docs/prototypes/quick-play-v3.js",
+      "origin": "working-tree",
+      "size": 5852,
+      "sha256": "2cdf3d640c80686c5f5c1401b3b8c68447bc0e73865475ff0be3165c489e8931"
+    },
+    {
+      "path": "edu-games/docs/prototypes/quick-play-v3.review.md",
+      "origin": "working-tree",
+      "size": 1400,
+      "sha256": "d5ebde3f0b5801dffde5fb1afd72e85456b6d38b23eee1f8e2c86d71853ae850"
+    },
+    {
+      "path": "edu-games/docs/prototypes/quick-play-v3.test.cjs",
+      "origin": "working-tree",
+      "size": 3658,
+      "sha256": "7a7ad0fc4b6a20bf72432ad4286f3d2a09eef5eb95bdab14a206f5d94584e909"
+    },
+    {
+      "path": "edu-games/docs/prototypes/sync-boardgame-lab.cjs",
+      "origin": "working-tree",
+      "size": 697,
+      "sha256": "3da334db9748517c639536f0704a7b19ceb020b67368bf9775f2344a7bdad972"
+    },
+    {
+      "path": "edu-games/docs/prototypes/sync-quick-play.cjs",
+      "origin": "working-tree",
+      "size": 655,
+      "sha256": "dc3a316712cb1d88b0185773cbc9ce18c45082cfe6c49386c4b5adfdbdf4c754"
+    },
+    {
       "path": "edu-games/docs/release-1.0-plan.md",
       "size": 16954,
       "sha256": "ffc40d326b2d138f5026669dbbac2bbf67b1c66bbbd222fe72eb805f21ee7131",
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/docs/releases/1.13.1.md",
+      "origin": "working-tree",
+      "size": 1346,
+      "sha256": "e342e0da0b2f97be8b8573093dc6dcfa97ce44420e39c6511f28d173829cfc90"
+    },
+    {
       "path": "edu-games/edu-games.php",
       "size": 1665,
-      "sha256": "dc56f0d0e8ad1f283398c9c06fce061cfb12e8ee43c4fe940f714c8504aca5d4",
+      "sha256": "3d6a883f87a7b1be6cc22c04ee42d0b17fd3fd910223485c37172ca23b468e05",
       "origin": "working-tree"
     },
     {
@@ -4241,14 +4840,14 @@
     },
     {
       "path": "edu-games/package.json",
-      "size": 2140,
-      "sha256": "72c68bba59f1f73269bfe6a3d096517de0b87388cb8faec41c21b11cb391b660",
+      "size": 2920,
+      "sha256": "12fdb6974ad74079d87b23c8923d8192f3cac5fc2705053d8d92f54e54f39d4f",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/plugin-package.php",
       "size": 349,
-      "sha256": "201c109525e9fd3ec65586d44cf9a387fc4d8c76e703e4c7e233d5b3108c5664",
+      "sha256": "1818200f65c948d24ba6889c8148b3086c76fbe83f5a43dfbe695b9e83e7508f",
       "origin": "working-tree"
     },
     {
@@ -4266,8 +4865,8 @@
     {
       "path": "edu-games/realtime-server/src/adapter.js",
       "origin": "working-tree",
-      "size": 6207,
-      "sha256": "dfe3d0457ac3f4e7bd2d0e47cd70dcfef289cd80a3da65e66712accea56306e5"
+      "size": 6235,
+      "sha256": "c92dd11926f3f82e73d533774a22da375080b0356d98ec1c78c29066553b9ad0"
     },
     {
       "path": "edu-games/resources/css/console-game-report.css",
@@ -4283,9 +4882,15 @@
     },
     {
       "path": "edu-games/resources/css/public-hub.css",
-      "size": 2550,
-      "sha256": "adb2bf5fa5fa9085589985ada9941cc1c349f89f42c6589069fd059eb14809e5",
+      "size": 8186,
+      "sha256": "335218631fc7662388cddf25f350c60864089a203fb909db68b2824c137325a7",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/resources/css/typing-evaluations.css",
+      "origin": "working-tree",
+      "size": 19267,
+      "sha256": "fda9acaf0bdaca8dd1b2ec42942b9068385337aa86411837153eeb1dd133d24a"
     },
     {
       "path": "edu-games/resources/js/console-ai-model-lab-report.js",
@@ -4304,6 +4909,12 @@
       "size": 12924,
       "sha256": "59a68e4481e6a7734271bc5b97fc796962c3fdcfa2fd7bbe4e981ce2ce9848b5",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/resources/js/typing-evaluations.js",
+      "origin": "working-tree",
+      "size": 45389,
+      "sha256": "2c9b606368c5126d4012e0472deeb0588c9b5d5778f8fab9a7024ad3a8476796"
     },
     {
       "path": "edu-games/scripts/build-release.ps1",
@@ -4420,6 +5031,12 @@
       "sha256": "b4c1735f86ab0fec03fed68dd7043df52afde67a3d0f5488781addd94bb627f2"
     },
     {
+      "path": "edu-games/src/Addon/Cipher_Team_Page_Handler.php",
+      "origin": "working-tree",
+      "size": 657,
+      "sha256": "72ef976cdb48820805ae7f2a8e1aa414c6c075930f51eb27777e2239c5408b74"
+    },
+    {
       "path": "edu-games/src/Addon/Console_Ai_Model_Lab_Report_Page_Handler.php",
       "size": 2212,
       "sha256": "5ee115147cdfcc01bd4edce46f8f75a3d09aeb9997e8a515f39690c234e2836b",
@@ -4445,14 +5062,14 @@
     },
     {
       "path": "edu-games/src/Addon/Game_Play_Page_Handler.php",
-      "size": 1455,
-      "sha256": "72948d6df2c060c92c22da161948890de75ade44b413c7621e80fe19a62b16f1",
+      "size": 1639,
+      "sha256": "8d70f215baa27f62818118a379ac459851bb5a90505da016332a5f6a953f4162",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Addon/Oj_Platform_Registration.php",
-      "size": 17299,
-      "sha256": "c0fbc4d262b73dc28c4fc7d0f2d173c411f3d26cebaa327b25e4d3a02f91fb6b",
+      "size": 19538,
+      "sha256": "f117a6f2ef099ec4cde89f4b5e087f8426c73b15aded0d460e0ba5169685f0ef",
       "origin": "working-tree"
     },
     {
@@ -4463,8 +5080,8 @@
     },
     {
       "path": "edu-games/src/Addon/Public_Game_Hub_Page_Handler.php",
-      "size": 6063,
-      "sha256": "6ac4943123c63a20c3587ebe3d54ba0c34a37d792d853a26b0e103acd00e0aa1",
+      "size": 3825,
+      "sha256": "5abe4d9f35866a26344ea622bbcb7020400dadcbada578af044c9962a03390ac",
       "origin": "working-tree"
     },
     {
@@ -4476,8 +5093,32 @@
     {
       "path": "edu-games/src/Addon/Team_Operations_Page_Handler.php",
       "origin": "working-tree",
-      "size": 1241,
-      "sha256": "fa3bd98a8a1e09caf9b2dfd4ec22234aca2ae1fea207f73e1cd019003eebda71"
+      "size": 1267,
+      "sha256": "7f8b3f61ae7373e0abd00792fa3988fa7939b86b91c34161a3a33d45f32374b6"
+    },
+    {
+      "path": "edu-games/src/Addon/Typing_Evaluations_Page_Handler.php",
+      "origin": "working-tree",
+      "size": 11335,
+      "sha256": "3a7aa600060df3e8dd1853794daaacd7de7967bc2033741418afa54ad640f5d0"
+    },
+    {
+      "path": "edu-games/src/Arcade/Dance_Rules.php",
+      "origin": "working-tree",
+      "size": 6505,
+      "sha256": "f97414307d6b4f12f1bade9c1eb313fe48ff1644ea1e0d7319a7bf6b61f906ec"
+    },
+    {
+      "path": "edu-games/src/Arcade/Repository.php",
+      "origin": "working-tree",
+      "size": 7268,
+      "sha256": "f65b8eea8c0dfa052bc9da02427bf42bfbd14bb408461d07d02423fc56e82d92"
+    },
+    {
+      "path": "edu-games/src/Arcade/Vault_Rules.php",
+      "origin": "working-tree",
+      "size": 6445,
+      "sha256": "a8007941a27f7b09f43d29f564ec55a9c0dbba0da82074c724b488e14e069b16"
     },
     {
       "path": "edu-games/src/Blocks/AI_Classifier_Lab_Renderer.php",
@@ -4498,16 +5139,22 @@
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/src/Blocks/Arcade_Renderer.php",
+      "origin": "working-tree",
+      "size": 2709,
+      "sha256": "90fdc7b2528e2cdc545e3690b61a2af80f847c80b3a242ac6efb1be572bc9485"
+    },
+    {
       "path": "edu-games/src/Blocks/Binary_Arcade_Renderer.php",
-      "size": 6060,
-      "sha256": "d640e9a99b607b7f88f9556a7fde599f8824eefa370736ff2ca2ea3814d4dfcb",
+      "size": 5400,
+      "sha256": "f7673269a2d980a7d078238b15e31d6729f68aab71360b487c61eb409ca9fb98",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Blocks/Binary_Team_Renderer.php",
       "origin": "working-tree",
-      "size": 4199,
-      "sha256": "0c1d3b6c28ca9266f9ff52d33fd7c11ba214310a117d9af0a5ce449d0c4932d1"
+      "size": 4865,
+      "sha256": "bd4aa1ce7c09fb11284cdf610d564642ca5406b11ff82254c4266454794ccc7d"
     },
     {
       "path": "edu-games/src/Blocks/Block_Registrar.php",
@@ -4517,14 +5164,20 @@
     },
     {
       "path": "edu-games/src/Blocks/Character_Code_Renderer.php",
-      "size": 7103,
-      "sha256": "193079d7de3d24f888b71d1613bfff5012795096f59faf65da849da1cb991b48",
+      "size": 8295,
+      "sha256": "06c38835ae510817d30267abfae2bff9317e24b7eb1621efc6906586e5400a11",
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/src/Blocks/Cipher_Team_Renderer.php",
+      "origin": "working-tree",
+      "size": 250,
+      "sha256": "e93c0050a6a52ed3673afb75275342a025a2ca054dc3b6605756d7a4aefa558f"
+    },
+    {
       "path": "edu-games/src/Blocks/Code_Typing_Renderer.php",
-      "size": 6281,
-      "sha256": "a3fb35dd5c2dbd868e114c911126381c7d6bbfb7ec156f83c7b0290140d266a4",
+      "size": 8213,
+      "sha256": "31697385fed48d569969370e97f559a952055f1d2a0c42e21262b5c25f76e371",
       "origin": "working-tree"
     },
     {
@@ -4547,8 +5200,8 @@
     },
     {
       "path": "edu-games/src/Blocks/Device_Matching_Renderer.php",
-      "size": 7186,
-      "sha256": "90efdf1fed3edebb325fb617c2a78860f4add71c7890a0c84b1113f73cf2c4c0",
+      "size": 7166,
+      "sha256": "94371582b607e2b9de3634f7d241374f337e97d73915beb3c9d6675fdaf8ae8a",
       "origin": "working-tree"
     },
     {
@@ -4558,21 +5211,27 @@
       "sha256": "75727515bdce71e353de2115e3ef168f653f445b86ad0b5ce6d9f88bb8941c52"
     },
     {
+      "path": "edu-games/src/Blocks/Game_Hub_Presentation.php",
+      "origin": "working-tree",
+      "size": 2110,
+      "sha256": "805bd82008d301ecdba0b8586d7ce6f4c49716a26487f978581265403467fd4f"
+    },
+    {
       "path": "edu-games/src/Blocks/Game_Shell_Renderer.php",
-      "size": 488,
-      "sha256": "922d29ee4c084633cbeeaaa6baa2f01575141fc564e66df7696cee1e3e43182e",
+      "size": 1361,
+      "sha256": "e192f038ba2300c26d3d36ac33c6bee761980978ef3e6e9833be8d2fedee705c",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Blocks/Image_Data_Renderer.php",
-      "size": 7321,
-      "sha256": "0abdd8c44c337b0b7a08cd3a5a7a72fdf54a2904bf1fc56c3a59143c0bfff7e5",
+      "size": 7098,
+      "sha256": "dea311ec954d414d7657a0c88ab305386070a152a105ddea602e9c16e15a31a6",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Blocks/Keyword_Rain_Renderer.php",
-      "size": 7925,
-      "sha256": "f7a6369b536506b7ea854790fafcac076dd534ae4349b9701b12e328c1745acd",
+      "size": 7975,
+      "sha256": "747bb9484d05c65c88c477a71da1e955541cf4817196ab8722d0c4063f506179",
       "origin": "working-tree"
     },
     {
@@ -4595,8 +5254,8 @@
     },
     {
       "path": "edu-games/src/Blocks/Play_Renderer.php",
-      "size": 4374,
-      "sha256": "4701178cd69f6c69d8248ccf8e1ee3d392cb920b39c47260ad8141eaadfe5e5d",
+      "size": 4977,
+      "sha256": "8508c28f847db69e410cec50f41a6ef03ff023b5f3cd3ea8329f1b96021e128d",
       "origin": "working-tree"
     },
     {
@@ -4608,14 +5267,20 @@
     {
       "path": "edu-games/src/Blocks/Ranking_Page_Renderer.php",
       "origin": "working-tree",
-      "size": 4152,
-      "sha256": "b51c05bbabdbcf07b8ac7c6e0f5606cbe95ee4f08160d00edaaf8261ac9dbaca"
+      "size": 5351,
+      "sha256": "bec6d926fe330a5dd8f758cdfe383e9ad9fd4a6e75a05627526c58e845728c97"
     },
     {
       "path": "edu-games/src/Blocks/Strategy_Renderer.php",
       "size": 3910,
       "sha256": "ae783474b07dff269ca555c25ac401625adc16cd6001b1d2345910b4ce8d45cb",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/src/Blocks/Typing_Entry_Renderer.php",
+      "origin": "working-tree",
+      "size": 1317,
+      "sha256": "eb84996a82cc3016348c55af32678d1673ada7d0177bbc9dd05d091714e6a121"
     },
     {
       "path": "edu-games/src/Blocks/Warehouse_Renderer.php",
@@ -4649,14 +5314,14 @@
     },
     {
       "path": "edu-games/src/Core/Plugin.php",
-      "size": 6073,
-      "sha256": "f7f9691067ea2e0ebec008c792b02c080665986e9965be184a616795e45010d5",
+      "size": 7253,
+      "sha256": "76f59ffd44a866f5aa0ac8154171ef0dfea60a41e5203c79e7dc02bbc44954e0",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Database/Installer.php",
-      "size": 10914,
-      "sha256": "1597844c28ce0e0011c41971e71e967132e86f76f8cbdae637d66398c08de554",
+      "size": 11078,
+      "sha256": "d507729a5e3d4487c098b6bf87987625a64cc314e0a32160b9cc916a9a03b944",
       "origin": "working-tree"
     },
     {
@@ -4685,8 +5350,8 @@
     },
     {
       "path": "edu-games/src/Frontend/Code_Typing_Assets.php",
-      "size": 1210,
-      "sha256": "b0692b7ca7439127f846d50e8443c576700b16699f1de9a2f9febf57d4c39303",
+      "size": 2050,
+      "sha256": "a57d0b234dceedaa58ae18bf883fdb9c47075cb8e68fdb5f153cb65d9cba69eb",
       "origin": "working-tree"
     },
     {
@@ -4715,8 +5380,8 @@
     },
     {
       "path": "edu-games/src/Frontend/Game_Access_Guard.php",
-      "size": 3173,
-      "sha256": "24cfd52d98c24ca11c1c88826c6ad7854a669a95454308461896acff4b277d7e",
+      "size": 3649,
+      "sha256": "f8c2229e12614cb452fe8c80898acd346270e81c4250420fd577cc94497808f7",
       "origin": "working-tree"
     },
     {
@@ -4750,6 +5415,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/src/Games/Experience_Separation.php",
+      "origin": "working-tree",
+      "size": 1128,
+      "sha256": "e286aced6a7c416acc752007a5f4aa4326e34ae9d8535eced4f00229946f2eca"
+    },
+    {
       "path": "edu-games/src/Games/Game_Category_Labels.php",
       "size": 916,
       "sha256": "319de86043724453aee26e360a98d23fb31d44671188a4a7c5f76531854b5d13",
@@ -4757,14 +5428,14 @@
     },
     {
       "path": "edu-games/src/Games/Game_Module_Registry.php",
-      "size": 2422,
-      "sha256": "2fd619e19a3c7595f58357fded5af6362c209f25093334a902c4afda25a23e7b",
+      "size": 2721,
+      "sha256": "daa54a9e6d5b771d2d3c901cc88977717dbd24ddf176f1606f1ff6fbef486849",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Games/Game_Visibility.php",
-      "size": 2178,
-      "sha256": "142ebd8d5683c376854ee3c7463a95731dc06d763882b18290b2167248a314b7",
+      "size": 2462,
+      "sha256": "abe672893619ca4d790e609d369beaf75d19e0875d7574ce22848fd2aae0ea4b",
       "origin": "working-tree"
     },
     {
@@ -4919,9 +5590,15 @@
     },
     {
       "path": "edu-games/src/Games/Modules/Character_Code/Character_Code_Module.php",
-      "size": 8077,
-      "sha256": "5365928b57d5281e644a5ec5c590d5493443c712af7147fcb5b5e2122ddd29df",
+      "size": 8560,
+      "sha256": "36da0b07570eb1afbfb60809d02d4cd9a1a48b6a8309c63086e8e74b027c4047",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/src/Games/Modules/Cipher_Vault/Cipher_Vault_Module.php",
+      "origin": "working-tree",
+      "size": 769,
+      "sha256": "95a389a867f4e4555da634b25d1ca6b80004fe292361a7c3e07b3f9ba57f4afb"
     },
     {
       "path": "edu-games/src/Games/Modules/Code_Typing/Code_Typing_Module.php",
@@ -4940,6 +5617,12 @@
       "size": 12239,
       "sha256": "315d77b53a9a5d811df5c55611ec1187899a5ba99b6434a9076b3bcec6df7a0a",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/src/Games/Modules/Dance_Bot/Dance_Bot_Module.php",
+      "origin": "working-tree",
+      "size": 718,
+      "sha256": "5f44c2f1c757d38f511b4086eead544f8e9ddc749f8fdab9059eabbf40410e01"
     },
     {
       "path": "edu-games/src/Games/Modules/Data_Extraction/Campaign.php",
@@ -4979,14 +5662,14 @@
     },
     {
       "path": "edu-games/src/Games/Modules/Data_Structure_Lab/Data_Structure_Lab_Module.php",
-      "size": 23263,
-      "sha256": "40dca2c846622d9fa2423837ce19eea36f120dff1a67c8d0ea62c46af4f6247e",
+      "size": 23290,
+      "sha256": "a0c99ffce1a635544e1908b8592ba158ef920e48fbaea9ae7f83a4162ce12366",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Games/Modules/Data_Structure_Lab/Hands_Board.php",
-      "size": 3360,
-      "sha256": "44344421f39aa333e52905f6814ec4dc338bbcb32f44d34eb50745ba23c64ac7",
+      "size": 9006,
+      "sha256": "7af57fb48ec44cd72bcc517a6b34203b751271413b745ae0ff90a26bf4e2ef84",
       "origin": "working-tree"
     },
     {
@@ -5202,8 +5885,8 @@
     {
       "path": "edu-games/src/Multiplayer/Bot_Runner.php",
       "origin": "working-tree",
-      "size": 6164,
-      "sha256": "5f9a03e7745e80edc9e8b4209559691fe2836c8ef1dc9c76d911b5fed2a1c6e8"
+      "size": 7628,
+      "sha256": "5cd2ddf2fbe3c0e19653f8011403bbd7b0cba78e4b3ba3a4ccd30023e04abff2"
     },
     {
       "path": "edu-games/src/Multiplayer/Device_Room.php",
@@ -5244,8 +5927,8 @@
     {
       "path": "edu-games/src/Multiplayer/Room_Overview.php",
       "origin": "working-tree",
-      "size": 2576,
-      "sha256": "f1d4549cadbbf19b39a21d658648d4f1a6d97c154e3d9131e3853af75abcd226"
+      "size": 2626,
+      "sha256": "08ec5730cb0790a071c49547c6eb9eaac54df8685e599ec8e8d5883bae993fc2"
     },
     {
       "path": "edu-games/src/Multiplayer/Room_Policy.php",
@@ -5256,8 +5939,8 @@
     {
       "path": "edu-games/src/Multiplayer/Room_Rules.php",
       "origin": "working-tree",
-      "size": 1260,
-      "sha256": "839071f7093a7b86be759198e85d2f7e1379c6b050eb2549e2e2597acf23406e"
+      "size": 1312,
+      "sha256": "f7617f1a70ec9fd8aadad588cac33b81d0781ce9fc8a6b4f9ffad2919d7dd275"
     },
     {
       "path": "edu-games/src/Multiplayer/Service.php",
@@ -5268,14 +5951,20 @@
     {
       "path": "edu-games/src/Multiplayer/Socket_Relay.php",
       "origin": "working-tree",
-      "size": 3347,
-      "sha256": "62bbd7d1869f2d4bfbac9de87c7f956cc33ef0353854e1bbd6aa0cc2d57d4651"
+      "size": 3380,
+      "sha256": "a5ee23e800938a7ce1a909cf11e995cebf7f0fd399ee1a3511d59502e476fc98"
     },
     {
       "path": "edu-games/src/Multiplayer/Ticket.php",
       "origin": "working-tree",
-      "size": 2672,
-      "sha256": "6810fb476b3b028b2edc905e9329d036770a27ac8ad4acc53d5289041f66166a"
+      "size": 2715,
+      "sha256": "7b85547763a08f94b1062cf84bae9a12526c066eeb9d373cfdc340f6d20c69a5"
+    },
+    {
+      "path": "edu-games/src/Multiplayer/Vault_Room.php",
+      "origin": "working-tree",
+      "size": 10675,
+      "sha256": "3a667e1821181e8c668d77a5ca85e72a2fe7a310000d0d563f4c8986704a82a9"
     },
     {
       "path": "edu-games/src/Multiplayer/Wpdb_Repository.php",
@@ -5309,8 +5998,8 @@
     },
     {
       "path": "edu-games/src/Progress/Validator.php",
-      "size": 5332,
-      "sha256": "fffca5679396c15b9ad78127602dde6c38d529e18e4d61ffa7f4b95caa358575",
+      "size": 5541,
+      "sha256": "1a9e806a680d6db22507743b38d46673fe0fadf6c523d579eb6bcf03458d0612",
       "origin": "working-tree"
     },
     {
@@ -5339,8 +6028,8 @@
     },
     {
       "path": "edu-games/src/Reports/Report.php",
-      "size": 5866,
-      "sha256": "165139c023eb3117ae1d1013ae836ed04f0b0e002ec77617ea10d9ac41d1bcbf",
+      "size": 6685,
+      "sha256": "91a5ad0d76bb9d3fafb81a8b1cc44b8c45bb6055bfc88e923e4c169a55b6e031",
       "origin": "working-tree"
     },
     {
@@ -5351,8 +6040,8 @@
     },
     {
       "path": "edu-games/src/Rest/Api.php",
-      "size": 1460,
-      "sha256": "c7532bd283d28ebfc4130065098e9cca23291db060616c7130d23d5a94f1e66c",
+      "size": 1656,
+      "sha256": "330ee71a8f925daf5db6cee17d90f9415a6bf3934a39790948f133bc5a040075",
       "origin": "working-tree"
     },
     {
@@ -5368,39 +6057,45 @@
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/src/Rest/Controllers/Arcade_Controller.php",
+      "origin": "working-tree",
+      "size": 5033,
+      "sha256": "a206dabb27a4d62262c03fc55239fca05c33e356fab93f66f33f218fcd0bf933"
+    },
+    {
       "path": "edu-games/src/Rest/Controllers/Binary_Team_Controller.php",
       "origin": "working-tree",
-      "size": 6116,
-      "sha256": "4bc564da3356aeadd7910959ec0744bb34b895d620fe01ed5d985702bb0b9909"
+      "size": 6163,
+      "sha256": "ed5d98bbddbaf0df6682c450700da4595be234f86eadfff8b12e315a43859259"
     },
     {
       "path": "edu-games/src/Rest/Controllers/Games_Admin_Controller.php",
-      "size": 3031,
-      "sha256": "e4536cd7f9ae642ff907ebbff01297b00dbbf4d0977a78fba254201f256cbf96",
+      "size": 3039,
+      "sha256": "1720bf0b3176da4fbd7e3049dfaf6897d8fe8d0e04d333b24002cf332f902f3f",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Rest/Controllers/Games_Controller.php",
-      "size": 5034,
-      "sha256": "3cda6c843e9053b15553a858e62f918fad771be0bf74418a073f86a685a527e7",
+      "size": 5251,
+      "sha256": "1c2b2f0e37036baabf9fceebba7de51f18b434e7d971ae4f5f98fbf20496451e",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Rest/Controllers/Leaderboard_Controller.php",
-      "size": 7348,
-      "sha256": "9612c3b0b41dfe7808a630f4ed2bef3aefe5626f13f8f9710db2c30ca35c7113",
+      "size": 7375,
+      "sha256": "8116a9ab59ebcf649f282bcdc8368b083dceaa24dae2e67d3d882975bdbb7d55",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Rest/Controllers/Learning_Controller.php",
-      "size": 7452,
-      "sha256": "607214564ead838092ab00ae78447b543c0dda520877fdc7233ba55eba9b021c",
+      "size": 7609,
+      "sha256": "9c28fb78a5d27d2e9d141264047a8cadeb2df912f9d632471a0876dd62c920dd",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/src/Rest/Controllers/Play_Controller.php",
-      "size": 9319,
-      "sha256": "b1e1173bb50166efb0d8afa7808c3a2eab1d3fd7ecb4c1abb1f181903d95a671",
+      "size": 9497,
+      "sha256": "8b01913a16e8d0b7bdd2260a6fee23089ba650db527cc8eb99bd972fe291e895",
       "origin": "working-tree"
     },
     {
@@ -5417,8 +6112,8 @@
     },
     {
       "path": "edu-games/src/Rest/Controllers/Ranking_Records_Controller.php",
-      "size": 2670,
-      "sha256": "63b9d43f918c4bdce521515e3ddfacccbb11ab31064f11ba622380c19b8c9809",
+      "size": 3021,
+      "sha256": "a1575fc1a1929ca741ad55560bb81dd767096a4b97f856e5e00ba89755cb0483",
       "origin": "working-tree"
     },
     {
@@ -5429,8 +6124,8 @@
     },
     {
       "path": "edu-games/src/Rest/Controllers/Strategy_Controller.php",
-      "size": 9230,
-      "sha256": "2629d0bb485c25c16d03801ff06454f46bb4d54ebeec810bf965dfb81294b4f2",
+      "size": 9408,
+      "sha256": "b822dfaf59c7c6c729fe30e879db1fc82e090e8910b7c1ef5f9c29b795c9f4e9",
       "origin": "working-tree"
     },
     {
@@ -5440,9 +6135,15 @@
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/src/Rest/Controllers/Typing_Controller.php",
+      "origin": "working-tree",
+      "size": 4003,
+      "sha256": "858f31a00478da839fe1d5daacead0ae4d40470236a8bc0d87d3f29f485c41c0"
+    },
+    {
       "path": "edu-games/src/Rest/Controllers/Warehouse_Controller.php",
-      "size": 8084,
-      "sha256": "906043600eb974449a6ec111bb14f63cc248b300389dfb2254e49b6eff897ed1",
+      "size": 8183,
+      "sha256": "f137b930ed13fdeeae993cd530f25e496d65c8b6430e9b3483bdbc0de34b1181",
       "origin": "working-tree"
     },
     {
@@ -5555,8 +6256,8 @@
     },
     {
       "path": "edu-games/src/Statistics/Player_Statistics_Service.php",
-      "size": 7111,
-      "sha256": "e46f8e82df06d27949f2eaaf7e6589fcac14bee5e0c3fc9327f9c5666219bdb5",
+      "size": 7785,
+      "sha256": "24ce1fb75e3f6cf355ec5e607f6a8b1a3b105e144c8840a042f548fc491922e7",
       "origin": "working-tree"
     },
     {
@@ -5578,6 +6279,24 @@
       "sha256": "21e47665e153023ccc071c8d31125ec8fd9c8e6ee83403fd34e82765ec018f40"
     },
     {
+      "path": "edu-games/src/Typing/Repository.php",
+      "origin": "working-tree",
+      "size": 5268,
+      "sha256": "0399ddba20dcd8c81159c8a7d3397363bf3323a6f1e0d48c054e498639876054"
+    },
+    {
+      "path": "edu-games/src/Typing/Rules.php",
+      "origin": "working-tree",
+      "size": 7212,
+      "sha256": "430348cd51a348129db78579a8ff6645b4aae1d9dc717ec4673d5ad1b57cca24"
+    },
+    {
+      "path": "edu-games/src/Typing/Service.php",
+      "origin": "working-tree",
+      "size": 25806,
+      "sha256": "21382e9a259114a29d3b2f3edb2bc23f449b04a9b04b54739c19552fa8fe9d57"
+    },
+    {
       "path": "edu-games/tests/account-protection.php",
       "origin": "working-tree",
       "size": 8633,
@@ -5585,9 +6304,33 @@
     },
     {
       "path": "edu-games/tests/addon-assets.php",
-      "size": 13908,
-      "sha256": "f0552b3fedeeae53a9b021671c8616ae1b315ef195ddca9afe93a3bc21bb877d",
+      "size": 15593,
+      "sha256": "1e62001a1de2a2296a423271e0bd2e936b4a7aee5cb9f19473a3c06c22620ad1",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/arcade-api.php",
+      "origin": "working-tree",
+      "size": 7259,
+      "sha256": "e75f176bf714b559e3344a0d288cbcb0b438c92d188df48b99e31a1ec7fd5359"
+    },
+    {
+      "path": "edu-games/tests/arcade-embeds.php",
+      "origin": "working-tree",
+      "size": 1530,
+      "sha256": "40571aecfb62690cbe1e2b738e57068e0391c4dc03fdfff4929f47c6b0c846d6"
+    },
+    {
+      "path": "edu-games/tests/arcade-fixture.php",
+      "origin": "working-tree",
+      "size": 6174,
+      "sha256": "223092850cba2ce64ed899bbb280c9a537ea989e95d11386ccedfebbc739cef3"
+    },
+    {
+      "path": "edu-games/tests/arcade-rules.php",
+      "origin": "working-tree",
+      "size": 8404,
+      "sha256": "966230a8b7b98494d273ac00117bad521d3e782aeb73e37408a89cbd50a7c8f8"
     },
     {
       "path": "edu-games/tests/binary-realtime-settings.php",
@@ -5615,8 +6358,8 @@
     },
     {
       "path": "edu-games/tests/bootstrap.php",
-      "size": 5394,
-      "sha256": "85a2014ca911456d2c6bbc08156f1e65dc30f316a92e45d7f5e53fcee081c32e",
+      "size": 5472,
+      "sha256": "8ee9417c4043e2ae2d1aa1cf5664f24e4762b9bb2b915a0988d714e9bd743b7d",
       "origin": "working-tree"
     },
     {
@@ -5634,8 +6377,20 @@
     {
       "path": "edu-games/tests/browser-binary-team.cjs",
       "origin": "working-tree",
-      "size": 18648,
-      "sha256": "abaf02501b2fb2858cd63ab21d35dd14d74ddf01d6b03781c86aa90cbfe8ce4f"
+      "size": 19103,
+      "sha256": "8f90608b21823223f708f0106fa25de621a6e158cf3247391a511a6e25709dff"
+    },
+    {
+      "path": "edu-games/tests/browser-board-ui.cjs",
+      "origin": "working-tree",
+      "size": 6286,
+      "sha256": "0808c7dd991bd30c6a99221ed1002cab4e8ff855f734d1a7236bbf677c976301"
+    },
+    {
+      "path": "edu-games/tests/browser-character-code.cjs",
+      "origin": "working-tree",
+      "size": 14155,
+      "sha256": "e52ecc63ea5e0c7b805f337261a0738dbeaa4c14e330452f8716b9efd89993e0"
     },
     {
       "path": "edu-games/tests/browser-device-images.cjs",
@@ -5663,14 +6418,14 @@
     },
     {
       "path": "edu-games/tests/browser-fixture.php",
-      "size": 4682,
-      "sha256": "4d231ef5eef9f2e811961e4dac1d600d9b57614d6de2c7ebf96074e8ef202fbd",
+      "size": 5793,
+      "sha256": "c0f7bfdcebca2105b603ddf83c8376babeb75cb6623ec9f8a9445c5ef6ed092a",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/tests/browser-hands.cjs",
-      "size": 19897,
-      "sha256": "87184d000d9168968c0cf181f4cfe0aba266ef99f05a8f610b5246aa914d3a6e",
+      "size": 19859,
+      "sha256": "e48de96c916df8b32d3f62e73dabade89ba652c5b643e14ddfa23c05b31bdcb5",
       "origin": "working-tree"
     },
     {
@@ -5678,6 +6433,12 @@
       "size": 7940,
       "sha256": "d6305eb49925a469f8ace99580e4bd6233af506f9085a794d388ad069e3db2ed",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/browser-layout-v2.cjs",
+      "origin": "working-tree",
+      "size": 3806,
+      "sha256": "8ab5df98346d4b636f3c307aa23e6315cc6807194e06bdfd786df8d527192723"
     },
     {
       "path": "edu-games/tests/browser-leaderboard-all.cjs",
@@ -5693,15 +6454,21 @@
     },
     {
       "path": "edu-games/tests/browser-machines.cjs",
-      "size": 11602,
-      "sha256": "12aef4f068fe652f7d2a9beb91650ca8b8a0a41fac84ed205f267245903e24fb",
+      "size": 11692,
+      "sha256": "4c8ba82f22eb2a9b9e39b5a6c29039b750089c7067a08259891db37c2e8f82e5",
       "origin": "working-tree"
     },
     {
       "path": "edu-games/tests/browser-play.cjs",
-      "size": 13403,
-      "sha256": "644561066162b73843ec81c994f48559907cbd7d9709155fc6cae709ea903381",
+      "size": 18351,
+      "sha256": "bf93c58d5d793e9189c6b79f4ff9eb9e5ce1b9c32265420ddc6c7811b1d53a68",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/browser-preview-integrity.cjs",
+      "origin": "working-tree",
+      "size": 6990,
+      "sha256": "ccffe9516f473c67388fe422c3d400cd2cf66d7acbf159723b203cf3da8646a9"
     },
     {
       "path": "edu-games/tests/browser-rank-pagination.cjs",
@@ -5714,6 +6481,18 @@
       "origin": "working-tree",
       "size": 10963,
       "sha256": "ee3bbbf96b6a7b1dff8bd0d791a920db5acac77575634be8598e5882da82ace7"
+    },
+    {
+      "path": "edu-games/tests/browser-split-theme.cjs",
+      "origin": "working-tree",
+      "size": 2549,
+      "sha256": "d94df8811dd8fec436d5a1a4df74810f68ab540ac03469f3106ce91934b62931"
+    },
+    {
+      "path": "edu-games/tests/browser-split.cjs",
+      "origin": "working-tree",
+      "size": 9338,
+      "sha256": "2f558adc85449df7ac8c3a430cfcff7e4cd1509d2fc4f7c23bc6cd96b1080e47"
     },
     {
       "path": "edu-games/tests/browser-strategy.cjs",
@@ -5734,22 +6513,46 @@
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/tests/browser-typing-verified.cjs",
+      "origin": "working-tree",
+      "size": 28241,
+      "sha256": "e261e8bb7da73bdea331e23d1b2e0bab1529bd7febc60fc086994755c0e67329"
+    },
+    {
       "path": "edu-games/tests/browser-v1.cjs",
       "size": 12359,
       "sha256": "3a02f75e4cc8aa02c2679028afae8e4ab2edcaa35d5e42e627d5df2848336caf",
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/tests/browser-vault-team.cjs",
+      "origin": "working-tree",
+      "size": 4168,
+      "sha256": "15449f1c0780af82d17220b1166c3bb69f466f13022546daaf8aefbb030e5efa"
+    },
+    {
       "path": "edu-games/tests/browser-viewport.cjs",
-      "size": 9701,
-      "sha256": "8911b986ff7cc8149b023c42b6189d96d068e6fde85054cfb1838e042b30b28a",
+      "size": 9699,
+      "sha256": "f2f8a05c6a5f82de25d77dd24a7d9811278966f0cd5643384d330d290dd51fc9",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/browser-warehouse-rush.cjs",
+      "origin": "working-tree",
+      "size": 7494,
+      "sha256": "f0572367603b0e4aa81b620822c3c192194dd46c0e12f013035f6c1ff53ef774"
     },
     {
       "path": "edu-games/tests/browser-warehouse.cjs",
       "size": 10162,
       "sha256": "97c21b09a3c62a40029762a8dabca2263de5e0c4f0462a07550241a49d892fc6",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/cipher-navigation.php",
+      "origin": "working-tree",
+      "size": 1800,
+      "sha256": "d23123c5109a610ba89aca4df9423d438efedc326d5aa62fb888d40d03d215b3"
     },
     {
       "path": "edu-games/tests/client-scoring.cjs",
@@ -5762,6 +6565,18 @@
       "size": 19474,
       "sha256": "c141340b378906a9d94ade407b4418503c2e382382ec093b15cc4781636a3767",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/dance-composition.php",
+      "origin": "working-tree",
+      "size": 2709,
+      "sha256": "a11d3fc7ae92665ce74a3c8356ce44297ed55d0d01fb2346bd604e461f5fc38f"
+    },
+    {
+      "path": "edu-games/tests/dance-controls.cjs",
+      "origin": "working-tree",
+      "size": 2624,
+      "sha256": "835f49b69d7d03eab0b3c3b4da3cbfd209805dfc9889e5f329bb92cb2d7d4d1f"
     },
     {
       "path": "edu-games/tests/device-matching.cjs",
@@ -5795,8 +6610,8 @@
     },
     {
       "path": "edu-games/tests/hands.php",
-      "size": 6155,
-      "sha256": "f3a8aa6ed9fc1f78a2ed1adc994f26ec681a6240352dcfe40da0a340b45041bd",
+      "size": 6245,
+      "sha256": "c873af288b29590e7fff66c727615b2c86aad137e636b1599fe7f099414d8479",
       "origin": "working-tree"
     },
     {
@@ -5804,6 +6619,12 @@
       "size": 5215,
       "sha256": "6c70b3ace3f4b6192238620b7e96f3822eb053beda311e9dabe49e3ed9fa32ae",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/hub-compact.cjs",
+      "origin": "working-tree",
+      "size": 2722,
+      "sha256": "73246b13e60505a05f0e98b825a12f20b5e3976cf25fc211c023e0f342311370"
     },
     {
       "path": "edu-games/tests/leaderboard-all.php",
@@ -5855,8 +6676,8 @@
     },
     {
       "path": "edu-games/tests/personal-challenges.cjs",
-      "size": 5317,
-      "sha256": "2fb2d7012f014736ee8ef1f98aeeb52810f847677724dd27755f36a7a1ed1bc5",
+      "size": 5444,
+      "sha256": "a82e2da2f0c740e629a179b7e56d0bebfdd5cb02b02358cee452e74e93f77ffa",
       "origin": "working-tree"
     },
     {
@@ -5897,8 +6718,8 @@
     },
     {
       "path": "edu-games/tests/regression.php",
-      "size": 15156,
-      "sha256": "1f3dd3a30b1785b1681ef8236faf56c380c4489ead6cdfa2269c61bca5fcd451",
+      "size": 15302,
+      "sha256": "8d368fcc433c0c4079b1fe93901446c14b5e62c6ef0f3818f02b095b03eb33b1",
       "origin": "working-tree"
     },
     {
@@ -5906,6 +6727,12 @@
       "size": 3739,
       "sha256": "37654fe54e65f02e1f63f7afb9670d7889bdefb285fd3d608cbd2d043a14a3df",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/split-preview.cjs",
+      "origin": "working-tree",
+      "size": 9414,
+      "sha256": "5d0aafa2bc3a894a4625a4c8c392cad7b1f7c8512bc8c6896677c8f2a925a6d1"
     },
     {
       "path": "edu-games/tests/strategy-api.php",
@@ -5950,10 +6777,52 @@
       "sha256": "99a4980176154b6c0c683ec48dd68964851fb0f48bf183d10e5e86d70214bf62"
     },
     {
+      "path": "edu-games/tests/typing-fixture.php",
+      "origin": "working-tree",
+      "size": 6062,
+      "sha256": "9518ab31f683bafabde9ea4c142c95d6a4b67a63e0b5c8f79cf502cd80805aa3"
+    },
+    {
+      "path": "edu-games/tests/typing-line-ending.php",
+      "origin": "working-tree",
+      "size": 4275,
+      "sha256": "6dac396263727092c247ddadf0e33caa7dc53a94a089717ebdd94234e9fc2092"
+    },
+    {
+      "path": "edu-games/tests/typing-parity.cjs",
+      "origin": "working-tree",
+      "size": 2165,
+      "sha256": "60193a0bfe2b485d392fcac8016e6e02a877ac5357db169ef359e5d6b2c4d8a7"
+    },
+    {
+      "path": "edu-games/tests/typing-practice-metrics.cjs",
+      "origin": "working-tree",
+      "size": 4617,
+      "sha256": "17bb0059d1507bdcd33d7c250825875f4a610b3f2a6b39e8488cf39f7251d91a"
+    },
+    {
+      "path": "edu-games/tests/typing-rules-fixture.php",
+      "origin": "working-tree",
+      "size": 468,
+      "sha256": "29d46dac007dd6358d01b881b22d5685827fc6e110943866d1d9cea03c6c20af"
+    },
+    {
+      "path": "edu-games/tests/typing-support.php",
+      "origin": "working-tree",
+      "size": 5166,
+      "sha256": "01b64c1f6125afacdd64aab149d875bc0354c7e05ce252ad61b57c0de43a67c1"
+    },
+    {
       "path": "edu-games/tests/typing-syntax.cjs",
       "size": 2795,
       "sha256": "a79f4fd78af4ba904d5a98b48a6d2792cbcad3df2707010bfc993fbe2a0140d8",
       "origin": "working-tree"
+    },
+    {
+      "path": "edu-games/tests/typing-verified.php",
+      "origin": "working-tree",
+      "size": 20287,
+      "sha256": "53359377b5cbf08b9948c5d56e1ad42d3d13cf71c0113f6136db0ef03f8fbf8e"
     },
     {
       "path": "edu-games/tests/v1.php",
@@ -5980,6 +6849,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "edu-games/tests/warehouse-rush.php",
+      "origin": "working-tree",
+      "size": 5928,
+      "sha256": "a002cb19d8558c8b848de67685a1eb1bd7513ee99d8561d69e6e1b2859f41f81"
+    },
+    {
       "path": "edu-games/tests/warehouse.php",
       "size": 6945,
       "sha256": "bf56631934ef447055e667dc4500b3e70c8931ac7f5c21de8f81bdad2f0342c4",
@@ -5987,8 +6862,8 @@
     },
     {
       "path": "edu-games/uninstall.php",
-      "size": 1072,
-      "sha256": "1871843a9c0e6d62d1ee99d5cadd72037d5f8a8c0279d4b5cea8307d1024fbd0",
+      "size": 1266,
+      "sha256": "7fc7d721b48a427bcf95d1efc74b58a15e0762289b871d01b90ee349b80ff646",
       "origin": "working-tree"
     },
     {
@@ -7614,13 +8489,13 @@
     {
       "path": "oj-ai-dashboard/oj-ai-dashboard.php",
       "size": 1468,
-      "sha256": "a47d82b433a2d368a59cd54facba8f9b5116b74186bd9f112e4472fb5293ecda",
+      "sha256": "b5e0e100933219e8b2f941ab17eeba810b3910856ec1eb9a90581a4ed44352cd",
       "origin": "working-tree"
     },
     {
       "path": "oj-ai-dashboard/package.json",
       "size": 22912,
-      "sha256": "95c6c182d0a356ae55aaf43bb1ebc6678f9fcc097bdc9d5f347e1108128fdfa5",
+      "sha256": "01cfdaf4209d0d709a74e769d04f8f6dbdcc551d5d0c22c4e11d111a4737588c",
       "origin": "working-tree"
     },
     {
@@ -13143,7 +14018,7 @@
     {
       "path": "oj-ai-dashboard/resources/contracts/platform-compatibility-baseline-v1.json",
       "size": 565,
-      "sha256": "1351b6e2feb21ec4518d1b5c136f6176dfea9de762173e9c126a8a944ff97c49",
+      "sha256": "34cdb60e68ae24b87ecda0bf3b1d59363b5bca63670ee4c2b4120d50236d8ae2",
       "origin": "working-tree",
       "sourceSha256": "2c89c8033250424c3553b15e1dcf013a282ff503a685ac151b8f40f175d7de69",
       "sourceSize": 596,
@@ -13151,8 +14026,8 @@
     },
     {
       "path": "oj-ai-dashboard/resources/contracts/release-boundary-fingerprint-v1.json",
-      "size": 16490,
-      "sha256": "49ec8dbd5bd2e5a4d8a3e79f3b8468233a4314433541e23afc28ea2e119d5850",
+      "size": 16920,
+      "sha256": "64d43823f451174069169bf55bf5cf312108e9ba7f0506701a714f15e72c8d86",
       "origin": "working-tree"
     },
     {
@@ -13373,8 +14248,8 @@
     },
     {
       "path": "oj-ai-dashboard/resources/js/submission-evaluation-review-workbench.js",
-      "size": 250650,
-      "sha256": "df55d40df16fffd359141b2c33ad47b41fc1cea4cceb5b44883f395d6ff38c70",
+      "size": 257899,
+      "sha256": "89cb463001b7c26d0fa9935b500deafd1ce1eb08c303f086b57983e9c311c91a",
       "origin": "working-tree"
     },
     {
@@ -15504,7 +16379,7 @@
     {
       "path": "oj-ai-dashboard/scripts/check-failure-restart-g5-imp-06-s03.ps1",
       "size": 5187,
-      "sha256": "f71aea8fb7451e548ed65428ebd529cd5ed2d4b2f3577d6a70adb5e7d2b2c960",
+      "sha256": "5621183856d28652200cf5b814d87433fd0dd72863211afcd715fae09c770801",
       "origin": "working-tree",
       "sourceSha256": "8e2e9ee158c0a8d89c1ffced8da8146b9af4869e7e95d869a10943ded965303d",
       "sourceSize": 5318,
@@ -16349,8 +17224,8 @@
     },
     {
       "path": "oj-ai-dashboard/scripts/e2e-bulk-review-report.mjs",
-      "size": 10645,
-      "sha256": "492764ca377e80683cd22665e398a3e97cfba1a877518a1f38933a781de91bb8",
+      "size": 14104,
+      "sha256": "b9cec5a777d3911d03eee78ff861d03a2bca65e382bccce66c3bf2f7cb878f2f",
       "origin": "working-tree"
     },
     {
@@ -16404,8 +17279,8 @@
     {
       "path": "oj-ai-dashboard/scripts/e2e-non-submission-grade.mjs",
       "origin": "working-tree",
-      "size": 11365,
-      "sha256": "8770a53325d20d6b8c864b0c1416402b461d160a80c85c044dd8e57dd5716889"
+      "size": 13058,
+      "sha256": "199d84fb9d1bde559ed85517ae325d30e8a32fed1dbcc7bce7427b269edccff0"
     },
     {
       "path": "oj-ai-dashboard/scripts/e2e-operations-diagnostics.mjs",
@@ -16460,6 +17335,12 @@
       "size": 5802,
       "sha256": "e6281ed1970693d55924e8e8896cc64f6ddc2e2d1d85cff1eb62857df49355e7",
       "origin": "working-tree"
+    },
+    {
+      "path": "oj-ai-dashboard/scripts/e2e-roster-recovery.mjs",
+      "origin": "working-tree",
+      "size": 3187,
+      "sha256": "b276e55642ff5acba2f5d52605324bbc8b5d0df9dc4a8070f3cbaa51db57418b"
     },
     {
       "path": "oj-ai-dashboard/scripts/e2e-score-download.mjs",
@@ -16721,8 +17602,8 @@
     },
     {
       "path": "oj-ai-dashboard/scripts/run-tests.mjs",
-      "size": 39630,
-      "sha256": "8c0560e4e9391cca64b111e0d741cb30e71272a22e34bf921bd2f9e2c425ba54",
+      "size": 39977,
+      "sha256": "cb191d99be9b175b1c806cc49edc939c4cb972bb2c2be180f63e69e7eb7bbed7",
       "origin": "working-tree"
     },
     {
@@ -17267,8 +18148,8 @@
     },
     {
       "path": "oj-ai-dashboard/src/ExternalAssessment/Assessment_Profile.php",
-      "size": 13520,
-      "sha256": "eaf96ee78dc722fccd58686a1db6692692a12a234fa75909214436938ae0750c",
+      "size": 17428,
+      "sha256": "71227c67cdf3aa7155dc33b80a2b0278b6c60cba97d98042b0ae6fe015811dbe",
       "origin": "working-tree"
     },
     {
@@ -18365,8 +19246,8 @@
     },
     {
       "path": "oj-ai-dashboard/src/Platform/Assessment_Project_Page_Handler.php",
-      "size": 7262,
-      "sha256": "abf96247d575267c535ae3021b07539601c646ba56e5f371e19e0d81ef98be1e",
+      "size": 7645,
+      "sha256": "0855499355b119c7c494d2997ebfb04596b6138295047899af93f4f25de02149",
       "origin": "working-tree"
     },
     {
@@ -18407,8 +19288,8 @@
     },
     {
       "path": "oj-ai-dashboard/src/Platform/Worksheet_Evaluation_Workbench_Page_Handler.php",
-      "size": 32964,
-      "sha256": "3d44669de1abf7b3d9c72e0876f1aca89de0558adeeaa50fe57475de73870637",
+      "size": 33913,
+      "sha256": "dfbbe2b6216a2b524e7f08586fbbfec24141372d3a7934f4278fbcbde36dd440",
       "origin": "working-tree"
     },
     {
@@ -20243,8 +21124,8 @@
     },
     {
       "path": "oj-ai-dashboard/src/Submission/Assessment/Application/Read_Submission_Evaluation_Roster.php",
-      "size": 5041,
-      "sha256": "07e037ee4666dd191c8c00d55ad289ab489f8e9722f6e705db4b6c21d1601175",
+      "size": 6084,
+      "sha256": "8b606a5773cc01f5c1051c0731b0ed18b3113875a16bd498dd544ba158d0fb9f",
       "origin": "working-tree"
     },
     {
@@ -23387,8 +24268,8 @@
     },
     {
       "path": "oj-ai-dashboard/tests/Contract/external-ml-assessment.php",
-      "size": 24387,
-      "sha256": "2f2159df3a4f921db17ee83772fefe01850d77a8e8e10d8c9d3595838dbfed3d",
+      "size": 28662,
+      "sha256": "d9273189ae32ba93e431e5d24ec345387b72823e177a43acdd5dfb895530a6b9",
       "origin": "working-tree"
     },
     {
@@ -23538,8 +24419,8 @@
     {
       "path": "oj-ai-dashboard/tests/Contract/non-submission-grade.mjs",
       "origin": "working-tree",
-      "size": 3785,
-      "sha256": "bd895455186c1d8ce1cd61192c70a59bfb0911f3394042ef7e2ff3555e5c2af6"
+      "size": 3940,
+      "sha256": "0868b577fe308963ab4ed4a7d31f3bdf05c33d98333d821f91a5d38e9febe88e"
     },
     {
       "path": "oj-ai-dashboard/tests/Contract/non-submission-grade.php",
@@ -23687,8 +24568,8 @@
     },
     {
       "path": "oj-ai-dashboard/tests/Contract/project-workspace-page.php",
-      "size": 3416,
-      "sha256": "7a248f237f09e6fa61c3957092eb20f013005343818ab2007e84a6265a09c28c",
+      "size": 3764,
+      "sha256": "b9b7505a60db46ca656a175eccb255bd9db2ba94c5d72782783d4099d54a7d16",
       "origin": "working-tree"
     },
     {
@@ -24184,6 +25065,12 @@
       "origin": "working-tree"
     },
     {
+      "path": "oj-ai-dashboard/tests/Contract/submission-bulk-release.mjs",
+      "origin": "working-tree",
+      "size": 7761,
+      "sha256": "c4754ce67fd42bc8f5f54b80f57a5fb6acc80fc1eee127d7f49d8b07d6ea17ac"
+    },
+    {
       "path": "oj-ai-dashboard/tests/Contract/submission-bulk-retry.php",
       "size": 9866,
       "sha256": "7f8b40d27b7209c69d729cb893fdf122a67b9a36843cd8dee13a5b60e94ee742",
@@ -24197,8 +25084,8 @@
     },
     {
       "path": "oj-ai-dashboard/tests/Contract/submission-bulk-review-report.php",
-      "size": 1827,
-      "sha256": "e46caa1bbcab38e5b5d07bdf07a19cf23dbe22c622e5747ceb0643c327e06f6f",
+      "size": 2324,
+      "sha256": "e5b859ba83435a950ac21657613bb53870eb6a96c662d792ad10082184a4f0c6",
       "origin": "working-tree"
     },
     {
@@ -24293,8 +25180,8 @@
     },
     {
       "path": "oj-ai-dashboard/tests/Contract/submission-evaluation-roster.php",
-      "size": 22967,
-      "sha256": "eb89b5c205c0d9311b5fbb6b6f2ae1451d3d2f15057ffcbc8d3bd1c021096598",
+      "size": 25556,
+      "sha256": "e3136b60923018365fa6540eac09f5dfaf080c093ba4823c4de50724d2fadd27",
       "origin": "working-tree"
     },
     {
@@ -25100,14 +25987,14 @@
     },
     {
       "path": "oj-ai-dashboard/tests/fixtures/submission-bulk-review-report.mjs",
-      "size": 7594,
-      "sha256": "f9609edcec61e8531b168febf0a58ba05bfd18e7d93c89363c1561b436515f37",
+      "size": 8874,
+      "sha256": "33261ba253a20580ede53d1c13194d81ec9e859c021e6ffa5914235cbee570ee",
       "origin": "working-tree"
     },
     {
       "path": "oj-ai-dashboard/tests/fixtures/submission-evaluation-review-workbench-visual.html",
-      "size": 36510,
-      "sha256": "b9e2a41f3f3d1fa9e739625cffdb05e698ca95801d6447d6ae7ee33477aedbca",
+      "size": 36966,
+      "sha256": "29e1c1370c905fd58ca447e30237e96483f1c9342d382f5d3ad1aa208d77070d",
       "origin": "working-tree"
     },
     {
@@ -26108,6 +26995,162 @@
       "size": 1510,
       "sha256": "545eb76d19a018248eca887b022a76a656ce9a28b6fbacfe84601db49fd260ae",
       "origin": "working-tree"
+    },
+    {
+      "path": "oj-concept-lab/README.md",
+      "origin": "working-tree",
+      "size": 1435,
+      "sha256": "3abf89025255a39c2c1da11ed10327a586d3082e9f6fcebc29a81c95964ec0ad"
+    },
+    {
+      "path": "oj-concept-lab/THIRD-PARTY-NOTICES.md",
+      "origin": "working-tree",
+      "size": 1620,
+      "sha256": "4531ac773e8f7311dd935cb691f0d7681b4fc56e48390b8696971bb0deeb973c"
+    },
+    {
+      "path": "oj-concept-lab/oj-concept-lab.php",
+      "origin": "working-tree",
+      "size": 738,
+      "sha256": "15c93927a05106cf2066e619aed0597b40f12097217a280405b9e941df1c9a3b"
+    },
+    {
+      "path": "oj-concept-lab/plugin-package.php",
+      "origin": "working-tree",
+      "size": 261,
+      "sha256": "b99016039a83d3b6a62565a8f3dbb77b44a5a05f075552073ac746d090d927d8"
+    },
+    {
+      "path": "oj-concept-lab/resources/css/lab.css",
+      "origin": "working-tree",
+      "size": 12078,
+      "sha256": "0305378162a3c34b15dd0fc7b1882a037cb65d191df80fd7d28a5f6fbc87d1e7"
+    },
+    {
+      "path": "oj-concept-lab/resources/data/examples.json",
+      "origin": "working-tree",
+      "size": 211989,
+      "sha256": "9c4af6faf4878148763b5681f70f41e3a433f60f3791870470115eb628a067df"
+    },
+    {
+      "path": "oj-concept-lab/resources/hub/LICENSE.txt",
+      "origin": "working-tree",
+      "size": 3208,
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+    },
+    {
+      "path": "oj-concept-lab/resources/hub/icons.svg",
+      "origin": "working-tree",
+      "size": 3095,
+      "sha256": "8a2b7c819e85c67debed05ad947280ad1055aeeed11635069949906e2f2fd57c"
+    },
+    {
+      "path": "oj-concept-lab/resources/icons-LICENSE.txt",
+      "origin": "working-tree",
+      "size": 752,
+      "sha256": "ee209531f4aac74806dbbbd6866400e55b31161551ede7f4b6a85e0aaf090c0a"
+    },
+    {
+      "path": "oj-concept-lab/resources/icons.svg",
+      "origin": "working-tree",
+      "size": 6675,
+      "sha256": "cb769c4608ac1dedce8511bd05160d5be8b911a8722de6412c7905d1f244f226"
+    },
+    {
+      "path": "oj-concept-lab/resources/js/lab.js",
+      "origin": "working-tree",
+      "size": 34196,
+      "sha256": "4f9afbef55dc34141e9ce51a45ab42769ec2e84b28fe3a6b1a096eb0b468f2b6"
+    },
+    {
+      "path": "oj-concept-lab/resources/vendor/chartjs/LICENSE.md",
+      "origin": "working-tree",
+      "size": 1093,
+      "sha256": "41a84aa2caba645f966a18d9c2056b73e6d3a81d80bc0046bc0011a2634d4cce"
+    },
+    {
+      "path": "oj-concept-lab/resources/vendor/chartjs/chart.umd.min.js",
+      "origin": "working-tree",
+      "size": 208522,
+      "sha256": "48444a82d4edcb5bec0f1965faacdde18d9c17db3063d042abada2f705c9f54a"
+    },
+    {
+      "path": "oj-concept-lab/resources/vendor/chartjs/color-LICENSE.md",
+      "origin": "working-tree",
+      "size": 1085,
+      "sha256": "2859c50313bad2ba77b081410c477beaf92b60ca13a77a248d89859a6dd6ac81"
+    },
+    {
+      "path": "oj-concept-lab/src/Activities/Catalog.php",
+      "origin": "working-tree",
+      "size": 4224,
+      "sha256": "1da60498f47b97538eaefbba8fc8026ddd9ea25bb44aeecb44301fb34483e72d"
+    },
+    {
+      "path": "oj-concept-lab/src/Addon/PageHandler.php",
+      "origin": "working-tree",
+      "size": 1085,
+      "sha256": "41fa9edc11a68f07e4bb536cd510e6e77354546d619a08830946ebb25b59cbfb"
+    },
+    {
+      "path": "oj-concept-lab/src/Addon/Registration.php",
+      "origin": "working-tree",
+      "size": 3262,
+      "sha256": "87ca9765d4d0deff081bdd75bba71ac804fd68312989807189e7a1caa7629fb1"
+    },
+    {
+      "path": "oj-concept-lab/src/Core/Autoloader.php",
+      "origin": "working-tree",
+      "size": 483,
+      "sha256": "179b3da0c3a01a051fea81b34e3dcf2783a970e1148f533ec1b7bb3ddd5b4d68"
+    },
+    {
+      "path": "oj-concept-lab/src/Core/Plugin.php",
+      "origin": "working-tree",
+      "size": 946,
+      "sha256": "9cd33e11b196458d581d37b3ebf2cd28bc9d629da83a1149d6b74a1ebec347c2"
+    },
+    {
+      "path": "oj-concept-lab/src/Frontend/Renderer.php",
+      "origin": "working-tree",
+      "size": 2145,
+      "sha256": "e75505c6d1b7e49bb2c73a66a9ab68bea33fb8bdaffe745f762dd484a13f308b"
+    },
+    {
+      "path": "oj-concept-lab/src/Rest/Settings.php",
+      "origin": "working-tree",
+      "size": 1286,
+      "sha256": "a16f3414fd317ec538c46a103fb3fedd6412b0275f93ce699469a4bd78fca564"
+    },
+    {
+      "path": "oj-concept-lab/tests/hub-compact.cjs",
+      "origin": "working-tree",
+      "size": 2885,
+      "sha256": "00815a47ae47ccf6964628bfc34372ee8a16652f0fcdfb4328e1e3fa1b269ea3"
+    },
+    {
+      "path": "oj-concept-lab/tests/network-confirmation.cjs",
+      "origin": "working-tree",
+      "size": 2983,
+      "sha256": "f77f19d24199699c1bbf712ed6d13bc5d0d4e7c00b7706542bb40b6bdada8080"
+    },
+    {
+      "path": "oj-concept-lab/tests/registration.php",
+      "origin": "working-tree",
+      "size": 4458,
+      "sha256": "379c96da40cc23db1ea83c0ab5a31eea5c12e2c69e852d1d4bcc234ca6fed23b"
+    },
+    {
+      "path": "oj-concept-lab/tools/import-legacy-data.php",
+      "origin": "working-tree",
+      "size": 759,
+      "sha256": "8af6dd30ab971b746e559e5060374c238b63f73ad090104414b28847dfe864f4"
+    },
+    {
+      "path": "oj-concept-lab/uninstall.php",
+      "origin": "working-tree",
+      "size": 237,
+      "sha256": "ebaff818bd6143bb20e55f0bf99165670f28f9f9acb21e17112878d5383a1bb2"
     },
     {
       "path": "oj-integration-rebuild/.gitattributes",
@@ -39016,6 +40059,438 @@
       "origin": "working-tree"
     },
     {
+      "path": "oj-logic-lab/README.md",
+      "origin": "working-tree",
+      "size": 21753,
+      "sha256": "565dcab87670392adc2c11226ffbd2109c8db3dc853d603c324aeff2d34743f5"
+    },
+    {
+      "path": "oj-logic-lab/index.html",
+      "origin": "working-tree",
+      "size": 506,
+      "sha256": "d4b796c1be6fbeb28b1cb2cf188e7bffa1be1f3c9beb79498967128865616792"
+    },
+    {
+      "path": "oj-logic-lab/oj-logic-lab.php",
+      "origin": "working-tree",
+      "size": 660,
+      "sha256": "aeb14c6746ab2cf846bcc83d8083c8f58a17b29b821db4f4bdf69f13cd8947cd"
+    },
+    {
+      "path": "oj-logic-lab/plugin-package.php",
+      "origin": "working-tree",
+      "size": 260,
+      "sha256": "90550fc968721058b9a7aaf83ec95bd2679536d0437855e753c02665f39cd3f1"
+    },
+    {
+      "path": "oj-logic-lab/resources/css/logic-lab.css",
+      "origin": "working-tree",
+      "size": 29779,
+      "sha256": "676bc9a909fe38bc79428f7a79fb8fe8833fe76ae636d7a779b31d607281149e"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/analysis.js",
+      "origin": "working-tree",
+      "size": 7418,
+      "sha256": "21f696b7cf60f39239b32d49c92053ae37fddf3d37967875d9ed0cd12e47df46"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/app.js",
+      "origin": "working-tree",
+      "size": 85611,
+      "sha256": "f04f460a4d4d6e0e9f087f65e493f8e6fe8dfabe9837d908a43caac33e56161a"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/bootstrap.js",
+      "origin": "working-tree",
+      "size": 360,
+      "sha256": "62d5ed557f25d2bd9db618510de9ed3d239fdc7bc8659d023b646d2b9e540366"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/compile.js",
+      "origin": "working-tree",
+      "size": 4136,
+      "sha256": "bfcfdb195be5e5759382141e9bcdbd484876828720a8d935b50fda3c958ba40e"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/drag-planner.js",
+      "origin": "working-tree",
+      "size": 1132,
+      "sha256": "b31e919d9490167c09786d05ef2ed33c3ef9860cb65c282616ecdd4dae92a870"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/drag-worker.js",
+      "origin": "working-tree",
+      "size": 537,
+      "sha256": "dddf67b49876a7220adc7f36f1a95b1d98923a89d44324c94dcc342e5819c630"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/editing.js",
+      "origin": "working-tree",
+      "size": 4492,
+      "sha256": "df9deeb4e6b7d2ec0c45755e2b5af4535604cbc1b2eeac1cc4f0441a80258c99"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/engine.js",
+      "origin": "working-tree",
+      "size": 12030,
+      "sha256": "da32fe63da12bd69665c8d749e761f6d421248394bef2ffad184c086a739349e"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/examples.js",
+      "origin": "working-tree",
+      "size": 7895,
+      "sha256": "854c481cc59876d291fa07593dff22082d63ca92e769b1e960b3e280f8a16f6f"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/exercises.js",
+      "origin": "working-tree",
+      "size": 5786,
+      "sha256": "384e375733a3840cfcd73fe30567ee986066186a532719fe9ab01cd1f7b2f7a1"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/model.js",
+      "origin": "working-tree",
+      "size": 20501,
+      "sha256": "680d3f562c68ad32bbf3f0b0bef87eec1798e4d3d3b9044d0759ae202f5585f0"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/modes.js",
+      "origin": "working-tree",
+      "size": 1700,
+      "sha256": "2895aba71c0a3674bbcc1611eaaf3bc9a13a5cc9069fb700cf7d4a04ecb28e12"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/move.js",
+      "origin": "working-tree",
+      "size": 761,
+      "sha256": "c1b772780f66d8771007861375fb0f5ffbf43eb14ed74e789bff2e676c86dc1c"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/package.json",
+      "origin": "working-tree",
+      "size": 32,
+      "sha256": "d218e29ec01186542b0d85bdc6691d12514e4cdd0ba3b9cd81f253250c8d1e34"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/project-state.js",
+      "origin": "working-tree",
+      "size": 3082,
+      "sha256": "187d301ff4c6eaf7ac8e81963f43a151bd82485b03322bb8df2099a7b0e83233"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/router.js",
+      "origin": "working-tree",
+      "size": 10378,
+      "sha256": "aad1bfaf52c2e2028df4a69da3e32670ca0092b30362d66868961a9311783ff8"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/schematic.js",
+      "origin": "working-tree",
+      "size": 4550,
+      "sha256": "5db017168ba58dcc18e019bd13c85107a31d260c70f964f9388d955223579fd6"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/symbols.js",
+      "origin": "working-tree",
+      "size": 4606,
+      "sha256": "1880e30a62f8afdca215e7f9c6163b3a780c255e18845e29f4c69c2f6f41cd3e"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/tools-ui.js",
+      "origin": "working-tree",
+      "size": 21604,
+      "sha256": "575ca5d19f28db8ef771afdb653cb183f7ef31edeabd3dd41e6a98ba789aadf9"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/waveform.js",
+      "origin": "working-tree",
+      "size": 999,
+      "sha256": "51ca1a9d87031e2e207452d77046821105c955488099ad994fb374ae4222c66b"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/wire-move.js",
+      "origin": "working-tree",
+      "size": 2619,
+      "sha256": "bc0c75a65dfd6b54a3bc0fa1322f354515ab6eb3c10c3ca2c075560deec5a93f"
+    },
+    {
+      "path": "oj-logic-lab/resources/js/wire-points.js",
+      "origin": "working-tree",
+      "size": 4294,
+      "sha256": "01152002d1f53dbeb38d83e3ea074713b05f9f2581b56825e5795a0034bbe8a0"
+    },
+    {
+      "path": "oj-logic-lab/scripts/preview.mjs",
+      "origin": "working-tree",
+      "size": 1131,
+      "sha256": "84eb14364fc000bff127c0aeaf6e8a9a168131a9a6a071b1cf239a89d9501799"
+    },
+    {
+      "path": "oj-logic-lab/scripts/verify.ps1",
+      "origin": "working-tree",
+      "size": 2272,
+      "sha256": "a3983a053eb6bd2f3fc0ce6df6cc9a9703d161c87225bf7c5d1a8dea6c3eafd9"
+    },
+    {
+      "path": "oj-logic-lab/scripts/wordpress-check.ps1",
+      "origin": "working-tree",
+      "size": 6285,
+      "sha256": "82e20a8cb8443057aac40a54f0d4828b4d06de4bfe825e4a28d187f491806de7"
+    },
+    {
+      "path": "oj-logic-lab/src/Addon/PageHandler.php",
+      "origin": "working-tree",
+      "size": 805,
+      "sha256": "5828849e37abb761a2895735df08a387e02babf594727d6ae410407297599527"
+    },
+    {
+      "path": "oj-logic-lab/src/Addon/Registration.php",
+      "origin": "working-tree",
+      "size": 2104,
+      "sha256": "7b1e67b9a5f819ca2e30e2fc899f7ee1adaa9bfacd8978acc04c4adf0b30258c"
+    },
+    {
+      "path": "oj-logic-lab/src/Core/Autoloader.php",
+      "origin": "working-tree",
+      "size": 491,
+      "sha256": "68503e8ade1c591657f0f04f0510d5536bda69ba37ae22aa295d03869a79b60e"
+    },
+    {
+      "path": "oj-logic-lab/src/Core/Plugin.php",
+      "origin": "working-tree",
+      "size": 687,
+      "sha256": "d0623b1e9ff06060fa524549393096f75a5b89ca63609042b987268bc97b50bd"
+    },
+    {
+      "path": "oj-logic-lab/tests/db-budget.php",
+      "origin": "working-tree",
+      "size": 944,
+      "sha256": "7980cb71decb1155f1edde1c37c426b6bc6dbedaba1d9bf7c690ebb667ae743b"
+    },
+    {
+      "path": "oj-logic-lab/tests/drag.mjs",
+      "origin": "working-tree",
+      "size": 2448,
+      "sha256": "773a829a0b4943f5845d20f9a3368d96ddd826b9240f76e1bdb5bc5088edd461"
+    },
+    {
+      "path": "oj-logic-lab/tests/engine.mjs",
+      "origin": "working-tree",
+      "size": 6126,
+      "sha256": "46bd0bec1f00bb13383d85d2b26f37cae316544a4c0520b6ca2ca4499872e16a"
+    },
+    {
+      "path": "oj-logic-lab/tests/features.mjs",
+      "origin": "working-tree",
+      "size": 10088,
+      "sha256": "ec65f35a73ffb53fdbb23f83841359da4d240648aa8d8027c6d08b97b9286960"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.1.0-dff.json",
+      "origin": "working-tree",
+      "size": 3278,
+      "sha256": "fa698fa2327c4cdc0e8f144467ab40d374ac8e25e20e9536922fb95cf78615d2"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.1.0-half.json",
+      "origin": "working-tree",
+      "size": 3473,
+      "sha256": "0dd86c03c2136d7292776ba55204692301f4367b565eec0e1dc941a83f257937"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.2.0-dff.json",
+      "origin": "working-tree",
+      "size": 3304,
+      "sha256": "3d4dc2bd9aa77d847f4f3b0575157765531ea0b064c25ab481d807c423dbea1c"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.2.0-half.json",
+      "origin": "working-tree",
+      "size": 3499,
+      "sha256": "a12cb1783e16e1483460ea46115c5eb11dc8958319cc89401c5f14683a1f81da"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.3.0-dff.json",
+      "origin": "working-tree",
+      "size": 3499,
+      "sha256": "b7c0bf9a729fd6084c6d2f3bfbb9275fe20020366f978a93ac6c9abd6beb5dda"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.3.0-half.json",
+      "origin": "working-tree",
+      "size": 3694,
+      "sha256": "cf352eeb9eb24579f71526f9db841c04828e3a48b30bfef9dccdc09368e9a2a8"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.4.0-dff.json",
+      "origin": "working-tree",
+      "size": 3499,
+      "sha256": "08a4f1bb6aaa19832e487e0667fd002d9149e3ffdf411303fd654a516b63a6db"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.4.0-half.json",
+      "origin": "working-tree",
+      "size": 3694,
+      "sha256": "ac571bb1c5d25f9ba401f8731ad3391a85f39d4007952802ab92413a86fd0460"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.4.0-manual.json",
+      "origin": "working-tree",
+      "size": 4158,
+      "sha256": "92dc89f644ec7a4ef0bd19305fa8527675cb97871ca42a29c8f606929c674151"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.5.0-dff.json",
+      "origin": "working-tree",
+      "size": 3499,
+      "sha256": "139aacddd028422ac00fc4480fc531da6a4a7a705d7ba48194b78f3db66e9740"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.5.0-half.json",
+      "origin": "working-tree",
+      "size": 3694,
+      "sha256": "5d11088b146fae1011f1c9f46b70520f89194201cc3455ab18fae6eeca96f576"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.5.0-manual.json",
+      "origin": "working-tree",
+      "size": 4158,
+      "sha256": "17d5d9c4ec4e4f5985f58c824f10e44003abe8b00abb78fb83f0d146cef0fb7f"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/0.5.0-waypoint.json",
+      "origin": "working-tree",
+      "size": 4558,
+      "sha256": "b9cf7aa17fab70c50050f1f7d7148a19f21a31bafac3dffc64641d4627338a36"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-alu.json",
+      "origin": "working-tree",
+      "size": 9218,
+      "sha256": "61abcb4420877a4b6a64845f78d2c306c65b81b48b760edbc8e90fab43eb21fd"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-bus.json",
+      "origin": "working-tree",
+      "size": 4056,
+      "sha256": "58d0519122a53b61c201c995b99d7d416836a008e05aeb22b5a03e2ce355a22f"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-counter.json",
+      "origin": "working-tree",
+      "size": 4948,
+      "sha256": "46ccb88cf1fa3265c1597e167a6e65075c3458c3fb6ef1531b7245811aaf37bf"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-datapath.json",
+      "origin": "working-tree",
+      "size": 6110,
+      "sha256": "eb822f015219d91a61b94728fe5feb18277260337c47759d34fa3344660c00c8"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-dff.json",
+      "origin": "working-tree",
+      "size": 3990,
+      "sha256": "bedaa8895ed21928c0708dd02ea7fe26208d2c29ad80f1b9329a5f55b78ca508"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-full.json",
+      "origin": "working-tree",
+      "size": 5313,
+      "sha256": "6e58f0f6b12cd922f3933c0666797268b879bb2a0da096986ae23882dd1c8490"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-half.json",
+      "origin": "working-tree",
+      "size": 4185,
+      "sha256": "58387df68563fda8d3426277af4252486b15cdb1ca68647d3d2b84015339fe5a"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-hazard.json",
+      "origin": "working-tree",
+      "size": 3055,
+      "sha256": "d2b043b8b9e054b99bdb659c36a5eaf5f17868b69c8121ccf1623693f0ca6f14"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-manual-waypoint.json",
+      "origin": "working-tree",
+      "size": 5114,
+      "sha256": "c23b24cc3f2732986e20f9446300ea55859ef8c43646a9238d9f4137902de951"
+    },
+    {
+      "path": "oj-logic-lab/tests/fixtures/1.0.0-rc.1-transfer.json",
+      "origin": "working-tree",
+      "size": 4959,
+      "sha256": "086d64acae14ab97733a3aa0e386f092621bc70c6d2da6f1ea0be06f6be28661"
+    },
+    {
+      "path": "oj-logic-lab/tests/integration.php",
+      "origin": "working-tree",
+      "size": 3190,
+      "sha256": "801efeef29f585d4eef53dc0cf9580bd8190f98d0346cd7dea393da8c4c31d85"
+    },
+    {
+      "path": "oj-logic-lab/tests/migrations.mjs",
+      "origin": "working-tree",
+      "size": 3668,
+      "sha256": "ef9427d6b352a8d3166fa610092635ce9f6c18922e928479e918394b2620e333"
+    },
+    {
+      "path": "oj-logic-lab/tests/modes.mjs",
+      "origin": "working-tree",
+      "size": 4309,
+      "sha256": "7c846bd74fc97d5aa8638a0f3b503e55d49366682b8ede74dbc330f48c0f782f"
+    },
+    {
+      "path": "oj-logic-lab/tests/performance.mjs",
+      "origin": "working-tree",
+      "size": 2340,
+      "sha256": "ed6437e291e3db41305e9cd35ebae5cde3db8a142adb310baefcf390b9c8d270"
+    },
+    {
+      "path": "oj-logic-lab/tests/rc.mjs",
+      "origin": "working-tree",
+      "size": 7251,
+      "sha256": "e72fd0e358637d88b56468b89c6435f2743048f53cb6429252a4196601918a34"
+    },
+    {
+      "path": "oj-logic-lab/tests/router.mjs",
+      "origin": "working-tree",
+      "size": 3018,
+      "sha256": "efee08e01c877f22568c87d6c97ca4f9557fa55421da8712b5c0a7aa98943fca"
+    },
+    {
+      "path": "oj-logic-lab/tests/wire-move.mjs",
+      "origin": "working-tree",
+      "size": 7098,
+      "sha256": "037009c725cdf7167f00b5c18e5b4d601fee1eb918081ccd92fcde3f656b01a5"
+    },
+    {
+      "path": "oj-logic-lab/tests/wire-points.mjs",
+      "origin": "working-tree",
+      "size": 7587,
+      "sha256": "03029e6f11d8f251363acf1699b5b2334d2e170a839ace76f6662535dd0537b5"
+    },
+    {
+      "path": "oj-logic-lab/tests/wordpress-route.php",
+      "origin": "working-tree",
+      "size": 2572,
+      "sha256": "b928eea89d7c1a7e5344e3f7009f3b8f49aef1dc2e334e63ed350c4fde13bb68"
+    },
+    {
+      "path": "oj-logic-lab/tests/wordpress-upgraded.php",
+      "origin": "working-tree",
+      "size": 1410,
+      "sha256": "845a51858cca832c7888b5e4dc0ab5e482b054ba5c80f31568ded0566a8fc2a9"
+    },
+    {
+      "path": "oj-logic-lab/tests/wordpress.php",
+      "origin": "working-tree",
+      "size": 8086,
+      "sha256": "49a14d1926b0fc555d0542abcecd130b6c17ea8cb892ec83433a2302d61e70d4"
+    },
+    {
       "path": "oj-microbit/AGENTS.md",
       "origin": "working-tree",
       "size": 2090,
@@ -39024,8 +40499,8 @@
     {
       "path": "oj-microbit/CHANGELOG.md",
       "origin": "working-tree",
-      "size": 11845,
-      "sha256": "95bb6db2376c5924e27af9e1f415334a9a6c1fe5b039ce61e505b0e01df1a8be"
+      "size": 17207,
+      "sha256": "0351041eb4ad927412ed1d110f2909ec18c7d07f1e9a0e31bcdaebdb1dfe5d3d"
     },
     {
       "path": "oj-microbit/LICENSE.txt",
@@ -39036,20 +40511,26 @@
     {
       "path": "oj-microbit/README.md",
       "origin": "working-tree",
-      "size": 22925,
-      "sha256": "af4cf30e21787f04f0e0b693ebb68a101cfc2ea1960ae9a795881c572fbbd169"
+      "size": 23014,
+      "sha256": "3b98e6b37cb3664a0c59e3b63b30f25d0c11a1d1b01474a816a3f81caaab3825"
     },
     {
       "path": "oj-microbit/docs/ACCEPTANCE-CHECKLIST.md",
       "origin": "working-tree",
-      "size": 23923,
-      "sha256": "25cfd315cc1eec4d7395febd4e9a1206e6d84498524f9d686bdad205fb227c6e"
+      "size": 27132,
+      "sha256": "0c9c7a6738fb3bf28626d10edd77eccd70150076d6f4481b885dccc9e4af3a70"
     },
     {
       "path": "oj-microbit/docs/ACCEPTANCE-REPORT-TEMPLATE.md",
       "origin": "working-tree",
-      "size": 3043,
-      "sha256": "65b3b49763cddee9bba7de653afb193a80cb6ad7a0312655a23a26ffce8b3cbe"
+      "size": 3382,
+      "sha256": "a5e05ce13ac9920de7f27690d3d35dffd70855d96154608dd325705ca1aeb1f0"
+    },
+    {
+      "path": "oj-microbit/docs/ACTUAL-EXECUTION-1.0.0-rc.12.md",
+      "origin": "working-tree",
+      "size": 7169,
+      "sha256": "19b0d8167ce1e104625d1214ab2acf2590190246837dc8694a4e0a2d5abd322e"
     },
     {
       "path": "oj-microbit/docs/BEGINNER-UX-1.0.0-rc.6.md",
@@ -39064,10 +40545,22 @@
       "sha256": "4ab81b1d5df79f48b067e7469c393ae58385da5e02bf765ac44cf8a72dbed91a"
     },
     {
+      "path": "oj-microbit/docs/EDITING-FOCUS-1.0.0-rc.15.md",
+      "origin": "working-tree",
+      "size": 4349,
+      "sha256": "2ffeb9778bffe76c88fd50ef178dd7d3d13c1cbc89320ab3a817c1b5f9dd787c"
+    },
+    {
+      "path": "oj-microbit/docs/EXPECTED-PREVIEW-1.0.0-rc.11.md",
+      "origin": "working-tree",
+      "size": 4678,
+      "sha256": "a4b3370587e91d43ca2b7f93cd498a00d4755a8f0066489e2a7c90cd53b8b372"
+    },
+    {
       "path": "oj-microbit/docs/FEATURE-FREEZE.md",
       "origin": "working-tree",
-      "size": 2269,
-      "sha256": "1f1f1201a939521a191509ed6a33cfba501b9ec74615c0a7c2272da428dfbb61"
+      "size": 3202,
+      "sha256": "8706b7ca0f519cb9fc247aa272008c6624a44ad5f88c8e2b5392d27c45753abc"
     },
     {
       "path": "oj-microbit/docs/FOCUSED-UI-1.0.0-rc.8.md",
@@ -39078,14 +40571,20 @@
     {
       "path": "oj-microbit/docs/HUSTOJ-COEXISTENCE.md",
       "origin": "working-tree",
-      "size": 8345,
-      "sha256": "2de6efe2f6b6320aa77f34526da64ef3792ce25554f9961221ea868583120058"
+      "size": 8656,
+      "sha256": "91acef53a37c008e0e6b6930e1c786ed5ed1253fb0e9493bb9d124b71cf1c9da"
+    },
+    {
+      "path": "oj-microbit/docs/INSTALLER-AUDIT-1.0.0-rc.14.md",
+      "origin": "working-tree",
+      "size": 7612,
+      "sha256": "e23459a49d84ec025eb3715a16a94586143d6ecae9ced26fcbe66986419c28c4"
     },
     {
       "path": "oj-microbit/docs/INSTALLER.md",
       "origin": "working-tree",
-      "size": 10126,
-      "sha256": "9bea654827ff74dd78b7909289cd997aa6be4003fe95879cc2ab3107d0ed4cb4"
+      "size": 12992,
+      "sha256": "76de3d0c58cdf24edb5689bce2af3761fd6420fd5b728b0b073a403cb8a98bc4"
     },
     {
       "path": "oj-microbit/docs/MENU-SEPARATION-1.0.0-rc.5.md",
@@ -39102,26 +40601,38 @@
     {
       "path": "oj-microbit/docs/PROBLEM-WORKFLOW.md",
       "origin": "working-tree",
-      "size": 10226,
-      "sha256": "7e6742d179240624da16ef903843cceb0b5fe9955203675d9b71603880c21699"
+      "size": 12659,
+      "sha256": "d7259231b282c78ef43bbed28cb8e1c00bd2791de5d44eefeccf97aa2609f23e"
     },
     {
       "path": "oj-microbit/docs/RELEASE-PLAN.md",
       "origin": "working-tree",
-      "size": 13424,
-      "sha256": "140804f905e5788cb818512c1db518a009bd833e94c7288a5d40f858d8e37bce"
+      "size": 13973,
+      "sha256": "4e6f6262fbb89da5d0f39c8c001d21d86ee038186f717c085646500b32b01544"
     },
     {
       "path": "oj-microbit/docs/RELEASE-REVIEW.md",
       "origin": "working-tree",
-      "size": 14346,
-      "sha256": "1bb20c0b864418e5807547d3c4b8a8b917d73ba7facf927c29778bf4ade30b14"
+      "size": 14895,
+      "sha256": "2d2184ac9b5739652c839b2133070111c7f6f5bf028b6a902731c3226e495f30"
     },
     {
       "path": "oj-microbit/docs/STAGE-WIZARD-1.0.0-rc.7.md",
       "origin": "working-tree",
       "size": 5876,
       "sha256": "9d150f93304879c94756f5480ddac309e5010a956e687218d528cc8f93646799"
+    },
+    {
+      "path": "oj-microbit/docs/STATEFUL-EXECUTION-1.0.0-rc.13.md",
+      "origin": "working-tree",
+      "size": 8613,
+      "sha256": "3b2c5d67c77a7fc084476d2b7c56c2ae9636ff2797ccfad43ee8e333304bb590"
+    },
+    {
+      "path": "oj-microbit/docs/STUDENT-OVERVIEW-1.0.0-rc.10.md",
+      "origin": "working-tree",
+      "size": 3736,
+      "sha256": "b5b0b0af82c7f056a99b847936b6ed416ccbe66da2a52ae45af9f8fee811446b"
     },
     {
       "path": "oj-microbit/docs/UI-UX-REVIEW-1.0.0-rc.4.md",
@@ -39132,14 +40643,62 @@
     {
       "path": "oj-microbit/docs/VALIDATION.md",
       "origin": "working-tree",
-      "size": 49422,
-      "sha256": "9bf83d84a2af5a2df1de1bffce538cbb03e49b3491d582a16deae67168dc9ff1"
+      "size": 57703,
+      "sha256": "4f5d61facd6952380d37336b4229cfcd6339b6c1321dc402ec9fa0d4c37c0abb"
+    },
+    {
+      "path": "oj-microbit/docs/author-design-validation-1.0.0-rc.10.json",
+      "origin": "working-tree",
+      "size": 24858,
+      "sha256": "e5f8865a422faf2b89d12a203ece0a359878531ac011f952fdc95b8f49506c7f"
+    },
+    {
+      "path": "oj-microbit/docs/author-design-validation-1.0.0-rc.11.json",
+      "origin": "working-tree",
+      "size": 24857,
+      "sha256": "c4779cfb7bdc7800a4f2d69ad07308cb8bc78a9dfa6392a0b7bd015c2733dc7a"
+    },
+    {
+      "path": "oj-microbit/docs/author-design-validation-1.0.0-rc.12.json",
+      "origin": "working-tree",
+      "size": 24932,
+      "sha256": "0316bf55fa0e99dce0e495f27172164f69fc3a2725bcb20dc71987b7abcaf2ff"
+    },
+    {
+      "path": "oj-microbit/docs/author-design-validation-1.0.0-rc.13.json",
+      "origin": "working-tree",
+      "size": 24932,
+      "sha256": "0316bf55fa0e99dce0e495f27172164f69fc3a2725bcb20dc71987b7abcaf2ff"
     },
     {
       "path": "oj-microbit/docs/browser-beginner-validation-1.0.0-rc.6.json",
       "origin": "working-tree",
       "size": 3388,
       "sha256": "6378cb0b5651b03e284dcb479543b7e4f4aa87fb99b08c953fd523de003db2e2"
+    },
+    {
+      "path": "oj-microbit/docs/browser-focused-validation-1.0.0-rc.10.json",
+      "origin": "working-tree",
+      "size": 11761,
+      "sha256": "85dc11a634e357a9f5d828167e16029608e26e8fae7e09dee2ecb3c44c249d98"
+    },
+    {
+      "path": "oj-microbit/docs/browser-focused-validation-1.0.0-rc.11.json",
+      "origin": "working-tree",
+      "size": 12399,
+      "sha256": "6f47d36be71275c9af404b825d001fde15126419f47bd6c7b3015ca43c4b87dc"
+    },
+    {
+      "path": "oj-microbit/docs/browser-focused-validation-1.0.0-rc.12.json",
+      "origin": "working-tree",
+      "size": 14031,
+      "sha256": "91185af6d924a5790b82783abdd46abaa94eabf04df8f57e27c1e5333c0a8dbf"
+    },
+    {
+      "path": "oj-microbit/docs/browser-focused-validation-1.0.0-rc.13.json",
+      "origin": "working-tree",
+      "size": 14792,
+      "sha256": "9acbffe0f670e5e33fdcef44c12926bd5db7dea3835f76c07edf91e0674d57f9"
     },
     {
       "path": "oj-microbit/docs/browser-focused-validation-1.0.0-rc.8.json",
@@ -39152,6 +40711,12 @@
       "origin": "working-tree",
       "size": 7836,
       "sha256": "6839d5aac22a64493ec1036ff8e6c5c920177cf8c58ddbb3bb79bd548447e8d8"
+    },
+    {
+      "path": "oj-microbit/docs/browser-immersive-validation-1.0.0-rc.15.json",
+      "origin": "working-tree",
+      "size": 16174,
+      "sha256": "ca335ff8e85661d5686f166871f62e398eabe37928ea4f809d228a3c28a26e95"
     },
     {
       "path": "oj-microbit/docs/browser-p1-validation-0.5.0.json",
@@ -39244,6 +40809,12 @@
       "sha256": "1099c9b5e573f801ef2d86727dfa3d28b02b44096ccef8bc4636fc1c39dbc6f7"
     },
     {
+      "path": "oj-microbit/docs/design-fidelity-1.0.0-rc.15.json",
+      "origin": "working-tree",
+      "size": 9691,
+      "sha256": "1056a9aa92d6f8e00093b504a312a896b44492568541549b9d5b029e490945e0"
+    },
+    {
       "path": "oj-microbit/docs/design-fidelity-validation-1.0.0-rc.9.json",
       "origin": "working-tree",
       "size": 36281,
@@ -39254,6 +40825,42 @@
       "origin": "working-tree",
       "size": 6841,
       "sha256": "292d6db08eab7114baacb90f85a02c7a05cf1f92357e34dc03129f3732885fe8"
+    },
+    {
+      "path": "oj-microbit/docs/feature-freeze-1.0.0-rc.10.json",
+      "origin": "working-tree",
+      "size": 8674,
+      "sha256": "027b1d7e9c8d2e77baf59d6e506445a46f5424dd25c5adbdf19581551129edbc"
+    },
+    {
+      "path": "oj-microbit/docs/feature-freeze-1.0.0-rc.11.json",
+      "origin": "working-tree",
+      "size": 8657,
+      "sha256": "01d62a72eee2f46ee8f3a2ce6f2b16550d4212236dd69a458ae413906f0b9b4a"
+    },
+    {
+      "path": "oj-microbit/docs/feature-freeze-1.0.0-rc.12.json",
+      "origin": "working-tree",
+      "size": 8720,
+      "sha256": "d14c68059e95ee029a34733b181891c06b382d008d3d34e61ad738b059264a38"
+    },
+    {
+      "path": "oj-microbit/docs/feature-freeze-1.0.0-rc.13.json",
+      "origin": "working-tree",
+      "size": 11636,
+      "sha256": "08bfdecb53f634c3aefdef2293f4145c5b379b311bc8e1e2ec9e40f094b1b981"
+    },
+    {
+      "path": "oj-microbit/docs/feature-freeze-1.0.0-rc.14.json",
+      "origin": "working-tree",
+      "size": 11008,
+      "sha256": "00ceb8ab5677a28fbcab14ae8454080728ff35375532664132d688905119c529"
+    },
+    {
+      "path": "oj-microbit/docs/feature-freeze-1.0.0-rc.15.json",
+      "origin": "working-tree",
+      "size": 11026,
+      "sha256": "c6d51cdfede7e7ce761c63aeaca6f0e07a729cbf046f6e48151209f76f3c5647"
     },
     {
       "path": "oj-microbit/docs/feature-freeze-1.0.0-rc.2.json",
@@ -39328,6 +40935,12 @@
       "sha256": "7487735ef3ce8965bba10ef0be1907cfb5abb8a947bcd21e55f2b13b61894db9"
     },
     {
+      "path": "oj-microbit/docs/installer-validation-1.0.0-rc.14.json",
+      "origin": "working-tree",
+      "size": 1308,
+      "sha256": "4fb24f1694ba34f71afc428ea6039b64cfd7166592d11cb4ef090955300f6a8d"
+    },
+    {
       "path": "oj-microbit/docs/lesson-results-1.0.0-rc.3.png",
       "origin": "working-tree",
       "size": 41677,
@@ -39386,6 +40999,42 @@
       "origin": "working-tree",
       "size": 1389,
       "sha256": "1fcbc44bf49187b7d02620d85af15d420ef17283b8028f89ab5fc8832db58c3f"
+    },
+    {
+      "path": "oj-microbit/docs/rc-validation-1.0.0-rc.10.json",
+      "origin": "working-tree",
+      "size": 4919,
+      "sha256": "9e8ba32b7778422d2dd9bce515061b9ad2d2042982ceb6293302e05f1d76e2f6"
+    },
+    {
+      "path": "oj-microbit/docs/rc-validation-1.0.0-rc.11.json",
+      "origin": "working-tree",
+      "size": 5509,
+      "sha256": "405b15549f3aad776f80fd08cfd489f6632693efab4450deaa4693d6d89dc0ed"
+    },
+    {
+      "path": "oj-microbit/docs/rc-validation-1.0.0-rc.12.json",
+      "origin": "working-tree",
+      "size": 7124,
+      "sha256": "642a47de7e7765c30a054c9c31916ba8dc851302d824b80b40775af2b82a324e"
+    },
+    {
+      "path": "oj-microbit/docs/rc-validation-1.0.0-rc.13.json",
+      "origin": "working-tree",
+      "size": 7102,
+      "sha256": "308ceae975746154167c498481416d874ec32c45fb17cc275bb42259bad1ed5e"
+    },
+    {
+      "path": "oj-microbit/docs/rc-validation-1.0.0-rc.14.json",
+      "origin": "working-tree",
+      "size": 7594,
+      "sha256": "7e0f9a2f2d2a8734c371bf2d6065f182db792d24ff2308884f9e61bb354d8082"
+    },
+    {
+      "path": "oj-microbit/docs/rc-validation-1.0.0-rc.15.json",
+      "origin": "working-tree",
+      "size": 8157,
+      "sha256": "4498d9ef958208445e03b6fab7febae5337c09ee4f14204493bc4c5a640cb04e"
     },
     {
       "path": "oj-microbit/docs/rc-validation-1.0.0-rc.2.json",
@@ -39452,6 +41101,30 @@
       "origin": "working-tree",
       "size": 25796,
       "sha256": "0114cb365015171867bb54f3a7f0765880f7156b0cf68b04ac891322c6f4364b"
+    },
+    {
+      "path": "oj-microbit/docs/ui-actual-rc12/actual-execution-dark.png",
+      "origin": "working-tree",
+      "size": 138428,
+      "sha256": "60da997837085366a1e4bbc5ef809aafa205290aa3136062c656cc954c485935"
+    },
+    {
+      "path": "oj-microbit/docs/ui-actual-rc12/actual-execution-desktop.png",
+      "origin": "working-tree",
+      "size": 148027,
+      "sha256": "b501c42493ca7853c3fe12c220304daf3db614333da208967901f9954bb9db9e"
+    },
+    {
+      "path": "oj-microbit/docs/ui-actual-rc12/actual-execution-mobile.png",
+      "origin": "working-tree",
+      "size": 137613,
+      "sha256": "020527ffa5f6772e20a6e817c7c897c075d57735f02023891696b32be7834c0b"
+    },
+    {
+      "path": "oj-microbit/docs/ui-actual-rc12/teacher-private-checks.png",
+      "origin": "working-tree",
+      "size": 28310,
+      "sha256": "900c9ba8c1b240e3053908fe42b83e82f9764e1457671cdc550d29384e9ea758"
     },
     {
       "path": "oj-microbit/docs/ui-before-1.0.0-rc.4.png",
@@ -39562,6 +41235,24 @@
       "sha256": "8c1e341e824c53c4f21923902e90ea9b3c8633d81e004b2b75935990de087c0b"
     },
     {
+      "path": "oj-microbit/docs/ui-expected-rc11/expected-preview-dark.png",
+      "origin": "working-tree",
+      "size": 106514,
+      "sha256": "9933d7df4961b8215d582730ed5bf9fc712eeae22e040bfa19177c317bad9f8b"
+    },
+    {
+      "path": "oj-microbit/docs/ui-expected-rc11/expected-preview-desktop.png",
+      "origin": "working-tree",
+      "size": 112173,
+      "sha256": "b1327d95debd6bb4d72c2379ff79ef2c872b30b54cdc5dfc6f932bbe9000815e"
+    },
+    {
+      "path": "oj-microbit/docs/ui-expected-rc11/expected-preview-mobile.png",
+      "origin": "working-tree",
+      "size": 105460,
+      "sha256": "009a341f5ff23f18c8a52604ee63f253e60be0f950929f8a377ffb1fd29d9245"
+    },
+    {
       "path": "oj-microbit/docs/ui-focused-author-desktop-1.0.0-rc.8.png",
       "origin": "working-tree",
       "size": 99986,
@@ -39596,6 +41287,60 @@
       "origin": "working-tree",
       "size": 79502,
       "sha256": "710b2f45037a639064d5a54a4a3b6a1ff6cc6b72b89346863601503c43806d45"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/actual-author-1280.png",
+      "origin": "working-tree",
+      "size": 24983,
+      "sha256": "66051932ac98543698e91110bb02ac26c2b43e1bd4b03191da2112c207f5f61a"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/actual-author-390.png",
+      "origin": "working-tree",
+      "size": 18982,
+      "sha256": "2d4547b5994b57a0eaec8b14884572a3de10e744a51d851d101e26c4fd7ca7ae"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/editor-full-width-320.png",
+      "origin": "working-tree",
+      "size": 34024,
+      "sha256": "51a61133220a4795707d3817d92e207627dcc8bc87f7648c7e20f30fe512fe44"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/editor-full-width-desktop.png",
+      "origin": "working-tree",
+      "size": 40280,
+      "sha256": "2d6c09a419bdb563c4aadc3b19c44b6273fc1eaf278eeb5ffaedfd21c4de0b02"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/reference-author-1280.png",
+      "origin": "working-tree",
+      "size": 32765,
+      "sha256": "b8fe5e97306957389e83a49aee600ff793d3ccf9de93d0c2cb56ff0768d6e40b"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/reference-author-390.png",
+      "origin": "working-tree",
+      "size": 31126,
+      "sha256": "a17e2b4635ef096280406ab4e98ea59a8c1e90acbf52f855bcda56acc934044b"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/stateful-execution-dark.png",
+      "origin": "working-tree",
+      "size": 53187,
+      "sha256": "1ef490faa709590b50ab76f884e6ab6360db7a19b66c2f393ccec3c0fc5605cd"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/stateful-execution-desktop.png",
+      "origin": "working-tree",
+      "size": 68864,
+      "sha256": "7b809c7b1d130b54dd5456e3f6b8daab446c613cca80c8ada34a49440864d6fd"
+    },
+    {
+      "path": "oj-microbit/docs/ui-immersive-rc15/stateful-execution-mobile.png",
+      "origin": "working-tree",
+      "size": 52690,
+      "sha256": "8d34ad807418239a13f48d314ef1a0e8ac18daaf0b2c4e102a308161d3c5e713"
     },
     {
       "path": "oj-microbit/docs/ui-input-cards-1.0.0-rc.6.png",
@@ -39676,6 +41421,24 @@
       "sha256": "1baae89ff6f881b3fec7ba3a7d21b31801a674cc1702622816f57977f26927e6"
     },
     {
+      "path": "oj-microbit/docs/ui-stateful-rc13/stateful-execution-dark.png",
+      "origin": "working-tree",
+      "size": 131508,
+      "sha256": "d6b1995584f84fc5b28f9519032a8bc359ed7b2b7e5249513dae730e9ee9a32e"
+    },
+    {
+      "path": "oj-microbit/docs/ui-stateful-rc13/stateful-execution-desktop.png",
+      "origin": "working-tree",
+      "size": 140041,
+      "sha256": "0ce0de9f0b43b9168f61c56d945a775441127de3a4fc21b874a416aa800ea64c"
+    },
+    {
+      "path": "oj-microbit/docs/ui-stateful-rc13/stateful-execution-mobile.png",
+      "origin": "working-tree",
+      "size": 130282,
+      "sha256": "5dd127fcec63e368e8bea71b588be93fbb82eec028f015c05049899d33b15814"
+    },
+    {
       "path": "oj-microbit/docs/ui-student-cards-1.0.0-rc.6.png",
       "origin": "working-tree",
       "size": 80878,
@@ -39688,34 +41451,82 @@
       "sha256": "2b8461f2390fdab33943ff65d4c42c851b94330feeb2a68c2301717739fed042"
     },
     {
+      "path": "oj-microbit/docs/ui-student-rc10/student-overview-1280.png",
+      "origin": "working-tree",
+      "size": 73495,
+      "sha256": "7f25dbf4b4c92dc5d75e348796cb640da9752711b2f204b454d532d788794f18"
+    },
+    {
+      "path": "oj-microbit/docs/ui-student-rc10/student-overview-390.png",
+      "origin": "working-tree",
+      "size": 80663,
+      "sha256": "8c8d7e1a780dfa1a54872a99754911e3a5a3a53946e9fdba1884c65a429a4344"
+    },
+    {
+      "path": "oj-microbit/docs/ui-student-rc10/student-overview-dark-390.png",
+      "origin": "working-tree",
+      "size": 81830,
+      "sha256": "3c4b05390c246a14f2fd9dad75c876cf3bbf4442bb393367dcd9bf9562c6397a"
+    },
+    {
       "path": "oj-microbit/oj-microbit.php",
       "origin": "working-tree",
-      "size": 810,
-      "sha256": "6677facd5375e72ce6e1afb2cd84d31a1a8505f8798ca41f1b4fada2f4dbba11"
+      "size": 812,
+      "sha256": "c36512862cbf80569a69bd3142ec1b1cd223a53f5665cf537d0c93d6785f02d8"
     },
     {
       "path": "oj-microbit/plugin-package.php",
       "origin": "working-tree",
-      "size": 286,
-      "sha256": "ad5cc78053f72c4b12c851a7511b3265fc7aa0b9ffed4cf689e5406acf69676b"
+      "size": 287,
+      "sha256": "efe184df5f7fa9a56119559affdbd2cdddf1bf9f1f384c5cf3384c6059d89d22"
     },
     {
       "path": "oj-microbit/resources/css/microbit.css",
       "origin": "working-tree",
-      "size": 45389,
-      "sha256": "93b25065a69f471f78f3500f73451c4fce67a90ab26f43917fe78f6be8976fec"
+      "size": 84067,
+      "sha256": "916c11b965756e176ca0bc4162e579ced303e2e663b8fcaae86f04881fe92624"
+    },
+    {
+      "path": "oj-microbit/resources/js/live-session.js",
+      "origin": "working-tree",
+      "size": 3759,
+      "sha256": "c2a7932350291fbd8a3c16ea2b5d2b83537bdf39cd972506ce456dc9b6ffc65c"
     },
     {
       "path": "oj-microbit/resources/js/microbit.js",
       "origin": "working-tree",
-      "size": 258677,
-      "sha256": "e813374e374a3ff5b77f8bc47e73daae4cdbb649767948cebc9fd12b34e439e0"
+      "size": 310283,
+      "sha256": "c5a0eab2ec021b84b70b6e3e43839818fafe3cd892916fea33bd5df38103360f"
+    },
+    {
+      "path": "oj-microbit/resources/simulator/THIRD_PARTY_NOTICES.txt",
+      "origin": "working-tree",
+      "size": 2285,
+      "sha256": "8ac95cc76ba126fbf70132069f844491f437e5c53a29164b6642c46cc8885eb9"
+    },
+    {
+      "path": "oj-microbit/resources/simulator/host.html",
+      "origin": "working-tree",
+      "size": 464,
+      "sha256": "76311b71a98cf0e03fc36329fab514832fbd2199ab476a24f6e95efb73654c4f"
+    },
+    {
+      "path": "oj-microbit/resources/simulator/host.js",
+      "origin": "working-tree",
+      "size": 659865,
+      "sha256": "3edabd37e89a42e309bd7bbfead3d85063b5b1c7b171691c791972a3dc7b8a60"
     },
     {
       "path": "oj-microbit/resources/tools/.gitignore",
       "origin": "working-tree",
       "size": 14,
       "sha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97"
+    },
+    {
+      "path": "oj-microbit/resources/tools/build-live.mjs",
+      "origin": "working-tree",
+      "size": 2680,
+      "sha256": "56597d918d9c57e041c808cf5c7a8f07ce97a9ccbadf1a9e4db622746b170457"
     },
     {
       "path": "oj-microbit/resources/tools/build.mjs",
@@ -39726,8 +41537,20 @@
     {
       "path": "oj-microbit/resources/tools/frontend.test.cjs",
       "origin": "working-tree",
-      "size": 119613,
-      "sha256": "6378dd60668506961aa8dd2339dfa827984b0e063634bb4c62a79f2b0813968f"
+      "size": 148537,
+      "sha256": "c0dcf15174ff5c2b10e6886ca5fe1ac5be940cafae106de748bf41f91dee4d03"
+    },
+    {
+      "path": "oj-microbit/resources/tools/live-host-template.js",
+      "origin": "working-tree",
+      "size": 1475,
+      "sha256": "f9e8f94d3ef9d042bd93602578c481fefa0f060423bf19caade7dc615e0ebc86"
+    },
+    {
+      "path": "oj-microbit/resources/tools/live-worker-template.js",
+      "origin": "working-tree",
+      "size": 3702,
+      "sha256": "99aa17477bbc7fa94a57a006f9fbc4d582c3b531c29d2962bab2848e51e0da02"
     },
     {
       "path": "oj-microbit/resources/tools/package-lock.json",
@@ -39786,8 +41609,8 @@
     {
       "path": "oj-microbit/runner/README.md",
       "origin": "working-tree",
-      "size": 19607,
-      "sha256": "70ec629cf408d50ec9398120905cee9a45dbfb582b95d2b32a3dd4e550c33594"
+      "size": 20664,
+      "sha256": "ca780f569623bfaac9f1a35405a147db11a14e0d3737aba9c5e04968a0ea0375"
     },
     {
       "path": "oj-microbit/runner/install-tools/WordPressConfigurator.php",
@@ -39804,26 +41627,26 @@
     {
       "path": "oj-microbit/runner/install-tools/runner-check.mjs",
       "origin": "working-tree",
-      "size": 3767,
-      "sha256": "d996236ed9b01126f86b9ed29696d3952a3110a66eacc03bb49399834a27f6a1"
+      "size": 4991,
+      "sha256": "f7bf2d7a230bab8ad1b275a21fbb4d54b0974c7a3c1ffb13ef0672f526531087"
     },
     {
       "path": "oj-microbit/runner/install.sh",
       "origin": "working-tree",
-      "size": 34179,
-      "sha256": "9a64d1d34adc7326bf1edf6606ffbef2a2be7d378862e7263f6b1989d63ac6dd"
+      "size": 35852,
+      "sha256": "0a1474b65283466fb8c15ad820444ef62c9918e4f4f437ceb39d6232b3575e50"
     },
     {
       "path": "oj-microbit/runner/package-lock.json",
       "origin": "working-tree",
-      "size": 323910,
-      "sha256": "405c5f243eafb375fda63ded11bf372b7f63588bf1ea96e659cd187148a1bc04"
+      "size": 323912,
+      "sha256": "a294046c67d2e3b99aed4e3b3ac140f8e45ffbbdf0badcaf1b4a864913caaed2"
     },
     {
       "path": "oj-microbit/runner/package.json",
       "origin": "working-tree",
-      "size": 450,
-      "sha256": "d99e373b1b599e41c7b99f9ee15fb092d44cc3ae9b3a14d1d9bc93dea1dc9aca"
+      "size": 451,
+      "sha256": "b6849786582d2c279624df8468dc05503f03b766a276d396621eb6654fef3021"
     },
     {
       "path": "oj-microbit/runner/src/assertions.mjs",
@@ -39846,14 +41669,20 @@
     {
       "path": "oj-microbit/runner/src/job.mjs",
       "origin": "working-tree",
-      "size": 672,
-      "sha256": "cac56919c6350f087d3860309bde2832ab3dd0a62810d94a3b952f33734ece20"
+      "size": 779,
+      "sha256": "2cb65e11e07a334f07eb5b1c14339beb714f5ffb1d1893bc9248697d1e39f44a"
     },
     {
       "path": "oj-microbit/runner/src/launcher.mjs",
       "origin": "working-tree",
-      "size": 4535,
-      "sha256": "22ba7472829e2788cf87020b92a74c0d57e038bb659a474e0d0e673d757359a6"
+      "size": 4536,
+      "sha256": "3127a056380d062cf66a463d8151301f9a229cb734e5baee9f202d32237fae73"
+    },
+    {
+      "path": "oj-microbit/runner/src/live-compile.mjs",
+      "origin": "working-tree",
+      "size": 747,
+      "sha256": "1ee396ce92e16ec81bff1c54d30a9a6694487c0e3597db8f6e57670976c71c93"
     },
     {
       "path": "oj-microbit/runner/src/peripherals.mjs",
@@ -39864,20 +41693,20 @@
     {
       "path": "oj-microbit/runner/src/server.mjs",
       "origin": "working-tree",
-      "size": 6542,
-      "sha256": "a4a4f7d8e5d4fa6023b4fcec98493457315685fecad53c842dae02d50de9171f"
+      "size": 6938,
+      "sha256": "83774eaeee2e69b31227b408412f4627b786f3d5414f12ba53f290dde7280106"
     },
     {
       "path": "oj-microbit/runner/src/simulator.mjs",
       "origin": "working-tree",
-      "size": 8508,
-      "sha256": "31f03c3b080aff5e62dcb2a22a2035d7d5e07bd8f28c3e23fdc350c53ecbe8d1"
+      "size": 8522,
+      "sha256": "afee0bda9a971cdaae21ae842e93e7391a3ab803b77e6de1f330b9d111438b99"
     },
     {
       "path": "oj-microbit/runner/src/validation.mjs",
       "origin": "working-tree",
-      "size": 13713,
-      "sha256": "23dd91a36df119715d73041ab26bb5ee52f53a2d2c0b7d083b4c5fd1e5779a92"
+      "size": 14187,
+      "sha256": "5affdd919a8e9d91d27782ab169c8d321d091bc9627de3faea0e6fbdb06cf9ab"
     },
     {
       "path": "oj-microbit/runner/src/version.mjs",
@@ -39906,14 +41735,20 @@
     {
       "path": "oj-microbit/runner/tests/installer-check.test.mjs",
       "origin": "working-tree",
-      "size": 2344,
-      "sha256": "16374e13914e6845a47ee00b13c7ecfe1adfba12f7142da72b3a8ea7a6e0d564"
+      "size": 4297,
+      "sha256": "98146ae3693d8e5a2b23fb81345cf589e8d541e35b2227d513e1996902714a59"
     },
     {
       "path": "oj-microbit/runner/tests/isolation-contract.test.mjs",
       "origin": "working-tree",
       "size": 1234,
       "sha256": "516ab7ab4923399f0b896d47e4d649a44dc01027b92c8f119d2ceea44b41a90b"
+    },
+    {
+      "path": "oj-microbit/runner/tests/live-compile.test.mjs",
+      "origin": "working-tree",
+      "size": 1933,
+      "sha256": "6f80442166118544cb1accd4471f4ebcc8aa9b1cb7ef464cf52d7bb720f4476c"
     },
     {
       "path": "oj-microbit/runner/tests/output-sequences.integration.test.mjs",
@@ -39960,8 +41795,8 @@
     {
       "path": "oj-microbit/runner/tests/server.test.mjs",
       "origin": "working-tree",
-      "size": 8524,
-      "sha256": "d2fd47ed1af377a6cbee0786977ce8ccab8db083f7f7fa82d6a8e010767bf869"
+      "size": 9891,
+      "sha256": "219412211dc78aaa54bc513f8a892b197b6120ca32681a99412dcdb9ae2dcc16"
     },
     {
       "path": "oj-microbit/runner/tests/stage-batch.integration.test.mjs",
@@ -40020,8 +41855,8 @@
     {
       "path": "oj-microbit/scripts/acceptance/install-cycle.py",
       "origin": "working-tree",
-      "size": 13211,
-      "sha256": "5510783ee96adda5a9f07600dd15fb574db60e064f1aaf17ae5c47a5ea5219f9"
+      "size": 13258,
+      "sha256": "6059ef091ecce2563b2724b5ef4f98c5f9c9373cd23404cbd54a1d53b36a55e6"
     },
     {
       "path": "oj-microbit/scripts/acceptance/install-cycle.sh",
@@ -40050,8 +41885,8 @@
     {
       "path": "oj-microbit/scripts/verify.ps1",
       "origin": "working-tree",
-      "size": 3587,
-      "sha256": "4c402deb0764621a749190b4cd2b5a015bdf1670a8e02eab9a341e82ef1808c5"
+      "size": 3741,
+      "sha256": "63e28bfa49176925280e22417fa0e3e41ccb3afc0ad0247a64d0a161754ccf98"
     },
     {
       "path": "oj-microbit/src/Addon/NativeLearningProvider.php",
@@ -40062,20 +41897,20 @@
     {
       "path": "oj-microbit/src/Addon/PageHandler.php",
       "origin": "working-tree",
-      "size": 3709,
-      "sha256": "faaa494e85a26c633089456ea60f2e44e0e6ce8df0e7a359396b5746d50bc566"
+      "size": 3895,
+      "sha256": "fd7ec8393a87dea197fa1c379b630bbce77e182ded05bd9d57da8d9a82c21bae"
     },
     {
       "path": "oj-microbit/src/Addon/Registration.php",
       "origin": "working-tree",
-      "size": 5467,
-      "sha256": "aaa43a6c3646ff83e1dd82e85fb2f67698bf7e4b8d4610eb9c1a5d07ee1d2d76"
+      "size": 5499,
+      "sha256": "376f17ac421a386fa79f3b7f62784abd48980f8d030d9ff428e0739d02e68eb9"
     },
     {
       "path": "oj-microbit/src/Addon/RestController.php",
       "origin": "working-tree",
-      "size": 17489,
-      "sha256": "5d6c08f19a5838ec1fa00f014759d11b525aeaf883e800b23c6379d15191cac8"
+      "size": 17959,
+      "sha256": "c24e61e5bbdd7c8ba2c3916d5b76bfccfefff61c634d4399ade25be2cccfb790"
     },
     {
       "path": "oj-microbit/src/Application/Access.php",
@@ -40098,14 +41933,20 @@
     {
       "path": "oj-microbit/src/Application/LessonService.php",
       "origin": "working-tree",
-      "size": 13951,
-      "sha256": "d1c37907c09a58a88cde20479722ecf45f89c37e0d6e855a8f08feba0749eb50"
+      "size": 15158,
+      "sha256": "b6bc7020d11791974b596d28d69fa3ace65d244b46dcfdc6801ddf97e75037a4"
+    },
+    {
+      "path": "oj-microbit/src/Application/LiveCompiler.php",
+      "origin": "working-tree",
+      "size": 144,
+      "sha256": "f48291bdd41088dc871562aee9fb7cb11d7b4a155c9b6a894824756a2ec9f869"
     },
     {
       "path": "oj-microbit/src/Application/PracticeService.php",
       "origin": "working-tree",
-      "size": 14233,
-      "sha256": "6c47a8a36ef0622708bff092ffd2f6c26e2fb451b60adb51c1512416900f2bd7"
+      "size": 15216,
+      "sha256": "77468f778423606770e00596d74034aae47630bc23ddd6933d75beb8d35b1421"
     },
     {
       "path": "oj-microbit/src/Application/Repository.php",
@@ -40224,8 +42065,8 @@
     {
       "path": "oj-microbit/src/Support/HttpRunner.php",
       "origin": "working-tree",
-      "size": 6891,
-      "sha256": "c1bef3e24958c0e632e12935272c9e2aee7f168fe3c0288e56b87d9e705f4c86"
+      "size": 8695,
+      "sha256": "81b4a7629de0eece4ef8266f18513d9dec2bf41b8cdc11ec2d51cc388bd87f57"
     },
     {
       "path": "oj-microbit/src/Support/LearnerCapabilities.php",
@@ -40302,8 +42143,8 @@
     {
       "path": "oj-microbit/tests/bootstrap.php",
       "origin": "working-tree",
-      "size": 13140,
-      "sha256": "6bfdebc1f68448c17d464876887d737cb440cc02826e9c9e3207a2244a191ec9"
+      "size": 13141,
+      "sha256": "03d613d0a6cd29888b50216ba8add1443d1bc51abdfa93e016b510ec275aeb14"
     },
     {
       "path": "oj-microbit/tests/browser-acceptance.cjs",
@@ -40326,8 +42167,14 @@
     {
       "path": "oj-microbit/tests/browser-focused.cjs",
       "origin": "working-tree",
-      "size": 34394,
-      "sha256": "e17c1bd4e7b368b38e3afaba53dc0591b48c7b79f5fc5db3d1b14423479d49b3"
+      "size": 145,
+      "sha256": "616001b69f734531e77c8d193dfaa332a613953316809709d525992335de9710"
+    },
+    {
+      "path": "oj-microbit/tests/browser-immersive.cjs",
+      "origin": "working-tree",
+      "size": 58575,
+      "sha256": "bbe1e8ca4cd3ad3336aeee537e898ffd069e8f7c083216161f20356ffff2a2de"
     },
     {
       "path": "oj-microbit/tests/browser-p1.cjs",
@@ -40404,14 +42251,14 @@
     {
       "path": "oj-microbit/tests/feature-freeze.test.cjs",
       "origin": "working-tree",
-      "size": 4184,
-      "sha256": "80b3f16110c8838c5df56f6ee9ed6c82ec037c96f7a26891d1ffd58eec1750ed"
+      "size": 4316,
+      "sha256": "91b55b35008882c415c816f316652ec93ad5551fcb27cfbe9dff4a25e66b7258"
     },
     {
       "path": "oj-microbit/tests/fixtures/browser-host.php",
       "origin": "working-tree",
-      "size": 18080,
-      "sha256": "fa15604623596275ef3f22648d90c8ae6de70afbe1a9ec841705cf9397125616"
+      "size": 18081,
+      "sha256": "23bfa00586187bb43d2fd55aace46c8a7fbb20c4ba9c402f0e4d1135ef72abcb"
     },
     {
       "path": "oj-microbit/tests/fixtures/focused-reference.html",
@@ -40424,6 +42271,12 @@
       "origin": "working-tree",
       "size": 4440,
       "sha256": "355978472f8835057f581f768bcd13455546b1b30d5ed722c4b3a23e9a135ef2"
+    },
+    {
+      "path": "oj-microbit/tests/fixtures/immersive-reference.html",
+      "origin": "working-tree",
+      "size": 63121,
+      "sha256": "e0f2197e50d48f844100ae867adc0aed4c78ea5ad52242f16729c6156ac46a13"
     },
     {
       "path": "oj-microbit/tests/fixtures/makecode-i2c-project.json",
@@ -40524,8 +42377,8 @@
     {
       "path": "oj-microbit/tests/installer-shell.test.cjs",
       "origin": "working-tree",
-      "size": 31843,
-      "sha256": "96896fe637ac0d3eb334e6e504f0e10fe0ec1c6320f7a368e7def3bc2b0d6cdd"
+      "size": 37321,
+      "sha256": "15225718c2381bd155501fe483eaf9f21ed54928dd661f3f2daf590a4f2fabf2"
     },
     {
       "path": "oj-microbit/tests/installer.php",
@@ -40548,8 +42401,8 @@
     {
       "path": "oj-microbit/tests/lessons.php",
       "origin": "working-tree",
-      "size": 18753,
-      "sha256": "c58622490497afc0e9d17d0ddd8002f410a0c37bc58e9779720628298ac69aa6"
+      "size": 20085,
+      "sha256": "40bfd50a1bdcb3bb036e556ceee5e9cf1ea39ee181ed659c23dece8013b38428"
     },
     {
       "path": "oj-microbit/tests/lib/AcceptanceWpdb.php",
@@ -40566,8 +42419,14 @@
     {
       "path": "oj-microbit/tests/lib/installer-harness.sh",
       "origin": "working-tree",
-      "size": 8030,
-      "sha256": "7a5bbaad77b41e26435a31e31a0cddf3bcd2bdb93ae2ff999c31c7f3efb94f20"
+      "size": 8920,
+      "sha256": "42ef41391120a4b89a5120055ff0e9ac5d048f6b172cc7c3a16080f46d7c74f5"
+    },
+    {
+      "path": "oj-microbit/tests/live-compile.php",
+      "origin": "working-tree",
+      "size": 2629,
+      "sha256": "fa2167565ff60b7806ca63261a31342bcc045c4aae6b4104bcae725b80f048d1"
     },
     {
       "path": "oj-microbit/tests/menu-layout.php",
@@ -40585,7 +42444,7 @@
       "path": "oj-microbit/tests/platform.php",
       "origin": "working-tree",
       "size": 15328,
-      "sha256": "3591ec9e68d8556a59a56c8a72b44299abcfe81f5d7ad9232e25f61b8a3a5fa7"
+      "sha256": "8d2d5eada4a6d1fdf60a6b2c6647730c86dc097304968e479b224f49f13a93aa"
     },
     {
       "path": "oj-microbit/tests/privacy-batches.php",
@@ -40602,8 +42461,8 @@
     {
       "path": "oj-microbit/tests/publication-review.php",
       "origin": "working-tree",
-      "size": 3834,
-      "sha256": "01e9d6681f5f09b2e7f60be7c56e17f18e5698ab27e81099f1315791ae5346b4"
+      "size": 4691,
+      "sha256": "2228820ee4b3676d11c81c6a47aea890078595b7baafd923cd86825250f817bb"
     },
     {
       "path": "oj-microbit/tests/runner-result.php",
@@ -40632,8 +42491,8 @@
     {
       "path": "oj-microbit/tests/service.php",
       "origin": "working-tree",
-      "size": 42685,
-      "sha256": "d33d443c43d48a57f58da435d3914fccd30d78a33ec91c839bdc15db1401caa4"
+      "size": 44484,
+      "sha256": "a370e6e0da77e927a9d6d1ec12c26a2770d7bb66c752e42943e2f75239f5d09c"
     },
     {
       "path": "oj-microbit/tests/settings.php",
@@ -40664,6 +42523,450 @@
       "origin": "working-tree",
       "size": 1105,
       "sha256": "4d7c5a74e5f34af4b0908cb1496feb965390e4a5a86cbddd751c4f009ed1c27f"
+    },
+    {
+      "path": "oj-network-lab/CHANGELOG.md",
+      "origin": "working-tree",
+      "size": 9936,
+      "sha256": "b9e917f7fae33cf4ad196038b7c5cc4bb16933d650641056a4289cefb6e3218f"
+    },
+    {
+      "path": "oj-network-lab/CLI-GUIDE.md",
+      "origin": "working-tree",
+      "size": 19265,
+      "sha256": "be1b1dc59abd6479280c81a2c62e2a06cfc0eea92c1a9f49e728d84e69ae2827"
+    },
+    {
+      "path": "oj-network-lab/LICENSE.txt",
+      "origin": "working-tree",
+      "size": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "oj-network-lab/README.md",
+      "origin": "working-tree",
+      "size": 17328,
+      "sha256": "0c4c477fc688846d40c561ddbbd4069e2c225c12072de8c9e106fce66d202dff"
+    },
+    {
+      "path": "oj-network-lab/TOOLS-GUIDE.md",
+      "origin": "working-tree",
+      "size": 9424,
+      "sha256": "b0dcc86a853c350df94f769a7c9e19fa0820b02452676162b5c270ddc4487597"
+    },
+    {
+      "path": "oj-network-lab/WINDOWS-GUIDE.md",
+      "origin": "working-tree",
+      "size": 14721,
+      "sha256": "39bf2b8803579c3fe956fb851090a48e18eee649d9b1e5ac1cf047a980f35bb9"
+    },
+    {
+      "path": "oj-network-lab/oj-network-lab.php",
+      "origin": "working-tree",
+      "size": 855,
+      "sha256": "5410dd56a73f2003d69dd9fe7ce7af8c2c0fe65ae92d8c359c27f6a2c7ce9435"
+    },
+    {
+      "path": "oj-network-lab/plugin-package.php",
+      "origin": "working-tree",
+      "size": 265,
+      "sha256": "8830029eb1a109be2aa2ebb5c7254e064716b96fa7e9ea7ba51ef84dfbe2c225"
+    },
+    {
+      "path": "oj-network-lab/resources/css/network-lab.css",
+      "origin": "working-tree",
+      "size": 11242,
+      "sha256": "009ed752eba1cad908acd32c9a2cb4813470d75f3ad64bd3638a5f317f99b4ce"
+    },
+    {
+      "path": "oj-network-lab/resources/js/app.js",
+      "origin": "working-tree",
+      "size": 65454,
+      "sha256": "1b47303120cb5f03a36ee537e0f0e55305fec74e19868e76bba8b7d6b56b996e"
+    },
+    {
+      "path": "oj-network-lab/resources/js/cli-common.js",
+      "origin": "working-tree",
+      "size": 5658,
+      "sha256": "5b282a25e3e132dc3d38a0d97e6f48bd5ba4c5c4fd12372f2225651e2b5c9616"
+    },
+    {
+      "path": "oj-network-lab/resources/js/cli-fortios.js",
+      "origin": "working-tree",
+      "size": 17927,
+      "sha256": "b094432d3084bca6c40d2740d86980ec3314c5d4a0944eb52abf21bb45ab5514"
+    },
+    {
+      "path": "oj-network-lab/resources/js/cli-ios.js",
+      "origin": "working-tree",
+      "size": 21575,
+      "sha256": "e077b73e2ad89c99383ea0f249d53d3e397cb7e215b0e5dd9489823be2912256"
+    },
+    {
+      "path": "oj-network-lab/resources/js/cli-routing.js",
+      "origin": "working-tree",
+      "size": 7464,
+      "sha256": "904c97ff2c2a87e545d9d93929a2fdfeba292c7e971abee675a90ad3830c39d8"
+    },
+    {
+      "path": "oj-network-lab/resources/js/cli-windows.js",
+      "origin": "working-tree",
+      "size": 10800,
+      "sha256": "422a23c66ab9b9a342928250f96842cb2918eac32a4f0c01f03daf7301fee172"
+    },
+    {
+      "path": "oj-network-lab/resources/js/cli.js",
+      "origin": "working-tree",
+      "size": 3138,
+      "sha256": "2b69f6e7815e4c801e6f13684a0d1725799d17ad1d361c50c721bdea8e5e0862"
+    },
+    {
+      "path": "oj-network-lab/resources/js/commands.js",
+      "origin": "working-tree",
+      "size": 19519,
+      "sha256": "615c3bf37dd8831d62979ecc77f0edbe2a4a138031294b31604258a1d651dd9b"
+    },
+    {
+      "path": "oj-network-lab/resources/js/curriculum.js",
+      "origin": "working-tree",
+      "size": 6871,
+      "sha256": "9747c747001e22f15f142c6d448a463442cbe85435fd9109b53963062de2c691"
+    },
+    {
+      "path": "oj-network-lab/resources/js/device-config.js",
+      "origin": "working-tree",
+      "size": 8321,
+      "sha256": "1d5ab28027a782ee08b6c463ba088cbaf62978313f0fa5ff658c010154e862c9"
+    },
+    {
+      "path": "oj-network-lab/resources/js/device-traffic.js",
+      "origin": "working-tree",
+      "size": 4893,
+      "sha256": "390eee1caf82c6233402821332b6999651d813ec3508de15ecbec12fef16b7cf"
+    },
+    {
+      "path": "oj-network-lab/resources/js/diagnostics.js",
+      "origin": "working-tree",
+      "size": 4903,
+      "sha256": "17b644cc8df6cd9b96fc5aa26b6187a5f5807d8e00966da7515d9af1764a4f5e"
+    },
+    {
+      "path": "oj-network-lab/resources/js/engine.js",
+      "origin": "working-tree",
+      "size": 43944,
+      "sha256": "4560a9cf935c83f84e4cfb252c40f5c2446ab1e4efe7cd8d412077cde58d4d18"
+    },
+    {
+      "path": "oj-network-lab/resources/js/ipsec.js",
+      "origin": "working-tree",
+      "size": 7680,
+      "sha256": "9da91782e60fd4c848373f77c4b33b6ff25bc6563f73ab73c5911b4ce4b84939"
+    },
+    {
+      "path": "oj-network-lab/resources/js/ipv6-address.js",
+      "origin": "working-tree",
+      "size": 2249,
+      "sha256": "132718a9253b9461970dca53d0a123dd586525a6d2c35650fd5e7ed8cbfd8ec3"
+    },
+    {
+      "path": "oj-network-lab/resources/js/ipv6.js",
+      "origin": "working-tree",
+      "size": 10702,
+      "sha256": "7adc53f0423f48abaf4b9d4f01b5715ad90da0a5f01dcb5c3bd5abe13392b3af"
+    },
+    {
+      "path": "oj-network-lab/resources/js/model.js",
+      "origin": "working-tree",
+      "size": 17073,
+      "sha256": "53d69b4472027b2abe0cc749408b405261fa095ff321b2144f4d7c3f85945d13"
+    },
+    {
+      "path": "oj-network-lab/resources/js/output-tools.js",
+      "origin": "working-tree",
+      "size": 8770,
+      "sha256": "f85292086b67e073074a5fbcf3955e84f0c9bdd79014e7a1050cb4092a41125f"
+    },
+    {
+      "path": "oj-network-lab/resources/js/package.json",
+      "origin": "working-tree",
+      "size": 33,
+      "sha256": "89c47db7851f89caec72da4f215ebc21cf1e294aeef3b45d2583562d846ab035"
+    },
+    {
+      "path": "oj-network-lab/resources/js/routing-config.js",
+      "origin": "working-tree",
+      "size": 1681,
+      "sha256": "9ae5f7e0c330c563b128d07c46e8f5d6d503444bdc7b9fb9937e1ce718dff51c"
+    },
+    {
+      "path": "oj-network-lab/resources/js/routing.js",
+      "origin": "working-tree",
+      "size": 10419,
+      "sha256": "f4748190f2b9c68e6ccf6050c001f7c97efdd729534d83d7d27701110f9d39e7"
+    },
+    {
+      "path": "oj-network-lab/resources/js/scenarios.js",
+      "origin": "working-tree",
+      "size": 12698,
+      "sha256": "67c29270014468f8b209de1026c4822c52dd0e8bdcc7f3a5d0985c4936405225"
+    },
+    {
+      "path": "oj-network-lab/resources/js/text-help.js",
+      "origin": "working-tree",
+      "size": 1398,
+      "sha256": "c5fff295731f73e409c26fd137f8c9f2995fa27b6c12fb70faf23e70f3acfbaa"
+    },
+    {
+      "path": "oj-network-lab/resources/js/text-pattern.js",
+      "origin": "working-tree",
+      "size": 9883,
+      "sha256": "308ce33788d15af354701ee5766f4232014f3001ae458c7b942d58a17577c9b1"
+    },
+    {
+      "path": "oj-network-lab/resources/js/text-utils.js",
+      "origin": "working-tree",
+      "size": 16767,
+      "sha256": "8890ef5826b29d4716e9831b8586ac1e81fe9b6e7f053e9f3fe91d2e7b80fe2e"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-admin.js",
+      "origin": "working-tree",
+      "size": 18662,
+      "sha256": "fa214017cec89b06199abec02e04a4ecaa347c7c6897f11435bdc83cff360925"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-cmd.js",
+      "origin": "working-tree",
+      "size": 9183,
+      "sha256": "e46f643f3f72e18a42f983b2944c9f792adab1aa806017e98a76a1242f23dfde"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-config.js",
+      "origin": "working-tree",
+      "size": 4680,
+      "sha256": "e47de969e514b7e4e431fc57c222171acb1bad0722455023212d2d2d70573d11"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-files.js",
+      "origin": "working-tree",
+      "size": 2729,
+      "sha256": "41f570a368d484cae05bb2c2f551e7f16ed34f2fac09f5ccc2115d4de0ba07b3"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-format.js",
+      "origin": "working-tree",
+      "size": 1497,
+      "sha256": "45d1c3c38c3cd59de8e184a5dca5ffa305818386e211f3c8166d38ddb82beb98"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-help.js",
+      "origin": "working-tree",
+      "size": 3427,
+      "sha256": "1399916f22dec56244a465359a451721d7f36f99a2c5f9ea98c5c8df635fdfa4"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-parser.js",
+      "origin": "working-tree",
+      "size": 5032,
+      "sha256": "1eae0360e5a976bd11cc5ca07a854f90c33d560944661c5c2778e189d4aee212"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-pipeline.js",
+      "origin": "working-tree",
+      "size": 11699,
+      "sha256": "d83271d9c2a8ac361b70417247670dcd412bd6d2d7c8762b9543ef192b870871"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-query.js",
+      "origin": "working-tree",
+      "size": 4508,
+      "sha256": "2297159c506f5898cb1b1fffb69b08ed749fd760d259a460dd1049d6089747e4"
+    },
+    {
+      "path": "oj-network-lab/resources/js/windows-traffic.js",
+      "origin": "working-tree",
+      "size": 6339,
+      "sha256": "946a3936ad5442e4487360a49e43e62a7bfdd41199c243f06de1ccf85c11ae54"
+    },
+    {
+      "path": "oj-network-lab/resources/js/worker.js",
+      "origin": "working-tree",
+      "size": 2952,
+      "sha256": "45ffc8aa86d18ba79e3f2e634ba20a316de406d06b18830f2fbd82a8db3ba672"
+    },
+    {
+      "path": "oj-network-lab/scripts/verify.ps1",
+      "origin": "working-tree",
+      "size": 2188,
+      "sha256": "dce29a9b54aa6735fc9876db2b16ae7910f54cf5332a798ec6f920c98050c456"
+    },
+    {
+      "path": "oj-network-lab/src/Addon/PageHandler.php",
+      "origin": "working-tree",
+      "size": 1116,
+      "sha256": "8cbfab9fd0b540aa1652ae406aaec6a35bafc2557787f7ec16bf6bd43325a95e"
+    },
+    {
+      "path": "oj-network-lab/src/Addon/Registration.php",
+      "origin": "working-tree",
+      "size": 4213,
+      "sha256": "0ad3fd9aa05fe04919f463a11324956cd497ea61ab1545afeda1320907d754ea"
+    },
+    {
+      "path": "oj-network-lab/src/Addon/RestController.php",
+      "origin": "working-tree",
+      "size": 4267,
+      "sha256": "374a6ac56eef0e02eccfe51a219201c40b8c4fa67c30467a38a8c8fee0d38cb2"
+    },
+    {
+      "path": "oj-network-lab/src/Core/Autoloader.php",
+      "origin": "working-tree",
+      "size": 495,
+      "sha256": "a3d35f4f1362ceb1ad20695e7389c9474525bdaa86bc89ed9763a1f7dcd86041"
+    },
+    {
+      "path": "oj-network-lab/src/Core/Plugin.php",
+      "origin": "working-tree",
+      "size": 2274,
+      "sha256": "680bf1e74ccf795c7282a5b7996409fb663df14dcef14e7d5b1361b53262aef1"
+    },
+    {
+      "path": "oj-network-lab/src/Storage/Installer.php",
+      "origin": "working-tree",
+      "size": 1909,
+      "sha256": "d5ac2ac32e152ddc276cb8248c35fc22d2faede1dd86fefcb7f07d148b7fa713"
+    },
+    {
+      "path": "oj-network-lab/src/Storage/ProjectValidator.php",
+      "origin": "working-tree",
+      "size": 6659,
+      "sha256": "77eac4d8bdf416dca23663a6864cb3947c8920257e447cb631a5a4692cfc676d"
+    },
+    {
+      "path": "oj-network-lab/src/Storage/Projects.php",
+      "origin": "working-tree",
+      "size": 5209,
+      "sha256": "45b4badf25dd51eae787d0a34365166e451ba454ee8f2d8a34d70f7d1a96bf9c"
+    },
+    {
+      "path": "oj-network-lab/src/Storage/RoutingValidator.php",
+      "origin": "working-tree",
+      "size": 4371,
+      "sha256": "3c9172dc281549239afdc76f9740d4c567dea1ee2a36c3cde6baa6400d9cbb07"
+    },
+    {
+      "path": "oj-network-lab/src/Storage/WindowsValidator.php",
+      "origin": "working-tree",
+      "size": 5162,
+      "sha256": "933ddd177c8a98b631dc6aa9d9cf81af86b92077e683f4e86494cd2911da1e96"
+    },
+    {
+      "path": "oj-network-lab/src/Support/Privacy.php",
+      "origin": "working-tree",
+      "size": 2360,
+      "sha256": "2667351e6a35b1a4ca958f540e167dc46b6ccf34b7caee17b62b9cfd48fafec6"
+    },
+    {
+      "path": "oj-network-lab/src/Support/Settings.php",
+      "origin": "working-tree",
+      "size": 3287,
+      "sha256": "38823c6e6d59339d2846cc7be89f14b4a62332d74f04781bc3ccd170d9dc2b98"
+    },
+    {
+      "path": "oj-network-lab/tests/backend.php",
+      "origin": "working-tree",
+      "size": 16655,
+      "sha256": "1029cf644a327f4675736c04235c2e3624a72c937e59e6ffd54b80c5e76b4e60"
+    },
+    {
+      "path": "oj-network-lab/tests/browser.cjs",
+      "origin": "working-tree",
+      "size": 32341,
+      "sha256": "6ba41f732d8033c04ad75775be58b9260b9a48ed49b83f4c139bdce38af288f2"
+    },
+    {
+      "path": "oj-network-lab/tests/curriculum.mjs",
+      "origin": "working-tree",
+      "size": 2967,
+      "sha256": "86a06734494f52b5e2d74f42bc886ce927aa51113aa1b187c51660d39c4ba2e3"
+    },
+    {
+      "path": "oj-network-lab/tests/devices.mjs",
+      "origin": "working-tree",
+      "size": 22317,
+      "sha256": "e1100cea0d6d1a73d8bdb3d7cdf0e7c8ff8cff9204f7ad3d959c5c31f03573a0"
+    },
+    {
+      "path": "oj-network-lab/tests/engine.mjs",
+      "origin": "working-tree",
+      "size": 8704,
+      "sha256": "3f59f6f7373ade6ae079ec3d40e890ef952fd9b8be98d348fa510bfb5346a934"
+    },
+    {
+      "path": "oj-network-lab/tests/exercises.cjs",
+      "origin": "working-tree",
+      "size": 15395,
+      "sha256": "52c8e367023c8ecfcfb236e19f329076a01b2a032f72ee91aa6044a4bfdd45be"
+    },
+    {
+      "path": "oj-network-lab/tests/goals.mjs",
+      "origin": "working-tree",
+      "size": 7361,
+      "sha256": "eb1e731ff8a70836753f8af22812c54141929879dea4f0286ed9092ddbfa5ebe"
+    },
+    {
+      "path": "oj-network-lab/tests/render.php",
+      "origin": "working-tree",
+      "size": 1165,
+      "sha256": "9f67edb60d08a37fe663adf65aed1e185c588e111fe820b8ee3291106939b5f8"
+    },
+    {
+      "path": "oj-network-lab/tests/routing-browser.cjs",
+      "origin": "working-tree",
+      "size": 7741,
+      "sha256": "0b531544b6f2e219dbd5ad3156dad578d22403c118cb7b8d7c053399e19c29ec"
+    },
+    {
+      "path": "oj-network-lab/tests/routing.mjs",
+      "origin": "working-tree",
+      "size": 11578,
+      "sha256": "b4e0dff9d6a38697cbcae5f90cb97f47b7a531dd3b7091adcdef5fd2b1389113"
+    },
+    {
+      "path": "oj-network-lab/tests/student-walkthrough-server.cjs",
+      "origin": "working-tree",
+      "size": 3760,
+      "sha256": "1d0f465e50de692fad6b09d48bcf84f38c266223a8935c134aa8368f36d375f0"
+    },
+    {
+      "path": "oj-network-lab/tests/tools.mjs",
+      "origin": "working-tree",
+      "size": 15249,
+      "sha256": "14a9dbec3e2f4dad59d99c97cf89c400da1a50f0c1941956c3d83c242b6f2eea"
+    },
+    {
+      "path": "oj-network-lab/tests/windows.mjs",
+      "origin": "working-tree",
+      "size": 23148,
+      "sha256": "992bc6c230cd0514f33d9804469a3644e795d2f99ec6e71ba3adfb3f336d7f84"
+    },
+    {
+      "path": "oj-network-lab/tests/wordpress-driver.php",
+      "origin": "working-tree",
+      "size": 6661,
+      "sha256": "8e5f5a4b315f2c139b44e740cb6d25e69b11d17d8699517ed4eeb74aec4e3a2b"
+    },
+    {
+      "path": "oj-network-lab/tests/wordpress-real.cjs",
+      "origin": "working-tree",
+      "size": 35544,
+      "sha256": "7e97ba539468cbea14ea651804a7fa02296ccafe390360c2cb7a65739da557f4"
+    },
+    {
+      "path": "oj-network-lab/uninstall.php",
+      "origin": "working-tree",
+      "size": 547,
+      "sha256": "7daf6791b3f008246afe17f6be05b2796bc6b6be9c92318e77378b3ee103869c"
     },
     {
       "path": "oj-primm/CHANGELOG.md",
@@ -41171,20 +43474,20 @@
     },
     {
       "path": "readcontents-library/README.md",
-      "size": 16170,
-      "sha256": "ae8a4640d2fbe408b6d1c7dcd52f23ee5433d024b1534c53583794380b95b918",
+      "size": 19115,
+      "sha256": "7b89bfa936996df69c154280e62d6a27785bd65a79977dd28da0d0d6b292615f",
       "origin": "working-tree"
     },
     {
       "path": "readcontents-library/assets/editor/admin.css",
-      "size": 337031,
-      "sha256": "d8629623760d28541dfd5a4d0d1792b355617b126b75df904bd069543f0a602d",
+      "size": 337091,
+      "sha256": "19cfe7154d231b41b4a5d137821dafca594f85399c11c7c8c5840780f9e237e5",
       "origin": "working-tree"
     },
     {
       "path": "readcontents-library/assets/editor/admin.js",
-      "size": 6345866,
-      "sha256": "9cfbd677d614e6a9aa2681c821c5e9ee2929dbbf3b2bcf271bdee4d84ad338c1",
+      "size": 6347920,
+      "sha256": "4e951fd458aeb49e302c892c143980c227581fb8898850738f91a2ccc285398f",
       "origin": "working-tree"
     },
     {
@@ -47646,7 +49949,7 @@
     {
       "path": "readcontents-library/contents-editor.php",
       "size": 4438,
-      "sha256": "e793467e6222587d959b51591d8318c73fae9828310d58bc3f46d978182b2abb",
+      "sha256": "7e257c2344be1faf0fac141049168400573540c6a3a8ec423b54a192926abeda",
       "origin": "working-tree"
     },
     {
@@ -47753,14 +50056,14 @@
     },
     {
       "path": "readcontents-library/src/PublicSite/LessonShortcode.php",
-      "size": 2495,
-      "sha256": "1c69235875a99c835860039b0e407d7b68f1f338fe74fa3e5e2fdf4b33c96c9c",
+      "size": 2598,
+      "sha256": "813c9f99d47ee7f308527936a70994415dc6d2f66969664689d1d426d80ae864",
       "origin": "working-tree"
     },
     {
       "path": "readcontents-library/src/PublicSite/PlateHtmlRenderer.php",
-      "size": 16213,
-      "sha256": "7f3f0ea6262ea7fd287d034d1eb9750ff5b4e5fb52aa78b5a4b6a25efedb3cda",
+      "size": 16516,
+      "sha256": "0264fd7fc9ef6c71bd8ef32ef2e7092a0d26a8a5a760885efc9d58c12ef6b422",
       "origin": "working-tree"
     },
     {
@@ -47771,8 +50074,8 @@
     },
     {
       "path": "readcontents-library/src/PublicSite/TopicShortcode.php",
-      "size": 15688,
-      "sha256": "982540d35e58118f0fb80815b29525927f0ae9dde7dac969b8ff8ab94fb5fe9d",
+      "size": 15791,
+      "sha256": "224a6a245d421203268f0d24d733e1a778719a23b7007890108eb36ff3c7a73e",
       "origin": "working-tree"
     },
     {
@@ -47831,8 +50134,8 @@
     },
     {
       "path": "readcontents-library/src/ReadContents/Library/Addon/TopicPageHandler.php",
-      "size": 8427,
-      "sha256": "0e02c990508953dc6b63496a96f574de27f7246f7911eecf95b94524c185fae2",
+      "size": 8545,
+      "sha256": "8bd627bae7a4e029ac98d1b3107f3498c5eaf3b20343cdb2a1db8e2e75baec8f",
       "origin": "working-tree"
     },
     {
@@ -47843,8 +50146,8 @@
     },
     {
       "path": "readcontents-library/src/ReadContents/Library/Editor/Content/ContentAccessPolicy.php",
-      "size": 2828,
-      "sha256": "2dfd9c4353d2b814090417f1bbd3509fa249b28a5d35527d07cd966f93f26aaf",
+      "size": 3078,
+      "sha256": "2a6f4f997b8660d8c439c77f4d31be81548e0a3442b36bac033d430a74c3c9a9",
       "origin": "working-tree"
     },
     {
@@ -47897,8 +50200,8 @@
     },
     {
       "path": "readcontents-library/src/ReadContents/Library/Editor/ImportExport/ContentPackageService.php",
-      "size": 54474,
-      "sha256": "3848ef3b187f7e1f04dc0d8c4e3515b5f1b7f73d5e1477e6f0fe319281092680",
+      "size": 57909,
+      "sha256": "46abc2446b9982fce2d5dd5684cc717808255306f67c8cb73b347583318d1430",
       "origin": "working-tree"
     },
     {
@@ -47944,9 +50247,15 @@
       "origin": "working-tree"
     },
     {
+      "path": "readcontents-library/src/ReadContents/Library/Editor/PublicSite/OptionalReadingBlocks.php",
+      "origin": "working-tree",
+      "size": 6174,
+      "sha256": "efacdc6b15bdb3ad4fe6fb0d222124c318c1296a60c19d6453ffff8d3018ffe4"
+    },
+    {
       "path": "readcontents-library/src/ReadContents/Library/Editor/PublicSite/PlateHtmlRenderer.php",
-      "size": 35606,
-      "sha256": "f645c4be4674bf640ada0b6ebd12ff0998762d69a87957fe986062a39135af71",
+      "size": 36183,
+      "sha256": "7174bbd5d57f27fda620023b20211521c3b251ea030aabd6c3a8b43cd9d430e8",
       "origin": "working-tree"
     },
     {
@@ -47963,8 +50272,8 @@
     },
     {
       "path": "readcontents-library/src/ReadContents/Library/Editor/Rest/ContentRoutes.php",
-      "size": 35202,
-      "sha256": "8327cd99ee3f23f28801aa805b19623aca4e204f326ec402b98e952eb8cec4c7",
+      "size": 35304,
+      "sha256": "59a6301e28b4df14ea6cd365acc3309c95d2085ba9b41d5595e0f312fb69c4e0",
       "origin": "working-tree"
     },
     {
@@ -48107,8 +50416,8 @@
     },
     {
       "path": "readcontents-library/tests/README.md",
-      "size": 8016,
-      "sha256": "bf134fbf42b31282b0705cb625459281daa2b249304dd9479f1dcec626a6e9cb",
+      "size": 8808,
+      "sha256": "f0dc7459cd748c5a3f259fa976f5004ae1e311e9d9b6d0c153e34a247322fab4",
       "origin": "working-tree"
     },
     {
@@ -48136,6 +50445,30 @@
       "origin": "working-tree"
     },
     {
+      "path": "readcontents-library/tests/import-numeric-ids.php",
+      "origin": "working-tree",
+      "size": 2805,
+      "sha256": "59e473146ac11ffa6b1ab172f9d8dd202cb6ec6a4a02ad1e4d26efa5bb23fa2a"
+    },
+    {
+      "path": "readcontents-library/tests/import-titles-ui.mjs",
+      "origin": "working-tree",
+      "size": 6993,
+      "sha256": "4071e2b339ab8d47be15f4105a80a58e3a9b278a9a0279da98ce8ed6bffb4ed2"
+    },
+    {
+      "path": "readcontents-library/tests/import-titles.php",
+      "origin": "working-tree",
+      "size": 4789,
+      "sha256": "3e3ccaba9efbc0d8dfbac79fe1d960bb76263f4769225fe18bbd5a7a743edec6"
+    },
+    {
+      "path": "readcontents-library/tests/lesson-links.php",
+      "origin": "working-tree",
+      "size": 3469,
+      "sha256": "8f118c1e01cfcb263fcb5a983055f6b6f512a15d6fe9e30d939d4da394230a2c"
+    },
+    {
       "path": "readcontents-library/tests/lesson-theme-ui.mjs",
       "size": 14096,
       "sha256": "7a06431c7cc8cbf9d442c32479a647128f9291a396e36abd58deb9c9e0dea091",
@@ -48146,6 +50479,12 @@
       "size": 9323,
       "sha256": "f9ac9847673380d97e65b8cc0426740347cd7de540985a38677b9fe328819c9b",
       "origin": "working-tree"
+    },
+    {
+      "path": "readcontents-library/tests/optional-reading.php",
+      "origin": "working-tree",
+      "size": 7994,
+      "sha256": "dc67bd563d6274bf6bae51dc58d22c7cb006a71d3ede9ae3cc9bea121b1eff90"
     },
     {
       "path": "readcontents-library/tests/preview.mjs",
@@ -48161,20 +50500,26 @@
     },
     {
       "path": "readcontents-library/tests/reader-layout.php",
-      "size": 14789,
-      "sha256": "0b3e630f0e79d5da8c41b494e2898869c5f0164f8af82323576c53e71753d947",
+      "size": 10511,
+      "sha256": "18b0bcf7d7728fee41e1a1bb6272c2e5ab093297d867c67eb753cc740dd62d5d",
       "origin": "working-tree"
     },
     {
+      "path": "readcontents-library/tests/reader-wordpress.php",
+      "origin": "working-tree",
+      "size": 5602,
+      "sha256": "3418032f48dc6141586cd65ce14a8ed210d4b1d356533f53ccdec5280fb0857c"
+    },
+    {
       "path": "readcontents-library/tests/workspace-resize-ui.mjs",
-      "size": 15731,
-      "sha256": "37b577cbb8566b4db92973d6a4b7696dfa086a57f19af87a9e9d7ebf410b8763",
+      "size": 17931,
+      "sha256": "8c63028304d4598a892c96cc0cffaad57f28e4b729574caeed5947b48a28c8a0",
       "origin": "working-tree"
     },
     {
       "path": "readcontents-library/tests/workspace-scroll-ui.mjs",
-      "size": 12757,
-      "sha256": "2a57d8f83b6377966fb97ba5616fe2107879f75220464dfc6a2056b6c1999aa3",
+      "size": 12886,
+      "sha256": "cd04236b372fc4c30e6708917ee233985cb3159548017f29ac05f35beb37837c",
       "origin": "working-tree"
     },
     {
@@ -48185,8 +50530,8 @@
     },
     {
       "path": "source/README.md",
-      "size": 527,
-      "sha256": "b1acaf2ce698abd7fc560b8e2b55945dc3e452c7e828bd65ace8b4de2f5f4097",
+      "size": 643,
+      "sha256": "127257468227f2d30fb78074e1aab5b62256bab754cbac433eb02725677fda35",
       "origin": "working-tree"
     },
     {
@@ -48257,8 +50602,8 @@
     },
     {
       "path": "teaching-tools/README.md",
-      "size": 76793,
-      "sha256": "9cf676b854315c73a59700862e7c50fc16ac23f3055cf3b5f1e3c5405f2fca8d",
+      "size": 78893,
+      "sha256": "7ae22884b2dfdf7dc7b51a6bf8043642cfe573d5010b3a5927536dbcb4a717e7",
       "origin": "working-tree"
     },
     {
@@ -48269,8 +50614,8 @@
     },
     {
       "path": "teaching-tools/plugin-package.php",
-      "size": 280,
-      "sha256": "03f486fd07c735df94b1a24bc6a99e7c5dd61039c2c5769b29eaaecba08fe988",
+      "size": 281,
+      "sha256": "558646a18aab01af94f77e445139afee98a111abfbec02fcd7db14ba082b5b9e",
       "origin": "working-tree"
     },
     {
@@ -48551,8 +50896,8 @@
     },
     {
       "path": "teaching-tools/resources/js/host-seating.js",
-      "size": 31362,
-      "sha256": "8cfab185bd751b6b3360ab5bd3a1965d15844a19475ca1bd3e5f72f7ad0bb8bb",
+      "size": 37902,
+      "sha256": "da6f17c1baf5856235ec55111b700302f1b5b0b24b9ad4a341e3a24b8880e161",
       "origin": "working-tree"
     },
     {
@@ -48623,8 +50968,8 @@
     },
     {
       "path": "teaching-tools/resources/js/seating-engine.js",
-      "size": 27730,
-      "sha256": "b363de5c7417efb99853177d45c86e319dd906e1c731d77298164f5cde412070",
+      "size": 32345,
+      "sha256": "a5e486af8f80423dc407b9bdff8b7683686b1040283ca3d272d3275c3d184b11",
       "origin": "working-tree"
     },
     {
@@ -49931,8 +52276,8 @@
     },
     {
       "path": "teaching-tools/src/Addon/Oj_Platform_Registration.php",
-      "size": 21796,
-      "sha256": "153fcd049c385105c08cbef67aff4bbd58a6939c63d50bf995d7dc21b212f91c",
+      "size": 22044,
+      "sha256": "c6666bd27c6212d852dd30f591fe7036944c673118ec2b090394f560942b6cd1",
       "origin": "working-tree"
     },
     {
@@ -49972,9 +52317,15 @@
       "origin": "working-tree"
     },
     {
+      "path": "teaching-tools/src/Addon/Seating/Seating_History_Repository.php",
+      "origin": "working-tree",
+      "size": 4616,
+      "sha256": "f57875d9fb9f4420c9508f11493e10b2a0421efbf86b87c0fa171307d5f0038d"
+    },
+    {
       "path": "teaching-tools/src/Addon/Seating/Seating_Host_Page_Handler.php",
-      "size": 11733,
-      "sha256": "a3e39ff3ae5b2a4a4e9a6ee6409d90bc19f2de700ff36eae372120105ae09d63",
+      "size": 12338,
+      "sha256": "32401b27d4ad80e5f8189258bbfa83926d8a66918345608f4f58f6379c9d1552",
       "origin": "working-tree"
     },
     {
@@ -50021,8 +52372,8 @@
     },
     {
       "path": "teaching-tools/src/Admin/Privacy_Tools.php",
-      "size": 17539,
-      "sha256": "92b50342f28aa4ae04d67d6ccca1f368da9bb05ccef6ea2b10c295560801c5a7",
+      "size": 18664,
+      "sha256": "563882c79d98f89d43e8e4361bca39eb2690e0d4e0cee0e5689f0d69664eb710",
       "origin": "working-tree"
     },
     {
@@ -50051,8 +52402,8 @@
     },
     {
       "path": "teaching-tools/src/Database/Installer.php",
-      "size": 6735,
-      "sha256": "1a252b6a5e11a8cad00843e654590ae7e7a869ebbb6a0886e5692a6736d71739",
+      "size": 8005,
+      "sha256": "7c9a44e7db98a24f3f134376c9f710af29a37ea40832afcd8c301fbf8a182074",
       "origin": "working-tree"
     },
     {
@@ -50063,8 +52414,8 @@
     },
     {
       "path": "teaching-tools/src/Rest/Api.php",
-      "size": 1523,
-      "sha256": "dbb882dbbed1a3fcc0db300c53407bbf4a156fd7b64fba82e6eb786cd3f54309",
+      "size": 1641,
+      "sha256": "3e7a9b0de72db33cc3d01af51bf6b9230bbcc63575ac022418f34dd6ab6d0a67",
       "origin": "working-tree"
     },
     {
@@ -50120,6 +52471,12 @@
       "size": 10025,
       "sha256": "9089694162cf57e60cb882ef8d94ca88bed8e929c0843cf9fe465fb85f5597a8",
       "origin": "working-tree"
+    },
+    {
+      "path": "teaching-tools/src/Rest/Controllers/Seating_History_Controller.php",
+      "origin": "working-tree",
+      "size": 6180,
+      "sha256": "2950100c152ad28026d3c4ba03386f46ff05511b9af5677a52259b2edb9a262d"
     },
     {
       "path": "teaching-tools/src/Rest/Controllers/Seating_Layout_Controller.php",
@@ -50201,8 +52558,8 @@
     },
     {
       "path": "teaching-tools/teaching-tools.php",
-      "size": 2037,
-      "sha256": "7d928c00d6d6ed23ca2f7f982252384eb448be294741fd93f741824d4f81259e",
+      "size": 2039,
+      "sha256": "d1efdb1d3b6119d55b1ca6eda36843fb8476da45fda6d7fb023db793ae4ed7cb",
       "origin": "working-tree"
     },
     {
@@ -50224,10 +52581,22 @@
       "origin": "working-tree"
     },
     {
+      "path": "teaching-tools/tests/browser-seating.cjs",
+      "origin": "working-tree",
+      "size": 12133,
+      "sha256": "0999601a8065a1800287256e5c79ece4826094316f83aee35870747efc5a6ec7"
+    },
+    {
       "path": "teaching-tools/tests/discovery-client.cjs",
       "size": 3346,
       "sha256": "efe6a6b7bb9878065ad5c75a411bf9143523f16feea89c0d18b9da8dcbf6b5a4",
       "origin": "working-tree"
+    },
+    {
+      "path": "teaching-tools/tests/fixtures/wp-admin/includes/upgrade.php",
+      "origin": "working-tree",
+      "size": 97,
+      "sha256": "1da5fcde669e92751d654b066f65c5a8598037be257c5d4d61dc56967ffb64ea"
     },
     {
       "path": "teaching-tools/tests/material-stream-fixture.php",
@@ -50237,14 +52606,14 @@
     },
     {
       "path": "teaching-tools/tests/packaged-versions.php",
-      "size": 3850,
-      "sha256": "9ca5f4a16f293078987faf300c995e9d20da3f869ca66f0cf707bc0e18318b2e",
+      "size": 4193,
+      "sha256": "7b5050b4b84564acd61fbd150eed2e70dbe4e4d0806aa7b1e976386ef993e2d7",
       "origin": "working-tree"
     },
     {
       "path": "teaching-tools/tests/query-load.php",
-      "size": 9452,
-      "sha256": "2fea447d6de6a15f04f081491f1b1d6666b844d2ee3d27cb0de2c2b241c0a335",
+      "size": 9494,
+      "sha256": "6fb1a6b7d3a14f4481e9f61eaeb004d648df5bfdfb988818e0488b590a952e67",
       "origin": "working-tree"
     },
     {
@@ -50279,9 +52648,27 @@
     },
     {
       "path": "teaching-tools/tests/render-fixture.php",
-      "size": 4333,
-      "sha256": "b94dfca05dd6db4a690ab1d3508817c155fbe24aec37280ee96ffdd3b8b003c4",
+      "size": 4630,
+      "sha256": "856be00f466ea0202222146dbef874da6475ca4ca514223cfc1fd071c058bad1",
       "origin": "working-tree"
+    },
+    {
+      "path": "teaching-tools/tests/seating-distribution.cjs",
+      "origin": "working-tree",
+      "size": 9697,
+      "sha256": "44632d0fbf37ea20877d74b147c2eb540583e91487c1a29171d40459ae29b7b1"
+    },
+    {
+      "path": "teaching-tools/tests/seating-history-engine.cjs",
+      "origin": "working-tree",
+      "size": 5968,
+      "sha256": "d6217060740fb3d64de9f5a2ca16b3f7966dcbd6a1b833cacfd74ee196254f18"
+    },
+    {
+      "path": "teaching-tools/tests/seating-history.php",
+      "origin": "working-tree",
+      "size": 12402,
+      "sha256": "a97a294c6c037ccc5ef27334675f442754cf9a07457e36a909921eea2f5f37d3"
     },
     {
       "path": "teaching-tools/tests/session-admission.php",
@@ -50315,8 +52702,8 @@
     },
     {
       "path": "teaching-tools/uninstall.php",
-      "size": 3087,
-      "sha256": "07d475ad110f4791301a605b7ee0775d266441a54a2ef93897fddf02dbaa8882",
+      "size": 3225,
+      "sha256": "59858b2d872611195519c8346cff62f618e0b1bed33f01d5cd363b3e4b74988a",
       "origin": "working-tree"
     },
     {

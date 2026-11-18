@@ -1,0 +1,82 @@
+.edu-typing-entry {--te-ink:var(--ojp-color-ink,var(--eg-ink,#1d1d1f));--te-muted:var(--ojp-color-muted,var(--eg-muted,#6e6e73));--te-line:var(--ojp-color-line,var(--eg-line,#d2d2d7));--te-surface:var(--ojp-color-surface,var(--eg-surface,#fff));--te-blue:var(--ojp-color-primary,#087d78);color:var(--te-ink);margin:0 0 24px;font:inherit;letter-spacing:0;min-width:0}
+.edu-typing-entry[hidden] {display:none}
+.edu-typing-entry .ete-student-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:0}
+.edu-typing-entry .ete-student-heading>div {display:flex;align-items:center;gap:10px;min-width:0}
+.edu-typing-entry :is(h2,h3,p) {margin:0;letter-spacing:0;overflow-wrap:anywhere}
+.edu-typing-entry h2 {font-size:18px;line-height:1.4;font-weight:650}
+.edu-typing-entry .ete-student-count {font-size:13px;font-weight:650;min-width:24px;text-align:center;color:var(--te-blue);background:var(--ojp-color-accent-bg,#e8f3f3);border-radius:4px;padding:2px 6px}
+.edu-typing-entry .ete-student-icon {width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.edu-typing-entry .ete-student-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.edu-typing-entry .ete-student-grid:has(>.ete-student-card:only-child) {grid-template-columns:minmax(0,1fr)}
+.edu-typing-entry .ete-student-card {border:1px solid var(--te-line);border-radius:8px;padding:16px;background:var(--te-surface);min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:none}
+.edu-typing-entry .ete-student-card-top {display:flex;justify-content:space-between;align-items:center;gap:10px}
+.edu-typing-entry .ete-student-subject {font-size:12px;font-weight:600;color:var(--te-muted)}
+.edu-typing-entry .ete-student-state {display:inline-flex;align-items:center;justify-self:start;gap:6px;min-height:24px;border-radius:4px;padding:2px 7px;font-size:12px;font-weight:600;line-height:1.4;background:var(--ojp-color-subtle,#f5f5f7);color:var(--te-muted)}
+.edu-typing-entry .ete-student-state[data-tone=success] {background:var(--ojp-color-success-bg,#eaf6ed);color:var(--ojp-color-success,#218043)}
+.edu-typing-entry .ete-student-state[data-tone=warning] {background:var(--ojp-color-warning-bg,#fff4df);color:var(--ojp-color-warning,#8a611a)}
+.edu-typing-entry h3 {font-size:17px;font-weight:650;line-height:1.45}
+.edu-typing-entry .ete-student-groups {display:flex;align-items:center;gap:6px;font-size:12px;color:var(--te-muted)}
+.edu-typing-entry .ete-student-groups .ete-student-icon {width:14px;height:14px}
+.edu-typing-entry .ete-student-meta {font-size:13px;line-height:1.6;color:var(--te-ink)}
+.edu-typing-entry .ete-student-card-foot {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:6px;font-size:12px;color:var(--te-muted)}
+.edu-typing-entry :is(.ete-student-action,.ete-student-secondary,.ete-student-icon-button) {display:inline-flex;justify-content:center;align-items:center;gap:8px;min-height:42px;border:1px solid var(--te-line);border-radius:6px;padding:8px 14px;font:inherit;font-size:14px;font-weight:600;line-height:1.4;text-decoration:none;cursor:pointer;letter-spacing:0;max-width:100%;box-sizing:border-box;background:var(--te-surface);color:var(--te-ink)}
+.edu-typing-entry .ete-student-action {background:var(--te-blue);border-color:var(--te-blue);color:var(--ojp-color-on-primary,#fff);min-width:128px}
+.edu-typing-entry .ete-student-action:hover {filter:brightness(.95)}
+.edu-typing-entry .ete-student-icon-button {width:36px;min-height:36px;padding:7px;background:transparent;border-color:transparent;color:var(--te-muted)}
+.edu-typing-entry :is(a,button,summary):focus-visible {outline:2px solid var(--te-blue);outline-offset:3px}
+.edu-typing-entry .ete-student-empty {padding:14px 0;font-size:13px;color:var(--te-muted);border-bottom:1px solid var(--te-line)}
+.edu-typing-entry .ete-student-loading {min-height:72px;align-content:center;color:var(--te-muted);font-size:13px}
+.edu-typing-entry :is(.ete-student-history,.ete-student-results) {margin:12px 0 0;border:0;padding:0}
+.edu-typing-entry summary {padding:8px 0;cursor:pointer;font-size:13px;color:var(--te-muted)}
+.edu-typing-entry .ete-student-results>div {display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;border-top:1px solid var(--te-line);padding:10px 0;font-size:13px}
+.edu-typing-entry .ete-student-results small {font-size:12px;color:var(--te-muted)}
+.edu-typing-entry .ete-student-selected {display:flex;align-items:center;gap:14px;padding:16px 0;border-block:1px solid var(--te-line)}
+.edu-typing-entry .ete-student-selected-icon {display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;background:var(--ojp-color-accent-bg,#e8f3f3);color:var(--te-blue);border-radius:8px}
+.edu-typing-entry .ete-student-selected-title {flex:1;min-width:0;display:grid;gap:5px}
+.edu-typing-entry .ete-student-selected-title p {display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px;color:var(--te-muted);line-height:1.5}
+.edu-typing-entry .ete-student-selected-title p>span {white-space:nowrap}
+.edu-typing-entry .ete-student-statuses {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px;border-block:1px solid var(--te-line)}
+.edu-typing-entry .ete-student-statuses button {display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;min-height:54px;padding:10px 14px;border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;color:var(--te-muted);font:inherit;font-size:13px;cursor:pointer;letter-spacing:0}
+.edu-typing-entry .ete-student-statuses button+button {border-left:1px solid var(--te-line)}
+.edu-typing-entry .ete-student-statuses button[aria-pressed=true] {background:var(--ojp-color-accent-bg,#e8f3f3);border-bottom-color:var(--te-blue);color:var(--te-blue)}
+.edu-typing-entry .ete-student-statuses strong {font-size:22px;font-weight:650;font-variant-numeric:tabular-nums}
+.edu-typing-entry .ete-student-metrics {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:14px 0;border-block:1px solid var(--te-line);font-variant-numeric:tabular-nums}
+.edu-typing-entry .ete-student-metrics>div {display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:4px}
+.edu-typing-entry .ete-student-metrics>div+div {border-left:1px solid var(--te-line);padding-left:16px}
+.edu-typing-entry .ete-student-metrics>div>span {font-size:12px;color:var(--te-muted);line-height:1.5}
+.edu-typing-entry .ete-student-metrics strong {font-size:30px;line-height:1.2;font-weight:650;white-space:nowrap;color:var(--te-ink)}
+.edu-typing-entry .ete-student-metrics small {font-size:11px;line-height:1.5;color:var(--te-muted)}
+.edu-typing-entry .ete-student-metrics strong>small {font-size:16px;margin-left:2px;color:inherit}
+.edu-typing-entry .ete-student-accuracy-track {position:relative;flex:none;height:4px;width:100%;margin:4px 0 1px;background:var(--ojp-color-subtle,#f5f5f7)}
+.edu-typing-entry .ete-student-accuracy-track>span {display:block;height:100%;background:var(--ojp-color-success,#218043)}
+.edu-typing-entry .ete-student-accuracy-track>i {position:absolute;top:-3px;bottom:-3px;width:1px;max-width:100%;background:var(--te-muted);transform:translateX(-1px)}
+.edu-typing-entry .ete-student-record {display:flex;justify-content:space-between;align-items:center;gap:6px 12px;flex-wrap:wrap;min-height:22px;font-size:12px;color:var(--te-muted)}
+.edu-typing-entry .ete-student-verdict {font-size:12px;font-weight:600}
+.edu-typing-entry [data-tone=warning]:is(.ete-student-verdict,small),.edu-typing-entry .ete-student-metrics>[data-tone=warning] strong {color:var(--ojp-color-warning,#8a611a)}
+.edu-typing-entry [data-tone=success]:is(.ete-student-verdict,small) {color:var(--ojp-color-success,#218043)}
+.edu-typing-entry .ete-student-metrics>[data-tone=warning] .ete-student-accuracy-track>span {background:var(--ojp-color-warning,#8a611a)}
+.edu-typing-entry .ete-student-results {margin-top:0;border-top:1px solid var(--te-line)}
+.edu-typing-entry .ete-student-results>:is(.ete-student-attempt,.ete-student-attempt-head) {display:grid;grid-template-columns:48px minmax(0,1fr) minmax(0,1fr) minmax(70px,1fr);gap:8px;font-variant-numeric:tabular-nums;align-items:center}
+.edu-typing-entry .ete-student-attempt-head {color:var(--te-muted);font-size:11px}
+.edu-typing-entry .ete-student-attempt>span:first-child small {display:block;font-size:10px;color:var(--te-blue)}
+.edu-typing-entry .ete-student-finished {padding:16px 0 0}
+.edu-typing-entry .ete-student-finished:focus {outline:none}
+.edu-typing-entry .ete-student-receipt {display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:14px}
+.edu-typing-entry .ete-student-finished .ete-student-metrics strong {font-size:40px}
+.edu-typing-entry .ete-student-result-facts {display:flex;flex-wrap:wrap;gap:8px 20px;margin:12px 0;font-size:12px;color:var(--te-muted)}
+.edu-typing-entry .ete-student-result-facts b {color:var(--te-ink)}
+.edu-typing-entry .ete-student-notice {font-size:12px;color:var(--te-muted);line-height:1.6;margin:10px 0}
+@media (max-width:620px) {
+    .edu-typing-entry .ete-student-grid {grid-template-columns:minmax(0,1fr)}
+    .edu-typing-entry .ete-student-card {padding:14px}
+    .edu-typing-entry .ete-student-selected {flex-wrap:wrap;gap:10px}
+    .edu-typing-entry .ete-student-selected .ete-student-secondary {margin-left:auto;min-height:36px;font-size:12px}
+    .edu-typing-entry .ete-student-statuses button {display:grid;gap:1px;text-align:left;padding:8px;min-height:64px;font-size:12px}
+    .edu-typing-entry .ete-student-statuses strong {font-size:20px}
+    .edu-typing-entry .ete-student-metrics {gap:12px}
+    .edu-typing-entry .ete-student-metrics>div+div {padding-left:12px}
+    .edu-typing-entry .ete-student-metrics strong {font-size:27px}
+    .edu-typing-entry .ete-student-results>:is(.ete-student-attempt,.ete-student-attempt-head) {grid-template-columns:32px minmax(0,1fr) minmax(0,1fr) minmax(58px,1fr);gap:4px;font-size:11px}
+    .edu-typing-entry .ete-student-results small {font-size:11px}
+    .edu-typing-entry .ete-student-finished .ete-student-metrics strong {font-size:32px}
+}

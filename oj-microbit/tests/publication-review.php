@@ -35,4 +35,11 @@ verify(ProjectSchema::hash($current['starterProject']) === $originalHash, 'Inten
 $draft = $original; $draft['status'] = 'draft';
 verify(PublicationReview::prepareInput($draft) === $draft, 'Drafts need no publishing confirmation');
 PublicationReview::requireConfirmed($draft, null); verify(true, 'Draft saving is not blocked by review');
+$allHidden = $blank; foreach ($allHidden['scenarios'] as &$scenario) { $scenario['visible'] = false; } unset($scenario);
+$hiddenReview = PublicationReview::describe(ExerciseSchema::normalize($allHidden), 'blank');
+verify($hiddenReview['summary']['visibleScenarioCount'] === 0 && $hiddenReview['summary']['hiddenScenarioCount'] === 2, 'A problem may use exclusively private grading scenarios');
+verify($hiddenReview['studentPreview']['scenarios'] === [], 'No private condition is exposed when public examples are absent');
+verify($hiddenReview['summary']['checksCount'] === 4, 'Hiding public examples does not remove grading conditions');
+PublicationReview::requireConfirmed($allHidden, ['starterMode' => 'blank', 'confirmed' => true, 'fingerprint' => $hiddenReview['fingerprint']]); verify(true, 'All-private checks can pass explicit publication review');
+
 echo '[publication-review] ' . $testChecks . " checks passed\n";

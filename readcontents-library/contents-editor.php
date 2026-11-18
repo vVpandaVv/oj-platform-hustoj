@@ -3,7 +3,7 @@
  * Plugin Name: ReadContents Library Addon
  * Plugin URI: https://example.com/contents-editor
  * Description: OJ Platform에서 읽기자료를 제작합니다. 플러그인을 삭제하면 등록된 모든 읽기자료 본문과 목차가 영구 삭제됩니다.
- * Version: 3.3.10
+ * Version: 3.3.16
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Author: Contents Editor Team
@@ -20,7 +20,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-define('CONTENTS_EDITOR_VERSION', '3.3.10');
+define('CONTENTS_EDITOR_VERSION', '3.3.16');
 define('CONTENTS_EDITOR_MINIMUM_PHP', '8.1');
 define('CONTENTS_EDITOR_FILE', __FILE__);
 define('CONTENTS_EDITOR_PATH', plugin_dir_path(__FILE__));

@@ -11,7 +11,7 @@ final class Binary_Arcade_Renderer extends Abstract_Game_Renderer {
      */
     public static function render(array $attributes = array(), bool $is_block = false): string {
         $config = self::build_config(Binary_Conversion_Module::ID, Binary_Conversion_Module::rules());
-        $wrapper = self::wrapper_attributes($is_block, 'binary-arcade-block');
+        $wrapper = self::wrapper_attributes($is_block, 'binary-arcade-block eg-layout-v2');
 
         ob_start();
         ?>
@@ -30,6 +30,15 @@ final class Binary_Arcade_Renderer extends Abstract_Game_Renderer {
                 </header>
                 <p data-field="challenge-goal" aria-live="polite"></p>
 
+                <div class="oj-binary-console" data-game-workspace="binary">
+                    <aside class="oj-binary-sidebar" aria-label="게임 상태">
+                        <div class="oj-binary-sidecard"><span data-field="score-label">점수</span><strong data-field="score">0</strong></div>
+                        <div class="oj-binary-sidecard"><span data-field="stage-label">레벨</span><strong data-field="stage">1</strong></div>
+                        <div class="oj-binary-sidecard"><span data-field="time-label">남은 줄</span><strong data-field="time">6</strong></div>
+                        <div class="oj-binary-sidecard"><span data-field="streak-label">연속 정답</span><strong data-field="streak">0</strong></div>
+                        <div class="oj-binary-sidecard"><span data-field="best-label">최고점</span><strong data-field="best">0</strong></div>
+                        <div class="oj-binary-sidecard"><span data-field="rank-label">내 순위</span><strong data-field="rank">-</strong></div>
+                    </aside>
                 <div class="oj-binary-layout">
                     <section class="oj-binary-board" aria-label="<?php esc_attr_e('이진수 게임 보드', 'edu-games'); ?>">
                         <div class="oj-binary-board-head" data-field="grid-head"></div>
@@ -53,32 +62,7 @@ final class Binary_Arcade_Renderer extends Abstract_Game_Renderer {
                         </div>
                     </section>
 
-                    <aside class="oj-binary-sidebar" aria-label="<?php esc_attr_e('게임 상태', 'edu-games'); ?>">
-                        <div class="oj-binary-sidecard">
-                            <span data-field="score-label"><?php esc_html_e('점수', 'edu-games'); ?></span>
-                            <strong data-field="score">0</strong>
-                        </div>
-                        <div class="oj-binary-sidecard">
-                            <span data-field="stage-label"><?php esc_html_e('레벨', 'edu-games'); ?></span>
-                            <strong data-field="stage">1</strong>
-                        </div>
-                        <div class="oj-binary-sidecard">
-                            <span data-field="time-label"><?php esc_html_e('남은 줄', 'edu-games'); ?></span>
-                            <strong data-field="time">6</strong>
-                        </div>
-                        <div class="oj-binary-sidecard">
-                            <span data-field="streak-label"><?php esc_html_e('연속 정답', 'edu-games'); ?></span>
-                            <strong data-field="streak">0</strong>
-                        </div>
-                        <div class="oj-binary-sidecard">
-                            <span data-field="best-label"><?php esc_html_e('최고점', 'edu-games'); ?></span>
-                            <strong data-field="best">0</strong>
-                        </div>
-                        <div class="oj-binary-sidecard">
-                            <span data-field="rank-label"><?php esc_html_e('내 순위', 'edu-games'); ?></span>
-                            <strong data-field="rank">-</strong>
-                        </div>
-                    </aside>
+                </div>
                 </div>
 
                 <section class="oj-binary-rank-panel" aria-label="<?php esc_attr_e('실전 순위', 'edu-games'); ?>">

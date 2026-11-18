@@ -1,0 +1,120 @@
+{
+    "plugin":  "oj-concept-lab",
+    "version":  "1.0.0",
+    "builder":  "_release-kit generic",
+    "archive":  "oj-concept-lab-1.0.0.zip",
+    "sha256":  "b5ce8f12fd3cc458acccea39792cb066222bd9f85c12f85d08ebe7d075b2dfec",
+    "fileCount":  22,
+    "files":  [
+                  {
+                      "path":  "oj-concept-lab/oj-concept-lab.php",
+                      "bytes":  738,
+                      "sha256":  "15c93927a05106cf2066e619aed0597b40f12097217a280405b9e941df1c9a3b"
+                  },
+                  {
+                      "path":  "oj-concept-lab/plugin-package.php",
+                      "bytes":  261,
+                      "sha256":  "b99016039a83d3b6a62565a8f3dbb77b44a5a05f075552073ac746d090d927d8"
+                  },
+                  {
+                      "path":  "oj-concept-lab/README.md",
+                      "bytes":  1435,
+                      "sha256":  "3abf89025255a39c2c1da11ed10327a586d3082e9f6fcebc29a81c95964ec0ad"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/css/lab.css",
+                      "bytes":  12078,
+                      "sha256":  "0305378162a3c34b15dd0fc7b1882a037cb65d191df80fd7d28a5f6fbc87d1e7"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/data/examples.json",
+                      "bytes":  211989,
+                      "sha256":  "9c4af6faf4878148763b5681f70f41e3a433f60f3791870470115eb628a067df"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/hub/icons.svg",
+                      "bytes":  3095,
+                      "sha256":  "8a2b7c819e85c67debed05ad947280ad1055aeeed11635069949906e2f2fd57c"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/hub/LICENSE.txt",
+                      "bytes":  3208,
+                      "sha256":  "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/icons.svg",
+                      "bytes":  6675,
+                      "sha256":  "cb769c4608ac1dedce8511bd05160d5be8b911a8722de6412c7905d1f244f226"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/icons-LICENSE.txt",
+                      "bytes":  752,
+                      "sha256":  "ee209531f4aac74806dbbbd6866400e55b31161551ede7f4b6a85e0aaf090c0a"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/js/lab.js",
+                      "bytes":  34196,
+                      "sha256":  "4f9afbef55dc34141e9ce51a45ab42769ec2e84b28fe3a6b1a096eb0b468f2b6"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/vendor/chartjs/chart.umd.min.js",
+                      "bytes":  208522,
+                      "sha256":  "48444a82d4edcb5bec0f1965faacdde18d9c17db3063d042abada2f705c9f54a"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/vendor/chartjs/color-LICENSE.md",
+                      "bytes":  1085,
+                      "sha256":  "2859c50313bad2ba77b081410c477beaf92b60ca13a77a248d89859a6dd6ac81"
+                  },
+                  {
+                      "path":  "oj-concept-lab/resources/vendor/chartjs/LICENSE.md",
+                      "bytes":  1093,
+                      "sha256":  "41a84aa2caba645f966a18d9c2056b73e6d3a81d80bc0046bc0011a2634d4cce"
+                  },
+                  {
+                      "path":  "oj-concept-lab/src/Activities/Catalog.php",
+                      "bytes":  4224,
+                      "sha256":  "1da60498f47b97538eaefbba8fc8026ddd9ea25bb44aeecb44301fb34483e72d"
+                  },
+                  {
+                      "path":  "oj-concept-lab/src/Addon/PageHandler.php",
+                      "bytes":  1085,
+                      "sha256":  "41fa9edc11a68f07e4bb536cd510e6e77354546d619a08830946ebb25b59cbfb"
+                  },
+                  {
+                      "path":  "oj-concept-lab/src/Addon/Registration.php",
+                      "bytes":  3262,
+                      "sha256":  "87ca9765d4d0deff081bdd75bba71ac804fd68312989807189e7a1caa7629fb1"
+                  },
+                  {
+                      "path":  "oj-concept-lab/src/Core/Autoloader.php",
+                      "bytes":  483,
+                      "sha256":  "179b3da0c3a01a051fea81b34e3dcf2783a970e1148f533ec1b7bb3ddd5b4d68"
+                  },
+                  {
+                      "path":  "oj-concept-lab/src/Core/Plugin.php",
+                      "bytes":  946,
+                      "sha256":  "9cd33e11b196458d581d37b3ebf2cd28bc9d629da83a1149d6b74a1ebec347c2"
+                  },
+                  {
+                      "path":  "oj-concept-lab/src/Frontend/Renderer.php",
+                      "bytes":  2145,
+                      "sha256":  "e75505c6d1b7e49bb2c73a66a9ab68bea33fb8bdaffe745f762dd484a13f308b"
+                  },
+                  {
+                      "path":  "oj-concept-lab/src/Rest/Settings.php",
+                      "bytes":  1286,
+                      "sha256":  "a16f3414fd317ec538c46a103fb3fedd6412b0275f93ce699469a4bd78fca564"
+                  },
+                  {
+                      "path":  "oj-concept-lab/THIRD-PARTY-NOTICES.md",
+                      "bytes":  1620,
+                      "sha256":  "4531ac773e8f7311dd935cb691f0d7681b4fc56e48390b8696971bb0deeb973c"
+                  },
+                  {
+                      "path":  "oj-concept-lab/uninstall.php",
+                      "bytes":  237,
+                      "sha256":  "ebaff818bd6143bb20e55f0bf99165670f28f9f9acb21e17112878d5383a1bb2"
+                  }
+              ]
+}

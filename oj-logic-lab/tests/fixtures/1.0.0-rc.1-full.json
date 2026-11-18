@@ -1,0 +1,286 @@
+{
+  "version": "1.0.0-rc.1",
+  "rcExact": true,
+  "project": {
+    "schema": 1,
+    "formatVersion": 1,
+    "title": "RC 기존 회로 · full",
+    "nodes": [
+      {
+        "id": "a",
+        "type": "SWITCH",
+        "x": 84,
+        "y": 84,
+        "label": "A",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 1,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "b",
+        "type": "SWITCH",
+        "x": 84,
+        "y": 264,
+        "label": "B",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 1,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "ci",
+        "type": "SWITCH",
+        "x": 84,
+        "y": 504,
+        "label": "C IN",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "ha1",
+        "type": "HA",
+        "x": 360,
+        "y": 108,
+        "label": "반가산기 1",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "ha2",
+        "type": "HA",
+        "x": 684,
+        "y": 228,
+        "label": "반가산기 2",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "or",
+        "type": "OR",
+        "x": 960,
+        "y": 480,
+        "label": "자리올림 OR",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "sum",
+        "type": "LED",
+        "x": 1200,
+        "y": 228,
+        "label": "SUM",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "co",
+        "type": "LED",
+        "x": 1200,
+        "y": 480,
+        "label": "C OUT",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      }
+    ],
+    "wires": [
+      {
+        "id": "w0",
+        "from": {
+          "node": "a",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "ha1",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w1",
+        "from": {
+          "node": "b",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "ha1",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w2",
+        "from": {
+          "node": "ha1",
+          "pin": "S"
+        },
+        "to": {
+          "node": "ha2",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w3",
+        "from": {
+          "node": "ci",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "ha2",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w4",
+        "from": {
+          "node": "ha1",
+          "pin": "C"
+        },
+        "to": {
+          "node": "or",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w5",
+        "from": {
+          "node": "ha2",
+          "pin": "C"
+        },
+        "to": {
+          "node": "or",
+          "pin": "B"
+        }
+      },
+      {
+        "id": "w6",
+        "from": {
+          "node": "ha2",
+          "pin": "S"
+        },
+        "to": {
+          "node": "sum",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w7",
+        "from": {
+          "node": "or",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "co",
+          "pin": "A"
+        }
+      }
+    ],
+    "components": [],
+    "stimuli": [
+      {
+        "id": "s0",
+        "time": 240,
+        "node": "a",
+        "value": 0
+      }
+    ],
+    "netNames": {
+      "a:Q": "RC 신호 이름"
+    },
+    "notes": [
+      {
+        "id": "rcNote1",
+        "text": "RC에서 작성한 주석\n모든 회로와 설정 유지",
+        "x": 24,
+        "y": 24
+      }
+    ],
+    "exercise": null,
+    "settings": {
+      "mode": "advanced",
+      "step": 17,
+      "speed": 31,
+      "wave": {
+        "span": 160,
+        "start": 48,
+        "signals": [
+          "a:Q"
+        ]
+      }
+    }
+  }
+}

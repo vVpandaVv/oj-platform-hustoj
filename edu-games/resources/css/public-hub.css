@@ -1,86 +1,50 @@
-/*
- * 교육 게임 허브. 머리말·배지·빈 상태는 OJ Platform 공용 부품(ojp-*)을 쓰고,
- * 여기에는 카드 격자만 둔다. 색·모서리·그림자는 --ojp-* 토큰만 쓴다.
- */
-.edu-games-addon-hub .eg-hub-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: var(--ojp-space-4, 16px);
-    margin-top: var(--ojp-space-5, 24px);
-}
-
-.edu-games-addon-hub .eg-hub-card {
-    display: grid;
-    gap: var(--ojp-space-4, 16px);
-    align-content: space-between;
-    min-height: 220px;
-    padding: var(--ojp-space-5, 24px);
-    border: 1px solid var(--ojp-color-separator, #d2d2d7);
-    border-radius: var(--ojp-radius-lg, 16px);
-    background: var(--ojp-color-surface, #ffffff);
-    box-shadow: var(--ojp-shadow-1, none);
-    color: var(--ojp-color-ink, #1d1d1f);
-    text-decoration: none;
-    transition:
-        box-shadow var(--ojp-duration, 200ms) var(--ojp-ease, ease),
-        transform var(--ojp-duration, 200ms) var(--ojp-ease, ease);
-}
-
-.edu-games-addon-hub a.eg-hub-card:hover {
-    box-shadow: var(--ojp-shadow, 0 8px 24px rgba(0, 0, 0, 0.08));
-    transform: translateY(-2px);
-}
-
-.edu-games-addon-hub a.eg-hub-card:focus-visible {
-    outline: 3px solid var(--ojp-color-primary, #0071e3);
-    outline-offset: 2px;
-}
-
-.edu-games-addon-hub .eg-hub-card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--ojp-space-2, 8px);
-    margin-bottom: var(--ojp-space-3, 12px);
-}
-
-.edu-games-addon-hub .eg-hub-card h3 {
-    margin: 0 0 var(--ojp-space-2, 8px);
-    font-size: var(--ojp-text-title3, 18px);
-    font-weight: 700;
-    line-height: 1.3;
-}
-
-.edu-games-addon-hub .eg-hub-card p {
-    margin: 0;
-    color: var(--ojp-color-muted, #6e6e73);
-    font-size: var(--ojp-text-callout, 14px);
-    line-height: 1.5;
-}
-
-.edu-games-addon-hub .eg-hub-open {
-    justify-self: start;
-    color: var(--ojp-color-primary, #0071e3);
-    font-size: var(--ojp-text-callout, 14px);
-    font-weight: 600;
-}
-
-.edu-games-addon-hub .eg-hub-card.is-closed {
-    background: var(--ojp-color-subtle, #f5f5f7);
-    box-shadow: none;
-}
-
-.edu-games-addon-hub .eg-hub-card.is-closed .eg-hub-open {
-    color: var(--ojp-color-muted, #6e6e73);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .edu-games-addon-hub .eg-hub-card {
-        transition: none;
-    }
-
-    .edu-games-addon-hub a.eg-hub-card:hover {
-        transform: none;
-    }
-}
+/* Shared compact cards for the addon page, block and shortcode hub. */
+:is(.edu-games-addon-hub,.edu-games-block-game-hub){color:var(--ojp-color-ink,#1d1d1f);font-family:inherit;letter-spacing:0}
+.edu-games-block-game-hub.edu-games-block-game-hub{color:var(--ojp-color-ink,#1d1d1f);font-family:inherit}.edu-games-block-game-hub .eg-hub-header>p{display:none}.edu-games-block-game-hub .eg-hub-header h2{font-size:24px;line-height:1.3}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) *{box-sizing:border-box;letter-spacing:0}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-icon{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.edu-games-addon-hub .eg-hub-heading{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}
+.edu-games-addon-hub .eg-hub-heading>div{display:flex;align-items:center;gap:10px;min-width:0}
+.edu-games-addon-hub .eg-hub-heading h1{font-size:24px;line-height:1.3;margin:0;font-weight:700}
+.edu-games-addon-hub .eg-hub-count{font-size:13px;color:var(--ojp-color-muted,#6e6e73);font-variant-numeric:tabular-nums}
+.edu-games-addon-hub .eg-hub-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.edu-games-addon-hub .eg-hub-links a{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:7px 10px;border:1px solid var(--ojp-color-line,#d2d2d7);border-radius:6px;font-size:13px;line-height:1.4;text-decoration:none;color:var(--ojp-color-ink,#1d1d1f);background:var(--ojp-color-surface,#fff)}
+.edu-games-addon-hub .eg-hub-links a:hover{background:var(--ojp-color-subtle,#f5f5f7)}
+.edu-games-addon-hub .eg-hub-teams{display:flex;align-items:center;gap:12px;border-block:1px solid var(--ojp-color-line,#d2d2d7);padding:10px 0;margin-bottom:14px;flex-wrap:wrap}
+.edu-games-addon-hub .eg-hub-teams>span{display:flex;gap:6px;align-items:center;font-size:12px;font-weight:600;color:var(--ojp-color-muted,#6e6e73)}
+.edu-games-addon-hub .eg-hub-teams .eg-hub-links{gap:6px}
+.edu-games-addon-hub .eg-hub-teams a{border-color:transparent;background:var(--ojp-color-subtle,#f5f5f7);min-height:32px;padding:5px 9px;font-size:12px}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card{--hub-ink:var(--ojp-color-info,#0066cc);--hub-tint:var(--ojp-color-info-bg,#eaf3fd);display:grid;grid-template-rows:44px minmax(44px,1fr);gap:11px;align-content:initial;min-height:144px;min-width:0;padding:16px;border:1px solid var(--ojp-color-separator,#d2d2d7);border-radius:8px;background:var(--ojp-color-surface,#fff);box-shadow:none;color:var(--ojp-color-ink,#1d1d1f);text-decoration:none;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card[data-tone=mint]{--hub-ink:var(--ojp-color-primary,#087d78);--hub-tint:var(--ojp-color-accent-bg,#e7f3f2)}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card[data-tone=coral]{--hub-ink:var(--ojp-color-danger,#c4001a);--hub-tint:var(--ojp-color-danger-bg,#fdecee)}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card[data-tone=amber]{--hub-ink:var(--ojp-color-warning,#8f4a00);--hub-tint:var(--ojp-color-warning-bg,#fff4e5)}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) a.eg-hub-card:hover{border-color:var(--hub-ink);box-shadow:var(--ojp-shadow-1,0 2px 8px rgb(0 0 0 / 6%));transform:translateY(-2px)}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) a:focus-visible{outline:3px solid var(--ojp-color-primary,#087d78);outline-offset:3px}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-art{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:8px;background:var(--hub-tint);color:var(--hub-ink)}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-art .eg-hub-icon{width:28px;height:28px;stroke-width:1.65}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card-copy{min-width:0}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card h3{margin:0 0 5px;font-size:17px;font-weight:650;line-height:1.35;overflow-wrap:anywhere}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card p{margin:0;color:var(--ojp-color-muted,#6e6e73);font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0;color:var(--ojp-color-muted,#6e6e73);font-size:11px}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-open{display:grid;place-items:center;min-width:24px;min-height:24px;padding:0;background:none;border-radius:0;color:var(--hub-ink);font-weight:400}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-state{font-size:11px;color:var(--ojp-color-muted,#6e6e73)}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card.is-closed{background:var(--ojp-color-subtle,#f5f5f7)}
+:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card dl{margin:0;grid-column:1/-1;font-size:11px;overflow-wrap:anywhere}
+.edu-games-addon-hub .edu-typing-entry{margin:0 0 14px;padding:12px 14px;border-left:3px solid var(--ojp-color-primary,#087d78);background:var(--ojp-color-subtle,#f5f5f7)}
+.edu-games-addon-hub .ete-student-heading{margin-bottom:8px}
+.edu-games-addon-hub .ete-student-heading h2{font-size:14px}
+.edu-games-addon-hub .ete-student-heading .ete-student-secondary{min-height:30px;padding:4px 8px;font-size:12px;background:transparent;border-color:transparent}
+.edu-games-addon-hub .ete-student-grid{gap:8px}
+.edu-games-addon-hub .ete-student-card.ete-hub-card{display:flex;flex-direction:row;align-items:center;gap:12px;padding:0;border:0;border-radius:0;background:transparent}
+.edu-games-addon-hub .ete-hub-info{flex:1;min-width:0}
+.edu-games-addon-hub .ete-hub-card h3{font-size:14px;margin:0 0 5px;line-height:1.4}
+.edu-games-addon-hub .ete-hub-facts{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:11px;color:var(--ojp-color-muted,#6e6e73)}
+.edu-games-addon-hub .ete-hub-card .ete-student-state{min-height:20px;padding:1px 5px;font-size:11px}
+.edu-games-addon-hub .ete-hub-card .ete-student-action{min-width:0;min-height:34px;padding:6px 10px;font-size:12px;flex:none}
+.edu-games-addon-hub .ete-hub-result{display:grid;gap:4px;font-size:11px;flex:none;color:var(--ojp-color-muted,#6e6e73)}
+.edu-games-addon-hub .ete-hub-result b{font-size:14px;color:var(--ojp-color-ink,#1d1d1f);font-variant-numeric:tabular-nums}
+@media(max-width:900px){:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card h3{font-size:15px}}
+@media(max-width:700px){:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card{padding:12px;gap:9px;min-height:138px;grid-template-rows:40px minmax(45px,1fr)}:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-art{width:40px;height:40px}:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card h3{font-size:15px}:is(.edu-games-addon-hub,.edu-games-block-game-hub) .eg-hub-card p{font-size:11px}.edu-games-addon-hub .eg-hub-heading{gap:10px;flex-wrap:wrap}.edu-games-addon-hub .eg-hub-heading h1{font-size:22px}.edu-games-addon-hub .eg-hub-teams{gap:6px 10px}.edu-games-addon-hub .eg-hub-teams .eg-hub-links{flex-wrap:wrap}.edu-games-addon-hub .edu-typing-entry{padding:10px}.edu-games-addon-hub .ete-hub-card{flex-wrap:wrap}.edu-games-addon-hub .ete-hub-card .ete-student-action{margin-left:auto}.edu-games-addon-hub .ete-hub-result{grid-template-columns:repeat(2,auto);gap:10px}}
+@media(prefers-reduced-motion:reduce){:is(.edu-games-addon-hub,.edu-games-block-game-hub) a.eg-hub-card{transition:none}:is(.edu-games-addon-hub,.edu-games-block-game-hub) a.eg-hub-card:hover{transform:none}}

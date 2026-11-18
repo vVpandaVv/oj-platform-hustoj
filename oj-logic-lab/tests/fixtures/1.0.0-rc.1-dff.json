@@ -1,0 +1,215 @@
+{
+  "version": "1.0.0-rc.1",
+  "rcExact": true,
+  "project": {
+    "schema": 1,
+    "formatVersion": 1,
+    "title": "RC 기존 회로 · dff",
+    "nodes": [
+      {
+        "id": "d",
+        "type": "SWITCH",
+        "x": 120,
+        "y": 96,
+        "label": "DATA",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 1,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "clk",
+        "type": "CLOCK",
+        "x": 120,
+        "y": 300,
+        "label": "CLK",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 74,
+          "duty": 35,
+          "phase": 19,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "rst",
+        "type": "SWITCH",
+        "x": 120,
+        "y": 504,
+        "label": "RESET",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "ff",
+        "type": "DFF",
+        "x": 492,
+        "y": 192,
+        "label": "D 레지스터",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "q",
+        "type": "LED",
+        "x": 852,
+        "y": 192,
+        "label": "Q",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      },
+      {
+        "id": "qb",
+        "type": "LED",
+        "x": 852,
+        "y": 396,
+        "label": "Q̅",
+        "config": {
+          "delay": 7,
+          "initial": 0,
+          "value": 0,
+          "period": 40,
+          "duty": 50,
+          "phase": 0,
+          "edge": "rising",
+          "setup": 1,
+          "hold": 1,
+          "width": 1
+        }
+      }
+    ],
+    "wires": [
+      {
+        "id": "w0",
+        "from": {
+          "node": "d",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "ff",
+          "pin": "D"
+        }
+      },
+      {
+        "id": "w1",
+        "from": {
+          "node": "clk",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "ff",
+          "pin": "CLK"
+        }
+      },
+      {
+        "id": "w2",
+        "from": {
+          "node": "rst",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "ff",
+          "pin": "RST"
+        }
+      },
+      {
+        "id": "w3",
+        "from": {
+          "node": "ff",
+          "pin": "Q"
+        },
+        "to": {
+          "node": "q",
+          "pin": "A"
+        }
+      },
+      {
+        "id": "w4",
+        "from": {
+          "node": "ff",
+          "pin": "QB"
+        },
+        "to": {
+          "node": "qb",
+          "pin": "A"
+        }
+      }
+    ],
+    "components": [],
+    "stimuli": [
+      {
+        "id": "s0",
+        "time": 240,
+        "node": "d",
+        "value": 0
+      }
+    ],
+    "netNames": {
+      "d:Q": "RC 신호 이름"
+    },
+    "notes": [
+      {
+        "id": "rcNote1",
+        "text": "RC에서 작성한 주석\n모든 회로와 설정 유지",
+        "x": 24,
+        "y": 24
+      }
+    ],
+    "exercise": null,
+    "settings": {
+      "mode": "advanced",
+      "step": 17,
+      "speed": 31,
+      "wave": {
+        "span": 160,
+        "start": 48,
+        "signals": [
+          "d:Q"
+        ]
+      }
+    }
+  }
+}

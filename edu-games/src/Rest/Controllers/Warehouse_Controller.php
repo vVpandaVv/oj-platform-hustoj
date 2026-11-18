@@ -10,7 +10,7 @@ use EduGames\Support\Capabilities;
 final class Warehouse_Controller {
     public static function register_routes(): void {
         foreach (array('start','update','resume','summary') as $action) {
-            register_rest_route('edu-games/v1','/warehouse/'.$action,array('methods'=>'POST','callback'=>array(__CLASS__,$action),'permission_callback'=>array(__CLASS__,'allowed')));
+            register_rest_route('edu-games/v1','/warehouse/'.$action,array('methods'=>'POST','callback'=>array(__CLASS__,$action),'permission_callback'=>static fn()=>self::allowed()||($action==='summary'&&Capabilities::can_play()&&Game_Visibility::can_read_records(Board::GAME))));
         }
     }
     public static function allowed(): bool { return Capabilities::can_play() && Game_Visibility::is_open(Board::GAME); }

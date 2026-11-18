@@ -162,7 +162,8 @@ function Build-InstallGuides($Registry, $Infos) {
         $entry = Get-LatestEntry $releaseSet $info.Id
         $file = $S.notPackagedShort
         if ($entry -and $entry.status -eq 'ready') { $file = '`' + ($entry.files -join '`, `') + '`' }
-        $rows += "| $n | [$($info.Name)]($('{0:D2}' -f $n)-$($info.Id).md) | $($info.Version) | $($info.RequiresWp)+ | $($info.RequiresPhp)+ | $(Get-PlatformVar $info.PlatformRequires) | $file |"
+        $wpRequirement = '-'; if ($info.RequiresWp) { $wpRequirement = "$($info.RequiresWp)+" }
+        $rows += "| $n | [$($info.Name)]($('{0:D2}' -f $n)-$($info.Id).md) | $($info.Version) | $wpRequirement | $($info.RequiresPhp)+ | $(Get-PlatformVar $info.PlatformRequires) | $file |"
     }
 
     $docs = New-Object System.Collections.Generic.List[object]
@@ -212,7 +213,11 @@ function Build-InstallGuides($Registry, $Infos) {
         }
         $guidePath = Join-Path $kit $info.Plugin.guide
         if (-not (Test-Path -LiteralPath $guidePath)) { throw "Guide source missing for $($info.Id): $guidePath" }
-        $text = (Expand-Template $header $vars '_plugin-header.md') + "`n" + (Expand-Template (Read-Utf8 $guidePath) $vars $info.Plugin.guide) + "`n" + (Expand-Template $footer $vars '_plugin-footer.md')
+        $entryHeader = $header
+        $entryFooter = $footer
+        if (Get-Prop $info.Plugin 'guideHeader') { $entryHeader = Read-Utf8 (Join-Path $kit $info.Plugin.guideHeader) }
+        if (Get-Prop $info.Plugin 'guideFooter') { $entryFooter = Read-Utf8 (Join-Path $kit $info.Plugin.guideFooter) }
+        $text = (Expand-Template $entryHeader $vars 'guide header') + "`n" + (Expand-Template (Read-Utf8 $guidePath) $vars $info.Plugin.guide) + "`n" + (Expand-Template $entryFooter $vars 'guide footer')
         $fileName = ('{0:D2}' -f $n) + "-$($info.Id).md"
         Write-Utf8 (Join-Path $outDir $fileName) $text
         $docs.Add([pscustomobject]@{ Id = $info.Id; Title = $info.Name; Markdown = $text })

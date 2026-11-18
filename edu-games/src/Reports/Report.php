@@ -8,6 +8,7 @@ use EduGames\Learning\Run;
 final class Report {
     public static function modes(string $game): array {
         $modes=array('arcade'=>array('label'=>'아케이드·검정 기록','version'=>'arcade'));
+        if(in_array($game,['cipher-vault','dance-bot'],true))return ['verified-arcade'=>['label'=>'서버 검증 완주 기록','version'=>\EduGames\Arcade\Repository::engine($game)::VERSION]]+($game==='dance-bot'?['verified-arcade-v1'=>['label'=>'이전 단일 반복 안무 기록','version'=>'dance-v1']]:[]);
         if(isset(\EduGames\Boards\Catalog::GAMES[$game])) $modes=array('strategy'=>array('label'=>'전략 보드','version'=>\EduGames\Boards\Catalog::version($game)));
         if($game==='data-structure-lab') $modes=array('board'=>array('label'=>'물류 보드','version'=>\EduGames\Games\Modules\Data_Structure_Lab\Warehouse_Board::VERSION));
         if($game==='image-data') $modes=array('collection'=>array('label'=>'복원 도감','version'=>'progress-1'));
@@ -26,16 +27,19 @@ final class Report {
         $meta=Page::meta(count($users),$page,$size);$selected=array_slice($users,$meta['offset'],$meta['perPage']);
         $rows=array();foreach($selected as $user){$profile=get_userdata($user);$rows[$user]=array('userId'=>$user,'name'=>$profile?$profile->display_name:'학생','attempts'=>0,'completed'=>0,'cleared'=>0,'stars'=>0,'best'=>null,'first'=>null,'final'=>null,'total'=>null,'last'=>null);}
         if(!$users)return array('students'=>array(),'pagination'=>$meta,'participants'=>0,'version'=>$modes[$mode]['version']);
-        $table=$mode==='arcade'?\EduGames\Database\Installer::scores_table():($mode==='collection'?\EduGames\Progress\Store::table():\EduGames\Learning\Installer::table());
-        $time=$mode==='arcade'?'created_at':($mode==='collection'?'updated_at':'started_at');
+        $verified=str_starts_with($mode,'verified-arcade');
+        $table=$verified?\EduGames\Arcade\Repository::table():($mode==='arcade'?\EduGames\Database\Installer::scores_table():($mode==='collection'?\EduGames\Progress\Store::table():\EduGames\Learning\Installer::table()));
+        $time=$mode==='arcade'||$verified?'created_at':($mode==='collection'?'updated_at':'started_at');
         $where=$wpdb->prepare('game_slug=%s',$game);
-        if(!in_array($mode,array('arcade','collection'),true))$where.=$wpdb->prepare(' AND content_version=%s AND mode=%s',$modes[$mode]['version'],$mode);
+        if($verified)$where.=$wpdb->prepare(' AND pack LIKE %s',$wpdb->esc_like($modes[$mode]['version']).'-%');
+        elseif(!in_array($mode,array('arcade','collection'),true))$where.=$wpdb->prepare(' AND content_version=%s AND mode=%s',$modes[$mode]['version'],$mode);
         if($from!=='')$where.=$wpdb->prepare(" AND {$time}>=%s",$mode==='arcade'?get_date_from_gmt($from):$from);
         if($to!=='')$where.=$wpdb->prepare(" AND {$time}<%s",$mode==='arcade'?get_date_from_gmt($to):$to);
         $all=implode(',',$users);$ids=implode(',',$selected);
         $participants=$wpdb->get_var("SELECT COUNT(DISTINCT user_id) FROM {$table} WHERE {$where} AND user_id IN ({$all})");
         if($participants===null||!empty($wpdb->last_error))return Page::error();
         if($mode==='collection')$sql="SELECT user_id, COUNT(*) AS attempts, COUNT(*) AS completed, COUNT(*) AS best, MAX(updated_at) AS last FROM {$table} WHERE {$where} AND user_id IN ({$ids}) GROUP BY user_id";
+        elseif($verified)$sql="SELECT user_id, COUNT(*) AS attempts, SUM(status='finished') AS completed, MAX(CASE WHEN status='finished' THEN score ELSE NULL END) AS best, MAX(created_at) AS last FROM {$table} WHERE {$where} AND user_id IN ({$ids}) GROUP BY user_id";
         elseif($mode==='arcade')$sql="SELECT user_id, COUNT(*) AS attempts, COUNT(*) AS completed, MAX(score) AS best, MAX(created_at) AS last FROM {$table} WHERE {$where} AND user_id IN ({$ids}) GROUP BY user_id";
         else $sql="SELECT user_id, level, COUNT(*) AS attempts, SUM(completed_at IS NOT NULL) AS completed, MAX(CASE WHEN completed_at IS NOT NULL THEN score ELSE NULL END) AS best, MAX(started_at) AS last FROM {$table} WHERE {$where} AND user_id IN ({$ids}) GROUP BY user_id, level";
         $records=$wpdb->get_results($sql,ARRAY_A);if(!is_array($records)||!empty($wpdb->last_error))return Page::error();

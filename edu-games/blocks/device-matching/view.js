@@ -267,6 +267,7 @@
         handleMatch(opened) {
             const gained = this.scoreForMatch();
             this.state.score += gained;
+            this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{delta:gained,text:opened[0].device.name + ' · 짝 완성',tone:'success'}}));
             this.state.streak += 1;
             this.state.totalMatches += 1;
             this.state.openedIds = [];
@@ -287,10 +288,12 @@
         }
 
         handleMismatch(opened) {
+            const before = this.state.score;
             this.state.mistakes += 1;
             this.state.stageMistakes += 1;
             this.state.streak = 0;
             this.state.score = Math.max(0, this.state.score - this.rules.scoring.mismatchPenalty);
+            this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{delta:this.state.score-before,text:'다른 장치 · 다시 뒤집기',tone:'miss'}}));
             this.renderStats();
             this.setFeedback(`오답입니다. 이번 단계 실수 ${this.state.stageMistakes}회로 기록되고, 카드는 다시 뒤집힙니다.`);
 
@@ -313,6 +316,7 @@
             const stars = this.starsForMistakes(this.state.stageMistakes);
             const bonus = this.rules.scoring.stageClearBaseBonus + (stars * this.rules.scoring.starBonus);
             this.state.score += bonus;
+            this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{delta:bonus,text:stars + '별 · 단계 완료 보너스',tone:'success'}}));
             this.state.totalStars += stars;
             this.state.stageResults.push({
                 stage: stage.stage,
@@ -325,6 +329,7 @@
 
             if (this.state.stageIndex >= this.rules.stages.length - 1) {
                 this.state.score += this.rules.scoring.completionBonus;
+                this.root.dispatchEvent(new CustomEvent('edu-games:action', {detail:{delta:bonus+this.rules.scoring.completionBonus,text:'모든 단계 완료 · 별점·완주 보너스',tone:'success'}}));
                 this.finishGame("completed");
                 return;
             }
@@ -521,17 +526,12 @@
 
             const stage = this.currentStage();
             this.fields.stageMeta.textContent = `${stage.stage}단계 · ${stage.pairs}쌍`;
-            this.fields.stageTitle.textContent = "사진 카드와 설명 카드를 같은 의미로 연결하세요";
+            this.fields.stageTitle.textContent = "사진 ↔ 설명 · 같은 장치 찾기";
         }
 
         renderDeck() {
             if (this.state.status === "idle") {
-                this.fields.deck.innerHTML = `
-                    <div class="oj-device-empty">
-                        <strong>카드 세트 준비</strong>
-                        <span>실제 장치 사진과 설명 카드가 섞여 나옵니다.</span>
-                    </div>
-                `;
+                this.fields.deck.innerHTML = Array.from({length:this.rules.stages[0].pairs*2},()=>'<div class="oj-device-preview-card" aria-hidden="true"><span class="oj-device-card-mark">?</span></div>').join('');
                 return;
             }
 

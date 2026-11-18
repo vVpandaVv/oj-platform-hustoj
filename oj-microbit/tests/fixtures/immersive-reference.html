@@ -1,0 +1,575 @@
+<div id="microbit-redesign-review">
+  <div class="mr-draft">디자인 초안 · MakeCode는 배치 모형 · 센서 반응은 화면 시연</div>
+  <div class="viz-carousel" aria-label="마이크로비트 화면 디자인 세 가지" data-previous-label="이전 시안" data-next-label="다음 시안">
+    <section class="mr-design-stage" data-variant="편집 몰입형" aria-label="편집 몰입형 디자인">
+      <div class="mr-app mr-focus" data-design="focus" aria-label="편집 몰입형 작업 화면"></div>
+    </section>
+    <section class="mr-design-stage" data-variant="아래 비교형" aria-label="아래 비교형 디자인" hidden>
+      <div class="mr-app mr-dock" data-design="dock" aria-label="아래 비교형 작업 화면"></div>
+    </section>
+    <section class="mr-design-stage" data-variant="단계 안내형" aria-label="단계 안내형 디자인" hidden>
+      <div class="mr-app mr-guide" data-design="guide" aria-label="단계 안내형 작업 화면"></div>
+    </section>
+  </div>
+  <template id="mr-app-template">
+    <header class="mr-chrome">
+      <div class="mr-brand">OJ<span>문제 <span aria-hidden="true">/</span> 마이크로비트 문제</span></div>
+      <div class="mr-role" role="group" aria-label="미리 볼 화면">
+        <button type="button" class="mr-role-student" aria-pressed="true">학생 화면</button>
+        <button type="button" class="mr-role-teacher" aria-pressed="false">문제 생성</button>
+      </div>
+    </header>
+    <main class="mr-student">
+      <div class="mr-heading">
+        <div><div class="mr-eyebrow">마이크로비트 · 공개 문제</div><h2>조도에 따라 LED와 모터 제어하기</h2></div>
+        <div class="mr-heading-actions"><span class="mr-saved"><i data-lucide="cloud-check" aria-hidden="true"></i> 저장됨</span><button type="button" class="mr-primary mr-submit">채점하기 <i data-lucide="arrow-up-right" aria-hidden="true"></i></button></div>
+      </div>
+      <nav class="mr-steps" aria-label="문제 풀기 단계">
+        <button type="button" data-stage="read" aria-current="false"><span>1</span>문제 이해</button>
+        <button type="button" data-stage="code" aria-current="step"><span>2</span>코드 만들기</button>
+        <button type="button" data-stage="run" aria-current="false"><span>3</span>실행·채점</button>
+      </nav>
+      <div class="mr-summary">
+        <span>센서 값이 512 이상이면 LED 켜기 · 모터 세기는 센서 값과 같게</span>
+        <button type="button" class="mr-question" aria-expanded="false"><i data-lucide="book-open" aria-hidden="true"></i> 문제 보기</button>
+      </div>
+      <section class="mr-problem" aria-label="문제 설명" hidden>
+        <div class="mr-problem-heading"><h3>이번에 만들 동작</h3><button type="button" class="mr-close-problem" aria-label="문제 설명 닫기"><i data-lucide="x" aria-hidden="true"></i></button></div>
+        <p>P0 조도센서 값이 512 이상이면 P1 LED를 켜고, 작으면 끄세요.<br>P2 모터의 PWM 출력은 P0 센서 값과 같게 만드세요.</p>
+        <div class="mr-wiring"><span><i data-lucide="sun" aria-hidden="true"></i> P0 조도센서</span><span><i data-lucide="lightbulb" aria-hidden="true"></i> P1 LED</span><span><i data-lucide="fan" aria-hidden="true"></i> P2 모터</span></div>
+        <div class="mr-example"><span class="mr-example-label">공개 예시</span><div><span>조도 <b>800</b></span><i data-lucide="arrow-right" aria-hidden="true"></i><span>LED <b>켜짐</b></span><span>모터 <b>800</b></span></div></div>
+        <button type="button" class="mr-start-code mr-primary">코드 만들기 <i data-lucide="arrow-right" aria-hidden="true"></i></button>
+      </section>
+      <div class="mr-workarea">
+        <section class="mr-editor" aria-label="블록 편집기 배치 시안">
+          <header class="mr-editorbar">
+            <div class="mr-editor-modes" role="group" aria-label="코드 표시 방식"><button type="button" class="mr-block-mode" aria-pressed="true"><i data-lucide="blocks" aria-hidden="true"></i> 블록</button><button type="button" class="mr-js-mode" aria-pressed="false">JavaScript</button></div>
+            <div class="mr-editor-actions"><span class="mr-makecode-label">MakeCode 배치 시안</span><button type="button" class="mr-open-live" aria-expanded="false"><i data-lucide="panel-right-open" aria-hidden="true"></i> <span>실행 결과 열기</span></button><details class="mr-more"><summary aria-label="파일과 기기 도구"><i data-lucide="ellipsis" aria-hidden="true"></i></summary><div><button type="button" data-tool="HEX 다운로드">HEX 다운로드</button><button type="button" data-tool="USB 업로드">USB 업로드</button><button type="button" data-tool="프로젝트 가져오기">프로젝트 가져오기</button></div></details></div>
+          </header>
+          <div class="mr-block-area">
+            <aside class="mr-toolbox" aria-label="블록 카테고리">
+              <div class="mr-tool-search"><i data-lucide="search" aria-hidden="true"></i><span>블록 찾기</span></div>
+              <button type="button" data-cat="basic" class="mr-cat mr-cat-basic"><span></span>기본</button><button type="button" data-cat="input" class="mr-cat mr-cat-input"><span></span>입력</button><button type="button" data-cat="loop" class="mr-cat mr-cat-loop"><span></span>반복</button><button type="button" data-cat="logic" class="mr-cat mr-cat-logic" aria-pressed="true"><span></span>논리</button><button type="button" data-cat="variable" class="mr-cat mr-cat-variable"><span></span>변수</button><button type="button" data-cat="math" class="mr-cat mr-cat-math"><span></span>계산</button><button type="button" data-cat="pin" class="mr-cat mr-cat-pin"><span></span>핀</button><button type="button" data-cat="music" class="mr-cat mr-cat-music"><span></span>음악</button><div class="mr-advanced">고급 <i data-lucide="chevron-down" aria-hidden="true"></i></div>
+            </aside>
+            <div class="mr-block-canvas">
+              <div class="mr-program" aria-label="계속 반복하며 조도를 읽고 LED와 모터 출력을 설정하는 블록 예시">
+                <div class="mr-block mr-forever">무한 반복 실행</div>
+                <div class="mr-loop-body">
+                  <div class="mr-block mr-variable-block">조도 <span>←</span> <em>P0 아날로그 읽기</em></div>
+                  <div class="mr-block mr-if">만약 <em>조도 ≥ 512</em> 이면</div>
+                  <div class="mr-branch"><div class="mr-block mr-pin-block">P1 디지털 출력 <em>1</em></div></div>
+                  <div class="mr-block mr-else">아니면</div>
+                  <div class="mr-branch"><div class="mr-block mr-pin-block">P1 디지털 출력 <em>0</em></div></div>
+                  <div class="mr-block mr-pin-block mr-last">P2 아날로그 출력 <em>조도</em></div>
+                </div>
+              </div>
+              <div class="mr-category-preview" hidden><h3></h3><div class="mr-block"></div><button type="button">예시 코드로 돌아가기</button></div>
+              <span class="mr-canvas-note">코드 배치 예시</span>
+            </div>
+          </div>
+          <pre class="mr-js-code" hidden><code>basic.forever(function () {
+  let light = pins.analogReadPin(AnalogPin.P0)
+  pins.digitalWritePin(DigitalPin.P1, light &gt;= 512 ? 1 : 0)
+  pins.analogWritePin(AnalogPin.P2, light)
+})</code></pre>
+        </section>
+        <section class="mr-live" aria-label="실행 결과 패널" hidden>
+          <header class="mr-live-header"><div><h3>실행 결과</h3><span class="mr-live-caption">내 코드가 만든 반응</span></div><button type="button" class="mr-close-live" aria-label="실행 결과 닫기"><i data-lucide="x" aria-hidden="true"></i></button></header>
+          <div class="mr-result-tabs" role="group" aria-label="결과 구분"><button type="button" class="mr-actual-tab" aria-pressed="true">내 코드 실행</button><button type="button" class="mr-expected-tab" aria-pressed="false">기대 동작</button></div>
+          <div class="mr-runline"><span class="mr-running-state"><span></span>실행 중 · 화면 시연</span><button type="button" class="mr-pause" aria-label="일시정지"><i data-lucide="pause" aria-hidden="true"></i></button><button type="button" class="mr-reset" aria-label="처음부터 다시 실행"><i data-lucide="rotate-ccw" aria-hidden="true"></i></button></div>
+          <div class="mr-peripherals" aria-live="polite" aria-atomic="true">
+            <div class="mr-sensor"><div class="mr-peripheral-head"><span><i data-lucide="sun" aria-hidden="true"></i> 조도센서 <small>P0</small></span><output>800</output></div><input type="range" min="0" max="1023" value="800" aria-label="조도센서 입력값"><div class="mr-range-labels"><span>어두움</span><span>밝음</span></div></div>
+            <div class="mr-output mr-led"><div class="mr-device-icon"><i data-lucide="lightbulb" aria-hidden="true"></i></div><div><span>LED <small>P1</small></span><strong>켜짐</strong></div></div>
+            <div class="mr-output mr-motor"><div class="mr-device-icon mr-rotor"><i data-lucide="fan" aria-hidden="true"></i></div><div><span>모터 <small>P2</small></span><strong>세기 800</strong></div></div>
+          </div>
+          <div class="mr-live-foot">입력만 변경 · 실행 상태 유지</div>
+          <details class="mr-trace"><summary>핀 값 자세히</summary><p>P0 입력 <span data-pin="input">800</span> · P1 출력 <span data-pin="led">1</span> · P2 출력 <span data-pin="motor">800</span></p></details>
+          <div class="mr-expected-note" hidden>기대 동작 미리보기 · 작성한 코드와 별개</div>
+          <div class="mr-guide-end"><button type="button" class="mr-back-code">코드로 돌아가기</button><button type="button" class="mr-primary mr-submit">채점하기</button></div>
+        </section>
+      </div>
+      <footer class="mr-workfooter"><span><i data-lucide="keyboard" aria-hidden="true"></i> 블록을 골라 코드를 만들어 보세요.</span><button type="button" class="mr-history">제출 기록 <i data-lucide="chevron-right" aria-hidden="true"></i></button></footer>
+    </main>
+    <main class="mr-teacher" hidden>
+      <div class="mr-heading"><div><div class="mr-eyebrow">마이크로비트 · 새 문제</div><h2>문제 만들기</h2></div><span class="mr-draft-status">작성 중</span></div>
+      <div class="mr-teacher-tabs" role="group" aria-label="문제 작성 순서"><button type="button" data-edit-stage="statement" aria-pressed="true"><span>1</span>문제 설명</button><button type="button" data-edit-stage="conditions" aria-pressed="false"><span>2</span>장치·동작</button><button type="button" data-edit-stage="publish" aria-pressed="false"><span>3</span>공개 설정</button></div>
+      <div class="mr-author-layout">
+        <section class="mr-author-form">
+          <div class="mr-edit-section mr-statement">
+            <label>문제 제목<input type="text" value="조도에 따라 LED와 모터 제어하기" aria-label="문제 제목"></label>
+            <label>학생이 만들 동작<textarea rows="4" aria-label="문제 설명">P0 조도센서 값이 512 이상이면 P1 LED를 켜고, 작으면 끄세요.
+P2 모터의 출력은 조도센서 값과 같게 만드세요.</textarea></label>
+            <div class="mr-attached"><i data-lucide="image" aria-hidden="true"></i><span>회로 그림 <small>선택 사항</small></span><button type="button" class="mr-image-tool">그림 추가</button></div>
+          </div>
+          <div class="mr-edit-section mr-conditions" hidden>
+            <h3>연결할 장치</h3><div class="mr-device-list"><span><i data-lucide="sun" aria-hidden="true"></i>P0 조도센서</span><span><i data-lucide="lightbulb" aria-hidden="true"></i>P1 LED</span><span><i data-lucide="fan" aria-hidden="true"></i>P2 모터</span></div>
+            <div class="mr-condition-tabs" role="group" aria-label="조건 공개 범위"><button type="button" class="mr-public-conditions" aria-pressed="true">공개 예시 <span>1</span></button><button type="button" class="mr-private-conditions" aria-pressed="false"><i data-lucide="lock-keyhole" aria-hidden="true"></i>비공개 채점 <span>1</span></button></div>
+            <div class="mr-condition-heading"><h3 class="mr-condition-name">밝아지면 LED와 모터 켜기</h3><button type="button" class="mr-edit-condition">동작 수정</button></div>
+            <div class="mr-sequence"><div><span class="mr-step-dot">1</span><div><span>처음 · 0.5초</span><p>조도 <b>0</b> <i data-lucide="arrow-right" aria-hidden="true"></i> LED 꺼짐 + 모터 0</p></div></div><div><span class="mr-step-dot">2</span><div><span>이어서 · 0.5초</span><p>조도 <b>800</b> <i data-lucide="arrow-right" aria-hidden="true"></i> LED 켜짐 + 모터 800</p></div></div></div>
+            <button type="button" class="mr-add-condition"><i data-lucide="plus" aria-hidden="true"></i> 단계 추가</button>
+          </div>
+          <div class="mr-edit-section mr-publish" hidden><h3>문제 공개</h3><label class="mr-option"><input type="radio" name="visibility" value="public" checked><span>공개 문제<small>누구나 풀고 채점할 수 있어요.</small></span></label><label class="mr-option"><input type="radio" name="visibility" value="draft"><span>초안으로 보관<small>작성자에게만 보여요.</small></span></label><hr><h3>수업에 적용 <small>선택 사항</small></h3><label>수업<select aria-label="배포할 수업"><option>지금은 배포하지 않음</option><option>1학년 2반 · 센서와 출력</option></select></label><p class="mr-publish-note">수업 결과는 공개 문제 풀이와 따로 모아요.</p></div>
+          <footer class="mr-author-footer"><button type="button" class="mr-previous-edit">이전</button><span>초안 자동 저장</span><button type="button" class="mr-primary mr-next-edit">다음: 장치·동작 <i data-lucide="arrow-right" aria-hidden="true"></i></button></footer>
+        </section>
+        <aside class="mr-student-preview" aria-label="학생에게 보일 문제"><div class="mr-preview-heading"><span>학생 화면 미리보기</span><i data-lucide="eye" aria-hidden="true"></i></div><h3>조도에 따라 LED와 모터 제어하기</h3><p>P0 조도센서 값이 512 이상이면 P1 LED를 켜고, 작으면 끄세요.<br>P2 모터의 출력은 조도센서 값과 같게 만드세요.</p><div class="mr-preview-devices"><span><i data-lucide="sun" aria-hidden="true"></i>조도센서</span><span><i data-lucide="lightbulb" aria-hidden="true"></i>LED</span><span><i data-lucide="fan" aria-hidden="true"></i>모터</span></div><div class="mr-example"><span class="mr-example-label">공개 예시</span><div>조도 800 → LED 켜짐 · 모터 800</div></div></aside>
+      </div>
+    </main>
+    <div class="mr-notice" role="status" hidden></div>
+    <dialog class="mr-dialog" aria-label="동작 단계 설정">
+      <form method="dialog"><header><div><span class="mr-eyebrow">동작 단계</span><h3>함께 바뀔 핀을 설정하세요</h3></div><button type="submit" value="cancel" aria-label="단계 설정 닫기"><i data-lucide="x" aria-hidden="true"></i></button></header><div class="mr-modal-fields"><label>이 단계의 시간<select aria-label="단계 유지 시간"><option>0.5초</option><option>1초</option><option>2초</option></select></label><label>센서 입력 · P0<input type="number" min="0" max="1023" value="800" aria-label="단계 조도 입력"></label></div><h3>같은 순간에 기대하는 출력</h3><div class="mr-multi-pin"><label><input type="checkbox" checked> P1 LED</label><select aria-label="기대 LED 출력"><option>켜짐</option><option>꺼짐</option></select></div><div class="mr-multi-pin"><label><input type="checkbox" checked> P2 모터</label><input type="number" min="0" max="1023" value="800" aria-label="기대 모터 출력"></div><details><summary>정밀 시간 조건</summary><p>반응 대기 한도 0.1초 · 정답 출력 유지 0.2초</p></details><footer><button type="submit" value="cancel">취소</button><button type="submit" value="save" class="mr-primary">이 단계에 적용</button></footer></form>
+    </dialog>
+  </template>
+</div>
+<style>
+  #microbit-redesign-review { width:100%; color-scheme:inherit; }
+  #microbit-redesign-review .mr-draft { color:light-dark(#646c78,#a9b2be); font:12px/1.5 system-ui,sans-serif; margin-bottom:10px; }
+  #microbit-redesign-review .mr-design-stage { min-height:960px; }
+  #microbit-redesign-review .mr-app { --mr-bg:light-dark(#ffffff,#19212c); --mr-soft:light-dark(#f5f7fa,#222c38); --mr-canvas:light-dark(#f1f4f8,#151d28); --mr-text:light-dark(#202b39,#e6edf5); --mr-muted:light-dark(#657184,#a5b1c2); --mr-line:light-dark(#e1e7ee,#364252); --mr-accent:light-dark(#087d76,#65d3c2); --mr-accent-fg:light-dark(#ffffff,#122a27); --mr-tint:light-dark(#eaf6f2,#213e3a); --mr-blue:light-dark(#2563bf,#92bfff); --mr-blue-bg:light-dark(#e9f1ff,#203a5c); --mr-block-text:light-dark(#ffffff,#172536); --mr-base-block:light-dark(#2763b8,#89baff); --mr-loop-block:light-dark(#16824a,#7acda6); --mr-logic-block:light-dark(#008d9b,#6acece); --mr-var-block:light-dark(#aa2d62,#eda0be); --mr-math-block:light-dark(#7442b6,#b9a3eb); --mr-pin-block:light-dark(#8f5900,#e5be78); --mr-shadow:light-dark(#1422391a,#00000055); background:var(--mr-bg); color:var(--mr-text); border:1px solid var(--mr-line); border-radius:14px; overflow:clip; min-height:760px; font:14px/1.55 'Segoe UI','Malgun Gothic',system-ui,sans-serif; }
+  #microbit-redesign-review .mr-app { position:relative; }
+  #microbit-redesign-review .mr-app * { box-sizing:border-box; }
+  #microbit-redesign-review .mr-app [hidden] { display:none !important; }
+  #microbit-redesign-review .mr-app h2, #microbit-redesign-review .mr-app h3, #microbit-redesign-review .mr-app p { margin:0; font-weight:400; }
+  #microbit-redesign-review .mr-app h2 { font-size:22px; line-height:1.4; letter-spacing:-.6px; font-weight:500; }
+  #microbit-redesign-review .mr-app h3 { font-size:16px; font-weight:500; }
+  #microbit-redesign-review .mr-app button, #microbit-redesign-review .mr-app input, #microbit-redesign-review .mr-app textarea, #microbit-redesign-review .mr-app select { font:inherit; }
+  #microbit-redesign-review .mr-app button { display:inline-flex; align-items:center; justify-content:center; gap:6px; background:var(--mr-bg); color:var(--mr-text); border:1px solid var(--mr-line); border-radius:7px; min-height:34px; padding:5px 10px; white-space:normal; }
+  #microbit-redesign-review .mr-app button:hover { background:var(--mr-soft); }
+  #microbit-redesign-review .mr-app button.mr-primary { background:var(--mr-accent); color:var(--mr-accent-fg); border-color:var(--mr-accent); }
+  #microbit-redesign-review .mr-app button[aria-pressed="true"] { background:var(--mr-tint); color:var(--mr-accent); border-color:var(--mr-line); font-weight:500; }
+  #microbit-redesign-review .mr-app button svg { flex-shrink:0; }
+  #microbit-redesign-review .mr-chrome { display:flex; align-items:center; justify-content:space-between; gap:14px; border-bottom:1px solid var(--mr-line); padding:13px 112px 13px 22px; }
+  #microbit-redesign-review .mr-brand { display:flex; align-items:center; gap:14px; font-size:20px; font-weight:500; }
+  #microbit-redesign-review .mr-brand > span { font-size:12px; color:var(--mr-muted); font-weight:400; }
+  #microbit-redesign-review .mr-brand > span > span { padding:0 7px; }
+  #microbit-redesign-review .mr-role { display:flex; padding:3px; border:1px solid var(--mr-line); background:var(--mr-soft); border-radius:9px; }
+  #microbit-redesign-review .mr-role button { font-size:12px; min-height:28px; padding:3px 10px; border:0; background:transparent; white-space:nowrap; }
+  #microbit-redesign-review .mr-role button[aria-pressed="true"] { background:var(--mr-bg); box-shadow:0 1px 4px var(--mr-shadow); }
+  #microbit-redesign-review .mr-student, #microbit-redesign-review .mr-teacher { padding:22px; }
+  #microbit-redesign-review .mr-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:17px; }
+  #microbit-redesign-review .mr-eyebrow { color:var(--mr-muted); font-size:12px; margin-bottom:4px; }
+  #microbit-redesign-review .mr-heading-actions { display:flex; align-items:center; gap:14px; flex-shrink:0; }
+  #microbit-redesign-review .mr-saved { display:flex; align-items:center; gap:5px; color:var(--mr-muted); font-size:12px; }
+  #microbit-redesign-review .mr-heading-actions button { min-height:38px; padding:6px 14px; }
+  #microbit-redesign-review .mr-summary { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 13px; background:var(--mr-soft); border-radius:8px; margin-bottom:14px; }
+  #microbit-redesign-review .mr-summary > span { font-size:13px; }
+  #microbit-redesign-review .mr-summary button { border:0; background:transparent; color:var(--mr-accent); padding:3px; min-height:28px; flex-shrink:0; }
+  #microbit-redesign-review .mr-problem { padding:20px; border:1px solid var(--mr-line); border-radius:10px; margin-bottom:14px; }
+  #microbit-redesign-review .mr-focus .mr-problem, #microbit-redesign-review .mr-dock .mr-problem { position:absolute; right:22px; top:150px; width:430px; max-width:calc(100% - 44px); z-index:8; background:var(--mr-bg); box-shadow:0 10px 35px var(--mr-shadow); }
+  #microbit-redesign-review .mr-problem-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  #microbit-redesign-review .mr-problem-heading button { border:0; padding:4px; min-height:28px; }
+  #microbit-redesign-review .mr-problem > p { margin-bottom:18px; }
+  #microbit-redesign-review .mr-wiring { display:flex; flex-wrap:wrap; gap:18px; margin:0 0 18px; }
+  #microbit-redesign-review .mr-wiring > span { display:flex; align-items:center; gap:6px; }
+  #microbit-redesign-review .mr-example { border-radius:8px; background:var(--mr-soft); padding:14px; }
+  #microbit-redesign-review .mr-example-label { color:var(--mr-muted); font-size:12px; display:block; margin-bottom:7px; }
+  #microbit-redesign-review .mr-example > div { display:flex; flex-wrap:wrap; gap:14px; align-items:center; }
+  #microbit-redesign-review .mr-example b { font-weight:500; }
+  #microbit-redesign-review .mr-start-code { display:none; }
+  #microbit-redesign-review .mr-workarea { display:grid; grid-template-columns:minmax(0,1fr); align-items:start; gap:14px; }
+  #microbit-redesign-review .mr-focus.mr-live-open .mr-workarea { grid-template-columns:minmax(0,1fr) var(--mr-preview-width,270px); }
+  #microbit-redesign-review .mr-editor { min-width:0; border:1px solid var(--mr-line); border-radius:10px; background:var(--mr-bg); }
+  #microbit-redesign-review .mr-editorbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; padding:9px 10px; border-bottom:1px solid var(--mr-line); }
+  #microbit-redesign-review .mr-editor-modes { display:flex; align-items:center; padding:2px; background:var(--mr-soft); border-radius:7px; }
+  #microbit-redesign-review .mr-editor-modes button { border:0; min-height:30px; font-size:12px; padding:3px 10px; background:transparent; }
+  #microbit-redesign-review .mr-editor-modes button[aria-pressed="true"] { background:var(--mr-bg); color:var(--mr-text); box-shadow:0 1px 4px var(--mr-shadow); }
+  #microbit-redesign-review .mr-editor-actions { display:flex; align-items:center; gap:8px; }
+  #microbit-redesign-review .mr-editor-actions > button { font-size:12px; }
+  #microbit-redesign-review .mr-makecode-label { color:var(--mr-muted); font-size:11px; }
+  #microbit-redesign-review .mr-more { position:relative; }
+  #microbit-redesign-review .mr-more summary { list-style:none; display:flex; align-items:center; padding:6px; }
+  #microbit-redesign-review .mr-more summary::-webkit-details-marker { display:none; }
+  #microbit-redesign-review .mr-more > div { position:absolute; z-index:5; right:0; top:35px; background:var(--mr-bg); border:1px solid var(--mr-line); border-radius:9px; padding:5px; min-width:180px; box-shadow:0 6px 22px var(--mr-shadow); }
+  #microbit-redesign-review .mr-more button { width:100%; justify-content:flex-start; border:0; }
+  #microbit-redesign-review .mr-block-area { display:grid; grid-template-columns:128px minmax(0,1fr); min-height:420px; border-radius:0 0 10px 10px; }
+  #microbit-redesign-review .mr-toolbox { background:var(--mr-bg); border-right:1px solid var(--mr-line); padding:9px 7px; border-radius:0 0 0 10px; }
+  #microbit-redesign-review .mr-tool-search { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--mr-muted); padding:6px 5px 13px; }
+  #microbit-redesign-review .mr-app .mr-cat { display:flex; justify-content:flex-start; width:100%; background:transparent; border:0; border-radius:6px; font-size:13px; min-height:35px; padding:4px 8px; gap:10px; }
+  #microbit-redesign-review .mr-cat > span { width:8px; height:16px; border-radius:3px; flex-shrink:0; background:var(--mr-base-block); }
+  #microbit-redesign-review .mr-cat-input > span, #microbit-redesign-review .mr-cat-variable > span { background:var(--mr-var-block); }
+  #microbit-redesign-review .mr-cat-loop > span { background:var(--mr-loop-block); }
+  #microbit-redesign-review .mr-cat-logic > span { background:var(--mr-logic-block); }
+  #microbit-redesign-review .mr-cat-math > span, #microbit-redesign-review .mr-cat-music > span { background:var(--mr-math-block); }
+  #microbit-redesign-review .mr-cat-pin > span { background:var(--mr-pin-block); }
+  #microbit-redesign-review .mr-advanced { display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--mr-line); padding:12px 7px 0; margin-top:7px; font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-block-canvas { position:relative; background:var(--mr-canvas); background-image:radial-gradient(var(--mr-line) 1px,transparent 1px); background-size:16px 16px; padding:34px 28px 40px; border-radius:0 0 10px; min-width:0; }
+  #microbit-redesign-review .mr-program { max-width:360px; font-size:13px; line-height:1.55; }
+  #microbit-redesign-review .mr-block { width:max-content; max-width:100%; border-radius:5px; padding:9px 12px; color:var(--mr-block-text); font-weight:500; position:relative; overflow-wrap:anywhere; }
+  #microbit-redesign-review .mr-block em { font-style:normal; border-radius:4px; padding:3px 6px; background:light-dark(#ffffff24,#1627361f); display:inline-block; font-weight:400; }
+  #microbit-redesign-review .mr-forever { background:var(--mr-base-block); border-radius:13px 13px 4px 4px; min-width:190px; padding-top:12px; }
+  #microbit-redesign-review .mr-loop-body { border-left:10px solid var(--mr-base-block); border-bottom:10px solid var(--mr-base-block); margin-top:-1px; border-radius:0 0 6px 6px; padding:7px 0 4px 9px; max-width:100%; }
+  #microbit-redesign-review .mr-variable-block { background:var(--mr-var-block); margin-bottom:9px; }
+  #microbit-redesign-review .mr-if, #microbit-redesign-review .mr-else { background:var(--mr-logic-block); min-width:200px; }
+  #microbit-redesign-review .mr-branch { border-left:8px solid var(--mr-logic-block); padding:5px 0 5px 10px; }
+  #microbit-redesign-review .mr-pin-block { background:var(--mr-pin-block); }
+  #microbit-redesign-review .mr-last { margin-top:10px; }
+  #microbit-redesign-review .mr-canvas-note { position:absolute; bottom:12px; right:13px; color:var(--mr-muted); font-size:11px; }
+  #microbit-redesign-review .mr-category-preview { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+  #microbit-redesign-review .mr-category-preview h3 { color:var(--mr-text); }
+  #microbit-redesign-review .mr-category-preview .mr-block { background:var(--mr-base-block); }
+  #microbit-redesign-review .mr-js-code { white-space:pre-wrap; overflow-wrap:anywhere; margin:0; padding:25px; min-height:420px; color:var(--mr-text); background:var(--mr-canvas); font:13px/1.8 Consolas,monospace; border-radius:0 0 10px 10px; }
+  #microbit-redesign-review .mr-live { border:1px solid var(--mr-line); border-radius:10px; background:var(--mr-bg); min-width:0; padding:15px; }
+  #microbit-redesign-review .mr-live-header { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px; }
+  #microbit-redesign-review .mr-live-header h3 { font-size:16px; }
+  #microbit-redesign-review .mr-live-caption { font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-live-header button { min-height:28px; padding:3px; border:0; }
+  #microbit-redesign-review .mr-result-tabs { display:flex; gap:4px; border-bottom:1px solid var(--mr-line); padding-bottom:10px; }
+  #microbit-redesign-review .mr-result-tabs button { flex:1; padding:5px; font-size:12px; border:0; background:var(--mr-soft); }
+  #microbit-redesign-review .mr-runline { display:flex; align-items:center; gap:5px; padding:10px 0; }
+  #microbit-redesign-review .mr-running-state { display:flex; align-items:center; gap:5px; font-size:11px; flex:1; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-running-state > span { width:6px; height:6px; border-radius:50%; background:var(--mr-accent); }
+  #microbit-redesign-review .mr-runline button { min-height:27px; padding:4px; }
+  #microbit-redesign-review .mr-peripherals { display:grid; gap:12px; }
+  #microbit-redesign-review .mr-sensor { background:var(--mr-soft); padding:12px; border-radius:8px; }
+  #microbit-redesign-review .mr-peripheral-head { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  #microbit-redesign-review .mr-peripheral-head > span { display:flex; gap:5px; align-items:center; font-size:13px; }
+  #microbit-redesign-review .mr-peripheral-head output { font-size:20px; font-weight:500; font-variant-numeric:tabular-nums; }
+  #microbit-redesign-review .mr-app small { font-size:11px; color:var(--mr-muted); font-weight:400; }
+  #microbit-redesign-review .mr-sensor input { width:100%; margin:13px 0 3px; padding:0; accent-color:var(--mr-accent); min-width:0; }
+  #microbit-redesign-review .mr-range-labels { display:flex; justify-content:space-between; color:var(--mr-muted); font-size:11px; }
+  #microbit-redesign-review .mr-output { display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--mr-line); padding:0 2px 12px; }
+  #microbit-redesign-review .mr-device-icon { width:54px; height:54px; border-radius:50%; background:var(--mr-soft); display:flex; align-items:center; justify-content:center; color:var(--mr-muted); flex-shrink:0; }
+  #microbit-redesign-review .mr-device-icon svg { width:29px; height:29px; }
+  #microbit-redesign-review .mr-output > div > span { display:block; font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-output strong { display:block; font-size:16px; font-weight:500; }
+  #microbit-redesign-review .mr-led.mr-is-on .mr-device-icon { background:light-dark(#fff0c0,#5c4821); color:light-dark(#925200,#ffd775); }
+  #microbit-redesign-review .mr-live-foot { font-size:11px; color:var(--mr-muted); margin-top:12px; }
+  #microbit-redesign-review .mr-trace { color:var(--mr-muted); font-size:12px; margin-top:10px; }
+  #microbit-redesign-review .mr-trace p { margin-top:8px; }
+  #microbit-redesign-review .mr-expected-note { margin-top:10px; color:var(--mr-blue); font-size:12px; }
+  #microbit-redesign-review .mr-guide-end { display:none; }
+  #microbit-redesign-review .mr-workfooter { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
+  #microbit-redesign-review .mr-workfooter > span { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-workfooter button { border:0; font-size:12px; padding:2px 0; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-steps { display:none; }
+  #microbit-redesign-review .mr-dock .mr-block-area, #microbit-redesign-review .mr-dock .mr-js-code { min-height:370px; }
+  #microbit-redesign-review .mr-dock .mr-block-canvas { padding-top:22px; padding-bottom:30px; }
+  #microbit-redesign-review .mr-dock .mr-block { padding:6px 10px; }
+  #microbit-redesign-review .mr-dock .mr-toolbox .mr-cat { min-height:30px; }
+  #microbit-redesign-review .mr-dock .mr-live { display:grid; grid-template-columns:180px minmax(0,1fr); column-gap:20px; padding:13px 16px; }
+  #microbit-redesign-review .mr-dock .mr-live-header { margin-bottom:5px; }
+  #microbit-redesign-review .mr-dock .mr-result-tabs { grid-column:1; grid-row:2; border:0; padding:0; }
+  #microbit-redesign-review .mr-dock .mr-runline { grid-column:1; grid-row:3; padding-bottom:0; }
+  #microbit-redesign-review .mr-dock .mr-peripherals { grid-column:2; grid-row:1 / 4; grid-template-columns:minmax(170px,1.3fr) 1fr 1fr; align-items:center; gap:16px; }
+  #microbit-redesign-review .mr-dock .mr-output { border:0; padding:0; gap:8px; }
+  #microbit-redesign-review .mr-dock .mr-device-icon { width:43px; height:43px; }
+  #microbit-redesign-review .mr-dock .mr-live-foot { display:none; }
+  #microbit-redesign-review .mr-dock .mr-trace { grid-column:1 / -1; }
+  #microbit-redesign-review .mr-dock .mr-expected-note { grid-column:2; }
+  #microbit-redesign-review .mr-guide .mr-steps, #microbit-redesign-review .mr-teacher-tabs { display:flex; gap:0; border-bottom:1px solid var(--mr-line); margin-bottom:18px; }
+  #microbit-redesign-review .mr-steps button, #microbit-redesign-review .mr-teacher-tabs button { flex:1; background:transparent; border:0; border-radius:0; border-bottom:2px solid transparent; padding:9px 6px 12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-steps button > span, #microbit-redesign-review .mr-teacher-tabs button > span { width:21px; height:21px; border-radius:50%; background:var(--mr-soft); font-size:12px; }
+  #microbit-redesign-review .mr-steps button[aria-current="step"], #microbit-redesign-review .mr-teacher-tabs button[aria-pressed="true"] { color:var(--mr-accent); border-bottom-color:var(--mr-accent); background:transparent; }
+  #microbit-redesign-review .mr-steps button[aria-current="step"] > span, #microbit-redesign-review .mr-teacher-tabs button[aria-pressed="true"] > span { color:var(--mr-accent-fg); background:var(--mr-accent); }
+  #microbit-redesign-review .mr-guide .mr-heading-actions > .mr-submit { display:none; }
+  #microbit-redesign-review .mr-guide .mr-summary { background:transparent; padding:0 0 5px; }
+  #microbit-redesign-review .mr-guide .mr-makecode-label { display:none; }
+  #microbit-redesign-review .mr-guide.mr-live-open .mr-editor { display:none; }
+  #microbit-redesign-review .mr-guide .mr-live { padding:22px; }
+  #microbit-redesign-review .mr-guide .mr-peripherals { grid-template-columns:1.5fr 1fr 1fr; gap:25px; margin:25px 0 20px; }
+  #microbit-redesign-review .mr-guide .mr-result-tabs { width:270px; max-width:100%; }
+  #microbit-redesign-review .mr-guide .mr-runline { width:270px; max-width:100%; }
+  #microbit-redesign-review .mr-guide .mr-output { border:0; }
+  #microbit-redesign-review .mr-guide .mr-guide-end { display:flex; gap:10px; justify-content:flex-end; margin-top:30px; border-top:1px solid var(--mr-line); padding-top:18px; }
+  #microbit-redesign-review .mr-guide.mr-reading .mr-workarea, #microbit-redesign-review .mr-guide.mr-reading .mr-summary, #microbit-redesign-review .mr-guide.mr-reading .mr-workfooter { display:none; }
+  #microbit-redesign-review .mr-guide .mr-problem { padding:25px; }
+  #microbit-redesign-review .mr-guide .mr-start-code { display:inline-flex; margin-top:24px; }
+  #microbit-redesign-review .mr-draft-status { font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-author-layout { display:grid; grid-template-columns:minmax(0,1fr); gap:24px; }
+  #microbit-redesign-review .mr-author-form { min-width:0; }
+  #microbit-redesign-review .mr-edit-section { max-width:650px; min-height:330px; }
+  #microbit-redesign-review .mr-author-form label { display:flex; flex-direction:column; gap:7px; font-size:13px; margin-bottom:20px; }
+  #microbit-redesign-review .mr-author-form input[type="text"], #microbit-redesign-review .mr-author-form textarea, #microbit-redesign-review .mr-author-form select, #microbit-redesign-review .mr-dialog input[type="number"], #microbit-redesign-review .mr-dialog select { width:100%; background:var(--mr-bg); color:var(--mr-text); border:1px solid var(--mr-line); border-radius:7px; padding:10px 12px; min-width:0; }
+  #microbit-redesign-review .mr-author-form textarea { resize:vertical; min-height:135px; }
+  #microbit-redesign-review .mr-attached { display:flex; align-items:center; gap:9px; border:1px dashed var(--mr-line); padding:12px; border-radius:8px; }
+  #microbit-redesign-review .mr-attached > span { flex:1; font-size:13px; }
+  #microbit-redesign-review .mr-attached small { margin-left:6px; }
+  #microbit-redesign-review .mr-attached button { font-size:12px; }
+  #microbit-redesign-review .mr-author-footer { display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:20px; border-top:1px solid var(--mr-line); margin-top:20px; }
+  #microbit-redesign-review .mr-author-footer > span { font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-author-footer button { min-height:38px; }
+  #microbit-redesign-review .mr-student-preview { display:none; }
+  #microbit-redesign-review .mr-app .mr-preview-toggle { display:none; }
+  #microbit-redesign-review .mr-dock .mr-author-layout { grid-template-columns:minmax(0,1fr) minmax(240px,.8fr); }
+  #microbit-redesign-review .mr-dock .mr-student-preview { display:block; border:1px solid var(--mr-line); border-radius:10px; padding:20px; background:var(--mr-soft); align-self:start; }
+  #microbit-redesign-review .mr-preview-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-student-preview > h3 { margin-bottom:12px; }
+  #microbit-redesign-review .mr-student-preview > p { font-size:13px; margin-bottom:22px; }
+  #microbit-redesign-review .mr-preview-devices { display:flex; gap:16px; margin-bottom:22px; }
+  #microbit-redesign-review .mr-preview-devices > span { display:flex; flex-direction:column; align-items:center; gap:8px; font-size:11px; }
+  #microbit-redesign-review .mr-preview-devices svg { width:24px; height:24px; }
+  #microbit-redesign-review .mr-student-preview .mr-example { background:var(--mr-bg); }
+  #microbit-redesign-review .mr-guide .mr-author-form { max-width:650px; margin:auto; width:100%; }
+  #microbit-redesign-review .mr-device-list { display:flex; flex-wrap:wrap; gap:9px; margin:12px 0 22px; }
+  #microbit-redesign-review .mr-device-list > span { display:flex; align-items:center; gap:5px; font-size:12px; background:var(--mr-soft); padding:8px 9px; border-radius:7px; }
+  #microbit-redesign-review .mr-condition-tabs { display:flex; gap:8px; padding-bottom:14px; margin-bottom:16px; border-bottom:1px solid var(--mr-line); }
+  #microbit-redesign-review .mr-condition-tabs > button { font-size:12px; gap:5px; }
+  #microbit-redesign-review .mr-condition-tabs > button > span { color:var(--mr-muted); }
+  #microbit-redesign-review .mr-condition-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:18px; }
+  #microbit-redesign-review .mr-condition-heading h3 { font-size:14px; }
+  #microbit-redesign-review .mr-condition-heading button { font-size:12px; flex-shrink:0; }
+  #microbit-redesign-review .mr-sequence { display:grid; gap:18px; margin:0 0 20px; }
+  #microbit-redesign-review .mr-sequence > div { display:flex; gap:12px; }
+  #microbit-redesign-review .mr-step-dot { display:flex; justify-content:center; align-items:center; width:25px; height:25px; border-radius:50%; background:var(--mr-tint); color:var(--mr-accent); flex-shrink:0; }
+  #microbit-redesign-review .mr-sequence > div > div > span { font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-sequence p { font-size:13px; margin-top:6px; display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+  #microbit-redesign-review .mr-sequence b { font-weight:500; }
+  #microbit-redesign-review .mr-add-condition { border-style:dashed !important; width:100%; }
+  #microbit-redesign-review .mr-author-form .mr-option { flex-direction:row; align-items:flex-start; border:1px solid var(--mr-line); padding:14px; border-radius:9px; margin-top:12px; margin-bottom:10px; }
+  #microbit-redesign-review .mr-option input { accent-color:var(--mr-accent); margin-top:4px; }
+  #microbit-redesign-review .mr-option small { display:block; margin-top:5px; }
+  #microbit-redesign-review .mr-publish hr { border:0; border-top:1px solid var(--mr-line); margin:22px 0; }
+  #microbit-redesign-review .mr-publish > h3 { margin-bottom:12px; }
+  #microbit-redesign-review .mr-publish-note { color:var(--mr-muted); font-size:12px; }
+  #microbit-redesign-review .mr-notice { margin:0 22px 22px; padding:12px 14px; background:var(--mr-blue-bg); color:var(--mr-text); border-radius:8px; font-size:13px; }
+  #microbit-redesign-review .mr-dialog { background:var(--mr-bg); color:var(--mr-text); border:1px solid var(--mr-line); border-radius:14px; width:480px; max-width:calc(100% - 24px); padding:22px; box-shadow:0 16px 50px var(--mr-shadow); }
+  #microbit-redesign-review .mr-dialog::backdrop { background:light-dark(#15233377,#00000099); }
+  #microbit-redesign-review .mr-dialog header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:22px; }
+  #microbit-redesign-review .mr-dialog header button { border:0; padding:4px; }
+  #microbit-redesign-review .mr-modal-fields { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px; }
+  #microbit-redesign-review .mr-modal-fields label { display:flex; flex-direction:column; gap:6px; font-size:13px; min-width:0; }
+  #microbit-redesign-review .mr-multi-pin { display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:center; padding:12px 0; border-bottom:1px solid var(--mr-line); }
+  #microbit-redesign-review .mr-multi-pin label { display:flex; gap:7px; align-items:center; }
+  #microbit-redesign-review .mr-multi-pin input[type="checkbox"] { accent-color:var(--mr-accent); }
+  #microbit-redesign-review .mr-dialog details { margin:20px 0; font-size:12px; color:var(--mr-muted); }
+  #microbit-redesign-review .mr-dialog details p { padding-top:8px; }
+  #microbit-redesign-review .mr-dialog footer { display:flex; justify-content:flex-end; gap:10px; margin-top:24px; }
+  @media (max-width:860px) {
+    #microbit-redesign-review .mr-makecode-label { display:none; }
+    #microbit-redesign-review .mr-focus.mr-live-open .mr-workarea { grid-template-columns:minmax(0,1fr) 250px; }
+    #microbit-redesign-review .mr-block-canvas { padding:30px 16px 40px; }
+    #microbit-redesign-review .mr-focus.mr-live-open .mr-block-area { grid-template-columns:105px minmax(0,1fr); }
+    #microbit-redesign-review .mr-dock .mr-live { grid-template-columns:150px minmax(0,1fr); gap:8px 15px; }
+    #microbit-redesign-review .mr-dock .mr-peripherals { grid-template-columns:1.3fr 1fr; gap:12px; }
+    #microbit-redesign-review .mr-dock .mr-sensor { grid-row:1 / 3; }
+    #microbit-redesign-review .mr-dock .mr-device-icon { width:35px; height:35px; }
+    #microbit-redesign-review .mr-dock .mr-output strong { font-size:14px; }
+    #microbit-redesign-review .mr-dock .mr-motor { grid-column:2; }
+  }
+  @media (max-width:700px) {
+    #microbit-redesign-review .mr-design-stage { min-height:1080px; }
+    #microbit-redesign-review .mr-app { min-height:870px; border-radius:10px; }
+    #microbit-redesign-review .mr-chrome { padding:12px 14px; flex-wrap:wrap; }
+    #microbit-redesign-review .mr-brand { font-size:18px; }
+    #microbit-redesign-review .mr-student, #microbit-redesign-review .mr-teacher { padding:16px 14px; }
+    #microbit-redesign-review .mr-heading { align-items:flex-start; gap:10px; }
+    #microbit-redesign-review .mr-app h2 { font-size:19px; }
+    #microbit-redesign-review .mr-heading-actions { gap:0; }
+    #microbit-redesign-review .mr-saved { display:none; }
+    #microbit-redesign-review .mr-summary { align-items:flex-start; padding:10px; }
+    #microbit-redesign-review .mr-summary > span { font-size:12px; }
+    #microbit-redesign-review .mr-summary button { font-size:12px; }
+    #microbit-redesign-review .mr-focus.mr-live-open .mr-workarea { grid-template-columns:minmax(0,1fr); }
+    #microbit-redesign-review .mr-focus.mr-live-open .mr-editor, #microbit-redesign-review .mr-dock.mr-live-open .mr-editor { display:none; }
+    #microbit-redesign-review .mr-app.mr-reading .mr-workarea, #microbit-redesign-review .mr-app.mr-reading .mr-workfooter, #microbit-redesign-review .mr-app.mr-reading .mr-summary { display:none; }
+    #microbit-redesign-review .mr-focus .mr-problem, #microbit-redesign-review .mr-dock .mr-problem { position:static; width:100%; max-width:100%; box-shadow:none; }
+    #microbit-redesign-review .mr-block-area, #microbit-redesign-review .mr-focus.mr-live-open .mr-block-area { grid-template-columns:92px minmax(0,1fr); min-height:470px; }
+    #microbit-redesign-review .mr-toolbox { padding:10px 4px; }
+    #microbit-redesign-review .mr-app .mr-cat { font-size:12px; padding:6px; gap:8px; min-height:38px; }
+    #microbit-redesign-review .mr-tool-search { font-size:11px; padding:3px 3px 13px; }
+    #microbit-redesign-review .mr-tool-search svg { display:none; }
+    #microbit-redesign-review .mr-block-canvas { padding:28px 10px 40px; }
+    #microbit-redesign-review .mr-program { font-size:12px; }
+    #microbit-redesign-review .mr-block { padding:8px 7px; }
+    #microbit-redesign-review .mr-forever, #microbit-redesign-review .mr-if, #microbit-redesign-review .mr-else { min-width:0; width:100%; }
+    #microbit-redesign-review .mr-loop-body { border-left-width:6px; padding-left:5px; }
+    #microbit-redesign-review .mr-branch { border-left-width:6px; padding-left:6px; }
+    #microbit-redesign-review .mr-block em { padding:1px 3px; }
+    #microbit-redesign-review .mr-editorbar { gap:6px; padding:8px; }
+    #microbit-redesign-review .mr-editor-actions { gap:3px; }
+    #microbit-redesign-review .mr-editor-modes button { font-size:11px; padding:5px 7px; }
+    #microbit-redesign-review .mr-editor-actions > button { font-size:11px; padding:5px 7px; }
+    #microbit-redesign-review .mr-editor-actions .mr-more { display:none; }
+    #microbit-redesign-review .mr-workfooter { align-items:flex-start; }
+    #microbit-redesign-review .mr-workfooter > span { font-size:11px; max-width:65%; }
+    #microbit-redesign-review .mr-workfooter > span svg { display:none; }
+    #microbit-redesign-review .mr-live { padding:17px; }
+    #microbit-redesign-review .mr-dock .mr-live { display:block; padding:17px; }
+    #microbit-redesign-review .mr-dock .mr-peripherals { grid-template-columns:1fr 1fr; gap:16px; margin-top:15px; }
+    #microbit-redesign-review .mr-dock .mr-sensor { grid-column:1 / -1; grid-row:auto; }
+    #microbit-redesign-review .mr-dock .mr-motor { grid-column:auto; }
+    #microbit-redesign-review .mr-dock .mr-live-foot { margin-top:18px; }
+    #microbit-redesign-review .mr-dock .mr-runline { padding:12px 0; }
+    #microbit-redesign-review .mr-guide .mr-peripherals { grid-template-columns:1fr 1fr; gap:15px; }
+    #microbit-redesign-review .mr-guide .mr-sensor { grid-column:1 / -1; }
+    #microbit-redesign-review .mr-guide .mr-output { flex-direction:column; align-items:flex-start; }
+    #microbit-redesign-review .mr-guide .mr-live { padding:17px; }
+    #microbit-redesign-review .mr-steps button, #microbit-redesign-review .mr-teacher-tabs button { font-size:12px; gap:5px; }
+    #microbit-redesign-review .mr-steps button > span, #microbit-redesign-review .mr-teacher-tabs button > span { width:18px; height:18px; font-size:11px; }
+    #microbit-redesign-review .mr-guide .mr-problem { padding:17px; }
+    #microbit-redesign-review .mr-wiring { gap:12px; font-size:12px; }
+    #microbit-redesign-review .mr-problem > p { font-size:13px; }
+    #microbit-redesign-review .mr-author-form input[type="text"], #microbit-redesign-review .mr-author-form textarea, #microbit-redesign-review .mr-author-form select, #microbit-redesign-review .mr-dialog input, #microbit-redesign-review .mr-dialog select { font-size:16px; }
+    #microbit-redesign-review .mr-dock .mr-author-layout { grid-template-columns:minmax(0,1fr); }
+    #microbit-redesign-review .mr-dock .mr-student-preview { padding:15px; display:none; }
+    #microbit-redesign-review .mr-dock.mr-preview-open .mr-student-preview { display:block; }
+    #microbit-redesign-review .mr-dock .mr-preview-toggle { display:inline-flex; width:100%; }
+    #microbit-redesign-review .mr-author-footer { flex-wrap:wrap; }
+    #microbit-redesign-review .mr-author-footer > span { display:none; }
+    #microbit-redesign-review .mr-attached small { display:block; margin:0; }
+    #microbit-redesign-review .mr-dialog { padding:17px; }
+    #microbit-redesign-review .mr-dialog h3 { font-size:14px; }
+    #microbit-redesign-review .mr-modal-fields { gap:10px; }
+  }
+  @media (pointer:coarse) {
+    #microbit-redesign-review .mr-app button, #microbit-redesign-review .mr-more summary { min-height:44px; }
+    #microbit-redesign-review .mr-role button { min-height:36px; }
+    #microbit-redesign-review .mr-sensor input { min-height:44px; }
+    #microbit-redesign-review .mr-app .mr-cat { min-height:44px; }
+  }
+  @media (prefers-reduced-motion:reduce) { #microbit-redesign-review .mr-rotor svg { transform:none !important; } }
+</style>
+<script>
+(() => {
+  const root = document.getElementById('microbit-redesign-review');
+  const template = document.getElementById('mr-app-template');
+  let saved = window.openai?.widgetState;
+  saved = saved?.privateContent?.screens || saved?.screens || {};
+  const apps = [];
+  const categoryNames = { basic:['기본','아이콘 출력'], input:['입력','버튼 A 누르면 실행'], loop:['반복','반복 4회 실행'], logic:['논리','만약 참 이면'], variable:['변수','조도 ← 0'], math:['계산','0 + 0'], pin:['핀','P0 아날로그 읽기'], music:['음악','소리 재생'] };
+  function persist() {
+    const screens = Object.fromEntries(apps.map(a => [a.design, { role:a.role, open:a.open, stage:a.stage, edit:a.edit, sensor:a.sensor, expected:a.expected, paused:a.paused }]));
+    const active = root.querySelector('[data-variant]:not([hidden])');
+    window.openai?.setWidgetState?.({ modelContent:{ design:active?.dataset.variant, screen:apps.find(a=>a.el===active?.firstElementChild)?.role }, privateContent:{screens} })?.catch(()=>{});
+  }
+  function icons() { globalThis.lucide?.createIcons({attrs:{width:16,height:16}}); }
+  function init(el) {
+    const design = el.dataset.design;
+    el.append(template.content.cloneNode(true));
+    el.querySelectorAll('button, summary, input[type="range"], input[type="radio"], input[type="checkbox"]').forEach(n=>n.classList.add('cursor-interaction'));
+    el.querySelectorAll('input[name="visibility"]').forEach(n=>n.name='visibility-'+design);
+    const q = s=>el.querySelector(s);
+    const qa = s=>Array.from(el.querySelectorAll(s));
+    const old = saved[design] || {};
+    const a = { el, design, role:old.role==='teacher'?'teacher':'student', open:typeof old.open==='boolean'?old.open:design==='dock'&&!window.matchMedia('(max-width:700px)').matches, stage:['read','code','run'].includes(old.stage)?old.stage:design==='guide'?'read':'code', edit:['statement','conditions','publish'].includes(old.edit)?old.edit:'statement', sensor:Number.isFinite(old.sensor)?Math.max(0,Math.min(1023,old.sensor)):800, expected:!!old.expected, paused:!!old.paused, private:false, js:false, actual:800, animated:false };
+    apps.push(a);
+    a.actual=a.sensor;
+    function notice(text) { q('.mr-notice').hidden=false; q('.mr-notice').textContent=text; }
+    function showStage(value) { a.stage=value; if(design==='guide') a.open=value==='run'; render(); persist(); }
+    function live(open) { a.open=open; if(design==='guide') a.stage=open?'run':'code'; render(); persist(); }
+    function renderValues() {
+      q('.mr-sensor input').value=String(a.sensor);
+      q('.mr-sensor output').textContent=String(a.sensor);
+      if(!a.paused) a.actual=a.sensor;
+      const value=a.expected?a.sensor:a.actual;
+      q('.mr-led').classList.toggle('mr-is-on',value>=512);
+      q('.mr-led strong').textContent=value>=512?'켜짐':'꺼짐';
+      q('.mr-motor strong').textContent='세기 '+value;
+      q('[data-pin="input"]').textContent=String(a.sensor);
+      q('[data-pin="led"]').textContent=value>=512?'1':'0';
+      q('[data-pin="motor"]').textContent=String(value);
+      q('.mr-running-state').replaceChildren();
+      const dot=document.createElement('span');
+      q('.mr-running-state').append(dot, document.createTextNode(a.expected?'기대 동작 · 화면 시연':a.paused?'일시정지 · 화면 시연':'실행 중 · 화면 시연'));
+      q('.mr-pause').setAttribute('aria-label',a.paused?'계속 실행':'일시정지');
+      q('.mr-pause').innerHTML='<i data-lucide="'+(a.paused?'play':'pause')+'" aria-hidden="true"></i>';
+      q('.mr-actual-tab').setAttribute('aria-pressed',String(!a.expected));
+      q('.mr-expected-tab').setAttribute('aria-pressed',String(a.expected));
+      q('.mr-expected-note').hidden=!a.expected;
+      q('.mr-live-caption').textContent=a.expected?'목표로 하는 반응':'내 코드가 만든 반응';
+      q('.mr-live-foot').textContent=a.expected?'공개 예시의 목표 동작':'입력만 변경 · 실행 상태 유지';
+      q('.mr-pause').disabled=a.expected;
+      q('.mr-reset').disabled=a.expected;
+      icons();
+    }
+    function render() {
+      q('.mr-student').hidden=a.role!=='student';
+      q('.mr-teacher').hidden=a.role!=='teacher';
+      q('.mr-role-student').setAttribute('aria-pressed',String(a.role==='student'));
+      q('.mr-role-teacher').setAttribute('aria-pressed',String(a.role==='teacher'));
+      el.classList.toggle('mr-live-open',a.open);
+      el.classList.toggle('mr-reading',design==='guide'?a.stage==='read':!q('.mr-problem').hidden);
+      q('.mr-live').hidden=!a.open;
+      q('.mr-open-live').setAttribute('aria-expanded',String(a.open));
+      q('.mr-open-live > span').textContent=a.open?'실행 결과 닫기':'실행 결과 열기';
+      if(design==='guide') q('.mr-problem').hidden=a.stage!=='read';
+      q('.mr-question').setAttribute('aria-expanded',String(!q('.mr-problem').hidden));
+      qa('[data-stage]').forEach(b=>b.setAttribute('aria-current',b.dataset.stage===a.stage?'step':'false'));
+      qa('[data-edit-stage]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.editStage===a.edit)));
+      qa('.mr-edit-section').forEach(n=>n.hidden=!n.classList.contains('mr-'+a.edit));
+      q('.mr-previous-edit').disabled=a.edit==='statement';
+      q('.mr-next-edit').textContent=a.edit==='statement'?'다음: 장치·동작 →':a.edit==='conditions'?'다음: 공개 설정 →':'공개하기';
+      q('.mr-block-area').hidden=a.js;
+      q('.mr-js-code').hidden=!a.js;
+      q('.mr-block-mode').setAttribute('aria-pressed',String(!a.js));
+      q('.mr-js-mode').setAttribute('aria-pressed',String(a.js));
+      renderValues();
+    }
+    q('.mr-role-student').onclick=()=>{a.role='student';q('.mr-notice').hidden=true;render();persist();};
+    q('.mr-role-teacher').onclick=()=>{a.role='teacher';q('.mr-notice').hidden=true;render();persist();};
+    q('.mr-open-live').onclick=()=>live(!a.open);
+    q('.mr-close-live').onclick=()=>live(false);
+    q('.mr-question').onclick=()=>{if(design==='guide'){showStage('read');return;}q('.mr-problem').hidden=!q('.mr-problem').hidden;render();};
+    q('.mr-close-problem').onclick=()=>{if(design==='guide'){showStage('code');return;}q('.mr-problem').hidden=true;render();};
+    q('.mr-start-code').onclick=()=>showStage('code');
+    q('.mr-back-code').onclick=()=>showStage('code');
+    qa('[data-stage]').forEach(b=>b.onclick=()=>showStage(b.dataset.stage));
+    q('.mr-sensor input').oninput=e=>{a.sensor=Number(e.target.value);a.animated=true;renderValues();};
+    q('.mr-sensor input').onchange=persist;
+    q('.mr-actual-tab').onclick=()=>{a.expected=false;renderValues();persist();};
+    q('.mr-expected-tab').onclick=()=>{a.expected=true;renderValues();persist();};
+    q('.mr-pause').onclick=()=>{a.paused=!a.paused;renderValues();persist();};
+    q('.mr-reset').onclick=()=>{a.paused=false;renderValues();notice('화면 시연: 실행을 처음부터 다시 시작했어요.');persist();};
+    q('.mr-block-mode').onclick=()=>{a.js=false;render();};
+    q('.mr-js-mode').onclick=()=>{a.js=true;render();};
+    qa('[data-cat]').forEach(b=>b.onclick=()=>{const [name,text]=categoryNames[b.dataset.cat];qa('[data-cat]').forEach(c=>c.setAttribute('aria-pressed',String(c===b)));q('.mr-program').hidden=true;q('.mr-category-preview').hidden=false;q('.mr-category-preview h3').textContent=name+' 블록';q('.mr-category-preview .mr-block').textContent=text;});
+    q('.mr-category-preview button').onclick=()=>{q('.mr-program').hidden=false;q('.mr-category-preview').hidden=true;};
+    qa('.mr-submit').forEach(b=>b.onclick=()=>notice('채점 결과 예시 · 정답! 비공개 조건은 학생 화면에 표시하지 않아요.'));
+    q('.mr-history').onclick=()=>notice('제출 기록 예시 · 오늘 14:20 · 정답 · 100점');
+    qa('[data-tool]').forEach(b=>b.onclick=()=>{notice(b.dataset.tool+'의 배치 시안입니다. 이 초안에서는 기기에 연결하지 않아요.');q('.mr-more').open=false;});
+    qa('[data-edit-stage]').forEach(b=>b.onclick=()=>{a.edit=b.dataset.editStage;render();persist();});
+    q('.mr-next-edit').onclick=()=>{if(a.edit==='publish'){notice('공개 완료 화면 예시 · 문제 목록에서 풀 수 있고, 수업별 결과는 따로 확인해요.');return;}a.edit=a.edit==='statement'?'conditions':'publish';render();persist();};
+    q('.mr-previous-edit').onclick=()=>{a.edit=a.edit==='publish'?'conditions':'statement';render();persist();};
+    function conditionPrivate(value) {a.private=value;q('.mr-public-conditions').setAttribute('aria-pressed',String(!value));q('.mr-private-conditions').setAttribute('aria-pressed',String(value));q('.mr-condition-name').textContent=value?'경계값 511 · 512 확인':'밝아지면 LED와 모터 켜기';qa('.mr-sequence p').forEach((p,i)=>{const sensor=value?(i?512:511):(i?800:0);p.textContent='조도 '+sensor+' → LED '+(sensor>=512?'켜짐':'꺼짐')+' + 모터 '+sensor;});}
+    q('.mr-public-conditions').onclick=()=>conditionPrivate(false);
+    q('.mr-private-conditions').onclick=()=>conditionPrivate(true);
+    let addingStep=false;
+    function openStep(add) {addingStep=add;const value=a.private?512:800;q('.mr-dialog input[aria-label="단계 조도 입력"]').value=String(value);q('.mr-dialog input[aria-label="기대 모터 출력"]').value=String(value);q('.mr-dialog').showModal();}
+    q('.mr-edit-condition').onclick=()=>openStep(false);
+    q('.mr-add-condition').onclick=()=>openStep(true);
+    qa('.mr-dialog button[value]').forEach(button=>{button.type='button';button.onclick=()=>q('.mr-dialog').close(button.value);});
+    q('.mr-dialog form').addEventListener('submit',event=>event.preventDefault());
+    q('.mr-dialog').addEventListener('close',()=>{
+      if(q('.mr-dialog').returnValue!=='save')return;
+      const sensor=q('.mr-dialog input[aria-label="단계 조도 입력"]').value;
+      const motor=q('.mr-dialog input[aria-label="기대 모터 출력"]').value;
+      const led=q('.mr-dialog select[aria-label="기대 LED 출력"]').value;
+      const time=q('.mr-dialog select[aria-label="단계 유지 시간"]').value;
+      let row=q('.mr-sequence > div:last-child');
+      if(addingStep){row=row.cloneNode(true);q('.mr-sequence').append(row);row.querySelector('.mr-step-dot').textContent=String(qa('.mr-sequence > div').length);}
+      row.querySelector(':scope > div > span').textContent='이어서 · '+time;
+      const checks=qa('.mr-dialog input[type="checkbox"]');
+      row.querySelector('p').textContent='조도 '+sensor+' → '+[checks[0].checked?'LED '+led:'',checks[1].checked?'모터 '+motor:''].filter(Boolean).join(' + ');
+      notice('단계 설정 시연 · 여러 핀의 출력은 같은 단계에서 함께 설정해요.');
+    });
+    q('.mr-image-tool').onclick=()=>notice('그림 추가 버튼의 배치 시안입니다.');
+    if(design==='dock') {const button=document.createElement('button');button.type='button';button.className='mr-preview-toggle cursor-interaction';button.textContent='학생 화면 미리보기';button.setAttribute('aria-expanded','false');q('.mr-author-layout').insertBefore(button,q('.mr-student-preview'));button.onclick=()=>{const open=el.classList.toggle('mr-preview-open');button.setAttribute('aria-expanded',String(open));button.textContent=open?'미리보기 닫기':'학생 화면 미리보기';};}
+    q('input[aria-label="문제 제목"]').oninput=e=>{q('.mr-student-preview > h3').textContent=e.target.value;};
+    q('textarea').oninput=e=>{q('.mr-student-preview > p').textContent=e.target.value;};
+    a.render=render;
+    a.renderValues=renderValues;
+    render();
+    if(globalThis.Tweak) {
+      const settings={sideWidth:270};
+      const tweak=new Tweak({container:el,onChange:()=>{if(design==='focus')el.style.setProperty('--mr-preview-width',settings.sideWidth+'px');if(design==='guide')a.stage=a.open?'run':'code';render();}});
+      if(design==='focus')tweak.addSlider(settings,'sideWidth',{label:'실행 패널 너비',min:250,max:330,step:10,unit:'px'});
+      tweak.addToggle(a,'open',{label:design==='guide'?'실행 단계 보기':'실행 결과 펼치기'});
+    }
+  }
+  root.querySelectorAll('.mr-app').forEach(init);
+  window.addEventListener('openai:set_globals',event=>{
+    const incoming=event.detail?.globals?.widgetState;
+    const screens=incoming?.privateContent?.screens || incoming?.screens;
+    if(!screens)return;
+    apps.forEach(a=>{const v=screens[a.design];if(!v)return;['role','open','stage','edit','sensor','expected','paused'].forEach(k=>{if(v[k]!==undefined)a[k]=v[k];});a.render();});
+  });
+  let previous=0,angle=0;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  function animate(time) {
+    const delta=Math.min(50,time-previous || 16);previous=time;
+    apps.forEach(a=>{if(a.el.closest('[data-variant]').hidden || a.role!=='student' || !a.open || reduced.matches || !a.animated)return;const value=a.expected?a.sensor:a.actual; if((!a.paused||a.expected)&&value>0){angle=(angle+delta*(value/1023)*.4)%360;const rotor=a.el.querySelector('.mr-rotor svg');if(rotor)rotor.style.transform='rotate('+angle+'deg)';}});
+    window.requestAnimationFrame(animate);
+  }
+  window.requestAnimationFrame(animate);
+  icons();
+})();
+</script>

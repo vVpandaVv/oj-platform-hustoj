@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace TeachingTools\Database;
 
 final class Installer {
-    public const SCHEMA_VERSION = '2.1.0';
+    public const SCHEMA_VERSION = '2.2.0';
 
     public static function maybe_install(): void {
         // The installed version is the normal request's schema marker. Keep
         // missing-table recovery on administrator requests, not every poll.
         if (get_option('teaching_tools_db_version') !== self::SCHEMA_VERSION
-            || (is_admin() && ! self::sessions_table_exists())) {
+            || (is_admin() && ! self::required_tables_exist())) {
             self::install();
         }
     }
@@ -21,6 +21,7 @@ final class Installer {
         self::create_session_hosts_table();
         self::backfill_session_hosts();
         self::create_seating_layouts_table();
+        self::create_seating_history_table();
         self::create_lesson_templates_table();
         update_option('teaching_tools_db_version', self::SCHEMA_VERSION);
     }
@@ -41,6 +42,12 @@ final class Installer {
         global $wpdb;
 
         return $wpdb->prefix . 'teaching_tools_seating_layouts';
+    }
+
+    public static function seating_history_table(): string {
+        global $wpdb;
+
+        return $wpdb->prefix . 'teaching_tools_seating_history';
     }
 
     public static function session_hosts_table(): string {
@@ -153,6 +160,27 @@ final class Installer {
         dbDelta($sql);
     }
 
+    private static function create_seating_history_table(): void {
+        global $wpdb;
+        $table = self::seating_history_table();
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE {$table} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            owner_user_id bigint(20) unsigned NOT NULL,
+            scope_key char(64) NOT NULL,
+            confirmation_key char(36) NOT NULL,
+            rows_count smallint(5) unsigned NOT NULL,
+            cols_count smallint(5) unsigned NOT NULL,
+            positions longtext NOT NULL,
+            created_at datetime NOT NULL,
+            PRIMARY KEY  (id),
+            UNIQUE KEY owner_confirmation (owner_user_id, confirmation_key),
+            KEY owner_scope (owner_user_id, scope_key, id)
+        ) {$charset_collate};";
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta($sql);
+    }
+
     private static function backfill_session_hosts(): void {
         global $wpdb;
 
@@ -184,11 +212,15 @@ final class Installer {
         dbDelta($sql);
     }
 
-    private static function sessions_table_exists(): bool {
+    private static function required_tables_exist(): bool {
         global $wpdb;
 
-        $table = self::sessions_table();
+        foreach (array(self::sessions_table(), self::seating_history_table()) as $table) {
+            if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table))) !== $table) {
+                return false;
+            }
+        }
 
-        return $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table;
+        return true;
     }
 }

@@ -9,7 +9,7 @@ require_once $platformRoot . '/src/Kernel/Autoloader.php';
 
 if (!defined('ARRAY_A')) { define('ARRAY_A', 'ARRAY_A'); }
 if (!defined('DAY_IN_SECONDS')) { define('DAY_IN_SECONDS', 86400); }
-if (!defined('OJ_MICROBIT_VERSION')) { define('OJ_MICROBIT_VERSION', '1.0.0-rc.9'); }
+if (!defined('OJ_MICROBIT_VERSION')) { define('OJ_MICROBIT_VERSION', '1.0.0-rc.15'); }
 if (!defined('OJ_MICROBIT_FILE')) { define('OJ_MICROBIT_FILE', dirname(__DIR__) . '/oj-microbit.php'); }
 
 $testChecks = 0;

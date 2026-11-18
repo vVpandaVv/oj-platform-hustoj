@@ -1,8 +1,8 @@
 {
   "contract": "oj_ai.release_boundary_fingerprint@1",
   "algorithm": "sha256-path-nul-bytes-nul-v1",
-  "addon_version": "1.2.26",
-  "platform_addon_api_version": "1.8.0",
+  "addon_version": "1.2.29",
+  "platform_addon_api_version": "1.9.0",
   "groups": {
     "addon_api": {
       "file_count": 21,
@@ -29,7 +29,7 @@
         "src/Platform/Worksheet_Workflow.php",
         "src/Security/Addon_Capabilities.php"
       ],
-      "sha256": "b6311093fac1cf7ef18ca8cb95c611b4165f5733ce5551ef93fffcb6db611230"
+      "sha256": "550f8cb06be328b0d6aa331a9d26e000b7ead6ade597171b84d8ac80e1944341"
     },
     "database_schema": {
       "file_count": 36,
@@ -159,7 +159,7 @@
       "sha256": "8790e13f17a55f1a7bfd8f65944bba31746a03d53ebd0b78b8e53fd6f229eb0f"
     },
     "platform_addon_api": {
-      "file_count": 96,
+      "file_count": 103,
       "files": [
         "src/AddonApi/V1/AddonAcceptedSubmissionPageV1.php",
         "src/AddonApi/V1/AddonAcceptedSubmissionQueryV1.php",
@@ -228,6 +228,13 @@
         "src/AddonApi/V1/AddonLearningContextGatewayV1.php",
         "src/AddonApi/V1/AddonLearningContextQueryV1.php",
         "src/AddonApi/V1/AddonManifestBuilderV1.php",
+        "src/AddonApi/V1/AddonNativeLearningItemV1.php",
+        "src/AddonApi/V1/AddonNativeLearningLinkV1.php",
+        "src/AddonApi/V1/AddonNativeLearningManifestBuilderV1.php",
+        "src/AddonApi/V1/AddonNativeLearningPageV1.php",
+        "src/AddonApi/V1/AddonNativeLearningProviderDefinitionV1.php",
+        "src/AddonApi/V1/AddonNativeLearningProviderV1.php",
+        "src/AddonApi/V1/AddonNativeLearningQueryV1.php",
         "src/AddonApi/V1/AddonPageHandlerV1.php",
         "src/AddonApi/V1/AddonPageRequestV1.php",
         "src/AddonApi/V1/AddonPageResponseV1.php",
@@ -258,7 +265,7 @@
         "src/AddonApi/V1/Research/ResearchLearningDataV1.php",
         "src/AddonApi/V1/Research/ResearchRuntimeV1.php"
       ],
-      "sha256": "d46dfc238d1ab1cd5b9fe6e306a3d49b825ec9f9e790d28b87fe3a419aa6c0f6"
+      "sha256": "e2c407f12bfa570b3757eae58882b8e44b54245963d0a40664b735413392aecb"
     }
   }
 }

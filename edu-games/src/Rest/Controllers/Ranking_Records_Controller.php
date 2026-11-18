@@ -7,7 +7,7 @@ use EduGames\Rankings\Record_Moderation;
 
 final class Ranking_Records_Controller {
     public static function register_routes(): void {
-        register_rest_route('edu-games/v1', '/leaderboards/game/(?P<game>[a-z0-9-]+)/records/(?P<store>score|run)/(?P<id>[1-9][0-9]*)', array(
+        register_rest_route('edu-games/v1', '/leaderboards/game/(?P<game>[a-z0-9-]+)/records/(?P<store>score|run|typing)/(?P<id>[1-9][0-9]*)', array(
             'methods' => 'DELETE',
             'callback' => array(__CLASS__, 'delete'),
             'permission_callback' => array(__CLASS__, 'allowed'),
@@ -26,12 +26,14 @@ final class Ranking_Records_Controller {
         $store = (string)$request['store'];
         $id = (int)$request['id'];
         $game = sanitize_key((string)$request['game']);
-        if (!in_array($store, array('score','run'), true) || $id <= 0 || $game === '') return new \WP_Error('edu_games_record', '기록을 확인하세요.', array('status'=>400));
+        if (!in_array($store, array('score','run','typing'), true) || $id <= 0 || $game === '' || ($store==='typing'&&$game!=='code-typing')) return new \WP_Error('edu_games_record', '기록을 확인하세요.', array('status'=>400));
         global $wpdb;
         $table = $store === 'score' ? Installer::scores_table() : \EduGames\Learning\Installer::table();
         $finished = $store === 'run' ? ' AND completed_at IS NOT NULL' : '';
         // Bind both the ID and game; an unfinished run must never be removed here.
-        $removed = $wpdb->query($wpdb->prepare("DELETE FROM {$table} WHERE id=%d AND game_slug=%s{$finished}", $id, $game));
+        $removed = $store==='typing'
+            ? $wpdb->query($wpdb->prepare('DELETE FROM '.\EduGames\Typing\Repository::table('runs')." WHERE id=%d AND evaluation_id=0 AND status='finished' AND version IN (%s,%s)",$id,\EduGames\Typing\Rules::VERSION,\EduGames\Typing\Rules::LEGACY_VERSION))
+            : $wpdb->query($wpdb->prepare("DELETE FROM {$table} WHERE id=%d AND game_slug=%s{$finished}", $id, $game));
         if ($removed === false) return new \WP_Error('edu_games_delete_failed', '기록을 삭제하지 못했습니다. 잠시 후 다시 시도하세요.', array('status'=>500));
         if ($removed !== 1) return new \WP_Error('edu_games_record_missing', '이미 삭제되었거나 삭제할 수 없는 기록입니다. 순위를 새로고침하세요.', array('status'=>404));
         $audit = array('actor'=>get_current_user_id(), 'game'=>$game, 'store'=>$store, 'recordId'=>$id, 'at'=>gmdate('c'));

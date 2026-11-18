@@ -49,7 +49,11 @@ namespace {
     $base = dirname(__DIR__);
     require $base . '/src/Addon/Ui.php';
     $is_host = ($argv[1] ?? 'host') === 'host';
-    if ($is_host) {
+    if (($argv[1] ?? '') === 'seating') {
+        require $base . '/src/Addon/Seating/Seating_Host_Page_Handler.php';
+        $handler = new TeachingTools\Addon\Seating\Seating_Host_Page_Handler();
+        $scripts = array('student-identities', 'seating-engine', 'host-seating');
+    } elseif ($is_host) {
         require $base . '/src/Sessions/Session_State_Policy.php';
         require $base . '/src/Addon/Whiteboard/Whiteboard_Host_Page_Handler.php';
         $handler = new TeachingTools\Addon\Whiteboard\Whiteboard_Host_Page_Handler();
@@ -62,7 +66,7 @@ namespace {
     $response = $handler->handle(new CodingPanda\OjPlatform\AddonApi\V1\AddonPageRequestV1());
     echo '<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">';
     echo '<link rel="stylesheet" href="/oj-integration-rebuild/oj-platform/resources/ui/css/oj-ui-system.css">';
-    foreach (array('console', 'public', 'whiteboard', 'classroom') as $style) { echo '<link rel="stylesheet" href="/teaching-tools/resources/css/' . $style . '.css">'; }
+    foreach (array('console', 'public', 'whiteboard', 'classroom', 'seating') as $style) { echo '<link rel="stylesheet" href="/teaching-tools/resources/css/' . $style . '.css">'; }
     if ($is_host) { echo '<script defer src="/teaching-tools/resources/vendor/qrcode-generator/qrcode.js"></script>'; }
     foreach ($scripts as $script) { echo '<script defer src="/teaching-tools/resources/js/' . $script . '.js"></script>'; }
     echo '</head><body class="ojp-app"><main class="ojp-shell">' . $response->body . '</main></body></html>';

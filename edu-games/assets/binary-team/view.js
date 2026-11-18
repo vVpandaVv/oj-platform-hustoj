@@ -11,10 +11,10 @@
         constructor(root) {
             this.root=root;this.config=JSON.parse(root.dataset.config||'{}');this.app=root.querySelector('[data-bt-app]');this.message=root.querySelector('[data-bt-message]');
             this.room=null;this.code='';this.watch=0;this.screen='rooms';this.rows=new Map();this.drafts=new Map();this.bitDrafts=new Map();this.answering=new Set();this.pending=0;this.queue=Promise.resolve();this.polling=false;this.offset=0;this.failures=0;
-            this.key=this.config.gameId==='device-matching'?`edu-games-device-team:${this.config.currentUserId}`:`edu-games-binary-team:${this.config.currentUserId}`;
+            this.isVault=this.config.gameId==='cipher-vault';this.key=this.isVault?`edu-games-cipher-team:${this.config.currentUserId}`:this.config.gameId==='device-matching'?`edu-games-device-team:${this.config.currentUserId}`:`edu-games-binary-team:${this.config.currentUserId}`;
             this.operations=this.config.screen&&this.config.screen!=='student'?new window.EduTeamOperations(this):null;
             if(this.operations)this.key+=`:${this.config.screen}`;
-            this.cardBoard=this.config.gameId==='device-matching'?new window.EduDeviceTeamBoard(this):null;
+            this.cardBoard=this.isVault?new window.EduVaultTeamBoard(this):this.config.gameId==='device-matching'?new window.EduDeviceTeamBoard(this):null;
             this.socket=this.config.websocketUrl&&window.EduBinarySocket?new window.EduBinarySocket({url:this.config.websocketUrl,channel:this.config.channel||'binary-team',ticket:()=>this.getTicket(),
                 state:room=>{if(room.code===this.code){this.receive(room);this.failures=0;this.root.classList.remove('bt-disconnected');}},status:()=>this.connectionLabel()}):null;
             this.root.addEventListener('click',e=>this.click(e));this.root.addEventListener('submit',e=>this.submit(e));
@@ -110,7 +110,7 @@
             if(draftKey){this.bitDrafts.set(draftKey,{op,value:body.value});this.syncRows(this.room.board.rows);}
             this.queue=this.queue.then(async()=>{
                 if(code!==this.code||round!==this.room?.round)return;
-                if(['bit','answer'].includes(body.type)&&!this.room.board?.rows.some(r=>r.id===body.row))return;
+                if(!this.isVault&&['bit','answer'].includes(body.type)&&!this.room.board?.rows.some(r=>r.id===body.row))return;
                 const wrongBefore=this.room.players.find(p=>p.id===this.room.me)?.wrong||0;
                 let data;
                 for(let attempt=0;attempt<2;attempt++){
@@ -120,7 +120,7 @@
                 if(draftKey&&this.bitDrafts.get(draftKey)?.op===op)this.bitDrafts.delete(draftKey);
                 if(code===this.code){
                     if(data.left){this.code='';this.room=null;this.remember();await this.list();}else this.receive(data);
-                    if(body.type==='answer'&&(data.players?.find(p=>p.id===data.me)?.wrong||0)>wrongBefore){this.say('10진수 답이 다릅니다.',true);this.app.querySelector(`[data-bt-answer="${body.row}"]`)?.setAttribute('aria-invalid','true');}
+                    if(!this.isVault&&body.type==='answer'&&(data.players?.find(p=>p.id===data.me)?.wrong||0)>wrongBefore){this.say('10진수 답이 다릅니다.',true);this.app.querySelector(`[data-bt-answer="${body.row}"]`)?.setAttribute('aria-invalid','true');}
                     else this.say('');
                 }
             }).catch(error=>{
@@ -250,7 +250,7 @@
             if(host.dataset.key!==hostKey){host.innerHTML=hostHtml;host.dataset.key=hostKey;}
             this.app.querySelector('[data-bt-room-label]').textContent=`${r.watchTeam}팀 · ${r.code}${r.mode==='practice'?' · 연습':''}`;
             const mine=r.teams.find(t=>t.team===r.watchTeam);this.app.querySelector('[data-bt-team-rank]').textContent=mine?`${1+r.teams.filter(t=>t.score>mine.score).length}위 / ${r.teams.length}팀`:'';
-            this.app.querySelector('[data-bt-scores]').innerHTML=r.teams.map(t=>`<div class="${t.team===r.myTeam?'is-mine':''}"><strong>${t.team}팀</strong><b>${t.score.toLocaleString()}점</b><span>${this.cardBoard?`${t.stage}판 · ${t.correct}쌍`:t.ended?'종료':`${t.occupied}/8줄`}</span></div>`).join('');
+            this.app.querySelector('[data-bt-scores]').innerHTML=r.teams.map(t=>`<div class="${t.team===r.myTeam?'is-mine':''}"><strong>${t.team}팀</strong><b>${t.score.toLocaleString()}점</b><span>${this.isVault?`${t.correct}금고`:this.cardBoard?`${t.stage}판 · ${t.correct}쌍`:t.ended?'종료':`${t.occupied}/8줄`}</span></div>`).join('');
             this.app.querySelector('[data-bt-members]').innerHTML=r.players.filter(p=>p.team===r.watchTeam).map(p=>`<span class="${p.online?'':'is-offline'}">${h(p.name)} <b>${p.correct}</b></span>`).join('');
             const b=r.board;this.app.querySelector('[data-bt-board-title]').textContent=b?`${b.team}팀 공유 보드${b.endedAt!==null?' · 종료':''}`:'관전 대기';
             this.app.querySelector('[data-bt-pressure]').innerHTML=b&&!this.cardBoard?`${b.size}명 · ${b.difficulty.spawnMs/1000}초 간격 · 역변환 ${Math.round(b.difficulty.inverseChance*100)}% · 다음 <b data-bt-next></b>초`:'';
@@ -325,7 +325,7 @@
             this.screen='result';this.rows.clear();const me=this.room?.me||this.config.currentUserId;
             this.app.innerHTML=`<div class="bt-result-head"><h3>${h(s.title)} · 결과</h3><span>${s.mode==='official'?'정식 경기':'연습'}${s.hasBots?' · 봇 포함':''} · ${reason[s.reason]||'경기 종료'} · ${seconds(s.durationMs)}초</span></div>
                 <div class="bt-results"><div class="bt-result-row bt-muted"><span>순위</span><span>팀</span><span>점수</span><span>해결</span><span>오답</span><span>${this.cardBoard?'진행':'생존'}</span></div>${s.teams.map(t=>`<div class="bt-result-row ${s.players.some(p=>p.id===me&&p.team===t.team)?'is-mine':''}"><strong>${t.rank}</strong><span>${t.team}팀 · ${t.size}명${this.cardBoard?' · '+t.stage+'판':''}</span><b>${t.score.toLocaleString()}</b><span>${t.correct}</span><span>${t.wrong}</span><span>${clock(t.survivedMs)}</span></div>`).join('')}</div>
-                <h4>팀원 기여</h4><div class="bt-contributions">${s.players.map(p=>`<div><strong>${h(p.name)}</strong><span>${p.team}팀</span><span>해결 ${p.correct} · 오답 ${p.wrong} · ${this.cardBoard?'뒤집기':'비트'} ${p.edits}</span></div>`).join('')}</div>
+                <h4>팀원 기여</h4><div class="bt-contributions">${s.players.map(p=>`<div><strong>${h(p.name)}</strong><span>${p.team}팀</span><span>해결 ${p.correct} · 오답 ${p.wrong} · ${this.isVault?'조작':this.cardBoard?'뒤집기':'비트'} ${p.edits}</span></div>`).join('')}</div>
                 <div class="bt-lobby-actions">${live&&this.room.host?button('다시 경기','rematch','',true)+button('방 닫고 나가기','close'):''}${button('참여 기록','records')}${button('방 목록','list')}</div>`;
         }
     }

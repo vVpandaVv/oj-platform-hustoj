@@ -3,7 +3,7 @@
     const h=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const show=v=>v===null||v===undefined?'미상':typeof v==='number'?String(Math.round(v*100)/100):h(v);
     const descriptions={linear:'시간 간격대로 연결',mean:'합 ÷ 개수',median:'정렬 후 가운데',mode:'가장 자주 나온 종류',previous:'앞의 관측값 →',next:'← 뒤의 관측값',seasonal:'같은 시간대끼리',nearest:'특성이 가장 가까운 자료',unknown:'값을 만들지 않기'};
-    const marks={linear:'●─●',mean:'Σ ÷ n',median:'▁ ▂ ▃ ▆ █',mode:'A A B A',previous:'● → ?',next:'? ← ●',seasonal:'↻',nearest:'≈',unknown:'?'};
+    const marks={linear:'●─●',mean:'Σ ÷ n',median:'▁▃▅',mode:'A A B A',previous:'● → ?',next:'? ← ●',seasonal:'↻',nearest:'≈',unknown:'?'};
     function sourceIds(s,l) { return s.rows.map((r,i)=>i).filter(i=>s.rows[i].value!==null&&(s.kind!=='cohort'||l.ids.includes(i))); }
     function predictions(s,method,ids) {
         const rows=ids.map(i=>s.rows[i]).filter(r=>r.value!==null);
@@ -40,9 +40,7 @@
         if(l.missingKey!==key){l.missingKey=key;l.ids=[];l.method=null;l.target=0;}
     }
     function controls(s,l) {
-        return `<div class="em-repair-heading"><h4>${h(s.context)}</h4><span>복원 ${s.turn+(s.phase==='review'?0:1)}</span></div><p class="em-evidence">${h(s.evidence)}</p>`+
-            (s.group?`<div class="em-target-label">복원 대상 <strong>${h(s.group)}</strong><span>선택 관측 ${(s.phase==='review'?s.feedback.ids:l.ids).length} / ${s.rows.length}</span></div>`:'')+
-            `<div class="em-methods em-toolbox" role="group" aria-label="복원 도구">${s.methods.map(m=>`<button type="button" data-do="method" data-value="${m}" aria-pressed="${s.phase==='review'?s.feedback.method===m:l.method===m}" ${s.phase==='review'?'disabled':''} title="${h(descriptions[m])}"><span class="em-method-mark" aria-hidden="true">${marks[m]}</span><b>${h(s.methodNames[m])}</b></button>`).join('')}</div>`;
+        return `<div class="em-methods em-toolbox" role="group" aria-label="복원 도구">${s.methods.map(m=>`<button type="button" data-do="method" data-value="${m}" aria-pressed="${s.phase==='review'?s.feedback.method===m:l.method===m}" ${s.phase==='review'?'disabled':''} title="${h(descriptions[m])}"><span class="em-method-mark" aria-hidden="true">${marks[m]}</span><b>${h(s.methodNames[m])}</b></button>`).join('')}</div>`;
     }
     function plot(s,p,active) {
         const all=s.rows.map(r=>r.value).concat(p.map(r=>r.value)).filter(v=>typeof v==='number'),min=Math.min(...all)-6,max=Math.max(...all)+6;
@@ -82,10 +80,13 @@
     }
     function render(s,l) {
         const p=s.phase==='review'?s.feedback.predictions:predictions(s,l.method,sourceIds(s,l));
-        return controls(s,l)+`<div class="em-repair-board"><section class="em-observation-bank"><h4>${s.kind==='cohort'?'비교 관측':'남아 있는 관측'}</h4>${s.kind==='series'?plot(s,p,l.target||0):records(s,l,p)}</section><section class="em-repair-targets"><div class="em-targets">${s.targets.map((t,i)=>{
+        const method=s.phase==='review'?s.feedback.method:l.method;
+        const group=s.group?`<div class="em-target-label">복원 대상 <strong>${h(s.group)}</strong><span>선택 관측 ${(s.phase==='review'?s.feedback.ids:l.ids).length} / ${s.rows.length}</span></div>`:'';
+        const confirm=s.phase==='review'?'<button type="button" data-do="next" class="eh-primary">다음 데이터</button>':`<button type="button" data-do="restore" class="eh-primary" ${ready(s,l)?'':'disabled'}>세 빈칸 복원 확정</button>`;
+        return `<section class="em-laboratory" data-board-layout="missing"><div class="em-repair-heading"><h4>${h(s.context)}</h4><span>복원 ${s.turn+(s.phase==='review'?0:1)}</span></div><p class="em-evidence">${h(s.evidence)}</p><div class="em-repair-board"><section class="em-observation-bank">${group}<h4>${s.kind==='cohort'?'비교 관측':'남아 있는 관측'}</h4>${s.kind==='series'?plot(s,p,l.target||0):records(s,l,p)}</section><section class="em-repair-targets"><div class="em-tool-dock">${controls(s,l)}</div><div class="em-targets">${s.targets.map((t,i)=>{
             const review=s.phase==='review',ok=review&&s.feedback.scopeOk&&s.feedback.errors[i]!==null&&s.feedback.errors[i]<=s.tolerance;
             return `<button type="button" data-do="missing-target" data-id="${i}" data-method-drop="${i}" aria-pressed="${(l.target||0)===i}" class="em-target ${review?(ok?'restored':'broken'):''}"><span>${s.kind==='series'&&!t.period?'시점 '+t.x:h(t.label)}</span>${t.features?`<small>${t.features[0]} × ${t.features[1]} cm</small>`:''}<strong>${p[i].value===null&&!review&&l.method!=='unknown'?'?':show(p[i].value)} <small>${h(s.unit)}</small></strong><small>${review?`관측 ${s.feedback.observed[i]===null?'미상':show(s.feedback.observed[i])} · ${ok?'✓ 일치':'차이 '+(s.feedback.errors[i]===null?'확인 불가':show(s.feedback.errors[i]))}`:'추정값'}</small></button>`;
-        }).join('')}</div><div class="em-formula" aria-live="polite">${calculation(s,l,p[l.target||0])}<b>${h(p[l.target||0].formula)}</b><small>근거: ${p[l.target||0].sources.map(h).join(', ')||'없음'}</small></div></section></div>`+result(s);
+        }).join('')}</div><div class="em-formula" aria-live="polite">${calculation(s,l,p[l.target||0])}${['mean','median','mode'].includes(method)&&p[l.target||0].sources.length?'':`<b>${h(p[l.target||0].formula)}</b>`}<details class="em-source-list"><summary>근거 ${p[l.target||0].sources.length}개</summary><small>${p[l.target||0].sources.map(h).join(', ')||'없음'}</small></details></div>${result(s)}<div class="em-confirm-dock">${confirm}</div></section></div></section>`;
     }
     function ready(s,l) {return s.phase==='solve'&&s.methods.includes(l.method)&&(s.kind!=='cohort'||l.ids.length>=2);}
     const api={prepare,controls,render,predictions,sourceIds,ready,payload(s,l){return {type:'restore',method:l.method,ids:s.kind==='cohort'?l.ids:[]};}};

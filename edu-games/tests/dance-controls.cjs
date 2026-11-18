@@ -1,0 +1,21 @@
+const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
+const source=fs.readFileSync(path.join(__dirname,'../assets/arcade/view.js'),'utf8'),listeners={},nodes=new Map();let checks=0;
+function check(value,label){assert(value,label);checks++;}
+const root={dataset:{config:JSON.stringify({gameId:'dance-bot',currentUserId:777,icons:'/icons.svg'})},isConnected:true,addEventListener(name,fn){listeners[name]=fn;},querySelector(selector){if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',textContent:'',classList:{toggle(){}}});return nodes.get(selector);}};
+vm.runInNewContext(source,{window:{},document:{readyState:'complete',querySelectorAll(){return[root];}},localStorage:{getItem(){return null;}},setInterval(){return 1;},clearInterval(){}});
+const game=root.__Arcade,board=nodes.get('[data-ea-board]');game.free=true;
+const click=dataset=>listeners.click({target:{closest(){return{dataset,disabled:false};}}});
+check(game.program[0].repeat===1,'first block starts as sequence');
+click({danceAdd:'jump'});click({danceAdd:'right'});
+listeners.input({target:{dataset:{danceRepeat:'0'},value:'3',matches(){return false;}}});
+check(game.program[0].repeat===3,'repeat updates on input without blur');
+check(board.innerHTML.includes('묶음 1 <small>반복</small>')&&board.innerHTML.includes('재생 6박자'),'repeat badge and playback count update immediately');
+click({ea:'add-sequence'});check(game.block===1&&game.program[1].repeat===1,'sequence button selects new single-play block');
+click({danceAdd:'light'});click({ea:'add-block'});check(game.block===2&&game.program[2].repeat===2,'repeat button selects new two-play block');
+click({danceAdd:'left'});check(game.localExpand().join(',')==='jump,right,jump,right,jump,right,light,left,left','mixed sequence expands in block order');
+check(board.innerHTML.includes('명령 6개 · 재생 9박자'),'cost includes repeat commands');
+listeners.input({target:{dataset:{danceRepeat:'0'},value:'',matches(){return false;}}});check(game.program[0].repeat===3,'clearing input does not silently replace repeat before edit completes');
+listeners.change({target:{dataset:{danceRepeat:'0'},value:'12',matches(){return false;}}});check(game.program[0].repeat===8,'repeat remains within allowed range');
+for(let i=0;i<15;i++)click({ea:'add-sequence'});check(game.program.length===12,'block limit retained');
+check(board.innerHTML.includes('순차 묶음 추가')&&board.innerHTML.includes('반복 묶음 추가'),'both controls have accessible names');
+console.log('PASS: '+checks+' dance composition control checks.');

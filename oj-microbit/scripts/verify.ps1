@@ -37,6 +37,8 @@ foreach ($test in Get-ChildItem -LiteralPath (Join-Path $pluginRoot 'tests') -Fi
 }
 & $nodeBinary --check (Join-Path $pluginRoot 'resources/js/microbit.js')
 if ($LASTEXITCODE -ne 0) { throw 'Browser JavaScript syntax failed.' }
+& $nodeBinary (Join-Path $pluginRoot 'resources/tools/build-live.mjs') --check
+if ($LASTEXITCODE -ne 0) { throw 'Continuous simulator bundle is stale.' }
 & $nodeBinary --test (Join-Path $pluginRoot 'tests/feature-freeze.test.cjs')
 if ($LASTEXITCODE -ne 0) { throw 'Frozen product baseline verification failed.' }
 & $nodeBinary --test (Join-Path $pluginRoot 'resources/tools/frontend.test.cjs')

@@ -57,12 +57,12 @@ module.exports=async({page,browser,url,out,ready,state,setFault,sessions})=>{
     await go('data-extraction');const and=await page.locator('.eh-equation').innerText();await page.locator('[data-do=join][data-value=or]').click();assert.notEqual(await page.locator('.eh-equation').innerText(),and);checks++;
     await page.locator('[data-field=shape]').uncheck();assert((await page.locator('.eh-equation').innerText()).includes('2열'));checks++;
     await action('[data-do=ship]');await layout('data-extraction');
-    await go('data-structure-lab');await action('[data-do=push][data-lane=stack]');await action('[data-do=push][data-lane=stack]');
+    await go('data-structure-lab');await action('[data-wh=put-stack]');await action('[data-wh=put-stack]');
     // Keyboard play: after a server round trip the same control keeps focus
     // (the redraw used to drop it to <body> after every move).
-    await page.focus('[data-do=push][data-lane=queue]');await page.keyboard.press('Enter');
-    await page.waitForFunction(()=>document.activeElement?.matches('[data-do=push][data-lane=queue]'));checks++;
-    let s=await state(page),top=s.stack[1];await action('[data-do=pop][data-lane=stack]');s=await state(page);assert(!s.stack.includes(top));checks++;
+    await page.focus('[data-wh=put-queue]');await page.keyboard.press('Enter');
+    await page.waitForFunction(()=>document.activeElement?.matches('[data-wh=put-queue]'));checks++;
+    let s=await state(page),top=s.stack[1];await action('button[data-wh=pop-stack]:not(.wh-crate)');s=await state(page);assert(!s.stack.includes(top));checks++;
     await layout('data-structure-lab');
     await go('ai-classifier-lab');const boundary=await page.locator('[data-drag=boundary][data-end="0"]').boundingBox();
     const startY=await page.locator('[data-drag=boundary][data-end="0"]').getAttribute('cy');

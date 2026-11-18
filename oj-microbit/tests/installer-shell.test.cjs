@@ -110,7 +110,7 @@ function assertCoexistence(root, before) {
   const log = exists(root, 'commands.log') ? read(root, 'commands.log') : '';
   assert.doesNotMatch(log, /FORBIDDEN:|apt-get:|download:|docker:(?:stop|rm|rmi|restart|kill|prune|volume|network|compose|system)\b/);
   for (const line of log.split('\n').filter(item => item.startsWith('docker:'))) {
-    assert.ok(/^docker:info(?:\s|$)/.test(line) || (/^docker:image inspect\b/.test(line) && /oj-microbit-worker:\d+\.\d+\.\d+$/.test(line)) || (/^docker:build\b/.test(line) && /--tag oj-microbit-worker:\d+\.\d+\.\d+\s/.test(line)), 'Docker command is restricted to daemon read-only info or the plugin-owned worker image: ' + line);
+    assert.ok(/^docker:info(?:\s|$)/.test(line) || (/^docker:image inspect\b/.test(line) && /oj-microbit-worker:\d+\.\d+\.\d+(?:-rc\.\d+)?$/.test(line)) || (/^docker:build\b/.test(line) && /--tag oj-microbit-worker:\d+\.\d+\.\d+(?:-rc\.\d+)?\s/.test(line)), 'Docker command is restricted to daemon read-only info or the plugin-owned worker image: ' + line);
   }
   for (const line of log.split('\n').filter(item => item.startsWith('systemctl:'))) {
     assert.ok(line === 'systemctl:daemon-reload' || line.includes('oj-microbit-runner.service') || /^systemctl:is-active --quiet (?:docker\.service|docker\.socket|snap\.docker\.dockerd\.service)$/.test(line), 'Service operations target only the plugin service; Docker unit status is read-only: ' + line);
@@ -197,7 +197,7 @@ test('new installation stages source, gates on actual canary, and configures Wor
   const result = runFixture(root);
   assert.equal(result.status, 0, result.stderr);
   const log = read(root, 'commands.log');
-  assert.ok(log.indexOf('probe:canary') < log.indexOf('bridge:configure'));
+  assert.ok(log.indexOf('probe:canary') < log.indexOf('probe:compile'));assert.ok(log.indexOf('probe:compile') < log.indexOf('bridge:configure'));
   assert.match(read(root, 'etc/oj-microbit/runner.env'), /MICROBIT_RUNNER_HOST=127\.0\.0\.1/);
   assert.match(read(root, 'etc/oj-microbit/runner.env'), /MICROBIT_RUNNER_MODE=docker/);
   assert.match(read(root, 'etc/systemd/system/oj-microbit-runner.service'), /User=oj-microbit/);
@@ -239,7 +239,7 @@ test('a new version keeps the old release and a restorable environment/unit/sett
 }));
 
 test('failed prerequisites/build/canary/WordPress connection preserve the prior configuration', () => {
-  for (const fail of ['npm', 'build', 'restart', 'canary', 'wordpress']) { withFixture(root => {
+  for (const fail of ['npm', 'build', 'restart', 'health', 'canary', 'compile', 'wordpress']) { withFixture(root => {
     assert.equal(runFixture(root).status, 0);
     const beforeEnv = read(root, 'etc/oj-microbit/runner.env'); const beforeUnit = read(root, 'etc/systemd/system/oj-microbit-runner.service');
     fs.writeFileSync(path.join(root, 'version'), '0.4.1');
@@ -252,7 +252,7 @@ test('failed prerequisites/build/canary/WordPress connection preserve the prior 
     assert.equal(read(root, 'wordpress-setting').trim(), 'http://127.0.0.1:3037', fail);
     assert.equal(exists(root, 'opt/oj-microbit/0.4.0/runner/src/server.mjs'), true, fail);
     assert.deepEqual(fs.readdirSync(path.join(root, 'opt/oj-microbit')).filter(name => name.startsWith('.install.')), [], fail);
-    if (['restart', 'canary', 'wordpress'].includes(fail)) { assert.match(result.stdout, /Restoring the previous/); }
+    if (['restart', 'health', 'canary', 'compile', 'wordpress'].includes(fail)) { assert.match(result.stdout, /Restoring the previous/); }
   }); }
 });
 
@@ -470,3 +470,27 @@ test('Docker activation status errors fail closed, while a running manual daemon
     const log = assertCoexistence(root, before); assert.match(log, /docker:info/);
   });
 });
+
+
+test('RC update verifies compilation before commit and restores old port/service/health on failure without HUSTOJ changes',()=>withFixture(root=>{
+ seedHustoj(root);const before=hustojSnapshot(root);fs.writeFileSync(path.join(root,'version'),'1.0.0-rc.13');fs.writeFileSync(path.join(root,'source/package.json'),'{"version":"1.0.0-rc.13"}');assert.equal(runFixture(root,'coexist-install').status,0);
+ const env=read(root,'etc/oj-microbit/runner.env'),unit=read(root,'etc/systemd/system/oj-microbit-runner.service');fs.writeFileSync(path.join(root,'version'),'1.0.0-rc.14');fs.writeFileSync(path.join(root,'source/package.json'),'{"version":"1.0.0-rc.14"}');fs.writeFileSync(path.join(root,'commands.log'),'');
+ const failed=runFixture(root,'coexist-port','compile');assert.notEqual(failed.status,0);assert.equal(read(root,'etc/oj-microbit/runner.env'),env);assert.equal(read(root,'etc/systemd/system/oj-microbit-runner.service'),unit);assert.equal(read(root,'wordpress-setting').trim(),'http://127.0.0.1:3037');assert.match(failed.stdout,/Previous runner authenticated health verified/);const log=assertCoexistence(root,before);assert(log.includes('probe-restored-url:http://127.0.0.1:3037'));assert.doesNotMatch(log,/bridge:configure/);assert(exists(root,'opt/oj-microbit/1.0.0-rc.13/runner/src/server.mjs'));assert(exists(root,'opt/oj-microbit/1.0.0-rc.14/runner/src/server.mjs'));
+ const check=runFixture(root,'coexist-check');assert.notEqual(check.status,0);assert.match(check.stderr,/active service does not use this plugin release/);assertCoexistence(root,before);
+}));
+test('rollback health failure is marked as manual recovery rather than successful restoration',()=>withFixture(root=>{
+ seedHustoj(root);const before=hustojSnapshot(root);assert.equal(runFixture(root,'coexist-install').status,0);const env=read(root,'etc/oj-microbit/runner.env');fs.writeFileSync(path.join(root,'version'),'0.4.1');fs.writeFileSync(path.join(root,'source/package.json'),'{"version":"0.4.1"}');const failed=runFixture(root,'coexist-install','rollback-health');assert.notEqual(failed.status,0);assert.equal(read(root,'etc/oj-microbit/runner.env'),env);assert.match(failed.stdout,/health could not be verified/);assert.match(failed.stdout,/Automatic service rollback needs administrator attention/);assert.doesNotMatch(failed.stdout,/Previous runner authenticated health verified/);assertCoexistence(root,before);
+}));
+test('INT and TERM after activation restore the previous active runner and preserve HUSTOJ',()=>{
+ for(const signal of ['signal-int','signal-term'])withFixture(root=>{seedHustoj(root);const before=hustojSnapshot(root);assert.equal(runFixture(root,'coexist-install').status,0);const unit=read(root,'etc/systemd/system/oj-microbit-runner.service');fs.writeFileSync(path.join(root,'version'),'0.4.1');fs.writeFileSync(path.join(root,'source/package.json'),'{"version":"0.4.1"}');const failed=runFixture(root,'coexist-install',signal);assert.notEqual(failed.status,0);assert.equal(read(root,'etc/systemd/system/oj-microbit-runner.service'),unit);assert(exists(root,'active'));assert.match(failed.stdout,/Previous runner authenticated health verified/);assertCoexistence(root,before);});
+});
+test('post-commit errors retain the new runner and matching WordPress connection',()=>withFixture(root=>{
+ seedHustoj(root);const before=hustojSnapshot(root);assert.equal(runFixture(root,'coexist-install').status,0);fs.writeFileSync(path.join(root,'version'),'0.4.1');fs.writeFileSync(path.join(root,'source/package.json'),'{"version":"0.4.1"}');fs.writeFileSync(path.join(root,'commands.log'),'');const result=runFixture(root,'coexist-port','post-commit');assert.notEqual(result.status,0);assert.match(result.stdout,/WordPress connection was committed/);assert.doesNotMatch(result.stdout,/Restoring the previous/);assert.equal(read(root,'wordpress-setting').trim(),'http://127.0.0.1:4040');assert.match(read(root,'etc/systemd/system/oj-microbit-runner.service'),/0\.4\.1\/runner/);assert.match(read(root,'etc/oj-microbit/runner.env'),/PORT=4040/);assertCoexistence(root,before);
+}));
+test('read-only check refuses a mismatched worker image without changing it',()=>withFixture(root=>{
+ assert.equal(runFixture(root).status,0);const file=path.join(root,'etc/oj-microbit/runner.env');fs.writeFileSync(file,read(root,'etc/oj-microbit/runner.env').replace('MICROBIT_WORKER_IMAGE=oj-microbit-worker:0.4.0','MICROBIT_WORKER_IMAGE=oj-microbit-worker:0.3.0'));const before=read(root,'etc/oj-microbit/runner.env');const result=runFixture(root,'check');assert.notEqual(result.status,0);assert.match(result.stderr,/worker environment does not match/);assert.equal(read(root,'etc/oj-microbit/runner.env'),before);
+}));
+
+test('rollback of a previously disabled unit reports an enable-state restoration failure',()=>withFixture(root=>{
+ assert.equal(runFixture(root).status,0);fs.unlinkSync(path.join(root,'enabled'));fs.writeFileSync(path.join(root,'version'),'0.4.1');fs.writeFileSync(path.join(root,'source/package.json'),'{"version":"0.4.1"}');const result=runFixture(root,'install','disable-rollback');assert.notEqual(result.status,0);assert.match(result.stdout,/Automatic service rollback needs administrator attention/);assert(exists(root,'enabled'));assert.match(read(root,'etc/systemd/system/oj-microbit-runner.service'),/0\.4\.0\/runner/);
+}));

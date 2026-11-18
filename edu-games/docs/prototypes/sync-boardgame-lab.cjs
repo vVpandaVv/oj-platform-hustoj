@@ -1,0 +1,12 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const file = path.join(__dirname,'boardgame-lab-v2.html');
+const source = fs.readFileSync(file,'utf8');
+const engine = fs.readFileSync(path.join(__dirname,'boardgame-lab-v2.js'),'utf8');
+const start = '/* ENGINE_START */', end = '/* ENGINE_END */';
+const a = source.indexOf(start), b = source.indexOf(end);
+if (a<0 || b<a) throw Error('Engine markers missing');
+const output = source.slice(0,a+start.length)+'\n'+engine+'\n'+source.slice(b);
+fs.writeFileSync(file,output,'utf8');
+if (process.argv[2]) fs.writeFileSync(path.resolve(process.argv[2]),output,'utf8');
+console.log('Synced engine: '+Buffer.byteLength(output)+' bytes');

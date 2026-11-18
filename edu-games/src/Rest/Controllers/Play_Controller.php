@@ -9,7 +9,7 @@ use EduGames\Games\Game_Visibility;
 
 final class Play_Controller {
     public static function register_routes(): void {
-        foreach(array('start','update','resume','summary','archive') as $action)register_rest_route('edu-games/v1','/play/(?P<game>[a-z-]+)/'.$action,array('methods'=>'POST','callback'=>array(__CLASS__,$action),'permission_callback'=>array(__CLASS__,'allowed')));
+        foreach(array('start','update','resume','summary','archive') as $action)register_rest_route('edu-games/v1','/play/(?P<game>[a-z-]+)/'.$action,array('methods'=>'POST','callback'=>array(__CLASS__,$action),'permission_callback'=>static fn($r)=>self::allowed($r)||(in_array($action,['summary','archive'],true)&&Capabilities::can_play()&&isset(Catalog::GAMES[(string)$r['game']])&&Game_Visibility::can_read_records((string)$r['game']))));
     }
     public static function allowed(\WP_REST_Request $r): bool {return is_string($r['game'])&&isset(Catalog::GAMES[$r['game']])&&Capabilities::can_play()&&Game_Visibility::is_open($r['game']);}
     private static function error(string $text,int $status=400): \WP_Error {return new \WP_Error('edu_games_play',$text,array('status'=>$status));}

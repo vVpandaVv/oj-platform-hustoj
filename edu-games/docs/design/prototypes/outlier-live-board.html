@@ -1,0 +1,126 @@
+<div id="outlier-live-board" lang="ko">
+<style>
+#outlier-live-board{--p-paper:light-dark(#fff,#151c19);--p-field:light-dark(#f2f6f4,#202b25);--p-ink:light-dark(#1e302b,#edf4ef);--p-muted:light-dark(#62746c,#aebfb3);--p-line:light-dark(#d7e2db,#3e5145);--p-grid:light-dark(#e5ece7,#2e3d33);--p-blue:light-dark(#287b9c,#91cee3);--p-blue-soft:light-dark(#e0f1f6,#233f49);--p-green:light-dark(#07806c,#7cdec0);--p-green-soft:light-dark(#d8f1e5,#254638);--p-red:light-dark(#c75146,#ffa99e);--p-red-soft:light-dark(#fce9e5,#50302c);--p-gold:light-dark(#a37623,#e8cc8e);font:400 14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;letter-spacing:0;color:var(--p-ink);min-width:0}
+#outlier-live-board *{box-sizing:border-box;letter-spacing:0}
+#outlier-live-board{--p-blue-ink:light-dark(#ffffff,#122d37);--p-checked-ink:light-dark(#056451,#b6efd1);--p-target-shadow:light-dark(rgb(24 74 87 / .12),rgb(0 0 0 / .22));--p-range:light-dark(#dce9e1,#304337)}
+#outlier-live-board :is(h2,p){margin:0}
+#outlier-live-board .p-review{font-size:12px;color:var(--p-muted);margin-bottom:10px;padding-right:90px}
+#outlier-live-board .p-app{background:var(--p-paper);padding:20px 24px 16px;min-width:0}
+#outlier-live-board .p-header{display:flex;justify-content:space-between;gap:20px;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--p-line)}
+#outlier-live-board h2{font-size:24px;line-height:1.2;font-weight:500}
+#outlier-live-board .p-subtitle{color:var(--p-muted);font-size:13px;margin-top:6px}
+#outlier-live-board .p-hud{display:flex;align-items:center;gap:24px;font-variant-numeric:tabular-nums;flex:none}
+#outlier-live-board .p-stat{display:flex;flex-direction:column;gap:2px;min-width:48px}
+#outlier-live-board .p-stat-label{font-size:11px;color:var(--p-muted)}
+#outlier-live-board .p-score{font-size:30px;line-height:1.1;font-weight:500;min-width:52px}
+#outlier-live-board .p-time{font-size:22px;line-height:1.4;min-width:56px}
+#outlier-live-board .p-lives{display:flex;gap:4px;align-items:center;min-height:31px}
+#outlier-live-board .p-lives .lucide{width:17px;height:17px;color:var(--p-red);fill:var(--p-red)}
+#outlier-live-board .p-lives .is-empty{fill:none;color:var(--p-line)}
+#outlier-live-board button{font:inherit;color:var(--p-ink);border:1px solid var(--p-line);background:var(--p-paper);border-radius:6px;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+#outlier-live-board .p-mode .lucide{width:18px;height:18px}
+#outlier-live-board .p-board-head{display:flex;align-items:baseline;gap:12px;justify-content:space-between;flex-wrap:wrap;padding:15px 0 10px}
+#outlier-live-board .p-board-label{font-size:13px;font-weight:500}
+#outlier-live-board .p-reference{font-size:12px;color:var(--p-muted);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#outlier-live-board .p-arena{position:relative;background:var(--p-field);height:400px;min-width:0}
+#outlier-live-board .p-plot{display:block;width:100%;height:400px}
+#outlier-live-board .p-points{position:absolute;inset:0;pointer-events:none}
+#outlier-live-board .p-point{position:absolute;width:44px;height:44px;min-height:44px;border-radius:50%;padding:0;border:1px solid var(--p-blue);background:var(--p-blue);color:var(--p-blue-ink);box-shadow:0 2px 6px var(--p-target-shadow);font-size:16px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:auto;transform:translate(-50%,-50%);z-index:2}
+#outlier-live-board .p-point:not(:disabled):hover{background:var(--p-ink);border-color:var(--p-ink);color:var(--p-paper)}
+#outlier-live-board .p-point.is-reviewed{background:var(--p-green-soft);border-color:var(--p-green);color:var(--p-checked-ink);font-size:14px}
+#outlier-live-board .p-point.is-wrong{background:var(--p-red-soft);border-color:var(--p-red);color:var(--p-red)}
+#outlier-live-board .p-point:disabled{pointer-events:none}
+#outlier-live-board .p-float{position:absolute;pointer-events:none;font-size:18px;font-weight:500;color:var(--p-green);transform:translate(-50%,-50%);z-index:3}
+#outlier-live-board .p-float.is-bad{color:var(--p-red)}
+#outlier-live-board .p-overlay{position:absolute;inset:0;background:color-mix(in srgb,var(--p-paper) 92%,transparent);display:flex;align-items:center;justify-content:center;padding:20px;z-index:5}
+#outlier-live-board .p-overlay[hidden]{display:none}
+#outlier-live-board .p-dialog{width:100%;max-width:380px;text-align:center}
+#outlier-live-board .p-result-label{font-size:13px;color:var(--p-muted)}
+#outlier-live-board .p-result-score{font-size:56px;line-height:1.2;font-weight:500;margin:6px 0}
+#outlier-live-board .p-result-line{font-size:13px;color:var(--p-muted);margin-top:10px}
+#outlier-live-board .p-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+#outlier-live-board .p-actions button{padding:9px 14px}
+#outlier-live-board .p-actions .p-primary{background:var(--p-ink);color:var(--p-paper);border-color:var(--p-ink)}
+#outlier-live-board .p-actions .lucide{width:16px;height:16px}
+#outlier-live-board .p-pulse{display:flex;align-items:center;gap:12px;padding-top:12px;font-size:12px;color:var(--p-muted)}
+#outlier-live-board .p-track{height:3px;flex:1;background:var(--p-grid);overflow:hidden}
+#outlier-live-board .p-progress{height:100%;width:0;background:var(--p-blue)}
+#outlier-live-board .p-feedback{font-size:13px;min-height:40px;display:flex;align-items:center;padding:10px 0 4px;color:var(--p-muted)}
+#outlier-live-board .p-feedback[data-tone="good"]{color:var(--p-green)}
+#outlier-live-board .p-feedback[data-tone="bad"]{color:var(--p-red)}
+#outlier-live-board .p-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--p-line);padding-top:9px;font-size:11px;color:var(--p-muted)}
+#outlier-live-board summary{min-height:24px}
+#outlier-live-board details{max-width:75ch}
+#outlier-live-board details p{font-size:12px;margin:8px 0}
+#outlier-live-board .p-probe{display:none}
+@media(max-width:650px){#outlier-live-board .p-app{padding:14px 12px}#outlier-live-board .p-header{align-items:flex-start;gap:14px;flex-wrap:wrap;padding-bottom:12px}#outlier-live-board h2{font-size:22px}#outlier-live-board .p-hud{width:100%;justify-content:space-between;gap:12px}#outlier-live-board .p-reference{display:block;font-size:11px;white-space:nowrap}#outlier-live-board .p-board-label{display:block;line-height:20px}#outlier-live-board .p-board-head{display:block;height:62px;padding:10px 0}#outlier-live-board .p-review{padding-right:0}#outlier-live-board .p-result-score{font-size:48px}}
+@media(prefers-reduced-motion:no-preference){#outlier-live-board .p-point{transition:top .24s ease-out,left .24s ease-out,background-color .16s,border-color .16s}#outlier-live-board .p-float{animation:outlier-live-score .6s ease-out both}@keyframes outlier-live-score{from{opacity:1;translate:0 0}to{opacity:0;translate:0 -24px}}}
+</style>
+<div class="p-review">새 검증판 · 운영 게임·순위와 별개</div>
+<section class="p-app" aria-label="실시간 이상치 캐치">
+ <header class="p-header"><div><h2>이상치 캐치</h2><p class="p-subtitle">무리에서 벗어난 새 관측을 검토함으로</p></div><div class="p-hud"><div class="p-stat"><span class="p-stat-label">검토 성공</span><span class="p-score" id="ol-score">0</span></div><div class="p-stat"><span class="p-stat-label">기회</span><span class="p-lives" id="ol-lives" aria-label="남은 기회 3"></span></div><div class="p-stat"><span class="p-stat-label">남은 시간</span><span class="p-time" id="ol-time">1:15</span></div><button type="button" class="p-mode" id="ol-mode" aria-label="시작" data-tooltip="시작"><i data-lucide="play" aria-hidden="true"></i></button></div></header>
+ <div class="p-board-head"><span class="p-board-label" id="ol-band">비교 구간</span><span class="p-reference" id="ol-reference"></span></div>
+ <div class="p-arena" id="ol-arena"><canvas class="p-plot" id="ol-plot" role="img" aria-label="가로축은 측정값. 위의 비교 관측 분포와 아래의 새 관측을 비교하는 게임판"></canvas><div class="p-points" id="ol-points"></div><div class="p-overlay" id="ol-overlay" hidden><div class="p-dialog"><p class="p-result-label" id="ol-result-title"></p><div class="p-result-score" id="ol-result-score"></div><p class="p-result-label" id="ol-best"></p><p class="p-result-line" id="ol-result-line"></p><div class="p-actions"><button type="button" class="p-primary" id="ol-again"><i data-lucide="rotate-ccw" aria-hidden="true"></i>다시 도전</button><button type="button" id="ol-inspect"><i data-lucide="scan-eye" aria-hidden="true"></i>판 보기</button></div></div></div></div>
+ <div class="p-pulse"><span id="ol-next">새 관측 대기</span><div class="p-track"><div class="p-progress" id="ol-progress"></div></div><span id="ol-flow">흐름 1</span></div>
+ <div class="p-feedback" id="ol-feedback" aria-live="polite">현재 비교 자료와 떨어진 값을 선택하세요.</div>
+ <div class="p-footer"><span>검토 +1 · 오경보/놓침은 기회 −1</span><details><summary>직전 판정 · 기준</summary><p id="ol-reason">비교 관측 8개의 아래/위 절반에서 중앙값 Q1·Q3를 구하고, Q1−1.5×IQR~Q3+1.5×IQR 바깥을 검토 후보로 봅니다. 가상 관측의 게임 규칙이며, 후보가 오류라는 뜻은 아닙니다.</p></details></div>
+</section><span class="p-probe" aria-hidden="true"></span>
+<script>
+(()=>{
+ const Core=(()=>{
+  const PERIOD=1600,DURATION=75000,EXPOSURE=2400;
+  function random(s){s.rng=(Math.imul(1664525,s.rng)+1013904223)>>>0;return s.rng/4294967296;}
+  function int(s,a,b){return a+Math.floor(random(s)*(b-a+1));}
+  function clamp(v){return Math.max(0,Math.min(100,v));}
+  function fences(reference){const a=[...reference].sort((x,y)=>x-y);if(a.length!==8)throw new Error('Eight reference observations required');const q1=(a[1]+a[2])/2,q3=(a[5]+a[6])/2,iqr=q3-q1;return{q1,q3,lo:q1-1.5*iqr,hi:q3+1.5*iqr};}
+  function isCandidate(s,record){const f=fences(s.reference);return record.value<f.lo||record.value>f.hi;}
+  function refresh(s){for(const r of s.records){if(isCandidate(s,r)){if(r.candidateSince===null)r.candidateSince=s.elapsed;}else r.candidateSince=null;}}
+  function fresh(seed=71,best=0){const s={schema:1,seed,rng:seed>>>0,mode:'ready',elapsed:0,lastNow:null,nextPulse:PERIOD,epoch:0,phase:0,refIndex:0,sequence:6,score:0,caught:0,falseAlarms:0,missed:0,lives:3,best,version:0,reference:[40,41,42,43,43,44,45,46],referenceHistory:[40,41,42,43,43,44,45,46],records:[],recordHistory:[],reviews:[],message:'',tone:'neutral',event:null,reason:'',finishReason:''};
+   const first=[44,41,43,18-int(s,0,4)];for(let i=3;i>0;i--){const j=int(s,0,i);[first[i],first[j]]=[first[j],first[i]];}const late=[72+int(s,0,4),45];if(random(s)<.5)late.reverse();const values=[...first,...late];s.records=values.map((value,i)=>({id:i+1,value,born:0,claimed:false,attemptedEpoch:-1,candidateSince:null}));s.recordHistory=s.records.map(r=>({id:r.id,value:r.value,born:0}));s.message='현재 비교 자료와 떨어진 값을 선택하세요.';refresh(s);return s;
+  }
+  function start(s,now){if(s.mode==='ended'||s.mode==='running')return s;s.mode='running';s.lastNow=now;s.message='새 관측이 들어오면 비교 분포도 달라집니다.';s.tone='neutral';s.version++;return s;}
+  function finish(s,reason){if(s.mode==='ended')return;s.mode='ended';s.finishReason=reason;s.best=Math.max(s.best,s.score);s.message=reason==='time'?'시간이 끝났습니다.': '기회를 모두 사용했습니다.';s.version++;}
+  function review(s,r,kind){const f=fences(s.reference),snapshot={id:r.id,value:r.value,at:s.elapsed,epoch:s.epoch,kind,reference:[...s.reference]};s.reviews.push(snapshot);if(s.reviews.length>14)s.reviews.shift();s.reason=`값 ${r.value} · 당시 비교 관측 [${s.reference.join(' · ')}] · 후보 구간은 ${f.lo} 미만 또는 ${f.hi} 초과. 원본 관측은 보존합니다.`;s.event={id:r.id,value:r.value,kind,at:s.elapsed};}
+  function lose(s,r,kind){s.lives--;if(kind==='miss'){s.missed++;s.message=`${r.value} 검토 기회를 놓쳤습니다 · 기회 −1`;}else{s.falseAlarms++;s.message=`${r.value}은 현재 비교 범위 안입니다 · 기회 −1`;}s.tone='bad';review(s,r,kind);if(!s.lives)finish(s,'lives');}
+  function profile(s,phase){const centres=[43,68,31,82,15,90,47],spreads=[1,2,2,1,3,3,2];return{centre:centres[phase%centres.length],spread:spreads[phase%spreads.length]};}
+  function pulse(s){
+   const oldest=s.records[0];if(!oldest.claimed&&isCandidate(s,oldest)&&oldest.candidateSince!==null&&s.elapsed-oldest.candidateSince>=EXPOSURE){lose(s,oldest,'miss');if(s.mode==='ended')return;}
+   s.records.shift();s.epoch++;const phase=s.epoch<2?0:1+Math.floor((s.epoch-2)/7),changed=phase!==s.phase;s.phase=phase;const p=profile(s,phase),offsets=[-3,-2,-1,0,0,1,2,3];for(let i=0;i<3;i++){const v=clamp(p.centre+offsets[s.refIndex++%8]*p.spread);s.reference.shift();s.reference.push(v);s.referenceHistory.push(v);}
+   const f=fences(s.reference);let value=clamp(p.centre+int(s,-3,3)*p.spread);if(s.epoch%3===0){const options=[Math.floor(f.lo)-int(s,8,18),Math.ceil(f.hi)+int(s,8,18)].filter(n=>n>=0&&n<=100);if(options.length)value=options[int(s,0,options.length-1)];}
+   const r={id:++s.sequence,value,born:s.elapsed,claimed:false,attemptedEpoch:-1,candidateSince:null};s.records.push(r);s.recordHistory.push({id:r.id,value,born:r.born});refresh(s);if(changed){s.message='비교 관측 갱신 · 분포가 이동하고 있습니다';s.tone='neutral';}s.version++;
+  }
+  function tick(s,now){if(s.mode!=='running')return s;const target=Math.min(DURATION,s.elapsed+Math.max(0,now-s.lastNow));while(s.nextPulse<=target&&s.mode==='running'){s.elapsed=s.nextPulse;pulse(s);s.nextPulse+=PERIOD;}if(s.mode==='running'){s.elapsed=target;if(s.elapsed>=DURATION)finish(s,'time');}s.lastNow=now;return s;}
+  function pick(s,id,now){if(s.mode==='ready')start(s,now);tick(s,now);if(s.mode!=='running')return s;const r=s.records.find(v=>v.id===id);if(!r||r.claimed||r.attemptedEpoch===s.epoch)return s;r.attemptedEpoch=s.epoch;
+   if(isCandidate(s,r)){r.claimed=true;s.score++;s.caught++;s.message=`${r.value} 검토 완료 · +1`;s.tone='good';review(s,r,'catch');}else lose(s,r,'false');s.version++;return s;
+  }
+  function pause(s,now){if(s.mode==='running'){tick(s,now);if(s.mode==='running'){s.mode='paused';s.message='일시정지';s.tone='neutral';s.version++;}}return s;}
+  function valid(s){return s?.schema===1&&['ready','running','paused','ended'].includes(s.mode)&&Number.isFinite(s.elapsed)&&s.elapsed>=0&&s.elapsed<=DURATION&&Number.isInteger(s.epoch)&&s.reference?.length===8&&s.reference.every(Number.isFinite)&&s.records?.length===6&&new Set(s.records.map(r=>r.id)).size===6&&s.records.every(r=>Number.isInteger(r.id)&&Number.isFinite(r.value)&&r.value>=0&&r.value<=100)&&Number.isInteger(s.lives)&&s.lives>=0&&s.lives<=3&&s.score===s.caught&&s.referenceHistory?.length<=155&&s.recordHistory?.length<=55&&s.reviews?.length<=14;}
+  return{PERIOD,DURATION,EXPOSURE,fresh,fences,isCandidate,start,tick,pick,pause,valid};
+ })();
+ if(typeof module==='object'&&module.exports){module.exports=Core;return;}
+ const root=document.getElementById('outlier-live-board'),$=q=>root.querySelector(q);let state=Core.fresh(),serial=0,applied=false,viewBoard=false,lastRender=-1,lastMode='',lastLife=-1,lastFloat='',width=0;
+ const saved=window.openai?.widgetState;
+ function restore(value){const p=value?.privateContent;if(p?.schema!==1||!Core.valid(p.state)||(applied&&Number(p.serial||0)<=serial))return false;state=p.state;serial=p.serial||0;applied=true;if(state.mode==='running'){state.mode='paused';state.lastNow=Date.now();}viewBoard=false;lastRender=-1;lastFloat='';root.querySelectorAll('.p-float').forEach(n=>n.remove());return true;}
+ restore(saved);
+ function iconise(){globalThis.lucide?.createIcons({attrs:{width:16,height:16}});}
+ function colours(){const out={},probe=$('.p-probe');for(const k of ['paper','field','ink','muted','line','grid','blue','green','red','gold','range']){probe.style.color=`var(--p-${k})`;out[k]=getComputedStyle(probe).color;}return out;}
+ function position(value,slot){const w=$('#ol-arena').getBoundingClientRect().width;return{x:36+value*(w-72)/100,y:100+slot*46};}
+ function plot(){const canvas=$('#ol-plot'),w=Math.round(canvas.getBoundingClientRect().width),dpr=window.devicePixelRatio||1,c=colours();width=w;canvas.width=w*dpr;canvas.height=400*dpr;const x=canvas.getContext('2d');x.scale(dpr,dpr);const sorted=[...state.reference].sort((a,b)=>a-b),median=(sorted[3]+sorted[4])/2,bounds=Core.fences(state.reference),rangeLeft=position(Math.max(0,bounds.lo),0).x,rangeRight=position(Math.min(100,bounds.hi),0).x;x.fillStyle=c.range;x.fillRect(rangeLeft,42,rangeRight-rangeLeft,308);x.strokeStyle=c.line;x.lineWidth=1;x.setLineDash([3,4]);x.beginPath();x.moveTo(position(median,0).x,42);x.lineTo(position(median,0).x,350);x.stroke();x.setLineDash([]);x.font='400 11px "Malgun Gothic",sans-serif';x.fillStyle=c.muted;x.textAlign='left';x.fillText('비교',10,24);x.fillText('새 관측',10,72);x.textAlign='center';for(let n=0;n<=100;n+=20){const px=position(n,0).x;x.strokeStyle=c.grid;x.lineWidth=1;x.beginPath();x.moveTo(px,42);x.lineTo(px,350);x.stroke();x.fillStyle=c.muted;x.fillText(n,px,375);}for(let i=0;i<6;i++){x.strokeStyle=c.grid;x.beginPath();x.moveTo(28,position(0,i).y);x.lineTo(w-28,position(0,i).y);x.stroke();const r=[...state.records].reverse()[i];x.strokeStyle=c.line;x.beginPath();x.moveTo(position(median,0).x,position(0,i).y);x.lineTo(position(r.value,0).x,position(0,i).y);x.stroke();}const repeated=new Map();for(const n of state.reference){const count=repeated.get(n)||0;repeated.set(n,count+1);const px=position(n,0).x,y=23-count*7;x.beginPath();x.arc(px,y,3.5,0,Math.PI*2);x.fillStyle=c.muted;x.fill();}x.textAlign='right';x.fillStyle=c.muted;x.fillText('측정값',w-8,395);}
+ function pointLayout(){const points=$('#ol-points'),existing=new Map([...points.querySelectorAll('.p-point')].map(b=>[Number(b.dataset.id),b]));const records=[...state.records].reverse();records.forEach((r,slot)=>{let b=existing.get(r.id);if(!b){b=document.createElement('button');b.type='button';b.className='p-point';b.dataset.id=r.id;points.appendChild(b);}existing.delete(r.id);const p=position(r.value,slot);b.style.left=`${p.x}px`;b.style.top=`${p.y}px`;b.dataset.slot=slot;b.dataset.value=r.value;b.textContent=r.claimed?`${r.value} ✓`:r.value;b.classList.toggle('is-reviewed',r.claimed);b.classList.toggle('is-wrong',!r.claimed&&r.attemptedEpoch===state.epoch);b.disabled=r.claimed||r.attemptedEpoch===state.epoch||state.mode==='paused'||state.mode==='ended';b.setAttribute('aria-label',`관측 ${r.value}${r.claimed?', 검토 완료':''}`);points.appendChild(b);});for(const b of existing.values())b.remove();}
+ function floating(){const e=state.event,key=e?`${e.id}/${e.at}/${e.kind}`:'';if(!key||key===lastFloat)return;lastFloat=key;const r=[...state.records].reverse().findIndex(v=>v.id===e.id);if(r<0||state.elapsed-e.at>700)return;const p=position(e.value,r),f=document.createElement('span');f.className=`p-float${e.kind==='catch'?'':' is-bad'}`;f.textContent=e.kind==='catch'?'+1':'−1';f.style.left=`${p.x}px`;f.style.top=`${p.y-29}px`;$('#ol-arena').appendChild(f);setTimeout(()=>f.remove(),700);}
+ function render(){if(state.version!==lastRender){lastRender=state.version;$('#ol-score').textContent=state.score;$('#ol-reference').textContent=state.reference.join(' · ');const f=Core.fences(state.reference);$('#ol-band').textContent=`비교 구간 ${f.lo}–${f.hi}`;$('#ol-flow').textContent=`흐름 ${state.epoch+1}`;$('#ol-feedback').textContent=state.message;$('#ol-feedback').dataset.tone=state.tone;if(state.reason)$('#ol-reason').textContent=state.reason;plot();pointLayout();floating();}
+  if(state.lives!==lastLife){lastLife=state.lives;$('#ol-lives').innerHTML=Array.from({length:3},(_,i)=>`<i data-lucide="heart" aria-hidden="true" class="${i>=state.lives?'is-empty':''}"></i>`).join('');$('#ol-lives').setAttribute('aria-label',`남은 기회 ${state.lives}`);iconise();}
+  if(state.mode!==lastMode){lastMode=state.mode;const isRunning=state.mode==='running',name=isRunning?'일시정지':state.mode==='ready'?'시작':state.mode==='ended'?'결과 보기':'계속하기';$('#ol-mode').innerHTML=`<i data-lucide="${isRunning?'pause':state.mode==='ended'?'trophy':'play'}" aria-hidden="true"></i>`;$('#ol-mode').setAttribute('aria-label',name);$('#ol-mode').dataset.tooltip=name;$('#ol-again').innerHTML=state.mode==='paused'?'<i data-lucide="play" aria-hidden="true"></i>계속하기':'<i data-lucide="rotate-ccw" aria-hidden="true"></i>다시 도전';iconise();}
+  const left=Math.max(0,Math.ceil((Core.DURATION-state.elapsed)/1000));$('#ol-time').textContent=`${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;const next=Math.max(0,state.nextPulse-state.elapsed);$('#ol-next').textContent=state.mode==='ready'?'새 관측 대기':state.mode==='paused'?'일시정지':state.mode==='ended'?'이번 흐름 종료':`새 관측 ${(next/1000).toFixed(1)}초`;$('#ol-progress').style.width=state.mode==='running'?`${100*(1-next/Core.PERIOD)}%`:'0%';
+  const ended=state.mode==='ended';$('#ol-overlay').hidden=!(ended&&!viewBoard||state.mode==='paused');$('#ol-result-title').textContent=state.mode==='paused'?'일시정지':state.finishReason==='time'?'시간 종료':'기회 소진';$('#ol-result-score').textContent=state.mode==='paused'?'잠깐 쉬기':`${state.score}`;$('#ol-best').textContent=state.mode==='paused'?'관측 흐름이 멈췄습니다':`내 최고 기록 ${state.best}`;$('#ol-result-line').textContent=state.mode==='paused'?'':`검토 ${state.caught} · 오경보 ${state.falseAlarms} · 놓침 ${state.missed}`;$('#ol-inspect').hidden=state.mode==='paused';
+ }
+ function save(){serial++;applied=true;window.openai?.setWidgetState?.({modelContent:{prototype:'outlier-live-board',score:state.score,caught:state.caught,falseAlarms:state.falseAlarms,missed:state.missed,mode:state.mode,epoch:state.epoch,best:state.best},privateContent:{schema:1,state,serial}})?.catch(()=>{});}
+ function changed(before){if(state.version!==before){render();save();}}
+ $('#ol-points').addEventListener('click',e=>{const b=e.target.closest('.p-point');if(!b)return;const v=state.version;Core.pick(state,Number(b.dataset.id),Date.now());changed(v);});$('#ol-mode').addEventListener('click',()=>{if(state.mode==='ended'){viewBoard=false;render();return;}const v=state.version;if(state.mode==='running')Core.pause(state,Date.now());else Core.start(state,Date.now());changed(v);});
+ $('#ol-again').addEventListener('click',()=>{if(state.mode==='paused')Core.start(state,Date.now());else{state=Core.fresh(state.seed+731,state.best);lastFloat='';root.querySelectorAll('.p-float').forEach(n=>n.remove());}viewBoard=false;lastRender=-1;render();iconise();save();});$('#ol-inspect').addEventListener('click',()=>{viewBoard=true;render();});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.mode==='running'){const v=state.version;Core.pause(state,Date.now());changed(v);}});
+ let resizePending=false;function resized(){if(resizePending)return;resizePending=true;requestAnimationFrame(()=>{resizePending=false;plot();pointLayout();});}new ResizeObserver(resized).observe($('#ol-arena'));new MutationObserver(resized).observe(document.documentElement,{attributes:true,attributeFilter:['class','style','data-theme']});matchMedia('(prefers-color-scheme:dark)').addEventListener('change',resized);window.addEventListener('openai:set_globals',e=>{if(restore(e.detail?.globals?.widgetState))render();else resized();});
+ function frame(){const v=state.version;Core.tick(state,Date.now());render();if(v!==state.version)save();requestAnimationFrame(frame);}render();iconise();requestAnimationFrame(frame);
+})();
+</script>
+</div>

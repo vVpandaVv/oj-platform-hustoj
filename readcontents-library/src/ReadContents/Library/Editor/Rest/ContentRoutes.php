@@ -785,6 +785,8 @@ final class ContentRoutes
         $policy_by_source_id = $this->zipLessonConflictPolicyMap($request);
         $options = [];
 
+        $options['updateContainerTitles'] = $request->get_param('updateContainerTitles') ?? false;
+
         if (is_string($policy) && '' !== $policy) {
             $options['lessonConflictPolicy'] = $policy;
         }

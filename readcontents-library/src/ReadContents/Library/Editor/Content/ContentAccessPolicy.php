@@ -24,6 +24,12 @@ final class ContentAccessPolicy
         $this->findNode = Closure::fromCallable($find_node);
     }
 
+    public function canReadLesson(?ContentNode $node, bool $allow_preview = false): bool
+    {
+        return $node !== null && $node->type === ContentNodeType::LESSON
+            && ($allow_preview || $this->isPubliclyReadable($node));
+    }
+
     public function isPubliclyReadable(?ContentNode $node): bool
     {
         if (! $node || ContentStatus::PUBLISHED !== $node->status) {

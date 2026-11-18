@@ -1,0 +1,298 @@
+{
+  "candidateVersion": "1.0.0-rc.15",
+  "baselineVersion": "1.0.0-rc.14",
+  "baselineArchiveSha256": "64cf3b5f97c909d16940cd153c0bfdfd48bf2f352bf3414333c19c1d267a8017",
+  "date": "2026-11-06",
+  "databaseSchema": 5,
+  "gradingContract": "oj-gpio/3",
+  "requiresPlatform": "2.5.9",
+  "requiresAddonApi": "1.9.0",
+  "previousRelease": {
+    "version": "1.0.0-rc.14",
+    "archiveSha256": "64cf3b5f97c909d16940cd153c0bfdfd48bf2f352bf3414333c19c1d267a8017",
+    "freezeManifestSha256": "00ceb8ab5677a28fbcab14ae8454080728ff35375532664132d688905119c529"
+  },
+  "requestedChange": "편집 몰입형을 문제 생성·학생 화면에 적용하고 패널 전환 시 코드와 실행 상태 보존, 모바일 검수 및 설치 ZIP 갱신",
+  "files": [
+    {
+      "path": "resources/css/microbit.css",
+      "sha256": "916c11b965756e176ca0bc4162e579ced303e2e663b8fcaae86f04881fe92624",
+      "previousSha256": "9f414aeb7f7f7d4464d23468798bc86a68db5bd8d9014d5a3655807eace3fd46",
+      "reviewScope": "editing_focus_ui"
+    },
+    {
+      "path": "resources/js/microbit.js",
+      "sha256": "c5a0eab2ec021b84b70b6e3e43839818fafe3cd892916fea33bd5df38103360f",
+      "previousSha256": "1ff0226b002a83b27b0a943c4576e57ffeca1b264254692df41e297e322728ac",
+      "reviewScope": "editing_focus_ui"
+    },
+    {
+      "path": "resources/vendor/microbit-usb.js",
+      "sha256": "74fff5a21241f15506eabf11e00dbc8ad34c1701844538a40358bebaf385d023"
+    },
+    {
+      "path": "resources/vendor/README.md",
+      "sha256": "a04c87d14a53e29515d0119b9c56f307ceed44e9edf928add3d84f3ddedd6901"
+    },
+    {
+      "path": "resources/vendor/THIRD_PARTY_NOTICES.txt",
+      "sha256": "86633ad2b92c56e07c4887c1b75bcfb3cb1640c1b03ecc5f88839eb2055a50b3"
+    },
+    {
+      "path": "runner/src/assertions.mjs",
+      "sha256": "acd02cb837d01bc19f0461e1b891ccebc71b51b23242ad7696e0ba7e2330ff7c"
+    },
+    {
+      "path": "runner/src/compiler.mjs",
+      "sha256": "d90bab49631b3dddd71da2e3335a66da3570caf63b1dc67c591f51b92e822ed5"
+    },
+    {
+      "path": "runner/src/grade.mjs",
+      "sha256": "cb69e8e335ade65fc66ae897af67e0a18d9404b9092e623d95e7d00e4a2e352e"
+    },
+    {
+      "path": "runner/src/job.mjs",
+      "sha256": "2cb65e11e07a334f07eb5b1c14339beb714f5ffb1d1893bc9248697d1e39f44a"
+    },
+    {
+      "path": "runner/src/peripherals.mjs",
+      "sha256": "e1c402fd935695ef59a5799a6777d1211719c556a2c9093bb8462ce2591adf4d"
+    },
+    {
+      "path": "runner/src/server.mjs",
+      "sha256": "83774eaeee2e69b31227b408412f4627b786f3d5414f12ba53f290dde7280106"
+    },
+    {
+      "path": "runner/src/simulator.mjs",
+      "sha256": "afee0bda9a971cdaae21ae842e93e7391a3ab803b77e6de1f330b9d111438b99"
+    },
+    {
+      "path": "runner/src/validation.mjs",
+      "sha256": "5affdd919a8e9d91d27782ab169c8d321d091bc9627de3faea0e6fbdb06cf9ab"
+    },
+    {
+      "path": "runner/src/version.mjs",
+      "sha256": "d28765176ce07cae667a94283ee71e08295a61061c0e4ba70b0735397fbb9723"
+    },
+    {
+      "path": "src/Addon/PageHandler.php",
+      "sha256": "fd7ec8393a87dea197fa1c379b630bbce77e182ded05bd9d57da8d9a82c21bae",
+      "previousSha256": "4568adf2cc346b201a48eb78c6f84ece235b167bc399f88437930b26ca9d533c",
+      "reviewScope": "editing_focus_ui"
+    },
+    {
+      "path": "src/Addon/Registration.php",
+      "sha256": "376f17ac421a386fa79f3b7f62784abd48980f8d030d9ff428e0739d02e68eb9"
+    },
+    {
+      "path": "src/Addon/RestController.php",
+      "sha256": "c24e61e5bbdd7c8ba2c3916d5b76bfccfefff61c634d4399ade25be2cccfb790"
+    },
+    {
+      "path": "src/Application/Access.php",
+      "sha256": "897da38701deaf56be4fbe2cbe52a7b371f400f44e3766703300f31fbd13d695"
+    },
+    {
+      "path": "src/Application/PracticeService.php",
+      "sha256": "77468f778423606770e00596d74034aae47630bc23ddd6933d75beb8d35b1421"
+    },
+    {
+      "path": "src/Application/Repository.php",
+      "sha256": "12ec594301acddc38080f5662cf2f45e8b5a85f6a66c210757fe3a6b4a7ecd7a"
+    },
+    {
+      "path": "src/Application/Runner.php",
+      "sha256": "6bac4ec60af6a5403ee13f58ec2d7dd4d88be96ac9906adb3855fb46a4bc9ab5"
+    },
+    {
+      "path": "src/Core/Autoloader.php",
+      "sha256": "e46db0573f3a647ff797257208b736dafcbe721de70da07c737e1554689ffbde"
+    },
+    {
+      "path": "src/Core/Plugin.php",
+      "sha256": "27956cdcc28d959443461fd66a223a3af7c0c44718aaf8122a2e17b2ad26f8a9"
+    },
+    {
+      "path": "src/Domain/ExerciseSchema.php",
+      "sha256": "60cf24d27c12146f23893a2707221d43514f137aeda414790ef41f8264b41b60"
+    },
+    {
+      "path": "src/Domain/I2cSchema.php",
+      "sha256": "bb213afe392208397eb2799ae46477e5c936362c6b62db70a6cbd5b321a54b9b"
+    },
+    {
+      "path": "src/Domain/OutputSequenceSchema.php",
+      "sha256": "4136940086b71d2809ac8aef6b41176952b5521820694a7af02f3d9a67cb8fa9"
+    },
+    {
+      "path": "src/Domain/ProjectSchema.php",
+      "sha256": "ee2e810cbbd9ebf991918e54018f390abd881e9fbf670628bffd0a9a91ca568f"
+    },
+    {
+      "path": "src/Domain/PublicationReview.php",
+      "sha256": "a60fcc3ca6a74793677a9cde4010f97a22830d97e02e17cdd0baa777f64fd01c"
+    },
+    {
+      "path": "src/Domain/ResultVisibility.php",
+      "sha256": "d9b3ab10e757b9a3bff33b8984a48fc14820e9997177e05d36fc8914aa8844a9"
+    },
+    {
+      "path": "src/Domain/RunnerResultSchema.php",
+      "sha256": "37e573c1171fe6104ac958f79ca833ac7b5e0860e992761c63f8b14d90255803"
+    },
+    {
+      "path": "src/Domain/SchemaValue.php",
+      "sha256": "1533627943e47033b1332bd1b9d0993ab4b890d77847cd58aca210aef5954df0"
+    },
+    {
+      "path": "src/Domain/SignalSchema.php",
+      "sha256": "5e046b26afdcb0ffb0942a6e3ec734329f1719b1d32890469a2b24449cd4fcee"
+    },
+    {
+      "path": "src/Storage/Installer.php",
+      "sha256": "f7c4a3d60af627917ebe166af846a52383acf4a520cd223277e7d38d172a3c82"
+    },
+    {
+      "path": "src/Storage/WpdbRepository.php",
+      "sha256": "4494cc79e21229caa8952321240f52ba74113c5c314e74e1c847bffd364b7762"
+    },
+    {
+      "path": "src/Support/ClassAudienceAccess.php",
+      "sha256": "d3e94a99aa2168743632de5acb091f2b598c0186c04823e469c3d9aa7f828d3c"
+    },
+    {
+      "path": "src/Support/HttpRunner.php",
+      "sha256": "81b4a7629de0eece4ef8266f18513d9dec2bf41b8cdc11ec2d51cc388bd87f57"
+    },
+    {
+      "path": "src/Support/LearnerCapabilities.php",
+      "sha256": "496f57e4f987cda5a913544df149e3cad1e9c2d424272e00a2af6f90062500c5"
+    },
+    {
+      "path": "src/Support/OperationError.php",
+      "sha256": "ea03658c7e0fe509b39e8cdcb850b4c7d46c261ec7d1cd262482bc144b696fb8"
+    },
+    {
+      "path": "src/Support/PlatformAccess.php",
+      "sha256": "d9193baa198aa962fee52187ce379f16d3ada6803e3d552c4848041377bdee42"
+    },
+    {
+      "path": "src/Support/Privacy.php",
+      "sha256": "308d1bad9db36d65500049aec078e60c3aa3e294168174eabb06724553cfcbf3"
+    },
+    {
+      "path": "src/Support/RequestContext.php",
+      "sha256": "c85cae7bb473351db3789c32a0a3aca86501c780388115365d1a8e0715bc0bc2"
+    },
+    {
+      "path": "src/Support/Settings.php",
+      "sha256": "0135beb4dd5bc500eef5171266ab13d93739d73b88a05f8d543fd769bb69fe4c"
+    },
+    {
+      "path": "src/Support/GroupAudienceAccess.php",
+      "sha256": "beb4e0cf47bd99cfe4e621e7309158f048619b18b9850f615f6e0dbdd99790bf"
+    },
+    {
+      "path": "uninstall.php",
+      "sha256": "4d7c5a74e5f34af4b0908cb1496feb965390e4a5a86cbddd751c4f009ed1c27f"
+    },
+    {
+      "path": "src/Application/LessonAccess.php",
+      "sha256": "2c7efae6ece8acde87d1612d65fab3bc8b3e009019be377f466da9f9aae95fce"
+    },
+    {
+      "path": "src/Application/LessonRepository.php",
+      "sha256": "ae3ab918abde5f0903294d594d42a5f1d544f3ae0eeecf91f3f7598accb21c93"
+    },
+    {
+      "path": "src/Application/LessonService.php",
+      "sha256": "b6bc7020d11791974b596d28d69fa3ace65d244b46dcfdc6801ddf97e75037a4"
+    },
+    {
+      "path": "src/Storage/WpdbLessonRepository.php",
+      "sha256": "db06dd00859e9a352d1ab7e27a420f30d14e5ed1ae900e60bd1f93ee8caf437c"
+    },
+    {
+      "path": "src/Support/ClassLessonAccess.php",
+      "sha256": "41b07ffb29f87614f7534046015799b394bb6a0279f2b91096ce4b84a0d487da"
+    },
+    {
+      "path": "src/Addon/NativeLearningProvider.php",
+      "sha256": "3458fc58c38cd7358a8f1b5e9dc31649eb35e4e99771e2a4d2e112ecb1eb2693"
+    },
+    {
+      "path": "plugin-package.php",
+      "sha256": "efe184df5f7fa9a56119559affdbd2cdddf1bf9f1f384c5cf3384c6059d89d22",
+      "previousSha256": "fa60182d2d38ca0b928fbb815c87e9dfa15996a7e5e802ca445df9886f08d3cb",
+      "reviewScope": "release_metadata"
+    },
+    {
+      "path": "src/Application/LiveCompiler.php",
+      "sha256": "f48291bdd41088dc871562aee9fb7cb11d7b4a155c9b6a894824756a2ec9f869"
+    },
+    {
+      "path": "runner/src/live-compile.mjs",
+      "sha256": "1ee396ce92e16ec81bff1c54d30a9a6694487c0e3597db8f6e57670976c71c93"
+    },
+    {
+      "path": "resources/js/live-session.js",
+      "sha256": "c2a7932350291fbd8a3c16ea2b5d2b83537bdf39cd972506ce456dc9b6ffc65c"
+    },
+    {
+      "path": "resources/simulator/host.html",
+      "sha256": "76311b71a98cf0e03fc36329fab514832fbd2199ab476a24f6e95efb73654c4f",
+      "previousSha256": "7f693848447d658a29a8a79662443e964b057e120e50aabe8000025f992bbc3a",
+      "reviewScope": "release_metadata"
+    },
+    {
+      "path": "resources/simulator/host.js",
+      "sha256": "3edabd37e89a42e309bd7bbfead3d85063b5b1c7b171691c791972a3dc7b8a60"
+    },
+    {
+      "path": "resources/simulator/THIRD_PARTY_NOTICES.txt",
+      "sha256": "8ac95cc76ba126fbf70132069f844491f437e5c53a29164b6642c46cc8885eb9"
+    },
+    {
+      "path": "resources/tools/build-live.mjs",
+      "sha256": "56597d918d9c57e041c808cf5c7a8f07ce97a9ccbadf1a9e4db622746b170457"
+    },
+    {
+      "path": "resources/tools/live-worker-template.js",
+      "sha256": "99aa17477bbc7fa94a57a006f9fbc4d582c3b531c29d2962bab2848e51e0da02"
+    },
+    {
+      "path": "resources/tools/live-host-template.js",
+      "sha256": "f9e8f94d3ef9d042bd93602578c481fefa0f060423bf19caade7dc615e0ebc86"
+    },
+    {
+      "path": "runner/install.sh",
+      "sha256": "0a1474b65283466fb8c15ad820444ef62c9918e4f4f437ceb39d6232b3575e50"
+    },
+    {
+      "path": "runner/install-tools/runner-check.mjs",
+      "sha256": "f7bf2d7a230bab8ad1b275a21fbb4d54b0974c7a3c1ffb13ef0672f526531087"
+    },
+    {
+      "path": "runner/install-tools/WordPressConfigurator.php",
+      "sha256": "7c0f571533edd4dfe46074c877246d97d39302406bd96faedb1a7e0aef08c4d0"
+    },
+    {
+      "path": "runner/install-tools/configure-wordpress.php",
+      "sha256": "1c84268f666bf24c2222bae0d42328459843aac4efd65ab7184d8081ca25e9ba"
+    },
+    {
+      "path": "scripts/acceptance/install-cycle.py",
+      "sha256": "6059ef091ecce2563b2724b5ef4f98c5f9c9373cd23404cbd54a1d53b36a55e6"
+    }
+  ],
+  "versionOnlyFiles": [
+    {
+      "path": "oj-microbit.php",
+      "normalizedSha256": "42fa20038711e1a994895fd193334a99e66c3c944bd9fdf57adac994e164e28f"
+    },
+    {
+      "path": "runner/src/launcher.mjs",
+      "normalizedSha256": "4bb3083f9e4b34294765acbe087879c23a2061db7a95bb8fb28f8804190346f0"
+    }
+  ]
+}

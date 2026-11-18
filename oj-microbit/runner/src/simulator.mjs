@@ -10,7 +10,7 @@ const runtimeSources = [
   'pxt-microbit/built/sim.js',
 ].map(file => readFileSync(require.resolve(file), 'utf8'));
 
-const bootstrap = `
+export const bootstrap = `
   var clock = { now: 0, next: 1, timers: new Map(), operations: 0 };
   var console = { log(){}, warn(){}, error(){}, debug(){} };
   var navigator = {};
@@ -39,7 +39,7 @@ const bootstrap = `
   var clearInterval = clearTimeout;
 `;
 
-const instrument = `
+export const instrument = `
   var trace = [], output = new Map(), inputs = new Map(), failure = null;
   var connections = new Map(payload.connections.map(c => [c.pin, c]));
   function pinNumber(id) { return id - 100; }

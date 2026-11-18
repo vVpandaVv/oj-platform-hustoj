@@ -241,14 +241,17 @@ final class PlateHtmlRenderer
     /** @param array<string, mixed> $node */
     private function renderLink(array $node): string
     {
-        $url = $this->safeUrl((string) ($node['url'] ?? $node['href'] ?? ''));
+        $href = (string) ($node['url'] ?? $node['href'] ?? '');
+        // Add-on routes are relative to the WordPress site, including subdirectory installs.
+        $url = $this->safeUrl(str_starts_with($href, '/oj-addons/') && function_exists('home_url') ? home_url($href) : $href);
         $children = $this->renderChildren($node);
 
         if ('' === $url) {
             return $children;
         }
 
-        return '<a href="' . $url . '" rel="noopener noreferrer">' . $children . '</a>';
+        $target = ($node['target'] ?? '') === '_blank' ? ' target="_blank"' : '';
+        return '<a href="' . $url . '"' . $target . ' rel="noopener noreferrer">' . $children . '</a>';
     }
 
     /** @param array<string, mixed> $node */
@@ -381,6 +384,10 @@ final class PlateHtmlRenderer
     /** @param array<string, mixed> $node */
     private function renderCallout(array $node): string
     {
+        if (($node['readContentsRole'] ?? null) === 'practice-solution') {
+            return '<details class="contents-editor-practice-solution"><summary>판단 근거와 해설</summary><div>'
+                . $this->renderChildren($node) . '</div></details>';
+        }
         $icon = trim((string) ($node['icon'] ?? '💡'));
         $styles = [];
         $background = $this->safeCssColor($node['backgroundColor'] ?? null);

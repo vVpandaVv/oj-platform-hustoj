@@ -4,7 +4,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_PATH||'../../_archived/readconte
 const root=path.resolve(__dirname,'..'),out=path.resolve(root,'../_notes/tmp/edu-games-binary-team');fs.mkdirSync(out,{recursive:true});
 let db={rooms:{},results:{}},manual=process.env.BINARY_TEAM_PREVIEW?null:Date.now(),socketUrl='',hub=null,dropNextCommand=false,droppedCommands=0,httpCommands=0;
 const wsMode=Boolean(process.env.BINARY_TEAM_WEBSOCKET);
-const deviceMode=Boolean(process.env.DEVICE_TEAM),game=deviceMode?'device-matching':'binary-conversion';
+const deviceMode=Boolean(process.env.DEVICE_TEAM),game=process.env.VAULT_TEAM?'cipher-vault':deviceMode?'device-matching':'binary-conversion';
 const now=()=>manual??Date.now();
 function php(input){const p=spawnSync(process.env.PHP_BINARY||'D:/php/php.exe',[path.join(__dirname,'binary-team-fixture.php')],{input:JSON.stringify(input),encoding:'utf8',maxBuffer:16e6});if(p.status!==0)throw Error(p.stderr||p.stdout);return p.stdout;}
 const server=http.createServer(async(req,res)=>{
@@ -22,10 +22,10 @@ const server=http.createServer(async(req,res)=>{
   if(url.pathname==='/'){
    const html=php({action:'html',uid,socketUrl,game,screen:url.searchParams.get('screen')||'student',room:url.searchParams.get('room')||''});res.writeHead(200,{'content-type':'text/html; charset=utf-8'});
    const identity=`<script>const nativeFetch=window.fetch.bind(window);window.fetch=(url,options={})=>nativeFetch(url,{...options,headers:{...options.headers,'X-Test-User':${Number.isSafeInteger(uid)?uid:7}}});</script>`;
-   return res.end('<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>실시간 팀전 미리보기</title><style>body{margin:0;padding:24px 16px;font-family:system-ui}main{max-width:1120px;margin:auto}</style>'+identity+['assets/shell/shell.css','blocks/binary-arcade/style.css','blocks/device-matching/style.css','assets/binary-team/style.css','assets/device-team/style.css','assets/binary-team/operations.css'].map(f=>`<link rel="stylesheet" href="/plugins/edu-games/${f}">`).join('')+'<main>'+html+'</main>'+['assets/shell/shell.js','assets/binary-team/socket.js','assets/device-team/board.js','assets/binary-team/operations.js','assets/binary-team/view.js'].map(f=>`<script src="/plugins/edu-games/${f}"></script>`).join('')+'</html>');
+   return res.end('<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>실시간 팀전 미리보기</title><style>body{margin:0;padding:24px 16px;font-family:system-ui}main{max-width:1120px;margin:auto}</style>'+identity+['assets/shell/shell.css','blocks/binary-arcade/style.css','blocks/device-matching/style.css','assets/binary-team/style.css','assets/device-team/style.css','assets/binary-team/operations.css','assets/arcade/style.css'].map(f=>`<link rel="stylesheet" href="/plugins/edu-games/${f}">`).join('')+'<main>'+html+'</main>'+['assets/shell/shell.js','assets/binary-team/socket.js','assets/device-team/board.js','assets/arcade/vault-board.js','assets/arcade/vault-team.js','assets/binary-team/operations.js','assets/binary-team/view.js'].map(f=>`<script src="/plugins/edu-games/${f}"></script>`).join('')+'</html>');
   }
   let raw='';for await(const chunk of req)raw+=chunk;const body=raw?JSON.parse(raw):undefined;
-  const prefix='/edu-games/v1/'+(deviceMode?'device-team':'binary-team');let action,code,id;
+  const prefix='/edu-games/v1/'+(game==='cipher-vault'?'cipher-team':deviceMode?'device-team':'binary-team');let action,code,id;
   if(relay)action=body?.sync?'socket':'relay';
   else if(url.pathname===prefix+'/ticket')action='ticket';
   else if(url.pathname===prefix+'/rooms')action=req.method==='POST'?'create':'rooms';
@@ -58,6 +58,7 @@ async function main(){
  const advance=async at=>{await fetch(base+'/_advance?at='+at);if(wsMode)await new Promise(resolve=>setTimeout(resolve,1300));};
  try{
   if(process.env.TEAM_OPERATIONS){await require('./browser-team-operations.cjs')({browser,base,out,state,done,advance,wsMode,game,getDb:()=>db,setup:body=>{const reply=JSON.parse(php({action:'setup',uid:100,game,body,db,now:now()}));db=reply.db;return reply.data;}});assert.deepEqual(errors,[]);return;}
+  if(process.env.VAULT_TEAM){await require('./browser-vault-team.cjs')({browser,base,out,user,state,done,advance,wsMode,getDb:()=>db,setup:body=>{const reply=JSON.parse(php({action:'setup',uid:100,game,body,db,now:now()}));db=reply.db;return reply.data;}});assert.deepEqual(errors,[]);return;}
   if(deviceMode){await require('./browser-device-team.cjs')({browser,base,root,out,user,state,done,advance,wsMode,getDb:()=>db,setup:body=>{const reply=JSON.parse(php({action:'setup',uid:100,game,body,db,now:now()}));db=reply.db;return reply.data;}});assert.deepEqual(errors,[]);return;}
   const host=await user(100),players=[];
   await host.locator('[name=participate]').uncheck();

@@ -13,6 +13,7 @@ use ContentsEditor\Content\ContentNodeType;
 use ContentsEditor\Content\ContentStatus;
 use ContentsEditor\Infrastructure\Assets;
 use ContentsEditor\Storage\ContentRepository;
+use ReadContents\Library\Editor\PublicSite\OptionalReadingBlocks;
 use Throwable;
 
 final class LessonShortcode
@@ -66,7 +67,7 @@ final class LessonShortcode
                 '<article class="contents-editor-public-lesson" data-lesson-id="%1$d" data-schema-version="%2$s">%3$s</article>',
                 $lesson_id,
                 esc_attr($document->schemaVersion),
-                $this->renderer->render($document->plateValue)
+                $this->renderer->render(OptionalReadingBlocks::forShortcode($document->plateValue))
             );
         } catch (Throwable $throwable) {
             return $this->notice($throwable->getMessage());
